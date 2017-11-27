@@ -1,0 +1,14 @@
+target
+.idea
+*.iml
+pom.xml.versionsBackup
+.classpath
+.project
+.settings/
+.env
+bin/
+.factorypath
+
+.vscode
+
+.DS_Store
