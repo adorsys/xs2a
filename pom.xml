@@ -19,11 +19,12 @@
 	</parent>
 
 	<properties>
+	
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<swagger.version>2.6.1</swagger.version>
 		<java.version>1.8</java.version>
-		<mongobee.version>0.12</mongobee.version>
+		
 	</properties>
 	<scm>
         <connection>scm:git:https://git.adorsys.de/adorsys/multibanking-xs2a.git</connection>
@@ -61,11 +62,6 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		 <dependency>
-            <groupId>com.github.mongobee</groupId>
-            <artifactId>mongobee</artifactId>
-            <version>${mongobee.version}</version>
-        </dependency>
 		
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -107,7 +103,7 @@
                     </execution>
                 </executions>
 			</plugin>
-			<plugin>
+			<!--  plugin>
        			<groupId>org.apache.maven.plugins</groupId>
         			<artifactId>maven-dependency-plugin</artifactId>
         			<version>3.0.2</version>
@@ -131,7 +127,7 @@
             				</configuration>
           			</execution>
         			</executions>
-      		</plugin>
+      		</plugin-->
 		
 			
 		</plugins>
