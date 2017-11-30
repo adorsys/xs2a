@@ -16,11 +16,11 @@ import lombok.Data;
 @ApiModel(description = "Amount information", value = "Amount")
 public class Amount {
 	
-	@ApiModelProperty(value = "currency", example = "€")
+	@ApiModelProperty(value = "currency", required=true, example = "€")
 	 private String currency;
 	
 	
 //TO DO type not defined in the documentation
-	@ApiModelProperty(value = "content", example = "1000")
+	@ApiModelProperty(value = "content", required=true, example = "1000")
 	 private String content;
 }

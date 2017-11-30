@@ -1,0 +1,78 @@
+# ------------------------------------------------------------------
+# variables
+# ------------------------------------------------------------------
+
+variables:
+  GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
+  GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/multibanking-xs2a"
+  OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
+  OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/banking-api/multibanking-xs2a"
+# ------------------------------------------------------------------
+# stages
+# ------------------------------------------------------------------
+
+stages:
+  - "build:src"    # build jar and provide as artifact
+  - "build:image"  # dockerize jar and push to gitlab registry
+  - "deploy"       # push to openshift registry (snapshot deployment) or release registry
+
+# ------------------------------------------------------------------
+# reusable yaml anchors
+# ------------------------------------------------------------------
+
+# release on all tags created by mvn release:prepare
+.release_condition: &release_condition
+  only:
+    - develop
+
+.java_artifacts: &java_artifacts
+  paths:
+    - "target/multibanking-xs2a.jar"
+    - "config/*.yml"
+  name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
+
+.build_java: &build_java
+  stage: "build:src"
+  image: "adorsys/openjdk-build-base:8"
+  tags:
+    - aws_docker
+  script:
+    - mvn clean package
+
+# ------------------------------------------------------------------
+# jobs
+# ------------------------------------------------------------------
+
+# snapshot
+build_snapshot:
+  <<: *build_java
+  artifacts:
+    <<: *java_artifacts
+    expire_in: "1 day"
+
+build_snapshot_image:
+  stage: "build:image"
+  only:
+    - develop
+  tags:
+    - aws_shell
+  script:
+    - docker build -t "$GITLAB_IMAGE_NAME:latest" .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
+    - docker push "$GITLAB_IMAGE_NAME:latest"
+
+deploy_snapshot:
+  stage: deploy
+  only:
+    - develop
+  tags:
+    - aws_shell
+  environment:
+    name: integ
+    url: https://multibanking-xs2a.dev.adorsys.de
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
+    - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
+    - docker pull $GITLAB_IMAGE_NAME:latest
+    - docker tag $GITLAB_IMAGE_NAME:latest $OPENSHIFT_IMAGE_NAME:latest
+    - docker push $OPENSHIFT_IMAGE_NAME:latest
