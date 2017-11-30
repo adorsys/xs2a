@@ -17,7 +17,7 @@ import lombok.Data;
 @ApiModel(description = "Balance Information", value = "SingleBalance")
 public class SingleBalance {
 	
-	@ApiModelProperty(value = "amount")
+	@ApiModelProperty(value = "amount", required=true)
 	 private Amount amount;
 
 	@ApiModelProperty(value = "last action date time", example = "2007-01-01T17:30:12.000")

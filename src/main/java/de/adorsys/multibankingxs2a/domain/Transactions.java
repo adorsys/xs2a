@@ -17,35 +17,35 @@ import lombok.Data;
 @ApiModel(description = "Transactions information", value = "Transactions")
 public class Transactions {
 	 
-	@ApiModelProperty(value = "Transaction ID", example = "12345")
+	@ApiModelProperty(value = "Transaction ID: Can be used as access-id in the API, where more details on an transaction is offered", example = "12345")
 	 private String transaction_id;
 	
 	@ApiModelProperty(value = "Entry Date", example = "2017-01-01")
 	 private Date entry_date;
 	
-	@ApiModelProperty(value = "Amount")
+	@ApiModelProperty(value = "Amount", required=true)
 	 private Amount amount;
 	
-	@ApiModelProperty(value = "Credited or Debited", example = "Credited or Debited")
+	@ApiModelProperty(value = "Credited or Debited", required=true,example = "Credited or Debited")
 	 private String credit_debit;
 	
 	@ApiModelProperty(value = "Name of the Creditor if a debited transaction", example = "Bauer")
 	 private String creditor;
 	
 	@ApiModelProperty(value = "Creditor account", example = "56666")
-	 private String creditor_account;
+	 private Account creditor_account;
 	
 	@ApiModelProperty(value = "Name of the last creditor", example = "Max")
 	 private String ultimate_creditor;
 	
-	@ApiModelProperty(value = "Name of the Debitor if a credited transaction", example = "Jan")
-	 private String debitor;
+	@ApiModelProperty(value = "Name of the Debtor if a credited transaction", example = "Jan")
+	 private String debtor;
 	
-	@ApiModelProperty(value = "Debitor account", example = "56666")
-	 private String debitor_account;
+	@ApiModelProperty(value = "Debtor account", example = "56666")
+	 private Account debtor_account;
 	
-	@ApiModelProperty(value = "Name of the last debitor", example = "Max")
-	 private String ultimate_debitor;
+	@ApiModelProperty(value = "Name of the last debtor", example = "Max")
+	 private String ultimate_debtor;
 	
 	@ApiModelProperty(value = "Remittance information", example = "Otto")
 	 private String remittance_information;

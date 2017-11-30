@@ -16,12 +16,17 @@ import lombok.Data;
 @ApiModel(description = "Account Report", value = "AccountReport")
 public class AccountReport {
 	 
-	@ApiModelProperty(value = "Booked Transactions")
+	@ApiModelProperty(value = "Booked Transactions", required=true)
 	 private Transactions[] booked;
 	
 	@ApiModelProperty(value = "Pending Transactions")
 	 private Transactions[] pending;
 	
-	@ApiModelProperty(value = "Liks")
+	@ApiModelProperty(value = "Liks: he following links might be used within this context:" + 
+			"account link (mandatory)" + 
+			"first_page_link (optional)" + 
+			"second_page_link (optional)" + 
+			"current_page_ link (optional)" + 
+			"last_page_link (optional)", required=true)
 	 private Links _links;
 }

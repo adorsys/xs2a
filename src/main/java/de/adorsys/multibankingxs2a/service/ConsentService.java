@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 
 
 /**
- * Created by aro on 24.11.17.
+ * Created by alexg on 20.10.17.
  */
 @Service
-public class PaymentService {
+public class ConsentService {
 
-   
+ 
 }

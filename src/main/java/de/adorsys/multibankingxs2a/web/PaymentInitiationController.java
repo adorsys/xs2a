@@ -25,54 +25,56 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;;
 
 
-
-
-
-
 /**
- * Created by aro on 20.11.17
+ * Created by aro on 23.11.17
  */
 
 @RestController
 @SuppressWarnings("unused")
-@RequestMapping(path = "api/v1/payments/{payment-product}")
+@RequestMapping(path = "api/v1/payments/{product -name}")
 
 public class PaymentInitiationController {
+	
 	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationController.class);
 	
 	 
 	@ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured")
     @ApiResponses(value = { @ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the TPP."),
-            @ApiResponse(code = 400, message = "Bad request") })
+    @ApiResponse(code = 400, message = "Bad request") })
    
 	@RequestMapping( method = RequestMethod.POST)
-	    public  Response paymentInitiation(@RequestBody Transactions transactions) {
-		 		return createResponse(transactions.getTransaction_id());
-	 	}
-	 
-	 @RequestMapping(value = "/{payment-id}/status", method = RequestMethod.GET)
-	    public Response getPaymentStatus() {
+	public  ResponseGeneral paymentInitiation(@RequestBody Transactions transactions) {
+		return createResponse(transactions.getTransaction_id());
+	}
+	
+	@ApiOperation(value = "Get information  about the status of a payment initialisation ", notes = "the payment ID")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "transactions_status Accepted Customer Profil."),
+    @ApiResponse(code = 400, message = "Bad request") })
+	 @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
+	 public ResponseGeneral getPaymentStatus() {
 		 return createResponse();
-	    }
+	 }
 	 
-	 @RequestMapping(value = "/{payment-id}", method = RequestMethod.GET)
-	 public Response getPyament(@PathVariable String paymentId) {
-	       
+	@ApiOperation(value = "Get information  about all payments ", notes = "the payment ID")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "transactions_status ?????"),
+    @ApiResponse(code = 400, message = "Bad request") })
+	@RequestMapping(value = "/{paymentId}", method = RequestMethod.GET)
+	public ResponseGeneral getPyament(@PathVariable String paymentId) {
 		 return createResponse();
 	 }
 	
-	 private Response createResponse(String transactionID) {
+	 private ResponseGeneral createResponse(String transactionID) {
 	    
-		 Response response = new Response();
+		 ResponseGeneral response = new ResponseGeneral();
 	    //	return new Resource<>(transactions,
 	      //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 	        
 		 return response;
 	 }
 	 
-	 private Response createResponse() {
+	 private ResponseGeneral createResponse() {
 		    
-		 Response response = new Response();
+		 ResponseGeneral response = new ResponseGeneral();
 	    //	return new Resource<>(transactions,
 	      //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 	        

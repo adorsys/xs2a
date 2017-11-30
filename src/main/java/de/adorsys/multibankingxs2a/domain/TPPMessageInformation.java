@@ -16,17 +16,17 @@ import lombok.Data;
 @ApiModel(description = "TPP Message Information", value = "TPPMessageInformation")
 public class TPPMessageInformation {
 	
-	@ApiModelProperty(value = "Category", example = "Error")
+	@ApiModelProperty(value = "Category of the error permitted", required=true, example = "Error")
 	 private String category;
 
 	//TO DO Should be later change to Message code	
-	 @ApiModelProperty(value = "Code")
+	 @ApiModelProperty(value = "Code", required=true)
 	 private String code;
 	 
 	 @ApiModelProperty(value = "Path", example = "")
 	 private String path;
 	 
-	 @ApiModelProperty(value = "Text", example = "Additional Text")
+	 @ApiModelProperty(value = "Tadditional expalnation text", example = "Additional Text")
 	 private String text;
 	 
 }
