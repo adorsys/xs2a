@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "Request for the Confirmation Funds")
-public class RequestFunds {
+public class FundsRequest {
 	@ApiModelProperty(value = "card_number: ", example = "12345")
 	private String card_number;
 	

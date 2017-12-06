@@ -43,38 +43,33 @@ public class PaymentInitiationController {
     @ApiResponse(code = 400, message = "Bad request") })
    
 	@RequestMapping( method = RequestMethod.POST)
-	public  ResponseGeneral paymentInitiation(@RequestBody Transactions transactions) {
-		return createResponse(transactions.getTransaction_id());
+	public  PaymentInitialisationResponse createPaymentInitiation(@RequestBody PaymentInitialisationRequest aymentInitialisationRequest) {
+		return createResponse();
 	}
 	
 	@ApiOperation(value = "Get information  about the status of a payment initialisation ", notes = "the payment ID")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "transactions_status Accepted Customer Profil."),
     @ApiResponse(code = 400, message = "Bad request") })
-	 @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
-	 public ResponseGeneral getPaymentStatus() {
-		 return createResponse();
-	 }
+	@RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
+	public TransactionStatus getPaymentInitiationStatus(@PathVariable String paymentId) {
+		 return TransactionStatus.RCVD;
+    }
 	 
 	@ApiOperation(value = "Get information  about all payments ", notes = "the payment ID")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "transactions_status ?????"),
     @ApiResponse(code = 400, message = "Bad request") })
 	@RequestMapping(value = "/{paymentId}", method = RequestMethod.GET)
-	public ResponseGeneral getPyament(@PathVariable String paymentId) {
-		 return createResponse();
-	 }
+	public Transactions  getPyamentIniatiation(@PathVariable String paymentId) {
+		
+		// TO DO... we have get back here  a Resource<PaymentInitialisationEntity>
+		return new Transactions();
+	}
 	
-	 private ResponseGeneral createResponse(String transactionID) {
-	    
-		 ResponseGeneral response = new ResponseGeneral();
-	    //	return new Resource<>(transactions,
-	      //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
-	        
-		 return response;
-	 }
+	
 	 
-	 private ResponseGeneral createResponse() {
+	 private PaymentInitialisationResponse createResponse() {
 		    
-		 ResponseGeneral response = new ResponseGeneral();
+		 PaymentInitialisationResponse response = new PaymentInitialisationResponse();
 	    //	return new Resource<>(transactions,
 	      //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 	        

@@ -16,7 +16,7 @@ import lombok.Data;
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
 
-	@ApiModelProperty(value = "IBAN: This data element can be used in the body of the Consent Request Message for retrieving account access consent from this payment account", example = "1111111111")
+	@ApiModelProperty(value = "IBAN: This data element can be used in the body of the ConsentRequest Request Message for retrieving account access consent from this payment account", example = "1111111111")
 	 private String iban;
 
 	@ApiModelProperty(value = "BBAN: This data elements is used for payment accounts which have no IBAN", example = "1111111111")

@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "Response for created by some methods inthe consent Service")
-public class ConsentRequest  {
+public class ConsentResponse  {
 
     
    
@@ -18,8 +18,7 @@ public class ConsentRequest  {
 	private Integer frequency_per_day;
 	private boolean recurring_indicator;
 	private TransactionStatus transaction_status;
-	private boolean combined_service_indicator
-	;
+	private String conset_status;
 	
 
 }

@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 @ApiModel(description = "Single account access", value = "SingleAccountAccess")
 public class SingleAccountAccess {
-	 @ApiModelProperty(value = "account", required=true,  example = "12345")
+	 @ApiModelProperty(value = "account", required=true)
 	 private AccountReference account;
 	 @ApiModelProperty(value = "access type: The“values balance and transactions are permitted. ", required=true, example = "balance, transactions")
 	 private String[] access_type;

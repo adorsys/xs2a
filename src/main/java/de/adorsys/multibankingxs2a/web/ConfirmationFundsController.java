@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.adorsys.multibankingxs2a.domain.RequestFunds;
-import de.adorsys.multibankingxs2a.domain.ResponseGeneral;
+import de.adorsys.multibankingxs2a.domain.FundsRequest;
+import de.adorsys.multibankingxs2a.domain.PaymentInitialisationResponse;
 import de.adorsys.multibankingxs2a.domain.Transactions;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -31,7 +31,7 @@ public class ConfirmationFundsController {
     @ApiResponses(value = {@ApiResponse(code = 201, message = "return true or false"),
     @ApiResponse(code = 400, message = "Bad request") })
     @RequestMapping( method = RequestMethod.POST)
-	public  Boolean getConfirmationOFunds(@RequestBody RequestFunds request) {
+	public  Boolean getConfirmationOFunds(@RequestBody FundsRequest request) {
 		return false;
 	}
 	

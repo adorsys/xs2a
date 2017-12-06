@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.adorsys.multibankingxs2a.domain.Account;
 import de.adorsys.multibankingxs2a.domain.Balances;
-import de.adorsys.multibankingxs2a.domain.ResponseGeneral;
-import de.adorsys.multibankingxs2a.domain.TransactionsResponse;
+import de.adorsys.multibankingxs2a.domain.PaymentInitialisationResponse;
+import de.adorsys.multibankingxs2a.domain.AccountDataResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -78,16 +78,21 @@ public class AccountController {
 	}
 	
 	
-	@ApiOperation(value = "Read a list of the balances for the given account")
+	@ApiOperation(value = "Read account data from the given account")
     @ApiResponses(value = { @ApiResponse(code = 200, message = ""),
     @ApiResponse(code = 400, message = "Bad request") })
     @RequestMapping(value = "/{accountId}/transactions", method = RequestMethod.GET)
-	public  TransactionsResponse  getTransactionss(@PathVariable String accountId,
+	public  AccountDataResponse  getTransactionsForAccount(@PathVariable String accountId,
 			@RequestParam(value = "date_from", required = true) Date dateFROM,
 			@RequestParam(value = "date_to", required = true) Date dateTo,
 			@RequestParam(value = "transaction_id", required = false) String transactionID,
 			@RequestParam(value = "psu_involved", required = false) Boolean psu_involved ){
-		 return readTransactions();
+		 return readAccountData
+				 
+				 
+				 
+				 
+				 ();
 	}
 	
 	
@@ -109,11 +114,11 @@ public class AccountController {
 	 }
 	 
 	 
-	 private TransactionsResponse readTransactions() {
+	 private AccountDataResponse readAccountData() {
 			
 		 //TO DO... full the list of the balances for the accountID
-		 TransactionsResponse transactions = new TransactionsResponse();
+		 AccountDataResponse accountData = new AccountDataResponse();
 	
-		 return transactions;
+		 return accountData;
 	 }
 }

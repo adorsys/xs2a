@@ -3,6 +3,7 @@ package de.adorsys.multibankingxs2a.web;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+import org.h2.mvstore.db.TransactionStore.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.adorsys.multibankingxs2a.domain.Account;
+import de.adorsys.multibankingxs2a.domain.ConsentLinkResponse;
+import de.adorsys.multibankingxs2a.domain.ConsentRequest;
 import de.adorsys.multibankingxs2a.domain.ConsentResponse;
-import de.adorsys.multibankingxs2a.domain.ResponseGeneral;
+import de.adorsys.multibankingxs2a.domain.PaymentInitialisationResponse;
 import de.adorsys.multibankingxs2a.domain.SingleAccountAccess;
+import de.adorsys.multibankingxs2a.domain.TransactionStatus;
 import de.adorsys.multibankingxs2a.domain.Transactions;
-import de.adorsys.multibankingxs2a.domain.TransactionsResponse;
+import de.adorsys.multibankingxs2a.domain.AccountDataResponse;
 import de.adorsys.multibankingxs2a.service.ConsentService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -40,7 +44,7 @@ public class ConsentInformationController {
 	private static final Logger log = LoggerFactory.getLogger(PaymentInitiationController.class);
 	
 	@Autowired
-    private ConsentService paymentService;
+    private ConsentService consentService;
 	
 	
 	@ApiOperation(value = "Creats an account information consent resource at the ASPSP regarding access to accounts specified in this request",
@@ -48,9 +52,9 @@ public class ConsentInformationController {
     @ApiResponses(value = { @ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the TPP."),
     @ApiResponse(code = 400, message = "Bad request") })
     @RequestMapping( method = RequestMethod.POST)
-	public  ResponseGeneral getConsetForAccounts(@RequestBody ConsentResponse consentResponse) {
+	public  ConsentLinkResponse createConsetForAccounts(@RequestBody ConsentRequest consentRequest) {
 		
-		return createResponse();
+		return new ConsentLinkResponse();
 	
 	}
 	
@@ -59,9 +63,10 @@ public class ConsentInformationController {
     @ApiResponses(value = { @ApiResponse(code = 201, message = "a list of hyperlinks to be recognized by the TPP."),
     @ApiResponse(code = 400, message = "Bad request") })
 	@RequestMapping(value = "/account-list", method = RequestMethod.POST)
-	public  ResponseGeneral getAccountWithConsent( @RequestParam(required = true) Boolean withBalance) {
+	public  ConsentLinkResponse getAccountWithConsent( @RequestParam(required = true) Boolean withBalance) {
 	
-		return createResponse();
+		return new ConsentLinkResponse();
+		// TO DO.... the returned link must be /v1/consents
 	
 	}
 	
@@ -71,10 +76,9 @@ public class ConsentInformationController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "transaction_status: AcceptedTechnicalValidation "),
     @ApiResponse(code = 400, message = "Bad request") })
 	@RequestMapping(value = "/{consentID}/status", method = RequestMethod.GET)
-	public  ResponseGeneral getStatusForConsent( @PathVariable("consentID") String consentID) {
+	public  String  getStatusForConsent( @PathVariable("consentID") String consentID) {
 		
-		return createResponse();
-	
+		return TransactionStatus.ACTC.getDefinition();
 	}
 	
 	@ApiOperation(value = " Returns the content of an account information consent object",
@@ -82,11 +86,11 @@ public class ConsentInformationController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Get the list of accounts for this consent ojbect"),
     @ApiResponse(code = 400, message = "Bad request") })
 	@RequestMapping(value = "/{consentID}", method = RequestMethod.GET)
-	public   ConsentResponse getAccountsWithConsent(@PathVariable("consentID") String consentID) {
+	public   ConsentResponse getAccountsForConsent(@PathVariable("consentID") String consentID) {
 		
 		//TO DO...... muss as der MongoDB gelesen werden....
-		ConsentResponse consent = new ConsentResponse();
-		return consent;
+		return new  ConsentResponse();
+		
 	}
 	
 	
@@ -99,12 +103,7 @@ public class ConsentInformationController {
 	     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	 }
 	
-	 private ResponseGeneral createResponse() {
-		 
-		 ResponseGeneral response = new ResponseGeneral();
-	    
-		 return response;
-	 }
+	
 	 
 	
 	   
