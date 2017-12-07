@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.adorsys</groupId>
-	<artifactId>multibanking-xs2a</artifactId>
+	<artifactId>aspsp-xs2a</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>multibanking-xs2a</name>
+	<name>aspsp-xs2a</name>
 	<description>xs2a interfaces</description>
 
 	<parent>
@@ -27,7 +27,7 @@
 		
 	</properties>
 	<scm>
-        <connection>scm:git:https://git.adorsys.de/adorsys/multibanking-xs2a.git</connection>
+        <connection>scm:git:https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a.git</connection>
         <tag>DEVELOP</tag>
     </scm>
 	<dependencies>
