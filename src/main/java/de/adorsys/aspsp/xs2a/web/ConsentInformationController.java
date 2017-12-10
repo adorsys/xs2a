@@ -1,12 +1,10 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.h2.mvstore.db.TransactionStore.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.adorsys.aspsp.xs2a.domain.Account;
-import de.adorsys.aspsp.xs2a.domain.AccountDataResponse;
-import de.adorsys.aspsp.xs2a.domain.AICResponse;
-import de.adorsys.aspsp.xs2a.domain.AICAccountsList;
-import de.adorsys.aspsp.xs2a.domain.AICRequestBody;
-import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.SingleAccountAccess;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
+import de.adorsys.aspsp.xs2a.spi.domain.AICAccountsList;
+import de.adorsys.aspsp.xs2a.spi.domain.AICRequestBody;
+import de.adorsys.aspsp.xs2a.spi.domain.AICResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SingleAccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

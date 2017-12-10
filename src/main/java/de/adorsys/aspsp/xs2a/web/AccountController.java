@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.adorsys.aspsp.xs2a.domain.Account;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.spi.domain.Account;
+import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
+import de.adorsys.aspsp.xs2a.spi.domain.Balances;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSPI;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -36,6 +38,9 @@ import io.swagger.annotations.ApiResponses;
 @Api(value="api/v1/accounts", tags="AISP, Accounts", description="Provides access to the PSU account")
 public class AccountController {
 	
+	@Autowired
+	private AccountSPI accountSPI;
+	
 	private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 	
 	@ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
@@ -49,8 +54,6 @@ public class AccountController {
 					 @RequestParam(name="psu-involved",required=false) Boolean psuInvolved ) {
 		 return new ResponseEntity<Account[]>(readAccounts(withBalance, psuInvolved),HttpStatus.OK);
 	 }
-	
-	
 	
 	@ApiOperation(value = "Read a list of the balances for the given account")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response=Balances.class),
@@ -82,8 +85,9 @@ public class AccountController {
 	}
 	
 	private AccountReport readTransactions(String accountId, Date dateFROM, Date dateTo, String transactionID,
-			Boolean psu_involved) {
-		AccountReport accountReport = new AccountReport();
+			Boolean psuInvolved) {
+		
+		AccountReport accountReport = accountSPI.readTransactions(accountId, dateFROM, dateTo, transactionID, psuInvolved);
 		String link = linkTo(AccountController.class).slash(accountId).toString();
 		accountReport.get_links().setAccount_link(link);
 		return null;
@@ -93,8 +97,8 @@ public class AccountController {
 
 	private Account[] readAccounts(Boolean withBalance, Boolean psuInvolved) {
 		
-		 //TO DO... full the list of the accounts objects
-		 List<Account> accounts = new ArrayList<Account>();
+		// Read from SPI
+		List<Account> accounts = accountSPI.readAccounts(withBalance, psuInvolved);
 		 for (Account account : accounts) {
 			 String balances= 
 					 linkTo(methodOn(AccountController.class).getBalances(account.getId(), psuInvolved)).toString();
@@ -107,10 +111,10 @@ public class AccountController {
 		 return (Account[]) accounts.toArray();
 	 }
 	 
-	 private Balances readBalances(Boolean psu_involved) {
+	 private Balances readBalances(Boolean psuInvolved) {
 			
-		 //TO DO... full the list of the balances for the accountID
-		Balances balances = new Balances();
+		 
+		Balances balances = accountSPI.readBalances(psuInvolved);
 	
 		return balances;
 	 }

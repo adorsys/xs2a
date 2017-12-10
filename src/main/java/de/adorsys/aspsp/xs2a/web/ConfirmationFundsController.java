@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.adorsys.aspsp.xs2a.domain.FundsRequest;
-import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.spi.domain.FundsRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
