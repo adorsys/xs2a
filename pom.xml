@@ -11,12 +11,18 @@
 	<name>aspsp-mockspi</name>
 	<description>Mock spi interfaces for aspsp</description>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.8.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
 	<properties>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<swagger.version>1.5.10</swagger.version>
-		<lombok.version>1.16.18</lombok.version>
 		<java.version>1.8</java.version>
 
 	</properties>
@@ -27,12 +33,15 @@
 			<artifactId>aspsp-spi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
