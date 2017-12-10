@@ -4,7 +4,7 @@
 
 variables:
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
-  GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/multibanking-xs2a"
+  GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a"
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
   OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/multibanking-xs2a/multibanking-xs2a"
 # ------------------------------------------------------------------
@@ -27,7 +27,7 @@ stages:
 
 .java_artifacts: &java_artifacts
   paths:
-    - "target/multibanking-xs2a.jar"
+    - "target/aspsp-xs2a.jar"
     - "config/*.yml"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
@@ -69,7 +69,7 @@ deploy_snapshot:
     - aws_shell
   environment:
     name: integ
-    url: https://multibanking-xs2a.dev.adorsys.de
+    url: https://aspsp-xs2a.dev.adorsys.de
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
