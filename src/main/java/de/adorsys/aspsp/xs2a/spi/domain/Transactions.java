@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.domain;
+	package de.adorsys.aspsp.xs2a.spi.domain;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +24,12 @@ public class Transactions {
 	// we get it in the Header
 	@ApiModelProperty(value = "Entry Date", example = "2017-01-01")
 	 private Date entry_date;
+	
+	@ApiModelProperty(value = "Booking Date", example = "2017-01-01")
+	 private Date booking_date;
+	
+	@ApiModelProperty(value = "Value Date", example = "2017-01-01")
+	 private Date value_date;
 	
 	@ApiModelProperty(value = "Amount", required=true)
 	 private Amount amount;

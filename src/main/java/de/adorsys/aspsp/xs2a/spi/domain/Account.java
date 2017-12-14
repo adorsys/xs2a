@@ -1,5 +1,5 @@
-package de.adorsys.aspsp.xs2a.spi.domain;
 
+package de.adorsys.aspsp.xs2a.spi.domain;
 import java.util.List;
 import java.util.Map;
 
@@ -14,19 +14,19 @@ import lombok.Data;
  */
 
 @Data
-@ApiModel(description = "Account information", value = "Account")
+@ApiModel(description = "AccountResponse information", value = "AccountResponse")
 public class Account {
 	 
 	@ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required=true, example = "12345")
 	 private String id;
 	
-	@ApiModelProperty(value = "IBAN: This data element can be used in the body of the AICRequestBody Request Message for retrieving account access consent from this payment accoun", example = "1111111111")
+	@ApiModelProperty(value = "IBAN: This data element can be used in the body of the AICInformationRequestBody Request Message for retrieving account access consent from this payment accoun", example = "1111111111")
 	 private String iban;
 
-	@ApiModelProperty(value = "BBAN: This data element can be used in the body of the AICRequestBody Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. ", example = "1111111111")
+	@ApiModelProperty(value = "BBAN: This data element can be used in the body of the AICInformationRequestBody Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. ", example = "1111111111")
 	 private String bban;
 	
-	@ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements", example = "1111")
+	@ApiModelProperty(value = "PAN: Primary AccountResponse Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements", example = "1111")
 	 private String pan;
 
 	@ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number.", example = "0172/1111111")

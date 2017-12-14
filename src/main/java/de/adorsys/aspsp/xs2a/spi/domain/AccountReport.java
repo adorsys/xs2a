@@ -13,7 +13,7 @@ import lombok.Data;
  */
 
 @Data
-@ApiModel(description = "Account Report", value = "AccountReport")
+@ApiModel(description = "AccountResponse Report", value = "AccountReport")
 public class AccountReport {
 	 
 	@ApiModelProperty(value = "Booked Transactions", required=true)

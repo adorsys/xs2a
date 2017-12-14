@@ -23,10 +23,11 @@ public class TPP {
 	private String tpp_name;
 	private String tpp_role;
 	private String tpp_national_competent_authority;
-	
-	private TPPMessageInformation tpp_messages;
+	private String tpp_certificate;
 	private String tpp_signature;
+	private String tpp_signature_data;
+	private TPPMessageInformation tpp_messages;
 	
-	// private ..... certificate;
+	
 	
 }

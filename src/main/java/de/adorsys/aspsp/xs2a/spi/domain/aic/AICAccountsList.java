@@ -1,6 +1,8 @@
-package de.adorsys.aspsp.xs2a.spi.domain;
+package de.adorsys.aspsp.xs2a.spi.domain.aic;
 
 
+import de.adorsys.aspsp.xs2a.spi.domain.SingleAccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 

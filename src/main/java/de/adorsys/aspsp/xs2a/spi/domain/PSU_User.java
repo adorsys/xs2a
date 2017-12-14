@@ -14,11 +14,10 @@ import lombok.Data;
 
 @Data
 
-public class PSU_User {
+public class PSU_User extends PSU{
 	 
 	private String psu_id; 
     private String psu_message;
-	private String psu_password;
 	private String psu_corporate_id;
 	private String psu_authentification;
 	private String psu_IP_adress;
