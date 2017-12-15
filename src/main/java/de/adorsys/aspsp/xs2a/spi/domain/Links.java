@@ -18,7 +18,7 @@ public class Links {
 
 	
 	@ApiModelProperty(value = "redirect: A link to an ASPSP site where SCA is performed within the Redirect SCA approach.", example = "www.testbank.de/login/")
-	 private String redirect;
+	private String redirect;
 	
 	@ApiModelProperty(value = "update psu identification: The link to the payment initiation or account information resource, which needs to be updated by the psu identification if not delivered yet.", example = "api/v1/identification/")
 	private String update_psu_identification;
