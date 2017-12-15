@@ -30,7 +30,7 @@ public class AccountSPIImpl implements AccountSPI  {
 		
 		List<Account> accounts =  MockData.getAccounts()	;
 		
-		if (!withBalance) {
+		if ((withBalance != null) && (!withBalance)) {
 			for (Account account : accounts) {
 				account.setBalances(null);
 			}
@@ -42,7 +42,7 @@ public class AccountSPIImpl implements AccountSPI  {
 
 	public Balances readBalances(String accountId, Boolean psuInvolved) {
 		
-		HashMap accounts =  MockData.getAccountHashMap()	;
+		HashMap<String, Account> accounts =  MockData.getAccountsHashMap()	;
 		return ( (Account)accounts.get(accountId)).getBalances();
 		
 	}

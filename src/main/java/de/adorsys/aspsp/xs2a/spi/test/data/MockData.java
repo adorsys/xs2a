@@ -1,5 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -9,18 +10,19 @@ import java.util.List;
 import de.adorsys.aspsp.xs2a.spi.domain.Account;
 import de.adorsys.aspsp.xs2a.spi.domain.Amount;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
+import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.SingleBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.Transactions;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionsArt;
 
 public class MockData {
 	
- private static List<Account> accounts ;
- private static List<Transactions> transactions;
- private static List<Amount> amounts;
- private static List<SingleBalance> singleBalances;
- private static List<Balances> balances;
- private static HashMap accounts_hashmap;
+ private  static List<Account> accounts = new ArrayList<Account>();
+ private  static List<Transactions> transactions = new ArrayList<Transactions>();
+ private  static List<Amount> amounts= new ArrayList<Amount>();
+ private  static List<SingleBalance> singleBalances= new ArrayList<SingleBalance>();
+ private  static List<Balances> balances = new ArrayList<Balances>();
+ private  static HashMap<String, Account> accounts_hashmap = new HashMap<String, Account>();
  
  public static void createAmount(String content, String currency) {
 		Amount amount = new Amount();
@@ -29,7 +31,7 @@ public class MockData {
 		amounts.add(amount);
  }
  
- public static void createAccounts_HashMap() {
+ public static void createAccountsHashMap() {
 	 for (Account account : accounts) {
 		 accounts_hashmap.put(account.getId(), account);
 	 }
@@ -45,6 +47,8 @@ public class MockData {
 		singleBalances.add(sb);
 	 
 }
+ 
+ 
  
 public static void createBalances (SingleBalance sb, TransactionsArt art) {
 		 
@@ -86,9 +90,31 @@ public static void createBalances (SingleBalance sb, TransactionsArt art) {
 		account.setAccount_type(account_type);
 		account.setName(name);
 		account.setBalances(balance);
+		account.set_links(createEmptyLinks());
 		accounts.add(account);
 		return account;
 		
+ }
+ 
+ public static Links createEmptyLinks() {
+	 Links links= new Links();
+	
+	 links.setBalances("");
+	 links.setRedirect("");
+	 links.setCurrent_page_link("");
+	 links.setFirst_page_link("");
+	 links.setLast_page_link("");
+	 links.setRedirect("");
+	 links.setSecond_page_link("");
+	 links.setSelect_authentication_method("");
+	 links.setSelf("");
+	 links.setTransactions("");
+	 links.setStatus("");
+	 links.setUpdate_psu_authentication("");
+	 links.setUpdate_psu_identification("");
+	 
+	 
+	 return links;
  }
  
  public static void createTransactions(Amount amount, String transactionId,
@@ -131,7 +157,7 @@ public static void createBalances (SingleBalance sb, TransactionsArt art) {
 	 return transactions;
  }
  
- public static HashMap getAccountHashMap() {
+ public static HashMap<String, Account> getAccountsHashMap() {
 	 return accounts_hashmap;
  }
  
