@@ -40,8 +40,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(value="api/v1/accounts", tags="AISP, Accounts", description="Provides access to the PSU account")
 public class AccountController {
 	
-	
-	private AccountService accountService;
+	@Autowired
+	private AccountService accountService ;
 	
 	private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 	
@@ -59,15 +59,21 @@ public class AccountController {
 		
 		for (AccountResponse account : accounts) {
 			
-			 String balancesLink= 
-					 linkTo(methodOn(AccountController.class).getBalances(account.getId(), psuInvolved)).toString();
-			 String transactionsLink= 
-					 linkTo(methodOn(AccountController.class).getTransactionsForAccount(account.getId(), null, null, psuInvolved)).toString();
+			 //String balancesLink= 
+					// linkTo(methodOn(AccountController.class).getBalances(account.getId(), psuInvolved)).toString();
+			String balancesLink = linkTo(AccountController.class).slash(account.getId()).toString() + "/balances";
+			
+			String transactionsLink = linkTo(AccountController.class).slash(account.getId()).toString() + "/transactions";
+			
+			System.out.println("balancesLink" + balancesLink);
+			 // String transactionsLink= 
+				//	 linkTo(methodOn(AccountController.class).getTransactionsForAccount(account.getId(), null, null, psuInvolved)).toString();
 			 account.get_links().setBalances(balancesLink);
 			 account.get_links().setTransactions(transactionsLink);
 		 }
 		
-		return new ResponseEntity<AccountResponse[]>((AccountResponse[])accounts.toArray(),HttpStatus.OK) ;
+		AccountResponse response[] = accounts.toArray(new AccountResponse[accounts.size()]);
+		return new ResponseEntity<AccountResponse[]>(response,HttpStatus.OK) ;
 		
 	}
 	

@@ -35,7 +35,7 @@ public class AccountService {
 	private AccountSPIImpl bankServiceProvider = new AccountSPIImpl();
 	private AccountSPI accountSPI = (AccountSPI) bankServiceProvider;
 	
-	public  List<AccountResponse>  getAccounts(Boolean withBalance, Boolean psuInvolved){
+	public  List<AccountResponse> getAccounts(Boolean withBalance, Boolean psuInvolved) {
 		
 		List<Account> accounts = readAccounts(withBalance, psuInvolved);
 		List <AccountResponse> liste = new ArrayList<AccountResponse>();
@@ -45,6 +45,7 @@ public class AccountService {
 			accountResponse.setIban(account.getIban());
 			accountResponse.setCurrency(account.getCurrency());
 			accountResponse.setAccount_type(account.getAccount_type());
+			accountResponse.set_links(account.get_links());
 			liste.add(accountResponse);
 		}
 		return liste;

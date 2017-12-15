@@ -12,9 +12,9 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 
-@Configuration
+//@Configuration
 public class WebConfig {
-
+/**
 	@Bean
 	public WebMvcRegistrationsAdapter webMvcRegistrationsHandlerMapping() {
 		return new WebMvcRegistrationsAdapter() {
@@ -42,4 +42,5 @@ public class WebConfig {
 			}
 		};
 	}
+	*/
 }

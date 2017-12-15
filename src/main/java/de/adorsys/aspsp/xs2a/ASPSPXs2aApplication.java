@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import de.adorsys.aspsp.xs2a.spi.domain.Account;
 import de.adorsys.aspsp.xs2a.spi.domain.Amount;
@@ -15,6 +16,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.test.data.MockData;
 
 @SpringBootApplication
+@ComponentScan
 public class ASPSPXs2aApplication {
 
 	public static void main(String[] args) {
@@ -62,7 +64,7 @@ public class ASPSPXs2aApplication {
 		MockData.createAccount("33333-999999999", "€", MockData.getBalances().get(2), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
 		MockData.createAccount("44444-999999999", "€", MockData.getBalances().get(3), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
 		MockData.createAccount("55555-999999999", "€", MockData.getBalances().get(4), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
-		MockData.createAccounts_HashMap();
+		MockData.createAccountsHashMap();
 		
 		MockData.createTransactions(
 				MockData.getAmounts().get(0), "12345",
@@ -73,7 +75,7 @@ public class ASPSPXs2aApplication {
 		MockData.createTransactions(
 				MockData.getAmounts().get(4), "123456",
 				4,6,"future",
-				"debit", MockData.getAccounts().get(5).getName(), MockData.getAccounts().get(5), "", 
+				"debit", MockData.getAccounts().get(4).getName(), MockData.getAccounts().get(4), "", 
 				"", null, "", "Another Example for remittance information");
 		
 		MockData.createTransactions(
