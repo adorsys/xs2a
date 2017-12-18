@@ -1,6 +1,6 @@
 # XS2A interface –> Core services-> Payment Initiation Service
 
-## Payment Initiation Service (PIS).
+## SER_01 Payment Initiation Service (PIS).
 This service may be used by a PISP to initiate a single payment on behalf of a PSU using a given account of that PSU. The account is managed by the ASPSP providing the XS2A Interface.
 
 
@@ -52,8 +52,8 @@ Attribute | Type  | Condition | Description |
 | PSU-Agent |	String	| Optional |	The forwarded Agent header field of the http request between PSU and TPP. |
 | PSU-IPAddress | String	| Mandatory |	The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. |
 | PSU-Geo-Location	| String	| Optional |	The forwarded Geo Location header field of the corresponding http request between PSU and TPP if available. |
-| signature	| details t.b.d. |	Conditional |	A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
-| certificate	|details t.b.d. |	Conditional	| The certificate used for signing the request. |
+| signature	| String ("details t.b.d." in the original specification) |	Conditional |	A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
+| certificate	|String ("details t.b.d." in the original specification) |	Conditional	| The certificate used for signing the request. |
 | Date |	DateTime	| Mandatory	| Standard https header element date and time |
 
 ###  Request Body
@@ -104,7 +104,7 @@ Data Element | Type  | SCT EU Core | SCT_INST EU Core | Target2  Paym. Core | Cr
 
 
 
-### SER_01_02 Response Header
+### Response Header
 The Location field is used as link to the created resource. No other specific requirements.
 
 ###  Response Body
@@ -174,7 +174,7 @@ If the response is JSON based, then the Name entry is used, to get a better read
         }
 
 
-## SER_01_03 Get Status Request
+## SER_01_02 Get Status Request
 
 ### Call
     GET /v1/payments/{payment-product}/{resource-id}/status
@@ -205,7 +205,7 @@ Attribute | Type | Condition | Description |
 No body.
 
 
-### SER_01_04  Response Body
+###  Response Body
 in Case of JSON based endpoint
 
 Attribute | Type | Condition | Description |
