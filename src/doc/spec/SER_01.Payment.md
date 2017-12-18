@@ -26,7 +26,7 @@ Transactions according to this use case can be used to initiate a single payment
 *	cross-border-credit-transfers
 
 ## Payment Initiation with JSON encoding of the Payment Instruction
-### Call
+### SER_01_01 Call
 
     POST /v1/payments/{payment-product}
 Creates a payment initiation request at the ASPSP.
@@ -104,7 +104,7 @@ Data Element | Type  | SCT EU Core | SCT_INST EU Core | Target2  Paym. Core | Cr
 
 
 
-### Response Header
+### SER_01_02 Response Header
 The Location field is used as link to the created resource. No other specific requirements.
 
 ###  Response Body
@@ -174,7 +174,7 @@ If the response is JSON based, then the Name entry is used, to get a better read
         }
 
 
-## Get Status Request
+## SER_01_03 Get Status Request
 
 ### Call
     GET /v1/payments/{payment-product}/{resource-id}/status
@@ -205,7 +205,7 @@ Attribute | Type | Condition | Description |
 No body.
 
 
-### Response Body
+### SER_01_04  Response Body
 in Case of JSON based endpoint
 
 Attribute | Type | Condition | Description |
