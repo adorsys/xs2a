@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,12 +15,13 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "AccountResponse Report", value = "AccountReport")
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class AccountReport {
 	 
-	@ApiModelProperty(value = "Booked Transactions", required=true)
+	@ApiModelProperty(value = "Booked TransactionsCreditorResponse", required=true)
 	 private Transactions[] booked;
 	
-	@ApiModelProperty(value = "Pending Transactions")
+	@ApiModelProperty(value = "Pending TransactionsCreditorResponse")
 	 private Transactions[] pending;
 	
 	@ApiModelProperty(value = "Liks: he following links might be used within this context:" + 

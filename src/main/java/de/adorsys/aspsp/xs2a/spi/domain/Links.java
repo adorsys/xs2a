@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,6 +15,8 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "Links ", value = "Links")
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+
 public class Links {
 
 	
@@ -41,7 +44,7 @@ public class Links {
 	@ApiModelProperty(value = "balances: A link to the resource providing the balance of a dedicated account.", example = "api/v1/balances/")
 	private String balances;
 	
-	@ApiModelProperty(value = "Transactions: A link to the resource providing the transaction history of a dediated amount.", example = "api/v1/transactions/")
+	@ApiModelProperty(value = "TransactionsCreditorResponse: A link to the resource providing the transaction history of a dediated amount.", example = "api/v1/transactions/")
 	private String transactions;
 	
 	@ApiModelProperty(value = "first page link: Navigation link for account reports.", example = "api/v1/firstPage/")

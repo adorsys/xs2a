@@ -10,5 +10,5 @@ import de.adorsys.aspsp.xs2a.spi.domain.Balances;
 public interface AccountSPI {
 	public List<Account> readAccounts(Boolean withBalance, Boolean psuInvolved);
 	public Balances readBalances(String accountId, Boolean psuInvolved);
-	public AccountReport readTransactions(String accountId, Date dateFROM, Date dateTo,Boolean psuInvolved);
+	public AccountReport readTransactions(String accountId, String dateFROM, String dateTo,Boolean psuInvolved);
 }
