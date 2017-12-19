@@ -1,27 +1,21 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
-import java.security.Principal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.service.PaymentService;
-import io.swagger.annotations.ApiResponses;
+import de.adorsys.aspsp.xs2a.spi.domain.PaymentInitialisationRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.Transactions;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;;
 
 
 /**
