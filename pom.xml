@@ -37,16 +37,13 @@
 			<artifactId>aspsp-spi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>de.adorsys</groupId>
 			<artifactId>aspsp-mockspi</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<!--  
-			-->
-			<scope>test</scope>
 		</dependency>
-
-
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -92,17 +89,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.adorsys</groupId>
-			<artifactId>aspsp-mockspi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>de.adorsys</groupId>
-			<artifactId>aspsp-spi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		
 	</dependencies>

@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,13 +99,13 @@ public class AccountController {
     @RequestMapping(value = "/{account-id}/transactions", method = RequestMethod.GET)
 	public  ResponseEntity<AccountReport>  getTransactionsForAccount(@PathVariable(name="account-id") String accountId,
 			@ApiParam(name="date_from",value="Starting date of the account statement", example="2017-10-30")
-			@RequestParam(name = "date_from", required = true) Date dateFROM,
+			@RequestParam(name = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String dateFrom,
 			@ApiParam(name="date_to",value="End date of the account statement", example="2017-11-30")
-			@RequestParam(name = "date_to", required = true) Date dateTo,
+			@RequestParam(name = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) String dateTo,
 			@ApiParam(name="psu-involved", value="If contained, it is indicating that a PSU has directly asked this account access in real-time. The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient.")
 			@RequestParam(name = "psu_involved", required = false) Boolean psu_involved ){
 	
-		AccountReport accountReport= accountService.getTransactionsForAccount(accountId, dateFROM, dateTo,psu_involved);
+		AccountReport accountReport= accountService.getTransactionsForAccount(accountId, dateFrom, dateTo,psu_involved);
 		
 		String link = linkTo(AccountController.class).slash(accountId).toString();
 		accountReport.get_links().setAccount_link(link.toString());

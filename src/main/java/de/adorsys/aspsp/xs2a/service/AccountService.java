@@ -55,8 +55,8 @@ public class AccountService {
 		return readBalances(accountId,psu_involved );
 	}
 	
-	public  AccountReport getTransactionsForAccount( String accountId, Date dateFROM,
-													Date dateTo, 
+	public  AccountReport getTransactionsForAccount( String accountId, String dateFROM,
+													String dateTo, 
 													Boolean psu_involved ){
 		 return readTransactions( accountId, dateFROM, dateTo,psu_involved);
 	
@@ -76,7 +76,7 @@ public class AccountService {
 		
 	 }
 	
-	private AccountReport readTransactions(String accountId, Date dateFROM, Date dateTo, Boolean psuInvolved) {
+	private AccountReport readTransactions(String accountId, String dateFROM, String dateTo, Boolean psuInvolved) {
 		
 		return accountSPI.readTransactions(accountId, dateFROM, dateTo, psuInvolved);
 		
