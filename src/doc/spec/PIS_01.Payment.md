@@ -191,7 +191,7 @@ The Location field is used as link to the created resource. No other specific re
 
 Attribute | Type  | Condition | Description |
 ------- | ---------------- |  ---------  |  ---------
-| transaction_status | Transaction status  |	Mandatory |	The values defined in the table “Transaction Status” (see below) might be used. |
+| transaction_status | Transaction status  |	Mandatory |	The values defined in the table “Transaction Status” (see "DICT_01_01 Transaction status" in [Dictionary: Business_objects](DICT_01.Business_objects.md) ) might be used. |
 | sca_methods | Array of authentication objects |	conditional |	This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods. Depending on the risk management of the ASPSP this choice might be offered before or after the PSU has been identified with the first relevant factor, or if an access token is transported. If this data element is contained, then there is also an hyperlink of type "select_authentication_methods" contained in the response body. These methods shall be presented towards the PSU for selection by the TPP. |
 | chosen_sca_method | authentication object  |	conditional |	This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected.  |
 | _links | links  |	Mandatory |	A list of hyperlinks to be recognized by the TPP. **Remark:**  All links can be relative or full links, to be decided by the ASPSP. Type of links admitted in this response, (further links might be added for ASPSP defined extensions): *"redirect"* : In case of an SCA Redirect Approach, the ASPSP is transmitting the link  to which to redirect the PSU browser. *"update_psu_identification"* : The link to the payment initiation resource, which needs to be updated by the psu identification. This  might be used in a redirect or decoupled approach, where the PSU ID was missing in the first request. *"update_psu_authentication"* : The link to the payment initiation resource, which need to be updated by a psu password and  eventually the psu identification if not delivered yet. This is used in a case of the Embedded SCA approach.  *"select_authentication_method"* : This is a link to a resource, where the TPP can select  the applicable strong customer authentication methods for the PSU, if there  were several available authentication methods. This link contained under exactly the same conditions as the data element “authentication_methods”, see above. *"self"* : The link to the payment initiation resource created by this request. This link can be used to retrieve the resource data. “status”: The link to retrieve the transaction status of the payment initiation |
@@ -199,21 +199,6 @@ Attribute | Type  | Condition | Description |
 | tpp_messages | Array of Message |   Optional	 |  |
 
 
-#### Transaction Status
-
-Code | Name | ISO 20022 Definition |
-------- | ---------------- |  ---------
-| ACCP |  AcceptedCustomerProfile |	Preceding check of technical validation was successful. Customer profile check was also successful. |
-| ACSC | AcceptedSettlementCompleted | Settlement on th’ debtor's account has been completed.  Usage : this can be used by the first agent to report to  the debtor that the transaction has been completed.  Warning : this status is provided for transaction status  reasons, not for financial information. It can only be used after bilateral agreement  |
-| ACSP | AcceptedSettlementInProcess | All preceding checks such as technical validation and customer profile were successful and therefore the payment initiation has been accepted for execution. |
-| ACTC | AcceptedTechnicalValidation | Authentication and syntactical and semantical validation are successful |
-| ACWC | AcceptedWithChange | Instruction is accepted but a change will be made, such as date or remittance not sent. |
-| ACWP | AcceptedWithoutPosting | Payment instruction included in the credit transfer is accepted without being posted to the creditor  customer’s account. |
-| RCVD | Received | Payment initiation has been received by the receiving  agent. |
-| PDNG | Pending | Payment initiation or individual transaction included in  the payment initiation is pending. Further checks and  status update will be performed. |
-| RJCT | Rejected | Payment initiation or individual transaction included in   the payment initiation has been rejected. |
-
-If the response is JSON based, then the Name entry is used, to get a better readability.
 
 ### Example
 

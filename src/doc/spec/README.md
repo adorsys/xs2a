@@ -12,9 +12,9 @@ Service | Abbr. | Usage |
 | Account information service |  AIS  | This service may be used by an AISP to request information about the account of a PSU. The account is managed by the ASPSP providing the XS2A Interface.  |
 |  Fund confirmation service |  FCS  | This service may be used by a PIISP to request a confirmation of the availability of specific funds on the account of a PSU. The account is managed by the ASPSP providing the XS2A Interface.  |
 
+##  Dictionaries
 
-
-
+[Dictionary: Business_objects](DICT_01.Business_objects.md) - Common Business objects used in XS2A Framework
 
 
 
