@@ -99,19 +99,19 @@ public static void createBalances (SingleBalance sb, TransactionsArt art) {
  public static Links createEmptyLinks() {
 	 Links links= new Links();
 	
-	 links.setBalances("");
-	 links.setRedirect("");
-	 links.setCurrent_page_link("");
-	 links.setFirst_page_link("");
-	 links.setLast_page_link("");
-	 links.setRedirect("");
-	 links.setSecond_page_link("");
-	 links.setSelect_authentication_method("");
-	 links.setSelf("");
-	 links.setTransactions("");
-	 links.setStatus("");
-	 links.setUpdate_psu_authentication("");
-	 links.setUpdate_psu_identification("");
+	 links.setBalances(null);
+	 links.setRedirect(null);
+	 links.setCurrent_page_link(null);
+	 links.setFirst_page_link(null);
+	 links.setLast_page_link(null);
+	 links.setRedirect(null);
+	 links.setSecond_page_link(null);
+	 links.setSelect_authentication_method(null);
+	 links.setSelf(null);
+	 links.setTransactions(null);
+	 links.setStatus(null);
+	 links.setUpdate_psu_authentication(null);
+	 links.setUpdate_psu_identification(null);
 	 
 	 
 	 return links;
@@ -129,6 +129,7 @@ public static void createBalances (SingleBalance sb, TransactionsArt art) {
 		t.setEntry_date(new Date());
 		t.setValue_date(createDate(nrDaysToValue,"when"));
 		t.setBooking_date(createDate(nrDaysToBooking,"when"));
+		System.out.println("booking_date" + t.getBooking_date());
 		t.setAmount(amount);
 		t.setCredit_debit(credit_debit);
 		t.setCreditor(creditorName);
