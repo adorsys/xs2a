@@ -1,9 +1,10 @@
-package de.adorsys.aspsp.xs2a.spi.domain;
+	package de.adorsys.aspsp.xs2a.spi.domain;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,7 +15,9 @@ import lombok.Data;
  */
 
 @Data
-@ApiModel(description = "Transactions information", value = "Transactions")
+@ApiModel(description = "TransactionsCreditorResponse information", value = "TransactionsCreditorResponse")
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+
 public class Transactions {
 	 
 	@ApiModelProperty(value = "Transaction ID: Can be used as access-id in the API, where more details on an transaction is offered", example = "12345")
@@ -24,6 +27,12 @@ public class Transactions {
 	// we get it in the Header
 	@ApiModelProperty(value = "Entry Date", example = "2017-01-01")
 	 private Date entry_date;
+	
+	@ApiModelProperty(value = "Booking Date", example = "2017-01-01")
+	 private Date booking_date;
+	
+	@ApiModelProperty(value = "Value Date", example = "2017-01-01")
+	 private Date value_date;
 	
 	@ApiModelProperty(value = "Amount", required=true)
 	 private Amount amount;

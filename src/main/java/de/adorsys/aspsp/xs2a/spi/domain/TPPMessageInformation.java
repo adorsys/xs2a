@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,6 +15,8 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "TPP Message Information", value = "TPPMessageInformation")
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+
 public class TPPMessageInformation {
 	
 	@ApiModelProperty(value = "Category of the error permitted", required=true, example = "Error")

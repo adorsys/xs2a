@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,6 +16,8 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "Balance Information", value = "SingleBalance")
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+
 public class SingleBalance {
 	
 	@ApiModelProperty(value = "amount", required=true)

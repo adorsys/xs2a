@@ -1,8 +1,11 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * Created by aro on 23.11.17.
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 
 public enum TransactionStatus {
 	
