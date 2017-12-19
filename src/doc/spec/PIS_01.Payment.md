@@ -1,6 +1,6 @@
 # XS2A interface –> Core services-> Payment Initiation Service
 
-## SER_01 Payment Initiation Service (PIS).
+## PIS_01 Payment Initiation Service (PIS).
 This service may be used by a PISP to initiate a single payment on behalf of a PSU using a given account of that PSU. The account is managed by the ASPSP providing the XS2A Interface.
 
 
@@ -16,6 +16,87 @@ Transactions according to this use case can be used to initiate a single payment
 Transactions according to this use case can be used to initiate a single payment in form of a credit transfer from an account of the PSU to an account of the payee.
 
 
+
+### Data Overview Payment Initiation Service
+
+The following table defines the technical description of the abstract data model for the Payment Initiation service. The columns give an overview on the API protocols as follows:
+
+
+* The **"Data element"** column is using the abstract data elements to deliver the connection to rules and role definitions.
+* The **"Attribute encoding"** is giving the actual encoding definition within the XS2A API.
+* The **"Location"** columns define, where the corresponding data elements are transported as https parameters, resp. are taken from e-IDas certificates. There are:
+    * Path
+    * Header
+    * Body
+    * Certificate
+* The **"Usage"** column gives an overview on the usage of data elements in the different services and API Calls. These calls will be technically realised as HHTPS POST, PUT and GET commands. There are:
+    * Init Req.
+    * Init Resp.
+    * Upd. Req.
+    * Upd. Resp.
+    * Stat. Req.
+    * Stat. Resp
+
+The calls are divided into the following calls for Payment Initiation:
+* The Initiation Request which shall be the first API Call for every
+      transaction within the corresponding XS2A service Payment Initiation. This
+      call generates the corresponding resource within the Payment Initiation
+      Service.
+* The Update Data Call is a call, where the TPP needs to add PSU related
+      data, which is requested in the return of the first call. This call might be
+      repeated.
+* The Status Request is used e.g. in cases, where the SCA control is taken
+      over by the ASPSP and the TPP needs later information about the
+      outcome.
+
+The following usage of abbreviations in the Location and Usage columns is defined:
+* x: This data element is transported on the corresponding level.
+* m: Mandatory
+* o : Optional for the TPP to use
+* c: Conditional. The Condition is described in the API Calls, condition defined by
+  the ASPSP
+
+| Data element                        | Attribute encoding                | Path | Header | Body | Certificate | Init Req. | Init Resp. | Upd Req. | Upd Resp. | Stat Req. | Stat Resp. |
+|-------------------------------------|-----------------------------------|:----:|:------:|:----:|:-----------:|:---------:|:----------:|:--------:|:---------:|:---------:|:----------:|
+| TPP RegistrationNumber              |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
+| TPP Name                            |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
+| TPP Roles                           |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
+| TPP NationalCompetent Authority     |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
+| TransactionIdentification           | Process-ID (unique id of TPP)     |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
+| RequestIdentification               | Request-ID                        |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
+| Resource ID                         | Resource-ID as part of ahyperlink |   x  |        |   x* |             |           |      m     |     m    |           |     m     |            |
+| Access Token (fromoptional OAuth 2) | Authorization Bearer              |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
+| Request Timestamp                   | Date                              |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
+| TPP SigningCertificate Data         | certificate                       |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
+| TPP ElectronicSignature             | signature                         |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
+| Further signaturerelated data       |                                   |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
+| Service Type                        |                                   |   x  |        |      |             |     m     |            |     m    |           |     m     |            |
+| Response Code                       |                                   |      |    x   |      |             |           |      m     |          |     m     |           |      m     |
+| Transaction Status                  | transaction_status                |      |        |   x  |             |           |      m     |          |     m     |           |      m     |
+| PSU Message Information             | psu_message                       |      |        |   x  |             |           |      o     |          |     o     |           |      o     |
+| TPP Message Information             | tpp_messages                      |      |        |   x  |             |           |      o     |          |     o     |           |      o     |
+| PSU Identification                  | PSU-ID                            |      |    x   |      |             |     c     |            |     c    |           |           |            |
+| Corporate Identification            | Corporate-ID                      |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
+| Corporate ID Type                   | Corporate-ID-Type                 |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
+| PSU Password                        | psu_data.password                 |      |        |   x  |             |           |            |     c    |           |           |            |
+| PSU Authentication Data             | sca_authentication_data           |      |        |   x  |             |           |            |          |           |           |            |
+| SCA Challenge Data                  | sca_challenge_data                |      |        |   x  |             |           |      c     |          |     c     |           |            |
+| IP Address PSU                      | PSU-IP-Address                    |      |    x   |      |             |     m     |            |          |           |           |            |
+| PSU User Agent                      | PSU-User-Agent*                   |      |    x   |      |             |     o     |            |          |           |           |            |
+| GEO Information                     | PSU-Geo-Location                  |      |    x   |      |             |     o     |            |          |           |           |            |
+| Additional Device Information       | PSU-Additional-Device-Information |      |    x   |      |             |     o     |            |          |           |           |            |
+| Redirect URL ASPSP                  | _links.redirect                   |      |        |   x  |             |           |      c     |          |           |           |            |
+| Payment Product                     | payment-product                   |   x  |        |      |             |     m     |            |     m    |           |     m     |            |
+
+
+x* - Is transported in body only in response message.
+
+PSU-User-Agent* - This field transports key information for risk management like browser type or PSU device operating system
+
+
+## Payment Initiation with JSON encoding of the Payment Instruction
+### PIS_01_01 Call
+
 **Endpoint POST**
    * 	/v1/payments/{product-name}
 
@@ -25,8 +106,7 @@ Transactions according to this use case can be used to initiate a single payment
 *	target-2-payments
 *	cross-border-credit-transfers
 
-## Payment Initiation with JSON encoding of the Payment Instruction
-### SER_01_01 Call
+
 
     POST /v1/payments/{payment-product}
 Creates a payment initiation request at the ASPSP.
@@ -174,7 +254,7 @@ If the response is JSON based, then the Name entry is used, to get a better read
         }
 
 
-## SER_01_02 Get Status Request
+## PIS_01_02 Get Status Request
 
 ### Call
     GET /v1/payments/{payment-product}/{resource-id}/status
