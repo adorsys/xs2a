@@ -261,8 +261,8 @@ Attribute | Type | Condition | Description |
 | Request-ID |  UUID  | Mandatory | |
 | Process-ID |  UUID  | Mandatory | |
 | Authorization Bearer |  String  | Conditional | Is contained only, if the optional OAuth Pre-Step was performed  |
-| signature |  details  t.b.d.  | Conditional | A signature of the request by the TPP on  application level. This might be mandated by ASPSP. |
-| certificate |  details  t.b.d. | Conditional | The certificate used for signing the request. |
+| signature |  String ("details t.b.d." in the original specification) | Conditional | A signature of the request by the TPP on  application level. This might be mandated by ASPSP. |
+| certificate |  String ("details t.b.d." in the original specification) | Conditional | The certificate used for signing the request. |
 | Date |  DateTime | Mandatory | Standard http date and time tag. |
 
 
