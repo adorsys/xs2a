@@ -7,6 +7,7 @@
 	<artifactId>aspsp-xs2a</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
     <modules>
+        <module>spi-api</module>
         <module>xs2a-impl</module>
     </modules>
     <packaging>pom</packaging>
@@ -34,19 +35,7 @@
 		<tag>DEVELOP</tag>
 	</scm>
 	<dependencies>
-		<!-- XS2A SPI -->
-		<dependency>
-			<groupId>de.adorsys</groupId>
-			<artifactId>aspsp-spi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>de.adorsys</groupId>
-			<artifactId>aspsp-mockspi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -72,16 +61,6 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${swagger.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

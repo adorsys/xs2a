@@ -12,6 +12,31 @@
 
     <artifactId>xs2a-impl</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>spi-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys</groupId>
+            <artifactId>aspsp-mockspi</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>${swagger.version}</version>
+        </dependency>
+
+    </dependencies>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
