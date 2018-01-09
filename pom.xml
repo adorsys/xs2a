@@ -3,11 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.adorsys</groupId>
-	<artifactId>aspsp-xs2a</artifactId>
+	<groupId>de.adorsys.aspsp</groupId>
+	<artifactId>xs2a</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>spi-api</module>
+        <module>spi-mock</module>
         <module>xs2a-impl</module>
     </modules>
     <packaging>pom</packaging>
