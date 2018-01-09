@@ -14,14 +14,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>de.adorsys</groupId>
+            <groupId>de.adorsys.aspsp</groupId>
             <artifactId>spi-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys</groupId>
-            <artifactId>aspsp-mockspi</artifactId>
+            <groupId>de.adorsys.aspsp</groupId>
+            <artifactId>spi-mock</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
