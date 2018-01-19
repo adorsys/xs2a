@@ -27,7 +27,7 @@ stages:
 
 .java_artifacts: &java_artifacts
   paths:
-    - "target/aspsp-xs2a.jar"
+    - "xs2a-impl/target/aspsp-xs2a.jar"
     - "config/*.yml"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 

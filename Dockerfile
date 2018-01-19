@@ -6,7 +6,7 @@ ENV JAVA_OPTS -Xmx1024m
 
 WORKDIR /opt/aspsp-xs2a
 
-COPY ./target/xs2a-impl/xs2a-impl.jar /opt/aspsp-xs2a/aspsp-xs2a.jar
+COPY ./xs2a-impl/target/aspsp-xs2a.jar /opt/aspsp-xs2a/aspsp-xs2a.jar
 
 EXPOSE 8080
 
