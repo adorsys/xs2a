@@ -38,7 +38,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <finalName>aspsp-xs2a</finalName>
         <plugins>
 
             <plugin>
