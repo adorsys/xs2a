@@ -62,6 +62,7 @@ build_snapshot_image:
     - docker push "$GITLAB_IMAGE_NAME:latest"
 
 deploy_snapshot:
+  when: manual
   stage: deploy
   only:
     - develop
