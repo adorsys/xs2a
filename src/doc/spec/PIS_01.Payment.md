@@ -13,8 +13,6 @@ This service may be used by a PISP to initiate a single payment on behalf of a P
 ![Payment Initiation Service](img/PIS.png)
 
 Transactions according to this use case can be used to initiate a single payment in form of a credit transfer from an account of the PSU to an account of the payee.
-Transactions according to this use case can be used to initiate a single payment in form of a credit transfer from an account of the PSU to an account of the payee.
-
 
 
 ### Data Overview Payment Initiation Service
@@ -62,8 +60,8 @@ The following usage of abbreviations in the Location and Usage columns is define
 | TPP Name                            |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
 | TPP Roles                           |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
 | TPP NationalCompetent Authority     |                                   |      |        |      |      x      |     m     |            |     m    |           |     m     |            |
-| TransactionIdentification           | Process-ID (unique id of TPP)     |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
-| RequestIdentification               | Request-ID                        |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
+| Transaction Identification          | Process-ID (unique id of TPP)     |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
+| Request Identification              | Request-ID                        |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
 | Resource ID                         | Resource-ID as part of ahyperlink |   x  |        |   x* |             |           |      m     |     m    |           |     m     |            |
 | Access Token (fromoptional OAuth 2) | Authorization Bearer              |      |    x   |      |             |     c     |            |     c    |           |     c     |            |
 | Request Timestamp                   | Date                              |      |    x   |      |             |     m     |            |     m    |           |     m     |            |
