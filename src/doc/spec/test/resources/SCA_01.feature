@@ -11,3 +11,17 @@ Feature: Strong Customer Authentication
     And the following data is delivered to the PSU:
       | transaction_status | links |
       | Received | {redirect: www.testbank.com/asdfasdfasdf, self: /v1/payments/sepa-credit-transfers/1234-wertiq-983} |
+
+
+  Scenario: Establish account information consent transaction with SCA based on the redirect approach
+    Given gateway user is logged in
+    And wants to create a consent resource with data
+      | access_accounts | recurring_indicator | valid_until | frequency_per_day |
+      | {iban: DE2310010010123456789, access: [balance, transactions]}, {iban: DE2310010010123456788, access: [balance]} | true | 2017-11-01 | 4 |
+    When AISP sends the create consent request
+    Then ASPSP decides about SCA "yes" and approach "Redirect approach" to be used
+    And a consent resource is created at the aspsp mock
+    And response code 200
+    And the following data is delivered to the AISP:
+      | transaction_status | links |
+      | Received | /v1/consents/qwer3456tzui7890 |
