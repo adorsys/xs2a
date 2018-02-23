@@ -1,10 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,10 +12,8 @@ import lombok.Data;
 @Data
 @ApiModel(description = "Links ", value = "Links")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-
 public class Links {
 
-	
 	@ApiModelProperty(value = "redirect: A link to an ASPSP site where SCA is performed within the Redirect SCA approach.", example = "www.testbank.de/login/")
 	private String redirect;
 	

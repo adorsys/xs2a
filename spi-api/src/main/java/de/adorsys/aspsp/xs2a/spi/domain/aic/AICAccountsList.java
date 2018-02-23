@@ -10,7 +10,7 @@ import lombok.Data;
  * Created by aro on 27.11.17.
  */
 @Data
-@ApiModel(description = "Response for created by some methods inthe consent Service")
+@ApiModel(description = "Response for created by some methods in the consent Service")
 public class AICAccountsList  {
 
     private SingleAccountAccess[] accounts;
@@ -18,9 +18,7 @@ public class AICAccountsList  {
 	private Integer frequency_per_day;
 	private boolean recurring_indicator;
 	private TransactionStatus transaction_status;
-	private String conset_status;
-	
-
+	private String consent_status;
 }
 
 

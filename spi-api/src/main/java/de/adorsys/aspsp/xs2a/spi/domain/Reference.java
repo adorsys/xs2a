@@ -12,10 +12,9 @@ import lombok.Data;
 @ApiModel(description = "Reference Party", value = "Reference")
 public class Reference {
 
-	
-	@ApiModelProperty(value = "name", example = "TEST")
-	 private String name;
+    @ApiModelProperty(value = "name", example = "TEST")
+    private String name;
 
-	@ApiModelProperty(value = "ID", example = "99999")
-	 private String id;
+    @ApiModelProperty(value = "ID", example = "99999")
+    private String id;
 }

@@ -81,6 +81,5 @@ public class SpiMockConfig {
                 5,3,"future",
                 "credit", "", null, "",
                 "MockData.getAccounts().get(1)", MockData.getAccounts().get(1), "", "remittance information");
-
     }
 }

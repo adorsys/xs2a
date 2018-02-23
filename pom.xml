@@ -29,6 +29,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<swagger.version>2.6.1</swagger.version>
 		<java.version>1.8</java.version>
+		<lombok.version>1.16.20</lombok.version>
 
 	</properties>
 	<scm>
@@ -62,6 +63,7 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+			<version>${lombok.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

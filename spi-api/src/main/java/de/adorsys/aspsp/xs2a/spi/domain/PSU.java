@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @ApiModel(description = "PSU information", value = "PSU")
 public class PSU {
-	 @ApiModelProperty(value = "Password", example = "12345")
-	 private String password;
+
+    @ApiModelProperty(value = "Password", example = "12345")
+    private String password;
 }

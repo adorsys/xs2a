@@ -1,11 +1,7 @@
 package de.adorsys.aspsp.xs2a.spi.domain.aic;
 
 
-import de.adorsys.aspsp.xs2a.spi.domain.Authentification;
-import de.adorsys.aspsp.xs2a.spi.domain.Challange;
-import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TPPMessageInformation;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,15 +11,12 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "Response for the AIC information  request in the AICService")
-public class AICGeneralResponseBody{
-	
-	@ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach")
-    private String psu_message;
-	@ApiModelProperty(value = "TPP Message Information")
-    private TPPMessageInformation tpp_message;
-  
-    
+public class AICGeneralResponseBody {
 
+    @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach")
+    private String psu_message;
+    @ApiModelProperty(value = "TPP Message Information")
+    private TPPMessageInformation tpp_message;
 }
 
 
