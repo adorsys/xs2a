@@ -51,7 +51,7 @@ public class ConsentInformationController {
 	@Autowired
     private ConsentService consentService;
 	
-	@ApiOperation(value = "Creats an account information consent resource at the ASPSP regarding access to accounts specified in this request")
+	@ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request")
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "OK",response=AICInformationResponseBody.class),
     @ApiResponse(code = 400, message = "Bad request") })
     @RequestMapping( method = RequestMethod.POST)

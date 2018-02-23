@@ -1,32 +1,24 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
-import java.util.List;
-import java.util.Map;
-
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * Created by aro on 30.11.17.
  */
 
-@ApiModel(description = "Authentification tpye", value = "AuthentificationType")
-public enum AuthentificationType {
-	
-	
+@ApiModel(description = "Authentication type", value = "AuthenticationType")
+public enum AuthenticationType {
 	SMS_OTP(""),
 	CHIP_OTP(""),
 	PHOTO_OTP(""),
 	PUSH_OTP("");
 	
-	
 	@ApiModelProperty(value = "description", example = "Will be defined later")
 	private String description;
 
-	
-	private AuthentificationType(String description) {
+	private AuthenticationType(String description) {
 		this.description = description;
 	}
 	

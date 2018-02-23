@@ -1,9 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.aic;
 
 
-import de.adorsys.aspsp.xs2a.spi.domain.Authentification;
-import de.adorsys.aspsp.xs2a.spi.domain.Challange;
-import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
