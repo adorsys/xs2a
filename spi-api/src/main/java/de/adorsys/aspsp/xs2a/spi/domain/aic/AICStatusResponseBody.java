@@ -11,13 +11,10 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "Response for the AIC information  request in the AICService")
-public class AICStatusResponseBody extends AICGeneralResponseBody{
-	
-    @ApiModelProperty(value = "Transaction status", required=true)
-    private TransactionStatus transactions_status;
-   
-    
+public class AICStatusResponseBody extends AICGeneralResponseBody {
 
+    @ApiModelProperty(value = "Transaction status", required = true)
+    private TransactionStatus transactions_status;
 }
 
 

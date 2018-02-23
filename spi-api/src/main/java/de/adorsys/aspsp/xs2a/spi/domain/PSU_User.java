@@ -13,7 +13,7 @@ public class PSU_User extends PSU {
     private String psu_message;
     private String psu_corporate_id;
     private String psu_authentication;
-    private String psu_IP_adress;
+    private String psu_IP_address;
     private String psu_agent;
     private String psu_geo_location;
 }

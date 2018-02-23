@@ -10,11 +10,10 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "Response for created by some methods inthe consent Service")
-public class AICResponseHeader{
-	
-	@ApiModelProperty(value = "Response Code", required = true)
-	private String responseCode;
-  
+public class AICResponseHeader {
+
+    @ApiModelProperty(value = "Response Code", required = true)
+    private String responseCode;
 }
 
 

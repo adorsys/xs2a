@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 
 public class TPP {
-    //TO DO... I defined the TPP attributes as string because they aren't still defined. 
+    //TODO... I defined the TPP attributes as string because they aren't still defined.
     //This information will be in the certificate
 
     private String tpp_provider_identification;

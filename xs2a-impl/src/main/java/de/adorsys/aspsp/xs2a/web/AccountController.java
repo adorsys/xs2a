@@ -108,11 +108,7 @@ public class AccountController {
 		AccountReport accountReport= accountService.getTransactionsForAccount(accountId, dateFrom, dateTo,psu_involved);
 		
 		String link = linkTo(AccountController.class).slash(accountId).toString();
-		accountReport.get_links().setAccount_link(link.toString());
+		accountReport.get_links().setAccount_link(link);
 		return new ResponseEntity<AccountReport>(accountReport, HttpStatus.OK);
 	}
-
-
-	 
-	
 }

@@ -11,15 +11,12 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "Response for the AIC information  request in the AICService")
-public class AICGeneralResponseBody{
-	
-	@ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach")
-    private String psu_message;
-	@ApiModelProperty(value = "TPP Message Information")
-    private TPPMessageInformation tpp_message;
-  
-    
+public class AICGeneralResponseBody {
 
+    @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach")
+    private String psu_message;
+    @ApiModelProperty(value = "TPP Message Information")
+    private TPPMessageInformation tpp_message;
 }
 
 

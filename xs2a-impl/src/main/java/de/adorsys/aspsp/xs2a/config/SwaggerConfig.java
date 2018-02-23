@@ -38,7 +38,7 @@ public class SwaggerConfig {
                 "urn:tos",
                 new Contact("aro, adorsys GmbH & Co. KG", null, "aro@adorsys.de"),
                 "License of API",
-                "API license URL",
-                Collections.emptyList());
+                "API license URL"
+                );
     }
 }

@@ -26,6 +26,4 @@ public class FundsRequest {
 	
 	@ApiModelProperty(value = "instructed_amount", required=true)
 	private Amount instructed_amount;
-	
-
 }

@@ -27,7 +27,7 @@
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<swagger.version>2.8.0</swagger.version>
+		<swagger.version>2.6.1</swagger.version>
 		<java.version>1.8</java.version>
 		<lombok.version>1.16.20</lombok.version>
 
@@ -72,6 +72,4 @@
 		</dependency>
 		
 	</dependencies>
-
-
 </project>

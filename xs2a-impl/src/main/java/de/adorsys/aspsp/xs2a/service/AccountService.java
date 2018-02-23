@@ -9,8 +9,8 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -26,28 +26,26 @@ public class AccountService {
     public List<AccountResponse> getAccounts(Boolean withBalance, Boolean psuInvolved) {
 
         List<Account> accounts = readAccounts(withBalance, psuInvolved);
-        List<AccountResponse> accountResponses = new ArrayList<>();
-        for (Account account : accounts) {
-            AccountResponse accountResponse = new AccountResponse();
-            accountResponse.setId(account.getId());
-            accountResponse.setIban(account.getIban());
-            accountResponse.setCurrency(account.getCurrency());
-            accountResponse.setAccount_type(account.getAccount_type());
-            accountResponse.set_links(account.get_links());
-            accountResponses.add(accountResponse);
-        }
-        return accountResponses;
+
+        return accounts.stream()
+                .map(account -> new AccountResponse(
+                        account.getId(),
+                        account.getIban(),
+                        account.getAccount_type(),
+                        account.getCurrency(),
+                        account.getBalances(),
+                        account.get_links()))
+                .collect(Collectors.toList());
     }
 
     public Balances getBalances(String accountId, Boolean psuInvolved) {
         return accountSPI.readBalances(accountId, psuInvolved);
     }
 
-    public AccountReport getTransactionsForAccount(String accountId, String dateFROM,
+    public AccountReport getTransactionsForAccount(String accountId, String dateFrom,
                                                    String dateTo,
                                                    Boolean psuInvolved) {
-        return accountSPI.readTransactions(accountId, dateFROM, dateTo, psuInvolved);
-
+        return accountSPI.readTransactions(accountId, dateFrom, dateTo, psuInvolved);
     }
 
     private List<Account> readAccounts(Boolean withBalance, Boolean psuInvolved) {
