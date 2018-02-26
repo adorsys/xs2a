@@ -29,7 +29,7 @@ public class AccountResponse {
     @ApiModelProperty(value = "Account Type: Product Name of the Bank for this account", example = "SCT")
     private String account_type;
 
-    @ApiModelProperty(value = "Currency Type", required = true, example = "€")
+    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private String currency;
 
     @ApiModelProperty(value = "Balances")

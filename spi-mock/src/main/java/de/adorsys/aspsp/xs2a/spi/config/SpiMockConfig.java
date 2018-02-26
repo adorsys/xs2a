@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Configuration;
 public class SpiMockConfig {
 
     public SpiMockConfig() {
-        MockData.createAmount("-1000", "€");
-        MockData.createAmount("2000", "€");
-        MockData.createAmount("3000", "€");
-        MockData.createAmount("4000", "€");
-        MockData.createAmount("-500", "€");
+        MockData.createAmount("-1000.34", "EUR");
+        MockData.createAmount("2000.56", "EUR");
+        MockData.createAmount("3000.45", "EUR");
+        MockData.createAmount("4000.43", "EUR");
+        MockData.createAmount("-500.14", "EUR");
 
         int i = 0;
 
@@ -41,16 +41,16 @@ public class SpiMockConfig {
                 case 4:
                     MockData.createBalances(singleBalance, TransactionsArt.interim_available);
                     break;
-
             }
             i++;
         }
 
-        MockData.createAccount("11111-999999999", "€", MockData.getBalances().get(0), "DE371234599999", "GENODEF1N02", "Müller", "SCT");
-        MockData.createAccount("22222-999999999", "€", MockData.getBalances().get(1), "DE371234599998", "GENODEF1N02", "Albert", "SCT");
-        MockData.createAccount("33333-999999999", "€", MockData.getBalances().get(2), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
-        MockData.createAccount("44444-999999999", "€", MockData.getBalances().get(3), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
-        MockData.createAccount("55555-999999999", "€", MockData.getBalances().get(4), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
+        MockData.addAccount("11111-999999999", "EUR", MockData.getBalances().get(0), "DE371234599999", "GENODEF1N02", "Müller", "SCT");
+        MockData.addAccount("22222-999999999", "EUR", MockData.getBalances().get(1), "DE371234599998", "GENODEF1N02", "Albert", "SCT");
+        MockData.addAccount("33333-999999999", "EUR", MockData.getBalances().get(2), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
+        MockData.addAccount("44444-999999999", "EUR", MockData.getBalances().get(3), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
+        MockData.addAccount("55555-999999999", "EUR", MockData.getBalances().get(4), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
+
         MockData.createAccountsHashMap();
 
         MockData.createTransactions(
@@ -61,7 +61,7 @@ public class SpiMockConfig {
 
         MockData.createTransactions(
                 MockData.getAmounts().get(4), "123456",
-                4,6,"future",
+                4, 6, "future",
                 "debit", MockData.getAccounts().get(4).getName(), MockData.getAccounts().get(4), "",
                 "", null, "", "Another Example for remittance information");
 
@@ -78,7 +78,7 @@ public class SpiMockConfig {
                 "MockData.getAccounts().get(2)", MockData.getAccounts().get(2), "", "remittance information");
         MockData.createTransactions(
                 MockData.getAmounts().get(3), "1234578",
-                5,3,"future",
+                5, 3, "future",
                 "credit", "", null, "",
                 "MockData.getAccounts().get(1)", MockData.getAccounts().get(1), "", "remittance information");
     }

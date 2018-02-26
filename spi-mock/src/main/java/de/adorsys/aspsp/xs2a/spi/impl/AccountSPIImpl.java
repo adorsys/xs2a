@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -16,25 +17,33 @@ import java.util.stream.Collectors;
 public class AccountSPIImpl implements AccountSPI {
     private final Logger LOGGER = LoggerFactory.getLogger(AccountSPIImpl.class);
 
-    public List<Account> readAccounts(Boolean withBalance, Boolean psuInvolved) {
+    public List<Account> readAccounts(boolean withBalance, boolean psuInvolved) {
 
-        List<Account> accounts = MockData.getAccounts();
-
-        if ((withBalance != null) && (!withBalance)) {
-            for (Account account : accounts) {
-                account.setBalances(null);
-            }
+        if (!withBalance) {
+            return getNoBalanceAccountList(MockData.getAccounts());
         }
 
-        return accounts;
+        return MockData.getAccounts();
     }
 
-    public Balances readBalances(String accountId, Boolean psuInvolved) {
+    private List<Account> getNoBalanceAccountList(List<Account> accounts) {
+        return accounts.stream().map(account -> MockData.createAccount(
+                account.getId(),
+                account.getCurrency(),
+                null,
+                account.getIban(),
+                account.getBic(),
+                account.getName(),
+                account.getAccount_type())).collect(Collectors.toList());
+    }
+
+
+    public Balances readBalances(String accountId, boolean psuInvolved) {
         HashMap<String, Account> accounts = MockData.getAccountsHashMap();
         return (accounts.get(accountId)).getBalances();
     }
 
-    public AccountReport readTransactions(String accountId, String dateFrom, String dateTo, Boolean psuInvolved) {
+    public AccountReport readTransactions(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
         // Todo replace mock data with real transactions
         List<Transactions> transactions = MockData.getTransactions();
         Links links = MockData.createEmptyLinks();
@@ -66,11 +75,11 @@ public class AccountSPIImpl implements AccountSPI {
 
     private boolean transactionIsValid(Transactions transaction, String accountId) {
 
-        Boolean isCreditorAccountValid = Optional.ofNullable(transaction.getCreditor_account())
+        boolean isCreditorAccountValid = Optional.ofNullable(transaction.getCreditor_account())
                 .map(creditorAccount -> creditorAccount.getId().trim().equals(accountId.trim()))
                 .orElse(false);
 
-        Boolean isDebtorAccountValid = Optional.ofNullable(transaction.getDebtor_account())
+        boolean isDebtorAccountValid = Optional.ofNullable(transaction.getDebtor_account())
                 .map(debtorAccount -> debtorAccount.getId().trim().equals(accountId.trim()))
                 .orElse(false);
 

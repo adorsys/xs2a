@@ -43,7 +43,7 @@ public class Account {
     @ApiModelProperty(value = "Balances")
     private Balances balances;
 
-    @ApiModelProperty(value = "Currency Type", required = true, example = "€")
+    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private String currency;
 
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")

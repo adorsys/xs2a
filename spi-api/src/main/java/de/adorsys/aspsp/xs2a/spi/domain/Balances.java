@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,6 +13,7 @@ import lombok.Data;
 @Data
 @ApiModel(description = "Balances", value = "Balances")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+@JsonRootName(value = "balances")
 public class Balances {
 
     @ApiModelProperty(value = "booked: Last known book balance of the account.")

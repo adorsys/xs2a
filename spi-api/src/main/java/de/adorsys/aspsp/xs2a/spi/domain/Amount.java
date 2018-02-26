@@ -14,10 +14,10 @@ import lombok.Data;
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class Amount {
 
-    @ApiModelProperty(value = "currency", required = true, example = "€")
+    @ApiModelProperty(value = "currency", required = true, example = "EUR")
     private String currency;
 
     //TODO type not defined in the documentation
-    @ApiModelProperty(value = "content", required = true, example = "1000")
+    @ApiModelProperty(value = "content", required = true, example = "1000.00")
     private String content;
 }

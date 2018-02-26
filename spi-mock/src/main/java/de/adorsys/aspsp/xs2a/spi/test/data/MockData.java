@@ -66,8 +66,12 @@ public class MockData {
         balances.add(balance);
     }
 
-    public static Account createAccount(String ID, String currency, Balances balance, String iban, String BIC, String name, String account_type) {
+    public static void addAccount(String ID, String currency, Balances balance, String iban, String BIC, String name, String account_type) {
+        Account account = createAccount(ID, currency, balance, iban, BIC, name, account_type);
+        accounts.add(account);
+    }
 
+    public static Account createAccount(String ID, String currency, Balances balance, String iban, String BIC, String name, String account_type) {
         Account account = new Account();
         account.setIban(iban);
         account.setId(ID);
@@ -77,7 +81,6 @@ public class MockData {
         account.setName(name);
         account.setBalances(balance);
         account.set_links(createEmptyLinks());
-        accounts.add(account);
         return account;
     }
 

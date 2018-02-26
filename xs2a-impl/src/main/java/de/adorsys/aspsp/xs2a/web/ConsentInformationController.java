@@ -50,12 +50,12 @@ public class ConsentInformationController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Account[].class),
             @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/account-list", method = RequestMethod.POST)
-    public Resource<Account[]> createAICRessource(
+    public Resource<List<Account>> createAICRessource(
             @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
             @RequestParam(name = "with-balance", required = true) Boolean withBalance) {
 
         Link link = linkTo(ConsentInformationController.class).withSelfRel();
-        return new Resource<Account[]>(getAllAcounts(withBalance), link);
+        return new Resource<>(getAllAccounts(withBalance), link);
 
     }
 
@@ -65,7 +65,7 @@ public class ConsentInformationController {
     @RequestMapping(value = "/{consentID}/status", method = RequestMethod.GET)
     public ResponseEntity<AICStatusResponseBody> getStatusForAIC(@PathVariable("consentID") String consentID) {
 
-        return new ResponseEntity<AICStatusResponseBody>(getTansactionStatus(consentID), HttpStatus.OK);
+        return new ResponseEntity<AICStatusResponseBody>(getTransactionStatus(consentID), HttpStatus.OK);
     }
 
     @ApiOperation(value = " Returns the content of an account information consent object")
@@ -94,20 +94,13 @@ public class ConsentInformationController {
         return null;
     }
 
-    private AICStatusResponseBody getTansactionStatus(String consentID) {
+    private AICStatusResponseBody getTransactionStatus(String consentID) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    private Account[] getAllAcounts(Boolean withBalance) {
-        Account account = new Account();
-        List<Account> accounts = new ArrayList<Account>();
-        accounts.add(account);
-        if (!withBalance) {
-            for (Account ac : accounts) {
-                ac.setBalances(null);
-            }
-        }
-        return (Account[]) accounts.toArray();
+    private List<Account> getAllAccounts(Boolean withBalance) {
+        // TODO make real data return
+        return new ArrayList<Account>();
     }
 }
