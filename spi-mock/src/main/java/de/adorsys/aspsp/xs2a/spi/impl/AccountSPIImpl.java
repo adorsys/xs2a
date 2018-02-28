@@ -43,14 +43,28 @@ public class AccountSPIImpl implements AccountSPI {
         return (accounts.get(accountId)).getBalances();
     }
 
-    public AccountReport readTransactions(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
+    public AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
         // Todo replace mock data with real transactions
         List<Transactions> transactions = MockData.getTransactions();
         Links links = MockData.createEmptyLinks();
 
-        List<Transactions> validTransactions = filterValidTransactions(transactions, accountId);
+        List<Transactions> validTransactions = filterValidTransactionsByAccountId(transactions, accountId);
         Transactions[] bookedTransactions = getFilteredBookedTransactions(validTransactions);
         Transactions[] pendingTransactions = getFilteredPendingTransactions(validTransactions);
+
+        return new AccountReport(bookedTransactions, pendingTransactions, links);
+    }
+
+    public AccountReport readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
+        // Todo replace mock data with real transactions
+        List<Transactions> transactions = MockData.getTransactions();
+        Links links = MockData.createEmptyLinks();
+
+        List<Transactions> validTransactions = filterValidTransactionsByAccountId(transactions, accountId);
+        List<Transactions> filteredTransaction = filterValidTransactionsByTransactionId(validTransactions, transactionId);
+
+        Transactions[] bookedTransactions = getFilteredBookedTransactions(filteredTransaction);
+        Transactions[] pendingTransactions = getFilteredPendingTransactions(filteredTransaction);
 
         return new AccountReport(bookedTransactions, pendingTransactions, links);
     }
@@ -67,9 +81,15 @@ public class AccountSPIImpl implements AccountSPI {
                 .toArray(Transactions[]::new);
     }
 
-    private List<Transactions> filterValidTransactions(List<Transactions> transactions, String accountId) {
+    private List<Transactions> filterValidTransactionsByAccountId(List<Transactions> transactions, String accountId) {
         return transactions.parallelStream()
                 .filter(transaction -> transactionIsValid(transaction, accountId))
+                .collect(Collectors.toList());
+    }
+
+    private List<Transactions> filterValidTransactionsByTransactionId(List<Transactions> transactions, String transactionId) {
+        return transactions.parallelStream()
+                .filter(transaction -> transaction.getTransaction_id().equals(transactionId))
                 .collect(Collectors.toList());
     }
 

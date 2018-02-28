@@ -70,17 +70,19 @@ public class AccountController {
             @ApiResponse(code = 200, message = "OK", response = AccountReport.class),
             @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/transactions", method = RequestMethod.GET)
-    public ResponseEntity<AccountReport> getTransactionsForAccount(@PathVariable(name = "account-id") String accountId,
+    public ResponseEntity<AccountReport> getTransactionsByPeriod(@PathVariable(name = "account-id") String accountId,
                                                                    @ApiParam(name = "date_from", value = "Starting date of the account statement", example = "2017-10-30")
                                                                    @RequestParam(name = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                                    @ApiParam(name = "date_to", value = "End date of the account statement", example = "2017-11-30")
                                                                    @RequestParam(name = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
+                                                                   @ApiParam(name = "transaction_id", value = "Transaction identification", example = "1234567")
+                                                                    @RequestParam(name = "transaction_id", required = false) String transactionId,
                                                                    @ApiParam(name = "psu-involved", value = "If contained, it is indicating that a PSU has directly asked this account access in real-time. The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient.")
                                                                    @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
-        AccountReport accountReport = accountService.getAccountReport(accountId, dateFrom, dateTo, psuInvolved);
-        LOGGER.debug("getTransactionsForAccount(): report for account {} date_from {} date_to {} and psu-involved {} is {}"
-                , accountId, dateFrom, dateTo, psuInvolved, accountReport);
+        AccountReport accountReport = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved);
+        LOGGER.debug("getTransactionsForAccount(): report for account {} date_from {} date_to {} transaction_id {} and psu-involved {} is {}"
+                , accountId, dateFrom, dateTo, transactionId, psuInvolved, accountReport);
 
         return new ResponseEntity<>(accountReport, HttpStatus.OK);
     }

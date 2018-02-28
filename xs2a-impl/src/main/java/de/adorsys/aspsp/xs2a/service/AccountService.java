@@ -40,11 +40,15 @@ public class AccountService {
         return accountSPI.readBalances(accountId, psuInvolved);
     }
 
-    public AccountReport getAccountReport(String accountId, Date dateFrom,
-                                                   Date dateTo,
-                                                   boolean psuInvolved) {
+    public AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId,
+                                          boolean psuInvolved) {
+        AccountReport accountReport;
 
-        AccountReport accountReport  = accountSPI.readTransactions(accountId, dateFrom, dateTo, psuInvolved);
+        if (transactionId == null || transactionId.isEmpty()) {
+            accountReport = accountSPI.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
+        } else {
+            accountReport = accountSPI.readTransactionsById(accountId, transactionId, psuInvolved);
+        }
 
         String link = linkTo(AccountController.class).slash(accountId).toString();
         accountReport.get_links().setAccount_link(link);

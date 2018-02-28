@@ -10,5 +10,6 @@ import java.util.List;
 public interface AccountSPI {
     List<Account> readAccounts(boolean withBalance, boolean psuInvolved);
     Balances readBalances(String accountId, boolean psuInvolved);
-    AccountReport readTransactions(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved);
+    AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved);
+    AccountReport readTransactionsById(String accountId, String transactionId, boolean psuInvolved);
 }

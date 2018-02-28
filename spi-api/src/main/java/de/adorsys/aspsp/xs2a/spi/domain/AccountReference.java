@@ -12,7 +12,6 @@ import lombok.Data;
 @Data
 @ApiModel(description = "AccountResponse Reference", value = "AccountReference")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-
 public class AccountReference {
 
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the AICInformationRequestBody Request Message for retrieving account access consent from this payment account", example = "1111111111")

@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @ApiModel(description = "AccountResponse Report", value = "AccountReport")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+@JsonRootName(value = "transactions")
 public class AccountReport {
 
     @ApiModelProperty(value = "Booked TransactionsCreditorResponse", required = true)
