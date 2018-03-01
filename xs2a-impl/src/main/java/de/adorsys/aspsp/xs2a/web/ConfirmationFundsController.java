@@ -13,22 +13,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 
-/**
- * Created by aro on 28.11.17
- */
-
 @RestController
 @SuppressWarnings("unused")
 @RequestMapping(path = "api/v1/confirmation-of-funds")
 public class ConfirmationFundsController {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfirmationFundsController.class);
+	private static final Logger log = LoggerFactory.getLogger(ConfirmationFundsController.class);
 
-    @ApiOperation(value = "Create a confirmation of funds request ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured")
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "return true or false"),
-            @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(method = RequestMethod.POST)
-    public Boolean getConfirmationFunds(@RequestBody FundsRequest request) {
-        return false;
-    }
+	@ApiOperation(value = "Create a confirmation of funds request ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured")
+	@ApiResponses(value = {@ApiResponse(code = 201, message = "return true or false"),
+			@ApiResponse(code = 400, message = "Bad request")})
+	@RequestMapping(method = RequestMethod.POST)
+	public Boolean getConfirmationFunds(@RequestBody FundsRequest request) {
+		return false;
+	}
 }

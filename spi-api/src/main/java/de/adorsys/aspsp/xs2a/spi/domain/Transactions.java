@@ -7,10 +7,6 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * Created by aro on 23.11.17.
- */
-
 @Data
 @ApiModel(description = "TransactionsCreditorResponse information", value = "TransactionsCreditorResponse")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)

@@ -7,7 +7,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.Balances;
 import java.util.Date;
 import java.util.List;
 
-public interface AccountSPI {
+public interface AccountSpi {
     List<Account> readAccounts(boolean withBalance, boolean psuInvolved);
     Balances readBalances(String accountId, boolean psuInvolved);
     AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved);

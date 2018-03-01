@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.domain.*;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSPI;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.MockData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class AccountSPIImpl implements AccountSPI {
-    private final Logger LOGGER = LoggerFactory.getLogger(AccountSPIImpl.class);
+public class AccountSpiImpl implements AccountSpi {
+    private final Logger LOGGER = LoggerFactory.getLogger(AccountSpiImpl.class);
 
     public List<Account> readAccounts(boolean withBalance, boolean psuInvolved) {
 
@@ -44,7 +44,6 @@ public class AccountSPIImpl implements AccountSPI {
     }
 
     public AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
-        // Todo replace mock data with real transactions
         List<Transactions> transactions = MockData.getTransactions();
         Links links = MockData.createEmptyLinks();
 
@@ -56,7 +55,6 @@ public class AccountSPIImpl implements AccountSPI {
     }
 
     public AccountReport readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
-        // Todo replace mock data with real transactions
         List<Transactions> transactions = MockData.getTransactions();
         Links links = MockData.createEmptyLinks();
 

@@ -8,23 +8,19 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * Created by aro on 23.11.17.
- */
-
 @Data
 @ApiModel(description = "Balance Information", value = "SingleBalance")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class SingleBalance {
 
-    @ApiModelProperty(value = "amount", required = true)
-    private Amount amount;
+	@ApiModelProperty(value = "amount", required = true)
+	private Amount amount;
 
-    @ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private Date last_action_date_time;
+	@ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+	private Date last_action_date_time;
 
-    @ApiModelProperty(value = "Date", example = "2007-01-01")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+	@ApiModelProperty(value = "Date", example = "2007-01-01")
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date date;
 }
