@@ -16,12 +16,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountControllerTest {
-	private final String ACCOUNT_ID = "11111-999999999";
-	private final String TRANSACTION_ID = "123456";
+	private final String ACCOUNT_ID = "33333-999999999";
+	private final String TRANSACTION_ID = "1234578";
 
 	@Autowired
 	private AccountController accountController;

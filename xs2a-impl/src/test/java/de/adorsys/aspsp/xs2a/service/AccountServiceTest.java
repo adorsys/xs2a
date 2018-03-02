@@ -24,8 +24,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountServiceTest {
-	private final String ACCOUNT_ID = "11111-999999999";
-	private final String TRANSACTION_ID = "123456";
+	private final String ACCOUNT_ID = "33333-999999999";
+	private final String TRANSACTION_ID = "1234578";
 
 	@Autowired
 	AccountService accountService;
@@ -80,9 +80,26 @@ public class AccountServiceTest {
 		Date dateFrom = new Date();
 		Date dateTo = new Date();
 		boolean psuInvolved = false;
+		String accountId = "11111-999999999";
 
-		checkTransactionResultsByPeriod(ACCOUNT_ID, dateFrom, dateTo, psuInvolved);
+		checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
 	}
+
+	@Test
+	public void getTransactions_jsonBiggerLimitSize_returnDownloadLink() {
+		//Given:
+		Date dateFrom = new Date();
+		Date dateTo = new Date();
+		boolean psuInvolved = false;
+		AccountReport expectedResult = accountService.getAccountReportWithDownloadLink(ACCOUNT_ID);
+
+		//When:
+		AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved);
+
+		//Then:
+		assertThat(actualResult).isEqualTo(expectedResult);
+	}
+
 
 	@Test
 	public void getTransactions_onlyTransaction() {
@@ -98,9 +115,10 @@ public class AccountServiceTest {
 		Date dateFrom = new Date();
 		Date dateTo = new Date();
 		boolean psuInvolved = false;
+		String accountId = "11111-999999999";
 
-		checkTransactionResultsByPeriod(ACCOUNT_ID, dateFrom, dateTo, psuInvolved);
-		checkTransactionResultsByTransactionId(ACCOUNT_ID, TRANSACTION_ID, psuInvolved);
+		checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
+		checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
 	}
 
 	@Test

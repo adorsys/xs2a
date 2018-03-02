@@ -49,4 +49,6 @@ public class Links {
 	@ApiModelProperty(value = "last page link: Navigation link for account reports.", example = "api/v1/lastPage/")
 	private String last_page_link;
 
+	@ApiModelProperty(value = "download: link to a resource, where the transaction report might be downloaded when is requested which has a huge size", example = "/v1/accounts/12345678999/transactions/download/")
+	private String download;
 }
