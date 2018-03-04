@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RunWith(SpringRunner.class)
@@ -65,13 +66,13 @@ public class AccountServiceTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldFail_getBalances_emptyAccountWithBalanceAndPsuInvolved() {
 		//Given:
 		String accountId = "";
 		boolean psuInvolved = true;
-		//todo we need make error check for empty accountId
 		checkBalanceResults(accountId, psuInvolved);
+		//todo we need make error check for empty accountId
+        fail();
 	}
 
 	@Test
@@ -122,23 +123,23 @@ public class AccountServiceTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldFail_getTransactions_noAccountId() {
 		//Given:
 		boolean psuInvolved = false;
 
 		//todo we need make error check for empty transactionId and empty period
 		checkTransactionResultsByTransactionId(ACCOUNT_ID, TRANSACTION_ID, psuInvolved);
+		fail();
 	}
 
 	@Test
-	@Ignore
 	public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
 		//Given:
 		boolean psuInvolved = false;
 
-		//todo we need make error check for empty transactionId and empty period
 		checkTransactionResultsByTransactionId(ACCOUNT_ID, TRANSACTION_ID, psuInvolved);
+		//todo we need make error check for empty transactionId and empty period
+		fail();
 	}
 
 	private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
