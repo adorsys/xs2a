@@ -8,7 +8,9 @@ pom.xml.versionsBackup
 .env
 bin/
 .factorypath
-
+*.log
+logs
+log
 .vscode
 
 .DS_Store
