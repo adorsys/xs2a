@@ -13,7 +13,7 @@ public class MockData {
     private static List<Balances> balances = new ArrayList<>();
     private static HashMap<String, Account> accounts_hashmap = new HashMap<String, Account>();
 
-    public static void createAmount(String content, String currency) {
+    public static void createAmount(String content, Currency currency) {
         Amount amount = new Amount();
         amount.setContent(content);
         amount.setCurrency(currency);
@@ -66,12 +66,12 @@ public class MockData {
         balances.add(balance);
     }
 
-    public static void addAccount(String ID, String currency, Balances balance, String iban, String BIC, String name, String account_type) {
+    public static void addAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
         Account account = createAccount(ID, currency, balance, iban, BIC, name, account_type);
         accounts.add(account);
     }
 
-    public static Account createAccount(String ID, String currency, Balances balance, String iban, String BIC, String name, String account_type) {
+    public static Account createAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
         Account account = new Account();
         account.setIban(iban);
         account.setId(ID);

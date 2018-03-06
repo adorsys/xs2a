@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Currency;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class AccountResponse {
 	private String account_type;
 
 	@ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
-	private String currency;
+	private Currency currency;
 
 	@ApiModelProperty(value = "Balances")
 	private Balances balances;

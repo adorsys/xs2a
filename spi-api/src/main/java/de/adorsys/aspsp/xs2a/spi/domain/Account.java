@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Currency;
+
 @Data
 @ApiModel(description = "AccountResponse information", value = "AccountResponse")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
@@ -39,7 +41,7 @@ public class Account {
 	private Balances balances;
 
 	@ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
-	private String currency;
+	private Currency currency;
 
 	@ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
 	private Links _links;
