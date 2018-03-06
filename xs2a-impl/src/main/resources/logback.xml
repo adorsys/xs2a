@@ -19,7 +19,7 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="org.springframework" level="OFF" />
+    <logger name="org.springframework" level="WARN" />
     <logger name="springfox.documentation" level="OFF" />
     <logger name="org.hibernate.validator" level="OFF" />
 

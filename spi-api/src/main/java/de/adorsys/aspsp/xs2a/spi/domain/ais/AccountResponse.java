@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import java.util.Currency;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @ApiModel(description = "Account Response information", value = "AccountResponse")
 public class AccountResponse {
 

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@SuppressWarnings("unused")
 @RequestMapping(path = "api/v1/confirmation-of-funds")
 public class ConfirmationFundsController {
 

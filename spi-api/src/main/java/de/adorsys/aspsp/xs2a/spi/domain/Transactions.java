@@ -12,11 +12,9 @@ import java.util.Date;
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class Transactions {
 
-    @ApiModelProperty(value = "Transaction ID: Can be used as access-id in the API, where more details on an transaction is offered", example = "12345")
-    // we get it in the Header in the Prozess-ID
+    @ApiModelProperty(value = "Transaction ID", example = "12345")
     private String transaction_id;
 
-    // we get it in the Header
     @ApiModelProperty(value = "Entry Date", example = "2017-01-01")
     private Date entry_date;
 

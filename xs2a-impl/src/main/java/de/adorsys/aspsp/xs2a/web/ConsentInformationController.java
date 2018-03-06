@@ -23,7 +23,6 @@ import java.util.List;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RestController
-@SuppressWarnings("unused")
 @RequestMapping(path = "api/v1/consents")
 @Api(value = "api/v1/consents", tags = "AISP Consents", description = "Provides access to the Psu Consents")
 public class ConsentInformationController {
@@ -86,17 +85,17 @@ public class ConsentInformationController {
 	}
 
 	private AisAccountsList getAccountsList(String consentID) {
-		// TODO Auto-generated method stub
+		// TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
 		return null;
 	}
 
 	private AisStatusResponseBody getTransactionStatus(String consentID) {
-		// TODO Auto-generated method stub
-		return null;
+        // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
+        return null;
 	}
 
 	private List<Account> getAllAccounts(Boolean withBalance) {
-		// TODO make real data return
-		return new ArrayList<Account>();
+        // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
+        return new ArrayList<Account>();
 	}
 }

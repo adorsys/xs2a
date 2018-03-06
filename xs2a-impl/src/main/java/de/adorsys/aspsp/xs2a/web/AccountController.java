@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@SuppressWarnings("unused")
 @RequestMapping(path = "api/v1/accounts")
 @Api(value = "api/v1/accounts", tags = "AISP, Accounts", description = "Provides access to the Psu account")
 public class AccountController {

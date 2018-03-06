@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
 import de.adorsys.aspsp.xs2a.spi.domain.*;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionsArt;
 
 import java.util.*;
 
