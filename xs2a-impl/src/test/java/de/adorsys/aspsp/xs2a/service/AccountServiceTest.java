@@ -75,6 +75,14 @@ public class AccountServiceTest {
 	}
 
 	@Test
+	public void getTransactions_onlyTransaction() {
+		//Given:
+		boolean psuInvolved = false;
+		String accountId = "11111-999999999";
+		checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
+	}
+
+	@Test
 	public void getTransactions_onlyByPeriod() {
 		//Given:
 		Date dateFrom = new Date();
@@ -98,15 +106,6 @@ public class AccountServiceTest {
 
 		//Then:
 		assertThat(actualResult).isEqualTo(expectedResult);
-	}
-
-
-	@Test
-	public void getTransactions_onlyTransaction() {
-		//Given:
-		boolean psuInvolved = false;
-
-		checkTransactionResultsByTransactionId(ACCOUNT_ID, TRANSACTION_ID, psuInvolved);
 	}
 
 	@Test
