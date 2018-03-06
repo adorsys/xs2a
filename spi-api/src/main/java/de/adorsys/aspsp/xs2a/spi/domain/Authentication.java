@@ -18,7 +18,7 @@ public class Authentication {
 	@ApiModelProperty(value = "Name of the authentication method", example = "redirect")
 	private String name;
 
-	@ApiModelProperty(value = "details information about the sca method", required = true)
+	@ApiModelProperty(value = "Details information about the sca method", required = true)
 	private String explanation;
 }
 

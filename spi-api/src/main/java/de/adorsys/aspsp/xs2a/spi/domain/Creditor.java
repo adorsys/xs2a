@@ -9,13 +9,10 @@ import lombok.Data;
 @ApiModel(description = "Creditor information", value = "Creditor")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class Creditor {
-
-	//TODO type not defined in the documentation
-	@ApiModelProperty(value = "name", example = "Schmidt, Michael")
-	private String name;
-
-
-	//TODO type not defined in the documentation
-	@ApiModelProperty(value = "Address", example = "Wiesenweg, 1, 99999 Traumdorf")
-	private String address;
+ 
+	@ApiModelProperty(value = "name", example = "Michael, Schmidt")
+	private PersonName name;
+	
+	@ApiModelProperty(value = "Address", example = "Herrnstraße, 123-34, Nürnberg, 90431, 49")
+	private Address address;
 }
