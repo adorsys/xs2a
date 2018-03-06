@@ -32,7 +32,12 @@ public class AccountResponse {
 
 	@ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
 	private Links _links;
-
+    
+    /**
+     * Constructor converts Account to own type
+     * @param account  account which the response is given for
+     * @param urlToAccounts current url for getting account information
+     */
 	public AccountResponse(Account account, String urlToAccounts) {
 		this.id = account.getId();
 		this.iban = account.getIban();
