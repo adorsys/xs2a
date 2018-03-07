@@ -1,8 +1,10 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
-
+@ApiModel(description = "MessageCode", value = "Message error codes and related http response codes.")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public enum MessageCode {
     CERTIFICATE_INVALID(401, "The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements."),
@@ -47,19 +49,21 @@ public enum MessageCode {
     ACCESS_EXCEEDED(429, "The access on the account has been exceeding the consented multiplicity per day."),
     REQUESTED_FORMATS_INVALID(401, "The requested formats in the Accept header entry are not matching the formats offered by the ASPSP.");
     
+    @ApiModelProperty(value = "code", example = "400")
     private int code;
-    private String definition;
+    @ApiModelProperty(value = "description", example = "Requested time period out of bound.")
+    private String description;
     
-    MessageCode(int code, String definition) {
+    MessageCode(int code, String description) {
         this.code = code;
-        this.definition = definition;
+        this.description = description;
     }
     
     public int getCode() {
         return code;
     }
     
-    public String getDefinition() {
-        return definition;
+    public String getDescription() {
+        return description;
     }
 }
