@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.domain;
+package de.adorsys.aspsp.xs2a.spi.domain.address;
 
 
 import io.swagger.annotations.ApiModel;
@@ -15,7 +15,6 @@ public class Address {
     @Size(max = 70)
     private String street;
     
-    
     @ApiModelProperty(value = "Building number", required = false, example = "123-34")
     private String buildingNumber;
     
@@ -26,5 +25,5 @@ public class Address {
     private String postalCode;
     
     @ApiModelProperty(value = "Country", required = true, example = "49")
-    private String country;
+    private CountryCode country;
 }

@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.domain;
+package de.adorsys.aspsp.xs2a.spi.domain.address;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
