@@ -33,7 +33,7 @@ public class MockData {
         sb.setAmount(amount);
 
         Date Last_manipulation_date = createDate(days, when);
-        sb.setLast_action_date_time(Last_manipulation_date);
+        sb.setLastActionDateTime(Last_manipulation_date);
         singleBalances.add(sb);
 
     }
