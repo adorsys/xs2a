@@ -18,7 +18,7 @@ public class SingleBalance {
 
 	@ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date last_action_date_time;
+	private Date lastActionDateTime;
 
 	@ApiModelProperty(value = "Date", example = "2007-01-01")
 	@JsonFormat(pattern = "yyyy-MM-dd")

@@ -1,7 +1,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.spi.domain.PaymentInitialisationRequest;
+import de.adorsys.aspsp.xs2a.spi.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.spi.domain.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.Transactions;
@@ -23,7 +23,7 @@ public class PaymentInitiationController {
     @ApiResponse(code = 400, message = "Bad request")})
 
     @RequestMapping(method = RequestMethod.POST)
-    public PaymentInitialisationResponse createPaymentInitiation(@RequestBody PaymentInitialisationRequest aymentInitialisationRequest) {
+    public PaymentInitialisationResponse createPaymentInitiation(@RequestBody SinglePayments aymentInitialisationRequest) {
         return createResponse();
     }
 
