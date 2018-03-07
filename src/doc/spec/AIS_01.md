@@ -2,14 +2,20 @@
 
 
 ## AIS_01 Account Information Service (AIS).
-This service may be used by an AISP to request information about the account of a PSU. The account is managed by the ASPSP providing the XS2A Interface.
+This service may be used by an AISP to request different types of information about the account of a PSU:
+ * Transaction reports
+ * Balances
+ * List of availlable accounts
+ * Account details
+ 
+ The account is managed by the ASPSP providing the XS2A Interface.
 
 
 ### Account Information Service Flows
 The Account Information Service is separated in two phases.
 
 
-#### Account Information Consent  
+#### Establish Account Information Consent  
 PSU is giving consent on
   * the type type of Account Information Service to grant an access to,
   * the Multiplicity of the Account Information Service, i.e. a once-off or
@@ -19,21 +25,32 @@ PSU is giving consent on
       
 
     With Redirect SCA Approach
-    If the ASPSP supports the Redirect SCA Approach, the message flow within the Account
-    Information Consent sub-service is simple. The Account Information Consent Request is
-    followed by a redirection to the ASPSP SCA authorisation site. A status or content request
-    on the created consent resource might be requested by the TPP after the session is reredirected
-    to the TPP’s system.
+    If the ASPSP supports the Redirect SCA Approach, the message flow within the Account Information Consent sub-service is simple. 
+    The Account Information Consent Request is followed by a redirection to the ASPSP SCA authorisation site. 
+    A status or content request on the created consent resource might be requested by the TPP after the session is reredirected to the TPP’s system.
     
-![Account Information Consent Flow](img/AIS_Consent.png)
+![Account Information Consent Flow for Redirect Approach](img/AIS_Consent_Redirect.png)
 
+
+    With OAuth2 SCA Approach
+    If the ASPSP supports the OAuth2 SCA Approach, the flow is very similar to the Redirect SCA Approach. 
+    Instead of redirecting the PSU directly on an authentication server, the OAuth2 protocol is used for the transaction autorization process.
+    
+![Account Information Consent Flow for OAuth2 Approach](img/AIS_Consent_OAuth2.png)
 
 
 #### Read Account Data  
 The AISP gets access to the account data as defined by the PSU's consent. The Read Account Data Request will indicate 
   * the type of the account data to be accessed
-  * in case of transaction reports additionally the addressed account number and the period of the transaction report 
-  * the preferred formats of the transaction reports
+  * the identification of the addressed account where applicable
+  * whether a PSU has directly initiated the request real-time
+  * whether balances should be delivered in addition where applicable
+  * in case of transaction reports as Account Information type additionally    
+    * the addressed account identification and
+    * the period of the transaction report
+    * in addition optionally a delta-flag indicating the request for a delta-report relative to the last request with additional data
+    * the preferred formats of the transaction reports
+ 
     
 ![Read Account Data Flow](img/AIS_Account.png)
 
@@ -78,47 +95,87 @@ The following usage of abbreviations in the Location and Usage columns is define
 * c: Conditional. The Condition is described in the API Calls, condition defined by
   the ASPSP
 
-| Data element                        | Attribute encoding                | Path | Header | Body | Certificate | Inf. Cons. Req. | Inf. Cons. Resp. | Upd. Req. | Upd. Resp. | Stat. Req. | Stat. Resp. | Read D. Req. | Read D. Resp. |
-|-------------------------------------|-----------------------------------|:----:|:------:|:----:|:-----------:|:---------------:|:----------------:|:---------:|:----------:|:----------:|:-----------:|:------------:|:-------------:|
-| Provider Identification             |                                   |   x  |        |      |             |        m        |                  |     m     |            |     m      |             |      m       |               | 
-| TPP Registration Number             |                                   |      |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
-| TPP Name                            |                                   |      |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
-| TPP Role                            |                                   |      |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
-| TPP National Competent Authority    |                                   |      |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
-| Transaction Identification          | Process-ID                        |      |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
-| Request Identification              | Request-ID                        |      |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
-| Resource ID                         | Resource ID                       |   x  |        |      |             |                 |        m         |     m     |            |     m      |             |      m       |               |
-| Access Token (from optional OAuth2) | Authorization Bearer              |      |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
-| Request Timestamp                   | Date                              |      |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
-| TPP Signing Certificate Data        | certificate                       |      |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
-| TPP Signing Electronic Signature    | signature                         |      |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
-| Further signature related data      |                                   |      |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
-| Service Type                        |                                   |   x  |        |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
-| Response Code                       |                                   |      |    x   |      |             |                 |        m         |           |     m      |            |     m       |              |      m        |
-| Transaction Status                  | transaction_status                |      |        |  x   |             |                 |        m         |           |     m      |            |     m       |              |               |
-| PSU Message Information             | psu_message                       |      |        |  x   |             |                 |        o         |           |     o      |            |     o       |              |      o        |
-| TPP Message Information             | tpp_messages                      |      |        |  x   |             |                 |        o         |           |     o      |            |     o       |              |      o        |
-| PSU Identification                  | PSU-ID                            |      |    x   |      |             |        c        |                  |     c     |            |            |             |              |               |
-| Corporate Identification            | PSU-Corporate-ID                  |      |    x   |      |             |        c        |                  |     c     |            |     c      |             |              |               |
-| PSU Password                        | psu_data.password                 |      |        |  x   |             |                 |                  |     c     |            |            |             |              |               |
-| PSU Authentication Data             | psu_data.authentication           |      |        |  x   |             |                 |                  |           |            |            |             |              |               |
-| SCA Challenge Data                  | sca_challenge_data                |      |        |  x   |             |                 |        c         |           |     c      |            |             |              |               |
-| IP Address PSU                      | PSU-IP-Address                    |      |    x   |      |             |        m        |                  |           |            |            |             |              |               |
-| PSU Agent                           | PSU Agent                         |      |    x   |      |             |        o        |                  |           |            |            |             |              |               |
-| GEO Information                     | PSU-Geo-Location                  |      |    x   |      |             |        o        |                  |           |            |            |             |              |               |
-| Redirect URL ASPSP                  | _links.redirect                   |      |        |  x   |             |                 |        c         |           |            |            |             |              |               |
-| PSU Account                         | psu_account                       |      |        |  x   |             |                 |                  |           |            |            |             |      c       |               |
-| PSU Account List                    | access_accounts                   |      |        |  x   |             |        m        |                  |           |            |            |             |              |               |
-| Date From                           | date_from                         |   x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
-| Date To                             | date_to                           |   x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
-| Validity Period                     | valid_until                       |      |        |  x   |             |        m        |                  |           |            |            |             |              |               |
-| Frequency                           | frequency_per_day                 |      |        |  x   |             |        m        |                  |           |            |            |             |              |               |
-| Recurring Indicator                 | recurring_indicator               |      |        |  x   |             |        m        |                  |           |            |            |             |      c       |               |
-| Combined service                    | combined_service_indicator        |      |        |  x   |             |        m        |                  |           |            |            |             |              |               |
+| Data element                        | Attribute encoding                | Path | Query Param. | Header | Body | Certificate | Establ. Cons. Req. | Establ. Cons. Resp. | Upd. Req. | Upd. Resp. | Stat. Req. | Stat. Resp. | Read D. Req. | Read D. Resp. |
+|-------------------------------------|-----------------------------------|:----:|:---:|:------:|:----:|:-----------:|:---------------:|:----------------:|:---------:|:----------:|:----------:|:-----------:|:------------:|:-------------:|
+| Provider Identification             |                                   |   x  |     |        |      |             |        m        |                  |     m     |            |     m      |             |      m       |               | 
+| TPP Registration Number             |                                   |      |     |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
+| TPP Name                            |                                   |      |     |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
+| TPP Role                            |                                   |      |     |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
+| TPP National Competent Authority    |                                   |      |     |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
+| Transaction Identification          | TPP-Transaction-ID                |      |     |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
+| Request Identification              | TPP-Request-ID                    |      |     |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
+| Resource ID                         | consentId                         |      |     |        |  x   |             |                 |        m         |           |            |            |             |              |               |
+| Resource-ID[^5]                     | Consent-ID                        |      |     |    x   |      |             |                 |                  |           |            |            |             |              |      c        |
+| Access Token (from optional OAuth2) | Authorization Bearer              |      |     |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
+| TPP Signing Certificate Data        | TPP-Certificate                   |      |     |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
+| TPP Signing Electronic Signature    | Signature                         |      |     |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
+| Further signature related data      | Digest                            |      |     |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
+| Service Type                        |                                   |   x  |     |        |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
+| Response Code                       |                                   |      |     |    x   |      |             |                 |        m         |           |     m      |            |     m       |              |      m        |
+| Transaction Status                  | transactionStatus                 |      |     |        |  x   |             |                 |        m         |           |     m      |            |     m       |              |               |
+| PSU Message Information             | psuMessage                        |      |     |        |  x   |             |                 |        o         |           |     o      |            |     o       |              |      o        |
+| TPP Message Information             | tppMessages                       |      |     |        |  x   |             |                 |        o         |           |     o      |            |     o       |              |      o        |
+| PSU Identification                  | PSU-ID                            |      |     |    x   |      |             |        c        |                  |     c     |            |            |             |              |               |
+| PSU Identification Type             | PSU-ID-Type                       |      |     |    x   |      |             |        c        |                  |     c     |            |            |             |              |               |
+| Corporate Identification            | PSU-Corporate-ID                  |      |     |    x   |      |             |        c        |                  |     c     |            |     c      |             |              |               |
+| Corporate Type                      | PSU-Corporate-ID-Type             |      |     |        |      |             |                 |                  |           |            |            |             |              |               |
+| IP Address PSU                      | PSU-IP-Address                    |      |     |    x   |      |             |        m        |                  |           |            |            |             |              |               |
+| PSU Agent                           | PSU Agent                         |      |     |    x   |      |             |        o        |                  |           |            |            |             |              |               |
+| GEO Information                     | PSU-Geo-Location                  |      |     |    x   |      |             |        o        |                  |           |            |            |             |              |               |
+| Redirect URL ASPSP                  | _links.redirect                   |      |     |        |  x   |             |                 |        c         |           |            |            |             |              |               |
+| Redirect Preference                 | tppRedirectPreferred              |      |  x  |        |      |             |        o        |                  |           |            |            |             |              |               |
+| Redirect URL TPP                    | TPP-Redirect-URI                  |      |     |    x   |      |             |        c        |                  |           |            |            |             |              |               |
+| PSU Account                         | psuAccount                        |      |     |        |  x   |             |                 |                  |           |            |            |             |      c       |               |
+| PSU Account List                    | accessAccounts                    |      |     |        |  x   |             |        m        |                  |           |            |            |             |              |               |
+| Date From                           | dateFrom                          |      |  x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
+| Date To                             | dateTo                            |      |  x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
+| Booking Status                      | bookingStatus                     |      |  x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
+| Delta Indicator                     | deltaList                         |      |  x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
+| With Balance Flag                   | withBalance                       |      |  x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
+| PSU Involvement Flag                | psuInvolved                       |      |  x  |        |      |             |                 |                  |           |            |            |             |      c       |               |
+| Validity Period                     | validUntil                        |      |     |        |  x   |             |        m        |                  |           |            |            |             |              |               |
+| Frequency                           | frequencyPerDay                   |      |     |        |  x   |             |        m        |                  |           |            |            |             |              |               |
+| Recurring Indicator                 | recurringIndicator                |      |     |        |  x   |             |        m        |                  |           |            |            |             |      c       |               |
+| Combined service                    | combinedServiceIndicator          |      |     |        |  x   |             |        m        |                  |           |            |            |             |              |               |
 
 
 
-### Account Information Consent Management
+### Multicurrency Accounts
+Definition: A multicurrency account is an account which is a collection of different sub- accounts which are all addressed by the same account identifier like an IBAN by e.g. payment initiating parties. The sub-accounts are legally different accounts and all differ in their currency, balances and transactions. An account identifier like an IBAN together with a currency always addresses uniquely a sub-account of a multicurrency account.
+This specification supports to address multicurrency accounts either on collection or on sub- account level. The currency data attribute in the corresponding data structure "Account Reference" allows to build structures like
+
+    {"iban": "DE87123456781234567890"}
+
+or
+
+    {"iban": "DE87123456781234567890",
+     "currency": "EUR"}
+
+If the underlying account is a multicurrency account, then
+* the first reference is referring to the collection of all sub-accounts addressable by this IBAN, and
+* the second reference is referring to the euro sub-account only.
+
+This interface specification is acting on sub-accounts of multicurrency accounts in exactly the
+same way as on regular accounts.
+The methods on multicurrency accounts differ in the inter-face due to the fact, that a collection of accounts is addressed. In the following the differences are described on abstract level.
+
+**Multicurrency Accounts in Submission of Consents**
+
+Multicurrency accounts are addressed by just using the external account identifier in the submission of a consent on dedicated accounts, without specifying a currency. Asking for the consent to retrieve account information data of a multicurrency accounts implies getting it for all sub-accounts.
+
+**Multicurrency Accounts in Reading Accounts or Account Details**
+
+The ASPSP will decide in its implementation whether to grant data access to a multicurrency account on aggregation level, on aggregation and sub-account level, or only on sub-account level.
+
+**Multicurrency Accounts in Reading Balances**
+
+The consequence for this function is that an array of balances of all sub-accounts are returned, if a multicurrency account is addressed on aggregation level.
+
+**Multicurrency Accounts in Reading Transactions**
+
+The consequence for this function is that the list of transactions will contain all transactions of all sub-accounts, if a multicurrency account is addressed on aggregation level. In this case the payment transactions contained in the report may have different transaction currencies.
+
+### Establish Account Information Consent
 #### AIS_01_01 Consent Request
 
 #### Consent Request on Dedicated Accounts
@@ -127,44 +184,61 @@ The following usage of abbreviations in the Location and Usage columns is define
     POST /v1/consents
 Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.
 
+##### Side Effects
+When this Consent Request is a request where the "recurringIndicator" equals "true" and if it exists already a former consent for recurring access on account information for the addressed PSU, then the former consent automatically expires as soon as the new consent request is authorised by the PSU.
+ 
+##### Query Parameters
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| tppRedirectPreferred	| Boolean	| Optional |	If it equals "true", the TPP prefers a redirect over an embedded SCA approach. If it equals "false", the TPP prefers not to be redirected for SCA. The ASPSP will then choose between the Embedded or the Decoupled SCA approach, depending on the choice of the SCA procedure by the TPP/PSU. If the parameter is not used, the ASPSP will choose the SCA approach to be applied depending on the SCA method chosen by the TPP/PSU. |
+| withBalance	| Boolean	| [Optional] |	This parameter may only be used together with the access sub attribute "available- accounts" in the request body. The request is rejected if the ASPSP is not supporting this parameter. If the ASPSP accepts this parameter in the /consents endpoint, he shall also accept it for the GET access method on the /accounts endpoint. |
+
 
 ##### Request Header
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| Process-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
+| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
 | PSU-ID|	String	|Conditional	|Might be mandated in the ASPSP’s documentation. Is not contained if the optional OAuth Pre-Step was performed.|
-| PSUCorporate-ID |	String |	Conditional |	Might be mandated in the ASPSP's documentation. Only used in a corporate context. |
-| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed to get the agreement of the PSU. |
-| signature	| String ("details t.b.d." in the original specification) |	Conditional |	A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
-| certificate	|String ("details t.b.d." in the original specification) |	Conditional	| The certificate used for signing the request. |
-| Date |	DateTime	| Mandatory	| Standard https header element for date and time of the TPP Request. |
+| PSU-ID-Type |	String	|Conditional	|Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. |
+| PSU-Corporate-ID |	String |	Conditional |	Might be mandated in the ASPSP's documentation. Only used in a corporate context. |
+| PSU-Corporate-ID-Type |	String |	Conditional |	Might be mandated in the ASPSP's documentation. Only used in a corporate context. |
+| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed to authenticate the PSU. |
+| TPP-Redirect-URI | String | Conditional | URI of the TPP, where the transaction flow shall be redirected to after a Redirect. Shall be contained at least if the tppRedirectPreferred parameter is set to true or is missing. |
+| Signature	| String |	Conditional |	A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
+| certificate	|String |	Conditional	| The certificate used for signing the request in base64 encoding. Shall be contained if the signature is used. |
 
 
 ##### Request body
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| access_accounts	| Array of single account access | Mandatory | Requested access service per account. |
-| recurring_indicator | boolean | Mandatory | "true", if the consent is for recurring access to the account data or "false", if the consent is for one access to the account data |
-| valid_until | String | Mandatory | This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format, e.g. 2017-10-30 |
-| frequency_per_day | Integer | Mandatory | This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to "1". |
-| combined_service_indicator | boolean | Mandatory | If "true" indicates that a payment initiation service will be addressed in the same "session". |
+| access	| Account Access | Mandatory | Requested access service. Only the sub attributes with the tags "accounts", "balances" and "transactions" are accepted for this request. |
+| recurringIndicator | boolean | Mandatory | "true", if the consent is for recurring access to the account data or "false", if the consent is for one access to the account data |
+| validUntil | ISODate | Mandatory | This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format, e.g. 2017-10-30. If a maximal available date is requested, a date in far future is to be used: "9999-12-31". The consent object to be retrieved by the GET Consent Request will contain the adjusted date. |
+| frequencyPerDay | Integer | Mandatory | This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to "1". |
+| combinedServiceIndicator | boolean | Mandatory | If "true" indicates that a payment initiation service will be addressed in the same "session". |
+
+**Note:** All permitted "access" attributes ("accounts", "balances" and "transactions") used in this message shall carry a non-empty array of account references, indicating the accounts where the type of access is requested. Please note that a "transactions", "balances" or "accounts" access right also gives access to the generic /accounts endpoints, i.e. is implicitly supporting also the "accounts" access. 
+
+This specification mandates the ASPSP to support all POST consent requests with dedicated accounts, i.e. POST requests with the above mentioned sub-attributes, where at least one sub-attribute is contained, and where all contained sub-attributes carry a non-empty array of account references. This results in a consent on dedicated accounts. For this Consent Request on Dedicated Accounts, no assumptions are made for the SCA Approach by this specification. 
+
+Optionally, the ASPSP can support also Consent Requests, where the above mentioned sub-attributes "accounts", "balances" and "transactions" only carry an empty array or where the sub-attributes "available-accounts" or "allPsd2" are used – both with the value "all- accounts".
 
 
 ##### Response Header    
-The Location field is used as link to the status of the created resource. No other specific requirements.
+The Location field is used as hyperlink to the status of the created resource. No other specific requirements.
 
 
 ##### Response Body
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| sca_methods | Array of authentication objects |	conditional |	This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods. Depending on the risk management of the ASPSP this choice might be offered before or after the PSU has been identified with the first relevant factor, or if an access token is transported. If this data element is contained, then there is also an hyperlink of type "select_authentication_methods" contained in the response body. These methods shall be presented towards the PSU for selection by the TPP. |
-| chosen_sca_method | authentication object  |	conditional |	This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected.  |
-| sca_challenge_data | challenge | conditional | It is contained in addition to the data element chosen_sca_method if challenge data is needed for SCA. 
-| _links | links  |	Mandatory |	A list of hyperlinks to be recognized by the TPP. Type of links admitted in this response, (further links might be added for ASPSP defined extensions): *"redirect"* : In case of an SCA Redirect Approach, the ASPSP is transmitting the link  to which to redirect the PSU browser. *"update_psu_identification"* : The link to the payment initiation resource, which needs to be updated by the psu identification. This  might be used in a redirect or decoupled approach, where the PSU ID was missing in the first request. *"update_psu_authentication"* : The link to the payment initiation resource, which need to be updated by a psu password and  eventually the psu identification if not delivered yet. This is used in a case of the Embedded SCA approach.  *"select_authentication_method"* : This is a link to a resource, where the TPP can select  the applicable strong customer authentication methods for the PSU, if there  were several available authentication methods. This link contained under exactly the same conditions as the data element “authentication_methods”, see above. *“status”*: The link to retrieve the transaction status of the payment initiation |
-| psu_message | string  |	Optional | Text to be displayed to the PSU |
+| transactionStatus | TransactionStatus | Mandatory | Authentication status of the consent. |
+| consentId | String | Conditional | Identification of the consent resource as it is used in the API structure. Shall be contained, if a consent resource was generated. | 
+| scaMethods | Array of Authentication Object |	Conditional |	This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods. Depending on the risk management of the ASPSP this choice might be offered before or after the PSU has been identified with the first relevant factor, or if an access token is transported. If this data element is contained, then there is also an hyperlink of type "select_authentication_methods" contained in the response body. These methods shall be presented towards the PSU for selection by the TPP. |
+| _links | Links  |	Mandatory |	A list of hyperlinks to be recognized by the TPP. Type of links admitted in this response, (further links might be added for ASPSP defined extensions): <br><br> **"redirect":** In case of an SCA Redirect Approach, the ASPSP is transmitting the link  to which to redirect the PSU browser. <br><br> **"oAuth":** In case of an OAuth2 based Redirect Approach the ASPSP is transmitting the link where the configuration of the OAuth2 Server is defined. <br><br> **"updatePsuIdentification":** The link to the payment initiation resource, which needs to be updated by the psu identification. This  might be used in a redirect or decoupled approach, where the PSU ID was missing in the first request. <br><br> **"updatePsuAuthentication":** The link to the payment initiation resource, which need to be updated by a psu password and  eventually the psu identification if not delivered yet. This is used in a case of the Embedded SCA approach. <br><br> **"selectAuthenticationMethod":** This is a link to a resource, where the TPP can select  the applicable strong customer authentication methods for the PSU, if there  were several available authentication methods. This link contained under exactly the same conditions as the data element “authentication_methods”, see above. <br><br> **“status”:** The link to retrieve the transaction status of the account information consent. |
+| psuMessage | String  |	Optional | Text to be displayed to the PSU |
 
 
 ##### Example
@@ -174,86 +248,135 @@ The Location field is used as link to the status of the created resource. No oth
     POST https://api.testbank.com/v1/consents
     Content-Encoding        gzip
     Content-Type            application/json
-    Process-ID              3dc3d5b3-7023-4848-9853-f5400a64e80g
-    Request-ID              99391c7e-ad88-49ec-a2ad-99ddcb1f7756
+    TPP-Transaction-ID      3dc3d5b3-7023-4848-9853-f5400a64e80g
+    TPP-Request-ID          99391c7e-ad88-49ec-a2ad-99ddcb1f7756
     PSU-IP-Address          192.168.8.78
-    PSU-Agent               Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0)
-    Gecko/20100101 Firefox/54.0
+    PSU-Agent               Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
     Date                    Sun, 06 Aug 2017 15:02:37 GMT
     {
-     "access_accounts": [
-        {"iban": "DE2310010010123456789",
-         "access" : ["balance","transactions"]},
-        {"iban": "DE2310010010123456788",
-         “access” :[“balance”],
-        {"pan": "12345678912345",
-         "access": ["transactions"] }
-     ],
-     "recurring_indicator": "true",
-     "valid_until": "2017-11-01",
-     "frequency_per_day" : "4"
+     "access":
+        {"balances": 
+           [{"iban": "DE2310010010123456789"}},
+            {"iban": "DE2310010010123456790",
+             "currency": "USD"},
+            {"iban": "DE2310010010123456788"}],
+        "transactions":
+           [{"iban": "DE2310010010123456789"},
+            {"maskedPan": "123456xxxxxx1234"}
+           ]
+        }   
+     "recurringIndicator": "true",
+     "validUntil": "2017-11-01",
+     "frequencyPerDay" : "4"
     }
 
 
 *Response in case of a redirect*
 
-    Response Code 200
+Response Code: 
+
+    200
 
 
-*Response Header*
+Response Header:
 
     Location "v1/consents/1234-wertiq-983"
 
 
-*Response Body*
+Response Body:
 
     {
-     "transaction_status" : "Received",
+     "transactionStatus" : "Received",
+     "consentId":          "1234-wertiq-983",
      "_links" {
-     "redirect" : "www.testbank.com/authentication/1234-wertiq-983"
+         "redirect" : "www.testbank.com/authentication/1234-wertiq-983"
+      }
     }
+
+*Response in case of the OAuth2 approach*
+
+Response Code:
+
+    201
+
+Response Header:
+
+    Location "v1/consents/1234-wertiq-983"
+
+Response Body:
+
+    {
+     "transactionStatus" : "Received",
+     "consentId":          "1234-wertiq-983",
+     "_links" {
+        "self" : "/v1/consents/1234-wertiq-983",
+        "consentId": "1234-wertiq-983"
+     }
+    }
+
     
     
+#### Consent Request on Account List or without Indication of Accounts
+
+##### Consent Request on Account List of Available Accounts
+This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call only contains the "available-accounts" sub attribute within the "access" attribute with value "all-accounts".
+In this case the call creates an account information consent resource at the ASPSP to return a list of all available accounts. For this specific Consent Request, no assumptions are made for the SCA Approach by this specification.
+
+##### Consent Request without Indication of Accounts
+This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array.
+The ASPSP will then agree bilaterally directly with the PSU on which accounts the requested access consent should be supported. The result can be retrieved by the TPP by using the GET Consent Request method. 
+
+##### Consent Request for Access to all Accounts for all PSD2 defined AIS
+This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call contains the "allPsd2" sub attribute within the "access" attribute with the value "all-accounts".
+If this function is supported, it will imply a consent on all available accounts of the PSU on all PSD2 related account information services. For this specific Consent Request, no assumptions are made for the SCA Approach by this specification.
+
+##### Example Consent on Account List of Available Accounts
+
+*Request*
+
+    POST https://api.testbank.com/v1/consents 
+    Content-Encoding:       gzip
+    Content-Type:           application/json
+    TPP-Transaction-ID:     3dc3d5b3-7023-4848-9853-f5400a64e80g 
+    TPP-Request-ID:          99391c7e-ad88-49ec-a2ad-99ddcb1f7756 
+    PSU-IP-Address:         192.168.8.78
+    PSU-Agent:              Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
+    Date:                   Sun, 06 Aug 2017 15:05:37 GMT
+
+    {"access":
+       {"available-accounts": "all-accounts"}, 
+     "recurringIndicator": "false", 
+     "validUntil": "2017-08-06",
+     "frequencyPerDay": "1"
+    }
+
+##### Example Consent without dedicated Account
+
+*Request*
+
+    POST https://api.testbank.com/v1/consents 
+        Content-Encoding:       gzip
+        Content-Type:           application/json
+        TPP-Transaction-ID:     3dc3d5b3-7023-4848-9853-f5400a64e80g 
+        TPP-Request-ID:         99391c7e-ad88-49ec-a2ad-99ddcb1f7756 
+        PSU-IP-Address:         192.168.8.78
+        PSU-Agent:              Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
+        Date:                   Sun, 06 Aug 2017 15:05:37 GMT
     
-#### Consent Request on Account List
-
-##### Call
-    POST /v1/consents/account-list
-Creates an account information consent resource at the ASPSP to return a list of all accessible accounts.
-
-
-##### Request Header
-
-| Attribute | Type  | Condition | Description |
-|--------|------------------|----------|---------|
-| Process-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
-| PSU-ID|	String	|Conditional	|Might be mandated in the ASPSP’s documentation. Is not contained if the optional OAuth Pre-Step was performed.|
-| PSUCorporate-ID |	String |	Conditional |	Might be mandated in the ASPSP's documentation. Only used in a corporate context. |
-| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed to get the agreement of the PSU. |
-| signature	| String ("details t.b.d." in the original specification) |	Conditional |	A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
-| certificate	|String ("details t.b.d." in the original specification) |	Conditional	| The certificate used for signing the request. |
-| Date |	DateTime	| Mandatory	| Standard https header element for date and time of the TPP Request. |
-
-
-##### Request body
-
-| Attribute | Type  | Condition | Description |
-|--------|------------------|----------|---------|
-| with-balance | boolean | Mandatory | If the value equals "true", then the consent request is on the list of all payment accounts inclusive the balance. If the value equals "false", then the consent request is on the list of accounts only. |
-
-
-##### Response Body
-
-    Location is under /v1/consents
-
+        {"access":
+           {"balances": [],
+            "transactions": []},
+         "recurringIndicator": "true", 
+         "validUntil": "2017-11-01",
+         "frequencyPerDay": "4"
+        }
     
     
 #### AIS_01_02 Get Status Request 
 
 ##### Call
 
-    GET /v1/consents/{consent-id}/status
+    GET /v1/consents/{consentId}/status
 Can check the status of an account information consent resource.
 
 
@@ -261,8 +384,10 @@ Can check the status of an account information consent resource.
 
 | Attribute | Type  | Description |
 |--------|------------------|----------|
-| resource-ID | String |  |
+| consentId | String | The consent identification assigned to the created resource. |
 
+##### Query Parameters
+No specific query parameters.
 
 ##### Request Header
 See Request Header under AIS_01_01.
@@ -276,7 +401,7 @@ No body.
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| transaction_status |  |  | This is the "authentication status" of the consent. 
+| transactionStatus |  |  | This is the "authentication status" of the consent. 
 
 
 ##### Example
@@ -291,7 +416,7 @@ No body.
     Response Code 200
     
     {
-     "transaction_status" : "AcceptedTechnicalValidation",
+     "transactionStatus" : "AcceptedTechnicalValidation",
     }
     
 
@@ -300,16 +425,18 @@ No body.
 
 ##### Call
 
-    GET /v1/consents/{consent-id}
+    GET /v1/consents/{consentId}
     
 Returns the content of an account information consent object. This is returning the data for the TPP especially in cases, where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach.
 
+##### Query Parameters
+No specific query parameters.
 
 ##### Path
 
 | Attribute | Type  | Description |
 |--------|------------------|----------|
-| consent-id | String | ID of the corresponding consent object as returned by Account Information Consent Request |
+| consentId | String | ID of the corresponding consent object as returned by Account Information Consent Request |
 
 
 ##### Request Header
@@ -324,12 +451,13 @@ No body.
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| access_accounts | Array of single account access | Mandatory | |
-| recurring_indicator | boolean | Mandatory | "true", if the consent is for recurring access to the account data or "false", if the consent is for one access to the account data |
-| valid_until | String | Mandatory | This parameter is a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format, e.g. 2017-10-30 |
-| frequency_per_day | Integer | Mandatory | This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to "1". |
-| transactions_status | String | Mandatory | This is the "authentication status" of the consent. |
-| consent-status | String | Mandatory | The following code values are permitted "empty", "valid", "blocked", "expired", "deleted". These values might be extended by ASPSP by more values. |
+| access | Account Access | Mandatory | Requested access service. Only the sub attributes with the tags "accounts", "balances" and "transactions" are accepted for this request. |
+| recurringIndicator | Boolean | Mandatory | "true", if the consent is for recurring access to the account data or "false", if the consent is for one access to the account data |
+| validUntil | ISODate | Mandatory | This parameter is a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format, e.g. 2017-10-30 |
+| frequencyPerDay | Integer | Mandatory | This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to "1". |
+| lastActionDate | ISODate | Mandatory | This date is containing the date of the last action on the consent object either trough the XS2A interface or the PSU/ASPSP interface having an impact on the status. |
+| transactionsStatus | Transaction Status | Mandatory | |
+| consentStatus | String | Mandatory | The following code values are permitted "empty", "valid", "blocked", "expired", "deleted". These values might be extended by ASPSP by more values. |
 
 
 ##### Example
@@ -341,28 +469,29 @@ No body.
 *Response* 
 
     {
-     "access_accounts": [
-        {"iban": "DE2310010010123456789",
-         "access" : ["balance","transactions"]},
-        {"iban": "DE2310010010123456788",
-         "access" :["balance"],
-        {"pan": "12345678912345",
-         "access": ["transactions"] }
-     ],
-     "recurring_indicator": "true",
-     "valid_until": "2017-11-01",
-     "frequency_per_day" : "4",
-     "transaction_status" : "AcceptedTechnicalValidation",
-     "consent_status": "valid"
+     "access": 
+        {"balances":
+           [{"iban": "DE2310010010123456789"}]
+        {"transactions" :
+           [{"iban": "DE2310010010123456789"},
+            {"pan": "123456xxxxxx3457"}]
+
+     "recurringIndicator": "true",
+     "validUntil": "2017-11-01",
+     "frequencyPerDay" : "4",
+     "transactionStatus" : "AcceptedTechnicalValidation",
+     "consentStatus": "valid",
+     "_links": {"viewAccounts": "/v1/accounts"}
     }
 
+**Remark:** This specification supports no detailed links to AIS service endpoints corresponding to this account. This is due to the fact, that the /accounts endpoint will deliver all detailed information, including the hyperlinks e.g. to the balances or transactions of certain accounts. Still due to the guiding principles, the ASPSP may deliver more links in addition, which then will be documented in the ASPSPs XS2A API documentation. 
 
 
 #### AIS_01_04 Delete Account Information Consent Object
 
 ##### Call
 
-    DELETE /v1/consents/{consent-id}
+    DELETE /v1/consents/{consentId}
 Deletes a given consent.
 
 
@@ -370,16 +499,18 @@ Deletes a given consent.
 
 | Attribute | Type  | Description |
 |--------|------------------|----------|
-| consent-id | String | Contains the resource id of the consent to be deleted. |
+| consentId | String | Contains the resource id of the consent to be deleted. |
 
+##### Query Parameters
+No specific query parameters.
 
 ##### Request Header
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| Process-ID | UUID | Mandatory | ID of the transaction as determined by the initiating party.. |
-| Request-ID | UUID | Mandatory | |
-| Authorization Bearer | String | Conditional | Is contained only, if the optional OAuth Pre-Step was performed. |
+| TPP-Transaction-ID | UUID | Mandatory | ID of the transaction as determined by the initiating party. |
+| TPP-Request-ID | UUID | Mandatory | |
+| Authorization Bearer | String | Conditional | Is contained only, if an OAuth2 based SCA was performed in the corresponding consent transaction. |
 
 
 ##### Request Body
@@ -395,11 +526,11 @@ No body.
 *Request*
     
     DELETE https://api.testbank.com/v1/consents/qwer3456tzui7890
-    Content-Encoding    gzip
-    Content-Type        application/json
-    Process-ID          3dc3d5b3-7023-4848-9853-f5400a64e812
-    Request-ID          99391c7e-ad88-49ec-a2ad-99ddcb1f7757
-    Date                Sun, 13 Aug 2017 17:05:37 GMT
+    Content-Encoding      gzip
+    Content-Type          application/json
+    TPP-Transaction-ID     3dc3d5b3-7023-4848-9853-f5400a64e812
+    Request-ID            99391c7e-ad88-49ec-a2ad-99ddcb1f7757
+    Date                  Sun, 13 Aug 2017 17:05:37 GMT
     
  
  *Response*
@@ -412,67 +543,202 @@ No body.
 
 ##### Call
 
-    GET /v1/accounts/{path-options}
+    GET /v1/accounts/{query-parameters}
 Reads a list of accounts. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The adressed list of accounts depends then on the PSU ID and the stored consent addressed by consent-id, respectively the OAuth2 Token.
-  
-  
-##### Path
 
-| Attribute | Type  | Description |
-|--------|------------------|----------|
-| with-balance | String | If it is contained, this function reads the list of accessible payment accounts including the balance. |
-| psu-involved | String | If contained, it is indicated that a PSU has directly asked this account access in real-time. The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
+**Note:** If the consent is granted only to show the list of available accounts, much less details are displayed about the accounts. Specifically hyperlinks to balances or transaction endpoint should not delivered then.
+  
+**Note:** If the details returned in this call with the access rights "accounts", "balances", "transactions" or "allPsd2" are not sufficient, then more details can be retrieved by addressing the /accounts/{account-id} endpoint.
+  
+  
+##### Query Parameters
+
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| withBalance | Boolean | [Optional] | If contained this function reads the list of accessible payment accounts including the booking balance. This call will be rejected if the withBalance parameter is used in a case, where the access right on balances is not granted in the related consent or if the ASPSP does not support the withBalance parameter. |
+| psuInvolved | Boolean | Conditional | It must be contained if the PSU has asked for this account access in real-time. This flag is then set to "true". The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
 
 
 ##### Request Header
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| Process-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
-| Consent-ID | String | Conditional | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
-| PSU-ID|	String	|Conditional	| Might be mandated in the ASPSP’s documentation. Is not contained if the optional OAuth Pre-Step was performed.|
-| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed. |
+| TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
+| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| Consent-ID | String | Mandatory | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
+| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed or an OAuth2 based SCA was performed in the related consent authorization. |
+| Signature | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
+| TPP-Certificate | String | Conditional | The certificate used for signing the request in base64 encoding. It shall be contained if a signature is used, see above. |
 
 
 ##### Response Body
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| account_list | Array of account | Mandatory | |
+| accountList | Array of Account Details | Mandatory | |
 
 
 ##### Example
 
-*Response*
+*Response in case of an example where the consent has been given on two different IBANs*
    
-    {[
-       {"id" : "3dc3d5b3-7023-4848-9853-f5400a64e80f",
-        "iban” : "DE2310010010123456789",
-        "account_type" : "Main Account",
-        "currency" : “EUR”
-        "_links" : {
-            "balances" : "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances",
-            "transactions" : "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions"}
-       },
-       {"id" : "3dc3d5b3-7023-4848-9853-f5400a64e81g",
-        "iban": "DE2310010010123456788",
-        "account_type" : "US Dollar Account",
-        "currency" : "USD",
-        "_links" : {
-            "balances" : "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances" }
-       },
-       {"id" : "1234567890-12345",
-        "pan" : "1234567890-12345",
-        "account_type": "Credit Card",
-        "currency" : "EUR",
-        "_links" : {
-            "transactions" : "/v1/accounts/1234567890-12345/transactions" }
-        }
-    ]}
-    
+    {“account-list”: 
+       [
+          {“id”:	“3dc3d5b3-7023-4848-9853-f5400a64e80f”, 
+          "iban": "DE2310010010123456789",
+          "currency": "EUR", 
+          "accountType": "Girokonto",
+          “cashAccountType”: “CurrentAccount”, 
+          “name”: “Main Account”,
+          “_links” : {
+             “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/balances”,
+             “transactions”	:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/transactions”}
+          },
+          {“id” : “3dc3d5b3-7023-4848-9853-f5400a64e81g”, 
+          "iban": "DE2310010010123456788",
+          “currency” : “USD”,
+          “accountType”: “Fremdwährungskonto”, 
+          “cashAccountType” : “CurrentAccount”, 
+          “name” : “US Dollar Account”, 
+          “_links” : {
+              “balances”	:	“/v 1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e81g/balances” }
+          }
+       ]
+    }
+     
+*Response in case of an example where consent on transactions and balances has been given to a multicurrency account which has two sub-accounts with currencies EUR and USD, and where the ASPSP is giving the data access only on sub-account level:*
+     
+     {“account-list”: 
+        [
+           {“id”:	“3dc3d5b3-7023-4848-9853-f5400a64e80f”, 
+            "iban": "DE2310010010123456788",
+            "currency": "EUR", 
+            “accountType”: “Girokonto”,
+            “cashAccountType”: “CurrentAccount”, 
+            “name”: “Main Account”,
+            “_links”: {
+              “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/balances”,
+              “transactions”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/transactions”}
+            },
+            {“id” : “3dc3d5b3-7023-4848-9853-f5400a64e81g”, 
+            "iban": "DE2310010010123456788",
+            “currency” : “USD”,
+            “accountType”: “Fremdwährungskonto”, 
+            “cashAccountType” : “CurrentAccount”, 
+            “name” : “US Dollar Account”, 
+            “_links” : {
+                “balances”	:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e81g/balances”,
+                “transactions”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e81g/transactions” }
+            }
+        ]
+     }
 
-### AIS_01_05_02 Read Balance
+*Response in case of an example where consent on balances and transactions has been given to a multicurrency account which has two sub-accounts with currencies EUR and USD and where the ASPSP is giving the data access on aggregation level and on sub-account level:*
+
+    {“account-list”: 
+       [
+           {“id”:	“3dc3d5b3-7023-4848-9853-f5400a64e80f”, 
+           "iban": "DE2310010010123456788",
+           "currency": "XXX",
+           “accountType”: “Multi currency account”, 
+           “cashAccountType”: “CurrentAccount”, 
+           “name”: “Aggregation Account”,
+           “_links”: {
+               “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e333/balances”,
+               “transactions”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e333/transactions”}
+           },
+           {“id”:		“3dc3d5b3-7023-4848-9853-f5400a64e80f”, 
+           "iban": "DE2310010010123456788",
+           "currency": "EUR", 
+           “accountType”: “Girokonto”,
+           “cashAccountType”: “CurrentAccount”, 
+           “name”: “Main Account”,
+           “_links”: {
+               “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/balances”,
+               “transactions”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/transactions”}
+           },
+           {“id” : “3dc3d5b3-7023-4848-9853-f5400a64e81g”, 
+           "iban": "DE2310010010123456788",
+           “currency” : “USD”,
+           “accountType”: “Fremdwährungskonto”, 
+           “cashAccountType” : “CurrentAccount”, 
+           “name” : “US Dollar Account”, 
+           “_links” : {
+               “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e81g/balances”,
+               “transactions”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e81g/transactions” }
+           }
+       ]
+    }
+
+### AIS_01_05_02 Read Account Details
+    
+##### Call
+
+    GET /v1/accounts/{account-id} {query-parameters}
+    
+Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token. NOTE: The account-id can represent a multicurrency account. In this case the currency code is set to "XXX".
+
+##### Query Parameters
+
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| withBalance | Boolean | [Optional] | If contained this function reads the list of accessible payment accounts including the booking balance. This call will be rejected if the withBalance parameter is used in a case, where the access right on balances is not granted in the related consent or if the ASPSP does not support the withBalance parameter. |
+| psuInvolved | Boolean | Conditional | It must be contained if the PSU has asked for this account access in real-time. This flag is then set to "true". The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
+
+##### Request Header
+
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
+| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| Consent-ID | String | Mandatory | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
+| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed or an OAuth2 based SCA was performed in the related consent authorization. |
+| Signature | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
+| TPP-Certificate | String | Conditional | The certificate used for signing the request in base64 encoding. It shall be contained if a signature is used, see above. |
+
+
+##### Response Body
+
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| account | Account Details | Mandatory | |
+
+
+##### Example
+
+*Response for a regular account*
+   
+    {“account”: 
+       {“id”:	“3dc3d5b3-7023-4848-9853-f5400a64e80f”, 
+       "iban": "DE2310010010123456789",
+       "currency": "EUR", 
+       "accountType": "Girokonto",
+       “cashAccountType”: “CurrentAccount”, 
+       “name”: “Main Account”,
+       “_links” : {
+          “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/balances”,
+          “transactions”	:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/transactions”}
+       }
+    }
+
+*Response for a multi-currency account*
+   
+    {“account”: 
+       {“id”:	“3dc3d5b3-7023-4848-9853-f5400a64e80f”, 
+       "iban": "DE2310010010123456789",
+       "currency": "XXX", 
+       "accountType": "Multicurrency Account",
+       “cashAccountType”: “CurrentAccount”, 
+       “name”: “Aggregation Account”,
+       “_links” : {
+          “balances”:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/balances”,
+          “transactions”	:	“/v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/transactions”}
+       }
+    }
+
+
+
+### AIS_01_05_03 Read Balance
 
 ##### Call
 
@@ -489,59 +755,84 @@ Remark: This account-id can be a tokenized identification due to data protection
 | account-id | String | This identification is denoting the addressed account. The account-id is retrieved by using a "Read Account List" call. The account-id is the “id” attribute of the account structure. Its value is constant at least throughout the lifecycle of a given consent.
 
 
+##### Query Parameters
+
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| psuInvolved | Boolean | Conditional | It must be contained if the PSU has asked for this account access in real-time. This flag is then set to "true". The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
+
+
 ##### Request Header
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| Process-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party. In case of a once off read data request, this Process-ID equals the Process-ID of the corresponding Account Information Consent Request.|
-| Request-ID	| UUID|  	Mandatory	|  |
-| Consent-ID | String | Conditional |  |
-| PSU-ID|	String	|Conditional	| To be used, if no OAuth Pre-Step was performed and if a list of account balances or a list of accounts is requested.|
-| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed. |
-| signatue | details t.b.d. | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
-| certificate | details t.b.d | Conditional | The certificate used for signing the request. |
-| Date | DateTime | Mandatory | Standard https header element for Date and Time |
-
-
-##### Request Filter Parameters in Path
-
-| Attribute | Type  | Description |
-|--------|------------------|----------|
-|psu-involved | String | If contained, it is indicated that a PSU has directly asked this account in realtime. The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
+| TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
+| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| Consent-ID | String | Mandatory | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
+| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed or an OAuth2 based SCA was performed in the related consent authorization. |
+| Signature | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
+| TPP-Certificate | String | Conditional | The certificate used for signing the request in base64 encoding. It shall be contained if a signature is used, see above. |
 
 
 ##### Response Body
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| balances | balances | Mandatory | A list of balances regarding this account, e.g. the current balance or the last booked balance. |
+| balances | Balances | Mandatory | A list of balances regarding this account, e.g. the current balance or the last booked balance. |
 
 
 ##### Example
 
-*Response*
+*Response in case of a regular account:*
 
-     {
-      "Balances" :
-         {"closed_booked" :
-            {
-            "Amount" : {"currency" : "EUR", "500.00"},
-            "Date" : "2017-10-25"
-            },
-         {"expected" :
-            {
-            "amount" : {"currency" : "amount" : "900.00"},
-            "last_action_date_time" : "2017-10-25T15:30:35.035Z"
-            }
-         }
-     }
+    {
+       “balances” :
+          [{“closingBooked”:
+             {
+              “amount”: {“currency” : “EUR”, “content”: “500.00”}, 
+              “date” : “2017-10-25”
+             },
+          “expected”:
+             {
+              “amount”: {“currency” : “EUR” ,“content” : “900.00”}, 
+              “lastActionDateTime” : “2017-10-25T15:30:35.035Z”
+             }
+          }]
+    }
+
+*Response in case of a multicurrency account with one account in EUR, one in USD, where the ASPSP has delivered a link to the balance endpoint relative to the aggregated multicurrency account (aggregation level):*
+
+    {
+       “balances” :
+          [{“closingBooked”:
+             {
+              “amount”: {“currency” : “EUR”, “content”: “500.00”}, 
+              “date” : “2017-10-25”
+             },
+          “expected”:
+             {
+              “amount”: {“currency” : “EUR” ,“content” : “900.00”}, 
+              “lastActionDateTime” : “2017-10-25T15:30:35.035Z”
+             }
+          },
+          {“closingBooked”:
+             {
+              “amount”: {“currency” : “USD”, “content”: “350.00”}, 
+              “date” : “2017-10-25”
+             },
+          “expected”:
+             {
+              “amount”: {“currency” : “USD” ,“content” : “350.00”}, 
+              “lastActionDateTime” : “2017-10-25T15:30:35.035Z”
+             }]
+    }
      
 
-### AIS_01_05_02 Read Transaction List
+### AIS_01_05_04 Read Transaction List
 
 ##### Call
 
-     GET /v1/accounts/{account-id}/transactions {parameter-option}
+     GET /v1/accounts/{account-id}/transactions{query-parameters}
 Reads account data from a given account addressed by "account-id".
 
 Remark: If the ASPSP is not providing the "GET Account List" call, then the ASPSP must accept e.g. the PSU IBAN as account-id in this call.
@@ -554,29 +845,29 @@ Remark: If the ASPSP is not providing the "GET Account List" call, then the ASPS
 | account-id | String | This identification is denoting the addressed account. The account-id is retrieved by using a "Read Account List" call. The account-id is the “id” attribute of the account structure. Its value is constant at least throughout the lifecycle of a given consent.
 
 
+##### Query Parameters
+
+| Attribute | Type  | Condition | Description |
+|--------|------------------|----------|---------|
+| dateFrom | ISODate | Conditional | Starting date of the transaction list, mandated if no delta access is required. |
+| dateTo | ISODate | Optional | End date of the transaction list, default is now if not given. |
+| transactionId | String | Optional | This data attribute is indicating that the AISP is in favour to get all transactions after the transaction with identification transactionId alternatively to the above defined period. This is a implementation of a delta access. <br><br> If this data element is contained, the entries "dateFrom" and "dateTo" might be ignored by the ASPSP if a delta report is supported. |
+| psuInvolved | Boolean | Conditional | It must be contained if the PSU has asked for this account in realtime. This flag is then set to "true". The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
+| bookingStatus | String | Mandatory | Permitted codes are "booked", "pending" and "both" <br><br> "booked" and "both" are to be supported mandatorily by the ASPSP <br><br> To support the "pending" feature is optional for the ASPSP, Error code if not supported in the online banking frontend. |
+| withBalance | Boolean | [Optional] | If contained the TPP is requiring to add the balance to the transaction list. This call will be rejected if the withBalance parameter is used in a case where the access right on balances is not granted in the corresponding consens or if the ASPSP does not support the withBalance parameter. |
+| deltaList | Boolean | [Optional] | This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU on the addressed account. This is another implementation of a delta access-report. This delta indicator might be rejected by the ASPSP if this function is not supported. |
+
 ##### Request Header
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| Process-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party. In case of a once off read data request, this Process-ID equals the Process-ID of the corresponding Account Information Consent Request.|
-| Request-ID	| UUID|  	Mandatory	|  |
-| Consent-ID | String | Conditional | Mandatory, if a consent was managed within this interface on /v1/consents for the access of this account. |
-| PSU-ID|	String	|Conditional	| To be used, if no OAuth Pre-Step was performed and if a list of account balances or a list of accounts is requested.|
-| Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed. |
+| TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party. In case of a once off read data request, this Process-ID equals the Process-ID of the corresponding Account Information Consent Request.|
+| TPP-Request-ID	| UUID|  	Mandatory	|  |
+| Consent-ID | String | Mandatory |  |
+| Authorization Bearer |	String |	Conditional |	Is contained only, if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in the related consent authorization. |
 | Accept | String | Conditional | The TPP can indicate the formats of account reports supported together with a priorisation following the http header definition. The supported formats are XML, JSON and text. |   
-| signatue | details t.b.d. | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
-| certificate | details t.b.d | Conditional | The certificate used for signing the request. |
-| Date | DateTime | Mandatory | Standard https header element for Date and Time |
-
-
-##### Request Filter Parameters in Path
-
-| Attribute | Type  | Condition | Description |
-|--------|------------------|----------|---------|
-| date_from | ISODate | Mandatory | Starting date of the account statement |
-| date_to | ISODate | Mandatory | End date of the account statement. It is contained is this is a Read Account Data Request for transaction reports. |
-| transaction_id | String | Optional | Implementation of a delta-report: the data attribute is indicating that the AISP is in favour to get all transactions after the transaction with identification transaction_id alternatively to the above defined period. If this data element is contained, the entries "date_from" and "date_to" might be ignored by the ASPSP if a delta report is supported. |
-| psu-involved | Boolean | String | If contained, it is indicated that a PSU has directly asked this account in realtime. The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
+| Signatue | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
+| Tpp-Certificate | String | Conditional | The certificate used for signing the request in base64 encoding. It shall be contained if a signature is used, see above. |
 
 
 ##### Response Header
@@ -586,15 +877,15 @@ Content-Type: application/json or application/xml or application/
 
 ##### Response Body
 
-In case the ASPSP returns a camt.05x XML structure, the response body consists of either a camt.052 or camt.053 format. The camt.052 may include pending payments which are not yet finally booked. The ASPSP will decide on the format due to the chosen parameters, specifically on the chosen dates relative to the time of the request. 
+In case the ASPSP returns a camt.05x XML structure, the response body consists of either a camt.052 or camt.053 format. The camt.052 may include pending payments which are not yet finally booked. The ASPSP will decide on the format due to the chosen parameters, specifically on the chosen dates relative to the time of the request.
 
-In case the ASPSP returns a MT94x content, the response body consists of an MT940 or MT942 format in a text structure. The camt.052 may include pending payments which are not yet finally booked. The ASPSP will decide on the format due to the chosen parameters, specifically on the chosen dates relative to the time of the request. 
+In case the ASPSP returns a MT94x content, the response body consists of an MT940 or MT942 format in a text structure. The camt.052 may include pending payments which are not yet finally booked. The ASPSP will decide on the format due to the chosen parameters, specifically on the chosen dates relative to the time of the request.
 
 A JSON response is defined as follows:
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| _links | links | Optional | A list of hyperlinks to be recognized by the TPP. Admitted types of links are "download" (link to a resource, where the transaction report might be downloaded from). This feature shall be only used where camt-data is requested which has a huge size. |
+| _links | links | Optional | A list of hyperlinks to be recognized by the TPP. <br> Admitted types of links are "download" (link to a resource, where the transaction report might be downloaded from). <br><br> Remark: This feature shall be only used where camt-data is requested which has a huge size. <br><br> Pagination links where transaction reports have a huge size and the ASPSP is only providing one page, where page size is defined by the ASPSP. <br><br> "first", "next", "previous", "last" |
 | transactions | Account Report | Optional | JSON based account report. |
 
 
@@ -604,44 +895,44 @@ A JSON response is defined as follows:
 
     GET https://api.testbank.com/v1/accounts/qwer3456tzui7890/transactions?date_from="2017-07-01"&date_to= “2017-07-30”&psu-involved
     Accept: application/json, application/text;q=0.9, application/xml;q=0.8 
-
-*Response in JSON format*
+ 
+*Response in JSON format for an access on a regular account*
 
 Response Code 200
 
     {“transactions” :
        {“booked” :
           [{
-             "transaction_id" : "12345672" ,
-             "creditor_name" : "John Miles" ,
-             "creditor_account" : {"iban" : "DE43533700240123456900"},
-             "Amount” : {"currency" : "EUR", "content" : "-256,67"} ,
-             "booking_date" : "2017-10-25" ,
-             "value_date" : "2017-10-26" ,
-             "remittance_information_unstructured" : "Example for Remittance Information"
+             "transactioId" : "1234567" ,
+             "creditorName" : "John Miles" ,
+             "creditorAccount" : {"iban" : "DE43533700240123456900"},
+             "amount” : {"currency" : "EUR", "content" : "-256,67"} ,
+             "bookingDate" : "2017-10-25" ,
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 1"
           },
           {
-             "transaction_id" : "1234568",
-             "debtor_name" : "Paul Simpson" ,
-             "debtor_account" : {"iban" : "NL354543123456900"} ,
+             "transactionId" : "1234568",
+             "debtorName" : "Paul Simpson" ,
+             "debtorAccount" : {"iban" : "NL354543123456900"} ,
              "amount" : {"currency" : "EUR", content: "343,01"} ,
-             "booking_date" : "2017-10-25" ,
-             "value_date" : "2017-10-26" ,
-             "remittance_information_unstructured" : "Another example for Remittance Information"
+             "bookingDate" : "2017-10-25" ,
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 2"
           }],
        },
        {"pending" :
           [{
-             "transaction_id" : "1234569" ,
-             "creditor_name" : "Claude Renault" ,
-             "creditor_account : {"iban" : "FR33554543123456900"},
+             "transactionId" : "1234569" ,
+             "creditorName" : "Claude Renault" ,
+             "creditorAccount : {"iban" : "FR33554543123456900"},
              "amount” : {"currency" : "EUR", "content" : "-100,03"} ,
-             "value_date" : "2017-10-26" ,
-             "remittance_information_unstructured" : "Third Example for Remittance Information"
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 3"
           }]
        },
        {"_links":
-          {"account-link" : "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}
+          {"viewAccount" : "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}
        }
     }
     
@@ -649,4 +940,51 @@ Response Code 200
 
     {
        "_links : {"download" : www.testapi.com/xs2a/v1/accounts/12345678999/transactions/download/}
+    }
+    
+*Response in JSON format for an access on a multicurrency account on aggregation level*
+
+    {“transactions” :
+       {“booked” :
+          [{
+             "transactioId" : "1234567" ,
+             "creditorName" : "John Miles" ,
+             "creditorAccount" : {"iban" : "DE43533700240123456900"},
+             "amount” : {"currency" : "EUR", "content" : "-256,67"} ,
+             "bookingDate" : "2017-10-25" ,
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 1"
+          },
+          {
+             "transactionId" : "1234568",
+             "debtorName" : "Paul Simpson" ,
+             "debtorAccount" : {"iban" : "NL354543123456900"} ,
+             "amount" : {"currency" : "EUR", content: "343,01"} ,
+             "bookingDate" : "2017-10-25" ,
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 2"
+          },
+          {
+             "transactionId" : "1234569",
+             "debtorName" : "Pepe Martin" ,
+             "debtorAccount" : {"iban" : "SE1234567891234"} ,
+             "amount" : {"currency" : "USD", content: "100"} ,
+             "bookingDate" : "2017-10-25" ,
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 3"
+          }],
+       },
+       {"pending" :
+          [{
+             "transactionId" : "1234570" ,
+             "creditorName" : "Claude Renault" ,
+             "creditorAccount : {"iban" : "FR33554543123456900"},
+             "amount” : {"currency" : "EUR", "content" : "-100,03"} ,
+             "valueDate" : "2017-10-26" ,
+             "remittanceInformationUnstructured" : "Example 4"
+          }]
+       },
+       {"_links":
+          {"viewAccount" : "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f"}
+       }
     }
