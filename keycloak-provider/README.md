@@ -1,3 +1,5 @@
+mvn clean install
+
 docker build -t keycloak 
 
 docker run -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin123 key-cloak
