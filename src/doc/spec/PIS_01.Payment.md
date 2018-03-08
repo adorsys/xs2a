@@ -169,24 +169,24 @@ system.
 
 
 The following table first gives an overview on the generic Berlin Group defined JSON
-structures of standard SEPA payment products.
+structures of standard SEPA payment products for single payments.
 
 Data Element | Type  | SCT EU Core | SCT_INST EU Core | Target2  Paym. Core | Cross  Curr CT Core |
 ------- | ---------------- |  ---------  |  --------- |  --------- |  ---------
-| end_to_end_identification	| String |	Optional |	Optional | Optional | n.a. |
-| debtor_account (incl. type)	| Account Reference |	mandatory |	mandatory | mandatory | mandatory |
-| debtor_account_currency	| CODE |	n.a. |	n.a. | n.a. | optional |
-| ultimate_debtor	| String |	n.a. |	n.a. | n.a. | n.a. |
-| instructed_amount (inc. Curr.)	| Amount |	mandatory |	mandatory | mandatory | mandatory |
-| creditor_account	| Account Reference  |	mandatory |	mandatory | mandatory | mandatory |
-| creditor_agent	| BICFI |	Optional |	Optional | Optional | Optional |
-| creditor name	| String |	mandatory |	mandatory | mandatory | mandatory |
-| creditor address	| Address |	Optional |	Optional | Optional | mandatory |
-| ultimate_creditor | String |	 n.a. |	 n.a. |  n.a. | n.a. |
-| purpose_code	| CODE |	 n.a. |	 n.a. |  n.a. | n.a. |
-| remittance_information_unstructured	| String |	Optional |	Optional | Optional | Optional |
-| remittance_informationstructured	| Remittance |	n.a. |	n.a. | n.a. | n.a. |
-| requested_execution	| DateTime |	n.a. |	n.a. | n.a. | n.a. |
+| endToEndIdentification	| Max35Text |	Optional |	Optional | Optional | n.a. |
+| debtorAccount (incl. type)	| Account Reference |	mandatory |	mandatory | mandatory | mandatory |
+| ultimateDebtor	| Max70Text |	n.a. |	n.a. | n.a. | n.a. |
+| instructedAmount (inc. Curr.)	| Amount |	mandatory |	mandatory | mandatory | mandatory |
+| creditorAccount	| Account Reference  |	mandatory |	mandatory | mandatory | mandatory |
+| creditorAgent	| BICFI |	Optional |	Optional | Optional | Optional |
+| creditorName	| Max70Text |	mandatory |	mandatory | mandatory | mandatory |
+| creditorAddress	| Address |	Optional |	Optional | Optional | mandatory |
+| ultimateCreditor | Max70Text |	 n.a. |	 n.a. |  n.a. | n.a. |
+| purposeCode	| Purpose Code |	 n.a. |	 n.a. |  n.a. | n.a. |
+| remittanceInformationUnstructured	| Max140Text |	Optional |	Optional | Optional | Optional |
+| remittanceInformationStructured	| Remittance |	n.a. |	n.a. | n.a. | n.a. |
+| requestedExecutionDate	| ISODate |	n.a. |	n.a. | n.a. | n.a. |
+| requestedExecutionTime	| ISODateTime |	n.a. |	n.a. | n.a. | n.a. |
 
 **Remark:** Extensions of these tables are permitted by this specification:
 * if they are less restrictive (e.g. set the debtor account to optional) or
