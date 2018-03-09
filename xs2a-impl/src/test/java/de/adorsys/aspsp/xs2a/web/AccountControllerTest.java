@@ -3,7 +3,7 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.AccountResponseList;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.AccountResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +28,7 @@ public class AccountControllerTest {
     @Autowired
     private AccountController accountController;
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @Test
     public void getAccounts_withBalance() {
@@ -155,14 +157,15 @@ public class AccountControllerTest {
 
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        AccountResponseList expectedResult = new AccountResponseList(accountService.getAccountResponses(withBalance, psuInvolved));
+        HashMap<String, List<AccountResponse>> expectedResult = new HashMap<>();
+        expectedResult.put("accountList", accountService.getAccountResponses(withBalance, psuInvolved));
 
         //When:
-        ResponseEntity<AccountResponseList> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
+        ResponseEntity<HashMap<String, List<AccountResponse>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        AccountResponseList actualResult = actualResponse.getBody();
+        HashMap<String, List<AccountResponse>> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);

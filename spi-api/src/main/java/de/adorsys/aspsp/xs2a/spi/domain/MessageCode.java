@@ -1,11 +1,11 @@
 package de.adorsys.aspsp.xs2a.spi.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "MessageCode", value = "Message error codes and related http response codes.")
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public enum MessageCode {
     CERTIFICATE_INVALID(401, "The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements."),
     CERTIFICATE_EXPIRED(401, "Signature/corporate seal certificate is expired."),
@@ -33,37 +33,43 @@ public enum MessageCode {
     RESOURCE_EXPIRED(403, "The addressed resource is associated with the TPP but has expired, not addressable anymore."),
     TIMESTAMP_INVALID(400, "Timestamp not in accepted time period."),
     PERIOD_INVALID(400, "Requested time period out of bound."),
-    SCA_METHOD_UNKNOWN(400, "Addressed SCA method in the Authentication Mehtod Select Request is unknown or cannot be matched by the ASPSP with the PSU."),
+    SCA_METHOD_UNKNOWN(400, "Addressed SCA method in the AuthenticationObject Mehtod Select Request is unknown or cannot be matched by the ASPSP with the PSU."),
     TRANSACTION_ID_INVALID(400, "The TPP-Transaction-ID is not matching the temporary resource."),
-    
+
     //PIS specific error codes
     PRODUCT_INVALID(403, "The addressed payment product is not available for the PSU ."),
     PRODUCT_UNKNOWN(404, "The addressed payment product is not supported by the ASPSP."),
     PAYMENT_FAILED(400, "The payment initiation POST request failed during the initial process.. Additional information may be provided by the ASPSP."),
     REQUIRED_KID_MISSING(401, "The payment initiation has failed due to a missing KID. This is a specific message code for the Norwegian market, where ASPSP can require the payer to transmit the KID."),
-    
+
     // AIS specific error code
-     //todo task: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/38
+    //todo task: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/38
     //CONSENT_INVALID(401, "The consent definition is not complete or invalid. In case of being not complete, the bank is not supporting a completion of the consent towards the PSU. Additional information will be provided."),
     SESSIONS_NOT_SUPPORTED(400, "The combined service flag may not be used with this ASPSP."),
     ACCESS_EXCEEDED(429, "The access on the account has been exceeding the consented multiplicity per day."),
     REQUESTED_FORMATS_INVALID(401, "The requested formats in the Accept header entry are not matching the formats offered by the ASPSP.");
-    
+
     @ApiModelProperty(value = "code", example = "400")
     private int code;
     @ApiModelProperty(value = "description", example = "Requested time period out of bound.")
     private String description;
-    
+
+    @JsonCreator
     MessageCode(int code, String description) {
         this.code = code;
         this.description = description;
     }
-    
+
     public int getCode() {
         return code;
     }
-    
+
     public String getDescription() {
         return description;
+    }
+
+    @JsonValue
+    public int toValue() {
+        return code;
     }
 }

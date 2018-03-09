@@ -2,7 +2,7 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.domain.*;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.test.data.MockData;
+import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,14 @@ public class AccountSpiImpl implements AccountSpi {
     public List<Account> readAccounts(boolean withBalance, boolean psuInvolved) {
 
         if (!withBalance) {
-            return getNoBalanceAccountList(MockData.getAccounts());
+            return getNoBalanceAccountList(AccountMockData.getAccounts());
         }
 
-        return MockData.getAccounts();
+        return AccountMockData.getAccounts();
     }
 
     private List<Account> getNoBalanceAccountList(List<Account> accounts) {
-        return accounts.stream().map(account -> MockData.createAccount(
+        return accounts.stream().map(account -> AccountMockData.createAccount(
         account.getId(),
         account.getCurrency(),
         null,
@@ -38,14 +38,14 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     public Balances readBalances(String accountId, boolean psuInvolved) {
-        HashMap<String, Account> accounts = MockData.getAccountsHashMap();
+        HashMap<String, Account> accounts = AccountMockData.getAccountsHashMap();
         Account account = Optional.ofNullable(accounts.get(accountId)).orElse(new Account());
         return account.getBalances();
     }
 
     public AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
-        List<Transactions> transactions = MockData.getTransactions();
-        Links links = MockData.createEmptyLinks();
+        List<Transactions> transactions = AccountMockData.getTransactions();
+        Links links = AccountMockData.createEmptyLinks();
 
         List<Transactions> validTransactions = filterValidTransactionsByAccountId(transactions, accountId);
         List<Transactions> transactionsFilteredByPeriod = filterTransactionsByPeriod(validTransactions, dateFrom, dateTo);
@@ -56,8 +56,8 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     public AccountReport readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
-        List<Transactions> transactions = MockData.getTransactions();
-        Links links = MockData.createEmptyLinks();
+        List<Transactions> transactions = AccountMockData.getTransactions();
+        Links links = AccountMockData.createEmptyLinks();
 
         List<Transactions> validTransactions = filterValidTransactionsByAccountId(transactions, accountId);
         List<Transactions> filteredTransaction = filterValidTransactionsByTransactionId(validTransactions, transactionId);

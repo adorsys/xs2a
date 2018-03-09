@@ -5,7 +5,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.TransactionsArt;
 
 import java.util.*;
 
-public class MockData {
+public class AccountMockData {
 
     private static List<Account> accounts = new ArrayList<>();
     private static List<Transactions> transactions = new ArrayList<>();
@@ -88,19 +88,22 @@ public class MockData {
     public static Links createEmptyLinks() {
         Links links = new Links();
 
-        links.setBalances(null);
         links.setRedirect(null);
-        links.setCurrent_page_link(null);
-        links.setFirst_page_link(null);
-        links.setLast_page_link(null);
-        links.setRedirect(null);
-        links.setSecond_page_link(null);
-        links.setSelect_authentication_method(null);
+        links.setOAuth(null);
+        links.setUpdatePsuAuthentication(null);
+        links.setUpdatePsuIdentification(null);
+        links.setUpdateProprietaryData(null);
+        links.setSelectAuthenticationMethod(null);
         links.setSelf(null);
-        links.setTransactions(null);
         links.setStatus(null);
-        links.setUpdate_psu_authentication(null);
-        links.setUpdate_psu_identification(null);
+        links.setViewBalances(null);
+        links.setViewAccount(null);
+        links.setViewTransactions(null);
+        links.setFirst(null);
+        links.setNext(null);
+        links.setPrevious(null);
+        links.setLast(null);
+        links.setDownload(null);
 
         return links;
     }

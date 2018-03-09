@@ -1,4 +1,4 @@
-package utils;
+package de.adorsys.aspsp.xs2a.spi.utils;
 
 
 import java.text.DateFormat;
@@ -34,6 +34,15 @@ public class DateUtil {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static Date getDateFromDateStringNoTimeZone(String dateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
             return null;

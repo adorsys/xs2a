@@ -25,7 +25,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Validated
 public class AccountService {
     @Value("${application.ais.transaction.max-length}")
-    private int MAX_LENGTH;
+    private int MAX_LENGTH_TRANSACTION_JSON;
 
     @Autowired
     private AccountSpi accountSpi;
@@ -61,12 +61,12 @@ public class AccountService {
 
         String jsonReport = new Gson().toJson(accountReport);
 
-        if (jsonReport.length() > MAX_LENGTH) {
+        if (jsonReport.length() > MAX_LENGTH_TRANSACTION_JSON) {
             return getAccountReportWithDownloadLink(accountId);
         }
 
         String urlToAccount = linkTo(AccountController.class).slash(accountId).toString();
-        accountReport.get_links().setAccount_link(urlToAccount);
+        accountReport.get_links().setViewAccount(urlToAccount);
         return accountReport;
     }
 
@@ -81,7 +81,7 @@ public class AccountService {
     }
 
     public AccountReport getAccountReportWithDownloadLink(@NotEmpty String accountId) {
-        // todo further we should implement real flow for download file
+        // todo further we should implement real flow for downloading file
         String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
         Links downloadLink = new Links();
         downloadLink.setDownload(urlToDownload);

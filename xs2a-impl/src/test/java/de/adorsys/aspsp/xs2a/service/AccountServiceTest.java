@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import utils.DateUtil;
+import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
 
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
@@ -29,9 +29,9 @@ public class AccountServiceTest {
     private final String TRANSACTION_ID = "1234578";
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
     @Autowired
-    AccountSpi accountSpi;
+    private AccountSpi accountSpi;
 
     @Test
     public void getAccountResponses_withBalanceNoPsuInvolved() throws IOException {
@@ -128,7 +128,7 @@ public class AccountServiceTest {
         //Given:
         AccountReport expectedResult = accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         String link = linkTo(AccountController.class).slash(accountId).toString();
-        expectedResult.get_links().setAccount_link(link);
+        expectedResult.get_links().setViewAccount(link);
 
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved);
@@ -141,7 +141,7 @@ public class AccountServiceTest {
         //Given:
         AccountReport expectedResult = accountSpi.readTransactionsById(accountId, transactionId, psuInvolved);
         String link = linkTo(AccountController.class).slash(accountId).toString();
-        expectedResult.get_links().setAccount_link(link);
+        expectedResult.get_links().setViewAccount(link);
 
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved);
