@@ -1,10 +1,12 @@
 package de.adorsys.keycloak.extension.clientregistration;
 
 import java.net.URI;
+import java.security.cert.CertificateException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,6 +15,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -45,6 +48,8 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
         super(session);
     }
 
+    @Context HttpServletRequest request ;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,10 +58,10 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
         if (clientOIDC.getClientId() != null) {
             throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client Identifier included", Response.Status.BAD_REQUEST);
         }
-        
-        CertificateUtil.verifiedCertificate(clientOIDC); //we verified the certificate here and validate the client
+
 
         try {
+            CertVerifier.verify(clientOIDC,request); //we verified the certificate here and validate the client
             ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
             OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this, clientOIDC);
             client = create(oidcContext);
@@ -72,6 +77,9 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
         } catch (ClientRegistrationException cre) {
             ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
             throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid", Response.Status.BAD_REQUEST);
+        } catch (CertificateException e) {
+            ServicesLogger.LOGGER.clientRegistrationException(e.getMessage());
+            throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client certificate invalid", Response.Status.BAD_REQUEST);
         }
     }
 
