@@ -71,31 +71,31 @@ public class SpiMockConfig {
         AccountMockData.createTransactions(
         AccountMockData.getAmounts().get(0), "12345",
         7, 4, "future",
-        "debit", AccountMockData.getAccounts().get(3).getName(), AccountMockData.getAccounts().get(3), "",
+        "debit", AccountMockData.getAccountDetails().get(3).getName(), new AccountReference(AccountMockData.getAccountDetails().get(3)), "",
         "", null, "", "Example for remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getAmounts().get(4), "123456",
         4, 6, "future",
-        "debit", AccountMockData.getAccounts().get(4).getName(), AccountMockData.getAccounts().get(4), "",
+        "debit", AccountMockData.getAccountDetails().get(4).getName(), new AccountReference(AccountMockData.getAccountDetails().get(4)), "",
         "", null, "", "Another Example for remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getAmounts().get(1), "123457",
         6, 10, "past",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(2)", AccountMockData.getAccounts().get(2), "", "remittance information");
+        "AccountMockData.getAccounts().get(2)", new AccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getAmounts().get(2), "1234578",
         17, 20, "past",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(2)", AccountMockData.getAccounts().get(2), "", "remittance information");
+        "AccountMockData.getAccounts().get(2)", new AccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
         AccountMockData.createTransactions(
         AccountMockData.getAmounts().get(3), "1234578",
         5, 3, "future",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(1)", AccountMockData.getAccounts().get(1), "", "remittance information");
+        "AccountMockData.getAccounts().get(1)", new AccountReference(AccountMockData.getAccountDetails().get(1)), "", "remittance information");
 
     }
 

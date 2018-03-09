@@ -17,30 +17,30 @@ import java.util.stream.Collectors;
 public class AccountSpiImpl implements AccountSpi {
     private final Logger LOGGER = LoggerFactory.getLogger(AccountSpiImpl.class);
 
-    public List<Account> readAccounts(boolean withBalance, boolean psuInvolved) {
+    public List<AccountDetails> readAccounts(boolean withBalance, boolean psuInvolved) {
 
         if (!withBalance) {
-            return getNoBalanceAccountList(AccountMockData.getAccounts());
+            return getNoBalanceAccountList(AccountMockData.getAccountDetails());
         }
 
-        return AccountMockData.getAccounts();
+        return AccountMockData.getAccountDetails();
     }
 
-    private List<Account> getNoBalanceAccountList(List<Account> accounts) {
-        return accounts.stream().map(account -> AccountMockData.createAccount(
+    private List<AccountDetails> getNoBalanceAccountList(List<AccountDetails> accountDetails) {
+        return accountDetails.stream().map(account -> AccountMockData.createAccount(
         account.getId(),
         account.getCurrency(),
         null,
         account.getIban(),
         account.getBic(),
         account.getName(),
-        account.getAccount_type())).collect(Collectors.toList());
+        account.getAccountType())).collect(Collectors.toList());
     }
 
     public Balances readBalances(String accountId, boolean psuInvolved) {
-        HashMap<String, Account> accounts = AccountMockData.getAccountsHashMap();
-        Account account = Optional.ofNullable(accounts.get(accountId)).orElse(new Account());
-        return account.getBalances();
+        HashMap<String, AccountDetails> accounts = AccountMockData.getAccountsHashMap();
+        AccountDetails accountDetails = Optional.ofNullable(accounts.get(accountId)).orElse(new AccountDetails());
+        return accountDetails.getBalances();
     }
 
     public AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
@@ -70,21 +70,21 @@ public class AccountSpiImpl implements AccountSpi {
 
     private Transactions[] getFilteredPendingTransactions(List<Transactions> transactions) {
         return transactions.parallelStream()
-               .filter(transaction -> transaction.getBooking_date() == null)
+               .filter(transaction -> transaction.getBookingDate() == null)
                .toArray(Transactions[]::new);
     }
 
     private Transactions[] getFilteredBookedTransactions(List<Transactions> transactions) {
         return transactions.parallelStream()
-               .filter(transaction -> transaction.getBooking_date() != null)
+               .filter(transaction -> transaction.getBookingDate() != null)
                .toArray(Transactions[]::new);
     }
 
     private List<Transactions> filterTransactionsByPeriod(List<Transactions> transactions, Date dateFrom, Date dateTo) {
         return transactions.parallelStream()
                .filter(transaction ->
-                       transaction.getBooking_date().after(dateFrom)
-                       && transaction.getBooking_date().before(dateTo)
+                       transaction.getBookingDate().after(dateFrom)
+                       && transaction.getBookingDate().before(dateTo)
                )
                .collect(Collectors.toList());
     }
@@ -97,18 +97,18 @@ public class AccountSpiImpl implements AccountSpi {
 
     private List<Transactions> filterValidTransactionsByTransactionId(List<Transactions> transactions, String transactionId) {
         return transactions.parallelStream()
-               .filter(transaction -> transaction.getTransaction_id().equals(transactionId))
+               .filter(transaction -> transaction.getTransactionId().equals(transactionId))
                .collect(Collectors.toList());
     }
 
     private boolean transactionIsValid(Transactions transaction, String accountId) {
 
-        boolean isCreditorAccountValid = Optional.ofNullable(transaction.getCreditor_account())
-                                         .map(creditorAccount -> creditorAccount.getId().trim().equals(accountId.trim()))
+        boolean isCreditorAccountValid = Optional.ofNullable(transaction.getCreditorAccount())
+                                         .map(creditorAccount -> creditorAccount.getAccountId().trim().equals(accountId.trim()))
                                          .orElse(false);
 
-        boolean isDebtorAccountValid = Optional.ofNullable(transaction.getDebtor_account())
-                                       .map(debtorAccount -> debtorAccount.getId().trim().equals(accountId.trim()))
+        boolean isDebtorAccountValid = Optional.ofNullable(transaction.getDebtorAccount())
+                                       .map(debtorAccount -> debtorAccount.getAccountId().trim().equals(accountId.trim()))
                                        .orElse(false);
 
         return isCreditorAccountValid || isDebtorAccountValid;

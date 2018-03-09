@@ -1,9 +1,9 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.AccountResponse;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,19 +31,19 @@ public class AccountController {
     @ApiResponse(code = 200, message = "OK"),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<HashMap<String, List<AccountResponse>>> getAccounts(
+    public ResponseEntity<HashMap<String, List<AccountDetails>>> getAccounts(
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
-        List<AccountResponse> accountResponses = accountService.getAccountResponses(withBalance, psuInvolved);
-        HashMap<String, List<AccountResponse>> accountResponseList = new HashMap<>();
-        accountResponseList.put("accountList", accountResponses);
+        List<AccountDetails> accountDetails = accountService.getAccountDetailsList(withBalance, psuInvolved);
+        HashMap<String, List<AccountDetails>> accountDetailsList = new HashMap<>();
+        accountDetailsList.put("accountList", accountDetails);
 
-        LOGGER.debug("getAccounts(): response has {} accounts", accountResponses.size());
+        LOGGER.debug("getAccounts(): response has {} accounts", accountDetails.size());
 
-        return new ResponseEntity<>(accountResponseList, HttpStatus.OK);
+        return new ResponseEntity<>(accountDetailsList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Read a list of the balances for the given account")

@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @ApiModel(description = "Balance Information", value = "SingleBalance")
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SingleBalance {
 
 	@ApiModelProperty(value = "amount", required = true)

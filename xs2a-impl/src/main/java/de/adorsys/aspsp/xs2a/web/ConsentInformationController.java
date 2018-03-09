@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.ConsentService;
-import de.adorsys.aspsp.xs2a.spi.domain.Account;
+import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.AisStatusResponseBody;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentRequestBody;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentResponseBody;
@@ -49,10 +49,10 @@ public class ConsentInformationController {
 
     @ApiOperation(value = "Creats an account information consent resource at the ASPSP to return a list of all accessible accounts",
     notes = "if withBalance is true then the balance is on the list off all payments accounts ")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Account[].class),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountDetails[].class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/account-list", method = RequestMethod.POST)
-    public Resource<List<Account>> createAICRessource(
+    public Resource<List<AccountDetails>> createAICRessource(
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = true) Boolean withBalance) {
 
@@ -97,8 +97,8 @@ public class ConsentInformationController {
         return null;
     }
 
-    private List<Account> getAllAccounts(Boolean withBalance) {
+    private List<AccountDetails> getAllAccounts(Boolean withBalance) {
         // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
-        return new ArrayList<Account>();
+        return new ArrayList<AccountDetails>();
     }
 }

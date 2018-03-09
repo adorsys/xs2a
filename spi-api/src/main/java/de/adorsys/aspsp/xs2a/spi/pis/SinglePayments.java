@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.Amount;
 import de.adorsys.aspsp.xs2a.spi.domain.address.Address;
+import de.adorsys.aspsp.xs2a.spi.domain.codes.BICFI;
+import de.adorsys.aspsp.xs2a.spi.domain.codes.PurposeCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

@@ -1,8 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.delete_extra_class;
 
 import de.adorsys.aspsp.xs2a.spi.domain.ais.AisStatusResponseBody;
-import de.adorsys.aspsp.xs2a.spi.domain.delete_extra_class.Authentication;
-import de.adorsys.aspsp.xs2a.spi.domain.Challenge;
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

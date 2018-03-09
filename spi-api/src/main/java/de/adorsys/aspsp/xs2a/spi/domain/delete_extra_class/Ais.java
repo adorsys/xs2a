@@ -15,7 +15,7 @@ public class Ais {
 	private AuthenticationObject chosen_sca_method;
 	private Challenge sca_challenge_data;
 	private PsuUser psu;
-	private Account psu_account;
+	private AccountDetails psu_accountDetails;
 	private SingleAccountAccess[] accounts;
 	private Date date_from;
 	private Date date_to;

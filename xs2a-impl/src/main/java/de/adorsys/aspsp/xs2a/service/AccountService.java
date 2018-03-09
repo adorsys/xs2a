@@ -1,11 +1,10 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import com.google.gson.Gson;
-import de.adorsys.aspsp.xs2a.spi.domain.Account;
+import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.AccountResponse;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -17,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -30,15 +28,27 @@ public class AccountService {
     @Autowired
     private AccountSpi accountSpi;
 
-    public List<AccountResponse> getAccountResponses(boolean withBalance, boolean psuInvolved) {
+ /*   public List<AccountResponse> getAccountResponses(boolean withBalance, boolean psuInvolved) {
 
-        List<Account> accounts = accountSpi.readAccounts(withBalance, psuInvolved);
+        List<AccountDetails> accountDetails = accountSpi.readAccounts(withBalance, psuInvolved);
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
-        return accounts.stream()
-               .map(account -> new AccountResponse(account, urlToAccount))
-               .collect(Collectors.toList());
+        return accountDetails.stream()
+        .map(account -> new AccountResponse(account, urlToAccount))
+        .collect(Collectors.toList());
+    }*/
+
+    public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
+
+        String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
+
+        List<AccountDetails> accountDetails = accountSpi.readAccounts(withBalance, psuInvolved);
+
+        accountDetails.forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
+
+        return accountDetails;
     }
+
 
     public Balances getBalances(@NotEmpty String accountId, boolean psuInvolved) {
         return accountSpi.readBalances(accountId, psuInvolved);
@@ -71,12 +81,12 @@ public class AccountService {
     }
 
     private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
-                                                  @NotNull Date dateTo, boolean psuInvolved) {
+                                                   @NotNull Date dateTo, boolean psuInvolved) {
         return accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
     }
 
     private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
-                                              boolean psuInvolved) {
+                                               boolean psuInvolved) {
         return accountSpi.readTransactionsById(accountId, transactionId, psuInvolved);
     }
 

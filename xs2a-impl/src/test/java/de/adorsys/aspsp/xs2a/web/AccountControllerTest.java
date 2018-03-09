@@ -1,9 +1,9 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.AccountResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,15 +157,15 @@ public class AccountControllerTest {
 
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        HashMap<String, List<AccountResponse>> expectedResult = new HashMap<>();
-        expectedResult.put("accountList", accountService.getAccountResponses(withBalance, psuInvolved));
+        HashMap<String, List<AccountDetails>> expectedResult = new HashMap<>();
+        expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved));
 
         //When:
-        ResponseEntity<HashMap<String, List<AccountResponse>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
+        ResponseEntity<HashMap<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        HashMap<String, List<AccountResponse>> actualResult = actualResponse.getBody();
+        HashMap<String, List<AccountDetails>> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);

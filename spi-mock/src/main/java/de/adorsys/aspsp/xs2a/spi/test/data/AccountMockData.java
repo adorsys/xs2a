@@ -1,18 +1,19 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
 import de.adorsys.aspsp.xs2a.spi.domain.*;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionsArt;
+import de.adorsys.aspsp.xs2a.spi.domain.codes.BankTransactionCode;
+import de.adorsys.aspsp.xs2a.spi.domain.codes.PurposeCode;
 
 import java.util.*;
 
 public class AccountMockData {
 
-    private static List<Account> accounts = new ArrayList<>();
+    private static List<AccountDetails> accountDetails = new ArrayList<>();
     private static List<Transactions> transactions = new ArrayList<>();
     private static List<Amount> amounts = new ArrayList<>();
     private static List<SingleBalance> singleBalances = new ArrayList<>();
     private static List<Balances> balances = new ArrayList<>();
-    private static HashMap<String, Account> accounts_hashmap = new HashMap<String, Account>();
+    private static HashMap<String, AccountDetails> accounts_hashmap = new HashMap<String, AccountDetails>();
 
     public static void createAmount(String content, Currency currency) {
         Amount amount = new Amount();
@@ -22,8 +23,8 @@ public class AccountMockData {
     }
 
     public static void createAccountsHashMap() {
-        for (Account account : accounts) {
-            accounts_hashmap.put(account.getId(), account);
+        for (AccountDetails accountDetails : AccountMockData.accountDetails) {
+            accounts_hashmap.put(accountDetails.getId(), accountDetails);
         }
     }
 
@@ -68,21 +69,21 @@ public class AccountMockData {
     }
 
     public static void addAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
-        Account account = createAccount(ID, currency, balance, iban, BIC, name, account_type);
-        accounts.add(account);
+        AccountDetails accountDetails = createAccount(ID, currency, balance, iban, BIC, name, account_type);
+        AccountMockData.accountDetails.add(accountDetails);
     }
 
-    public static Account createAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
-        Account account = new Account();
-        account.setIban(iban);
-        account.setId(ID);
-        account.setBic(BIC);
-        account.setCurrency(currency);
-        account.setAccount_type(account_type);
-        account.setName(name);
-        account.setBalances(balance);
-        account.set_links(createEmptyLinks());
-        return account;
+    public static AccountDetails createAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
+        AccountDetails accountDetails = new AccountDetails();
+        accountDetails.setIban(iban);
+        accountDetails.setId(ID);
+        accountDetails.setBic(BIC);
+        accountDetails.setCurrency(currency);
+        accountDetails.setAccountType(account_type);
+        accountDetails.setName(name);
+        accountDetails.setBalances(balance);
+        accountDetails.set_links(createEmptyLinks());
+        return accountDetails;
     }
 
     public static Links createEmptyLinks() {
@@ -110,36 +111,41 @@ public class AccountMockData {
 
     public static void createTransactions(Amount amount, String transactionId,
                                           int nrDaysToValue, int nrDaysToBooking, String when,
-                                          String credit_debit, String creditorName,
-                                          Account creditor_account, String ultimate_creditor,
-                                          String debtorName, Account debtor_account,
-                                          String ultimate_debtor, String remittance_information) {
+                                          String creditDebit, String creditorName,
+                                          AccountReference creditorAccount, String ultimateCreditor,
+                                          String debtorName, AccountReference debtorAccount,
+                                          String ultimateDebtor, String remittanceInformation) {
 
         Transactions t = new Transactions();
-        t.setTransaction_id(transactionId);
-        t.setEntry_date(new Date());
-        t.setValue_date(createDate(nrDaysToValue, "when"));
-        t.setBooking_date(createDate(nrDaysToBooking, "when"));
-        System.out.println("booking_date" + t.getBooking_date());
+        t.setTransactionId(transactionId);
+        t.setEndToEndId("EndToEndId");
+        t.setMandateId("MandateId");
+        t.setCreditorId("CreditorId");
+        t.setBookingDate(createDate(nrDaysToBooking, when));
+        t.setValueDate(createDate(nrDaysToValue, when));
         t.setAmount(amount);
-        t.setCredit_debit(credit_debit);
-        t.setCreditor_name(creditorName);
-        t.setCreditor_account(creditor_account);
-        t.setUltimate_creditor(ultimate_creditor);
-        t.setDebtor(debtorName);
-        t.setDebtor_account(debtor_account);
-        t.setUltimate_debtor(ultimate_debtor);
-        t.setRemittance_information_unstructured(remittance_information);
-        transactions.add(t);
+        t.setCreditorName(creditorName);
+        t.setCreditorAccount(creditorAccount);
+        t.setUltimateCreditor(ultimateCreditor);
+        t.setDebtorName(debtorName);
+        t.setDebtorAccount(debtorAccount);
+        t.setUltimateDebtor(ultimateDebtor);
+        t.setRemittanceInformationStructured("Ref Number Merchant");
+        t.setRemittanceInformationUnstructured("Ref Number Merchant");
+        t.setPurposeCode(new PurposeCode("PurposeCode"));
+        t.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
 
+        System.out.println("booking_date" + t.getBookingDate());
+
+        transactions.add(t);
     }
 
     public static List<Amount> getAmounts() {
         return amounts;
     }
 
-    public static List<Account> getAccounts() {
-        return accounts;
+    public static List<AccountDetails> getAccountDetails() {
+        return accountDetails;
     }
 
     public static List<SingleBalance> getSingleBalances() {
@@ -154,7 +160,7 @@ public class AccountMockData {
         return transactions;
     }
 
-    public static HashMap<String, Account> getAccountsHashMap() {
+    public static HashMap<String, AccountDetails> getAccountsHashMap() {
         return accounts_hashmap;
     }
 
