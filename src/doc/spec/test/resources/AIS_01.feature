@@ -1,6 +1,6 @@
 Feature: Account Information Service
 
-  Scenario: Consent request on dedicated accounts with redirect approach
+  Scenario: Consent request on dedicated accounts
     Given AISP wants to create a consent resource with data
       | access | recurringIndicator | validUntil | frequencyPerDay |
       | balances: [{iban: DE2310010010123456789}, {iban: DE2310010010123456790, currency: USD}, {iban: DE2310010010123456788}], transactions: [{iban: DE2310010010123456789}, {maskedPan: 123456xxxxxx1234}]  | true | 2018-08-01 | 4 |
@@ -11,18 +11,6 @@ Feature: Account Information Service
     And the following data is delivered to the AISP:
       | transactionStatus | consentId | links |
       | Received | 1234-wertiq-983    | redirect: https://www.testbank.com/authentication/1234-wertiq-983 |
-
-  Scenario: Consent request on dedicated accounts with oAuth2 approach
-    Given AISP wants to create a consent resource with data
-      | access | recurringIndicator | validUntil | frequencyPerDay |
-      | balances: [{iban: DE2310010010123456789}, {iban: DE2310010010123456790, currency: USD}, {iban: DE2310010010123456788}], transactions: [{iban: DE2310010010123456789}, {maskedPan: 123456xxxxxx1234}]  | true | 2018-08-01 | 4 |
-    And the OAuth2 approach is used
-    When AISP sends the create consent request
-    Then a consent resource is created at the aspsp mock
-    And response code 201
-    And the following data is delivered to the AISP:
-      | transactionStatus | consentId | links |
-      | Received | 1234-wertiq-984    | {self: /v1/consents/1234-wertiq-984, consentId: 1234-wertiq-984}     |
 
   Scenario: Consent request on account list of available accounts
     Given AISP wants to create a consent resource with data
