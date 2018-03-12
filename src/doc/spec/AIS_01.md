@@ -1,4 +1,4 @@
-# XS2A interface –> Core services-> Payment Initiation Service
+# XS2A interface –> Core services-> Account Information Service
 
 
 ## AIS_01 Account Information Service (AIS).
