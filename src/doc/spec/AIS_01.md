@@ -178,7 +178,7 @@ The consequence for this function is that the list of transactions will contain 
 ### Establish Account Information Consent
 #### AIS_01_01 Consent Request
 
-#### Consent Request on Dedicated Accounts
+#### AIS_01_01_01 Consent Request on Dedicated Accounts
 
 ##### Call
     POST /v1/consents
@@ -318,15 +318,15 @@ Response Body:
     
 #### Consent Request on Account List or without Indication of Accounts
 
-##### Consent Request on Account List of Available Accounts
+##### AIS_01_01_02 Consent Request on Account List of Available Accounts
 This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call only contains the "available-accounts" sub attribute within the "access" attribute with value "all-accounts".
 In this case the call creates an account information consent resource at the ASPSP to return a list of all available accounts. For this specific Consent Request, no assumptions are made for the SCA Approach by this specification.
 
-##### Consent Request without Indication of Accounts
+##### AIS_01_01_03 Consent Request without Indication of Accounts
 This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array.
 The ASPSP will then agree bilaterally directly with the PSU on which accounts the requested access consent should be supported. The result can be retrieved by the TPP by using the GET Consent Request method. 
 
-##### Consent Request for Access to all Accounts for all PSD2 defined AIS
+##### AIS_01_01_04 Consent Request for Access to all Accounts for all PSD2 defined AIS
 This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call contains the "allPsd2" sub attribute within the "access" attribute with the value "all-accounts".
 If this function is supported, it will imply a consent on all available accounts of the PSU on all PSD2 related account information services. For this specific Consent Request, no assumptions are made for the SCA Approach by this specification.
 
