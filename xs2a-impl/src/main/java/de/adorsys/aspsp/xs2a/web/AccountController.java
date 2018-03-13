@@ -22,10 +22,13 @@ import java.util.List;
 @Api(value = "api/v1/accounts", tags = "AISP, Accounts", description = "Provides access to the Psu account")
 public class AccountController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
-
-    @Autowired
     private AccountService accountService;
-
+    
+    @Autowired
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+    
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "OK"),

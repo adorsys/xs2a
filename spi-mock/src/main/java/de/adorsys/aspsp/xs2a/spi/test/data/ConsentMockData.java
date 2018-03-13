@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
 import de.adorsys.aspsp.xs2a.spi.domain.Consent;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentRequestBody;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -10,7 +10,7 @@ public class ConsentMockData {
 
     private static HashMap<String, Consent> consentMap = new HashMap<String, Consent>();
 
-    public static String createAicRequest(AccountInformationConsentRequestBody aicRequest,
+    public static String createAicRequest(CreateConsentReq aicRequest,
                                           boolean withBalance, boolean tppRedirectPreferred) {
 
         String consentId = generateConsentId();
@@ -19,9 +19,14 @@ public class ConsentMockData {
         return consentId;
     }
 
-    public static AccountInformationConsentRequestBody getAicRequest(String consentId) {
-
-        return consentMap.get(consentId).getAicRequest();
+    public static CreateConsentReq getAicRequest(String consentId) {
+        CreateConsentReq consent = null;
+        
+        if (consentMap.get(consentId)!=null) {
+           consent = consentMap.get(consentId).getAicRequest();
+        }
+        
+        return consent;
     }
 
     private static String generateConsentId() {

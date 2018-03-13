@@ -3,8 +3,8 @@ package de.adorsys.aspsp.xs2a.web;
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentRequestBody;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentResponseBody;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.utils.FileUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,14 +36,14 @@ public class ConsentInformationControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
         String aicRequestJson = getJsonString(AIC_REQUEST_PATH);
-        AccountInformationConsentRequestBody expectedAicRequest = new Gson().fromJson(aicRequestJson, AccountInformationConsentRequestBody.class);
+        CreateConsentReq expectedAicRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //When:
-        ResponseEntity<AccountInformationConsentResponseBody> actualAicResponse = consentInformationController.createConsentForAccounts(withBalance, tppRedirectPreferred, expectedAicRequest);
+        ResponseEntity<CreateConsentResp> actualAicResponse = consentInformationController.createConsentForAccounts(withBalance, tppRedirectPreferred, expectedAicRequest);
 
         //Then:
         HttpStatus actualStatusCode = actualAicResponse.getStatusCode();
-        AccountInformationConsentResponseBody actualResult = actualAicResponse.getBody();
+        CreateConsentResp actualResult = actualAicResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
 
@@ -51,7 +51,7 @@ public class ConsentInformationControllerTest {
         String consentId = actualResult.getConsentId();
 
         //When:
-        AccountInformationConsentRequestBody actualAicRequest = consentService.getAicRequest(consentId);
+        CreateConsentReq actualAicRequest = consentService.getAicRequest(consentId);
         //Then:
         assertThat(actualAicRequest).isEqualTo(expectedAicRequest);
     }
@@ -59,6 +59,5 @@ public class ConsentInformationControllerTest {
     public String getJsonString(String filePath) throws IOException {
         String fullPath = getClass().getClassLoader().getResource(filePath).getFile();
         return FileUtil.getJsonStringFromFile(fullPath);
-
     }
 }

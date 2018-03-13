@@ -2,50 +2,51 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentRequestBody;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentResponseBody;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ConsentService {
-
-    @Value("${application.ais.consents.link.redirect-to}")
     private String redirectToLink;
-
-    @Autowired
     private ConsentSpi consentSpi;
-
-    public AccountInformationConsentResponseBody createAicRequest(AccountInformationConsentRequestBody accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
-
+    
+    @Autowired
+    public ConsentService(ConsentSpi consentSpi, String redirectToLink) {
+        this.consentSpi = consentSpi;
+        this.redirectToLink = redirectToLink;
+    }
+    
+    public CreateConsentResp createAicRequest(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+        
         String consentId = consentSpi.createAicRequest(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
-
-        AccountInformationConsentResponseBody aicResponse = new AccountInformationConsentResponseBody();
-        aicResponse.set_links(getLinks(consentId));
+        
+        CreateConsentResp aicResponse = new CreateConsentResp();
+        aicResponse.set_links(getLinkToConsent(consentId));
         aicResponse.setConsentId(consentId);
         aicResponse.setTransactionStatus(TransactionStatus.RCVD);
-
+        
         return aicResponse;
     }
-
-     public AccountInformationConsentRequestBody getAicRequest(String consentId){
+    
+    public CreateConsentReq getAicRequest(String consentId) {
         return consentSpi.getAicRequest(consentId);
     }
-
-    private Links getLinks(String consentId) {
-        Links links = new Links();
-
+    
+    private Links getLinkToConsent(String consentId) {
+        Links linksToConsent = new Links();
+        
         // Response in case of the OAuth2 approach
         // todo figure out when we should return  OAuth2 response
         //String selfLink = linkTo(ConsentInformationController.class).slash(consentId).toString();
-        //links.setSelf(selfLink);
-
+        //linksToConsent.setSelf(selfLink);
+        
         // Response in case of a redirect
         String redirectLink = redirectToLink + "/" + consentId;
-        links.setRedirect(redirectLink);
-
-        return links;
+        linksToConsent.setRedirect(redirectLink);
+        
+        return linksToConsent;
     }
 }

@@ -5,7 +5,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.Amount;
 import de.adorsys.aspsp.xs2a.spi.domain.SingleBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentRequestBody;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
 import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
@@ -104,7 +104,7 @@ public class SpiMockConfig {
         ConsentMockData.createAicRequest(getAicRequest_2(), true, false);
     }
 
-    private AccountInformationConsentRequestBody getAicRequest_1() {
+    private CreateConsentReq getAicRequest_1() {
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE8710010010653456712");
 
@@ -128,7 +128,7 @@ public class SpiMockConfig {
         accountAccess.setBalances(balances);
         accountAccess.setTransactions(transactions);
 
-        AccountInformationConsentRequestBody aicRequestObj = new AccountInformationConsentRequestBody();
+        CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
         aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-11-01"));
@@ -136,7 +136,7 @@ public class SpiMockConfig {
         return aicRequestObj;
     }
 
-    private AccountInformationConsentRequestBody getAicRequest_2() {
+    private CreateConsentReq getAicRequest_2() {
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE5410010010165456787");
 
@@ -160,7 +160,7 @@ public class SpiMockConfig {
         accountAccess.setBalances(balances);
         accountAccess.setTransactions(transactions);
 
-        AccountInformationConsentRequestBody aicRequestObj = new AccountInformationConsentRequestBody();
+        CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
         aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-04-25"));

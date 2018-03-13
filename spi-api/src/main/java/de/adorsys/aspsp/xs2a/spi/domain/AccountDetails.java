@@ -18,10 +18,10 @@ public class AccountDetails {
     @Size(max = 35)
     private String id;
 
-    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the AccountInformationConsentRequestBody Request Message for retrieving account access consent from this payment accoun", example = "1111111111")
+    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment accoun", example = "1111111111")
     private String iban;
 
-    @ApiModelProperty(value = "BBAN: This data element can be used in the body of the AccountInformationConsentRequestBody Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. ", example = "1111111111")
+    @ApiModelProperty(value = "BBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. ", example = "1111111111")
     private String bban;
 
     @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements", example = "1111")
@@ -47,7 +47,6 @@ public class AccountDetails {
     private String accountType;
 
     @ApiModelProperty(value = "Cash Account Type: PExternalCashAccountType1Code from ISO20022", example = "CurrentAccount")
-    @Size(max = 35)
     private CashAccountType cashAccountType;
 
     @ApiModelProperty(value = "BIC: The BIC associated to the account.", example = "1234567890")

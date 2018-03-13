@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 @ApiModel(description = "Request Body for created by some methods in the Ais Service")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountInformationConsentRequestBody {
+public class CreateConsentReq {
 
     @ApiModelProperty(value = "Requested access services.", required = true)
     private AccountAccess access;
