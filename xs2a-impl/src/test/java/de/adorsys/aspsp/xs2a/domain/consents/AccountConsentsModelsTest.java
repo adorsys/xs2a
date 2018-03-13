@@ -15,7 +15,7 @@ import java.util.Currency;
 import static de.adorsys.aspsp.xs2a.spi.utils.FileUtil.readFromInputStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConsentModelsTest {
+public class AccountConsentsModelsTest {
     private final String AIC_REQUEST_PATH = "json/AccountInformationConsentRequestTest.json";
     private final String AIC_AVAILABLE_ACCOUNTS_REQUEST_PATH = "json/AicAvailableAccountsRequestTest.json";
     private final String AIC_NO_DEDICATE_REQUEST_PATH = "json/AicNoDedicateAccountTest.json";
@@ -37,10 +37,10 @@ public class ConsentModelsTest {
     public void aicAvailableAccountsRequest_jsonTest() throws IOException {
         //Given:
         String aicRequestJson = getJsonString(AIC_AVAILABLE_ACCOUNTS_REQUEST_PATH);
-        AccountInformationConsentRequestBody expectedAICRequest = getAicAvailableAccountsRequest();
+        CreateConsentReq expectedAICRequest = getAicAvailableAccountsRequest();
 
         //When:
-        AccountInformationConsentRequestBody actualAICRequest = new Gson().fromJson(aicRequestJson, AccountInformationConsentRequestBody.class);
+        CreateConsentReq actualAICRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //Then:
         assertThat(actualAICRequest).isEqualTo(expectedAICRequest);
@@ -50,22 +50,22 @@ public class ConsentModelsTest {
     public void aicAicNoDedicateAccountRequest_jsonTest() throws IOException {
         //Given:
         String aicRequestJson = getJsonString(AIC_NO_DEDICATE_REQUEST_PATH);
-        AccountInformationConsentRequestBody expectedAICRequest = getAicNoDedicatedAccountRequest();
+        CreateConsentReq expectedAICRequest = getAicNoDedicatedAccountRequest();
 
         //When:
-        AccountInformationConsentRequestBody actualAICRequest = new Gson().fromJson(aicRequestJson, AccountInformationConsentRequestBody.class);
+        CreateConsentReq actualAICRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //Then:
         assertThat(actualAICRequest).isEqualTo(expectedAICRequest);
     }
 
-    private AccountInformationConsentRequestBody getAicNoDedicatedAccountRequest() {
+    private CreateConsentReq getAicNoDedicatedAccountRequest() {
 
         AccountAccess accountAccess = new AccountAccess();
         accountAccess.setBalances(new AccountReference[0]);
         accountAccess.setTransactions(new AccountReference[0]);
-
-        AccountInformationConsentRequestBody aicRequestObj = new AccountInformationConsentRequestBody();
+    
+        CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
         aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-11-01"));
@@ -74,12 +74,12 @@ public class ConsentModelsTest {
         return aicRequestObj;
     }
 
-    private AccountInformationConsentRequestBody getAicAvailableAccountsRequest() {
+    private CreateConsentReq getAicAvailableAccountsRequest() {
 
         AccountAccess accountAccess = new AccountAccess();
         accountAccess.setAvailableAccounts("all-accounts");
-
-        AccountInformationConsentRequestBody aicRequestObj = new AccountInformationConsentRequestBody();
+    
+        CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(false);
         aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-08-06"));
@@ -88,7 +88,7 @@ public class ConsentModelsTest {
         return aicRequestObj;
     }
 
-    private AccountInformationConsentRequestBody getAICRequestTest() {
+    private CreateConsentReq getAICRequestTest() {
 
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE2310010010123456789");

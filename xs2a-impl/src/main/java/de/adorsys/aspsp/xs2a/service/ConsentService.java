@@ -2,8 +2,10 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsentsStatusResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class ConsentService {
     
     public CreateConsentResp createAicRequest(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
         
-        String consentId = consentSpi.createAicRequest(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+        String consentId = consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
         
         CreateConsentResp aicResponse = new CreateConsentResp();
         aicResponse.set_links(getLinkToConsent(consentId));
@@ -31,8 +33,18 @@ public class ConsentService {
         return aicResponse;
     }
     
-    public CreateConsentReq getAicRequest(String consentId) {
-        return consentSpi.getAicRequest(consentId);
+    public AccountConsentsStatusResp getAccountConsentsById(String consentId) {
+        AccountConsents accountConsents = consentSpi.getAccountConsentsById(consentId);
+    
+        AccountConsentsStatusResp resp = new AccountConsentsStatusResp(accountConsents.getAccess(),
+        accountConsents.isRecurringIndicator(),
+        accountConsents.getValidUntil(),
+        accountConsents.getFrequencyPerDay(),
+        accountConsents.getLastActionDate(),
+        accountConsents.getTransactionStatus(),
+        accountConsents.getConsentStatus());
+        
+        return resp;
     }
     
     private Links getLinkToConsent(String consentId) {
