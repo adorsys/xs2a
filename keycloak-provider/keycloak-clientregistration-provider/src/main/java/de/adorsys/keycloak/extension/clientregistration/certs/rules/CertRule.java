@@ -6,5 +6,5 @@ import java.security.cert.X509Certificate;
 
 public interface CertRule {
 
-    public  boolean check(X509Certificate certificate) throws CertificateValidationException;
+	public boolean check(X509Certificate certificate) throws CertificateValidationException;
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2018 adorsys GmbH & Co. KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.adorsys.keycloak.extension.clientregistration;
 
 import java.net.URI;
@@ -8,12 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -35,94 +45,101 @@ import org.keycloak.representations.idm.ProtocolMapperRepresentation;
 import org.keycloak.representations.oidc.OIDCClientRepresentation;
 import org.keycloak.services.ErrorResponseException;
 import org.keycloak.services.ServicesLogger;
-import org.keycloak.services.clientregistration.AbstractClientRegistrationProvider;
 import org.keycloak.services.clientregistration.ClientRegistrationException;
 import org.keycloak.services.clientregistration.ErrorCodes;
 import org.keycloak.services.clientregistration.oidc.OIDCClientRegistrationProvider;
 
 public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrationProvider {
 
-    private static final Logger logger = Logger.getLogger(OIDCClientRegistrationExtendedProvider.class);
+	private static final Logger logger = Logger.getLogger(OIDCClientRegistrationExtendedProvider.class);
 
-    public OIDCClientRegistrationExtendedProvider(KeycloakSession session) {
-        super(session);
-    }
+	public OIDCClientRegistrationExtendedProvider(KeycloakSession session) {
+		super(session);
+	}
 
-    @Context HttpServletRequest request ;
+	@Context
+	HttpServletRequest request;
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @Override
-    public Response createOIDC(OIDCClientRepresentation clientOIDC) {
-        if (clientOIDC.getClientId() != null) {
-            throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client Identifier included", Response.Status.BAD_REQUEST);
-        }
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Override
+	public Response createOIDC(OIDCClientRepresentation clientOIDC) {
+		if (clientOIDC.getClientId() != null) {
+			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client Identifier included",
+					Response.Status.BAD_REQUEST);
+		}
 
+		try {
+			CertVerifier.verify(clientOIDC, request); 
+			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
+			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
+					clientOIDC);
+			client = create(oidcContext);
 
-        try {
-            CertVerifier.verify(clientOIDC,request); //we verified the certificate here and validate the client
-            ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
-            OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this, clientOIDC);
-            client = create(oidcContext);
+			ClientModel clientModel = session.getContext().getRealm().getClientByClientId(client.getClientId());
+			updatePairwiseSubMappers(clientModel, SubjectType.parse(clientOIDC.getSubjectType()),
+					clientOIDC.getSectorIdentifierUri());
+			updateClientRepWithProtocolMappers(clientModel, client);
 
-            ClientModel clientModel = session.getContext().getRealm().getClientByClientId(client.getClientId());
-            updatePairwiseSubMappers(clientModel, SubjectType.parse(clientOIDC.getSubjectType()), clientOIDC.getSectorIdentifierUri());
-            updateClientRepWithProtocolMappers(clientModel, client);
+			URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
+			clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
+			clientOIDC.setClientIdIssuedAt(Time.currentTime());
+			return Response.created(uri).entity(clientOIDC).build();
+		} catch (ClientRegistrationException cre) {
+			ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
+			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid",
+					Response.Status.BAD_REQUEST);
+		} catch (CertificateException e) {
+			ServicesLogger.LOGGER.clientRegistrationException(e.getMessage());
+			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client certificate invalid",
+					Response.Status.BAD_REQUEST);
+		}
+	}
 
-            URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
-            clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
-            clientOIDC.setClientIdIssuedAt(Time.currentTime());
-            return Response.created(uri).entity(clientOIDC).build();
-        } catch (ClientRegistrationException cre) {
-            ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
-            throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid", Response.Status.BAD_REQUEST);
-        } catch (CertificateException e) {
-            ServicesLogger.LOGGER.clientRegistrationException(e.getMessage());
-            throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client certificate invalid", Response.Status.BAD_REQUEST);
-        }
-    }
+	private void updatePairwiseSubMappers(ClientModel clientModel, SubjectType subjectType,
+			String sectorIdentifierUri) {
+		if (subjectType == SubjectType.PAIRWISE) {
 
-    private void updatePairwiseSubMappers(ClientModel clientModel, SubjectType subjectType, String sectorIdentifierUri) {
-        if (subjectType == SubjectType.PAIRWISE) {
+			// See if we have existing pairwise mapper and update it. Otherwise
+			// create new
+			AtomicBoolean foundPairwise = new AtomicBoolean(false);
 
-            // See if we have existing pairwise mapper and update it. Otherwise create new
-            AtomicBoolean foundPairwise = new AtomicBoolean(false);
+			clientModel.getProtocolMappers().stream().filter((ProtocolMapperModel mapping) -> {
+				if (mapping.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX)) {
+					foundPairwise.set(true);
+					return true;
+				} else {
+					return false;
+				}
+			}).forEach((ProtocolMapperModel mapping) -> {
+				PairwiseSubMapperHelper.setSectorIdentifierUri(mapping, sectorIdentifierUri);
+				clientModel.updateProtocolMapper(mapping);
+			});
 
-            clientModel.getProtocolMappers().stream().filter((ProtocolMapperModel mapping) -> {
-                if (mapping.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX)) {
-                    foundPairwise.set(true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }).forEach((ProtocolMapperModel mapping) -> {
-                PairwiseSubMapperHelper.setSectorIdentifierUri(mapping, sectorIdentifierUri);
-                clientModel.updateProtocolMapper(mapping);
-            });
+			// We don't have existing pairwise mapper. So create new
+			if (!foundPairwise.get()) {
+				ProtocolMapperRepresentation newPairwise = SHA256PairwiseSubMapper
+						.createPairwiseMapper(sectorIdentifierUri, null);
+				clientModel.addProtocolMapper(RepresentationToModel.toModel(newPairwise));
+			}
 
-            // We don't have existing pairwise mapper. So create new
-            if (!foundPairwise.get()) {
-                ProtocolMapperRepresentation newPairwise = SHA256PairwiseSubMapper.createPairwiseMapper(sectorIdentifierUri, null);
-                clientModel.addProtocolMapper(RepresentationToModel.toModel(newPairwise));
-            }
+		} else {
+			// Rather find and remove all pairwise mappers
+			clientModel.getProtocolMappers().stream().filter((ProtocolMapperModel mapperRep) -> {
+				return mapperRep.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX);
+			}).forEach((ProtocolMapperModel mapping) -> {
+				clientModel.getProtocolMappers().remove(mapping);
+			});
+		}
+	}
 
-        } else {
-            // Rather find and remove all pairwise mappers
-            clientModel.getProtocolMappers().stream().filter((ProtocolMapperModel mapperRep) -> {
-                return mapperRep.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX);
-            }).forEach((ProtocolMapperModel mapping) -> {
-                clientModel.getProtocolMappers().remove(mapping);
-            });
-        }
-    }
-
-    private void updateClientRepWithProtocolMappers(ClientModel clientModel, ClientRepresentation rep) {
-        List<ProtocolMapperRepresentation> mappings = new LinkedList<>();
-        for (ProtocolMapperModel model : clientModel.getProtocolMappers()) {
-            mappings.add(ModelToRepresentation.toRepresentation(model));
-        }
-        rep.setProtocolMappers(mappings);
-    }
+	private void updateClientRepWithProtocolMappers(ClientModel clientModel, ClientRepresentation rep) {
+		List<ProtocolMapperRepresentation> mappings = new LinkedList<>();
+		for (ProtocolMapperModel model : clientModel.getProtocolMappers()) {
+			mappings.add(ModelToRepresentation.toRepresentation(model));
+		}
+		rep.setProtocolMappers(mappings);
+	}
 
 }

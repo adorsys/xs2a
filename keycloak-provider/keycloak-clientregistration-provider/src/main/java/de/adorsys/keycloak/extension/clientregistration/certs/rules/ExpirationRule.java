@@ -11,17 +11,17 @@ import java.util.Date;
 
 public class ExpirationRule implements CertRule {
 
-    private static final Logger log = Logger.getLogger(CertVerifier.class);
+	private static final Logger log = Logger.getLogger(CertVerifier.class);
 
-    @Override
-    public boolean check(X509Certificate certificate) throws CertificateValidationException {
-        try {
-            log.info("== Expiration Check ==");
-            certificate.checkValidity(new Date());
-            return true ;
-        } catch (CertificateNotYetValidException | CertificateExpiredException e) {
-            log.info(e.getMessage());
-            throw  new CertificateValidationException("Certificate Expired");
-        }
-    }
+	@Override
+	public boolean check(X509Certificate certificate) throws CertificateValidationException {
+		try {
+			log.info("== Expiration Check ==");
+			certificate.checkValidity(new Date());
+			return true;
+		} catch (CertificateNotYetValidException | CertificateExpiredException e) {
+			log.info(e.getMessage());
+			throw new CertificateValidationException("Certificate Expired");
+		}
+	}
 }
