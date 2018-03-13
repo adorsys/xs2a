@@ -60,16 +60,12 @@ public enum MessageCode {
         this.description = description;
     }
 
+    @JsonValue
     public int getCode() {
         return code;
     }
 
     public String getDescription() {
         return description;
-    }
-
-    @JsonValue
-    public int toValue() {
-        return code;
     }
 }

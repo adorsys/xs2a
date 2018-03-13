@@ -37,6 +37,7 @@ public class Transactions {
     private Date bookingDate;
 
     @ApiModelProperty(value = "Value Date", example = "2017-01-01")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date valueDate;
 
     @ApiModelProperty(value = "Amount", required = true)

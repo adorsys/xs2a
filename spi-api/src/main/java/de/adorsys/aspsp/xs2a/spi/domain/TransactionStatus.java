@@ -24,6 +24,7 @@ public enum TransactionStatus {
         this.definition = definition;
     }
 
+    @JsonValue
     public String getName() {
         return name;
     }
@@ -38,10 +39,5 @@ public enum TransactionStatus {
 
     public void setDefinition(String definition) {
         this.definition = definition;
-    }
-
-    @JsonValue
-    public String toValue() {
-        return name;
     }
 }

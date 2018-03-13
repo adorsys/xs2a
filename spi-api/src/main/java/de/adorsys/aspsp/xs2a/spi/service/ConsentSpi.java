@@ -1,10 +1,10 @@
 package de.adorsys.aspsp.xs2a.spi.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountInformationConsentRequestBody;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 
 public interface ConsentSpi {
-    String createAicRequest(AccountInformationConsentRequestBody accountInformationConsentRequest,
+    String createAicRequest(CreateConsentReq accountInformationConsentRequest,
                             boolean withBalance, boolean tppRedirectPreferred);
 
-    AccountInformationConsentRequestBody getAicRequest(String consentId);
+    CreateConsentReq getAicRequest(String consentId);
 }

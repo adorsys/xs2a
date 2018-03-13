@@ -11,5 +11,5 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public enum CashAccountType {
     // todo documentation doesn't have any definition. hhttps://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/45
-    currentAccount
+    CURRENT_ACCOUNT
 }

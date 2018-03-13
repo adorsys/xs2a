@@ -135,8 +135,6 @@ public class AccountMockData {
         t.setPurposeCode(new PurposeCode("PurposeCode"));
         t.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
 
-        System.out.println("booking_date" + t.getBookingDate());
-
         transactions.add(t);
     }
 
