@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.spi.pis;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.Amount;
+import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.spi.domain.address.Address;
 import de.adorsys.aspsp.xs2a.spi.domain.codes.BICFI;
 import de.adorsys.aspsp.xs2a.spi.domain.codes.PurposeCode;
@@ -59,11 +60,11 @@ public class SinglePayments {
     private Remittance remittanceInformationStructured;
 
     @ApiModelProperty(value = "requested execution date", required = false, example = "2017-01-01")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
     private Date requestedExecutionDate;
 
     @ApiModelProperty(value = "requested execution time", required = false, example = "2017-10-25T15:30:35.035Z")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN)
     private Date requestedExecutionTime;
 
 }

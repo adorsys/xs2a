@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
@@ -8,6 +9,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +24,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Service
 @Validated
 public class AccountService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+    
     private int maxLengthTransactionJson;
     private AccountSpi accountSpi;
     
@@ -60,7 +65,7 @@ public class AccountService {
     
     private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
         
-        String jsonReport = new Gson().toJson(accountReport);
+        String jsonReport = getJsonStringFromObject(accountReport);
         
         if (jsonReport.length() > maxLengthTransactionJson) {
             return getAccountReportWithDownloadLink(accountId);
@@ -69,6 +74,16 @@ public class AccountService {
         String urlToAccount = linkTo(AccountController.class).slash(accountId).toString();
         accountReport.get_links().setViewAccount(urlToAccount);
         return accountReport;
+    }
+    
+    private String getJsonStringFromObject(Object obj) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error converting object {} to json", obj);
+            return "";
+        }
     }
     
     private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,

@@ -5,14 +5,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
+import de.adorsys.aspsp.xs2a.utils.FileUtil;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Currency;
 
-import static de.adorsys.aspsp.xs2a.spi.utils.FileUtil.readFromInputStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccountConsentsModelsTest {
@@ -23,7 +22,7 @@ public class AccountConsentsModelsTest {
     @Test
     public void aicRequest_jsonTest() throws IOException {
         //Given:
-        String aicRequestJson = getJsonString(AIC_REQUEST_PATH);
+        String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
         CreateConsentReq expectedAICRequest = getAICRequestTest();
         
         //When:
@@ -120,12 +119,5 @@ public class AccountConsentsModelsTest {
         aicRequestObj.setFrequencyPerDay(4);
         
         return aicRequestObj;
-    }
-    
-    public String getJsonString(String filePath) throws IOException {
-        InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
-        
-        return readFromInputStream(is);
-        
     }
 }

@@ -1,6 +1,8 @@
 package de.adorsys.aspsp.xs2a.spi.utils;
 
 
+import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +16,7 @@ public class DateUtil {
 
     public static Date getDateWithTimeZone(Date date) {
         try {
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat(ApiDateConstants.DATE_TIME_PATTERN);
             return dateTimeFormat.parse(getStringFromDateTime(date));
         } catch (ParseException e) {
             return null;
@@ -23,7 +25,7 @@ public class DateUtil {
 
     public static String getStringFromDate(Date date) {
         if (date != null) {
-            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat dateFormatter = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
             dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             return dateFormatter.format(date);
         }
@@ -32,7 +34,7 @@ public class DateUtil {
 
     public static Date getDateFromDateString(String dateString) {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
@@ -42,7 +44,7 @@ public class DateUtil {
 
     public static Date getDateFromDateStringNoTimeZone(String dateString) {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
             return null;
@@ -51,7 +53,7 @@ public class DateUtil {
 
     public static String getStringFromDateTime(Date date) {
         if (date != null) {
-            DateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DateFormat dateTimeFormatter = new SimpleDateFormat(ApiDateConstants.DATE_TIME_PATTERN);
             dateTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             return dateTimeFormatter.format(date);
         }
@@ -60,7 +62,7 @@ public class DateUtil {
 
     public static Date getDateFromDateTimeString(String dateTimeString) {
         try {
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat(ApiDateConstants.DATE_TIME_PATTERN);
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             return dateTimeFormat.parse(dateTimeString);
         } catch (ParseException e) {

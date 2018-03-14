@@ -2,6 +2,7 @@ package de.adorsys.aspsp.xs2a.spi.domain.ais.consents;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class CreateConsentReq {
     private boolean recurringIndicator;
 
     @ApiModelProperty(value = "This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2017-10-30")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
     private Date validUntil;
 
     @ApiModelProperty(value = "This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
