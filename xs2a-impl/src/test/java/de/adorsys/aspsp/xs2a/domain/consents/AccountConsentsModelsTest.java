@@ -23,39 +23,39 @@ public class AccountConsentsModelsTest {
     public void aicRequest_jsonTest() throws IOException {
         //Given:
         String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
-        CreateConsentReq expectedAICRequest = getAICRequestTest();
+        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
         
         //When:
-        CreateConsentReq actualAICRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         
         //Then:
-        assertThat(actualAICRequest).isEqualTo(expectedAICRequest);
+        assertThat(actualRequest).isEqualTo(expectedRequest);
     }
 
     @Test
     public void aicAvailableAccountsRequest_jsonTest() throws IOException {
         //Given:
-        String aicRequestJson = getJsonString(AIC_AVAILABLE_ACCOUNTS_REQUEST_PATH);
-        CreateConsentReq expectedAICRequest = getAicAvailableAccountsRequest();
+        String aicRequestJson = FileUtil.getStringFromFile(AIC_AVAILABLE_ACCOUNTS_REQUEST_PATH);
+        CreateConsentReq expectedRequest = getAicAvailableAccountsRequest();
 
         //When:
-        CreateConsentReq actualAICRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //Then:
-        assertThat(actualAICRequest).isEqualTo(expectedAICRequest);
+        assertThat(actualRequest).isEqualTo(expectedRequest);
     }
 
     @Test
     public void aicAicNoDedicateAccountRequest_jsonTest() throws IOException {
         //Given:
-        String aicRequestJson = getJsonString(AIC_NO_DEDICATE_REQUEST_PATH);
-        CreateConsentReq expectedAICRequest = getAicNoDedicatedAccountRequest();
+        String aicRequestJson = FileUtil.getStringFromFile(AIC_NO_DEDICATE_REQUEST_PATH);
+        CreateConsentReq expectedRequest = getAicNoDedicatedAccountRequest();
 
         //When:
-        CreateConsentReq actualAICRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //Then:
-        assertThat(actualAICRequest).isEqualTo(expectedAICRequest);
+        assertThat(actualRequest).isEqualTo(expectedRequest);
     }
 
     private CreateConsentReq getAicNoDedicatedAccountRequest() {
@@ -87,7 +87,7 @@ public class AccountConsentsModelsTest {
         return aicRequestObj;
     }
 
-    private CreateConsentReq getAICRequestTest() {
+    private CreateConsentReq getCreateConsentsRequestTest() {
 
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE2310010010123456789");

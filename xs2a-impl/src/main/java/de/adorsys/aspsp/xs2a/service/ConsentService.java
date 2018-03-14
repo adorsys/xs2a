@@ -3,7 +3,6 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
-
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
@@ -23,9 +22,9 @@ public class ConsentService {
         this.redirectToLink = redirectToLink;
     }
     
-    public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+    public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
         
-        String consentId = consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+        String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance,tppRedirectPreferred);
         
         CreateConsentResp aicResponse = new CreateConsentResp();
         aicResponse.set_links(getLinkToConsent(consentId));
@@ -35,6 +34,10 @@ public class ConsentService {
         return aicResponse;
     }
     
+    public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+        return consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+    }
+    
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
         return Optional.ofNullable(consentSpi.getAccountConsentsStatusById(consentId))
                .orElse(null);
@@ -42,7 +45,7 @@ public class ConsentService {
     
     public AccountConsents getAccountConsentsById(String consentId) {
         return Optional.ofNullable(consentSpi.getAccountConsentsById(consentId))
-                                          .orElse(new AccountConsents());
+               .orElse(new AccountConsents());
     }
     
     private Links getLinkToConsent(String consentId) {

@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
@@ -25,14 +26,14 @@ public class ConsentServiceTest {
     private ConsentService consentService;
     
     @Test
-    public void createAicRequest_returnCreatedConsent() throws IOException {
+    public void createAccountConsentsWithResponse_returnCreatedConsent() throws IOException {
         //Given:
-        CreateConsentReq expectedAicRequest = getAICRequestTest();
+        CreateConsentReq expectedAicRequest = getCreateConsentsRequestTest();
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         
         //When:
-        CreateConsentResp actualAicResponse = consentService.createAicRequest(expectedAicRequest, withBalance, tppRedirectPreferred);
+        CreateConsentResp actualAicResponse = consentService.createAccountConsentsWithResponse(expectedAicRequest, withBalance, tppRedirectPreferred);
         
         //Then:
         assertThat(actualAicResponse.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
@@ -41,23 +42,36 @@ public class ConsentServiceTest {
         String consentId = actualAicResponse.getConsentId();
         
         //When:
-        CreateConsentReq actualAicRequest = consentService.getAicRequest(consentId);
+        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
         //Then:
-        assertThat(actualAicRequest).isEqualTo(expectedAicRequest);
+        //Then:
+        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedAicRequest.getAccess());
+        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedAicRequest.isRecurringIndicator());
+        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedAicRequest.getValidUntil());
+        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedAicRequest.getFrequencyPerDay());
     }
     
     @Test
-    public void shouldFail_getAicRequest_WrongConsentId() throws IOException {
+    public void shouldReturnEmptyObject_getAccountConsentsById_WrongConsentId() throws IOException {
         //Given:
         String wrongId = "111111";
         
         //When:
-        CreateConsentReq actualAicRequest = consentService.getAicRequest(wrongId);
+        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(wrongId);
         //Then:
-        assertThat(actualAicRequest).isNull();
+        assertThat(actualAccountConsents.getId()).isNull();
+        assertThat(actualAccountConsents.getAccess()).isNull();
+        assertThat(actualAccountConsents.isRecurringIndicator()).isFalse();
+        assertThat(actualAccountConsents.getValidUntil()).isNull();
+        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(0);
+        assertThat(actualAccountConsents.getLastActionDate()).isNull();
+        assertThat(actualAccountConsents.getTransactionStatus()).isNull();
+        assertThat(actualAccountConsents.getConsentStatus()).isNull();
+        assertThat(actualAccountConsents.isWithBalance()).isFalse();
+        assertThat(actualAccountConsents.isTppRedirectPreferred()).isFalse();
     }
     
-    private CreateConsentReq getAICRequestTest() {
+    private CreateConsentReq getCreateConsentsRequestTest() {
         
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE2310010010123456789");
