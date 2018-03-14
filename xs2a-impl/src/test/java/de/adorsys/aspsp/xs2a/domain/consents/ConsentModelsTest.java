@@ -2,16 +2,19 @@ package de.adorsys.aspsp.xs2a.domain.consents;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +63,7 @@ public class ConsentModelsTest {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-11-01"));
+        aicRequestObj.setValidUntil(getDateFromDateStringNoTimeZone("2017-11-01"));
         aicRequestObj.setFrequencyPerDay(4);
         
         return aicRequestObj;
@@ -71,5 +74,14 @@ public class ConsentModelsTest {
         
         return (String) IOUtils.readLines(inputStream).stream()
                         .collect(Collectors.joining());
+    }
+    
+    private static Date getDateFromDateStringNoTimeZone(String dateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }
