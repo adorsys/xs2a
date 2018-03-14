@@ -12,8 +12,7 @@ import lombok.Data;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class IBAN {
-
-    // todo documentation doesn't have any definition. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/42
+    //todo change property type to newly created Iban object and make validation accordingly  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/42
     @ApiModelProperty(value = "IBAN code", example = "IBAN")
     private String code;
 }
