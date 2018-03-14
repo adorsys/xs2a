@@ -44,7 +44,6 @@ public class ConsentServiceTest {
         //When:
         AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
         //Then:
-        //Then:
         assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedAicRequest.getAccess());
         assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedAicRequest.isRecurringIndicator());
         assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedAicRequest.getValidUntil());
