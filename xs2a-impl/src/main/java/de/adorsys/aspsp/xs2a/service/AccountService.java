@@ -26,13 +26,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class AccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
     
-    private int maxLengthTransactionJson;
+    private int maxNumberOfCharInTransactionJson;
     private AccountSpi accountSpi;
     
     @Autowired
-    public AccountService(AccountSpi accountSpi, int maxLengthTransactionJson) {
+    public AccountService(AccountSpi accountSpi, int maxNumberOfCharInTransactionJson) {
         this.accountSpi = accountSpi;
-        this.maxLengthTransactionJson = maxLengthTransactionJson;
+        this.maxNumberOfCharInTransactionJson = maxNumberOfCharInTransactionJson;
     }
     
     public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
@@ -67,7 +67,7 @@ public class AccountService {
         
         String jsonReport = getJsonStringFromObject(accountReport);
         
-        if (jsonReport.length() > maxLengthTransactionJson) {
+        if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             return getAccountReportWithDownloadLink(accountId);
         }
         

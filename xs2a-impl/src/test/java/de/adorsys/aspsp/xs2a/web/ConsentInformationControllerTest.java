@@ -5,7 +5,7 @@ import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
-import de.adorsys.aspsp.xs2a.utils.FileUtil;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ConsentInformationControllerTest {
-    private final String AIC_REQUEST_PATH = "json/AccountInformationConsentRequestTest.json";
+    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     
     @Autowired
     private ConsentInformationController consentInformationController;
@@ -35,7 +37,7 @@ public class ConsentInformationControllerTest {
         
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedAicRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         
         //When:
@@ -54,5 +56,12 @@ public class ConsentInformationControllerTest {
         CreateConsentReq actualAicRequest = consentService.getAicRequest(consentId);
         //Then:
         assertThat(actualAicRequest).isEqualTo(expectedAicRequest);
+    }
+    
+    private String getStringFromFile(String pathToFile) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(pathToFile);
+        
+        return (String) IOUtils.readLines(inputStream).stream()
+                        .collect(Collectors.joining());
     }
 }

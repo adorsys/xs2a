@@ -11,19 +11,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationConfig {
     @Value("${application.ais.transaction.max-length}")
-    private int maxLengthTransactionJson;
+    private int maxNumberOfCharInTransactionJson;
     
     @Value("${application.ais.consents.link.redirect-to}")
-    private String redirectToLink;
+    private String consentsLinkRedirectToSource;
     
     @Bean
-    public int maxLengthTransactionJson() {
-        return maxLengthTransactionJson;
+    public int maxNumberOfCharInTransactionJson() {
+        return maxNumberOfCharInTransactionJson;
     }
     
     @Bean
-    public String redirectToLink() {
-        return redirectToLink;
+    public String consentsLinkRedirectToSource() {
+        return consentsLinkRedirectToSource;
     }
     
     @Bean

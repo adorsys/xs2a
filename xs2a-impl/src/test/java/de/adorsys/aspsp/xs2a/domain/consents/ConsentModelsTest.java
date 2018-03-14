@@ -5,22 +5,24 @@ import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
-import de.adorsys.aspsp.xs2a.utils.FileUtil;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConsentModelsTest {
-    private final String AIC_REQUEST_PATH = "json/AccountInformationConsentRequestTest.json";
+    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     
     @Test
     public void accountInformationConsentRequest_jsonTest() throws IOException {
         //Given:
-        String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedAICRequest = getAICRequestTest();
         
         //When:
@@ -62,5 +64,12 @@ public class ConsentModelsTest {
         aicRequestObj.setFrequencyPerDay(4);
         
         return aicRequestObj;
+    }
+    
+    private String getStringFromFile(String pathToFile) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(pathToFile);
+        
+        return (String) IOUtils.readLines(inputStream).stream()
+                        .collect(Collectors.joining());
     }
 }
