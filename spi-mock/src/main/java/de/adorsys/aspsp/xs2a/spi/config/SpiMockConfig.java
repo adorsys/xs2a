@@ -100,8 +100,8 @@ public class SpiMockConfig {
     }
 
     private void fillConsents() {
-        ConsentMockData.createAicRequest(getAicRequest_1(), true, false);
-        ConsentMockData.createAicRequest(getAicRequest_2(), true, false);
+        ConsentMockData.createAccountConsent(getAicRequest_1(), true, false);
+        ConsentMockData.createAccountConsent(getAicRequest_2(), true, false);
     }
 
     private CreateConsentReq getAicRequest_1() {

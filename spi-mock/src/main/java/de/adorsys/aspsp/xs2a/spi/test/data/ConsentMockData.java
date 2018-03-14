@@ -13,8 +13,8 @@ public class ConsentMockData {
     
     private static HashMap<String, AccountConsents> consentMap = new HashMap<String, AccountConsents>();
     
-    public static String createAicRequest(CreateConsentReq aicRequest,
-                                          boolean withBalance, boolean tppRedirectPreferred) {
+    public static String createAccountConsent(CreateConsentReq aicRequest,
+                                              boolean withBalance, boolean tppRedirectPreferred) {
         
         String consentId = generateConsentId();
         consentMap.put(consentId, new AccountConsents(consentId,
@@ -32,7 +32,15 @@ public class ConsentMockData {
         return consentId;
     }
     
-    public static AccountConsents getAicRequest(String consentId) {
+    public static TransactionStatus getAccountConsentsStatus(String consentId) {
+        AccountConsents accountConsents = consentMap.get(consentId);
+        if (accountConsents!=null) {
+           return accountConsents.getTransactionStatus();
+        }
+       return null;
+    }
+    
+    public static AccountConsents getAccountConsent(String consentId) {
         return consentMap.get(consentId);
     }
     

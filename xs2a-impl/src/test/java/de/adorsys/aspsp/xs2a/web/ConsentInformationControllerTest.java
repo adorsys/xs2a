@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AccountConsentsInformationControllerTest {
+public class ConsentInformationControllerTest {
     private final String AIC_REQUEST_PATH = "json/AccountInformationConsentRequestTest.json";
     
     @Autowired
@@ -40,7 +40,7 @@ public class AccountConsentsInformationControllerTest {
         CreateConsentReq expectedAicRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         
         //When:
-        ResponseEntity<CreateConsentResp> actualAicResponse = consentInformationController.createConsentForAccounts(withBalance, tppRedirectPreferred, expectedAicRequest);
+        ResponseEntity<CreateConsentResp> actualAicResponse = consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, expectedAicRequest);
         
         //Then:
         HttpStatus actualStatusCode = actualAicResponse.getStatusCode();

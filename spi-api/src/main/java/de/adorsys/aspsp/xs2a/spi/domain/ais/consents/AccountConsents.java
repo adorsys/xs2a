@@ -2,17 +2,21 @@ package de.adorsys.aspsp.xs2a.spi.domain.ais.consents;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class AccountConsents {
     @ApiModelProperty(value = "ID of the corresponding consent object as returned by an Account Information Consent Request", required = true)
+    @JsonIgnore
     private String id;
     
     @ApiModelProperty(value = "Access", required = true)
@@ -39,8 +43,10 @@ public class AccountConsents {
     private ConsentStatus consentStatus;
     
     @ApiModelProperty(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
+    @JsonIgnore
     private boolean withBalance;
     
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+    @JsonIgnore
     private boolean tppRedirectPreferred;
 }

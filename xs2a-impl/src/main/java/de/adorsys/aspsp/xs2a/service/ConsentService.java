@@ -3,12 +3,14 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
+
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsentsStatusResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ConsentService {
@@ -21,7 +23,7 @@ public class ConsentService {
         this.redirectToLink = redirectToLink;
     }
     
-    public CreateConsentResp createAicRequest(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+    public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
         
         String consentId = consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
         
@@ -33,18 +35,14 @@ public class ConsentService {
         return aicResponse;
     }
     
-    public AccountConsentsStatusResp getAccountConsentsById(String consentId) {
-        AccountConsents accountConsents = consentSpi.getAccountConsentsById(consentId);
+    public TransactionStatus getAccountConsentsStatusById(String consentId) {
+        return Optional.ofNullable(consentSpi.getAccountConsentsStatusById(consentId))
+               .orElse(null);
+    }
     
-        AccountConsentsStatusResp resp = new AccountConsentsStatusResp(accountConsents.getAccess(),
-        accountConsents.isRecurringIndicator(),
-        accountConsents.getValidUntil(),
-        accountConsents.getFrequencyPerDay(),
-        accountConsents.getLastActionDate(),
-        accountConsents.getTransactionStatus(),
-        accountConsents.getConsentStatus());
-        
-        return resp;
+    public AccountConsents getAccountConsentsById(String consentId) {
+        return Optional.ofNullable(consentSpi.getAccountConsentsById(consentId))
+                                          .orElse(new AccountConsents());
     }
     
     private Links getLinkToConsent(String consentId) {
