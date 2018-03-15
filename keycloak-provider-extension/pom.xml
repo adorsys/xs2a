@@ -6,19 +6,21 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <parent>
+        <groupId>de.adorsys.aspsp</groupId>
+        <artifactId>aspsp-idp</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <groupId>de.adorsys.keycloak</groupId>
     <artifactId>keycloak-provider-extension</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>keycloak-clientregistration-provider</module>
     </modules>
-
-    <properties>
-        <keycloak.version>3.2.1.Final</keycloak.version>
-        <java.version>1.8</java.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -57,8 +59,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
