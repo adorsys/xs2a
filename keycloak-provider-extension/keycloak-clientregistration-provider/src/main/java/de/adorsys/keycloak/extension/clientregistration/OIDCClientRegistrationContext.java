@@ -43,8 +43,9 @@ public class OIDCClientRegistrationContext extends AbstractClientRegistrationCon
 
 		String rootUrl = client.getRootUrl();
 		Set<String> redirectUris = new HashSet<>();
-		if (client.getRedirectUris() != null)
+		if (client.getRedirectUris() != null) {
 			redirectUris.addAll(client.getRedirectUris());
+		}
 
 		SubjectType subjectType = SubjectType.parse(oidcRep.getSubjectType());
 		String sectorIdentifierUri = oidcRep.getSectorIdentifierUri();
