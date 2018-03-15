@@ -1,6 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.ais;
 
-import de.adorsys.aspsp.xs2a.spi.domain.Account;
+import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.Amount;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,7 +20,7 @@ public class TransactionsCreditorResponse {
 	private String creditor;
 
 	@ApiModelProperty(value = "Creditor account", example = "56666")
-	private Account creditor_account;
+	private AccountDetails creditor_accountDetails;
 
 	@ApiModelProperty(value = "Amount", required = true)
 	private Amount amount;

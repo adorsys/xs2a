@@ -28,11 +28,11 @@ public class PaymentInitiationController {
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", notes = "the payment ID")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profil."),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profile."),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
     public String getPaymentInitiationStatus(@PathVariable String paymentId) {
-        return TransactionStatus.RCVD.getDefinition();
+        return TransactionStatus.RCVD.getName();
     }
 
     @ApiOperation(value = "Get information  about all payments ", notes = "the payment ID")

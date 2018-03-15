@@ -9,17 +9,17 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@ApiModel(description = "AccountResponse Report", value = "AccountReport")
+@ApiModel(description = "Account Report", value = "AccountReport")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @JsonRootName(value = "transactions")
 public class AccountReport {
-    
+
     @ApiModelProperty(value = "Booked TransactionsCreditorResponse", required = true)
     private Transactions[] booked;
-    
+
     @ApiModelProperty(value = "Pending TransactionsCreditorResponse")
     private Transactions[] pending;
-    
+
     @ApiModelProperty(value = "Links: he following links might be used within this context:" +
                               "account link (mandatory)" +
                               "first_page_link (optional)" +

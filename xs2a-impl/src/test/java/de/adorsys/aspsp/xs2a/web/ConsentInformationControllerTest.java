@@ -1,0 +1,67 @@
+package de.adorsys.aspsp.xs2a.web;
+
+import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.service.ConsentService;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ConsentInformationControllerTest {
+    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
+    
+    @Autowired
+    private ConsentInformationController consentInformationController;
+    @Autowired
+    private ConsentService consentService;
+    
+    @Test
+    public void createConsentForAccounts_withBalanceAndTppRedirect() throws IOException {
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        CreateConsentReq expectedAicRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
+        
+        //When:
+        ResponseEntity<CreateConsentResp> actualAicResponse = consentInformationController.createConsentForAccounts(withBalance, tppRedirectPreferred, expectedAicRequest);
+        
+        //Then:
+        HttpStatus actualStatusCode = actualAicResponse.getStatusCode();
+        CreateConsentResp actualResult = actualAicResponse.getBody();
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+        assertThat(actualResult.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
+        
+        //Given:
+        String consentId = actualResult.getConsentId();
+        
+        //When:
+        CreateConsentReq actualAicRequest = consentService.getAicRequest(consentId);
+        //Then:
+        assertThat(actualAicRequest).isEqualTo(expectedAicRequest);
+    }
+    
+    private String getStringFromFile(String pathToFile) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(pathToFile);
+        
+        return (String) IOUtils.readLines(inputStream).stream()
+                        .collect(Collectors.joining());
+    }
+}
