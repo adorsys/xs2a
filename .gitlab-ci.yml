@@ -57,7 +57,7 @@ build_snapshot_image:
   tags:
     - aws_shell
   script:
-    - docker build -t "$GITLAB_IMAGE_NAME:integ ."
+    - docker build -t "$GITLAB_IMAGE_NAME:integ" .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker push "$GITLAB_IMAGE_NAME:integ"
 
