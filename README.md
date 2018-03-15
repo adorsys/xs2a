@@ -1,9 +1,11 @@
 ```
 mvn clean install
 
-docker build -t keycloak 
+cd keycloak-provider-extension/keycloak-clientregistration-provider
 
-docker run -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin123 keycloak
+docker build -t adorsys/keycloak-xs2a:dev .
+
+docker run -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin123 adorsys/keycloak-xs2a:dev
 
 curl -X POST \
   http://localhost:8080/auth/realms/demobank/clients-registrations/openid-connect \
