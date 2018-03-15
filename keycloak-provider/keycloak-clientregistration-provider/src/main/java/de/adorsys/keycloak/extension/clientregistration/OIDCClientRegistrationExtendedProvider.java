@@ -58,7 +58,7 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
 	}
 
 	@Context
-	HttpServletRequest request;
+	private HttpServletRequest request;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
