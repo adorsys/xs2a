@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.Date;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,12 +32,12 @@ public class ConsentServiceTest {
     @Test
     public void createAccountConsentsWithResponse_returnCreatedConsent() throws IOException {
         //Given:
-        CreateConsentReq expectedAicRequest = getCreateConsentsRequestTest();
+        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         
         //When:
-        CreateConsentResp actualAicResponse = consentService.createAccountConsentsWithResponse(expectedAicRequest, withBalance, tppRedirectPreferred);
+        CreateConsentResp actualAicResponse = consentService.createAccountConsentsWithResponse(expectedRequest, withBalance, tppRedirectPreferred);
         
         //Then:
         assertThat(actualAicResponse.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
@@ -47,14 +48,74 @@ public class ConsentServiceTest {
         //When:
         AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
         //Then:
-        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedAicRequest.getAccess());
-        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedAicRequest.isRecurringIndicator());
-        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedAicRequest.getValidUntil());
-        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedAicRequest.getFrequencyPerDay());
+        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedRequest.getAccess());
+        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
+        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
+        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
     
     @Test
-    public void shouldReturnEmptyObject_getAccountConsentsById_WrongConsentId() throws IOException {
+    public void createAccountConsentsAndReturnId_successesResult() {
+        //Given:
+        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        
+        //When:
+        String actualConsentId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        
+        //Then:
+        assertThat(actualConsentId).isNotEmpty();
+    }
+    
+    @Test
+    public void getAccountConsentsStatusById_successesResult() {
+        //Given:
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
+        String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        TransactionStatus expectedStatus = TransactionStatus.ACTC;
+        
+        //When:
+        TransactionStatus actualStatus = consentService.getAccountConsentsStatusById(validAccountConsentsId);
+        
+        //Then:
+        assertThat(actualStatus).isEqualTo(expectedStatus);
+    }
+    
+    @Test
+    public void getAccountConsentsStatusById_wrongId() {
+        //Given:
+        String wrongId = "111111";
+        
+        //When:
+        TransactionStatus actualStatus = consentService.getAccountConsentsStatusById(wrongId);
+        
+        //Then:
+        assertThat(actualStatus).isNull();
+    }
+    
+    @Test
+    public void getAccountConsentsById_successesResult() {
+        //Given:
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
+        String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        
+        //When:
+        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(validAccountConsentsId);
+        
+        //Then:
+        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedRequest.getAccess());
+        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
+        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
+        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
+    }
+    
+    @Test
+    public void getAccountConsentsById_WrongConsentId_shouldReturnEmptyObject() {
         //Given:
         String wrongId = "111111";
         
@@ -101,15 +162,16 @@ public class ConsentServiceTest {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(getDateFromDateStringNoTimeZone("2017-11-01"));
+        aicRequestObj.setValidUntil(getDateFromDateString("2017-11-01"));
         aicRequestObj.setFrequencyPerDay(4);
         
         return aicRequestObj;
     }
     
-    private static Date getDateFromDateStringNoTimeZone(String dateString) {
+    private static Date getDateFromDateString(String dateString) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
             return null;

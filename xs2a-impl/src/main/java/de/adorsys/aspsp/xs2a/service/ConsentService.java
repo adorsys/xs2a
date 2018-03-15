@@ -26,12 +26,12 @@ public class ConsentService {
         
         String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance,tppRedirectPreferred);
         
-        CreateConsentResp aicResponse = new CreateConsentResp();
-        aicResponse.set_links(getLinkToConsent(consentId));
-        aicResponse.setConsentId(consentId);
-        aicResponse.setTransactionStatus(TransactionStatus.RCVD);
+        CreateConsentResp createAicResp = new CreateConsentResp();
+        createAicResp.set_links(getLinkToConsent(consentId));
+        createAicResp.setConsentId(consentId);
+        createAicResp.setTransactionStatus(TransactionStatus.RCVD);
         
-        return aicResponse;
+        return createAicResp;
     }
     
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {

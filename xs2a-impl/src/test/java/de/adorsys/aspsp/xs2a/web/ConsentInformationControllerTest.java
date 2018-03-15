@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,12 +36,10 @@ public class ConsentInformationControllerTest {
     public void createConsentForAccounts_withBalanceAndTppRedirect() throws IOException {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
-        CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
-        CreateConsentReq expectedAicRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
+        CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         
         //When:
         ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, expectedRequest);
@@ -64,12 +63,12 @@ public class ConsentInformationControllerTest {
     }
     
     @Test
-    public void getAccountConsentsStatusById_successesResult()throws IOException {
+    public void getAccountConsentsStatusById_successesResult() throws IOException {
         //Given:
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
         HashMap<String, TransactionStatus> expectedResult = new HashMap<>();
@@ -77,7 +76,7 @@ public class ConsentInformationControllerTest {
         
         //When:
         ResponseEntity<HashMap<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(accountConsentsId);
-    
+        
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         HashMap<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
@@ -85,7 +84,7 @@ public class ConsentInformationControllerTest {
     }
     
     @Test
-    public void shouldFail_getAccountConsentsStatusById_wrongId()throws IOException {
+    public void shouldFail_getAccountConsentsStatusById_wrongId() throws IOException {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
         HashMap<String, TransactionStatus> expectedResult = new HashMap<>();
@@ -102,12 +101,12 @@ public class ConsentInformationControllerTest {
     }
     
     @Test
-    public void getAccountConsentsInformationById_successesResult()throws IOException {
+    public void getAccountConsentsInformationById_successesResult() throws IOException {
         //Given:
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = FileUtil.getStringFromFile(AIC_REQUEST_PATH);
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
         
@@ -124,7 +123,7 @@ public class ConsentInformationControllerTest {
     }
     
     @Test
-    public void shouldFail_getAccountConsentsInformationById_wrongId()throws IOException {
+    public void getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() throws IOException {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
         HashMap<String, TransactionStatus> expectedResult = new HashMap<>();

@@ -21,8 +21,8 @@ public class AccountAccess {
     private AccountReference[] transactions;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
-    private String availableAccounts;
+    private AccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
-    private String allPsd2;
+    private AccountAccessType allPsd2;
 }
