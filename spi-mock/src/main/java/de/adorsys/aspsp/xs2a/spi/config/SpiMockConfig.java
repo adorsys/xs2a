@@ -5,11 +5,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
-import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
 import org.springframework.context.annotation.Configuration;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.Date;
 
 @Configuration
 public class SpiMockConfig {
@@ -141,7 +143,7 @@ public class SpiMockConfig {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-11-01"));
+        aicRequestObj.setValidUntil(getDateFromDateStringNoTimeZone("2017-11-01"));
         aicRequestObj.setFrequencyPerDay(4);
         return aicRequestObj;
     }
@@ -173,9 +175,17 @@ public class SpiMockConfig {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-04-25"));
+        aicRequestObj.setValidUntil(getDateFromDateStringNoTimeZone("2017-04-25"));
         aicRequestObj.setFrequencyPerDay(4);
         return aicRequestObj;
     }
     
+    private static Date getDateFromDateStringNoTimeZone(String dateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
 }

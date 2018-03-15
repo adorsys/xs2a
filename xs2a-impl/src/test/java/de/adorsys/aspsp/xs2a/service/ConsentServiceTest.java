@@ -1,12 +1,12 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
-import de.adorsys.aspsp.xs2a.spi.utils.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,9 +101,18 @@ public class ConsentServiceTest {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(DateUtil.getDateFromDateStringNoTimeZone("2017-11-01"));
+        aicRequestObj.setValidUntil(getDateFromDateStringNoTimeZone("2017-11-01"));
         aicRequestObj.setFrequencyPerDay(4);
         
         return aicRequestObj;
+    }
+    
+    private static Date getDateFromDateStringNoTimeZone(String dateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

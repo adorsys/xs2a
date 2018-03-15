@@ -6,7 +6,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
-import de.adorsys.aspsp.xs2a.utils.FileUtil;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.InputStream;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ConsentInformationControllerTest {
-    private final String AIC_REQUEST_PATH = "json/AccountInformationConsentRequestTest.json";
+    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     
     @Autowired
     private ConsentInformationController consentInformationController;
@@ -38,6 +39,8 @@ public class ConsentInformationControllerTest {
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        CreateConsentReq expectedAicRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         
         //When:
         ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, expectedRequest);
@@ -144,5 +147,12 @@ public class ConsentInformationControllerTest {
         assertThat(actualResult.getConsentStatus()).isNull();
         assertThat(actualResult.isWithBalance()).isFalse();
         assertThat(actualResult.isTppRedirectPreferred()).isFalse();
+    }
+    
+    private String getStringFromFile(String pathToFile) throws IOException {
+        InputStream inputStream = getClass().getResourceAsStream(pathToFile);
+        
+        return (String) IOUtils.readLines(inputStream).stream()
+                        .collect(Collectors.joining());
     }
 }

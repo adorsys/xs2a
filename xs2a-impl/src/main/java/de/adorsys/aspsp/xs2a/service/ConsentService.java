@@ -13,13 +13,13 @@ import java.util.Optional;
 
 @Service
 public class ConsentService {
-    private String redirectToLink;
+    private String consentsLinkRedirectToSource;
     private ConsentSpi consentSpi;
     
     @Autowired
-    public ConsentService(ConsentSpi consentSpi, String redirectToLink) {
+    public ConsentService(ConsentSpi consentSpi, String consentsLinkRedirectToSource) {
         this.consentSpi = consentSpi;
-        this.redirectToLink = redirectToLink;
+        this.consentsLinkRedirectToSource = consentsLinkRedirectToSource;
     }
     
     public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
@@ -57,7 +57,7 @@ public class ConsentService {
         //linksToConsent.setSelf(selfLink);
         
         // Response in case of a redirect
-        String redirectLink = redirectToLink + "/" + consentId;
+        String redirectLink = consentsLinkRedirectToSource + "/" + consentId;
         linksToConsent.setRedirect(redirectLink);
         
         return linksToConsent;
