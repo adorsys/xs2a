@@ -6,7 +6,7 @@ variables:
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
   GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a"
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
-  OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/aspsp-xs2a/aspsp-xs2a"
+  OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-xs2a"
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
@@ -62,7 +62,6 @@ build_snapshot_image:
     - docker push "$GITLAB_IMAGE_NAME:latest"
 
 deploy_snapshot:
-  when: manual
   stage: deploy
   only:
     - develop
