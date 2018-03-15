@@ -71,7 +71,6 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
 		}
 
 		try {
-			CertVerifier.verify(clientOIDC, request); 
 			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
 			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
 					clientOIDC);
@@ -89,10 +88,6 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
 		} catch (ClientRegistrationException cre) {
 			ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
 			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid",
-					Response.Status.BAD_REQUEST);
-		} catch (CertificateException e) {
-			ServicesLogger.LOGGER.clientRegistrationException(e.getMessage());
-			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client certificate invalid",
 					Response.Status.BAD_REQUEST);
 		}
 	}
