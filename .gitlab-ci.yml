@@ -4,7 +4,7 @@
 
 variables:
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
-  GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/keycloak-xs2a"
+  GITLAB_IMAGE_NAME: "adorsys/keycloak-xs2a"
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
   OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/aspsp-xs2a/keycloak-xs2a"
 # ------------------------------------------------------------------
