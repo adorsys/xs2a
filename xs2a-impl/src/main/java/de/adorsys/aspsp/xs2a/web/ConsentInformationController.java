@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -47,24 +48,24 @@ public class ConsentInformationController {
         
         LOGGER.debug("createAccountConsent(): response {} ", aicCreateResponse);
         
-        return new ResponseEntity<CreateConsentResp>(aicCreateResponse, HttpStatus.OK);
+        return new ResponseEntity<>(aicCreateResponse, HttpStatus.OK);
     }
     
     @ApiOperation(value = "Can check the status of an account information consent resource")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = HashMap.class),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Map.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}/status", method = RequestMethod.GET)
-    public ResponseEntity<HashMap<String, TransactionStatus>> getAccountConsentsStatusById(
+    public ResponseEntity<Map<String, TransactionStatus>> getAccountConsentsStatusById(
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource")
     @PathVariable("consent-id") String consentId) {
     
-        HashMap<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
+        Map<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
         TransactionStatus transactionStatus = consentService.getAccountConsentsStatusById(consentId);
         accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
         
         LOGGER.debug("getAccountConsentsStatusById(): response {} ", transactionStatus);
         
-        return new ResponseEntity<HashMap<String, TransactionStatus>>(accountConsentsStatusResponse, HttpStatus.OK);
+        return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.OK);
     }
     
     @ApiOperation(value = "Returns the content of an account information consent object")
@@ -78,7 +79,7 @@ public class ConsentInformationController {
         
         LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsents);
         
-        return new ResponseEntity<AccountConsents>(accountConsents, HttpStatus.OK);
+        return new ResponseEntity<>(accountConsents, HttpStatus.OK);
     }
     
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP to return a list of all accessible accounts",
@@ -105,6 +106,6 @@ public class ConsentInformationController {
     
     private List<AccountDetails> getAllAccounts(Boolean withBalance) {
         // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
-        return new ArrayList<AccountDetails>();
+        return new ArrayList<>();
     }
 }

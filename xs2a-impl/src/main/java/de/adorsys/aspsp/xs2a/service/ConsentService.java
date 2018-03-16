@@ -24,14 +24,14 @@ public class ConsentService {
     
     public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
         
-        String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance,tppRedirectPreferred);
+        String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred);
         
-        CreateConsentResp createAicResp = new CreateConsentResp();
-        createAicResp.set_links(getLinkToConsent(consentId));
-        createAicResp.setConsentId(consentId);
-        createAicResp.setTransactionStatus(TransactionStatus.RCVD);
-        
-        return createAicResp;
+        return new CreateConsentResp(
+        TransactionStatus.RCVD,
+        consentId,
+        null,
+        getLinkToConsent(consentId),
+        null);
     }
     
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
@@ -39,8 +39,7 @@ public class ConsentService {
     }
     
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        return Optional.ofNullable(consentSpi.getAccountConsentsStatusById(consentId))
-               .orElse(null);
+        return consentSpi.getAccountConsentsStatusById(consentId);
     }
     
     public AccountConsents getAccountConsentsById(String consentId) {

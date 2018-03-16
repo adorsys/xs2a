@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/v1/accounts")
@@ -34,7 +35,7 @@ public class AccountController {
     @ApiResponse(code = 200, message = "OK"),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<HashMap<String, List<AccountDetails>>> getAccounts(
+    public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")

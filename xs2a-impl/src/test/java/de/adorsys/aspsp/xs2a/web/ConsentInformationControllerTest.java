@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,14 +72,14 @@ public class ConsentInformationControllerTest {
         String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
-        HashMap<String, TransactionStatus> expectedResult = new HashMap<>();
+        Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", TransactionStatus.ACTC);
         
         //When:
-        ResponseEntity<HashMap<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(accountConsentsId);
+        ResponseEntity<Map<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(accountConsentsId);
         
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        HashMap<String, TransactionStatus> actualResult = actualResponse.getBody();
+        Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -87,15 +88,15 @@ public class ConsentInformationControllerTest {
     public void shouldFail_getAccountConsentsStatusById_wrongId() throws IOException {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        HashMap<String, TransactionStatus> expectedResult = new HashMap<>();
+        Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
         
         //When:
-        ResponseEntity<HashMap<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(wrongId);
+        ResponseEntity<Map<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(wrongId);
         
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        HashMap<String, TransactionStatus> actualResult = actualResponse.getBody();
+        Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -126,7 +127,7 @@ public class ConsentInformationControllerTest {
     public void getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() throws IOException {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        HashMap<String, TransactionStatus> expectedResult = new HashMap<>();
+        Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
         

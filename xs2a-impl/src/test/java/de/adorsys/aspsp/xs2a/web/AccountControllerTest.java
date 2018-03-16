@@ -16,6 +16,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -157,15 +158,15 @@ public class AccountControllerTest {
 
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        HashMap<String, List<AccountDetails>> expectedResult = new HashMap<>();
+        Map<String, List<AccountDetails>> expectedResult = new HashMap<>();
         expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved));
 
         //When:
-        ResponseEntity<HashMap<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
+        ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        HashMap<String, List<AccountDetails>> actualResult = actualResponse.getBody();
+        Map<String, List<AccountDetails>> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);

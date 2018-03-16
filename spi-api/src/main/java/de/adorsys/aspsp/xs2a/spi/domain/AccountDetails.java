@@ -4,7 +4,9 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.validation.constraints.Size;
 import java.util.Currency;

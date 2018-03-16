@@ -73,11 +73,11 @@ public class AccountMockData {
         AccountMockData.accountDetails.add(accountDetails);
     }
 
-    public static AccountDetails createAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
+    public static AccountDetails createAccount(String id, Currency currency, Balances balance, String iban, String bic, String name, String account_type) {
         AccountDetails accountDetails = new AccountDetails();
         accountDetails.setIban(iban);
-        accountDetails.setId(ID);
-        accountDetails.setBic(BIC);
+        accountDetails.setId(id);
+        accountDetails.setBic(bic);
         accountDetails.setCurrency(currency);
         accountDetails.setAccountType(account_type);
         accountDetails.setName(name);
