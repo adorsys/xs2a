@@ -52,8 +52,8 @@ build_snapshot:
 
 build_snapshot_image:
   stage: "build:image"
-  only:
-    - develop
+#  only:
+#    - develop
   tags:
     - aws_shell
   script:
@@ -63,8 +63,8 @@ build_snapshot_image:
 
 deploy_snapshot:
   stage: deploy
-  only:
-    - develop
+#  only:
+#    - develop
   tags:
     - aws_shell
   environment:
