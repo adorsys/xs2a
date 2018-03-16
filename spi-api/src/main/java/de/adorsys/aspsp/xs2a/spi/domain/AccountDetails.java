@@ -4,14 +4,14 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import javax.validation.constraints.Size;
 import java.util.Currency;
 
 @Data
+@Setter(AccessLevel.NONE)
+@AllArgsConstructor
 @ApiModel(description = "AccountDetails information", value = "AccountDetails")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountDetails {

@@ -122,16 +122,7 @@ public class ConsentServiceTest {
         //When:
         AccountConsents actualAccountConsents = consentService.getAccountConsentsById(wrongId);
         //Then:
-        assertThat(actualAccountConsents.getId()).isNull();
-        assertThat(actualAccountConsents.getAccess()).isNull();
-        assertThat(actualAccountConsents.isRecurringIndicator()).isFalse();
-        assertThat(actualAccountConsents.getValidUntil()).isNull();
-        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(0);
-        assertThat(actualAccountConsents.getLastActionDate()).isNull();
-        assertThat(actualAccountConsents.getTransactionStatus()).isNull();
-        assertThat(actualAccountConsents.getConsentStatus()).isNull();
-        assertThat(actualAccountConsents.isWithBalance()).isFalse();
-        assertThat(actualAccountConsents.isTppRedirectPreferred()).isFalse();
+        assertThat(actualAccountConsents).isNull();
     }
     
     private CreateConsentReq getCreateConsentsRequestTest() {

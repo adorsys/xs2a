@@ -5,12 +5,12 @@ import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
+@Setter(AccessLevel.NONE)
 @AllArgsConstructor
-@ApiModel(description = "Response for the account information consent request in the Account service")
+@ApiModel(description = "Response for the create account information consent request in the Account service")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateConsentResp {
     

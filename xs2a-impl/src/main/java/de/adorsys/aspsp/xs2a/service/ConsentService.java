@@ -43,8 +43,7 @@ public class ConsentService {
     }
     
     public AccountConsents getAccountConsentsById(String consentId) {
-        return Optional.ofNullable(consentSpi.getAccountConsentsById(consentId))
-               .orElse(new AccountConsents());
+        return consentSpi.getAccountConsentsById(consentId);
     }
     
     private Links getLinkToConsent(String consentId) {

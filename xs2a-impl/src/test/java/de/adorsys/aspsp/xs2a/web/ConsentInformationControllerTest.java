@@ -137,16 +137,7 @@ public class ConsentInformationControllerTest {
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         AccountConsents actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult.getId()).isNull();
-        assertThat(actualResult.getAccess()).isNull();
-        assertThat(actualResult.isRecurringIndicator()).isFalse();
-        assertThat(actualResult.getValidUntil()).isNull();
-        assertThat(actualResult.getFrequencyPerDay()).isEqualTo(0);
-        assertThat(actualResult.getLastActionDate()).isNull();
-        assertThat(actualResult.getTransactionStatus()).isNull();
-        assertThat(actualResult.getConsentStatus()).isNull();
-        assertThat(actualResult.isWithBalance()).isFalse();
-        assertThat(actualResult.isTppRedirectPreferred()).isFalse();
+        assertThat(actualResult).isNull();
     }
     
     private String getStringFromFile(String pathToFile) throws IOException {

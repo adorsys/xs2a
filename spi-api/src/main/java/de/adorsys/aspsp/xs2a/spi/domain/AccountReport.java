@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@Setter(AccessLevel.NONE)
 @AllArgsConstructor
 @ApiModel(description = "Account Report", value = "AccountReport")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)

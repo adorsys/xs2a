@@ -3,11 +3,16 @@ package de.adorsys.aspsp.xs2a.spi.domain.address;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Setter;
 
 import javax.validation.constraints.Size;
 
 @Data
+@Setter(AccessLevel.NONE)
+@AllArgsConstructor
 @ApiModel(description = "Address", value = "Address")
 public class Address {
     

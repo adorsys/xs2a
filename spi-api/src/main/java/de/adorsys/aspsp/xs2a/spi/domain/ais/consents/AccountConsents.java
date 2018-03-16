@@ -3,18 +3,20 @@ package de.adorsys.aspsp.xs2a.spi.domain.ais.consents;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
 @Data
+@Setter(AccessLevel.NONE)
 @AllArgsConstructor
-@NoArgsConstructor
+@ApiModel(description = "Response for the get account information consent request by consent Id")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountConsents {
     @ApiModelProperty(value = "ID of the corresponding consent object as returned by an Account Information Consent Request", required = true)
     @JsonIgnore

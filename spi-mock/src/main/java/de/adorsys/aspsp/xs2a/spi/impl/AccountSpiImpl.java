@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,9 +38,14 @@ public class AccountSpiImpl implements AccountSpi {
     }
     
     public Balances readBalances(String accountId, boolean psuInvolved) {
-        HashMap<String, AccountDetails> accounts = AccountMockData.getAccountsHashMap();
-        AccountDetails accountDetails = Optional.ofNullable(accounts.get(accountId)).orElse(new AccountDetails());
-        return accountDetails.getBalances();
+        Balances balances = null;
+        AccountDetails accountDetails = AccountMockData.getAccountsHashMap().get(accountId);
+        
+        if (accountDetails != null) {
+            balances = accountDetails.getBalances();
+        }
+        
+        return balances;
     }
     
     public AccountReport readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
