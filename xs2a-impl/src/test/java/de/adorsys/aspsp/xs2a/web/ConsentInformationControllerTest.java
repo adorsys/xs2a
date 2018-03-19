@@ -56,6 +56,7 @@ public class ConsentInformationControllerTest {
 
         //When:
         AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
+
         //Then:
         assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedRequest.getAccess());
         assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
@@ -78,6 +79,7 @@ public class ConsentInformationControllerTest {
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(accountConsentsId);
 
+        //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
@@ -95,6 +97,7 @@ public class ConsentInformationControllerTest {
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(wrongId);
 
+        //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
@@ -114,6 +117,7 @@ public class ConsentInformationControllerTest {
         //When:
         ResponseEntity<AccountConsents> actualResponse = consentInformationController.getAccountConsentsInformationById(accountConsentsId);
 
+        //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         AccountConsents actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
@@ -134,6 +138,7 @@ public class ConsentInformationControllerTest {
         //When:
         ResponseEntity<AccountConsents> actualResponse = consentInformationController.getAccountConsentsInformationById(wrongId);
 
+        //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         AccountConsents actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
@@ -147,9 +152,9 @@ public class ConsentInformationControllerTest {
                         .collect(Collectors.joining());
     }
 
-    @Test public void deleteAIC_correctId() throws IOException {
+    @Test
+    public void deleteAccountConsent_correctId() throws IOException {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
         ResponseEntity<CreateConsentResp> createdObjectResponse = createConsentRespResponseEntity();
         String consentId = createdObjectResponse.getBody().getConsentId();
 
@@ -157,7 +162,7 @@ public class ConsentInformationControllerTest {
         ResponseEntity<Void> actualResponse = consentInformationController.deleteAccountConsent(consentId);
 
         //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     private ResponseEntity<CreateConsentResp> createConsentRespResponseEntity() throws IOException {

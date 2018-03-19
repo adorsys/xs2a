@@ -96,14 +96,13 @@ public class ConsentInformationController {
     }
 
     @ApiOperation(value = " Delete information consent object")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountDetails[].class),
-    @ApiResponse(code = 204, message = "No Content"),
+    @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content"),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consentID}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteAccountConsent(@PathVariable String consentID) {
         consentService.deleteAccountConsentsById(consentID);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private List<AccountDetails> getAllAccounts(Boolean withBalance) {
