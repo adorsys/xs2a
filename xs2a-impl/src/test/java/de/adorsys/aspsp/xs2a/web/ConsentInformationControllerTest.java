@@ -27,12 +27,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class ConsentInformationControllerTest {
     private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
-    
+
     @Autowired
     private ConsentInformationController consentInformationController;
     @Autowired
     private ConsentService consentService;
-    
+
     @Test
     public void createConsentForAccounts_withBalanceAndTppRedirect() throws IOException {
         //Given:
@@ -41,19 +41,19 @@ public class ConsentInformationControllerTest {
         boolean tppRedirectPreferred = false;
         String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
-        
+
         //When:
         ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, expectedRequest);
-        
+
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         CreateConsentResp actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
-        
+
         //Given:
         String consentId = actualResult.getConsentId();
-        
+
         //When:
         AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
         //Then:
@@ -62,7 +62,7 @@ public class ConsentInformationControllerTest {
         assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
         assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
-    
+
     @Test
     public void getAccountConsentsStatusById_successesResult() throws IOException {
         //Given:
@@ -74,16 +74,16 @@ public class ConsentInformationControllerTest {
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", TransactionStatus.ACTC);
-        
+
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(accountConsentsId);
-        
+
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-    
+
     @Test
     public void shouldFail_getAccountConsentsStatusById_wrongId() throws IOException {
         //Given:
@@ -91,16 +91,16 @@ public class ConsentInformationControllerTest {
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
-        
+
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = consentInformationController.getAccountConsentsStatusById(wrongId);
-        
+
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-    
+
     @Test
     public void getAccountConsentsInformationById_successesResult() throws IOException {
         //Given:
@@ -110,10 +110,10 @@ public class ConsentInformationControllerTest {
         String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
-        
+
         //When:
         ResponseEntity<AccountConsents> actualResponse = consentInformationController.getAccountConsentsInformationById(accountConsentsId);
-        
+
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         AccountConsents actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
@@ -122,7 +122,7 @@ public class ConsentInformationControllerTest {
         assertThat(actualResult.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
         assertThat(actualResult.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
-    
+
     @Test
     public void getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() throws IOException {
         //Given:
@@ -130,20 +130,41 @@ public class ConsentInformationControllerTest {
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
-        
+
         //When:
         ResponseEntity<AccountConsents> actualResponse = consentInformationController.getAccountConsentsInformationById(wrongId);
-        
+
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         AccountConsents actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isNull();
     }
-    
+
     private String getStringFromFile(String pathToFile) throws IOException {
         InputStream inputStream = getClass().getResourceAsStream(pathToFile);
-        
+
         return (String) IOUtils.readLines(inputStream).stream()
                         .collect(Collectors.joining());
+    }
+
+    @Test public void deleteAIC_correctId() throws IOException {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+        ResponseEntity<CreateConsentResp> createdObjectResponse = createConsentRespResponseEntity();
+        String consentId = createdObjectResponse.getBody().getConsentId();
+
+        //When:
+        ResponseEntity<Void> actualResponse = consentInformationController.deleteAccountConsent(consentId);
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+    }
+
+    private ResponseEntity<CreateConsentResp> createConsentRespResponseEntity() throws IOException {
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
+       return consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, expectedRequest);
     }
 }
