@@ -7,18 +7,16 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 @Data
-@Setter(AccessLevel.NONE)
-@AllArgsConstructor
 @ApiModel(description = "Account Report", value = "AccountReport")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @JsonRootName(value = "transactions")
 public class AccountReport {
 
     @ApiModelProperty(value = "Booked TransactionsCreditorResponse", required = true)
-    private Transactions[] booked;
+    private final Transactions[] booked;
 
     @ApiModelProperty(value = "Pending TransactionsCreditorResponse")
-    private Transactions[] pending;
+    private final Transactions[] pending;
 
     @ApiModelProperty(value = "Links: he following links might be used within this context:" +
                               "account link (mandatory)" +
@@ -26,5 +24,5 @@ public class AccountReport {
                               "second_page_link (optional)" +
                               "current_page_ link (optional)" +
                               "last_page_link (optional)", required = true)
-    private Links _links;
+    private final Links _links;
 }
