@@ -73,7 +73,7 @@ public class ConsentInformationController {
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
     public ResponseEntity<AccountConsents> getAccountConsentsInformationById(
-    @ApiParam(name = "consentId", value = "The account consent identification assigned to the created resource")
+    @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource")
     @PathVariable("consent-id") String consentId) {
         AccountConsents accountConsents = consentService.getAccountConsentsById(consentId);
         
