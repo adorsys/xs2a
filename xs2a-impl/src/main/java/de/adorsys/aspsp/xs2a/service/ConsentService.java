@@ -2,11 +2,14 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class ConsentService {
@@ -19,20 +22,28 @@ public class ConsentService {
         this.consentsLinkRedirectToSource = consentsLinkRedirectToSource;
     }
     
-    public CreateConsentResp createAicRequest(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+    public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
         
-        String consentId = consentSpi.createAicRequest(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+        String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred);
         
-        CreateConsentResp aicResponse = new CreateConsentResp();
-        aicResponse.set_links(getLinkToConsent(consentId));
-        aicResponse.setConsentId(consentId);
-        aicResponse.setTransactionStatus(TransactionStatus.RCVD);
-        
-        return aicResponse;
+        return new CreateConsentResp(
+        TransactionStatus.RCVD,
+        consentId,
+        null,
+        getLinkToConsent(consentId),
+        null);
     }
     
-    public CreateConsentReq getAicRequest(String consentId) {
-        return consentSpi.getAicRequest(consentId);
+    public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+        return consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+    }
+    
+    public TransactionStatus getAccountConsentsStatusById(String consentId) {
+        return consentSpi.getAccountConsentsStatusById(consentId);
+    }
+    
+    public AccountConsents getAccountConsentsById(String consentId) {
+        return consentSpi.getAccountConsentsById(consentId);
     }
     
     private Links getLinkToConsent(String consentId) {

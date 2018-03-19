@@ -9,5 +9,5 @@ import lombok.Data;
 public class CountryCode {
     
     @ApiModelProperty(value = "Country code", required = true, example = "49")
-    private String code;
+    private final String code;
 }

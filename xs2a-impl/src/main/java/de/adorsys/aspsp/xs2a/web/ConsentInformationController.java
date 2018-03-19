@@ -2,10 +2,8 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.AisStatusResponseBody;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.GetConsentStatusResp;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.*;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -38,45 +38,61 @@ public class ConsentInformationController {
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class), @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CreateConsentResp> createConsentForAccounts(
+    public ResponseEntity<CreateConsentResp> createAccountConsent(
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "withBalance", required = false) boolean withBalance,
     @RequestBody CreateConsentReq aicRequestBody) {
-        CreateConsentResp aicResponse = consentService.createAicRequest(aicRequestBody, withBalance, tppRedirectPreferred);
+        CreateConsentResp aicCreateResponse = consentService.createAccountConsentsWithResponse(aicRequestBody, withBalance, tppRedirectPreferred);
         
-        return new ResponseEntity<CreateConsentResp>(aicResponse, HttpStatus.OK);
+        LOGGER.debug("createAccountConsent(): response {} ", aicCreateResponse);
+        
+        return new ResponseEntity<>(aicCreateResponse, HttpStatus.OK);
     }
     
-    @ApiOperation(value = "Creats an account information consent resource at the ASPSP to return a list of all accessible accounts",
+    @ApiOperation(value = "Can check the status of an account information consent resource")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Map.class),
+    @ApiResponse(code = 400, message = "Bad request")})
+    @RequestMapping(value = "/{consent-id}/status", method = RequestMethod.GET)
+    public ResponseEntity<Map<String, TransactionStatus>> getAccountConsentsStatusById(
+    @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource")
+    @PathVariable("consent-id") String consentId) {
+    
+        Map<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
+        TransactionStatus transactionStatus = consentService.getAccountConsentsStatusById(consentId);
+        accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
+        
+        LOGGER.debug("getAccountConsentsStatusById(): response {} ", transactionStatus);
+        
+        return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.OK);
+    }
+    
+    @ApiOperation(value = "Returns the content of an account information consent object")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsents.class),
+    @ApiResponse(code = 400, message = "Bad request")})
+    @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
+    public ResponseEntity<AccountConsents> getAccountConsentsInformationById(
+    @ApiParam(name = "consentId", value = "The account consent identification assigned to the created resource")
+    @PathVariable("consent-id") String consentId) {
+        AccountConsents accountConsents = consentService.getAccountConsentsById(consentId);
+        
+        LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsents);
+        
+        return new ResponseEntity<>(accountConsents, HttpStatus.OK);
+    }
+    
+    @ApiOperation(value = "Creates an account information consent resource at the ASPSP to return a list of all accessible accounts",
     notes = "if withBalance is true then the balance is on the list off all payments accounts ")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountDetails[].class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/account-list", method = RequestMethod.POST)
-    public Resource<List<AccountDetails>> createAICRessource(
+    public Resource<List<AccountDetails>> createAICResource(
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = true) Boolean withBalance) {
         
         Link link = linkTo(ConsentInformationController.class).withSelfRel();
         return new Resource<>(getAllAccounts(withBalance), link);
-    }
-    
-    @ApiOperation(value = "Check the status of an account information consent resource")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AisStatusResponseBody.class),
-    @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(value = "/{consentID}/status", method = RequestMethod.GET)
-    public ResponseEntity<AisStatusResponseBody> getStatusForAIC(@PathVariable("consentID") String consentID) {
-        
-        return new ResponseEntity<AisStatusResponseBody>(getTransactionStatus(consentID), HttpStatus.OK);
-    }
-    
-    @ApiOperation(value = " Returns the content of an account information consent object")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = GetConsentStatusResp.class),
-    @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(value = "/{consentID}", method = RequestMethod.GET)
-    public ResponseEntity<GetConsentStatusResp> getInformationsForAIC(@PathVariable("consentID") String consentID) {
-        return new ResponseEntity<GetConsentStatusResp>(getAccountsList(consentID), HttpStatus.OK);
     }
     
     @ApiOperation(value = " Delete information consent object")
@@ -88,19 +104,8 @@ public class ConsentInformationController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
-    
-    private GetConsentStatusResp getAccountsList(String consentID) {
-        // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
-        return null;
-    }
-    
-    private AisStatusResponseBody getTransactionStatus(String consentID) {
-        // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
-        return null;
-    }
-    
     private List<AccountDetails> getAllAccounts(Boolean withBalance) {
         // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
-        return new ArrayList<AccountDetails>();
+        return new ArrayList<>();
     }
 }

@@ -1,34 +1,49 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
-import de.adorsys.aspsp.xs2a.spi.domain.Consent;
+import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
+import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.ConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class ConsentMockData {
-
-    private static HashMap<String, Consent> consentMap = new HashMap<String, Consent>();
-
-    public static String createAicRequest(CreateConsentReq aicRequest,
-                                          boolean withBalance, boolean tppRedirectPreferred) {
-
+    
+    private static HashMap<String, AccountConsents> consentMap = new HashMap<String, AccountConsents>();
+    
+    public static String createAccountConsent(CreateConsentReq aicRequest,
+                                              boolean withBalance, boolean tppRedirectPreferred) {
+        
         String consentId = generateConsentId();
-        consentMap.put(consentId, new Consent(consentId, aicRequest, withBalance, tppRedirectPreferred));
-
+        consentMap.put(consentId, new AccountConsents(consentId,
+        aicRequest.getAccess(),
+        aicRequest.isRecurringIndicator(),
+        aicRequest.getValidUntil(),
+        aicRequest.getFrequencyPerDay(),
+        new Date(),
+        TransactionStatus.ACTC,
+        ConsentStatus.VALID,
+        withBalance,
+        tppRedirectPreferred
+        ));
+        
         return consentId;
     }
-
-    public static CreateConsentReq getAicRequest(String consentId) {
-        CreateConsentReq consent = null;
-        
-        if (consentMap.get(consentId)!=null) {
-           consent = consentMap.get(consentId).getAicRequest();
+    
+    public static TransactionStatus getAccountConsentsStatus(String consentId) {
+        AccountConsents accountConsents = consentMap.get(consentId);
+        if (accountConsents!=null) {
+           return accountConsents.getTransactionStatus();
         }
-        
-        return consent;
+       return null;
     }
-
+    
+    public static AccountConsents getAccountConsent(String consentId) {
+        return consentMap.get(consentId);
+    }
+    
     private static String generateConsentId() {
         return UUID.randomUUID().toString();
     }

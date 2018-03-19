@@ -13,17 +13,17 @@ public class Address {
     
     @ApiModelProperty(value = "Street", required = false, example = "Herrnstraße")
     @Size(max = 70)
-    private String street;
+    private final String street;
     
     @ApiModelProperty(value = "Building number", required = false, example = "123-34")
-    private String buildingNumber;
+    private final String buildingNumber;
     
     @ApiModelProperty(value = "City", required = false, example = "Nürnberg")
-    private String city;
+    private final String city;
     
     @ApiModelProperty(value = "Postal code", required = false, example = "90431")
-    private String postalCode;
+    private final String postalCode;
     
     @ApiModelProperty(value = "Country", required = true, example = "49")
-    private CountryCode country;
+    private final CountryCode country;
 }

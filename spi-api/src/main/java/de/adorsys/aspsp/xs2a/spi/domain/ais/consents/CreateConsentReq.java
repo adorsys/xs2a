@@ -10,7 +10,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@ApiModel(description = "Request Body for created by some methods in the Ais Service")
+@ApiModel(description = "Request creates an account information consent resource at the ASPSP regarding access to accounts specified in this request")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateConsentReq {
 
