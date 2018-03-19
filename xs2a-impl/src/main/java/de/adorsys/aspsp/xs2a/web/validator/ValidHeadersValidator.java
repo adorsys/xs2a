@@ -2,14 +2,15 @@ package de.adorsys.aspsp.xs2a.web.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.annotation.Annotation;
 
 public class ValidHeadersValidator implements ConstraintValidator<ValidHeaders, String> {
     
     
     @Override
-    public void initialize(ValidHeaders s) {
-    
+    public void initialize(ValidHeaders validHeaders) {
+        
+        System.out.println(" initialize ====");
+        
     }
     
     @Override

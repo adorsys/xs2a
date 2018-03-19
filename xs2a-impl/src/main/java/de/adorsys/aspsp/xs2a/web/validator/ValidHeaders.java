@@ -16,7 +16,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ METHOD, FIELD, ANNOTATION_TYPE })
 @Retention(RUNTIME)
 public @interface  ValidHeaders {
-    String message() default "Invalid phone number";
+    
+    String message() default "Invalid data";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
