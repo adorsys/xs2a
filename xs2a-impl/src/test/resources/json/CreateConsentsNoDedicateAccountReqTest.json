@@ -1,5 +1,6 @@
 {"access":
-{"balances": [],
+{ "accounts": [],
+  "balances": [],
   "transactions": []},
   "recurringIndicator": "true",
   "validUntil": "2017-11-01",
