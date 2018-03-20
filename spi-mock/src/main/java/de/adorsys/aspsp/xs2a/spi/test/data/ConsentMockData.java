@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class ConsentMockData {
-    
+
     private static HashMap<String, AccountConsents> consentMap = new HashMap<String, AccountConsents>();
-    
+
     public static String createAccountConsent(CreateConsentReq aicRequest,
                                               boolean withBalance, boolean tppRedirectPreferred) {
-        
+
         String consentId = generateConsentId();
         consentMap.put(consentId, new AccountConsents(consentId,
         aicRequest.getAccess(),
@@ -28,10 +28,10 @@ public class ConsentMockData {
         withBalance,
         tppRedirectPreferred
         ));
-        
+
         return consentId;
     }
-    
+
     public static TransactionStatus getAccountConsentsStatus(String consentId) {
         AccountConsents accountConsents = consentMap.get(consentId);
         if (accountConsents!=null) {
@@ -39,11 +39,15 @@ public class ConsentMockData {
         }
        return null;
     }
-    
+
     public static AccountConsents getAccountConsent(String consentId) {
         return consentMap.get(consentId);
     }
-    
+
+    public static void deleteAccountConcent(String consentId){
+        consentMap.remove(consentId);
+    }
+
     private static String generateConsentId() {
         return UUID.randomUUID().toString();
     }
