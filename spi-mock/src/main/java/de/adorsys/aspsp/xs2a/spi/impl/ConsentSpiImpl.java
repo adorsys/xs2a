@@ -19,7 +19,8 @@ public class ConsentSpiImpl implements ConsentSpi {
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
         return ConsentMockData.getAccountConsentsStatus(consentId);
 
-    }@Override
+    }
+    @Override
     public AccountConsents getAccountConsentsById(String consentId) {
         return ConsentMockData.getAccountConsent(consentId);
     }
