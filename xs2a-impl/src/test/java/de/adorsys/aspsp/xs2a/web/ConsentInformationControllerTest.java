@@ -20,11 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -238,10 +237,8 @@ public class ConsentInformationControllerTest {
     }
 
     private String getStringFromFile(String pathToFile) throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream(pathToFile);
 
-        return (String) IOUtils.readLines(inputStream).stream()
-        .collect(Collectors.joining());
+        return IOUtils.resourceToString(pathToFile, Charset.forName("utf-8"));
     }
 
     private CreateConsentResp getCreateConsentRespEntityFromController(String path, boolean withBalance, boolean tppRedirectPreferred) throws IOException {
