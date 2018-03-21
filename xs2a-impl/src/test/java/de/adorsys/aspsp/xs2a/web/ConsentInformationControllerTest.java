@@ -35,6 +35,7 @@ public class ConsentInformationControllerTest {
     private final String CREATE_CONSENT_ALL_REQ_JSON_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
     private final String CREATE_CONSENT_NOSELECTED_REQ_JSON_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
     private final String CREATE_CONSENT_ALLPSD2_REQ_JSON_PATH = "/json/CreateConsentsPSD2AllAccountsAvailableReqTest.json";
+    private final Charset UTF_8 = Charset.forName("utf-8");
 
     @Autowired
     private ConsentInformationController consentInformationController;
@@ -47,7 +48,7 @@ public class ConsentInformationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
-        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, Charset.forName("utf-8"));
+        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //When:
@@ -78,7 +79,7 @@ public class ConsentInformationControllerTest {
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, Charset.forName("utf-8"));
+        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
@@ -118,7 +119,7 @@ public class ConsentInformationControllerTest {
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, Charset.forName("utf-8"));
+        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
 
@@ -239,7 +240,7 @@ public class ConsentInformationControllerTest {
     private CreateConsentResp getCreateConsentRespEntityFromController(String path, boolean withBalance, boolean tppRedirectPreferred) throws IOException {
         // Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String requestJson = IOUtils.resourceToString(path, Charset.forName("utf-8"));
+        String requestJson = IOUtils.resourceToString(path, UTF_8);
         CreateConsentReq createConsentReq = MAPPER.readValue(requestJson, CreateConsentReq.class);
 
         // When:
