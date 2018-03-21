@@ -47,7 +47,7 @@ public class ConsentInformationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
-        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, Charset.forName("utf-8"));
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //When:
@@ -78,7 +78,7 @@ public class ConsentInformationControllerTest {
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, Charset.forName("utf-8"));
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
@@ -118,7 +118,7 @@ public class ConsentInformationControllerTest {
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String aicRequestJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, Charset.forName("utf-8"));
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
 
@@ -236,15 +236,10 @@ public class ConsentInformationControllerTest {
         assertThat(actualAccountConsents.getValidUntil().compareTo(getDateFromDateString("2017-11-01")));
     }
 
-    private String getStringFromFile(String pathToFile) throws IOException {
-
-        return IOUtils.resourceToString(pathToFile, Charset.forName("utf-8"));
-    }
-
     private CreateConsentResp getCreateConsentRespEntityFromController(String path, boolean withBalance, boolean tppRedirectPreferred) throws IOException {
         // Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String requestJson = getStringFromFile(path);
+        String requestJson = IOUtils.resourceToString(path, Charset.forName("utf-8"));
         CreateConsentReq createConsentReq = MAPPER.readValue(requestJson, CreateConsentReq.class);
 
         // When:
