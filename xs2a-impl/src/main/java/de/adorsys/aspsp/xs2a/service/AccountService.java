@@ -24,58 +24,58 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Service
 @Validated
 public class AccountService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
+
     private int maxNumberOfCharInTransactionJson;
     private AccountSpi accountSpi;
-    
+
     @Autowired
     public AccountService(AccountSpi accountSpi, int maxNumberOfCharInTransactionJson) {
         this.accountSpi = accountSpi;
         this.maxNumberOfCharInTransactionJson = maxNumberOfCharInTransactionJson;
     }
-    
+
     public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
-        
+
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
-        
+
         List<AccountDetails> accountDetails = accountSpi.readAccounts(withBalance, psuInvolved);
-        
+
         accountDetails.forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
-        
+
         return accountDetails;
     }
-    
+
     public Balances getBalances(@NotEmpty String accountId, boolean psuInvolved) {
         return accountSpi.readBalances(accountId, psuInvolved);
     }
-    
+
     public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
                                           boolean psuInvolved) {
         AccountReport accountReport;
-        
+
         if (transactionId == null || transactionId.isEmpty()) {
             accountReport = readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         } else {
             accountReport = readTransactionsById(accountId, transactionId, psuInvolved);
         }
-        
+
         return getReportAccordingMaxSize(accountReport, accountId);
     }
-    
+
     private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
-        
+
         String jsonReport = getJsonStringFromObject(accountReport);
-        
+
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             return getAccountReportWithDownloadLink(accountId);
         }
-        
+
         String urlToAccount = linkTo(AccountController.class).slash(accountId).toString();
         accountReport.get_links().setViewAccount(urlToAccount);
         return accountReport;
     }
-    
+
     private String getJsonStringFromObject(Object obj) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -85,17 +85,17 @@ public class AccountService {
             return "";
         }
     }
-    
+
     private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
                                                    @NotNull Date dateTo, boolean psuInvolved) {
         return accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
     }
-    
+
     private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
                                                boolean psuInvolved) {
         return accountSpi.readTransactionsById(accountId, transactionId, psuInvolved);
     }
-    
+
     public AccountReport getAccountReportWithDownloadLink(@NotEmpty String accountId) {
         // todo further we should implement real flow for downloading file
         String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();

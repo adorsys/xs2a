@@ -4,7 +4,6 @@ import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.Balances;
-import de.adorsys.aspsp.xs2a.web.validator.ValidHeaders;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +24,12 @@ import java.util.Map;
 public class AccountController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
     private AccountService accountService;
-    
+
     @Autowired
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
-    
-    @ValidHeaders
+
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "OK"),

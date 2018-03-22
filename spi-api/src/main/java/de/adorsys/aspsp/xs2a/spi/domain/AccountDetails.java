@@ -18,7 +18,7 @@ public class AccountDetails {
     @Size(max = 35)
     private final String id;
 
-    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment accoun", example = "1111111111")
+    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment accoun", example = "DE2310010010123456760")
     private final String iban;
 
     @ApiModelProperty(value = "BBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. ", example = "1111111111")
@@ -28,7 +28,7 @@ public class AccountDetails {
     @Size(max = 35)
     private final String pan;
 
-    @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number.", example = "0172/1111111")
+    @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number.", example = "123456xxxxxx1234")
     @Size(max = 35)
     private final String maskedPan;
 
