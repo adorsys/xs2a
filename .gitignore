@@ -1,6 +1,6 @@
 .project
 .settings
-.Dstore
+.DS_Store
 .classpath
 .idea
 *.iml
