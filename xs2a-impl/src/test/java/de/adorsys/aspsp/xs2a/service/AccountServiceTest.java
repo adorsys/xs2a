@@ -1,8 +1,8 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.spi.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.junit.Test;
@@ -26,12 +26,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class AccountServiceTest {
     private final String ACCOUNT_ID = "33333-999999999";
     private final String TRANSACTION_ID = "1234578";
-    
+
     @Autowired
     private AccountService accountService;
     @Autowired
     private AccountSpi accountSpi;
-    
+
     @Test
     public void getAccountDetails_withBalanceNoPsuInvolved() throws IOException {
         //Given:
@@ -39,7 +39,7 @@ public class AccountServiceTest {
         boolean psuInvolved = false;
         checkAccountResults(withBalance, psuInvolved);
     }
-    
+
     @Test
     public void getAccountDetails_noBalanceNoPsuInvolved() throws IOException {
         //Given:
@@ -47,21 +47,21 @@ public class AccountServiceTest {
         boolean psuInvolved = false;
         checkAccountResults(withBalance, psuInvolved);
     }
-    
+
     @Test
     public void getBalances_noPsuInvolved() {
         //Given:
         boolean psuInvolved = false;
         checkBalanceResults(ACCOUNT_ID, psuInvolved);
     }
-    
+
     @Test
     public void getBalances_withPsuInvolved() {
         //Given:
         boolean psuInvolved = true;
         checkBalanceResults(ACCOUNT_ID, psuInvolved);
     }
-    
+
     @Test(expected = ConstraintViolationException.class)
     public void shouldFail_getBalances_emptyAccountWithBalanceAndPsuInvolved() {
         //Given:
@@ -69,7 +69,7 @@ public class AccountServiceTest {
         boolean psuInvolved = true;
         checkBalanceResults(accountId, psuInvolved);
     }
-    
+
     @Test
     public void getTransactions_onlyTransaction() {
         //Given:
@@ -77,7 +77,7 @@ public class AccountServiceTest {
         String accountId = "11111-999999999";
         checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
-    
+
     @Test
     public void getTransactions_onlyByPeriod() {
         //Given:
@@ -87,7 +87,7 @@ public class AccountServiceTest {
         String accountId = "11111-999999999";
         checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
     }
-    
+
     @Test
     public void getTransactions_jsonBiggerLimitSize_returnDownloadLink() {
         //Given:
@@ -95,14 +95,14 @@ public class AccountServiceTest {
         Date dateTo = addMonth(dateFrom, 12);
         boolean psuInvolved = false;
         AccountReport expectedResult = accountService.getAccountReportWithDownloadLink(ACCOUNT_ID);
-        
+
         //When:
         AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved);
-        
+
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-    
+
     @Test
     public void getTransactions_withPeriodAndTransactionIdNoPsuInvolved() {
         //Given:
@@ -110,11 +110,11 @@ public class AccountServiceTest {
         Date dateTo = new Date();
         boolean psuInvolved = false;
         String accountId = "11111-999999999";
-        
+
         checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
-    
+
     @Test(expected = ConstraintViolationException.class)
     public void shouldFail_getTransactionsNoAccountId() {
         //Given:
@@ -122,65 +122,69 @@ public class AccountServiceTest {
         String accountId = "";
         checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
-    
+
     private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
         //Given:
+        //TODO #58 get rid of dependencies in Unit Test
         AccountReport expectedResult = accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         String link = linkTo(AccountController.class).slash(accountId).toString();
         expectedResult.get_links().setViewAccount(link);
-        
+
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved);
-        
+
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-    
+
     private void checkTransactionResultsByTransactionId(String accountId, String transactionId, boolean psuInvolved) {
         //Given:
+        //TODO #58 get rid of dependencies in Unit Test
         AccountReport expectedResult = accountSpi.readTransactionsById(accountId, transactionId, psuInvolved);
         String link = linkTo(AccountController.class).slash(accountId).toString();
         expectedResult.get_links().setViewAccount(link);
-        
+
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved);
-        
-        
+
+
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-    
+
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
+        //TODO #58 get rid of dependencies in Unit Test
         Balances expectedResult = accountSpi.readBalances(accountId, psuInvolved);
-        
+
         //When:
         Balances actualResult = accountService.getBalances(accountId, psuInvolved);
-        
+
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
-    
+
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
+        //TODO #58 get rid of dependencies in Unit Test
         List<AccountDetails> accountDetails = accountSpi.readAccounts(withBalance, psuInvolved);
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
-        
+
         //When:
         List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved);
-        
+
         //Then:
         assertThat(expectedResult).isEqualTo(actualResponse);
     }
-    
+
     private List<AccountDetails> accountsToAccountDetailsList(List<AccountDetails> accountDetails) {
         String urlToAccount = linkTo(AccountController.class).toString();
-        
+
         accountDetails
         .forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
         return accountDetails;
-        
+
     }
-    
+
     private static Date addMonth(Date dateFrom, int months) {
         LocalDateTime localDateTimeFrom = LocalDateTime.ofInstant(dateFrom.toInstant(), ZoneId.systemDefault());
         LocalDateTime localDateTimeTo = localDateTimeFrom.plusMonths(months);

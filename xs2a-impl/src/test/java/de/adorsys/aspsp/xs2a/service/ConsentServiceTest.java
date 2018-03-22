@@ -1,9 +1,13 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.*;
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.ApiDateConstants;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccess;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +47,12 @@ public class ConsentServiceTest {
         String consentId = actualAicResponse.getConsentId();
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
         //Then:
-        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedRequest.getAccess());
-        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
-        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
-        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
+        assertThat(actualAccountConsent.getAccess()).isEqualTo(expectedRequest.getAccess());
+        assertThat(actualAccountConsent.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
+        assertThat(actualAccountConsent.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
+        assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
 
     @Test
@@ -102,13 +106,13 @@ public class ConsentServiceTest {
         String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(validAccountConsentsId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(validAccountConsentsId);
 
         //Then:
-        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedRequest.getAccess());
-        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
-        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
-        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
+        assertThat(actualAccountConsent.getAccess()).isEqualTo(expectedRequest.getAccess());
+        assertThat(actualAccountConsent.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
+        assertThat(actualAccountConsent.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
+        assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
 
     @Test
@@ -117,9 +121,9 @@ public class ConsentServiceTest {
         String wrongId = "111111";
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(wrongId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(wrongId);
         //Then:
-        assertThat(actualAccountConsents).isNull();
+        assertThat(actualAccountConsent).isNull();
     }
 
     private CreateConsentReq getCreateConsentsRequestTest() {

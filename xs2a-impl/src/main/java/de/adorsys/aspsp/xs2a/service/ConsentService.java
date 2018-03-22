@@ -1,15 +1,13 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.Links;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ConsentService {
@@ -35,15 +33,18 @@ public class ConsentService {
     }
 
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+        //TODO #58 Create Mapper by example from AccountService
         return consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
     }
 
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        return consentSpi.getAccountConsentsStatusById(consentId);
+        //TODO #58 Create Mapper by example from AccountService
+        return consentSpi.getAccountConsentStatusById(consentId);
     }
 
-    public AccountConsents getAccountConsentsById(String consentId) {
-        return consentSpi.getAccountConsentsById(consentId);
+    public AccountConsent getAccountConsentsById(String consentId) {
+        //TODO #58 Create Mapper by example from AccountService
+        return consentSpi.getAccountConsentById(consentId);
     }
 
     public void deleteAccountConsentsById(String consentId) {

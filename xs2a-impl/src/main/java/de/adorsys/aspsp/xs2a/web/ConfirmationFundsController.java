@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 
-import de.adorsys.aspsp.xs2a.spi.domain.FundsRequest;
+import de.adorsys.aspsp.xs2a.domain.FundsRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

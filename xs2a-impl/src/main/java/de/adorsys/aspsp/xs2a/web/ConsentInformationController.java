@@ -1,11 +1,11 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.ConsentService;
-import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,23 +64,23 @@ public class ConsentInformationController {
         TransactionStatus transactionStatus = consentService.getAccountConsentsStatusById(consentId);
         accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
 
-        LOGGER.debug("getAccountConsentsStatusById(): response {} ", transactionStatus);
+        LOGGER.debug("getAccountConsentStatusById(): response {} ", transactionStatus);
 
         return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Returns the content of an account information consent object")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsents.class),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
-    public ResponseEntity<AccountConsents> getAccountConsentsInformationById(
+    public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource")
     @PathVariable("consent-id") String consentId) {
-        AccountConsents accountConsents = consentService.getAccountConsentsById(consentId);
+        AccountConsent accountConsent = consentService.getAccountConsentsById(consentId);
 
-        LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsents);
+        LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsent);
 
-        return new ResponseEntity<>(accountConsents, HttpStatus.OK);
+        return new ResponseEntity<>(accountConsent, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP to return a list of all accessible accounts",
