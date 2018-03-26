@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -14,7 +15,7 @@ public class TppMessageInformation {
 
 	@ApiModelProperty(value = "Category of the error permitted", required = true, example = "Error")
 	private String category;
-	
+
 	@ApiModelProperty(value = "Code", required = true)
 	private MessageCode code;
 

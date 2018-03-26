@@ -32,9 +32,12 @@ public class AccountController {
 
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
     @ApiResponses(value = {
-    @ApiResponse(code = 200, message = "OK"),
+    @ApiResponse(code = 200, message = "OK", response = Map.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.GET)
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "tpp-transaction-id",  value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
@@ -55,6 +58,9 @@ public class AccountController {
     @ApiResponse(code = 200, message = "OK", response = Balances.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/balances", method = RequestMethod.GET)
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "tpp-transaction-id",  value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<Balances> getBalances(
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
@@ -71,6 +77,9 @@ public class AccountController {
     @ApiResponse(code = 200, message = "OK", response = AccountReport.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/transactions", method = RequestMethod.GET)
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "tpp-transaction-id",  value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<AccountReport> getTransactions(@PathVariable(name = "account-id") String accountId,
                                                          @ApiParam(name = "date_from", value = "Starting date of the account statement", example = "2017-10-30")
                                                          @RequestParam(name = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,

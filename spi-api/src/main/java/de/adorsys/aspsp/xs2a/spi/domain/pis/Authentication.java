@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.pis;
+package de.adorsys.aspsp.xs2a.spi.domain.pis;
 
 
 import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AuthenticationType;

@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.pis;
+package de.adorsys.aspsp.xs2a.spi.domain.pis;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +10,7 @@ public class Challenge {
 
     @ApiModelProperty(value = "OTP maximal length", required = false, example = "me.png")
     private String image;
-    
+
     @ApiModelProperty(value = "String challenge data", required = false, example = "me.png")
     private String data;
 

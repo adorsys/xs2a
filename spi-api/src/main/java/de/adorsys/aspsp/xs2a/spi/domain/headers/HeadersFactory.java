@@ -13,7 +13,7 @@ public class HeadersFactory {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public static RequestHeaders getHeadersImpl(Map<String, String> requestHeadersMap, String handlerName) {
-        RequestHeaders headers = new NotMatchedHeaderImpl();
+        RequestHeaders headers;
 
         switch (handlerName) {
             case "de.adorsys.aspsp.xs2a.web.AccountController":
@@ -28,6 +28,10 @@ public class HeadersFactory {
             case "de.adorsys.aspsp.xs2a.web.ConfirmationFundsController":
                 headers = convertMapToHeaders(requestHeadersMap, FundsConfirmationRequestHeader.class);
                 break;
+            default:
+                LOGGER.error("Handler {} is not matched ", handlerName);
+                headers = new NotMatchedHeaderImpl();
+                break;
         }
 
         return headers;
@@ -36,9 +40,9 @@ public class HeadersFactory {
     private static RequestHeaders convertMapToHeaders(Map<String, String> requestHeadersMap, Class<? extends RequestHeaders> toValueType) {
         try {
             return MAPPER.convertValue(requestHeadersMap, toValueType);
-        } catch (IllegalArgumentException ex) {
-            LOGGER.error("Error request headers conversion: {} ", ex.getMessage());
+        } catch (IllegalArgumentException exception) {
+            LOGGER.error("Error request headers conversion: " + exception.getMessage());
+            return new ErrorMessageHeaderImpl(exception.getMessage());
         }
-        return new NotMatchedHeaderImpl();
     }
 }

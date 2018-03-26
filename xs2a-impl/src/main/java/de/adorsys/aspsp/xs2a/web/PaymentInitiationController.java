@@ -1,7 +1,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.spi.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.spi.domain.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.Transactions;

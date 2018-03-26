@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.pis;
+package de.adorsys.aspsp.xs2a.spi.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;

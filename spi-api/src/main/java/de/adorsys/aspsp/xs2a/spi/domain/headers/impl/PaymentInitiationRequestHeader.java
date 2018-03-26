@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @ApiModel(description = "Payment initiation request header", value = "PaymentInitiationRequestHeader")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -16,6 +18,7 @@ public class PaymentInitiationRequestHeader extends CommonRequestHeader {
 
     @ApiModelProperty(value = "Content type", required = true, example = "application/json")
     @JsonProperty(value = "content-type")
+    @NotNull
     private ReportType contentType;
 
     @ApiModelProperty(value = "Might be mandated in the ASPSP's documentation, if OAuth is not chosen as Pre-Step", required = false, example = "PSU-1234")
@@ -57,13 +60,4 @@ public class PaymentInitiationRequestHeader extends CommonRequestHeader {
     @ApiModelProperty(value = "URI of the TPP, where the transaction flow shall be redirected to after a Redirect", required = false, example = "https://www.example.com/authentication/b51de9d9-2baa-4012-9447-e3f57f1f363c")
     @JsonProperty(value = "tpp-redirect-uri")
     private String tppRedirectUri;
-
-    @Override
-    public boolean isValid() {
-        return super.isValid() && notNullValidate();
-    }
-
-    private boolean notNullValidate() {
-        return contentType != null;
-    }
 }
