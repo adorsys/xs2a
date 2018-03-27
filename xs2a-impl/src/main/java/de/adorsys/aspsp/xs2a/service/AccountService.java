@@ -8,7 +8,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.Balances;
 import de.adorsys.aspsp.xs2a.spi.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +45,11 @@ public class AccountService {
         return accountDetails;
     }
 
-    public Balances getBalances(@NotEmpty String accountId, boolean psuInvolved) {
+    public Balances getBalances(@NotNull String accountId, boolean psuInvolved) {
         return accountSpi.readBalances(accountId, psuInvolved);
     }
 
-    public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
+    public AccountReport getAccountReport(@NotNull String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
                                           boolean psuInvolved) {
         AccountReport accountReport;
 
@@ -86,17 +85,17 @@ public class AccountService {
         }
     }
 
-    private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
+    private AccountReport readTransactionsByPeriod(@NotNull String accountId, @NotNull Date dateFrom,
                                                    @NotNull Date dateTo, boolean psuInvolved) {
         return accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
     }
 
-    private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
+    private AccountReport readTransactionsById(@NotNull String accountId, @NotNull String transactionId,
                                                boolean psuInvolved) {
         return accountSpi.readTransactionsById(accountId, transactionId, psuInvolved);
     }
 
-    public AccountReport getAccountReportWithDownloadLink(@NotEmpty String accountId) {
+    public AccountReport getAccountReportWithDownloadLink(@NotNull String accountId) {
         // todo further we should implement real flow for downloading file
         String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
         Links downloadLink = new Links();
