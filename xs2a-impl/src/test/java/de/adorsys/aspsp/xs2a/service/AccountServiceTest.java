@@ -36,20 +36,20 @@ public class AccountServiceTest {
     private final String ACCOUNT_ID = "11111-999999999";
     private final String TRANSACTION_ID = "Id-0001";
     private final Currency usd = Currency.getInstance("USD");
-    private final int maxNumberOfCharInTransactionJson=1000;
+    private final int maxNumberOfCharInTransactionJson = 1000;
 
     @Autowired
     private AccountService accountService;
     @Autowired
-    AccountMapper accountMapper;
+    private AccountMapper accountMapper;
 
-    @MockBean(name="accountSpi")
+    @MockBean(name = "accountSpi")
     private AccountSpi accountSpi;
 
     @Before
     public void setUp() {
         when(accountSpi.readTransactionsByPeriod(any(), any(), any(), anyBoolean())).thenReturn(getTransactionList());
-        when(accountSpi.readBalances(any(),anyBoolean())).thenReturn(getBalances());
+        when(accountSpi.readBalances(any(), anyBoolean())).thenReturn(getBalances());
         when(accountSpi.readTransactionsById(any(), any(), anyBoolean())).thenReturn(getTransactionList());
     }
 
@@ -146,7 +146,6 @@ public class AccountServiceTest {
 
     private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
         //Given:
-        //TODO #58 get rid of dependencies in Unit Test
         AccountReport expectedReport = getAccountReport(accountId);
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved);
@@ -158,7 +157,6 @@ public class AccountServiceTest {
 
     private void checkTransactionResultsByTransactionId(String accountId, String transactionId, boolean psuInvolved) {
         //Given:
-        //TODO #58 get rid of dependencies in Unit Test
         AccountReport expectedReport = getAccountReport(accountId);
 
         //When:
@@ -170,7 +168,6 @@ public class AccountServiceTest {
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
-        //TODO #58 get rid of dependencies in Unit Test
         Balances expectedResult = accountMapper.mapSpiBalances(getBalances());
 
         //When:
@@ -181,7 +178,6 @@ public class AccountServiceTest {
     }
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-        //TODO #58 get rid of dependencies in Unit Test
         List<SpiAccountDetails> list = accountSpi.readAccounts(withBalance, psuInvolved);
         List<AccountDetails> accountDetails = new ArrayList<>();
         for (SpiAccountDetails s : list) {
@@ -254,7 +250,7 @@ public class AccountServiceTest {
     }
 
     private SpiBalances getBalances() {
-        AccountBalance accountBalance = getSpiAccountBalance("1000","2016-12-12","2018-23-02");
+        AccountBalance accountBalance = getSpiAccountBalance("1000", "2016-12-12", "2018-23-02");
 
         SpiBalances spiBalances = new SpiBalances();
         spiBalances.setInterimAvailable(accountBalance);
@@ -262,24 +258,24 @@ public class AccountServiceTest {
         return spiBalances;
     }
 
-    private AccountBalance getSpiAccountBalance(String ammount,String date, String lastActionDate){
+    private AccountBalance getSpiAccountBalance(String ammount, String date, String lastActionDate) {
         AccountBalance acb = new AccountBalance();
-        acb.setAmount(new Amount(usd,ammount));
+        acb.setAmount(new Amount(usd, ammount));
         acb.setDate(getDateFromDateString(date));
         acb.setLastActionDateTime(getDateFromDateString(lastActionDate));
 
         return acb;
     }
 
-    private AccountReport getAccountReport(String accountId){
+    private AccountReport getAccountReport(String accountId) {
         AccountReport accountReport = accountMapper.mapAccountReport(getTransactionList());
-        String jsonReport=null;
+        String jsonReport = null;
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             jsonReport = objectMapper.writeValueAsString(accountReport);
         } catch (JsonProcessingException e) {
-            System.out.println("Error converting object {} to json"+ accountReport.toString());
+            System.out.println("Error converting object {} to json" + accountReport.toString());
         }
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
@@ -287,8 +283,7 @@ public class AccountServiceTest {
             Links downloadLink = new Links();
             downloadLink.setDownload(urlToDownload);
             return new AccountReport(null, null, downloadLink);
-        }
-        else {
+        } else {
             return accountReport;
         }
     }

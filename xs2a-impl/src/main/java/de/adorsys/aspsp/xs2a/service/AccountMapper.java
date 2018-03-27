@@ -42,12 +42,11 @@ class AccountMapper {
                 )
             )
             .orElse(null);
-
     }
 
-    private CashAccountType mapAccountType(AccountType cashAccountType) {
-        return Optional.ofNullable(cashAccountType)
-        .map(cashAccountTyp -> CashAccountType.valueOf(cashAccountType.name()))
+    private CashAccountType mapAccountType(AccountType accountType) {
+        return Optional.ofNullable(accountType)
+        .map(type -> CashAccountType.valueOf(type.name()))
         .orElse(null);
     }
 

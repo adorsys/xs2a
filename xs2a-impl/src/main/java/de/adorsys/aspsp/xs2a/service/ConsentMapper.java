@@ -22,6 +22,7 @@ class ConsentMapper {
         .map(ts-> de.adorsys.aspsp.xs2a.domain.TransactionStatus.valueOf(ts.name()))
         .orElse(null);
     }
+
     public CreateConsentRequest mapSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
         .map(consentRe -> new CreateConsentRequest(mapSpiAccountAccess(consentReq.getAccess()),
