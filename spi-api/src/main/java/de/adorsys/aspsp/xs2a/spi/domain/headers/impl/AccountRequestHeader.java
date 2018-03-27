@@ -3,7 +3,7 @@ package de.adorsys.aspsp.xs2a.spi.domain.headers.impl;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.spi.domain.ReportType;
+import de.adorsys.aspsp.xs2a.spi.domain.ContentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -29,5 +29,5 @@ public class AccountRequestHeader extends CommonRequestHeader {
 
     @ApiModelProperty(value = "Indicates the formats of account reports supported together with a prioritisation following the http header definition", required = false, example = "application/json")
     @JsonProperty(value = "accept")
-    private ReportType accept;
+    private ContentType accept;
 }

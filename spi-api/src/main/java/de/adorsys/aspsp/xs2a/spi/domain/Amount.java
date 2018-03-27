@@ -13,11 +13,11 @@ import java.util.Currency;
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class Amount {
 
-	@ApiModelProperty(value = "currency", required = true, example = "EUR")
+    @ApiModelProperty(value = "currency", required = true, example = "EUR")
     @NotNull
-	private Currency currency;
+    private Currency currency;
 
-	@ApiModelProperty(value = "content", required = true, example = "1000.00")
+    @ApiModelProperty(value = "content", required = true, example = "1000.00")
     @NotNull
-	private String content;
+    private String content;
 }
