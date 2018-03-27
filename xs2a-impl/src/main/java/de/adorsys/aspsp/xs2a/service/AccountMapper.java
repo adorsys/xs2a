@@ -50,7 +50,7 @@ class AccountMapper {
         .orElse(null);
     }
 
-    Balances mapSpiBalances(SpiBalances spiBalances) {
+    public Balances mapSpiBalances(SpiBalances spiBalances) {
         return Optional.ofNullable(spiBalances)
             .map(b -> {
                 Balances balances = new Balances();
