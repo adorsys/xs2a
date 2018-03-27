@@ -46,12 +46,14 @@ class AccountMapper {
     }
 
     private CashAccountType mapAccountType(AccountType cashAccountType) {
-        return CashAccountType.valueOf(cashAccountType.name());
+        return Optional.ofNullable(cashAccountType)
+        .map(cashAccountTyp -> CashAccountType.valueOf(cashAccountType.name()))
+        .orElse(null);
     }
 
     Balances mapSpiBalances(SpiBalances spiBalances) {
         return Optional.ofNullable(spiBalances)
-            .map(b ->  {
+            .map(b -> {
                 Balances balances = new Balances();
                 balances.setAuthorised(mapSingleBalances(b.getAuthorised()));
                 balances.setClosing_booked(mapSingleBalances(b.getClosing_booked()));

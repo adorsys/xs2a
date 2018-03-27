@@ -31,7 +31,7 @@ public class ConsentServiceTest {
     private ConsentService consentService;
 
     @Test
-    public void createAccountConsentsWithResponse_returnCreatedConsent() throws IOException {
+    public void createAccountConsentsWithResponse_returnCreatedConsent() {
         //Given:
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
         boolean withBalance = true;
@@ -91,6 +91,7 @@ public class ConsentServiceTest {
         String wrongId = "111111";
 
         //When:
+
         TransactionStatus actualStatus = consentService.getAccountConsentsStatusById(wrongId);
 
         //Then:

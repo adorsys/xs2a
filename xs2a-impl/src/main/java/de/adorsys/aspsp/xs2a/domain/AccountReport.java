@@ -18,7 +18,7 @@ public class AccountReport {
     @ApiModelProperty(value = "Pending TransactionsCreditorResponse")
     private final Transaction[] pending;
 
-    @ApiModelProperty(value = "Links: he following links might be used within this context:" +
+    @ApiModelProperty(value = "Links: the following links might be used within this context:" +
                               "account link (mandatory)" +
                               "first_page_link (optional)" +
                               "second_page_link (optional)" +

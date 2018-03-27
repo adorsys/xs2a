@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 public class ConsentService {
     private String consentsLinkRedirectToSource;
     private ConsentSpi consentSpi;
+    private ConsentMapper consentMapper;
 
     @Autowired
-    public ConsentService(ConsentSpi consentSpi, String consentsLinkRedirectToSource) {
+    public ConsentService(ConsentSpi consentSpi, String consentsLinkRedirectToSource, ConsentMapper consentMapper) {
         this.consentSpi = consentSpi;
         this.consentsLinkRedirectToSource = consentsLinkRedirectToSource;
+        this.consentMapper = consentMapper;
     }
 
     public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
@@ -33,18 +35,15 @@ public class ConsentService {
     }
 
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
-        //TODO #58 Create Mapper by example from AccountService
-        return consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+        return consentSpi.createAccountConsents(consentMapper.mapSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred);
     }
 
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        //TODO #58 Create Mapper by example from AccountService
-        return consentSpi.getAccountConsentStatusById(consentId);
+        return consentMapper.mapGetAccountConsentStatusById(consentSpi.getAccountConsentStatusById(consentId));
     }
 
     public AccountConsent getAccountConsentsById(String consentId) {
-        //TODO #58 Create Mapper by example from AccountService
-        return consentSpi.getAccountConsentById(consentId);
+        return consentMapper.mapGetAccountConsent(consentSpi.getAccountConsentById(consentId));
     }
 
     public void deleteAccountConsentsById(String consentId) {

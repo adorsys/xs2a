@@ -1,39 +1,60 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.account.Transaction;
+import de.adorsys.aspsp.xs2a.spi.domain.common.Amount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountServiceTest {
-    private final String ACCOUNT_ID = "33333-999999999";
-    private final String TRANSACTION_ID = "1234578";
+    private final String ACCOUNT_ID = "11111-999999999";
+    private final String TRANSACTION_ID = "Id-0001";
+    private final Currency usd = Currency.getInstance("USD");
+    private final int maxNumberOfCharInTransactionJson=1000;
 
     @Autowired
     private AccountService accountService;
     @Autowired
+    AccountMapper accountMapper;
+
+    @MockBean(name="accountSpi")
     private AccountSpi accountSpi;
 
+    @Before
+    public void setUp() {
+        when(accountSpi.readTransactionsByPeriod(any(), any(), any(), anyBoolean())).thenReturn(getTransactionList());
+        when(accountSpi.readBalances(any(),anyBoolean())).thenReturn(getBalances());
+        when(accountSpi.readTransactionsById(any(), any(), anyBoolean())).thenReturn(getTransactionList());
+    }
+
     @Test
-    public void getAccountDetails_withBalanceNoPsuInvolved() throws IOException {
+    public void getAccountDetails_withBalanceNoPsuInvolved() {
         //Given:
         boolean withBalance = true;
         boolean psuInvolved = false;
@@ -41,7 +62,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountDetails_noBalanceNoPsuInvolved() throws IOException {
+    public void getAccountDetails_noBalanceNoPsuInvolved() {
         //Given:
         boolean withBalance = true;
         boolean psuInvolved = false;
@@ -126,36 +147,31 @@ public class AccountServiceTest {
     private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
         //Given:
         //TODO #58 get rid of dependencies in Unit Test
-        AccountReport expectedResult = accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
-        String link = linkTo(AccountController.class).slash(accountId).toString();
-        expectedResult.get_links().setViewAccount(link);
-
+        AccountReport expectedReport = getAccountReport(accountId);
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved);
 
         //Then:
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedReport);
+        assertThat(actualResult.get_links()).isEqualTo(expectedReport.get_links());
     }
 
     private void checkTransactionResultsByTransactionId(String accountId, String transactionId, boolean psuInvolved) {
         //Given:
         //TODO #58 get rid of dependencies in Unit Test
-        AccountReport expectedResult = accountSpi.readTransactionsById(accountId, transactionId, psuInvolved);
-        String link = linkTo(AccountController.class).slash(accountId).toString();
-        expectedResult.get_links().setViewAccount(link);
+        AccountReport expectedReport = getAccountReport(accountId);
 
         //When:
         AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved);
 
-
         //Then:
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedReport);
     }
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
         //TODO #58 get rid of dependencies in Unit Test
-        Balances expectedResult = accountSpi.readBalances(accountId, psuInvolved);
+        Balances expectedResult = accountMapper.mapSpiBalances(getBalances());
 
         //When:
         Balances actualResult = accountService.getBalances(accountId, psuInvolved);
@@ -166,7 +182,12 @@ public class AccountServiceTest {
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
         //TODO #58 get rid of dependencies in Unit Test
-        List<AccountDetails> accountDetails = accountSpi.readAccounts(withBalance, psuInvolved);
+        List<SpiAccountDetails> list = accountSpi.readAccounts(withBalance, psuInvolved);
+        List<AccountDetails> accountDetails = new ArrayList<>();
+        for (SpiAccountDetails s : list) {
+            accountDetails.add(accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(s));
+        }
+
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
 
         //When:
@@ -189,5 +210,86 @@ public class AccountServiceTest {
         LocalDateTime localDateTimeFrom = LocalDateTime.ofInstant(dateFrom.toInstant(), ZoneId.systemDefault());
         LocalDateTime localDateTimeTo = localDateTimeFrom.plusMonths(months);
         return Date.from(localDateTimeTo.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private List<Transaction> getTransactionList() {
+        List<Transaction> testData = new ArrayList<>();
+        testData.add(getBookedTransaction());
+        testData.add(getPendingTransaction());
+
+        return testData;
+    }
+
+    private static Date getDateFromDateString(String dateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    private Transaction getBookedTransaction() {
+        Currency usd = Currency.getInstance("USD");
+        //transaction 1:
+        Date bookingDate = getDateFromDateString("2017-11-07");
+        Date valueDate = getDateFromDateString("2018-20-08");
+        Amount amount = new Amount(usd, "15000");
+        AccountReference creditorAccount = new AccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
+        AccountReference debtorAccount = new AccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
+
+        return new Transaction("Id-0001", "id-0001", "m-0001", "c-0001", bookingDate, valueDate, amount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
+    }
+
+    private Transaction getPendingTransaction() {
+        Currency usd = Currency.getInstance("USD");
+        //transaction 1:
+        Date valueDate = getDateFromDateString("2018-20-08");
+        Amount amount = new Amount(usd, "15000");
+        AccountReference creditorAccount = new AccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
+        AccountReference debtorAccount = new AccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
+
+        return new Transaction("Id-0001", "id-0001", "m-0001", "c-0001", null, valueDate, amount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
+    }
+
+    private SpiBalances getBalances() {
+        AccountBalance accountBalance = getSpiAccountBalance("1000","2016-12-12","2018-23-02");
+
+        SpiBalances spiBalances = new SpiBalances();
+        spiBalances.setInterimAvailable(accountBalance);
+
+        return spiBalances;
+    }
+
+    private AccountBalance getSpiAccountBalance(String ammount,String date, String lastActionDate){
+        AccountBalance acb = new AccountBalance();
+        acb.setAmount(new Amount(usd,ammount));
+        acb.setDate(getDateFromDateString(date));
+        acb.setLastActionDateTime(getDateFromDateString(lastActionDate));
+
+        return acb;
+    }
+
+    private AccountReport getAccountReport(String accountId){
+        AccountReport accountReport = accountMapper.mapAccountReport(getTransactionList());
+        String jsonReport=null;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            jsonReport = objectMapper.writeValueAsString(accountReport);
+        } catch (JsonProcessingException e) {
+            System.out.println("Error converting object {} to json"+ accountReport.toString());
+        }
+
+        if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
+            String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
+            Links downloadLink = new Links();
+            downloadLink.setDownload(urlToDownload);
+            return new AccountReport(null, null, downloadLink);
+        }
+        else {
+            return accountReport;
+        }
     }
 }
