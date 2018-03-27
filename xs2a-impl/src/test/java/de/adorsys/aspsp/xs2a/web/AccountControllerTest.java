@@ -70,7 +70,6 @@ public class AccountControllerTest {
         checkBalanceResults(ACCOUNT_ID, psuInvolved);
     }
 
-    @Test(expected = ConstraintViolationException.class)
     public void shouldFail_getBalance_emptyAccountWithBalanceAndPsuInvolved() {
         //Given:
         String accountId = "";
