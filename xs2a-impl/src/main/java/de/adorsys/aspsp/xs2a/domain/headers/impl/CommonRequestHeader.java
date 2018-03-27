@@ -1,9 +1,9 @@
-package de.adorsys.aspsp.xs2a.spi.domain.headers.impl;
+package de.adorsys.aspsp.xs2a.domain.headers.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.spi.domain.headers.RequestHeaders;
+import de.adorsys.aspsp.xs2a.domain.headers.RequestHeaders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

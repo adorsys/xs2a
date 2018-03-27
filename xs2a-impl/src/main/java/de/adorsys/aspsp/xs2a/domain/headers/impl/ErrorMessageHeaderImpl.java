@@ -1,6 +1,6 @@
-package de.adorsys.aspsp.xs2a.spi.domain.headers.impl;
+package de.adorsys.aspsp.xs2a.domain.headers.impl;
 
-import de.adorsys.aspsp.xs2a.spi.domain.headers.RequestHeaders;
+import de.adorsys.aspsp.xs2a.domain.headers.RequestHeaders;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

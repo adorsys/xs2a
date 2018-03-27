@@ -1,19 +1,17 @@
 package de.adorsys.aspsp.xs2a.service;
 
 
-import de.adorsys.aspsp.xs2a.spi.domain.headers.HeadersFactory;
-import de.adorsys.aspsp.xs2a.spi.domain.headers.RequestHeaders;
-import de.adorsys.aspsp.xs2a.spi.domain.headers.impl.ErrorMessageHeaderImpl;
+import de.adorsys.aspsp.xs2a.domain.headers.HeadersFactory;
+import de.adorsys.aspsp.xs2a.domain.headers.RequestHeaders;
+import de.adorsys.aspsp.xs2a.domain.headers.impl.ErrorMessageHeaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
-import javax.validation.Path;
 import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,8 +31,7 @@ public class RequestValidatorService {
 
         Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
 
-        String handlerName = ((HandlerMethod) handler).getBeanType().getTypeName();
-        RequestHeaders headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap, handlerName);
+        RequestHeaders headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap, ((HandlerMethod) handler).getBeanType());
 
         if (headerImpl instanceof ErrorMessageHeaderImpl) {
             return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());

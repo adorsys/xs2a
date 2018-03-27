@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.spi.domain.headers.impl;
+package de.adorsys.aspsp.xs2a.domain.headers.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
