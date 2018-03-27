@@ -9,6 +9,7 @@
     <modules>
         <module>spi-api</module>
         <module>spi-mock</module>
+        <module>aspsp-mock-server</module>
         <module>xs2a-impl</module>
     </modules>
     <packaging>pom</packaging>
