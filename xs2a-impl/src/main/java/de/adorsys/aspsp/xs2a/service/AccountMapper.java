@@ -4,7 +4,9 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,8 +68,8 @@ class AccountMapper {
             .orElse(null);
     }
 
-    private Amount mapSpiAmount(SpiAmount spiSpiAmount) {
-        return Optional.ofNullable(spiSpiAmount)
+    private Amount mapSpiAmount(SpiAmount spiAmount) {
+        return Optional.ofNullable(spiAmount)
             .map(a -> {
                 Amount amount = new Amount();
                 amount.setContent(a.getContent());
@@ -97,8 +99,8 @@ class AccountMapper {
         return new AccountReport(booked, pending, new Links());
     }
 
-    private Transaction mapSpiTransaction(SpiTransaction spiSpiTransaction) {
-        return Optional.ofNullable(spiSpiTransaction)
+    private Transaction mapSpiTransaction(SpiTransaction spiTransaction) {
+        return Optional.ofNullable(spiTransaction)
             .map(t -> {
                 Transaction transaction = new Transaction();
                 transaction.setAmount(mapSpiAmount(t.getSpiAmount()));
@@ -121,8 +123,8 @@ class AccountMapper {
             .orElse(null);
     }
 
-    private AccountReference mapSpiAccountReference(SpiAccountReference spiSpiAccountReference) {
-        return Optional.ofNullable(spiSpiAccountReference)
+    private AccountReference mapSpiAccountReference(SpiAccountReference spiAccountReference) {
+        return Optional.ofNullable(spiAccountReference)
             .map(ar -> {
                 AccountReference accountReference = new AccountReference();
                 accountReference.setAccountId(ar.getAccountId());
