@@ -40,7 +40,7 @@ public class RequestValidatorServiceTest {
     @Test
     public void shouldFail_preHandle_wrongRequest() throws Exception {
         //Given:
-        HttpServletRequest request = getWrongRequest();
+        HttpServletRequest request = getWrongRequestNoTppRequestId();
         Object handler = getHandler();
 
         //When:
@@ -48,12 +48,38 @@ public class RequestValidatorServiceTest {
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
+        assertThat(actualViolations.get("tppRequestId")).isEqualTo("must not be null");
     }
 
-    private HttpServletRequest getWrongRequest() {
+
+    @Test
+    public void shouldFail_preHandle_wrongRequestHeaderFormat() throws Exception {
+        //Given:
+        HttpServletRequest request = getWrongRequestWrongTppRequestIdFormat();
+        Object handler = getHandler();
+
+        //When:
+        Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(1);
+        assertThat(actualViolations.get("Wrong header arguments: ")).contains("Can not deserialize value");
+    }
+
+    private HttpServletRequest getWrongRequestNoTppRequestId() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
         request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
+        request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
+
+        return request;
+    }
+
+    private HttpServletRequest getWrongRequestWrongTppRequestIdFormat() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Content-Type", "application/json");
+        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
+        request.addHeader("tpp-request-id", "wrong_format");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 
         return request;
