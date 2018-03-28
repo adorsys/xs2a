@@ -20,7 +20,6 @@ public class AccountRequestHeader extends CommonRequestHeader {
     @ApiModelProperty(value = "ID of the account consent", required = true, example = "5845f9b0-cef6-4f2d-97e0-ed1e0469a907")
     @JsonProperty(value = "consent-id")
     @NotNull
-    @Size(min = 5)
     private String consentId;
 
     @ApiModelProperty(value = "Is contained only, if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in the related consent authorisation", required = false, example = "5845f9b0-cef6-4f2d-97e0-ed1e0469a907")

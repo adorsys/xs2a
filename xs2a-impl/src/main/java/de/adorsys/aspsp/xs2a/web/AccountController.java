@@ -36,6 +36,7 @@ public class AccountController {
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.GET)
     @ApiImplicitParams({
+    @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
@@ -59,6 +60,7 @@ public class AccountController {
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/balances", method = RequestMethod.GET)
     @ApiImplicitParams({
+    @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<Balances> getBalances(
@@ -78,6 +80,7 @@ public class AccountController {
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/transactions", method = RequestMethod.GET)
     @ApiImplicitParams({
+    @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<AccountReport> getTransactions(@PathVariable(name = "account-id") String accountId,
