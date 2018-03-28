@@ -12,5 +12,5 @@ public interface ConsentSpi {
 
     SpiAccountConsent getAccountConsentById(String consentId);
 
-    Boolean deleteAccountConsentsById(String consentId);
+    boolean deleteAccountConsentsById(String consentId);
 }

@@ -27,7 +27,7 @@ public class ConsentSpiImpl implements ConsentSpi {
     }
 
     @Override
-    public Boolean deleteAccountConsentsById(String consentId) {
+    public boolean deleteAccountConsentsById(String consentId) {
         if (ConsentMockData.getAccountConsent(consentId) != null) {
             ConsentMockData.deleteAccountConcent(consentId);
             return true;

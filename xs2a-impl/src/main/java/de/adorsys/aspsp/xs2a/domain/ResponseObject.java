@@ -11,15 +11,17 @@ import lombok.Getter;
  */
 @Getter
 public class ResponseObject<T> {
-    private OperationStatus operationStatus;
-    private T operationTarget;
-    private MessageCode message;
+    final private boolean success;
+    final private T operationTarget;
+    final private MessageCode message;
 
     /**
      * Success Response without any additional information
      */
     public ResponseObject() {
-        this.operationStatus = OperationStatus.SUCCESS;
+        this.success = true;
+        operationTarget = null;
+        message = null;
     }
 
     /**
@@ -28,8 +30,9 @@ public class ResponseObject<T> {
      * @param operationTarget Targeted object. (Any object that has to be passed back to the service)
      */
     public ResponseObject(T operationTarget) {
-        this.operationStatus = OperationStatus.SUCCESS;
+        this.success = true;
         this.operationTarget = operationTarget;
+        this.message = null;
     }
 
     /**
@@ -38,31 +41,8 @@ public class ResponseObject<T> {
      * @param message MessageCode enum
      */
     public ResponseObject(MessageCode message) {
-        this.operationStatus = OperationStatus.FAILURE;
-        this.message = message;
-    }
-
-    /**
-     * Custom Response including operation status and message
-     *
-     * @param operationStatus Operation status
-     * @param message         MessageCode enum
-     */
-    public ResponseObject(OperationStatus operationStatus, MessageCode message) {
-        this.operationStatus = operationStatus;
-        this.message = message;
-    }
-
-    /**
-     * Custom Response including all parameters
-     *
-     * @param operationStatus Operation status
-     * @param message         MessageCode enum
-     * @param operationTarget <T> Operation targeted object
-     */
-    public ResponseObject(OperationStatus operationStatus, T operationTarget, MessageCode message) {
-        this.operationTarget = operationTarget;
-        this.operationStatus = operationStatus;
+        this.success = false;
+        this.operationTarget = null;
         this.message = message;
     }
 }
