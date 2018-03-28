@@ -5,7 +5,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
-
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

@@ -9,7 +9,10 @@ import java.util.List;
 
 public interface AccountSpi {
     List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved);
+
     SpiBalances readBalances(String accountId, boolean psuInvolved);
+
     List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved);
+
     List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved);
 }

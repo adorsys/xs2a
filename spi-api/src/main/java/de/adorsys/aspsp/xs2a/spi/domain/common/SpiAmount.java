@@ -6,6 +6,6 @@ import java.util.Currency;
 
 @Data
 public class SpiAmount {
-	private final Currency currency;
-	private final String content;
+    private final Currency currency;
+    private final String content;
 }

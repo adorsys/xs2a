@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.web;
 
-
 import de.adorsys.aspsp.xs2a.domain.FundsRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 @RequestMapping(path = "api/v1/confirmation-of-funds")

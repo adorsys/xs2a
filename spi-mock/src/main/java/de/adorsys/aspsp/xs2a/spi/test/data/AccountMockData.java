@@ -1,17 +1,10 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Currency;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class AccountMockData {
 

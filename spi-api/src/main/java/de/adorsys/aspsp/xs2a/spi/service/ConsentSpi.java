@@ -8,7 +8,6 @@ public interface ConsentSpi {
     String createAccountConsents(SpiCreateConsentRequest accountInformationConsentRequest,
                                  boolean withBalance, boolean tppRedirectPreferred);
 
-
     SpiTransactionStatus getAccountConsentStatusById(String consentId);
 
     SpiAccountConsent getAccountConsentById(String consentId);

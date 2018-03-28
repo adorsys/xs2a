@@ -7,10 +7,7 @@ import java.util.Date;
 
 @Data
 public class SpiAccountBalance {
-
     private SpiAmount spiAmount;
-
     private Date lastActionDateTime;
-
     private Date date;
 }

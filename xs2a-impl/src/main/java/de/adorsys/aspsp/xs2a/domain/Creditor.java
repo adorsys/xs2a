@@ -1,9 +1,7 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import de.adorsys.aspsp.xs2a.domain.address.Address;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

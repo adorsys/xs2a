@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
