@@ -84,41 +84,41 @@ class AccountMapper {
             return null;
         }
 
-        Transaction[] booked = spiTransactions
+        Transactions[] booked = spiTransactions
             .stream()
             .filter(transaction -> transaction.getBookingDate() != null)
             .map(this::mapSpiTransaction)
-            .toArray(Transaction[]::new);
+            .toArray(Transactions[]::new);
 
-        Transaction[] pending = spiTransactions
+        Transactions[] pending = spiTransactions
             .stream()
             .filter(transaction -> transaction.getBookingDate() == null)
             .map(this::mapSpiTransaction)
-            .toArray(Transaction[]::new);
+            .toArray(Transactions[]::new);
 
         return new AccountReport(booked, pending, new Links());
     }
 
-    private Transaction mapSpiTransaction(SpiTransaction spiTransaction) {
+    private Transactions mapSpiTransaction(SpiTransaction spiTransaction) {
         return Optional.ofNullable(spiTransaction)
             .map(t -> {
-                Transaction transaction = new Transaction();
-                transaction.setAmount(mapSpiAmount(t.getSpiAmount()));
-                transaction.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
-                transaction.setBookingDate(t.getBookingDate());
-                transaction.setCreditorAccount(mapSpiAccountReference(t.getCreditorAccount()));
-                transaction.setDebtorAccount(mapSpiAccountReference(t.getDebtorAccount()));
-                transaction.setCreditorId(t.getCreditorId());
-                transaction.setCreditorName(t.getCreditorName());
-                transaction.setDebtorName(t.getDebtorName());
-                transaction.setUltimateDebtor(t.getUltimateDebtor());
-                transaction.setEndToEndId(t.getEndToEndId());
-                transaction.setMandateId(t.getMandateId());
-                transaction.setPurposeCode(new PurposeCode(t.getPurposeCode()));
-                transaction.setTransactionId(t.getTransactionId());
-                transaction.setRemittanceInformationStructured(t.getRemittanceInformationStructured());
-                transaction.setRemittanceInformationUnstructured(t.getRemittanceInformationUnstructured());
-                return transaction;
+                Transactions transactions = new Transactions();
+                transactions.setAmount(mapSpiAmount(t.getSpiAmount()));
+                transactions.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
+                transactions.setBookingDate(t.getBookingDate());
+                transactions.setCreditorAccount(mapSpiAccountReference(t.getCreditorAccount()));
+                transactions.setDebtorAccount(mapSpiAccountReference(t.getDebtorAccount()));
+                transactions.setCreditorId(t.getCreditorId());
+                transactions.setCreditorName(t.getCreditorName());
+                transactions.setDebtorName(t.getDebtorName());
+                transactions.setUltimateDebtor(t.getUltimateDebtor());
+                transactions.setEndToEndId(t.getEndToEndId());
+                transactions.setMandateId(t.getMandateId());
+                transactions.setPurposeCode(new PurposeCode(t.getPurposeCode()));
+                transactions.setTransactionId(t.getTransactionId());
+                transactions.setRemittanceInformationStructured(t.getRemittanceInformationStructured());
+                transactions.setRemittanceInformationUnstructured(t.getRemittanceInformationUnstructured());
+                return transactions;
             })
             .orElse(null);
     }

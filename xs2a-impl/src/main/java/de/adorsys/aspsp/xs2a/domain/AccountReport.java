@@ -13,10 +13,10 @@ import lombok.Data;
 public class AccountReport {
 
     @ApiModelProperty(value = "Booked TransactionsCreditorResponse", required = true)
-    private final Transaction[] booked;
+    private final Transactions[] booked;
 
     @ApiModelProperty(value = "Pending TransactionsCreditorResponse")
-    private final Transaction[] pending;
+    private final Transactions[] pending;
 
     @ApiModelProperty(value = "Links: the following links might be used within this context:" +
                               "account link (mandatory)" +

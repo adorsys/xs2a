@@ -2,7 +2,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.Transaction;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import io.swagger.annotations.ApiOperation;
@@ -39,10 +39,10 @@ public class PaymentInitiationController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status ?????"),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{paymentId}", method = RequestMethod.GET)
-    public Transaction getPaymentInitiation(@PathVariable String paymentId) {
+    public Transactions getPaymentInitiation(@PathVariable String paymentId) {
 
         // TODO according task PIS_01_02. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/10
-        return new Transaction();
+        return new Transactions();
     }
 
     private PaymentInitialisationResponse createResponse() {

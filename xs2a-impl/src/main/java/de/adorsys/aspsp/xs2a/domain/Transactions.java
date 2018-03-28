@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @ApiModel(description = "TransactionsCreditorResponse information", value = "TransactionsCreditorResponse")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-public class Transaction {
+public class Transactions {
 
     @ApiModelProperty(value = "Can be used as access-ID in the API, where more details on an transaction is offered.", required = false, example = "12345")
     @Size(max = 35)
