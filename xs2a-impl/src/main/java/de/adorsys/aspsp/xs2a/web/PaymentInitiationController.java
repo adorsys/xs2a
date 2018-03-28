@@ -1,10 +1,10 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.spi.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.spi.domain.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;

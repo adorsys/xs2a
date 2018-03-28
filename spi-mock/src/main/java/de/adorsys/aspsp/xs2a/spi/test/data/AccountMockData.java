@@ -1,47 +1,45 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
-import de.adorsys.aspsp.xs2a.spi.domain.*;
-import de.adorsys.aspsp.xs2a.spi.domain.codes.BankTransactionCode;
-import de.adorsys.aspsp.xs2a.spi.domain.codes.PurposeCode;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 
 import java.util.*;
 
 public class AccountMockData {
-    
-    private static List<AccountDetails> accountDetails = new ArrayList<>();
-    private static List<Transactions> transactions = new ArrayList<>();
-    private static List<Amount> amounts = new ArrayList<>();
-    private static List<SingleBalance> singleBalances = new ArrayList<>();
-    private static List<Balances> balances = new ArrayList<>();
-    private static HashMap<String, AccountDetails> accounts_hashmap = new HashMap<String, AccountDetails>();
-    
+
+    private static List<SpiAccountDetails> accountDetails = new ArrayList<>();
+    private static List<SpiTransaction> spiTransactions = new ArrayList<>();
+    private static List<SpiAmount> spiAmounts = new ArrayList<>();
+    private static List<SpiAccountBalance> singleBalances = new ArrayList<>();
+    private static List<SpiBalances> balances = new ArrayList<>();
+    private static HashMap<String, SpiAccountDetails> accounts_hashmap = new HashMap<>();
+
     public static void createAmount(String content, Currency currency) {
-        Amount amount = new Amount();
-        amount.setContent(content);
-        amount.setCurrency(currency);
-        amounts.add(amount);
+        SpiAmount spiAmount = new SpiAmount(currency, content);
+        spiAmounts.add(spiAmount);
     }
-    
+
     public static void createAccountsHashMap() {
-        for (AccountDetails accountDetails : AccountMockData.accountDetails) {
+        for (SpiAccountDetails accountDetails : AccountMockData.accountDetails) {
             accounts_hashmap.put(accountDetails.getId(), accountDetails);
         }
     }
-    
-    public static void createSingleBalances(Amount amount, int days, String when) {
-        SingleBalance sb = new SingleBalance();
+
+    public static void createSingleBalances(SpiAmount spiAmount, int days, String when) {
+        SpiAccountBalance sb = new SpiAccountBalance();
         sb.setDate(new Date());
-        sb.setAmount(amount);
-        
+        sb.setSpiAmount(spiAmount);
+
         Date Last_manipulation_date = createDate(days, when);
         sb.setLastActionDateTime(Last_manipulation_date);
         singleBalances.add(sb);
-        
+
     }
-    
-    public static void createBalances(SingleBalance sb, TransactionsArt art) {
-        
-        Balances balance = new Balances();
+
+    public static void createBalances(SpiAccountBalance sb, TransactionsArt art) {
+
+        SpiBalances balance = new SpiBalances();
         switch (art) {
             case booked:
                 balance.setClosingBooked(sb);
@@ -67,107 +65,84 @@ public class AccountMockData {
         balance.setClosingBooked(sb);
         balances.add(balance);
     }
-    
-    public static void addAccount(String ID, Currency currency, Balances balance, String iban, String BIC, String name, String account_type) {
-        AccountDetails accountDetails = createAccount(ID, currency, balance, iban, BIC, name, account_type);
+
+    public static void addAccount(String ID, Currency currency, SpiBalances balance, String iban, String BIC, String name, String account_type) {
+        SpiAccountDetails accountDetails = createAccount(ID, currency, balance, iban, BIC, name, account_type);
         AccountMockData.accountDetails.add(accountDetails);
     }
-    
-    public static AccountDetails createAccount(String id, Currency currency, Balances balance, String iban, String bic, String name, String accountType) {
-        return new AccountDetails(
-        id,
-        iban,
-        null,
-        null,
-        null,
-        null,
-        currency,
-        name,
-        accountType,
-        null,
-        bic,
-        balance,
-        createEmptyLinks());
+
+    public static SpiAccountDetails createAccount(String id, Currency currency, SpiBalances balance, String iban, String bic, String name, String accountType) {
+        return new SpiAccountDetails(
+            id,
+            iban,
+            null,
+            null,
+            null,
+            null,
+            currency,
+            name,
+            accountType,
+            null,
+            bic,
+            balance
+        );
     }
-    
-    public static Links createEmptyLinks() {
-        Links links = new Links();
-        
-        links.setRedirect(null);
-        links.setOAuth(null);
-        links.setUpdatePsuAuthentication(null);
-        links.setUpdatePsuIdentification(null);
-        links.setUpdateProprietaryData(null);
-        links.setSelectAuthenticationMethod(null);
-        links.setSelf(null);
-        links.setStatus(null);
-        links.setViewBalances(null);
-        links.setViewAccount(null);
-        links.setViewTransactions(null);
-        links.setFirst(null);
-        links.setNext(null);
-        links.setPrevious(null);
-        links.setLast(null);
-        links.setDownload(null);
-        
-        return links;
-    }
-    
-    public static void createTransactions(Amount amount, String transactionId,
+
+    public static void createTransactions(SpiAmount spiAmount, String transactionId,
                                           int nrDaysToValue, int nrDaysToBooking, String when,
                                           String creditDebit, String creditorName,
-                                          AccountReference creditorAccount, String ultimateCreditor,
-                                          String debtorName, AccountReference debtorAccount,
+                                          SpiAccountReference creditorAccount, String ultimateCreditor,
+                                          String debtorName, SpiAccountReference debtorAccount,
                                           String ultimateDebtor, String remittanceInformation) {
-        
-        Transactions t = new Transactions();
-        t.setTransactionId(transactionId);
-        t.setEndToEndId("EndToEndId");
-        t.setMandateId("MandateId");
-        t.setCreditorId("CreditorId");
-        t.setBookingDate(createDate(nrDaysToBooking, when));
-        t.setValueDate(createDate(nrDaysToValue, when));
-        t.setAmount(amount);
-        t.setCreditorName(creditorName);
-        t.setCreditorAccount(creditorAccount);
-        t.setUltimateCreditor(ultimateCreditor);
-        t.setDebtorName(debtorName);
-        t.setDebtorAccount(debtorAccount);
-        t.setUltimateDebtor(ultimateDebtor);
-        t.setRemittanceInformationStructured("Ref Number Merchant");
-        t.setRemittanceInformationUnstructured("Ref Number Merchant");
-        t.setPurposeCode(new PurposeCode("PurposeCode"));
-        t.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
-        
-        transactions.add(t);
+
+        SpiTransaction t = new SpiTransaction(transactionId,
+            "EndToEndId",
+            "MandateId",
+            "CreditorId",
+            createDate(nrDaysToBooking, when),
+            createDate(nrDaysToValue, when),
+        spiAmount,
+            creditorName,
+            creditorAccount,
+            ultimateCreditor,
+            debtorName,
+            debtorAccount,
+            ultimateDebtor,
+            "Ref Number Merchant",
+            "Ref Number Merchant",
+            "PurposeCode",
+            "BankTransactionCode"
+        );
+
+        spiTransactions.add(t);
     }
-    
-    public static List<Amount> getAmounts() {
-        return amounts;
+
+    public static List<SpiAmount> getSpiAmounts() {
+        return spiAmounts;
     }
-    
-    public static List<AccountDetails> getAccountDetails() {
+
+    public static List<SpiAccountDetails> getAccountDetails() {
         return accountDetails;
     }
-    
-    public static List<SingleBalance> getSingleBalances() {
+
+    public static List<SpiAccountBalance> getSingleBalances() {
         return singleBalances;
     }
-    
-    public static List<Balances> getBalances() {
+
+    public static List<SpiBalances> getBalances() {
         return balances;
     }
-    
-    public static List<Transactions> getTransactions() {
-        return transactions;
+
+    public static List<SpiTransaction> getSpiTransactions() {
+        return spiTransactions;
     }
-    
-    public static HashMap<String, AccountDetails> getAccountsHashMap() {
+
+    public static HashMap<String, SpiAccountDetails> getAccountsHashMap() {
         return accounts_hashmap;
     }
-    
-    public static Date createDate(int nrDays, String when) {
-        
+
+    private static Date createDate(int nrDays, String when) {
+
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(new Date());
         if (when.equals("future")) {
@@ -176,6 +151,6 @@ public class AccountMockData {
             calendar.add(Calendar.DAY_OF_MONTH, -nrDays);
         }
         return calendar.getTime();
-        
+
     }
 }

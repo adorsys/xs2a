@@ -1,9 +1,9 @@
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.service.AccountService;
-import de.adorsys.aspsp.xs2a.spi.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.spi.domain.Balances;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

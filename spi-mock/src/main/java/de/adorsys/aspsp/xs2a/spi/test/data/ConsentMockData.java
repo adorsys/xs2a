@@ -1,46 +1,48 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.ConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ConsentMockData {
 
-    private static HashMap<String, AccountConsents> consentMap = new HashMap<String, AccountConsents>();
+    private static Map<String, SpiAccountConsent> consentMap = new HashMap<>();
 
-    public static String createAccountConsent(CreateConsentReq aicRequest,
+    public static String createAccountConsent(SpiCreateConsentRequest aicRequest,
                                               boolean withBalance, boolean tppRedirectPreferred) {
 
         String consentId = generateConsentId();
-        consentMap.put(consentId, new AccountConsents(consentId,
-        aicRequest.getAccess(),
-        aicRequest.isRecurringIndicator(),
-        aicRequest.getValidUntil(),
-        aicRequest.getFrequencyPerDay(),
-        new Date(),
-        TransactionStatus.ACTC,
-        ConsentStatus.VALID,
-        withBalance,
-        tppRedirectPreferred
-        ));
+        consentMap.put(consentId, new SpiAccountConsent(consentId,
+                aicRequest.getAccess(),
+                aicRequest.isRecurringIndicator(),
+                aicRequest.getValidUntil(),
+                aicRequest.getFrequencyPerDay(),
+                new Date(),
+                SpiTransactionStatus.ACTC,
+                SpiConsentStatus.VALID,
+                withBalance,
+                tppRedirectPreferred
+            )
+        );
 
         return consentId;
     }
 
-    public static TransactionStatus getAccountConsentsStatus(String consentId) {
-        AccountConsents accountConsents = consentMap.get(consentId);
-        if (accountConsents!=null) {
-           return accountConsents.getTransactionStatus();
+    public static SpiTransactionStatus getAccountConsentsStatus(String consentId) {
+        SpiAccountConsent spiAccountConsents = consentMap.get(consentId);
+        if (spiAccountConsents !=null) {
+           return spiAccountConsents.getSpiTransactionStatus();
         }
        return null;
     }
 
-    public static AccountConsents getAccountConsent(String consentId) {
+    public static SpiAccountConsent getAccountConsent(String consentId) {
         return consentMap.get(consentId);
     }
 
