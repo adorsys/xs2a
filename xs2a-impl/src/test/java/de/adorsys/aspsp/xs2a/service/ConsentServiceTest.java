@@ -89,7 +89,6 @@ public class ConsentServiceTest {
         String wrongId = "111111";
 
         //When:
-
         TransactionStatus actualStatus = consentService.getAccountConsentsStatusById(wrongId);
 
         //Then:
@@ -126,7 +125,6 @@ public class ConsentServiceTest {
     }
 
     private CreateConsentReq getCreateConsentsRequestTest() {
-
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE2310010010123456789");
 
@@ -171,7 +169,6 @@ public class ConsentServiceTest {
 
     @Test
     public void deleteAccountConsentsById(){
-
         //Given:
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
         boolean withBalance = true;

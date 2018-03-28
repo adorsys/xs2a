@@ -20,13 +20,18 @@ public class ConsentSpiImpl implements ConsentSpi {
         return ConsentMockData.getAccountConsentsStatus(consentId);
 
     }
+
     @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
         return ConsentMockData.getAccountConsent(consentId);
     }
 
     @Override
-    public void deleteAccountConsentsById(String consentId) {
-        ConsentMockData.deleteAccountConcent(consentId);
+    public Boolean deleteAccountConsentsById(String consentId) {
+        if (ConsentMockData.getAccountConsent(consentId) != null) {
+            ConsentMockData.deleteAccountConcent(consentId);
+            return true;
+        }
+        return false;
     }
 }

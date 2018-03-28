@@ -46,8 +46,8 @@ public class ConsentService {
         return consentMapper.mapGetAccountConsent(consentSpi.getAccountConsentById(consentId));
     }
 
-    public void deleteAccountConsentsById(String consentId) {
-        consentSpi.deleteAccountConsentsById(consentId);
+    public Boolean deleteAccountConsentsById(String consentId) {
+        return consentSpi.deleteAccountConsentsById(consentId);
     }
 
     private Links getLinkToConsent(String consentId) {
