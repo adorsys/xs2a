@@ -8,7 +8,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.MessageCode.FORMAT_ERROR;
 
@@ -34,13 +36,13 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         if (requestHeaderViolationsMap.isEmpty()) {
             return true;
         } else {
-            StringBuilder builderViolationsText = new StringBuilder("Request header has violation: ");
 
-            requestHeaderViolationsMap.forEach((key, value) -> builderViolationsText.append(key).append(" ").append(value).append("; "));
+            final List<String> violations = requestHeaderViolationsMap.entrySet().stream()
+                                   .map(entry -> entry.getKey() + " : " + entry.getValue()).collect(Collectors.toList());
 
-            LOGGER.debug(builderViolationsText.toString());
+            LOGGER.debug(violations.toString());
 
-            response.sendError(FORMAT_ERROR.getCode(), builderViolationsText.toString());
+            response.sendError(FORMAT_ERROR.getCode(), violations.toString());
             return false;
         }
     }
