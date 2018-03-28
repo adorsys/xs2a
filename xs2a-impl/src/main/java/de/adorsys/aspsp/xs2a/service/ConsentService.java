@@ -1,25 +1,25 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.Links;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ConsentService {
     private String consentsLinkRedirectToSource;
     private ConsentSpi consentSpi;
+    private ConsentMapper consentMapper;
 
     @Autowired
-    public ConsentService(ConsentSpi consentSpi, String consentsLinkRedirectToSource) {
+    public ConsentService(ConsentSpi consentSpi, String consentsLinkRedirectToSource, ConsentMapper consentMapper) {
         this.consentSpi = consentSpi;
         this.consentsLinkRedirectToSource = consentsLinkRedirectToSource;
+        this.consentMapper = consentMapper;
     }
 
     public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
@@ -35,15 +35,15 @@ public class ConsentService {
     }
 
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
-        return consentSpi.createAccountConsents(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+        return consentSpi.createAccountConsents(consentMapper.mapSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred);
     }
 
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        return consentSpi.getAccountConsentsStatusById(consentId);
+        return consentMapper.mapGetAccountConsentStatusById(consentSpi.getAccountConsentStatusById(consentId));
     }
 
-    public AccountConsents getAccountConsentsById(String consentId) {
-        return consentSpi.getAccountConsentsById(consentId);
+    public AccountConsent getAccountConsentsById(String consentId) {
+        return consentMapper.mapGetAccountConsent(consentSpi.getAccountConsentById(consentId));
     }
 
     public void deleteAccountConsentsById(String consentId) {

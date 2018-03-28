@@ -2,14 +2,14 @@ package de.adorsys.aspsp.xs2a.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.ApiDateConstants;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccessType;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
-import de.adorsys.aspsp.xs2a.spi.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.ApiDateConstants;
-import de.adorsys.aspsp.xs2a.spi.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountAccessType;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.AccountConsents;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.spi.domain.ais.consents.CreateConsentResp;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,13 +64,13 @@ public class ConsentInformationControllerTest {
         String consentId = actualResult.getConsentId();
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
 
         //Then:
-        assertThat(actualAccountConsents.getAccess()).isEqualTo(expectedRequest.getAccess());
-        assertThat(actualAccountConsents.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
-        assertThat(actualAccountConsents.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
-        assertThat(actualAccountConsents.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
+        assertThat(actualAccountConsent.getAccess()).isEqualTo(expectedRequest.getAccess());
+        assertThat(actualAccountConsent.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
+        assertThat(actualAccountConsent.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
+        assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
 
     @Test
@@ -124,11 +124,11 @@ public class ConsentInformationControllerTest {
         String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
 
         //When:
-        ResponseEntity<AccountConsents> actualResponse = consentInformationController.getAccountConsentsInformationById(accountConsentsId);
+        ResponseEntity<AccountConsent> actualResponse = consentInformationController.getAccountConsentsInformationById(accountConsentsId);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        AccountConsents actualResult = actualResponse.getBody();
+        AccountConsent actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult.getAccess()).isEqualTo(expectedRequest.getAccess());
         assertThat(actualResult.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
@@ -145,11 +145,11 @@ public class ConsentInformationControllerTest {
         String wrongId = "111111";
 
         //When:
-        ResponseEntity<AccountConsents> actualResponse = consentInformationController.getAccountConsentsInformationById(wrongId);
+        ResponseEntity<AccountConsent> actualResponse = consentInformationController.getAccountConsentsInformationById(wrongId);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        AccountConsents actualResult = actualResponse.getBody();
+        AccountConsent actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isNull();
     }
@@ -177,18 +177,18 @@ public class ConsentInformationControllerTest {
         String consentId = consentRequest.getConsentId();
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
 
         //Then:
-        assertThat(actualAccountConsents.getId()).isNotNull();
-        assertThat(actualAccountConsents.getAccess()).isNotNull();
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getAccounts(), new AccountReference[]{}));
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getBalances(), new AccountReference[]{}));
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getTransactions(), new AccountReference[]{}));
-        assertThat(actualAccountConsents.getAccess().getAvailableAccounts()).isEqualTo(AccountAccessType.ALL_ACCOUNTS);
-        assertThat(actualAccountConsents.getAccess().getAllPsd2()).isNull();
-        assertThat(actualAccountConsents.isRecurringIndicator()).isFalse();
-        assertThat(actualAccountConsents.getValidUntil().compareTo(getDateFromDateString("2017-08-06")));
+        assertThat(actualAccountConsent.getId()).isNotNull();
+        assertThat(actualAccountConsent.getAccess()).isNotNull();
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getAccounts(), new AccountReference[]{}));
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getBalances(), new AccountReference[]{}));
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getTransactions(), new AccountReference[]{}));
+        assertThat(actualAccountConsent.getAccess().getAvailableAccounts()).isEqualTo(AccountAccessType.ALL_ACCOUNTS);
+        assertThat(actualAccountConsent.getAccess().getAllPsd2()).isNull();
+        assertThat(actualAccountConsent.isRecurringIndicator()).isFalse();
+        assertThat(actualAccountConsent.getValidUntil().compareTo(getDateFromDateString("2017-08-06")));
     }
 
     @Test
@@ -200,18 +200,18 @@ public class ConsentInformationControllerTest {
         String consentId = consentRequest.getConsentId();
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
 
         //Then:
-        assertThat(actualAccountConsents.getId()).isNotNull();
-        assertThat(actualAccountConsents.getAccess()).isNotNull();
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getAccounts(), new AccountReference[]{}));
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getBalances(), new AccountReference[]{}));
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getTransactions(), new AccountReference[]{}));
-        assertThat(actualAccountConsents.getAccess().getAccounts()).isNull();
-        assertThat(actualAccountConsents.getAccess().getAllPsd2()).isEqualTo(AccountAccessType.ALL_ACCOUNTS);
-        assertThat(actualAccountConsents.isRecurringIndicator()).isFalse();
-        assertThat(actualAccountConsents.getValidUntil().compareTo(getDateFromDateString("2017-07-11")));
+        assertThat(actualAccountConsent.getId()).isNotNull();
+        assertThat(actualAccountConsent.getAccess()).isNotNull();
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getAccounts(), new AccountReference[]{}));
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getBalances(), new AccountReference[]{}));
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getTransactions(), new AccountReference[]{}));
+        assertThat(actualAccountConsent.getAccess().getAccounts()).isNull();
+        assertThat(actualAccountConsent.getAccess().getAllPsd2()).isEqualTo(AccountAccessType.ALL_ACCOUNTS);
+        assertThat(actualAccountConsent.isRecurringIndicator()).isFalse();
+        assertThat(actualAccountConsent.getValidUntil().compareTo(getDateFromDateString("2017-07-11")));
     }
 
     @Test
@@ -223,18 +223,18 @@ public class ConsentInformationControllerTest {
         String consentId = consentRequest.getConsentId();
 
         //When:
-        AccountConsents actualAccountConsents = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
 
         //Then:
-        assertThat(actualAccountConsents.getId()).isNotNull();
-        assertThat(actualAccountConsents.getAccess()).isNotNull();
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getAccounts(), new AccountReference[]{}));
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getBalances(), new AccountReference[]{}));
-        assertThat(Arrays.equals(actualAccountConsents.getAccess().getTransactions(), new AccountReference[]{}));
-        assertThat(actualAccountConsents.getAccess().getAvailableAccounts()).isNull();
-        assertThat(actualAccountConsents.getAccess().getAllPsd2()).isNull();
-        assertThat(actualAccountConsents.isRecurringIndicator()).isTrue();
-        assertThat(actualAccountConsents.getValidUntil().compareTo(getDateFromDateString("2017-11-01")));
+        assertThat(actualAccountConsent.getId()).isNotNull();
+        assertThat(actualAccountConsent.getAccess()).isNotNull();
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getAccounts(), new AccountReference[]{}));
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getBalances(), new AccountReference[]{}));
+        assertThat(Arrays.equals(actualAccountConsent.getAccess().getTransactions(), new AccountReference[]{}));
+        assertThat(actualAccountConsent.getAccess().getAvailableAccounts()).isNull();
+        assertThat(actualAccountConsent.getAccess().getAllPsd2()).isNull();
+        assertThat(actualAccountConsent.isRecurringIndicator()).isTrue();
+        assertThat(actualAccountConsent.getValidUntil().compareTo(getDateFromDateString("2017-11-01")));
     }
 
     private CreateConsentResp getCreateConsentRespEntityFromController(String path, boolean withBalance, boolean tppRedirectPreferred) throws IOException {
