@@ -1,19 +1,17 @@
 package de.adorsys.keycloak.extension.clientregistration;
 
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import org.junit.Test;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 
 public class SSAServiceTest {
 	
 	@Test
 	public void ssaGenerate(){
 		
-		String[] software_roles = {"PISP","AISP"};
+		/*String[] software_roles = {"PISP","AISP"};
 		
 		try {
 		    Algorithm algorithm = Algorithm.HMAC256("secret123");
@@ -29,7 +27,19 @@ public class SSAServiceTest {
 		} catch (JWTCreationException exception){
 		    //Invalid Signing configuration / Couldn't convert Claims.
 		}
+		*/
 		
+		JWTSigner signer = new JWTSigner(getPrivateKey());
+        HashMap<String, Object> claims = new HashMap<String, Object>();
+        claims.put("sub", "1234567890");
+        claims.put("name", "John Doe");
+        claims.put("admin", "true");
+        JWTSigner.Options options = new JWTSigner.Options();
+        options.setAlgorithm(Algorithm.RS256);
+        String jwtSigned = signer.sign(claims, options);
+
+        System.out.println("Signed: " + jwtSigned);
+
 		
 	}
 }

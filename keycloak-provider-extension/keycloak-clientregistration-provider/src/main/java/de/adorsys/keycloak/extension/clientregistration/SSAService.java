@@ -2,9 +2,6 @@ package de.adorsys.keycloak.extension.clientregistration;
 
 import java.io.UnsupportedEncodingException;
 
-import org.keycloak.jose.jws.JWSInput;
-import org.keycloak.jose.jws.JWSInputException;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -21,7 +18,7 @@ public class SSAService {
 		// ssa must be issue and sign by a trust service provider,
 		String software_statement = clientOIDC.getSoftware_statement();
 
-		/*try {
+		try {
 			// we should verify signature (integrity) with TSP public key.
 			Algorithm algorithm = Algorithm.HMAC256("secret123");
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer("TSP").build(); 
@@ -30,7 +27,7 @@ public class SSAService {
 			// UTF-8 encoding not supported
 		} catch (JWTVerificationException exception) {
 			// Invalid signature/claims
-		}*/
+		}
 		
 	}
 
