@@ -60,10 +60,10 @@ public class DescriptionConverter {
 		client.setName(clientOIDC.getClientName());
 		client.setRedirectUris(clientOIDC.getRedirectUris());
 		client.setBaseUrl(clientOIDC.getClientUri());
-		
-		//set new attributes in clientModel attributes Map
+
+		// set new attributes in clientModel attributes Map
 		Map<String, String> attributes = new HashMap<>();
-		attributes.put("software_statement", clientOIDC.getSoftware_statement()); 
+		attributes.put("software_statement", clientOIDC.getSoftware_statement());
 		client.setAttributes(attributes);
 
 		List<String> oidcResponseTypes = clientOIDC.getResponseTypes();
@@ -158,11 +158,11 @@ public class DescriptionConverter {
 		}
 	}
 
-	public static OIDCClientRepresentationExtended toExternalResponse(KeycloakSession session, ClientRepresentation client,
-			URI uri) {
+	public static OIDCClientRepresentationExtended toExternalResponse(KeycloakSession session,
+			ClientRepresentation client, URI uri) {
 		OIDCClientRepresentationExtended response = new OIDCClientRepresentationExtended();
 		response.setClientId(client.getClientId());
-		
+
 		response.setSoftware_statement(client.getAttributes().get("software_statement"));
 
 		ClientAuthenticatorFactory clientAuth = (ClientAuthenticatorFactory) session.getKeycloakSessionFactory()

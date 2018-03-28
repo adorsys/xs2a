@@ -21,14 +21,14 @@ public class SSAService {
 		try {
 			// we should verify signature (integrity) with TSP public key.
 			Algorithm algorithm = Algorithm.HMAC256("secret123");
-			JWTVerifier verifier = JWT.require(algorithm).withIssuer("TSP").build(); 
+			JWTVerifier verifier = JWT.require(algorithm).withIssuer("TSP").build();
 			DecodedJWT jwt = verifier.verify(software_statement);
 		} catch (UnsupportedEncodingException exception) {
 			// UTF-8 encoding not supported
 		} catch (JWTVerificationException exception) {
 			// Invalid signature/claims
 		}
-		
+
 	}
 
 }
