@@ -1,12 +1,12 @@
 package de.adorsys.aspsp.xs2a.spi.config;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountBalance;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.Amount;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.CreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
 
@@ -38,13 +38,13 @@ public class SpiMockConfig {
 
         int i = 0;
 
-        for (Amount amount : AccountMockData.getAmounts()) {
-            AccountMockData.createSingleBalances(amount, i, "future");
+        for (SpiAmount spiAmount : AccountMockData.getSpiAmounts()) {
+            AccountMockData.createSingleBalances(spiAmount, i, "future");
             i++;
         }
         i = 0;
 
-        for (AccountBalance singleBalance : AccountMockData.getSingleBalances()) {
+        for (SpiAccountBalance singleBalance : AccountMockData.getSingleBalances()) {
             switch (i) {
                 case 0:
                     AccountMockData.createBalances(singleBalance, TransactionsArt.booked);
@@ -74,30 +74,30 @@ public class SpiMockConfig {
         AccountMockData.createAccountsHashMap();
 
         AccountMockData.createTransactions(
-        AccountMockData.getAmounts().get(0), "12345",
+        AccountMockData.getSpiAmounts().get(0), "12345",
         7, 4, "future",
         "debit", AccountMockData.getAccountDetails().get(3).getName(), convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(3)), "",
         "", null, "", "Example for remittance information");
 
         AccountMockData.createTransactions(
-        AccountMockData.getAmounts().get(4), "123456",
+        AccountMockData.getSpiAmounts().get(4), "123456",
         4, 6, "future",
         "debit", AccountMockData.getAccountDetails().get(4).getName(), convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(4)), "",
         "", null, "", "Another Example for remittance information");
 
         AccountMockData.createTransactions(
-        AccountMockData.getAmounts().get(1), "123457",
+        AccountMockData.getSpiAmounts().get(1), "123457",
         6, 10, "past",
         "credit", "", null, "",
         "AccountMockData.getAccounts().get(2)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
 
         AccountMockData.createTransactions(
-        AccountMockData.getAmounts().get(2), "1234578",
+        AccountMockData.getSpiAmounts().get(2), "1234578",
         17, 20, "past",
         "credit", "", null, "",
         "AccountMockData.getAccounts().get(2)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
         AccountMockData.createTransactions(
-        AccountMockData.getAmounts().get(3), "1234578",
+        AccountMockData.getSpiAmounts().get(3), "1234578",
         5, 3, "future",
         "credit", "", null, "",
         "AccountMockData.getAccounts().get(1)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(1)), "", "remittance information");
@@ -109,8 +109,8 @@ public class SpiMockConfig {
         ConsentMockData.createAccountConsent(getAicRequest_2(), true, false);
     }
 
-    private AccountReference convertAccountDetailsToAccountReference(SpiAccountDetails accountDetails) {
-        return new AccountReference(
+    private SpiAccountReference convertAccountDetailsToAccountReference(SpiAccountDetails accountDetails) {
+        return new SpiAccountReference(
             accountDetails.getId(),
             accountDetails.getIban(),
             accountDetails.getBban(),
@@ -121,8 +121,8 @@ public class SpiMockConfig {
         );
     }
 
-    private CreateConsentRequest getAicRequest_1() {
-        AccountReference iban1 = new AccountReference(
+    private SpiCreateConsentRequest getAicRequest_1() {
+        SpiAccountReference iban1 = new SpiAccountReference(
         null,
         "DE8710010010653456712",
         null,
@@ -132,7 +132,7 @@ public class SpiMockConfig {
         null
         );
 
-        AccountReference iban2 = new AccountReference(
+        SpiAccountReference iban2 = new SpiAccountReference(
             null,
             "DE8710010010653456723",
             null,
@@ -142,7 +142,7 @@ public class SpiMockConfig {
             Currency.getInstance("USD")
         );
 
-        AccountReference iban3 = new AccountReference(
+        SpiAccountReference iban3 = new SpiAccountReference(
             null,
             "DE8710010010653456734",
             null,
@@ -152,7 +152,7 @@ public class SpiMockConfig {
             null
         );
 
-        AccountReference iban4 = new AccountReference(
+        SpiAccountReference iban4 = new SpiAccountReference(
             null,
             "DE870010010165456745",
             null,
@@ -162,7 +162,7 @@ public class SpiMockConfig {
             null
         );
 
-        AccountReference maskedPan = new AccountReference(
+        SpiAccountReference maskedPan = new SpiAccountReference(
             null,
             null,
             null,
@@ -172,15 +172,15 @@ public class SpiMockConfig {
             null
         );
 
-        List<AccountReference> balances = Arrays.asList(iban1, iban2, iban3);
-        List<AccountReference> transactions = Arrays.asList(iban4, maskedPan);
+        List<SpiAccountReference> balances = Arrays.asList(iban1, iban2, iban3);
+        List<SpiAccountReference> transactions = Arrays.asList(iban4, maskedPan);
 
-        AccountAccess accountAccess = new AccountAccess();
-        accountAccess.setBalances(balances);
-        accountAccess.setTransactions(transactions);
+        SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
+        spiAccountAccess.setBalances(balances);
+        spiAccountAccess.setTransactions(transactions);
 
-        return new CreateConsentRequest(
-            accountAccess,
+        return new SpiCreateConsentRequest(
+        spiAccountAccess,
             true,
             getDateFromDateStringNoTimeZone("2017-11-01"),
             4,
@@ -188,8 +188,8 @@ public class SpiMockConfig {
         );
     }
 
-    private CreateConsentRequest getAicRequest_2() {
-        AccountReference iban1 = new AccountReference(
+    private SpiCreateConsentRequest getAicRequest_2() {
+        SpiAccountReference iban1 = new SpiAccountReference(
             null,
             "DE5410010010165456787",
             null,
@@ -199,7 +199,7 @@ public class SpiMockConfig {
             null
         );
 
-        AccountReference iban2 = new AccountReference(
+        SpiAccountReference iban2 = new SpiAccountReference(
             null,
             "DE650010010123456743",
             null,
@@ -209,7 +209,7 @@ public class SpiMockConfig {
             Currency.getInstance("USD")
         );
 
-        AccountReference iban3 = new AccountReference(
+        SpiAccountReference iban3 = new SpiAccountReference(
             null,
             "DE430010010123456534",
             null,
@@ -219,7 +219,7 @@ public class SpiMockConfig {
             null
         );
 
-        AccountReference iban4 = new AccountReference(
+        SpiAccountReference iban4 = new SpiAccountReference(
             null,
             "DE9780010010123452356",
             null,
@@ -229,7 +229,7 @@ public class SpiMockConfig {
             null
         );
 
-        AccountReference maskedPan = new AccountReference(
+        SpiAccountReference maskedPan = new SpiAccountReference(
             null,
             null,
             null,
@@ -239,15 +239,15 @@ public class SpiMockConfig {
             null
         );
 
-        List<AccountReference> balances = Arrays.asList(iban1, iban2, iban3);
-        List<AccountReference> transactions = Arrays.asList(iban4, maskedPan);
+        List<SpiAccountReference> balances = Arrays.asList(iban1, iban2, iban3);
+        List<SpiAccountReference> transactions = Arrays.asList(iban4, maskedPan);
 
-        AccountAccess accountAccess = new AccountAccess();
-        accountAccess.setBalances(balances);
-        accountAccess.setTransactions(transactions);
+        SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
+        spiAccountAccess.setBalances(balances);
+        spiAccountAccess.setTransactions(transactions);
 
-        return new CreateConsentRequest(
-            accountAccess,
+        return new SpiCreateConsentRequest(
+        spiAccountAccess,
             true,
             getDateFromDateStringNoTimeZone("2017-04-25"),
             4,

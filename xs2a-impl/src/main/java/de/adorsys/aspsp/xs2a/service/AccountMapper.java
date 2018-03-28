@@ -1,20 +1,11 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
-import de.adorsys.aspsp.xs2a.domain.CashAccountType;
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.SingleBalance;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountType;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
-import de.adorsys.aspsp.xs2a.spi.domain.account.Transaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.Amount;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 
 import org.springframework.stereotype.Service;
 
@@ -35,7 +26,7 @@ class AccountMapper {
                     accountDetail.getCurrency(),
                     accountDetail.getName(),
                     accountDetail.getAccountType(),
-                    mapAccountType(accountDetail.getCashAccountType()),
+                    mapAccountType(accountDetail.getCashSpiAccountType()),
                     accountDetail.getBic(),
                     mapSpiBalances(accountDetail.getBalances()),
                     new Links()
@@ -44,8 +35,8 @@ class AccountMapper {
             .orElse(null);
     }
 
-    private CashAccountType mapAccountType(AccountType accountType) {
-        return Optional.ofNullable(accountType)
+    private CashAccountType mapAccountType(SpiAccountType spiAccountType) {
+        return Optional.ofNullable(spiAccountType)
         .map(type -> CashAccountType.valueOf(type.name()))
         .orElse(null);
     }
@@ -65,11 +56,11 @@ class AccountMapper {
             .orElse(null);
     }
 
-    private SingleBalance mapSingleBalances(AccountBalance accountBalance) {
-        return Optional.ofNullable(accountBalance)
+    private SingleBalance mapSingleBalances(SpiAccountBalance spiAccountBalance) {
+        return Optional.ofNullable(spiAccountBalance)
             .map(b -> {
                 SingleBalance singleBalance = new SingleBalance();
-                singleBalance.setAmount(mapSpiAmount(b.getAmount()));
+                singleBalance.setAmount(mapSpiAmount(b.getSpiAmount()));
                 singleBalance.setDate(b.getDate());
                 singleBalance.setLastActionDateTime(b.getLastActionDateTime());
                 return singleBalance;
@@ -77,10 +68,10 @@ class AccountMapper {
             .orElse(null);
     }
 
-    private de.adorsys.aspsp.xs2a.domain.Amount mapSpiAmount(Amount spiAmount) {
-        return Optional.ofNullable(spiAmount)
+    private Amount mapSpiAmount(SpiAmount spiSpiAmount) {
+        return Optional.ofNullable(spiSpiAmount)
             .map(a -> {
-                de.adorsys.aspsp.xs2a.domain.Amount amount = new de.adorsys.aspsp.xs2a.domain.Amount();
+                Amount amount = new Amount();
                 amount.setContent(a.getContent());
                 amount.setCurrency(a.getCurrency());
                 return amount;
@@ -88,31 +79,31 @@ class AccountMapper {
             .orElse(null);
     }
 
-    public AccountReport mapAccountReport(List<Transaction> transactions) {
-        if (transactions == null) {
+    public AccountReport mapAccountReport(List<SpiTransaction> spiTransactions) {
+        if (spiTransactions == null) {
             return null;
         }
 
-        de.adorsys.aspsp.xs2a.domain.Transaction[] booked = transactions
+        Transaction[] booked = spiTransactions
             .stream()
             .filter(transaction -> transaction.getBookingDate() != null)
             .map(this::mapSpiTransaction)
-            .toArray(de.adorsys.aspsp.xs2a.domain.Transaction[]::new);
+            .toArray(Transaction[]::new);
 
-        de.adorsys.aspsp.xs2a.domain.Transaction[] pending = transactions
+        Transaction[] pending = spiTransactions
             .stream()
             .filter(transaction -> transaction.getBookingDate() == null)
             .map(this::mapSpiTransaction)
-            .toArray(de.adorsys.aspsp.xs2a.domain.Transaction[]::new);
+            .toArray(Transaction[]::new);
 
         return new AccountReport(booked, pending, new Links());
     }
 
-    private de.adorsys.aspsp.xs2a.domain.Transaction mapSpiTransaction(Transaction spiTransaction) {
-        return Optional.ofNullable(spiTransaction)
+    private Transaction mapSpiTransaction(SpiTransaction spiSpiTransaction) {
+        return Optional.ofNullable(spiSpiTransaction)
             .map(t -> {
-                de.adorsys.aspsp.xs2a.domain.Transaction transaction = new de.adorsys.aspsp.xs2a.domain.Transaction();
-                transaction.setAmount(mapSpiAmount(t.getAmount()));
+                Transaction transaction = new Transaction();
+                transaction.setAmount(mapSpiAmount(t.getSpiAmount()));
                 transaction.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
                 transaction.setBookingDate(t.getBookingDate());
                 transaction.setCreditorAccount(mapSpiAccountReference(t.getCreditorAccount()));
@@ -132,10 +123,10 @@ class AccountMapper {
             .orElse(null);
     }
 
-    private de.adorsys.aspsp.xs2a.domain.AccountReference mapSpiAccountReference(AccountReference spiAccountReference) {
-        return Optional.ofNullable(spiAccountReference)
+    private AccountReference mapSpiAccountReference(SpiAccountReference spiSpiAccountReference) {
+        return Optional.ofNullable(spiSpiAccountReference)
             .map(ar -> {
-                de.adorsys.aspsp.xs2a.domain.AccountReference accountReference = new de.adorsys.aspsp.xs2a.domain.AccountReference();
+                AccountReference accountReference = new AccountReference();
                 accountReference.setAccountId(ar.getAccountId());
                 accountReference.setIban(ar.getIban());
                 accountReference.setBban(ar.getBban());

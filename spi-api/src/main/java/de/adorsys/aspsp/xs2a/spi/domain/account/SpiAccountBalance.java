@@ -1,15 +1,14 @@
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
-
-import de.adorsys.aspsp.xs2a.spi.domain.common.Amount;
 
 import java.util.Date;
 
 @Data
-public class AccountBalance {
+public class SpiAccountBalance {
 
-    private Amount amount;
+    private SpiAmount spiAmount;
 
     private Date lastActionDateTime;
 

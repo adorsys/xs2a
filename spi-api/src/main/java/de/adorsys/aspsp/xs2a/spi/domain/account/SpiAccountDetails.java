@@ -25,7 +25,7 @@ public class SpiAccountDetails {
 
     private final String accountType;
 
-    private final AccountType cashAccountType;
+    private final SpiAccountType cashSpiAccountType;
 
     private final String bic;
 

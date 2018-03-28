@@ -1,5 +1,5 @@
 package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
-public enum ConsentStatus {
+public enum SpiConsentStatus {
     EMPTY, VALID, BLOCKED, EXPIRED, DELETED;
 }

@@ -1,11 +1,8 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
-import de.adorsys.aspsp.xs2a.spi.domain.account.Transaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.Amount;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 
 import java.util.ArrayList;
@@ -19,15 +16,15 @@ import java.util.List;
 public class AccountMockData {
 
     private static List<SpiAccountDetails> accountDetails = new ArrayList<>();
-    private static List<Transaction> transactions = new ArrayList<>();
-    private static List<Amount> amounts = new ArrayList<>();
-    private static List<AccountBalance> singleBalances = new ArrayList<>();
+    private static List<SpiTransaction> spiTransactions = new ArrayList<>();
+    private static List<SpiAmount> spiAmounts = new ArrayList<>();
+    private static List<SpiAccountBalance> singleBalances = new ArrayList<>();
     private static List<SpiBalances> balances = new ArrayList<>();
     private static HashMap<String, SpiAccountDetails> accounts_hashmap = new HashMap<>();
 
     public static void createAmount(String content, Currency currency) {
-        Amount amount = new Amount(currency, content);
-        amounts.add(amount);
+        SpiAmount spiAmount = new SpiAmount(currency, content);
+        spiAmounts.add(spiAmount);
     }
 
     public static void createAccountsHashMap() {
@@ -36,10 +33,10 @@ public class AccountMockData {
         }
     }
 
-    public static void createSingleBalances(Amount amount, int days, String when) {
-        AccountBalance sb = new AccountBalance();
+    public static void createSingleBalances(SpiAmount spiAmount, int days, String when) {
+        SpiAccountBalance sb = new SpiAccountBalance();
         sb.setDate(new Date());
-        sb.setAmount(amount);
+        sb.setSpiAmount(spiAmount);
 
         Date Last_manipulation_date = createDate(days, when);
         sb.setLastActionDateTime(Last_manipulation_date);
@@ -47,7 +44,7 @@ public class AccountMockData {
 
     }
 
-    public static void createBalances(AccountBalance sb, TransactionsArt art) {
+    public static void createBalances(SpiAccountBalance sb, TransactionsArt art) {
 
         SpiBalances balance = new SpiBalances();
         switch (art) {
@@ -98,20 +95,20 @@ public class AccountMockData {
         );
     }
 
-    public static void createTransactions(Amount amount, String transactionId,
+    public static void createTransactions(SpiAmount spiAmount, String transactionId,
                                           int nrDaysToValue, int nrDaysToBooking, String when,
                                           String creditDebit, String creditorName,
-                                          AccountReference creditorAccount, String ultimateCreditor,
-                                          String debtorName, AccountReference debtorAccount,
+                                          SpiAccountReference creditorAccount, String ultimateCreditor,
+                                          String debtorName, SpiAccountReference debtorAccount,
                                           String ultimateDebtor, String remittanceInformation) {
 
-        Transaction t = new Transaction(transactionId,
+        SpiTransaction t = new SpiTransaction(transactionId,
             "EndToEndId",
             "MandateId",
             "CreditorId",
             createDate(nrDaysToBooking, when),
             createDate(nrDaysToValue, when),
-            amount,
+        spiAmount,
             creditorName,
             creditorAccount,
             ultimateCreditor,
@@ -124,18 +121,18 @@ public class AccountMockData {
             "BankTransactionCode"
         );
 
-        transactions.add(t);
+        spiTransactions.add(t);
     }
 
-    public static List<Amount> getAmounts() {
-        return amounts;
+    public static List<SpiAmount> getSpiAmounts() {
+        return spiAmounts;
     }
 
     public static List<SpiAccountDetails> getAccountDetails() {
         return accountDetails;
     }
 
-    public static List<AccountBalance> getSingleBalances() {
+    public static List<SpiAccountBalance> getSingleBalances() {
         return singleBalances;
     }
 
@@ -143,8 +140,8 @@ public class AccountMockData {
         return balances;
     }
 
-    public static List<Transaction> getTransactions() {
-        return transactions;
+    public static List<SpiTransaction> getSpiTransactions() {
+        return spiTransactions;
     }
 
     public static HashMap<String, SpiAccountDetails> getAccountsHashMap() {

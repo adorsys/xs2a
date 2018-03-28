@@ -5,9 +5,9 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class CreateConsentRequest {
+public class SpiCreateConsentRequest {
 
-    private final AccountAccess access;
+    private final SpiAccountAccess access;
 
     private final boolean recurringIndicator;
 

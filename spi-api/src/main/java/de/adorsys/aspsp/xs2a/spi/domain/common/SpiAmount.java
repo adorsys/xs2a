@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Currency;
 
 @Data
-public class Amount {
+public class SpiAmount {
 	private final Currency currency;
 	private final String content;
 }

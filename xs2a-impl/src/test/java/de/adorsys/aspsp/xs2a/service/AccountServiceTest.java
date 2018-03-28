@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
-import de.adorsys.aspsp.xs2a.spi.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.Transaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.Amount;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.junit.Before;
@@ -208,8 +208,8 @@ public class AccountServiceTest {
         return Date.from(localDateTimeTo.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    private List<Transaction> getTransactionList() {
-        List<Transaction> testData = new ArrayList<>();
+    private List<SpiTransaction> getTransactionList() {
+        List<SpiTransaction> testData = new ArrayList<>();
         testData.add(getBookedTransaction());
         testData.add(getPendingTransaction());
 
@@ -226,41 +226,41 @@ public class AccountServiceTest {
         }
     }
 
-    private Transaction getBookedTransaction() {
+    private SpiTransaction getBookedTransaction() {
         Currency usd = Currency.getInstance("USD");
         //transaction 1:
         Date bookingDate = getDateFromDateString("2017-11-07");
         Date valueDate = getDateFromDateString("2018-20-08");
-        Amount amount = new Amount(usd, "15000");
-        AccountReference creditorAccount = new AccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
-        AccountReference debtorAccount = new AccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
+        SpiAmount spiAmount = new SpiAmount(usd, "15000");
+        SpiAccountReference creditorAccount = new SpiAccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
+        SpiAccountReference debtorAccount = new SpiAccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
 
-        return new Transaction("Id-0001", "id-0001", "m-0001", "c-0001", bookingDate, valueDate, amount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
+        return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", bookingDate, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
     }
 
-    private Transaction getPendingTransaction() {
+    private SpiTransaction getPendingTransaction() {
         Currency usd = Currency.getInstance("USD");
         //transaction 1:
         Date valueDate = getDateFromDateString("2018-20-08");
-        Amount amount = new Amount(usd, "15000");
-        AccountReference creditorAccount = new AccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
-        AccountReference debtorAccount = new AccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
+        SpiAmount spiAmount = new SpiAmount(usd, "15000");
+        SpiAccountReference creditorAccount = new SpiAccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
+        SpiAccountReference debtorAccount = new SpiAccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
 
-        return new Transaction("Id-0001", "id-0001", "m-0001", "c-0001", null, valueDate, amount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
+        return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", null, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
     }
 
     private SpiBalances getBalances() {
-        AccountBalance accountBalance = getSpiAccountBalance("1000", "2016-12-12", "2018-23-02");
+        SpiAccountBalance spiAccountBalance = getSpiAccountBalance("1000", "2016-12-12", "2018-23-02");
 
         SpiBalances spiBalances = new SpiBalances();
-        spiBalances.setInterimAvailable(accountBalance);
+        spiBalances.setInterimAvailable(spiAccountBalance);
 
         return spiBalances;
     }
 
-    private AccountBalance getSpiAccountBalance(String ammount, String date, String lastActionDate) {
-        AccountBalance acb = new AccountBalance();
-        acb.setAmount(new Amount(usd, ammount));
+    private SpiAccountBalance getSpiAccountBalance(String ammount, String date, String lastActionDate) {
+        SpiAccountBalance acb = new SpiAccountBalance();
+        acb.setSpiAmount(new SpiAmount(usd, ammount));
         acb.setDate(getDateFromDateString(date));
         acb.setLastActionDateTime(getDateFromDateString(lastActionDate));
 

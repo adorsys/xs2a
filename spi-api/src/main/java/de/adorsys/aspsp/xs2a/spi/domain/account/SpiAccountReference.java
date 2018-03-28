@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Currency;
 
 @Data
-public class AccountReference {
+public class SpiAccountReference {
     private final String accountId;
     private final String iban;
     private final String bban;

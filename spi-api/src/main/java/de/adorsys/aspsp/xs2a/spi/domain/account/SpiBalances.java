@@ -5,15 +5,15 @@ import lombok.Data;
 @Data
 public class SpiBalances {
 
-	private AccountBalance closingBooked;
+	private SpiAccountBalance closingBooked;
 
-	private AccountBalance expected;
+	private SpiAccountBalance expected;
 
-	private AccountBalance authorised;
+	private SpiAccountBalance authorised;
 
-	private AccountBalance openingBooked;
+	private SpiAccountBalance openingBooked;
 
-	private AccountBalance closing_booked;
+	private SpiAccountBalance closing_booked;
 
-	private AccountBalance interimAvailable;
+	private SpiAccountBalance interimAvailable;
 }

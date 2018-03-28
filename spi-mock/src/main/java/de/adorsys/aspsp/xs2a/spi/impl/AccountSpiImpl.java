@@ -2,7 +2,7 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
-import de.adorsys.aspsp.xs2a.spi.domain.account.Transaction;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 
@@ -52,43 +52,43 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<Transaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
-        List<Transaction> transactions = AccountMockData.getTransactions();
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
+        List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
 
-        List<Transaction> validTransactions = filterValidTransactionsByAccountId(transactions, accountId);
-        List<Transaction> transactionsFilteredByPeriod = filterTransactionsByPeriod(validTransactions, dateFrom, dateTo);
+        List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
+        List<SpiTransaction> transactionsFilteredByPeriod = filterTransactionsByPeriod(validSpiTransactions, dateFrom, dateTo);
 
         return Collections.unmodifiableList(transactionsFilteredByPeriod);
     }
 
     @Override
-    public List<Transaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
-        List<Transaction> transactions = AccountMockData.getTransactions();
+    public List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
+        List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
 
-        List<Transaction> validTransactions = filterValidTransactionsByAccountId(transactions, accountId);
-        List<Transaction> filteredTransactions = filterValidTransactionsByTransactionId(validTransactions, transactionId);
+        List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
+        List<SpiTransaction> filteredSpiTransactions = filterValidTransactionsByTransactionId(validSpiTransactions, transactionId);
 
-        return Collections.unmodifiableList(filteredTransactions);
+        return Collections.unmodifiableList(filteredSpiTransactions);
     }
 
-    private Transaction[] getFilteredPendingTransactions(List<Transaction> transactions) {
-        return transactions.parallelStream()
+    private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) {
+        return spiTransactions.parallelStream()
                .filter(this::isPendingTransaction)
-               .toArray(Transaction[]::new);
+               .toArray(SpiTransaction[]::new);
     }
 
-    private Transaction[] getFilteredBookedTransactions(List<Transaction> transactions) {
-        return transactions.parallelStream()
+    private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) {
+        return spiTransactions.parallelStream()
                .filter(transaction -> !isPendingTransaction(transaction))
-               .toArray(Transaction[]::new);
+               .toArray(SpiTransaction[]::new);
     }
 
-    private boolean isPendingTransaction(Transaction transaction) {
-        return transaction.getBookingDate() == null;
+    private boolean isPendingTransaction(SpiTransaction spiTransaction) {
+        return spiTransaction.getBookingDate() == null;
     }
 
-    private List<Transaction> filterTransactionsByPeriod(List<Transaction> transactions, Date dateFrom, Date dateTo) {
-        return transactions.parallelStream()
+    private List<SpiTransaction> filterTransactionsByPeriod(List<SpiTransaction> spiTransactions, Date dateFrom, Date dateTo) {
+        return spiTransactions.parallelStream()
                .filter(transaction -> isDateInTimeFrame(transaction.getBookingDate(), dateFrom, dateTo))
                .collect(Collectors.toList());
     }
@@ -97,25 +97,25 @@ public class AccountSpiImpl implements AccountSpi {
         return currentDate != null && currentDate.after(dateFrom) && currentDate.before(dateTo);
     }
 
-    private List<Transaction> filterValidTransactionsByAccountId(List<Transaction> transactions, String accountId) {
-        return transactions.parallelStream()
+    private List<SpiTransaction> filterValidTransactionsByAccountId(List<SpiTransaction> spiTransactions, String accountId) {
+        return spiTransactions.parallelStream()
                .filter(transaction -> transactionIsValid(transaction, accountId))
                .collect(Collectors.toList());
     }
 
-    private List<Transaction> filterValidTransactionsByTransactionId(List<Transaction> transactions, String transactionId) {
-        return transactions.parallelStream()
+    private List<SpiTransaction> filterValidTransactionsByTransactionId(List<SpiTransaction> spiTransactions, String transactionId) {
+        return spiTransactions.parallelStream()
                .filter(transaction -> transactionId.equals(transaction.getTransactionId()))
                .collect(Collectors.toList());
     }
 
-    private boolean transactionIsValid(Transaction transaction, String accountId) {
+    private boolean transactionIsValid(SpiTransaction spiTransaction, String accountId) {
 
-        boolean isCreditorAccountValid = Optional.ofNullable(transaction.getCreditorAccount())
+        boolean isCreditorAccountValid = Optional.ofNullable(spiTransaction.getCreditorAccount())
                                          .map(creditorAccount -> creditorAccount.getAccountId().trim().equals(accountId))
                                          .orElse(false);
 
-        boolean isDebtorAccountValid = Optional.ofNullable(transaction.getDebtorAccount())
+        boolean isDebtorAccountValid = Optional.ofNullable(spiTransaction.getDebtorAccount())
                                        .map(debtorAccount -> debtorAccount.getAccountId().trim().equals(accountId))
                                        .orElse(false);
 
