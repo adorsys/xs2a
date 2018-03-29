@@ -1,7 +1,6 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import lombok.Getter;
-//TODO Agree on design and aim
 
 /**
  * Responce Object passing the information about performed operation
