@@ -6,8 +6,8 @@ import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.entityValidator.TransactionByIdValidator;
-import de.adorsys.aspsp.xs2a.domain.entityValidator.TransactionByPeriodValidator;
+import de.adorsys.aspsp.xs2a.domain.entityValidator.impl.TransactionByIdRequestValidator;
+import de.adorsys.aspsp.xs2a.domain.entityValidator.impl.TransactionByPeriodRequestValidator;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.slf4j.Logger;
@@ -72,10 +72,10 @@ public class AccountService {
         AccountReport accountReport;
 
         if (transactionId == null || transactionId.isEmpty()) {
-            validatorService.validate(new TransactionByPeriodValidator(accountId, dateFrom, dateTo));
+            validatorService.validate(new TransactionByPeriodRequestValidator(accountId, dateFrom, dateTo));
             accountReport = readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         } else {
-            validatorService.validate(new TransactionByIdValidator(accountId, transactionId));
+            validatorService.validate(new TransactionByIdRequestValidator(accountId, transactionId));
             accountReport = readTransactionsById(accountId, transactionId, psuInvolved);
         }
 
@@ -105,12 +105,12 @@ public class AccountService {
         }
     }
 
-    private AccountReport readTransactionsByPeriod( String accountId, Date dateFrom,
-                                                    Date dateTo, boolean psuInvolved) {
+    private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
+                                                   Date dateTo, boolean psuInvolved) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
-    private AccountReport readTransactionsById( String accountId, String transactionId,
+    private AccountReport readTransactionsById(String accountId, String transactionId,
                                                boolean psuInvolved) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }

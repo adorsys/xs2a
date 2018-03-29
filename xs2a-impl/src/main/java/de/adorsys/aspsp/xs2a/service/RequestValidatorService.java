@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 
-import de.adorsys.aspsp.xs2a.domain.entityValidator.TransactionByPeriodValidator;
+import de.adorsys.aspsp.xs2a.domain.entityValidator.impl.TransactionByPeriodRequestValidator;
 import de.adorsys.aspsp.xs2a.domain.headers.HeadersFactory;
 import de.adorsys.aspsp.xs2a.domain.headers.RequestHeaders;
 import de.adorsys.aspsp.xs2a.domain.headers.impl.ErrorMessageHeaderImpl;
@@ -65,7 +65,7 @@ public class RequestValidatorService {
     }
 
     public void validateTransactionByPeriodParameters(String accountId, Date dateFrom, Date dateTo) {
-        Map<String, String> requestViolationsMap = validator.validate(new TransactionByPeriodValidator(accountId, dateFrom, dateTo)).stream().collect(
+        Map<String, String> requestViolationsMap = validator.validate(new TransactionByPeriodRequestValidator(accountId, dateFrom, dateTo)).stream().collect(
         Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         if (requestViolationsMap.size() > 0) {
