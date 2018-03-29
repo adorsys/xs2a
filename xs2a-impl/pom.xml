@@ -67,6 +67,9 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <includeSystemScope>true</includeSystemScope>
+                    <profiles>
+                        <profile>mockspi</profile>
+                    </profiles>
                 </configuration>
                 <executions>
                     <execution>
