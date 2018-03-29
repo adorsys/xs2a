@@ -1,22 +1,29 @@
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import org.springframework.data.annotation.Id;
 
 import java.util.Currency;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SpiAccountDetails {
-    private final String id;
-    private final String iban;
-    private final String bban;
-    private final String pan;
-    private final String maskedPan;
-    private final String msisdn;
-    private final Currency currency;
-    private final String name;
-    private final String accountType;
-    private final SpiAccountType cashSpiAccountType;
-    private final String bic;
-    private final List<SpiBalances> balances;
+    @Id
+    private String id;
+    private String iban;
+    private String bban;
+    private String pan;
+    private String maskedPan;
+    private String msisdn;
+    private Currency currency;
+    private String name;
+    private String accountType;
+    private SpiAccountType cashSpiAccountType;
+    private String bic;
+    private SpiBalances balances;
 }

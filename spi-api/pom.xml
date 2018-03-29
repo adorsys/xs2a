@@ -8,7 +8,7 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<artifactId>spi-api</artifactId>
 	<packaging>jar</packaging>
 
@@ -16,21 +16,15 @@
 	<description>xs2a spi interfaces for aspsp</description>
 
 	<properties>
-	
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<swagger.version>1.5.10</swagger.version>
 		<java.version>1.8</java.version>
-		
+
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-			<version>${lombok.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
@@ -38,11 +32,14 @@
 		</dependency>
 		<dependency>
     			<groupId>com.fasterxml.jackson.core</groupId>
-   		    <artifactId>jackson-annotations</artifactId>
-    			<version>2.9.3</version>
+   		        <artifactId>jackson-annotations</artifactId>
 		</dependency>
-		
-	</dependencies>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+
+    </dependencies>
 
 	<build>
 		<plugins>
