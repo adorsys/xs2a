@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +67,7 @@ public class AccountController {
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<Balances> getBalances(
-    @PathVariable(name = "account-id", required = true) String accountId,
+    @PathVariable(name = "account-id", required = true) @NotNull String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
@@ -85,18 +88,21 @@ public class AccountController {
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<AccountReport> getTransactions(@PathVariable(name = "account-id") String accountId,
                                                          @ApiParam(name = "date_from", value = "Starting date of the account statement", example = "2017-10-30")
-                                                         @RequestParam(name = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
+                                                         @RequestParam(name = "date_from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                          @ApiParam(name = "date_to", value = "End date of the account statement", example = "2017-11-30")
-                                                         @RequestParam(name = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
+                                                         @RequestParam(name = "date_to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
                                                          @ApiParam(name = "transaction_id", value = "Transaction identification", example = "1234567")
                                                          @RequestParam(name = "transaction_id", required = false) String transactionId,
                                                          @ApiParam(name = "psu-involved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
                                                          @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
+        try {
 
-        AccountReport accountReport = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved);
-        LOGGER.debug("getTransactionsForAccount(): report for account {} date_from {} date_to {} transaction_id {} and psu-involved {} is {}"
-        , accountId, dateFrom, dateTo, transactionId, psuInvolved, accountReport);
-
-        return new ResponseEntity<>(accountReport, HttpStatus.OK);
+            AccountReport accountReport = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved);
+            LOGGER.debug("getTransactionsForAccount(): report for account {} date_from {} date_to {} transaction_id {} and psu-involved {} is {}"
+            , accountId, dateFrom, dateTo, transactionId, psuInvolved, accountReport);
+            return new ResponseEntity<>(accountReport, HttpStatus.OK);
+        } catch (ValidationException ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

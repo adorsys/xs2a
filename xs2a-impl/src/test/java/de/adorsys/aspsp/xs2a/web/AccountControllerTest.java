@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +100,7 @@ public class AccountControllerTest {
         checkTransactionResults(ACCOUNT_ID, dateFrom, dateTo, transactionId, psuInvolved);
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
         //Given:
         String transactionId = "";

@@ -6,15 +6,17 @@ import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.entityValidator.TransactionByIdValidator;
+import de.adorsys.aspsp.xs2a.domain.entityValidator.TransactionByPeriodValidator;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Date;
@@ -32,12 +34,14 @@ public class AccountService {
     private int maxNumberOfCharInTransactionJson;
     private AccountSpi accountSpi;
     private AccountMapper accountMapper;
+    private ValueValidatorService validatorService;
 
     @Autowired
-    public AccountService(AccountSpi accountSpi, int maxNumberOfCharInTransactionJson, AccountMapper accountMapper) {
+    public AccountService(AccountSpi accountSpi, int maxNumberOfCharInTransactionJson, AccountMapper accountMapper, ValueValidatorService validatorService) {
         this.accountSpi = accountSpi;
         this.maxNumberOfCharInTransactionJson = maxNumberOfCharInTransactionJson;
         this.accountMapper = accountMapper;
+        this.validatorService = validatorService;
     }
 
     public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
@@ -45,14 +49,14 @@ public class AccountService {
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
         List<AccountDetails> accountDetails =
-            Optional.ofNullable(accountSpi.readAccounts(withBalance, psuInvolved))
-                .map(accountDetailsList ->
-                        accountDetailsList
-                        .stream()
-                        .map(accountDetail -> accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountDetail))
-                        .collect(Collectors.toList())
-                )
-                .orElse(Collections.emptyList());
+        Optional.ofNullable(accountSpi.readAccounts(withBalance, psuInvolved))
+        .map(accountDetailsList ->
+             accountDetailsList
+             .stream()
+             .map(accountDetail -> accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountDetail))
+             .collect(Collectors.toList())
+        )
+        .orElse(Collections.emptyList());
 
         accountDetails.forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
 
@@ -63,13 +67,15 @@ public class AccountService {
         return accountMapper.mapSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
     }
 
-    public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
+    public AccountReport getAccountReport(@NotEmpty String accountId, Date dateFrom, Date dateTo, String transactionId,
                                           boolean psuInvolved) {
         AccountReport accountReport;
 
         if (transactionId == null || transactionId.isEmpty()) {
+            validatorService.validate(new TransactionByPeriodValidator(accountId, dateFrom, dateTo));
             accountReport = readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         } else {
+            validatorService.validate(new TransactionByIdValidator(accountId, transactionId));
             accountReport = readTransactionsById(accountId, transactionId, psuInvolved);
         }
 
@@ -99,17 +105,17 @@ public class AccountService {
         }
     }
 
-    private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
-                                                   @NotNull Date dateTo, boolean psuInvolved) {
+    private AccountReport readTransactionsByPeriod( String accountId, Date dateFrom,
+                                                    Date dateTo, boolean psuInvolved) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
-    private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
+    private AccountReport readTransactionsById( String accountId, String transactionId,
                                                boolean psuInvolved) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 
-    public AccountReport getAccountReportWithDownloadLink(@NotEmpty String accountId) {
+    public AccountReport getAccountReportWithDownloadLink(@NotNull String accountId) {
         // todo further we should implement real flow for downloading file
         String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
         Links downloadLink = new Links();

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +54,10 @@ public class ConsentInformationController {
 
         LOGGER.debug("createAccountConsent(): response {} ", aicCreateResponse);
 
-        return new ResponseEntity<>(aicCreateResponse, HttpStatus.OK);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("Location", linkTo(ConsentInformationController.class).slash(aicCreateResponse.getConsentId()).toString());
+
+        return new ResponseEntity<>(aicCreateResponse, responseHeaders, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource")
@@ -67,11 +71,15 @@ public class ConsentInformationController {
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource")
     @PathVariable("consent-id") String consentId) {
 
-        Map<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
         TransactionStatus transactionStatus = consentService.getAccountConsentsStatusById(consentId);
-        accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
 
+        Map<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
+        accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
         LOGGER.debug("getAccountConsentStatusById(): response {} ", transactionStatus);
+
+        if (transactionStatus == null) {
+            return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.FORBIDDEN);
+        }
 
         return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.OK);
     }
@@ -89,6 +97,9 @@ public class ConsentInformationController {
         AccountConsent accountConsent = consentService.getAccountConsentsById(consentId);
 
         LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsent);
+        if (accountConsent == null) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         return new ResponseEntity<>(accountConsent, HttpStatus.OK);
     }

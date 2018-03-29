@@ -76,30 +76,31 @@ public class SpiMockConfig {
         AccountMockData.getSpiAmounts().get(0), "12345",
         7, 4, "future",
         "debit", AccountMockData.getAccountDetails().get(3).getName(), convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(3)), "",
-        "", null, "", "Example for remittance information");
+        "debtor name", null, "", "Example for remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(4), "123456",
         4, 6, "future",
         "debit", AccountMockData.getAccountDetails().get(4).getName(), convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(4)), "",
-        "", null, "", "Another Example for remittance information");
+        "debtor name", null, "", "Another Example for remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(1), "123457",
         6, 10, "past",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(2)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
+        "debtor name", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(2), "1234578",
         17, 20, "past",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(2)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
+        "debtor name", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
+
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(3), "1234578",
         5, 3, "future",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(1)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(1)), "", "remittance information");
+        "debtor name", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(1)), "", "remittance information");
 
     }
 

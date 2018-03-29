@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 
+import de.adorsys.aspsp.xs2a.domain.entityValidator.TransactionByPeriodValidator;
 import de.adorsys.aspsp.xs2a.domain.headers.HeadersFactory;
 import de.adorsys.aspsp.xs2a.domain.headers.RequestHeaders;
 import de.adorsys.aspsp.xs2a.domain.headers.impl.ErrorMessageHeaderImpl;
@@ -12,9 +13,12 @@ import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
 import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
 
 @Service
 public class RequestValidatorService {
@@ -37,7 +41,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());
         }
 
-        Map<String, String>  requestHeaderViolationsMap = validator.validate(headerImpl).stream().collect(
+        Map<String, String> requestHeaderViolationsMap = validator.validate(headerImpl).stream().collect(
         Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         return requestHeaderViolationsMap;
@@ -58,5 +62,18 @@ public class RequestValidatorService {
         }
 
         return requestHeaderMap;
+    }
+
+    public void validateTransactionByPeriodParameters(String accountId, Date dateFrom, Date dateTo) {
+        Map<String, String> requestViolationsMap = validator.validate(new TransactionByPeriodValidator(accountId, dateFrom, dateTo)).stream().collect(
+        Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
+
+        if (requestViolationsMap.size() > 0) {
+            final List<String> violations = requestViolationsMap.entrySet().stream()
+                                            .map(entry -> entry.getKey() + " : " + entry.getValue()).collect(Collectors.toList());
+
+            LOGGER.debug(violations.toString());
+            throw new ValidationException(FORMAT_ERROR.name() + ": " + violations.toString());
+        }
     }
 }

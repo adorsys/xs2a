@@ -42,7 +42,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
 
             LOGGER.debug(violations.toString());
 
-            response.sendError(FORMAT_ERROR.getCode(), violations.toString());
+            response.sendError(FORMAT_ERROR.getCode(), FORMAT_ERROR.name()+": "+violations.toString());
             return false;
         }
     }

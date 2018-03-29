@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -134,7 +135,7 @@ public class AccountServiceTest {
         checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = ValidationException.class)
     public void shouldFail_getTransactionsNoAccountId() {
         //Given:
         boolean psuInvolved = false;
