@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.validator;
 
 
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
@@ -25,7 +25,7 @@ public class RequestValidatorServiceTest {
     private ConsentInformationController consentInformationController;
 
     @Test
-    public void preHandle() throws Exception {
+    public void getRequestHeaderViolationMap() throws Exception {
         //Given:
         HttpServletRequest request = getCorrectRequest();
         Object handler = getHandler();
@@ -38,7 +38,7 @@ public class RequestValidatorServiceTest {
     }
 
     @Test
-    public void shouldFail_preHandle_wrongRequest() throws Exception {
+    public void shouldFail_getRequestHeaderViolationMap_wrongRequest() throws Exception {
         //Given:
         HttpServletRequest request = getWrongRequestNoTppRequestId();
         Object handler = getHandler();
@@ -51,9 +51,8 @@ public class RequestValidatorServiceTest {
         assertThat(actualViolations.get("tppRequestId")).isEqualTo("must not be null");
     }
 
-
     @Test
-    public void shouldFail_preHandle_wrongRequestHeaderFormat() throws Exception {
+    public void shouldFail_getRequestHeaderViolationMap_wrongRequestHeaderFormat() throws Exception {
         //Given:
         HttpServletRequest request = getWrongRequestWrongTppRequestIdFormat();
         Object handler = getHandler();

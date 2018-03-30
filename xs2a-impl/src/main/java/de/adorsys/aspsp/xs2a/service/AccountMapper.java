@@ -112,10 +112,8 @@ class AccountMapper {
                 transactions.setCreditorName(t.getCreditorName());
                 transactions.setDebtorName(t.getDebtorName());
                 transactions.setUltimateDebtor(t.getUltimateDebtor());
-                transactions.setEndToEndId(t.getEndToEndId());
                 transactions.setMandateId(t.getMandateId());
                 transactions.setPurposeCode(new PurposeCode(t.getPurposeCode()));
-                transactions.setTransactionId(t.getTransactionId());
                 transactions.setRemittanceInformationStructured(t.getRemittanceInformationStructured());
                 transactions.setRemittanceInformationUnstructured(t.getRemittanceInformationUnstructured());
                 return transactions;

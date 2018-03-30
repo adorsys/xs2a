@@ -6,14 +6,16 @@ import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.entityValidator.impl.TransactionByIdRequestValidator;
-import de.adorsys.aspsp.xs2a.domain.entityValidator.impl.TransactionByPeriodRequestValidator;
+import de.adorsys.aspsp.xs2a.service.validator.FieldsForValidatorGroup;
+import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.service.validator.group.*;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
@@ -71,11 +73,11 @@ public class AccountService {
                                           boolean psuInvolved) {
         AccountReport accountReport;
 
-        if (transactionId == null || transactionId.isEmpty()) {
-            validatorService.validate(new TransactionByPeriodRequestValidator(accountId, dateFrom, dateTo));
+        if (StringUtils.isEmpty(transactionId)) {
+            validate_accountId_period(accountId, dateFrom, dateTo);
             accountReport = readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
         } else {
-            validatorService.validate(new TransactionByIdRequestValidator(accountId, transactionId));
+            validate_accountId_transactionId(accountId, transactionId);
             accountReport = readTransactionsById(accountId, transactionId, psuInvolved);
         }
 
@@ -121,5 +123,24 @@ public class AccountService {
         Links downloadLink = new Links();
         downloadLink.setDownload(urlToDownload);
         return new AccountReport(null, null, downloadLink);
+    }
+
+
+    // Validation
+    private void validate_accountId_period(String accountId, Date dateFrom, Date dateTo) {
+        FieldsForValidatorGroup fieldValidator = new FieldsForValidatorGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setDateFrom(dateFrom);
+        fieldValidator.setDateTo(dateTo);
+
+        validatorService.validate(fieldValidator, AccountIdGroup.class, PeriodGroup.class);
+    }
+
+    private void validate_accountId_transactionId(String accountId, String transactionId) {
+        FieldsForValidatorGroup fieldValidator = new FieldsForValidatorGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setTransactionId(transactionId);
+
+        validatorService.validate(fieldValidator, AccountIdGroup.class, TransactionIdGroup.class);
     }
 }

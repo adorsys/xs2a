@@ -1,7 +1,6 @@
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.service.ValueValidatorService;
-import de.adorsys.aspsp.xs2a.service.RequestValidatorService;
+import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -35,11 +34,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public RequestValidatorService requestValidatorService() {
         return new RequestValidatorService(validator());
-    }
-
-    @Bean
-    public ValueValidatorService valueValidatorService() {
-        return new ValueValidatorService(validator());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
-import de.adorsys.aspsp.xs2a.service.RequestValidatorService;
+import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
