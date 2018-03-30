@@ -64,11 +64,11 @@ public class SpiMockConfig {
             i++;
         }
 
-        AccountMockData.addAccount("11111-999999999", euro, AccountMockData.getBalances().get(0), "DE371234599999", "GENODEF1N02", "Müller", "SCT");
-        AccountMockData.addAccount("22222-999999999", euro, AccountMockData.getBalances().get(1), "DE371234599998", "GENODEF1N02", "Albert", "SCT");
-        AccountMockData.addAccount("33333-999999999", euro, AccountMockData.getBalances().get(2), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
-        AccountMockData.addAccount("44444-999999999", euro, AccountMockData.getBalances().get(3), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
-        AccountMockData.addAccount("55555-999999999", euro, AccountMockData.getBalances().get(4), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
+        AccountMockData.addAccount("11111-999999999", euro, AccountMockData.getBalances(), "DE371234599999", "GENODEF1N02", "Müller", "SCT");
+        AccountMockData.addAccount("22222-999999999", euro, AccountMockData.getBalances(), "DE371234599998", "GENODEF1N02", "Albert", "SCT");
+        AccountMockData.addAccount("33333-999999999", euro, AccountMockData.getBalances(), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
+        AccountMockData.addAccount("44444-999999999", euro, AccountMockData.getBalances(), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
+        AccountMockData.addAccount("55555-999999999", euro, AccountMockData.getBalances(), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
 
         AccountMockData.createAccountsHashMap();
 

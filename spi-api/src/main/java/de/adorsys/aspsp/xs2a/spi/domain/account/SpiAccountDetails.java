@@ -17,5 +17,5 @@ public class SpiAccountDetails {
     private final String accountType;
     private final SpiAccountType cashSpiAccountType;
     private final String bic;
-    private final SpiBalances balances;
+    private final SpiBalances[] balances;
 }

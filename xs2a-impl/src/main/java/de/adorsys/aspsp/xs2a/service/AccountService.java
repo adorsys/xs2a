@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -59,8 +56,8 @@ public class AccountService {
         return accountDetails;
     }
 
-    public Balances getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        return accountMapper.mapSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+    public List<Balances> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
+        return Arrays.asList(accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved)));
     }
 
     public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
