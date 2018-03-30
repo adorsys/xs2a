@@ -51,7 +51,7 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
         assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T18:30:35.035Z");
+        assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
         assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getDate()).isEqualTo("2007-01-01");
     }
 
@@ -69,19 +69,19 @@ public class AccountMapperTest {
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T18:30:35.035Z");
+        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
         assertThat(actualBalances.get(0).getClosingBooked().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getAuthorised().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo("2017-10-25T18:30:35.035Z");
+        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
         assertThat(actualBalances.get(0).getAuthorised().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getExpected().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo("2017-10-25T18:30:35.035Z");
+        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
         assertThat(actualBalances.get(0).getExpected().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getInterimAvailable().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo("2017-10-25T18:30:35.035Z");
+        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
         assertThat(actualBalances.get(0).getInterimAvailable().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getOpeningBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo("2017-10-25T18:30:35.035Z");
+        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
         assertThat(actualBalances.get(0).getOpeningBooked().getDate()).isEqualTo("2007-01-01");
     }
 
