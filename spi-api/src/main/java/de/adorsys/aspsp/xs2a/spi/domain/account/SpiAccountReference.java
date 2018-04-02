@@ -1,10 +1,14 @@
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Currency;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class SpiAccountReference {
     private final String accountId;
     private final String iban;

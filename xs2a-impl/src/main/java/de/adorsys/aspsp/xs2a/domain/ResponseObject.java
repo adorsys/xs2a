@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public class ResponseObject<T> {
     final private boolean success;
-    final private T operationTarget;
+    final private T data;
     final private MessageCode message;
 
     /**
@@ -19,18 +19,18 @@ public class ResponseObject<T> {
      */
     public ResponseObject() {
         this.success = true;
-        operationTarget = null;
+        data = null;
         message = null;
     }
 
     /**
      * Success Response including the Requested Object as a parameter
      *
-     * @param operationTarget Targeted object. (Any object that has to be passed back to the service)
+     * @param data payload object. (Any object that has to be passed back to the service)
      */
-    public ResponseObject(T operationTarget) {
+    public ResponseObject(T data) {
         this.success = true;
-        this.operationTarget = operationTarget;
+        this.data = data;
         this.message = null;
     }
 
@@ -41,7 +41,7 @@ public class ResponseObject<T> {
      */
     public ResponseObject(MessageCode message) {
         this.success = false;
-        this.operationTarget = null;
+        this.data = null;
         this.message = message;
     }
 }
