@@ -44,7 +44,7 @@ public class PaymentInitiationController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profile."),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatus(
+    public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
     @ApiParam(name = "paymentId", value = "Resource Identification of the related payment")
     @PathVariable("paymentId") String paymentId) {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
@@ -69,11 +69,11 @@ public class PaymentInitiationController {
     private PaymentInitiation createResponse() {
 
         // TODO according task PIS_01_02. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/10
-        PaymentInitiation response = new PaymentInitiation(false);
+        //PaymentInitiation response = new PaymentInitiation(false);
         //	return new Resource<>(transactions,
         //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 
-        return response;
+        return null;
     }
 
 }

@@ -7,8 +7,10 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiCreatePaymentRequest;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
+import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import org.springframework.context.annotation.Configuration;
 
 import java.text.ParseException;
@@ -24,6 +26,12 @@ public class SpiMockConfig {
     public SpiMockConfig() {
         fillAccounts();
         fillConsents();
+        fillPayments();
+    }
+
+    private void fillPayments() {
+        PaymentMockData.createPaymentInitiation(getPisRequest_1(),false);
+        PaymentMockData.createPaymentInitiation(getPisRequest_2(),false);
     }
 
     private void fillAccounts() {
@@ -261,5 +269,35 @@ public class SpiMockConfig {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    private SpiCreatePaymentRequest getPisRequest_1() {
+        Currency euro = Currency.getInstance("EUR");
+        SpiAmount spiTransactionFees = new SpiAmount(
+            euro,
+            "5"
+        );
+        return new SpiCreatePaymentRequest(
+            spiTransactionFees,
+            true,
+            null,
+            null,
+            null
+        );
+    }
+
+    private SpiCreatePaymentRequest getPisRequest_2() {
+        Currency euro = Currency.getInstance("EUR");
+        SpiAmount spiTransactionFees = new SpiAmount(
+        euro,
+        "8"
+        );
+        return new SpiCreatePaymentRequest(
+        spiTransactionFees,
+        true,
+        null,
+        null,
+        null
+        );
     }
 }
