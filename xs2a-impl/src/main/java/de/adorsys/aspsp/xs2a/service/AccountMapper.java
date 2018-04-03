@@ -31,7 +31,7 @@ class AccountMapper {
                     accountDetail.getAccountType(),
                     mapAccountType(accountDetail.getCashSpiAccountType()),
                     accountDetail.getBic(),
-                    mapListSpiBalances(Optional.ofNullable(accountDetail.getBalances()).orElse(null)),
+                    mapListSpiBalances(accountDetail.getBalances()),
                     new Links()
                 )
             )
