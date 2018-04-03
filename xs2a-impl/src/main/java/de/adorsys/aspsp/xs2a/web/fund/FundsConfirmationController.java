@@ -20,7 +20,7 @@ public class FundsConfirmationController implements IFundsConfirmationController
     }
 
     @PostMapping
-	public FundsConfirmationResponse fundConfirmation(@RequestBody FundsConfirmationRequest request) {
-		return new FundsConfirmationResponse(fundsConfirmationService.fundsConfirmation(request));
-	}
+    public FundsConfirmationResponse fundConfirmation(@RequestBody FundsConfirmationRequest request) {
+        return new FundsConfirmationResponse(fundsConfirmationService.fundsConfirmation(request));
+    }
 }

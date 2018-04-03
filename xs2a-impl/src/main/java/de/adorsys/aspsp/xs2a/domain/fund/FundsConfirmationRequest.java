@@ -16,18 +16,18 @@ import javax.validation.constraints.NotNull;
 @ApiModel(description = "Request for the Confirmation Funds")
 public class FundsConfirmationRequest {
 
-    @ApiModelProperty(value = "cardNumber: ", example = "12345")
+    @ApiModelProperty(value = "Card Number of the card issued by the PIISP. Must be delivered if available.", example = "12345")
     private  String cardNumber;
 
     @NotNull
-    @ApiModelProperty(value = "psuAccount", required = true)
+    @ApiModelProperty(value = "PSU’s account number.", required = true)
     private  AccountReference psuAccount;
 
-    @ApiModelProperty(value = "payee", example = "Check24")
+    @ApiModelProperty(value = "The merchant where the card is accepted as an information to the PSU.", example = "Check24")
     private  String payee;
 
     @NotNull
-    @ApiModelProperty(value = "instructedAmount", required = true)
+    @ApiModelProperty(value = "Transaction amount to be checked within the funds check mechanism.", required = true)
     private  Amount instructedAmount;
 }
 

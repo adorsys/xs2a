@@ -140,7 +140,7 @@ class AccountMapper {
 
     }
 
-    public SpiAccountReference toModel(AccountReference account){
+    public SpiAccountReference toSpi(AccountReference account){
         return ofNullable(account)
         .map(ac -> builder()
         .accountId(ac.getAccountId())
@@ -154,7 +154,7 @@ class AccountMapper {
         .orElse(null);
     }
 
-    public SpiAmount toModel(Amount amount){
+    public SpiAmount toSpi(Amount amount){
         return ofNullable(amount)
         .map(am -> SpiAmount.builder()
         .content(am.getContent())
@@ -163,7 +163,7 @@ class AccountMapper {
         .orElse(null);
     }
 
-    public Amount fromModel(SpiAmount spi){
+    public Amount fromSpi(SpiAmount spi){
         return ofNullable(spi)
         .map(s -> Amount.builder()
         .content(s.getContent())

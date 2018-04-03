@@ -19,12 +19,8 @@ public class FundsConfirmationTest {
         //Given:
         String expectedJson = FileReaderUtil.readContent(EXPECTED_FUNDS_CONFIRMATION_PATH);
 
-        System.out.println("expectedJson: " + expectedJson);
-
         //When:
         String actual = toJson(buildConfirmationRequest());
-
-        System.out.println("actual: " + actual);
 
         //Then:
         JSONAssert.assertEquals(expectedJson, actual, false);

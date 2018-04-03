@@ -20,8 +20,8 @@ public class FundMapper {
         return builder()
         .cardNumber(request.getCardNumber())
         .payee(request.getPayee())
-        .psuAccount(accountMapper.toModel(request.getPsuAccount()))
-        .instructedAmount(accountMapper.toModel(request.getInstructedAmount()))
+        .psuAccount(accountMapper.toSpi(request.getPsuAccount()))
+        .instructedAmount(accountMapper.toSpi(request.getInstructedAmount()))
         .build();
     }
 }
