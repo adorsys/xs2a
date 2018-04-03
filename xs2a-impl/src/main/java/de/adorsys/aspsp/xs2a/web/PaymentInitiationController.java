@@ -1,38 +1,59 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.PaymentInitiation;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.service.PaymentService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/v1/payments/{product-name}")
 public class PaymentInitiationController {
 
-    private static final Logger log = LoggerFactory.getLogger(PaymentInitiationController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentInitiationController.class);
+    private PaymentService paymentService;
+
+    @Autowired
+    public PaymentInitiationController(PaymentService paymentService){
+        this.paymentService = paymentService;
+    }
 
     @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
     @ApiResponse(code = 400, message = "Bad request")})
-
     @RequestMapping(method = RequestMethod.POST)
-    public PaymentInitialisationResponse createPaymentInitiation(@RequestBody SinglePayments aymentInitialisationRequest) {
+    public PaymentInitiation createPaymentInitiation(@RequestBody SinglePayments paymentInitialisationRequest) {
         return createResponse();
     }
 
-    @ApiOperation(value = "Get information  about the status of a payment initialisation ", notes = "the payment ID")
+    @ApiOperation(value = "Get information  about the status of a payment initialisation ")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profile."),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
-    public String getPaymentInitiationStatus(@PathVariable String paymentId) {
-        return TransactionStatus.RCVD.getName();
+    public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatus(
+    @ApiParam(name = "paymentId", value = "Resource Identification of the related payment")
+    @PathVariable("paymentId") String paymentId) {
+        Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
+        TransactionStatus transactionStatus = paymentService.getPaymentStatusById(paymentId);
+        paymentStatusResponse.put("transactionStatus", transactionStatus);
+
+        LOGGER.debug("getPaymentInitiationStatus(): response {} ", transactionStatus);
+
+        return new ResponseEntity<>(paymentStatusResponse, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Get information  about all payments ", notes = "the payment ID")
@@ -45,10 +66,10 @@ public class PaymentInitiationController {
         return new Transactions();
     }
 
-    private PaymentInitialisationResponse createResponse() {
+    private PaymentInitiation createResponse() {
 
         // TODO according task PIS_01_02. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/10
-        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+        PaymentInitiation response = new PaymentInitiation();
         //	return new Resource<>(transactions,
         //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 
