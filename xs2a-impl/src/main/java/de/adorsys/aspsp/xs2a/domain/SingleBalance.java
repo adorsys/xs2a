@@ -20,7 +20,7 @@ public class SingleBalance {
 	@JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN)
 	private Date lastActionDateTime;
 
-	@ApiModelProperty(value = "Date", example = "2007-01-01")
+	@ApiModelProperty(value = "Date", example = "2017-03-26")
 	@JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
 	private Date date;
 }

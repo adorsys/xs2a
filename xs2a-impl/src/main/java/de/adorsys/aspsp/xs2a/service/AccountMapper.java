@@ -9,8 +9,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 class AccountMapper {
@@ -28,7 +31,7 @@ class AccountMapper {
                     accountDetail.getAccountType(),
                     mapAccountType(accountDetail.getCashSpiAccountType()),
                     accountDetail.getBic(),
-                    mapSpiBalances(accountDetail.getBalances()),
+                    mapListSpiBalances(accountDetail.getBalances()),
                     new Links()
                 )
             )
@@ -41,19 +44,31 @@ class AccountMapper {
         .orElse(null);
     }
 
-    public Balances mapSpiBalances(SpiBalances spiBalances) {
+    public List<Balances> mapListSpiBalances(List<SpiBalances> spiBalances) {
+        if (spiBalances == null) {
+            return null;
+        }
+
+        List<Balances> balances = spiBalances
+        .stream()
+        .map(this::mapBalances)
+        .collect(Collectors.toList());
+
+        return balances;
+    }
+
+    private Balances mapBalances(SpiBalances spiBalances){
         return Optional.ofNullable(spiBalances)
-            .map(b -> {
-                Balances balances = new Balances();
-                balances.setAuthorised(mapSingleBalances(b.getAuthorised()));
-                balances.setClosing_booked(mapSingleBalances(b.getClosing_booked()));
-                balances.setClosingBooked(mapSingleBalances(b.getClosingBooked()));
-                balances.setExpected(mapSingleBalances(b.getExpected()));
-                balances.setInterimAvailable(mapSingleBalances(b.getInterimAvailable()));
-                balances.setOpeningBooked(mapSingleBalances(b.getOpeningBooked()));
-                return balances;
-            })
-            .orElse(null);
+        .map(b -> {
+            Balances balances = new Balances();
+            balances.setAuthorised(mapSingleBalances(b.getAuthorised()));
+            balances.setClosingBooked(mapSingleBalances(b.getClosingBooked()));
+            balances.setExpected(mapSingleBalances(b.getExpected()));
+            balances.setInterimAvailable(mapSingleBalances(b.getInterimAvailable()));
+            balances.setOpeningBooked(mapSingleBalances(b.getOpeningBooked()));
+            return balances;
+        })
+        .orElse(null);
     }
 
     private SingleBalance mapSingleBalances(SpiAccountBalance spiAccountBalance) {
@@ -106,10 +121,12 @@ class AccountMapper {
                 transactions.setAmount(mapSpiAmount(t.getSpiAmount()));
                 transactions.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
                 transactions.setBookingDate(t.getBookingDate());
+                transactions.setValueDate(t.getValueDate());
                 transactions.setCreditorAccount(mapSpiAccountReference(t.getCreditorAccount()));
                 transactions.setDebtorAccount(mapSpiAccountReference(t.getDebtorAccount()));
                 transactions.setCreditorId(t.getCreditorId());
                 transactions.setCreditorName(t.getCreditorName());
+                transactions.setUltimateCreditor(t.getUltimateCreditor());
                 transactions.setDebtorName(t.getDebtorName());
                 transactions.setUltimateDebtor(t.getUltimateDebtor());
                 transactions.setEndToEndId(t.getEndToEndId());

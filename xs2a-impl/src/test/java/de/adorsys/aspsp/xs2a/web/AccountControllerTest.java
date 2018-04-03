@@ -4,6 +4,7 @@ import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,14 +142,14 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        Balances expectedResult = accountService.getBalances(accountId, psuInvolved);
+        List<Balances> expectedResult = accountService.getBalances(accountId, psuInvolved);
 
         //When:
-        ResponseEntity<Balances> actualResponse = accountController.getBalances(accountId, psuInvolved);
+        ResponseEntity<List<Balances>> actualResponse = accountController.getBalances(accountId, psuInvolved);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        Balances actualResult = actualResponse.getBody();
+        List<Balances> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);

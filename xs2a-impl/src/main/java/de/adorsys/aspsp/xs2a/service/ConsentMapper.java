@@ -34,11 +34,11 @@ class ConsentMapper {
 
     public AccountConsent mapGetAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
-        .map(accountConsen -> new AccountConsent(
+        .map(accountConsent -> new AccountConsent(
         spiAccountConsent.getId(), mapAccountAccess(spiAccountConsent.getAccess()),
         spiAccountConsent.isRecurringIndicator(), spiAccountConsent.getValidUntil(),
         spiAccountConsent.getFrequencyPerDay(), spiAccountConsent.getLastActionDate(),
-        de.adorsys.aspsp.xs2a.domain.TransactionStatus.valueOf(spiAccountConsent.getSpiTransactionStatus().name()),
+        TransactionStatus.valueOf(spiAccountConsent.getSpiTransactionStatus().name()),
         ConsentStatus.valueOf(spiAccountConsent.getSpiConsentStatus().name()),
         spiAccountConsent.isWithBalance(), spiAccountConsent.isTppRedirectPreferred()))
         .orElse(null);
