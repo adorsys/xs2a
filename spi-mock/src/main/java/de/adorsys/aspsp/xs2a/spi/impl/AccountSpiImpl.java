@@ -37,7 +37,7 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
-        List<SpiBalances> balances = null;
+        List<SpiBalances> balances = new ArrayList<>();
         SpiAccountDetails accountDetails = AccountMockData.getAccountsHashMap().get(accountId);
 
         if (accountDetails != null) {
