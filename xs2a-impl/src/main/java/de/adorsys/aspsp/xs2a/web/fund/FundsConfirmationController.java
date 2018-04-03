@@ -7,10 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static de.adorsys.aspsp.xs2a.util.Routing.FUNDS_CONFIRMATION_BASE_URL;
 
 @Slf4j
 @RestController
+@RequestMapping(path = FUNDS_CONFIRMATION_BASE_URL)
 public class FundsConfirmationController implements IFundsConfirmationController {
     private FundsConfirmationService fundsConfirmationService;
 

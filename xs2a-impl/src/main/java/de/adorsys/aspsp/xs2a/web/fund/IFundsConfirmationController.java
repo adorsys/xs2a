@@ -6,11 +6,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import static de.adorsys.aspsp.xs2a.util.Routing.FUNDS_CONFIRMATION_BASE_URL;
 
-@RequestMapping(path = FUNDS_CONFIRMATION_BASE_URL)
 @Api(value = FUNDS_CONFIRMATION_BASE_URL, tags = "AISP, Funds confirmation", description = "Provides access to the funds confirmation")
 public interface IFundsConfirmationController {
 
