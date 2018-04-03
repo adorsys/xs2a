@@ -8,6 +8,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Size;
 import java.util.Currency;
+import java.util.List;
 
 @Data
 @ApiModel(description = "SpiAccountDetails information", value = "SpiAccountDetails")
@@ -53,7 +54,7 @@ public class AccountDetails {
     private final String bic;
 
     @ApiModelProperty(value = "Balances")
-    private final Balances[] balances;
+    private final List<Balances> balances;
 
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     private final Links _links;

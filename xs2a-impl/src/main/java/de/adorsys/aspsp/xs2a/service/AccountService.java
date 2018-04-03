@@ -57,7 +57,7 @@ public class AccountService {
     }
 
     public List<Balances> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        return Arrays.asList(accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved)));
+        return accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
     }
 
     public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,

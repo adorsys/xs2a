@@ -41,7 +41,7 @@ public class AccountSpiImpl implements AccountSpi {
         SpiAccountDetails accountDetails = AccountMockData.getAccountsHashMap().get(accountId);
 
         if (accountDetails != null) {
-            balances = Arrays.asList(accountDetails.getBalances());
+            balances = accountDetails.getBalances();
         }
 
         return balances;

@@ -81,7 +81,7 @@ public class AccountMockData {
             accountType,
             null,
             bic,
-            balance.toArray(new SpiBalances[balance.size()])
+            balance
         );
     }
 

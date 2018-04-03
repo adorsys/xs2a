@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 class AccountMapper {
@@ -30,7 +31,7 @@ class AccountMapper {
                     accountDetail.getAccountType(),
                     mapAccountType(accountDetail.getCashSpiAccountType()),
                     accountDetail.getBic(),
-                    mapListSpiBalances(Arrays.asList(accountDetail.getBalances())),
+                    mapListSpiBalances(Optional.ofNullable(accountDetail.getBalances()).orElse(null)),
                     new Links()
                 )
             )
@@ -43,15 +44,15 @@ class AccountMapper {
         .orElse(null);
     }
 
-    public Balances[] mapListSpiBalances(List<SpiBalances> spiBalances) {
+    public List<Balances> mapListSpiBalances(List<SpiBalances> spiBalances) {
         if (spiBalances == null) {
             return null;
         }
 
-        Balances[] balances = spiBalances
+        List<Balances> balances = spiBalances
         .stream()
         .map(this::mapBalances)
-        .toArray(Balances[]::new);
+        .collect(Collectors.toList());
 
         return balances;
     }

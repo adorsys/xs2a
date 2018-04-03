@@ -166,7 +166,7 @@ public class AccountServiceTest {
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
-        List<Balances> expectedResult = Arrays.asList(accountMapper.mapListSpiBalances(getBalances()));
+        List<Balances> expectedResult = accountMapper.mapListSpiBalances(getBalances());
 
         //When:
         List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved);

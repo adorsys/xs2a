@@ -6,6 +6,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +51,9 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getName()).isEqualTo("Main Account");
         assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
-        assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
-        assertThat(actualAccountDetails.getBalances()[0].getClosingBooked().getDate()).isEqualTo("2007-01-01");
+        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
+        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getDate()).isEqualTo("2007-01-01");
     }
 
     @Test
@@ -65,7 +66,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorBalances);
-        List<Balances> actualBalances = Arrays.asList(accountMapper.mapListSpiBalances(donorBalancesList));
+        List<Balances> actualBalances = accountMapper.mapListSpiBalances(donorBalancesList);
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
