@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.aspspmockserver;
+package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.AccountRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;

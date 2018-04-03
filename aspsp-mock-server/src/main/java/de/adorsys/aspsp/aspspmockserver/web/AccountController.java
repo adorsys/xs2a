@@ -1,6 +1,6 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import de.adorsys.aspsp.aspspmockserver.AccountService;
+import de.adorsys.aspsp.aspspmockserver.service.AccountService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/account")
-public class AccountResource {
+public class AccountController {
     private AccountService accountService;
 
-    public AccountResource(AccountService accountService) {this.accountService = accountService;}
+    public AccountController(AccountService accountService) {this.accountService = accountService;}
 
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
