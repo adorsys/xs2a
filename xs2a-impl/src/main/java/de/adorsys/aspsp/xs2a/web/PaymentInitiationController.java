@@ -69,7 +69,7 @@ public class PaymentInitiationController {
     private PaymentInitiation createResponse() {
 
         // TODO according task PIS_01_02. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/10
-        PaymentInitiation response = new PaymentInitiation();
+        PaymentInitiation response = new PaymentInitiation(false);
         //	return new Resource<>(transactions,
         //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 

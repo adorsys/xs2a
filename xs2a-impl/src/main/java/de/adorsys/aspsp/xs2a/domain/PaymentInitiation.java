@@ -1,5 +1,6 @@
 package de.adorsys.aspsp.xs2a.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AuthenticationObject;
 import io.swagger.annotations.ApiModel;
@@ -41,4 +42,8 @@ public class PaymentInitiation {
 
     @ApiModelProperty(value = "Links: a list of hyperlinks to be recognised by the TPP.")
 	private Links _links;
+
+    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+    @JsonIgnore
+    private final boolean tppRedirectPreferred;
 }
