@@ -25,15 +25,15 @@ public class PaymentMockData {
 
         String paymentId = generatePaymentId();
         paymentMap.put(paymentId, new SpiPaymentInitiation(
-        SpiTransactionStatus.ACCP,
-        paymentId,
-        pisRequest.getSpiTransactionFees(),
-        pisRequest.isSpiTransactionFeeIndicator(),
-        pisRequest.getScaMethods(),
-        pisRequest.getPsuMessage(),
-        pisRequest.getTppMessages(),
-        tppRedirectPreferred
-        )
+            SpiTransactionStatus.ACCP,
+            paymentId,
+            pisRequest.getSpiTransactionFees(),
+            pisRequest.isSpiTransactionFeeIndicator(),
+            pisRequest.getScaMethods(),
+            pisRequest.getPsuMessage(),
+            pisRequest.getTppMessages(),
+            tppRedirectPreferred
+            )
         );
 
         return paymentId;

@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.CreatePaymentInitiationRequest;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,9 @@ public class PaymentService {
 
     public TransactionStatus getPaymentStatusById(String paymentId) {
         return paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId));
+    }
+
+    public String createPaymentInitiationAndReturnId(CreatePaymentInitiationRequest createPaymentInitiationRequest, boolean tppRedirectPreferred) {
+        return paymentSpi.createPaymentInitiation(paymentMapper.mapSpiCreatePaymentRequest(createPaymentInitiationRequest), tppRedirectPreferred);
     }
 }

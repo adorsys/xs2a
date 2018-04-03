@@ -9,7 +9,7 @@ import java.util.Currency;
 
 @Data
 @ApiModel(description = "Amount information", value = "Amount")
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Amount {
 
 	@ApiModelProperty(value = "currency", required = true, example = "EUR")
