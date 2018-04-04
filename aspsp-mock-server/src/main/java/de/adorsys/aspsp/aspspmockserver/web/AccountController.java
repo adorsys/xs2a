@@ -31,7 +31,7 @@ public class AccountController {
     }
 
     @GetMapping(path = "/{id}/")
-    public ResponseEntity<SpiAccountDetails> readAllAccounts(@PathVariable("id") String id) {
+    public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("id") String id) {
         return accountService.getAccount(id)
         .map(ResponseEntity::ok)
         .orElseGet(() -> ResponseEntity.notFound().build());

@@ -11,7 +11,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
