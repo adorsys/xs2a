@@ -60,15 +60,6 @@ public class PaymentInitiationController {
         return new ResponseEntity<>(paymentStatusResponse, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Get information  about all payments ", notes = "the payment ID")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status ?????"),
-    @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(value = "/{paymentId}", method = RequestMethod.GET)
-    public Transactions getPaymentInitiation(@PathVariable String paymentId) {
-        // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
-        return new Transactions();
-    }
-
     private PaymentInitiationResponse createResponse() {
         // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
         return null;
