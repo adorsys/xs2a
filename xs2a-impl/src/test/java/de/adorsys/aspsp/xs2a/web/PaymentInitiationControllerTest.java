@@ -46,10 +46,6 @@ public class PaymentInitiationControllerTest {
     }
 
     @Test
-    public void createPaymentInitiation() {
-    }
-
-    @Test
     public void getPaymentInitiationStatusById_successesResult() throws IOException {
         //Given:
         boolean tppRedirectPreferred = false;
@@ -88,10 +84,6 @@ public class PaymentInitiationControllerTest {
         //Then:
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
         assertThat(actualResult).isEqualTo(expectedResult);
-    }
-
-    @Test
-    public void getPaymentInitiation() {
     }
 
 }
