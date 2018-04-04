@@ -24,6 +24,7 @@ public class PaymentMockData {
                                               boolean tppRedirectPreferred) {
 
         String paymentId = generatePaymentId();
+        System.out.println("Payment id"+paymentId);
         paymentMap.put(paymentId, new SpiPaymentInitiation(
             SpiTransactionStatus.ACCP,
             paymentId,

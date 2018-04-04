@@ -5,10 +5,13 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -19,18 +22,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PaymentInitiationResponseControllerTest {
+public class PaymentInitiationControllerTest {
 
     private final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private final String PAYMENT_ID = "12345";
 
     @Autowired
     PaymentInitiationController paymentInitiationController;
-    @Autowired
+    @MockBean
     PaymentService paymentService;
+
+    @Before
+    public void setUpPaymentServiceMock() throws IOException {
+        when(paymentService.createPaymentInitiationAndReturnId(getExpectedRequest(),false))
+            .thenReturn(PAYMENT_ID);
+        when(paymentService.getPaymentStatusById(PAYMENT_ID))
+            .thenReturn(TransactionStatus.ACCP);
+    }
 
     @Test
     public void createPaymentInitiation() {
@@ -57,10 +70,14 @@ public class PaymentInitiationResponseControllerTest {
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
+    private SinglePayments getExpectedRequest() throws IOException {
+        String pisRequestJson = IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8);
+        return new Gson().fromJson(pisRequestJson, SinglePayments.class);
+    }
+
     @Test
     public void getAccountConsentsStatusById_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "0";
@@ -69,10 +86,8 @@ public class PaymentInitiationResponseControllerTest {
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(wrongId);
 
         //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
-        assertThat(actualStatusCode).isNotEqualTo(expectedStatusCode);
-        assertThat(actualResult).isNotEqualTo(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     @Test

@@ -3,6 +3,8 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.code.BICFI;
+import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,14 +23,8 @@ public class PaymentServiceTest {
     PaymentService paymentService;
 
     @Test
-    public void getPaymentStatusById() {
-
-    }
-
-    @Test
-    public void getAccountConsentsStatusById_successesResult() {
+    public void getPaymentStatusById_successesResult() {
         //Given:
-        boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         SinglePayments expectedRequest = getCreatePaymentInitiationRequestTest();
         String validAccountConsentsId = paymentService.createPaymentInitiationAndReturnId(expectedRequest,tppRedirectPreferred);
@@ -51,14 +47,17 @@ public class PaymentServiceTest {
         singlePayments.setInstructedAmount(amount);
         singlePayments.setDebtorAccount(accountReference);
         singlePayments.setCreditorName("Merchant123");
+        singlePayments.setPurposeCode(new PurposeCode("BEQNSD"));
+        singlePayments.setCreditorAgent(new BICFI("q1bjkbs1"));
         singlePayments.setCreditorAccount(accountReference);
+        singlePayments.setPurposeCode(new PurposeCode("BCENECEQ"));
         singlePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
 
         return singlePayments;
     }
 
     @Test
-    public void getAccountConsentsStatusById_wrongId() {
+    public void getPaymentStatusById_wrongId() {
         //Given:
         String wrongId = "111111";
 
