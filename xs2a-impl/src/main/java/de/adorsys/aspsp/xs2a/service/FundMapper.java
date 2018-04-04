@@ -5,8 +5,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest.builder;
-
 @Component
 public class FundMapper {
     private AccountMapper accountMapper;
@@ -17,11 +15,9 @@ public class FundMapper {
     }
 
     public SpiFundsConfirmationRequest toModel(FundsConfirmationRequest request){
-        return builder()
-        .cardNumber(request.getCardNumber())
-        .payee(request.getPayee())
-        .psuAccount(accountMapper.toSpi(request.getPsuAccount()))
-        .instructedAmount(accountMapper.toSpi(request.getInstructedAmount()))
-        .build();
+        return new SpiFundsConfirmationRequest(request.getCardNumber(),
+        accountMapper.toSpi(request.getPsuAccount()),
+        request.getPayee(),
+        accountMapper.toSpi(request.getInstructedAmount()));
     }
 }

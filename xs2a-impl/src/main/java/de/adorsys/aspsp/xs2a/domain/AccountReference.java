@@ -1,22 +1,14 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Currency;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @ApiModel(description = "Account Reference", value = "AccountReference")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountReference {
 
     @JsonIgnore

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference.builder;
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -142,33 +141,19 @@ class AccountMapper {
 
     public SpiAccountReference toSpi(AccountReference account){
         return ofNullable(account)
-        .map(ac -> builder()
-        .accountId(ac.getAccountId())
-        .iban(ac.getIban())
-        .bban(ac.getBban())
-        .pan(ac.getPan())
-        .maskedPan(ac.getMaskedPan())
-        .msisdn(ac.getMsisdn())
-        .currency(ac.getCurrency())
-        .build())
-        .orElse(null);
+            .map(ac -> new SpiAccountReference(ac.getAccountId(),
+                ac.getIban(),
+                ac.getBban(),
+                ac.getPan(),
+                ac.getMaskedPan(),
+                ac.getMsisdn(),
+                ac.getCurrency()))
+            .orElse(null);
     }
 
     public SpiAmount toSpi(Amount amount){
         return ofNullable(amount)
-        .map(am -> SpiAmount.builder()
-        .content(am.getContent())
-        .currency(am.getCurrency())
-        .build())
-        .orElse(null);
-    }
-
-    public Amount fromSpi(SpiAmount spi){
-        return ofNullable(spi)
-        .map(s -> Amount.builder()
-        .content(s.getContent())
-        .currency(s.getCurrency())
-        .build())
+            .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
         .orElse(null);
     }
 }
