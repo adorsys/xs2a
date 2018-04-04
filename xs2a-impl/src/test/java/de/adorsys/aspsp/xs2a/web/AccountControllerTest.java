@@ -1,35 +1,107 @@
 package de.adorsys.aspsp.xs2a.web;
 
+import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.ConstraintViolationException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AccountControllerTest {
+public class AccountControllerTest<T> {
     private final String ACCOUNT_ID = "33333-999999999";
     private final String TRANSACTION_ID = "1234578";
+    private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetailsTestData.json";
+    private final String ACCOUNT_REPORT_SOURCE = "/json/AccountReportTestData.json";
+    private final String BALANCES_SOURCE = "/json/BalancesTestData.json";
+    private final Charset UTF_8 = Charset.forName("utf-8");
 
     @Autowired
     private AccountController accountController;
-    @Autowired
+
+    @MockBean(name = "accountService")
     private AccountService accountService;
+
+    @Before
+    public void setUp() throws Exception {
+        when(accountService.getAccountDetailsList(anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
+        when(accountService.getBalances(any(String.class), anyBoolean())).thenReturn(new ResponseObject(new Gson().fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class)));
+        when(accountService.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
+        when(accountService.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
+    }
+
+    @Test
+    public void getAccountDetails_withBalance() throws IOException {
+        //Given
+        boolean withBalance = true;
+        boolean psuInvolved = true;
+        ResponseObject<AccountDetails> expectedResult = getAccountDetails();
+
+        //When
+        AccountDetails result = accountController.readAccountDetails(ACCOUNT_ID, withBalance, psuInvolved).getBody();
+
+        assertThat(result).isEqualTo(expectedResult.getData());
+    }
+
+    @Test
+    public void getAccounts_ResultTest() throws IOException {
+        //Given
+        boolean withBalance = true;
+        boolean psuInvolved = true;
+        List<AccountDetails> expectedResult = (List<AccountDetails>) createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getData();
+
+        //When:
+        List<AccountDetails> result = accountController.getAccounts(withBalance, psuInvolved).getBody().get("accountList");
+
+        //Then:
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void getBallances_ResultTest() throws IOException {
+        //Given:
+        boolean psuInvolved = true;
+        Balances expectedResult = (Balances) new ResponseObject(new Gson().fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class)).getData();
+
+        //When:
+        Balances result = accountController.getBalances(ACCOUNT_ID, psuInvolved).getBody();
+
+        //Then:
+        assertThat(result).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void getTransactions_ResultTest() throws IOException {
+        //Given:
+        boolean psuInvolved = true;
+        AccountReport expectedResult = new Gson().fromJson(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), AccountReport.class);
+
+        //When
+        AccountReport result = accountController.getTransactions(ACCOUNT_ID, null, null, TRANSACTION_ID, psuInvolved, "both", false, false).getBody();
+
+        //Then:
+        assertThat(result).isEqualTo(expectedResult);
+    }
 
     @Test
     public void getAccounts_withBalance() {
@@ -57,7 +129,6 @@ public class AccountControllerTest {
 
     @Test
     public void getBalance_withPsuInvolved() {
-
         //Given:
         boolean psuInvolved = true;
         checkBalanceResults(ACCOUNT_ID, psuInvolved);
@@ -68,15 +139,6 @@ public class AccountControllerTest {
         //Given:
         boolean psuInvolved = false;
         checkBalanceResults(ACCOUNT_ID, psuInvolved);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getBalance_emptyAccountWithBalanceAndPsuInvolved() {
-        //Given:
-        String accountId = "";
-        boolean psuInvolved = true;
-
-        checkBalanceResults(accountId, psuInvolved);
     }
 
     @Test
@@ -100,34 +162,15 @@ public class AccountControllerTest {
         checkTransactionResults(ACCOUNT_ID, dateFrom, dateTo, transactionId, psuInvolved);
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
-        //Given:
-        String transactionId = "";
-        boolean psuInvolved = false;
-
-        checkTransactionResults(ACCOUNT_ID, null, null, transactionId, psuInvolved);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getTransactions_noAccountId() {
-        //Given:
-        String accountId = "";
-        String transactionId = "";
-        boolean psuInvolved = false;
-
-        checkTransactionResults(accountId, null, null, transactionId, psuInvolved);
-    }
-
     private void checkTransactionResults(String accountId, Date dateFrom, Date dateTo, String transactionId,
                                          boolean psuInvolved) {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        AccountReport expectedResult = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved);
+        AccountReport expectedResult = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false).getData();
 
         //When:
-        ResponseEntity<AccountReport> actualResponse = accountController.getTransactions(accountId, dateFrom, dateTo, transactionId, psuInvolved);
+        ResponseEntity<AccountReport> actualResponse = accountController.getTransactions(accountId, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
@@ -141,7 +184,7 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        Balances expectedResult = accountService.getBalances(accountId, psuInvolved);
+        Balances expectedResult = (Balances) accountService.getBalances(accountId, psuInvolved).getData();
 
         //When:
         ResponseEntity<Balances> actualResponse = accountController.getBalances(accountId, psuInvolved);
@@ -155,11 +198,10 @@ public class AccountControllerTest {
     }
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
         Map<String, List<AccountDetails>> expectedResult = new HashMap<>();
-        expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved));
+        expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved).getData());
 
         //When:
         ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
@@ -170,6 +212,22 @@ public class AccountControllerTest {
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);
+    }
 
+    private ResponseObject createAccountDetailsList(String path) throws IOException {
+        AccountDetails[] array = new Gson().fromJson(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class);
+
+        return new ResponseObject(Arrays.asList(array));
+    }
+
+    private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
+        List<AccountDetails> list = (List<AccountDetails>) createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getData();
+        return new ResponseObject<>(list.get(0));
+    }
+
+    private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
+        AccountReport accountReport = new Gson().fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
+
+        return new ResponseObject<>(accountReport);
     }
 }

@@ -2,10 +2,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
-import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -16,12 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
@@ -40,40 +35,27 @@ public class AccountService {
         this.accountMapper = accountMapper;
     }
 
-    public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
+    public ResponseObject<List<AccountDetails>> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
+        List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccounts(withBalance, psuInvolved));
 
-        String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
-
-        List<AccountDetails> accountDetails =
-            Optional.ofNullable(accountSpi.readAccounts(withBalance, psuInvolved))
-                .map(accountDetailsList ->
-                        accountDetailsList
-                        .stream()
-                        .map(accountDetail -> accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountDetail))
-                        .collect(Collectors.toList())
-                )
-                .orElse(Collections.emptyList());
-
-        accountDetails.forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
-
-        return accountDetails;
+        return accountDetailsList != null
+               ? new ResponseObject(accountDetailsList)
+               : new ResponseObject(RESOURCE_UNKNOWN_404);
     }
 
-    public Balances getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        return accountMapper.mapSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+    public ResponseObject getBalances(@NotEmpty String accountId, boolean psuInvolved) {
+        Balances balances = accountMapper.mapSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+
+        return (balances != null ? new ResponseObject<>(balances) : new ResponseObject(RESOURCE_UNKNOWN_404));
     }
 
-    public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
-                                          boolean psuInvolved) {
-        AccountReport accountReport;
+    public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
+                                                          boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
+        AccountReport accountReport = transactionId == null || transactionId.isEmpty()
+                                      ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+                                      : readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
 
-        if (transactionId == null || transactionId.isEmpty()) {
-            accountReport = readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
-        } else {
-            accountReport = readTransactionsById(accountId, transactionId, psuInvolved);
-        }
-
-        return getReportAccordingMaxSize(accountReport, accountId);
+        return accountReport == null ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404) : new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
     }
 
     private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
@@ -100,12 +82,12 @@ public class AccountService {
     }
 
     private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
-                                                   @NotNull Date dateTo, boolean psuInvolved) {
+                                                   @NotNull Date dateTo, boolean psuInvolved, boolean withBalance) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
     private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
-                                               boolean psuInvolved) {
+                                               boolean psuInvolved, boolean withBalance) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 
@@ -115,5 +97,11 @@ public class AccountService {
         Links downloadLink = new Links();
         downloadLink.setDownload(urlToDownload);
         return new AccountReport(null, null, downloadLink);
+    }
+
+    public ResponseObject<AccountDetails> getAccountDetails(@NotEmpty String accountId, boolean withBalance, boolean psuInvolved) {
+        AccountDetails accountDetails = accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
+
+        return accountDetails == null ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404) : new ResponseObject<>(accountDetails);
     }
 }

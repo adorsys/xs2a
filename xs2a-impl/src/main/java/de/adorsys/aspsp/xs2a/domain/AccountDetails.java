@@ -1,7 +1,6 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -11,7 +10,6 @@ import java.util.Currency;
 
 @Data
 @ApiModel(description = "SpiAccountDetails information", value = "SpiAccountDetails")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountDetails {
 
     @ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required = true, example = "12345")
@@ -46,7 +44,7 @@ public class AccountDetails {
     @Size(max = 35)
     private final String accountType;
 
-    @ApiModelProperty(value = "Cash Account Type: PExternalCashAccountType1Code from ISO20022", example = "CurrentAccount")
+    @ApiModelProperty(value = "Cash Account Type: PExternalCashAccountType1Code from ISO20022")
     private final CashAccountType cashAccountType;
 
     @ApiModelProperty(value = "BIC: The BIC associated to the account.", example = "1234567890")
@@ -63,7 +61,7 @@ public class AccountDetails {
      *
      * @param urlToController main account controller url
      */
-    public void setBalanceAndTransactionLinksDyDefault(String urlToController) {
+    public void setBalanceAndTransactionLinksByDefault(String urlToController) {
         String urlWithId = urlToController + "/" + id;
         String balancesLink = urlWithId + "/balances";
         String transactionsLink = urlWithId + "/transactions";

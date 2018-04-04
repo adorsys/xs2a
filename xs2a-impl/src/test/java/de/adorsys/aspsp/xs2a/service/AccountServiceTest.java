@@ -2,11 +2,13 @@ package de.adorsys.aspsp.xs2a.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -23,8 +27,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -34,7 +37,9 @@ public class AccountServiceTest {
     private final String ACCOUNT_ID = "11111-999999999";
     private final String TRANSACTION_ID = "Id-0001";
     private final Currency usd = Currency.getInstance("USD");
+    private final String ACCOUNT_DETAILS_SOURCE = "/json/SpiAccountDetails.json";
     private final int maxNumberOfCharInTransactionJson = 1000;
+    private final Charset UTF_8 = Charset.forName("utf-8");
 
     @Autowired
     private AccountService accountService;
@@ -45,10 +50,58 @@ public class AccountServiceTest {
     private AccountSpi accountSpi;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         when(accountSpi.readTransactionsByPeriod(any(), any(), any(), anyBoolean())).thenReturn(getTransactionList());
         when(accountSpi.readBalances(any(), anyBoolean())).thenReturn(getBalances());
         when(accountSpi.readTransactionsById(any(), any(), anyBoolean())).thenReturn(getTransactionList());
+        when(accountSpi.readAccountDetails(any(), eq(true), anyBoolean())).thenReturn(createSpiAccountDeatails());
+    }
+
+    @Test
+    public void getAccountDetails_withBalanace() throws IOException {
+        //Given:
+        boolean withBalance = true;
+        boolean psuInvolved = true;
+        AccountDetails expectedResult = new Gson().fromJson(IOUtils.resourceToString(ACCOUNT_DETAILS_SOURCE, UTF_8), AccountDetails.class);
+
+        //When:
+        ResponseObject<AccountDetails> result = accountService.getAccountDetails(ACCOUNT_ID, withBalance, psuInvolved);
+
+
+        //Then:
+        assertThat(result.getData()).isEqualTo(expectedResult);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldFail_getBalance_NoAccountId() {
+        //Given:
+        String accountId = "";
+        boolean psuInvoilved = true;
+        //When:
+        accountService.getBalances(accountId, psuInvoilved);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
+        //Given:
+        String transactionId = "";
+        boolean psuInvolved = false;
+        Date dateFrom = null;
+        Date dateTo = null;
+        //When
+        accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false);
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void shouldFail_getTransactions_noAccountId() {
+        //Given:
+        String accountId = "";
+        String transactionId = "";
+        Date dateFrom = null;
+        Date dateTo = null;
+        boolean psuInvolved = false;
+
+        accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false);
     }
 
     @Test
@@ -81,14 +134,6 @@ public class AccountServiceTest {
         checkBalanceResults(ACCOUNT_ID, psuInvolved);
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getBalances_emptyAccountWithBalanceAndPsuInvolved() {
-        //Given:
-        String accountId = "";
-        boolean psuInvolved = true;
-        checkBalanceResults(accountId, psuInvolved);
-    }
-
     @Test
     public void getTransactions_onlyTransaction() {
         //Given:
@@ -116,7 +161,7 @@ public class AccountServiceTest {
         AccountReport expectedResult = accountService.getAccountReportWithDownloadLink(ACCOUNT_ID);
 
         //When:
-        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved);
+        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", false, false).getData();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
@@ -134,19 +179,11 @@ public class AccountServiceTest {
         checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getTransactionsNoAccountId() {
-        //Given:
-        boolean psuInvolved = false;
-        String accountId = "";
-        checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
-    }
-
     private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
         //Given:
         AccountReport expectedReport = getAccountReport(accountId);
         //When:
-        AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved);
+        AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved, "both", false, false).getData();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedReport);
@@ -158,7 +195,7 @@ public class AccountServiceTest {
         AccountReport expectedReport = getAccountReport(accountId);
 
         //When:
-        AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved);
+        AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved, "both", false, false).getData();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedReport);
@@ -169,7 +206,7 @@ public class AccountServiceTest {
         Balances expectedResult = accountMapper.mapSpiBalances(getBalances());
 
         //When:
-        Balances actualResult = accountService.getBalances(accountId, psuInvolved);
+        Balances actualResult = (Balances) accountService.getBalances(accountId, psuInvolved).getData();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
@@ -185,7 +222,7 @@ public class AccountServiceTest {
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
 
         //When:
-        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved);
+        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved).getData();
 
         //Then:
         assertThat(expectedResult).isEqualTo(actualResponse);
@@ -195,7 +232,7 @@ public class AccountServiceTest {
         String urlToAccount = linkTo(AccountController.class).toString();
 
         accountDetails
-        .forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
+        .forEach(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount));
         return accountDetails;
 
     }
@@ -284,5 +321,9 @@ public class AccountServiceTest {
         } else {
             return accountReport;
         }
+    }
+
+    private SpiAccountDetails createSpiAccountDeatails() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(ACCOUNT_DETAILS_SOURCE, UTF_8), SpiAccountDetails.class);
     }
 }

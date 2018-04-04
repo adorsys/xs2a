@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
@@ -10,18 +9,12 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RestController
 @RequestMapping(path = "api/v1/consents")
@@ -83,19 +76,6 @@ public class ConsentInformationController {
         return new ResponseEntity<>(accountConsent, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Creates an account information consent resource at the ASPSP to return a list of all accessible accounts",
-    notes = "if withBalance is true then the balance is on the list off all payments accounts ")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountDetails[].class),
-    @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(value = "/account-list", method = RequestMethod.POST)
-    public Resource<List<AccountDetails>> createAICResource(
-    @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-    @RequestParam(name = "with-balance", required = true) Boolean withBalance) {
-
-        Link link = linkTo(ConsentInformationController.class).withSelfRel();
-        return new Resource<>(getAllAccounts(withBalance), link);
-    }
-
     @ApiOperation(value = " Delete information consent object")
     @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content"),
     @ApiResponse(code = 404, message = "Not Found")})
@@ -109,8 +89,4 @@ public class ConsentInformationController {
         return new ResponseEntity<>(status);
     }
 
-    private List<AccountDetails> getAllAccounts(Boolean withBalance) {
-        // TODO according task AIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/11
-        return new ArrayList<>();
-    }
 }
