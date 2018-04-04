@@ -8,9 +8,12 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -35,21 +38,23 @@ class AccountMapper {
 
     public AccountDetails mapSpiAccountDetailsToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
-               .map(ad -> new AccountDetails(
-               ad.getId(),
-               ad.getIban(),
-               ad.getBban(),
-               ad.getPan(),
-               ad.getMaskedPan(),
-               ad.getMsisdn(),
-               ad.getCurrency(),
-               ad.getName(),
-               ad.getAccountType(),
-               mapAccountType(ad.getCashSpiAccountType()),
-               ad.getBic(),
-               mapSpiBalances(ad.getBalances()),
-               new Links())
-               ).orElse(null);
+            .map(ad -> new AccountDetails(
+                    ad.getId(),
+                    ad.getIban(),
+                    ad.getBban(),
+                    ad.getPan(),
+                    ad.getMaskedPan(),
+                    ad.getMsisdn(),
+                    ad.getCurrency(),
+                    ad.getName(),
+                    ad.getAccountType(),
+                    mapAccountType(ad.getCashSpiAccountType()),
+                    ad.getBic(),
+                    mapListSpiBalances(ad.getBalances()),
+                    new Links()
+                )
+            )
+            .orElse(null);
     }
 
     private CashAccountType mapAccountType(SpiAccountType spiAccountType) {
@@ -58,19 +63,31 @@ class AccountMapper {
                .orElse(null);
     }
 
-    public Balances mapSpiBalances(SpiBalances spiBalances) {
+    public List<Balances> mapListSpiBalances(List<SpiBalances> spiBalances) {
+        if (spiBalances == null) {
+            return null;
+        }
+
+        List<Balances> balances = spiBalances
+        .stream()
+        .map(this::mapBalances)
+        .collect(Collectors.toList());
+
+        return balances;
+    }
+
+    private Balances mapBalances(SpiBalances spiBalances){
         return Optional.ofNullable(spiBalances)
-               .map(b -> {
-                   Balances balances = new Balances();
-                   balances.setAuthorised(mapSingleBalances(b.getAuthorised()));
-                   balances.setClosing_booked(mapSingleBalances(b.getClosing_booked()));
-                   balances.setClosingBooked(mapSingleBalances(b.getClosingBooked()));
-                   balances.setExpected(mapSingleBalances(b.getExpected()));
-                   balances.setInterimAvailable(mapSingleBalances(b.getInterimAvailable()));
-                   balances.setOpeningBooked(mapSingleBalances(b.getOpeningBooked()));
-                   return balances;
-               })
-               .orElse(null);
+        .map(b -> {
+            Balances balances = new Balances();
+            balances.setAuthorised(mapSingleBalances(b.getAuthorised()));
+            balances.setClosingBooked(mapSingleBalances(b.getClosingBooked()));
+            balances.setExpected(mapSingleBalances(b.getExpected()));
+            balances.setInterimAvailable(mapSingleBalances(b.getInterimAvailable()));
+            balances.setOpeningBooked(mapSingleBalances(b.getOpeningBooked()));
+            return balances;
+        })
+        .orElse(null);
     }
 
     private SingleBalance mapSingleBalances(SpiAccountBalance spiAccountBalance) {
@@ -126,27 +143,28 @@ class AccountMapper {
 
     private Transactions mapSpiTransaction(SpiTransaction spiTransaction) {
         return Optional.ofNullable(spiTransaction)
-               .map(t -> {
-                   Transactions transactions = new Transactions();
-                   transactions.setTransactionId(t.getTransactionId());
-                   transactions.setEndToEndId(t.getEndToEndId());
-                   transactions.setMandateId(t.getMandateId());
-                   transactions.setCreditorId(t.getCreditorId());
-                   transactions.setBookingDate(t.getBookingDate());
-                   transactions.setValueDate(t.getValueDate());
-                   transactions.setAmount(mapSpiAmount(t.getSpiAmount()));
-                   transactions.setCreditorName(t.getCreditorName());
-                   transactions.setCreditorAccount(mapSpiAccountReference(t.getCreditorAccount()));
-                   transactions.setDebtorName(t.getDebtorName());
-                   transactions.setDebtorAccount(mapSpiAccountReference(t.getDebtorAccount()));
-                   transactions.setUltimateDebtor(t.getUltimateDebtor());
-                   transactions.setRemittanceInformationUnstructured(t.getRemittanceInformationUnstructured());
-                   transactions.setRemittanceInformationStructured(t.getRemittanceInformationStructured());
-                   transactions.setPurposeCode(new PurposeCode(t.getPurposeCode()));
-                   transactions.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
-                   return transactions;
-               })
-               .orElse(null);
+            .map(t -> {
+                Transactions transactions = new Transactions();
+                transactions.setAmount(mapSpiAmount(t.getSpiAmount()));
+                transactions.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
+                transactions.setBookingDate(t.getBookingDate());
+                transactions.setValueDate(t.getValueDate());
+                transactions.setCreditorAccount(mapSpiAccountReference(t.getCreditorAccount()));
+                transactions.setDebtorAccount(mapSpiAccountReference(t.getDebtorAccount()));
+                transactions.setCreditorId(t.getCreditorId());
+                transactions.setCreditorName(t.getCreditorName());
+                transactions.setUltimateCreditor(t.getUltimateCreditor());
+                transactions.setDebtorName(t.getDebtorName());
+                transactions.setUltimateDebtor(t.getUltimateDebtor());
+                transactions.setEndToEndId(t.getEndToEndId());
+                transactions.setMandateId(t.getMandateId());
+                transactions.setPurposeCode(new PurposeCode(t.getPurposeCode()));
+                transactions.setTransactionId(t.getTransactionId());
+                transactions.setRemittanceInformationStructured(t.getRemittanceInformationStructured());
+                transactions.setRemittanceInformationUnstructured(t.getRemittanceInformationUnstructured());
+                return transactions;
+            })
+            .orElse(null);
     }
 
     private AccountReference mapSpiAccountReference(SpiAccountReference spiAccountReference) {

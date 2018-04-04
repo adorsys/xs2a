@@ -7,10 +7,7 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,7 +28,7 @@ public class AccountSpiImpl implements AccountSpi {
                .map(account -> AccountMockData.createAccount(
                account.getId(),
                account.getCurrency(),
-               null,
+               new ArrayList<SpiBalances>(),
                account.getIban(),
                account.getBic(),
                account.getName(),
@@ -39,8 +36,8 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiBalances readBalances(String accountId, boolean psuInvolved) {
-        SpiBalances balances = null;
+    public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
+        List<SpiBalances> balances = new ArrayList<>();
         SpiAccountDetails accountDetails = AccountMockData.getAccountsHashMap().get(accountId);
 
         if (accountDetails != null) {

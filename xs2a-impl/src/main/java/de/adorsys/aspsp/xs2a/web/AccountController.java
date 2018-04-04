@@ -78,8 +78,7 @@ public class AccountController {
     @ApiResponse(code = 200, message = "OK", response = Balances.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/balances", method = RequestMethod.GET)
-    public ResponseEntity<Balances> getBalances(
-    @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
+    public ResponseEntity<List<Balances>> getBalances(
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
@@ -91,7 +90,7 @@ public class AccountController {
         accountId, psuInvolved, responseObject.getData());
 
         return new ResponseEntity<>(responseObject.isSuccess() ?
-                                    (Balances) responseObject.getData() : null, httpStatus);
+                                    (List<Balances>) responseObject.getData() : null, httpStatus);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")

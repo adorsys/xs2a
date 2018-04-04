@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.Date;
 import java.util.List;
 
@@ -43,10 +45,8 @@ public class AccountService {
                : new ResponseObject(RESOURCE_UNKNOWN_404);
     }
 
-    public ResponseObject getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        Balances balances = accountMapper.mapSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
-
-        return (balances != null ? new ResponseObject<>(balances) : new ResponseObject(RESOURCE_UNKNOWN_404));
+    public List<Balances> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
+        return accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
     }
 
     public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,

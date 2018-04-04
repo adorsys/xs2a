@@ -6,8 +6,7 @@ import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AccountControllerTest<T> {
+public class AccountControllerTest {
     private final String ACCOUNT_ID = "33333-999999999";
     private final String TRANSACTION_ID = "1234578";
     private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetailsTestData.json";
@@ -184,14 +183,14 @@ public class AccountControllerTest<T> {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        Balances expectedResult = (Balances) accountService.getBalances(accountId, psuInvolved).getData();
+        List<Balances> expectedResult = accountService.getBalances(accountId, psuInvolved);
 
         //When:
-        ResponseEntity<Balances> actualResponse = accountController.getBalances(accountId, psuInvolved);
+        ResponseEntity<List<Balances>> actualResponse = accountController.getBalances(accountId, psuInvolved);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        Balances actualResult = actualResponse.getBody();
+        List<Balances> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);

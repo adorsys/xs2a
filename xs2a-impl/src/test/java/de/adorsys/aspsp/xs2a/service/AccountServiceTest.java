@@ -204,10 +204,10 @@ public class AccountServiceTest {
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
         Balances expectedResult = accountMapper.mapSpiBalances(getBalances());
-
+        List<Balances> expectedResult = accountMapper.mapListSpiBalances(getBalances());
         //When:
         Balances actualResult = (Balances) accountService.getBalances(accountId, psuInvolved).getData();
-
+        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved);
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -284,11 +284,13 @@ public class AccountServiceTest {
         return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", null, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
     }
 
-    private SpiBalances getBalances() {
+    private List<SpiBalances> getBalances() {
         SpiAccountBalance spiAccountBalance = getSpiAccountBalance("1000", "2016-12-12", "2018-23-02");
 
-        SpiBalances spiBalances = new SpiBalances();
-        spiBalances.setInterimAvailable(spiAccountBalance);
+        List<SpiBalances> spiBalances = new ArrayList<SpiBalances>();
+        for(SpiBalances spiBalancesItem: spiBalances){
+            spiBalancesItem.setInterimAvailable(spiAccountBalance);
+        }
 
         return spiBalances;
     }
