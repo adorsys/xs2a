@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +41,8 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());
         }
 
-        Map<String, String> requestHeaderViolationsMap = validator.validate(headerImpl).stream().collect(
-        Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
+        Map<String, String> requestHeaderViolationsMap = validator.validate(headerImpl).stream()
+                                                         .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         return requestHeaderViolationsMap;
     }
