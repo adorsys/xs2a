@@ -28,14 +28,14 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class PaymentInitiationControllerTest {
 
-    private final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
-    private final Charset UTF_8 = Charset.forName("utf-8");
-    private final String PAYMENT_ID = "12345";
+    private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
+    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final String PAYMENT_ID = "12345";
 
     @Autowired
-    PaymentInitiationController paymentInitiationController;
+    private PaymentInitiationController paymentInitiationController;
     @MockBean
-    PaymentService paymentService;
+    private PaymentService paymentService;
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {

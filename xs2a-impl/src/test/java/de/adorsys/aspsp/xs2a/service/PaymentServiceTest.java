@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class PaymentServiceTest {
     @Autowired
-    PaymentService paymentService;
+    private PaymentService paymentService;
 
     @Test
     public void getPaymentStatusById_successesResult() {
