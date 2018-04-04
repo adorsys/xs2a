@@ -1,7 +1,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiation;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
@@ -36,7 +36,10 @@ public class PaymentInitiationController {
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.POST)
-    public PaymentInitiation createPaymentInitiation(@RequestBody SinglePayments paymentInitialisationRequest) {
+    public PaymentInitiationResponse createPaymentInitiation(
+    @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+    @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
+    @RequestBody SinglePayments paymentInitialisationRequest) {
         return createResponse();
     }
 
@@ -66,10 +69,10 @@ public class PaymentInitiationController {
         return new Transactions();
     }
 
-    private PaymentInitiation createResponse() {
+    private PaymentInitiationResponse createResponse() {
 
         // TODO according task PIS_01_02. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/10
-        //PaymentInitiation response = new PaymentInitiation(false);
+        //PaymentInitiationResponse response = new PaymentInitiationResponse(false);
         //	return new Resource<>(transactions,
         //             linkTo(methodOn(PaymentInitiationController.class).paymentInitiation(transactions.getTransaction_id())).withSelfRel());
 

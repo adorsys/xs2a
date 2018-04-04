@@ -1,8 +1,9 @@
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.CreatePaymentInitiationRequest;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class PaymentServiceTest {
         //Given:
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
-        CreatePaymentInitiationRequest expectedRequest = getCreatePaymentInitiationRequestTest();
+        SinglePayments expectedRequest = getCreatePaymentInitiationRequestTest();
         String validAccountConsentsId = paymentService.createPaymentInitiationAndReturnId(expectedRequest,tppRedirectPreferred);
         TransactionStatus expectedStatus = TransactionStatus.ACCP;
 
@@ -40,14 +41,20 @@ public class PaymentServiceTest {
         assertThat(actualStatus).isEqualTo(expectedStatus);
     }
 
-    private CreatePaymentInitiationRequest getCreatePaymentInitiationRequestTest() {
-        return new CreatePaymentInitiationRequest(
-            null,
-            false,
-            null,
-            null,
-            null
-        );
+    private SinglePayments getCreatePaymentInitiationRequestTest() {
+        Amount amount = new Amount();
+        amount.setCurrency(Currency.getInstance("EUR"));
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban("DE23100120020123456789");
+        amount.setContent("123.40");
+        SinglePayments singlePayments = new SinglePayments();
+        singlePayments.setInstructedAmount(amount);
+        singlePayments.setDebtorAccount(accountReference);
+        singlePayments.setCreditorName("Merchant123");
+        singlePayments.setCreditorAccount(accountReference);
+        singlePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
+
+        return singlePayments;
     }
 
     @Test

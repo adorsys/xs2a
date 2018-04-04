@@ -2,7 +2,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.CreatePaymentInitiationRequest;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PaymentInitiationControllerTest {
+public class PaymentInitiationResponseControllerTest {
 
     private final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
@@ -42,7 +42,7 @@ public class PaymentInitiationControllerTest {
         boolean tppRedirectPreferred = false;
         HttpStatus expectedStatusCode = HttpStatus.OK;
         String pisRequestJson = IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8);
-        CreatePaymentInitiationRequest expectedRequest = new Gson().fromJson(pisRequestJson, CreatePaymentInitiationRequest.class);
+        SinglePayments expectedRequest = new Gson().fromJson(pisRequestJson, SinglePayments.class);
         String paymentId = paymentService.createPaymentInitiationAndReturnId(expectedRequest, tppRedirectPreferred);
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", TransactionStatus.ACCP);
@@ -58,12 +58,12 @@ public class PaymentInitiationControllerTest {
     }
 
     @Test
-    public void shouldFail_getAccountConsentsStatusById_wrongId() {
+    public void getAccountConsentsStatusById_wrongId() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
-        String wrongId = "111111";
+        String wrongId = "0";
 
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(wrongId);
@@ -71,8 +71,8 @@ public class PaymentInitiationControllerTest {
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         Map<String, TransactionStatus> actualResult = actualResponse.getBody();
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualStatusCode).isNotEqualTo(expectedStatusCode);
+        assertThat(actualResult).isNotEqualTo(expectedResult);
     }
 
     @Test

@@ -1,8 +1,8 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiCreatePaymentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitiation;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,18 +20,18 @@ public class PaymentMockData {
         return null;
     }
 
-    public static String createPaymentInitiation(SpiCreatePaymentRequest pisRequest,
+    public static String createPaymentInitiation(SpiSinglePayments pisRequest,
                                               boolean tppRedirectPreferred) {
 
         String paymentId = generatePaymentId();
         paymentMap.put(paymentId, new SpiPaymentInitiation(
             SpiTransactionStatus.ACCP,
             paymentId,
-            pisRequest.getSpiTransactionFees(),
-            pisRequest.isSpiTransactionFeeIndicator(),
-            pisRequest.getScaMethods(),
-            pisRequest.getPsuMessage(),
-            pisRequest.getTppMessages(),
+            null,
+            false,
+            null,
+            "",
+            null,
             tppRedirectPreferred
             )
         );

@@ -7,7 +7,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiCreatePaymentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
@@ -271,33 +271,67 @@ public class SpiMockConfig {
         }
     }
 
-    private SpiCreatePaymentRequest getPisRequest_1() {
+    private SpiSinglePayments getPisRequest_1() {
         Currency euro = Currency.getInstance("EUR");
-        SpiAmount spiTransactionFees = new SpiAmount(
+        SpiAccountReference accountReference = new SpiAccountReference(
+        "1111111",
+        "DE23100120020123456789",
+        null,
+        null,
+        null,
+        null,
+        euro);
+        SpiAmount amount = new SpiAmount(
             euro,
-            "5"
+            "500"
         );
-        return new SpiCreatePaymentRequest(
-            spiTransactionFees,
-            true,
+        return new SpiSinglePayments(
+            null,
+            accountReference,
             null,
             null,
-            null
+            accountReference,
+            null,
+            "Merchant123",
+            null,
+            null,
+            null,
+            "Ref Number Merchant",
+            null,
+            new Date(),
+            new Date()
         );
     }
 
-    private SpiCreatePaymentRequest getPisRequest_2() {
+    private SpiSinglePayments getPisRequest_2() {
         Currency euro = Currency.getInstance("EUR");
-        SpiAmount spiTransactionFees = new SpiAmount(
-        euro,
-        "8"
-        );
-        return new SpiCreatePaymentRequest(
-        spiTransactionFees,
-        true,
-        null,
-        null,
-        null
+        SpiAccountReference accountReference = new SpiAccountReference(
+            "2222222",
+            "DE2310012012323246789",
+            null,
+            null,
+            null,
+            null,
+            euro);
+            SpiAmount amount = new SpiAmount(
+            euro,
+            "300"
+            );
+            return new SpiSinglePayments(
+            null,
+            accountReference,
+            null,
+            null,
+            accountReference,
+            null,
+            "Merchant123",
+            null,
+            null,
+            null,
+            "Ref Number Merchant",
+            null,
+            new Date(),
+            new Date()
         );
     }
 }
