@@ -18,9 +18,9 @@ import java.util.Optional;
 
 @Service
 public class PaymentMapper {
-    public TransactionStatus mapGetPaymentStatusById(SpiTransactionStatus spiTransactionStatus){
+    public TransactionStatus mapGetPaymentStatusById(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
-        .map(ts-> TransactionStatus.valueOf(ts.name()))
+        .map(ts -> TransactionStatus.valueOf(ts.name()))
         .orElse(null);
     }
 
@@ -28,24 +28,24 @@ public class PaymentMapper {
         return Optional.ofNullable(paymentInitiationRequest)
         .map(paymentRe -> {
             SpiSinglePayments spiSinglePayments = new SpiSinglePayments(
-                paymentRe.getEndToEndIdentification(),
-                mapAccountReference(paymentRe.getDebtorAccount()),
-                paymentRe.getUltimateDebtor(),
-                mapAmount(paymentRe.getInstructedAmount()),
-                mapAccountReference(paymentRe.getCreditorAccount()),
-                paymentRe.getCreditorAgent().getCode(),
-                paymentRe.getCreditorName(),
-                mapAddress(paymentRe.getCreditorAddress()),
-                paymentRe.getUltimateCreditor(),
-                paymentRe.getPurposeCode().getCode(),
-                paymentRe.getRemittanceInformationUnstructured(),
-                mapRemittance(paymentRe.getRemittanceInformationStructured()),
-                paymentRe.getRequestedExecutionDate(),
-                paymentRe.getRequestedExecutionTime()
+            paymentRe.getEndToEndIdentification(),
+            mapAccountReference(paymentRe.getDebtorAccount()),
+            paymentRe.getUltimateDebtor(),
+            mapAmount(paymentRe.getInstructedAmount()),
+            mapAccountReference(paymentRe.getCreditorAccount()),
+            paymentRe.getCreditorAgent().getCode(),
+            paymentRe.getCreditorName(),
+            mapAddress(paymentRe.getCreditorAddress()),
+            paymentRe.getUltimateCreditor(),
+            paymentRe.getPurposeCode().getCode(),
+            paymentRe.getRemittanceInformationUnstructured(),
+            mapRemittance(paymentRe.getRemittanceInformationStructured()),
+            paymentRe.getRequestedExecutionDate(),
+            paymentRe.getRequestedExecutionTime()
             );
             return spiSinglePayments;
         })
-            .orElse(null);
+        .orElse(null);
     }
 
     private SpiRemittance mapRemittance(Remittance remittance) {

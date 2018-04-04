@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 public class PaymentInitiationResponse {
 
     @ApiModelProperty(value = "The transaction status is filled with value of the ISO20022 data table", required = true, example = "ACCP")
-	private final TransactionStatus transactionStatus;
+    private final TransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Resource identification of the generated payment initiation resource.", required = true, example = "qwer3456tzui7890")
     private final String paymentId;
@@ -27,7 +27,7 @@ public class PaymentInitiationResponse {
     @ApiModelProperty(value = "Can be used by the ASPSP to transport transaction fees relevant for the underlying payments.")
     private final Amount transactionFees;
 
-    @ApiModelProperty(value = "If equals true, the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU.", example="false")
+    @ApiModelProperty(value = "If equals true, the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU.", example = "false")
     private final boolean transactionFeeIndicator;
 
     @ApiModelProperty(value = "This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods")
@@ -40,9 +40,10 @@ public class PaymentInitiationResponse {
     private final MessageCode[] tppMessages;
 
     @ApiModelProperty(value = "Links: a list of hyperlinks to be recognised by the TPP.")
-	private final Links _links;
+    private final Links _links;
 
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @JsonIgnore
     private final boolean tppRedirectPreferred;
 }
+

@@ -28,7 +28,7 @@ public class PaymentInitiationController {
     private PaymentService paymentService;
 
     @Autowired
-    public PaymentInitiationController(PaymentService paymentService){
+    public PaymentInitiationController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 
@@ -80,4 +80,5 @@ public class PaymentInitiationController {
     }
 
 }
+
 

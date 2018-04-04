@@ -12,7 +12,7 @@ public class PaymentService {
     private PaymentMapper paymentMapper;
 
     @Autowired
-    public PaymentService(PaymentSpi paymentSpi,PaymentMapper paymentMapper) {
+    public PaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper) {
         this.paymentSpi = paymentSpi;
         this.paymentMapper = paymentMapper;
     }

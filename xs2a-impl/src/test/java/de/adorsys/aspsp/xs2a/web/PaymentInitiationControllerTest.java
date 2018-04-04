@@ -39,10 +39,10 @@ public class PaymentInitiationControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
-        when(paymentService.createPaymentInitiationAndReturnId(getExpectedRequest(),false))
-            .thenReturn(PAYMENT_ID);
+        when(paymentService.createPaymentInitiationAndReturnId(getExpectedRequest(), false))
+        .thenReturn(PAYMENT_ID);
         when(paymentService.getPaymentStatusById(PAYMENT_ID))
-            .thenReturn(TransactionStatus.ACCP);
+        .thenReturn(TransactionStatus.ACCP);
     }
 
     @Test

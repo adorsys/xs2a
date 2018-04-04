@@ -14,27 +14,27 @@ public class PaymentMockData {
 
     public static SpiTransactionStatus getPaymentStatusById(String paymentId) {
         SpiPaymentInitiation spiPaymentInitiation = paymentMap.get(paymentId);
-        if (spiPaymentInitiation !=null) {
+        if (spiPaymentInitiation != null) {
             return spiPaymentInitiation.getSpiTransactionStatus();
         }
         return null;
     }
 
     public static String createPaymentInitiation(SpiSinglePayments pisRequest,
-                                              boolean tppRedirectPreferred) {
+                                                 boolean tppRedirectPreferred) {
 
         String paymentId = generatePaymentId();
-        System.out.println("Payment id"+paymentId);
+        System.out.println("Payment id" + paymentId);
         paymentMap.put(paymentId, new SpiPaymentInitiation(
-            SpiTransactionStatus.ACCP,
-            paymentId,
-            null,
-            false,
-            null,
-            "",
-            null,
-            tppRedirectPreferred
-            )
+        SpiTransactionStatus.ACCP,
+        paymentId,
+        null,
+        false,
+        null,
+        "",
+        null,
+        tppRedirectPreferred
+        )
         );
 
         return paymentId;
