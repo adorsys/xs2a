@@ -2,35 +2,55 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountControllerTest {
-    @Autowired
+    private static final String ACCOUNT_ID = "2123sndjk2w23";
+
+    @MockBean
     private AccountService accountService;
     @Autowired
     private AccountController accountController;
+
+
+    @Before
+    public void setUpAccountServiceMock(){
+        List<SpiAccountDetails> accountList = new ArrayList<>();
+        accountList.add(getSpiAccountDetails_1());
+        accountList.add(getSpiAccountDetails_2());
+        when(accountService.getAccount(ACCOUNT_ID))
+        .thenReturn(Optional.of(getSpiAccountDetails_1()));
+        when(accountService.getAllAccounts())
+        .thenReturn(accountList);
+        when(accountService.addAccount(getSpiAccountDetails_1()))
+        .thenReturn(getSpiAccountDetails_1());
+    }
+
 
     @Test
     public void readAllAccounts() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        accountService.addAccount(getSpiAccountDetails_1());
-        accountService.addAccount(getSpiAccountDetails_2());
         List<SpiAccountDetails> expectedResult = accountService.getAllAccounts();
 
         //When:
@@ -48,12 +68,10 @@ public class AccountControllerTest {
     public void readAccountById() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        String spiAccountDetailsId = getSpiAccountDetails_1().getId();
-        accountService.addAccount(getSpiAccountDetails_1());
-        SpiAccountDetails expectedResult = accountService.getAccount(spiAccountDetailsId).get();
+        SpiAccountDetails expectedResult = accountService.getAccount(ACCOUNT_ID).get();
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountById(spiAccountDetailsId);
+        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountById(ACCOUNT_ID);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
@@ -69,11 +87,10 @@ public class AccountControllerTest {
         MockHttpServletRequest expectedRequest = new MockHttpServletRequest();
         expectedRequest.setRequestURI("/account/");
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
-        String spiAccountDetailsId = expectedSpiAccountDetails.getId();
 
         //When
         accountController.createAccount(expectedRequest,expectedSpiAccountDetails);
-        SpiAccountDetails actualSpiAccountDetails = accountService.getAccount(spiAccountDetailsId).get();
+        SpiAccountDetails actualSpiAccountDetails = accountService.getAccount(ACCOUNT_ID).get();
 
         //Then
         assertThat(actualSpiAccountDetails).isNotNull();
@@ -82,7 +99,7 @@ public class AccountControllerTest {
 
     private SpiAccountDetails getSpiAccountDetails_1(){
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId("21fefdsdvds212sa");
+        spiAccountDetails.setId(ACCOUNT_ID);
         spiAccountDetails.setIban("DE12345235431234");
         spiAccountDetails.setBban(null);
         spiAccountDetails.setPan("1111222233334444");
