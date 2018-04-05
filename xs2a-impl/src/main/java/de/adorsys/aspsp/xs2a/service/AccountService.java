@@ -1,13 +1,17 @@
 package de.adorsys.aspsp.xs2a.service;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
+
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
 @Validated
@@ -38,18 +41,21 @@ public class AccountService {
     }
 
     public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
-
+        /*
+            TODO move URL generation to Controller (it could have come as a parameter here)
+            Service should functional indepenedently from Controller
+        */
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
         List<AccountDetails> accountDetails =
-            Optional.ofNullable(accountSpi.readAccounts(withBalance, psuInvolved))
-                .map(accountDetailsList ->
-                        accountDetailsList
-                        .stream()
-                        .map(accountDetail -> accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountDetail))
-                        .collect(Collectors.toList())
-                )
-                .orElse(Collections.emptyList());
+        Optional.ofNullable(accountSpi.readAccounts(withBalance, psuInvolved))
+        .map(accountDetailsList ->
+        accountDetailsList
+        .stream()
+        .map(accountDetail -> accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountDetail))
+        .collect(Collectors.toList())
+        )
+        .orElse(Collections.emptyList());
 
         accountDetails.forEach(account -> account.setBalanceAndTransactionLinksDyDefault(urlToAccount));
 
@@ -60,8 +66,10 @@ public class AccountService {
         return accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
     }
 
-    public AccountReport getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
-                                          boolean psuInvolved) {
+    public AccountReport getAccountReport(
+    @NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
+    boolean psuInvolved
+    ) {
         AccountReport accountReport;
 
         if (transactionId == null || transactionId.isEmpty()) {
@@ -96,13 +104,17 @@ public class AccountService {
         }
     }
 
-    private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
-                                                   @NotNull Date dateTo, boolean psuInvolved) {
+    private AccountReport readTransactionsByPeriod(
+    @NotEmpty String accountId, @NotNull Date dateFrom,
+    @NotNull Date dateTo, boolean psuInvolved
+    ) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
-    private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
-                                               boolean psuInvolved) {
+    private AccountReport readTransactionsById(
+    @NotEmpty String accountId, @NotEmpty String transactionId,
+    boolean psuInvolved
+    ) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 

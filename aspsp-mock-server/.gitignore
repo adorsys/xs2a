@@ -1,7 +1,5 @@
-### Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
-pom.xml.versionsBackup
 
 ### STS ###
 .apt_generated
@@ -25,14 +23,3 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-
-### Other ###
-bin/
-.factorypath
-*.log
-logs
-log
-.vscode
-
-.DS_Store
-.springBeans

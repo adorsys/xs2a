@@ -12,27 +12,17 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
-    
+
     @Value("${application.ais.consents.link.redirect-to}")
     private String consentsLinkRedirectToSource;
-    
+
     @Bean
     public int maxNumberOfCharInTransactionJson() {
         return maxNumberOfCharInTransactionJson;
     }
-    
+
     @Bean
     public String consentsLinkRedirectToSource() {
         return consentsLinkRedirectToSource;
-    }
-    
-    @Bean
-    public AccountSpi accountSpi() {
-        return new AccountSpiImpl();
-    }
-    
-    @Bean
-    public ConsentSpi consentSpi() {
-        return new ConsentSpiImpl();
     }
 }
