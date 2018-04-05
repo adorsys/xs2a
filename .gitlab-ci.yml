@@ -5,9 +5,11 @@
 variables:
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
-  GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a"
-  OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-mock-server"
-  GITLAB_IMAGE_NAME_MOCKSRV: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a"
+
+  GITLAB_IMAGE_NAME_XS2A: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a"
+  OPENSHIFT_IMAGE_NAME_XS2A: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-xs2a"
+
+  GITLAB_IMAGE_NAME_MOCKSRV: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-mock-server"
   OPENSHIFT_IMAGE_NAME_MOCKSRV: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-mock-server"
 
 # ------------------------------------------------------------------
@@ -38,8 +40,8 @@ variables:
     - aws_shell
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
-    - docker build -t "$GITLAB_IMAGE_NAME:$DOCKER_TAG" xs2a-impl
-    - docker push "$GITLAB_IMAGE_NAME:$DOCKER_TAG"
+    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-impl
+    - docker push "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG"
     - docker build -t "$GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
     - docker push "$GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG"
 
@@ -49,9 +51,9 @@ variables:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
-    - docker pull $GITLAB_IMAGE_NAME:$DOCKER_TAG
-    - docker tag $GITLAB_IMAGE_NAME:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME:$DOCKER_TAG
-    - docker push $OPENSHIFT_IMAGE_NAME:$DOCKER_TAG
+    - docker pull $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
 
 # ------------------------------------------------------------------
 # stages
