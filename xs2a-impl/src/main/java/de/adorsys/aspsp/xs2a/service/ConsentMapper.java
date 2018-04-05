@@ -24,18 +24,18 @@ class ConsentMapper {
         .orElse(null);
     }
 
-    public SpiCreateConsentRequest mapSpiCreateConsentRequest(CreateConsentReq consentReq) {
+    public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
-        .map(cr -> new SpiCreateConsentRequest(mapSpiAccountAccess(cr.getAccess()),
+        .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
         cr.isRecurringIndicator(), cr.getValidUntil(),
         cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
         .orElse(null);
     }
 
-    public AccountConsent mapGetAccountConsent(SpiAccountConsent spiAccountConsent) {
+    public AccountConsent mapFromSpiAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
         .map(ac -> new AccountConsent(
-        ac.getId(), mapAccountAccess(ac.getAccess()),
+        ac.getId(), mapFromSpiAccountAccess(ac.getAccess()),
         ac.isRecurringIndicator(), ac.getValidUntil(),
         ac.getFrequencyPerDay(), ac.getLastActionDate(),
         TransactionStatus.valueOf(ac.getSpiTransactionStatus().name()),
@@ -45,29 +45,29 @@ class ConsentMapper {
     }
 
     //Domain
-    private AccountAccess mapAccountAccess(SpiAccountAccess access) {
+    private AccountAccess mapFromSpiAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
         .map(aa -> {
             AccountAccess accountAccess = new AccountAccess();
-            accountAccess.setAccounts(mapAccountReferences(aa.getAccounts()));
-            accountAccess.setBalances(mapAccountReferences(aa.getBalances()));
-            accountAccess.setTransactions(mapAccountReferences(aa.getTransactions()));
-            accountAccess.setAvailableAccounts(mapAccountAccessType(aa.getAvailableAccounts()));
-            accountAccess.setAllPsd2(mapAccountAccessType(aa.getAllPsd2()));
+            accountAccess.setAccounts(mapFromSpiAccountReferencesList(aa.getAccounts()));
+            accountAccess.setBalances(mapFromSpiAccountReferencesList(aa.getBalances()));
+            accountAccess.setTransactions(mapFromSpiAccountReferencesList(aa.getTransactions()));
+            accountAccess.setAvailableAccounts(mapFromSpiAccountAccessType(aa.getAvailableAccounts()));
+            accountAccess.setAllPsd2(mapFromSpiAccountAccessType(aa.getAllPsd2()));
             return accountAccess;
         })
         .orElse(null);
     }
 
-    private AccountReference[] mapAccountReferences(List<SpiAccountReference> references) {
+    private AccountReference[] mapFromSpiAccountReferencesList(List<SpiAccountReference> references) {
         if (references == null) {
             return null;
         }
 
-        return references.stream().map(this::mapAccountReference).toArray(AccountReference[]::new);
+        return references.stream().map(this::mapFromSpiAccountReference).toArray(AccountReference[]::new);
     }
 
-    private AccountReference mapAccountReference(SpiAccountReference reference) {
+    private AccountReference mapFromSpiAccountReference(SpiAccountReference reference) {
         return Optional.ofNullable(reference)
         .map(ar -> {
             AccountReference accountReference = new AccountReference();
@@ -83,7 +83,7 @@ class ConsentMapper {
         }).orElse(null);
     }
 
-    private AccountAccessType mapAccountAccessType(SpiAccountAccessType accessType) {
+    private AccountAccessType mapFromSpiAccountAccessType(SpiAccountAccessType accessType) {
         if (accessType==null){
             return null;
         }
@@ -94,29 +94,29 @@ class ConsentMapper {
 
     //Spi
 
-    private SpiAccountAccess mapSpiAccountAccess(AccountAccess access) {
+    private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
         return Optional.ofNullable(access)
         .map(aa -> {
             SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
-            spiAccountAccess.setAccounts(mapSpiAccountReferences(aa.getAccounts()));
-            spiAccountAccess.setBalances(mapSpiAccountReferences(aa.getBalances()));
-            spiAccountAccess.setTransactions(mapSpiAccountReferences(aa.getTransactions()));
-            spiAccountAccess.setAvailableAccounts(mapSpiAccountAccessType(aa.getAvailableAccounts()));
-            spiAccountAccess.setAllPsd2(mapSpiAccountAccessType(aa.getAllPsd2()));
+            spiAccountAccess.setAccounts(mapToSpiAccountReferencesList(aa.getAccounts()));
+            spiAccountAccess.setBalances(mapToSpiAccountReferencesList(aa.getBalances()));
+            spiAccountAccess.setTransactions(mapToSpiAccountReferencesList(aa.getTransactions()));
+            spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
+            spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
             return spiAccountAccess;
         })
         .orElse(null);
     }
 
-    private List<SpiAccountReference> mapSpiAccountReferences(AccountReference[] references) {
+    private List<SpiAccountReference> mapToSpiAccountReferencesList(AccountReference[] references) {
         if (references == null) {
             return null;
         }
 
-        return Arrays.stream(references).map(this::mapSpiAccountReference).collect(Collectors.toList());
+        return Arrays.stream(references).map(this::mapToSpiAccountReference).collect(Collectors.toList());
     }
 
-    public SpiAccountReference mapSpiAccountReference(AccountReference reference) {
+    public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
         return Optional.of(reference)
         .map(ar->new SpiAccountReference(
         ar.getAccountId(),
@@ -128,7 +128,7 @@ class ConsentMapper {
         ar.getCurrency())).orElse(null);
     }
 
-    private SpiAccountAccessType mapSpiAccountAccessType(AccountAccessType accessType) {
+    private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
         if (accessType==null){
             return null;
         }

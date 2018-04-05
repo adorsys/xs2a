@@ -31,10 +31,10 @@ public class PaymentMapper {
                .map(pp -> {
                    SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment();
                    spiPeriodicPayment.setEndToEndIdentification(pp.getEndToEndIdentification());
-                   spiPeriodicPayment.setDebtorAccount(consentMapper.mapSpiAccountReference(pp.getDebtorAccount()));
+                   spiPeriodicPayment.setDebtorAccount(consentMapper.mapToSpiAccountReference(pp.getDebtorAccount()));
                    spiPeriodicPayment.setUltimateDebtor(pp.getUltimateDebtor());
                    spiPeriodicPayment.setInstructedAmount(accountMapper.mapToSpiAmount(pp.getInstructedAmount()));
-                   spiPeriodicPayment.setCreditorAccount(consentMapper.mapSpiAccountReference(pp.getCreditorAccount()));
+                   spiPeriodicPayment.setCreditorAccount(consentMapper.mapToSpiAccountReference(pp.getCreditorAccount()));
                    spiPeriodicPayment.setCreditorAgent(pp.getCreditorAgent() != null ? pp.getCreditorAgent().getCode() : null);
                    spiPeriodicPayment.setCreditorName(pp.getCreditorName());
                    spiPeriodicPayment.setCreditorAddress(mapToSpiAdress(pp.getCreditorAddress()));
@@ -61,7 +61,7 @@ public class PaymentMapper {
         return Optional.ofNullable(response)
                .map(pir -> {
                    PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
-                   initialisationResponse.setTransaction_status(TransactionStatus.valueOf(pir.getTransaction_status()));
+                   initialisationResponse.setTransaction_status(TransactionStatus.valueOf(pir.getTransactionStatus()));
                    initialisationResponse.set_links(new Links());
                    return initialisationResponse;
                }).orElse(null); //TODO Fill in th Linx

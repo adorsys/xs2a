@@ -41,16 +41,12 @@ public class AccountController {
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<List<AccountDetails>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
+        ResponseObject<Map<String,List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
         HttpStatus httpStatus = responseObject.isSuccess() ? HttpStatus.OK : HttpStatus.valueOf(responseObject.getMessage().getCode());
 
-        List<AccountDetails> accountDetailsList = responseObject.isSuccess() ? responseObject.getData() : null;
-        Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
-        accountDetailsMap.put("accountList", accountDetailsList);
+        LOGGER.debug("getAccounts(): response has {} accounts", responseObject.getData().get("accountList").size());
 
-        LOGGER.debug("getAccounts(): response has {} accounts", accountDetailsMap.get("accountList").size());
-
-        return new ResponseEntity<>(responseObject.isSuccess() ? accountDetailsMap : null, httpStatus);
+        return new ResponseEntity<>(responseObject.isSuccess() ? responseObject.getData() : null, httpStatus);
     }
 
     @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token")
@@ -84,7 +80,7 @@ public class AccountController {
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
-        ResponseObject responseObject = accountService.getBalances(accountId, psuInvolved);
+        ResponseObject responseObject = accountService.getBalancesList(accountId, psuInvolved);
         HttpStatus httpStatus = (responseObject.isSuccess())
                                 ? HttpStatus.OK
                                 : HttpStatus.valueOf(responseObject.getMessage().getCode());

@@ -45,7 +45,7 @@ public class AccountControllerTest {
     @Before
     public void setUp() throws Exception {
         when(accountService.getAccountDetailsList(anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
-        when(accountService.getBalances(any(String.class), anyBoolean()))
+        when(accountService.getBalancesList(any(String.class), anyBoolean()))
         .thenReturn(readBalances());
         when(accountService.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
@@ -69,10 +69,10 @@ public class AccountControllerTest {
         //Given
         boolean withBalance = true;
         boolean psuInvolved = true;
-        List<AccountDetails> expectedResult = (List<AccountDetails>) createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getData();
+        Map<String,List<AccountDetails>> expectedResult =  createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getData();
 
         //When:
-        List<AccountDetails> result = accountController.getAccounts(withBalance, psuInvolved).getBody().get("accountList");
+        Map<String,List<AccountDetails>> result = accountController.getAccounts(withBalance, psuInvolved).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -187,7 +187,7 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        List<Balances> expectedResult = accountService.getBalances(accountId, psuInvolved).getData();
+        List<Balances> expectedResult = accountService.getBalancesList(accountId, psuInvolved).getData();
 
         //When:
         ResponseEntity<List<Balances>> actualResponse = accountController.getBalances(accountId, psuInvolved);
@@ -204,7 +204,7 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
         Map<String, List<AccountDetails>> expectedResult = new HashMap<>();
-        expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved).getData());
+        expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved).getData().get("accountList"));
 
         //When:
         ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
@@ -217,15 +217,16 @@ public class AccountControllerTest {
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
-    private ResponseObject createAccountDetailsList(String path) throws IOException {
+    private ResponseObject <Map<String,List<AccountDetails>>>createAccountDetailsList(String path) throws IOException {
         AccountDetails[] array = new Gson().fromJson(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class);
-
-        return new ResponseObject<>(Arrays.asList(array));
+        Map<String,List<AccountDetails>> result = new HashMap<>();
+        result.put("accountList",Arrays.asList(array));
+        return new ResponseObject<>(result);
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
-        List<AccountDetails> list = (List<AccountDetails>) createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getData();
-        return new ResponseObject<>(list.get(0));
+        Map<String,List<AccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getData();
+        return new ResponseObject<>(map.get("accountList").get(0));
     }
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {

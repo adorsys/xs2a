@@ -30,11 +30,11 @@ public class PeriodicPaymentsController {
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{payment-product}", method = RequestMethod.POST)
     public ResponseEntity<PaymentInitialisationResponse> initiationForStandingOrdersForRecurringOrPeriodicPayments(
-    @ApiParam(name = "payment-product", value = "", example = "") //TODO FILLUP
+    @ApiParam(name = "payment-product", value = "Named payment product", example = "sepa-credit-transfers")
     @PathVariable(name = "payment-product", required = true) String paymentProduct,
     @ApiParam()
     @RequestParam(name = "", required = false) boolean tppRedirectPreferred,
-    @ApiParam(name = "Periodic Payment", value = "", example = "") //TODO fillup
+    @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.")
     @RequestBody PeriodicPayment periodicPayment
     ) {
         ResponseObject responseObject = paymentService.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, periodicPayment);

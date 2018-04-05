@@ -8,8 +8,8 @@ import java.util.Date;
 public class SpiPeriodicPayment extends SpiSinglePayments {
 
     private Date startDate;
-    private String executionRule;
     private Date endDate;
+    private String executionRule;
     private String frequency;
     private int dayOfExecution; //Day here max 31
 }

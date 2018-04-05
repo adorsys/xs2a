@@ -51,7 +51,7 @@ public class ConsentMapperTest {
         SpiCreateConsentRequest expectedRequest = new Gson().fromJson(aicRequestJson, SpiCreateConsentRequest.class);
 
         //When:
-        SpiCreateConsentRequest actualRequest = consentMapper.mapSpiCreateConsentRequest(donorRequest);
+        SpiCreateConsentRequest actualRequest = consentMapper.mapToSpiCreateConsentRequest(donorRequest);
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);
@@ -65,7 +65,7 @@ public class ConsentMapperTest {
 
         //When:
         assertNotNull(donorAccountConsent);
-        AccountConsent actualAccountConsent = consentMapper.mapGetAccountConsent(donorAccountConsent);
+        AccountConsent actualAccountConsent = consentMapper.mapFromSpiAccountConsent(donorAccountConsent);
 
         //Then:
         assertThat(actualAccountConsent.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");

@@ -10,11 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -35,16 +38,18 @@ public class AccountService {
         this.accountMapper = accountMapper;
     }
 
-    public ResponseObject<List<AccountDetails>> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
-        List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccounts(withBalance, psuInvolved));
+    public ResponseObject<Map<String,List<AccountDetails>>> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
+        List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccounts(withBalance, psuInvolved));
+        Map<String,List<AccountDetails>> accountDetailsMap = new HashMap<>();
+        accountDetailsMap.put("accountList",accountDetailsList);
 
         return accountDetailsList != null
-               ? new ResponseObject<>(accountDetailsList)
+               ? new ResponseObject<>(accountDetailsMap)
                : new ResponseObject<>(RESOURCE_UNKNOWN_404);
     }
 
-    public ResponseObject<List<Balances>> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        List<Balances> result = accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+    public ResponseObject<List<Balances>> getBalancesList(@NotEmpty String accountId, boolean psuInvolved) {
+        List<Balances> result = accountMapper.mapFromSpiBalancesList(accountSpi.readBalances(accountId, psuInvolved));
         return result != null
                ? new ResponseObject<>(result)
                : new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404);
@@ -52,7 +57,7 @@ public class AccountService {
 
     public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
-        AccountReport accountReport = transactionId == null || transactionId.isEmpty()
+        AccountReport accountReport = StringUtils.isEmpty(transactionId)
                                       ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
                                       : readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
 
@@ -86,12 +91,12 @@ public class AccountService {
 
     private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
                                                    @NotNull Date dateTo, boolean psuInvolved, boolean withBalance) {
-        return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
+        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
     private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
                                                boolean psuInvolved, boolean withBalance) {
-        return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
+        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 
     public AccountReport getAccountReportWithDownloadLink(@NotEmpty String accountId) {
@@ -103,7 +108,7 @@ public class AccountService {
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(@NotEmpty String accountId, boolean withBalance, boolean psuInvolved) {
-        AccountDetails accountDetails = accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
+        AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
 
         return accountDetails == null ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404) : new ResponseObject<>(accountDetails);
     }

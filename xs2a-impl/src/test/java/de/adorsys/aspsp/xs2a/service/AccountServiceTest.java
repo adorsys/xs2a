@@ -67,7 +67,6 @@ public class AccountServiceTest {
         //When:
         ResponseObject<AccountDetails> result = accountService.getAccountDetails(ACCOUNT_ID, withBalance, psuInvolved);
 
-
         //Then:
         assertThat(result.getData()).isEqualTo(expectedResult);
     }
@@ -78,7 +77,7 @@ public class AccountServiceTest {
         String accountId = "";
         boolean psuInvoilved = true;
         //When:
-        accountService.getBalances(accountId, psuInvoilved);
+        accountService.getBalancesList(accountId, psuInvoilved);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -203,9 +202,9 @@ public class AccountServiceTest {
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
-        List<Balances> expectedResult = accountMapper.mapListSpiBalances(getBalances());
+        List<Balances> expectedResult = accountMapper.mapFromSpiBalancesList(getBalances());
         //When:
-        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getData();
+        List<Balances> actualResult = accountService.getBalancesList(accountId, psuInvolved).getData();
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -214,13 +213,13 @@ public class AccountServiceTest {
         List<SpiAccountDetails> list = accountSpi.readAccounts(withBalance, psuInvolved);
         List<AccountDetails> accountDetails = new ArrayList<>();
         for (SpiAccountDetails s : list) {
-            accountDetails.add(accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(s));
+            accountDetails.add(accountMapper.mapFromSpiAccountDetails(s));
         }
 
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
 
         //When:
-        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved).getData();
+        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved).getData().get("accountList");
 
         //Then:
         assertThat(expectedResult).isEqualTo(actualResponse);
@@ -303,7 +302,7 @@ public class AccountServiceTest {
     }
 
     private AccountReport getAccountReport(String accountId) {
-        AccountReport accountReport = accountMapper.mapAccountReport(getTransactionList());
+        AccountReport accountReport = accountMapper.mapFromSpiAccountReport(getTransactionList());
         String jsonReport = null;
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -42,7 +42,6 @@ public class PaymentServiceTest {
         when(paymentSpi.initiatePeriodicPayment(any(), anyBoolean(), any())).thenReturn(readSpiPaymentInitializationResponse());
     }
 
-
     @Test
     public void initiatePeriodicPayment() throws IOException {
         //Given:
@@ -79,7 +78,7 @@ public class PaymentServiceTest {
 
     private SpiPaymentInitialisationResponse readSpiPaymentInitializationResponse() {
         SpiPaymentInitialisationResponse resp = new SpiPaymentInitialisationResponse();
-        resp.setTransaction_status("ACCP");
+        resp.setTransactionStatus("ACCP");
 
         return resp;
     }

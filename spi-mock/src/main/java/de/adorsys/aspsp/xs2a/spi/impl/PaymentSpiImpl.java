@@ -14,14 +14,17 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment) {
         SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
-        Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
-        response.setTransaction_status("RJCT");
-        map.forEach((k, v) -> {
-            if (v.getIban().equals(periodicPayment.getCreditorAccount().getIban())) {
-                response.setTransaction_status("ACCP");
-            }
-        });
+        response.setTransactionStatus(resolveTransactionStatus(periodicPayment));
 
         return response;
     }
+
+    private String resolveTransactionStatus(SpiPeriodicPayment payment) {
+        Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
+        boolean isPresent = map.entrySet().stream()
+                            .anyMatch(a -> a.getValue().getIban()
+                                           .equals(payment.getCreditorAccount().getIban()));
+        return isPresent ? "ACCP" : "RJCT";
+    }
+
 }
