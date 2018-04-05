@@ -23,7 +23,8 @@ variables:
 
 .java_artifacts: &java_artifacts
   paths:
-    - "xs2a-impl/target/aspsp-xs2a.jar"
+    - "xs2a-impl/target/aspsp-xs2a*jar"
+    - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "config/*.yml"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
