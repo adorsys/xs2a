@@ -60,11 +60,11 @@ public class SinglePayments {
     private Remittance remittanceInformationStructured;
 
     @ApiModelProperty(value = "requested execution date", required = false, example = "2017-01-01")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
     private Date requestedExecutionDate;
 
     @ApiModelProperty(value = "requested execution time", required = false, example = "2017-10-25T15:30:35.035Z")
-    @JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN, timezone = ApiDateConstants.UTC)
     private Date requestedExecutionTime;
 
 }

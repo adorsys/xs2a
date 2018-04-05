@@ -27,14 +27,14 @@ public class AccountConsent {
     private final boolean recurringIndicator;
 
     @ApiModelProperty(value = "valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2017-10-30")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
     private final Date validUntil;
 
     @ApiModelProperty(value = "requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private final int frequencyPerDay;
 
     @ApiModelProperty(value = "This date is containing the date of the last action on the consent object either through the XS2A interface or the PSU/ASPSP interface having an impact on the status.", required = true, example = "2017-10-30")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
     private final Date lastActionDate;
 
     @ApiModelProperty(value = "Transaction status", required = true, example = "Pending")

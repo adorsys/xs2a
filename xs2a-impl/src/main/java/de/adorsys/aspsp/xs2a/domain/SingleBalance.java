@@ -13,14 +13,14 @@ import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SingleBalance {
 
-	@ApiModelProperty(value = "amount", required = true)
+    @ApiModelProperty(value = "amount", required = true)
 	private Amount amount;
 
 	@ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
-	@JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN)
+	@JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN, timezone = ApiDateConstants.UTC)
 	private Instant lastActionDateTime;
 
 	@ApiModelProperty(value = "Date", example = "2017-03-26")
-	@JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+	@JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
 	private Instant date;
 }

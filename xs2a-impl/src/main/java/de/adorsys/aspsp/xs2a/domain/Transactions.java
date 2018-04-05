@@ -33,11 +33,11 @@ public class Transactions {
     private String creditorId;
 
     @ApiModelProperty(value = "Booking Date", example = "2017-01-01")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
     private Date bookingDate;
 
     @ApiModelProperty(value = "Value Date", example = "2017-01-01")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
     private Date valueDate;
 
     @ApiModelProperty(value = "Amount", required = true)

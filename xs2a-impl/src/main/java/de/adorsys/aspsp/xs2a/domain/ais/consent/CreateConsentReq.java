@@ -21,7 +21,7 @@ public class CreateConsentReq {
     private boolean recurringIndicator;
 
     @ApiModelProperty(value = "This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2017-10-30")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
     private Date validUntil;
 
     @ApiModelProperty(value = "This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
