@@ -53,8 +53,10 @@ variables:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker pull $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_MOCKSRV:$DOCKER_TAG
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
     - docker push $OPENSHIFT_IMAGE_NAME_XS2A:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_MOCKSRV:$DOCKER_TAG
 
 # ------------------------------------------------------------------
 # stages

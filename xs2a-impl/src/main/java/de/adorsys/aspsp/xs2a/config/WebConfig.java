@@ -3,11 +3,13 @@ package de.adorsys.aspsp.xs2a.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.MessageSource;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -32,6 +34,15 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         registry.addResourceHandler("/webjars/**")
         .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:error_message");
+        messageSource.setCacheSeconds(3600); //reload messages every hour
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
     }
 
     @Bean
