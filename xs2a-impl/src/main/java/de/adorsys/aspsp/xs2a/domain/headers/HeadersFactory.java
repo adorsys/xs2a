@@ -3,7 +3,7 @@ package de.adorsys.aspsp.xs2a.domain.headers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.headers.impl.*;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-import de.adorsys.aspsp.xs2a.web.ConfirmationFundsController;
+import de.adorsys.aspsp.xs2a.web.FundsConfirmationController;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ public class HeadersFactory {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
         controllerClassMap.put(ConsentInformationController.class, ConsentRequestHeader.class);
         controllerClassMap.put(PaymentInitiationController.class, PaymentInitiationRequestHeader.class);
-        controllerClassMap.put(ConfirmationFundsController.class, FundsConfirmationRequestHeader.class);
+        controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
     }
 
     public static RequestHeaders getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {

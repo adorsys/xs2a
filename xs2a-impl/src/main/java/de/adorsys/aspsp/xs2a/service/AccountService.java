@@ -1,10 +1,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
@@ -13,7 +10,6 @@ import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +19,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
 @Validated
@@ -71,10 +71,8 @@ public class AccountService {
         return accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
     }
 
-    public AccountReport getAccountReport(
-    @NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
-    boolean psuInvolved
-    ) {
+    public AccountReport getAccountReport(@NotEmpty String accountId, Date dateFrom, Date dateTo, String transactionId,
+                                          boolean psuInvolved) {
         AccountReport accountReport;
 
         if (StringUtils.isEmpty(transactionId)) {
@@ -111,21 +109,21 @@ public class AccountService {
         }
     }
 
-     private AccountReport readTransactionsByPeriod(
-     @javax.validation.constraints.NotEmpty String accountId, @NotNull Date dateFrom,
-     @NotNull Date dateTo, boolean psuInvolved
+    private AccountReport readTransactionsByPeriod(
+    @NotEmpty String accountId, @NotNull Date dateFrom,
+    @NotNull Date dateTo, boolean psuInvolved
     ) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
-     private AccountReport readTransactionsById(
-     @javax.validation.constraints.NotEmpty String accountId, @javax.validation.constraints.NotEmpty String transactionId,
-     boolean psuInvolved
+    private AccountReport readTransactionsById(
+    @NotEmpty String accountId, @NotEmpty String transactionId,
+    boolean psuInvolved
     ) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 
-    public AccountReport getAccountReportWithDownloadLink(@NotNull String accountId) {
+    public AccountReport getAccountReportWithDownloadLink(@NotEmpty String accountId) {
         // todo further we should implement real flow for downloading file
         String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
         Links downloadLink = new Links();

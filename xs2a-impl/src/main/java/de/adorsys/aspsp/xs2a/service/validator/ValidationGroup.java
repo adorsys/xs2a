@@ -31,6 +31,6 @@ public class ValidationGroup {
     }
 
     @GroupSequence({AccountIdGroup.class, TransactionIdGroup.class})
-    public interface  AccountIdAndTransactionIdIsValid{
+    public interface AccountIdAndTransactionIdIsValid {
     }
 }

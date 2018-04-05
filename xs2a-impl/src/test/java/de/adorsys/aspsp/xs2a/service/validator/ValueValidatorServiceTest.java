@@ -54,7 +54,7 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-        .hasMessageContaining("[transactionId : must not be null]");
+        .hasMessageContaining("[transactionId : may not be null]");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-        .hasMessageContaining("[accountId : must not be null]");
+        .hasMessageContaining("[accountId : may not be null]");
     }
 
     @Test
@@ -77,6 +77,6 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class))
-        .hasMessageContaining("[dateFrom : must not be null]");
+        .hasMessageContaining("[dateFrom : may not be null]");
     }
 }

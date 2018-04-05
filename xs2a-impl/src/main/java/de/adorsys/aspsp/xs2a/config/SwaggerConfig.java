@@ -11,9 +11,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -39,8 +36,7 @@ public class SwaggerConfig {
         "urn:tos",
         new Contact("aro, adorsys GmbH & Co. KG", null, "aro@adorsys.de"),
         "License of API",
-        "API license URL",
-        Collections.emptyList()
+        "API license URL"
         );
     }
 }
