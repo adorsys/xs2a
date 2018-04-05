@@ -57,7 +57,8 @@ public enum MessageCode {
 
     // RESOURCE_EXPIRED : The addressed resource is associated with the TPP but has expired, not addressable anymore
     RESOURCE_EXPIRED_403(403), // 403 if path
-    RESOURCE_EXPIRED_400(400); // 400 if payload
+    RESOURCE_EXPIRED_400(400), // 400 if payload
+    INTERNAL_SERVER_ERROR(500);
 
     @ApiModelProperty(value = "code", example = "400")
     private int code;
