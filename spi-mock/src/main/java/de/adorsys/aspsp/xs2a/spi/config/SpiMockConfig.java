@@ -13,7 +13,6 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,33 +20,19 @@ import org.springframework.context.annotation.Profile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 @Profile("mockspi")
 public class SpiMockConfig {
     private Map<String, String> spiMockUrls;
 
-    @Value("mockspi.baseurl:http://localhost:28080")
+    @Value("${mockspi.baseurl:http://localhost:28080}")
     private String mockSpiBaseUrl;
 
     @Bean
-    public Map<String, String> spiMockUrls() {
-        if (spiMockUrls == null) {
-            initSpiMockUrls();
-        }
-        return Collections.unmodifiableMap(spiMockUrls);
-    }
-
-    private void initSpiMockUrls() {
-        this.spiMockUrls = new HashMap<>();
-        this.spiMockUrls.put("getAllAccounts", mockSpiBaseUrl + "/account/");
+    public RemoteSpiUrls remoteSpiUrls() {
+        return new RemoteSpiUrls(mockSpiBaseUrl);
     }
 
     public SpiMockConfig() {
@@ -57,7 +42,7 @@ public class SpiMockConfig {
 
     @Bean
     public AccountSpi accountSpi() {
-        return new AccountSpiImpl(spiMockUrls);
+        return new AccountSpiImpl(remoteSpiUrls());
     }
 
     @Bean
