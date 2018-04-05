@@ -80,7 +80,7 @@ public class AccountController {
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
-        ResponseObject responseObject = accountService.getBalancesList(accountId, psuInvolved);
+        ResponseObject<List<Balances>> responseObject = accountService.getBalancesList(accountId, psuInvolved);
         HttpStatus httpStatus = (responseObject.isSuccess())
                                 ? HttpStatus.OK
                                 : HttpStatus.valueOf(responseObject.getMessage().getCode());
@@ -88,7 +88,7 @@ public class AccountController {
         LOGGER.debug("getBalances(): balances by account {} and psu-involved {} is {}",
         accountId, psuInvolved, responseObject.getData());
 
-        return new ResponseEntity<>((List<Balances>) responseObject.getData(), httpStatus);
+        return new ResponseEntity<>(responseObject.getData(), httpStatus);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")
