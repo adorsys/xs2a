@@ -1,12 +1,14 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import com.google.gson.Gson;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -29,12 +35,16 @@ public class AccountMapperTest {
     private final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
     private final String SPI_TRANSACTION_JSON_PATH = "/json/mapAccountReportTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private final Date expectedDate = getDate("2017-10-25T15:30:35.035Z");
 
     @Autowired
     AccountMapper accountMapper;
 
+    public AccountMapperTest() throws ParseException {
+    }
+
     @Test
-    public void mapSpiAccountDetailsToXs2aAccountDetails() throws IOException {
+    public void mapSpiAccountDetailsToXs2aAccountDetails() throws IOException, ParseException {
         //Given:
         String spiAccountDetailsJson = IOUtils.resourceToString(SPI_ACCOUNT_DETAILS_JSON_PATH, UTF_8);
         SpiAccountDetails donorAccountDetails = new Gson().fromJson(spiAccountDetailsJson, SpiAccountDetails.class);
@@ -52,7 +62,7 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
         assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(expectedDate);
         assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getDate()).isEqualTo("2007-01-01");
     }
 
@@ -70,19 +80,19 @@ public class AccountMapperTest {
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(expectedDate);
         assertThat(actualBalances.get(0).getClosingBooked().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getAuthorised().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo(expectedDate);
         assertThat(actualBalances.get(0).getAuthorised().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getExpected().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo(expectedDate);
         assertThat(actualBalances.get(0).getExpected().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getInterimAvailable().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo(expectedDate);
         assertThat(actualBalances.get(0).getInterimAvailable().getDate()).isEqualTo("2007-01-01");
         assertThat(actualBalances.get(0).getOpeningBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo("2017-10-25T15:30:35.035Z");
+        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo(expectedDate);
         assertThat(actualBalances.get(0).getOpeningBooked().getDate()).isEqualTo("2007-01-01");
     }
 
@@ -94,9 +104,9 @@ public class AccountMapperTest {
         List<SpiTransaction> donorSpiTransactions = new ArrayList<SpiTransaction>();
         donorSpiTransactions.add(donorSpiTransaction);
         SpiTransaction[] expectedBooked = donorSpiTransactions
-        .stream()
-        .filter(transaction -> transaction.getBookingDate() != null)
-        .toArray(SpiTransaction[]::new);
+                                          .stream()
+                                          .filter(transaction -> transaction.getBookingDate() != null)
+                                          .toArray(SpiTransaction[]::new);
 
         //When:
         assertNotNull(donorSpiTransaction);
@@ -118,5 +128,12 @@ public class AccountMapperTest {
         assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount().getCurrency());
         assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode().getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
         assertThat(actualAccountReport.getBooked()[0].getPurposeCode().getCode()).isEqualTo(expectedBooked[0].getPurposeCode());
+    }
+
+    private Date getDate(String date) throws ParseException {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        df.setTimeZone(tz);
+        return df.parse(date);
     }
 }

@@ -4,9 +4,7 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,10 +13,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
+
 @Service
 class AccountMapper {
     public AccountDetails mapSpiAccountDetailsToXs2aAccountDetails(SpiAccountDetails accountDetails) {
-        return Optional.ofNullable(accountDetails)
+        return ofNullable(accountDetails)
             .map(accountDetail -> new AccountDetails(
                     accountDetail.getId(),
                     accountDetail.getIban(),
@@ -39,7 +39,7 @@ class AccountMapper {
     }
 
     private CashAccountType mapAccountType(SpiAccountType spiAccountType) {
-        return Optional.ofNullable(spiAccountType)
+        return ofNullable(spiAccountType)
         .map(type -> CashAccountType.valueOf(type.name()))
         .orElse(null);
     }
@@ -72,7 +72,7 @@ class AccountMapper {
     }
 
     private SingleBalance mapSingleBalances(SpiAccountBalance spiAccountBalance) {
-        return Optional.ofNullable(spiAccountBalance)
+        return ofNullable(spiAccountBalance)
             .map(b -> {
                 SingleBalance singleBalance = new SingleBalance();
                 singleBalance.setAmount(mapSpiAmount(b.getSpiAmount()));
@@ -84,7 +84,7 @@ class AccountMapper {
     }
 
     private Amount mapSpiAmount(SpiAmount spiAmount) {
-        return Optional.ofNullable(spiAmount)
+        return ofNullable(spiAmount)
             .map(a -> {
                 Amount amount = new Amount();
                 amount.setContent(a.getContent());
@@ -115,7 +115,7 @@ class AccountMapper {
     }
 
     private Transactions mapSpiTransaction(SpiTransaction spiTransaction) {
-        return Optional.ofNullable(spiTransaction)
+        return ofNullable(spiTransaction)
             .map(t -> {
                 Transactions transactions = new Transactions();
                 transactions.setAmount(mapSpiAmount(t.getSpiAmount()));
@@ -141,7 +141,7 @@ class AccountMapper {
     }
 
     private AccountReference mapSpiAccountReference(SpiAccountReference spiAccountReference) {
-        return Optional.ofNullable(spiAccountReference)
+        return ofNullable(spiAccountReference)
             .map(ar -> {
                 AccountReference accountReference = new AccountReference();
                 accountReference.setAccountId(ar.getAccountId());
@@ -155,5 +155,23 @@ class AccountMapper {
             })
             .orElse(null);
 
+    }
+
+    public SpiAccountReference toSpi(AccountReference account){
+        return ofNullable(account)
+            .map(ac -> new SpiAccountReference(ac.getAccountId(),
+                ac.getIban(),
+                ac.getBban(),
+                ac.getPan(),
+                ac.getMaskedPan(),
+                ac.getMsisdn(),
+                ac.getCurrency()))
+            .orElse(null);
+    }
+
+    public SpiAmount toSpi(Amount amount){
+        return ofNullable(amount)
+            .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
+        .orElse(null);
     }
 }
