@@ -4,7 +4,7 @@ import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Currency;
@@ -13,13 +13,9 @@ import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Service
+@AllArgsConstructor
 public class ExceptionService {
-    private MessageService messageService;
-
-    @Autowired
-    public ExceptionService(MessageService messageService) {
-        this.messageService = messageService;
-    }
+    private final MessageService messageService;
 
     public ResponseObject<Amount> getAmount(boolean exc) {
         if (exc) {

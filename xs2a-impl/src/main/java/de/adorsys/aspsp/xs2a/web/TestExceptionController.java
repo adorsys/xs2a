@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/exception")
 public class TestExceptionController {
-    private ResponseMapper responseMapper;
-    private ExceptionService exceptionService;
+    private final ResponseMapper responseMapper;
+    private final ExceptionService exceptionService;
 
     @GetMapping
     public ResponseEntity<Amount> testException(@RequestParam(name = "exc") boolean withException){
