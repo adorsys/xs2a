@@ -5,6 +5,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-class AccountMapper {
+public class AccountMapper {
     public AccountDetails mapSpiAccountDetailsToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
             .map(accountDetail -> new AccountDetails(

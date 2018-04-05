@@ -6,6 +6,7 @@ import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.hibernate.validator.constraints.NotEmpty;

@@ -36,6 +36,3 @@ public class BulkPaymentInitiationController {
         return paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
     }
 }
-
-
-

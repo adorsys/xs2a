@@ -2,22 +2,24 @@ package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import lombok.Data;
 
 import java.util.Date;
 
+@Data
 public class SpiSinglePayment {
-    private String endToEndIdentification;
-    private SpiAccountReference debtorAccount;
-    private String ultimateDebtor;
-    private SpiAmount instructedAmount;
-    private SpiAccountReference creditorAccount;
-    private String creditorAgent;
-    private String creditorName;
-    private String creditorAddress;
-    private String ultimateCreditor;
-    private String purposeCode;
-    private String remittanceInformationUnstructured;
-    private String remittanceInformationStructured;
-    private Date requestedExecutionDate;
+    private final String endToEndIdentification;
+    private final SpiAccountReference debtorAccount;
+    private final String ultimateDebtor;
+    private final SpiAmount instructedAmount;
+    private final SpiAccountReference creditorAccount;
+    private final String creditorAgent;
+    private final String creditorName;
+    private final String creditorAddress;
+    private final String ultimateCreditor;
+    private final String purposeCode;
+    private final String remittanceInformationUnstructured;
+    private final String remittanceInformationStructured;
+    private final Date requestedExecutionDate;
 
 }
