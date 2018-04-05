@@ -15,7 +15,7 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity handleTppException(Exception ex, HandlerMethod handlerMethod) {
-        log.warn("Uncatched exception handled in Controller: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.warn("Uncatched exception handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         return new ResponseEntity(status.getReasonPhrase(), status);
