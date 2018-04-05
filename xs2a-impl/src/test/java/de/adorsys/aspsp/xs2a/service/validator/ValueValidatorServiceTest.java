@@ -26,57 +26,57 @@ public class ValueValidatorServiceTest {
     @Test
     public void validate_AccountAndPeriod() {
         //Given:
-        FieldValidation fields = new FieldValidation();
+        ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
         fields.setDateFrom(DATE_FROM);
         fields.setDateTo(DATE_TO);
 
         //When Then:
-        valueValidatorService.validate(fields, Group.AccountIdGroup.class, Group.PeriodGroup.class);
+        valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class);
     }
 
     @Test
     public void validate_AccountAndTransaction() {
         //Given:
-        FieldValidation fields = new FieldValidation();
+        ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
         fields.setTransactionId(TRANSACTION_ID);
 
         //When Then:
-        valueValidatorService.validate(fields, Group.AccountIdGroup.class, Group.TransactionIdGroup.class);
+        valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class);
     }
 
     @Test
     public void shouldFail_validate_AccountAndEmptyTransaction() {
         //Given:
-        FieldValidation fields = new FieldValidation();
+        ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
 
         //When Then:
-        assertThatThrownBy(() -> valueValidatorService.validate(fields, Group.AccountIdGroup.class, Group.TransactionIdGroup.class))
+        assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
         .hasMessageContaining("[transactionId : must not be null]");
     }
 
     @Test
     public void shouldFail_validate_EmptyAccountAndTransaction() {
         //Given:
-        FieldValidation fields = new FieldValidation();
+        ValidationGroup fields = new ValidationGroup();
         fields.setTransactionId(TRANSACTION_ID);
 
         //When Then:
-        assertThatThrownBy(() -> valueValidatorService.validate(fields, Group.AccountIdGroup.class, Group.TransactionIdGroup.class))
+        assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
         .hasMessageContaining("[accountId : must not be null]");
     }
 
     @Test
     public void shouldFail_validate_AccountAndEmptyDataFrom() {
         //Given:
-        FieldValidation fields = new FieldValidation();
+        ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
         fields.setDateTo(DATE_TO);
 
         //When Then:
-        assertThatThrownBy(() -> valueValidatorService.validate(fields, Group.AccountIdGroup.class, Group.PeriodGroup.class))
+        assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class))
         .hasMessageContaining("[dateFrom : must not be null]");
     }
 }

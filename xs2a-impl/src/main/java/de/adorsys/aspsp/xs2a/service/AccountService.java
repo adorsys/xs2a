@@ -6,8 +6,7 @@ import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.service.validator.Group;
-import de.adorsys.aspsp.xs2a.service.validator.FieldValidation;
+import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
@@ -127,19 +126,19 @@ public class AccountService {
 
     // Validation
     private void validate_accountId_period(String accountId, Date dateFrom, Date dateTo) {
-        FieldValidation fieldValidator = new FieldValidation();
+        ValidationGroup fieldValidator = new ValidationGroup();
         fieldValidator.setAccountId(accountId);
         fieldValidator.setDateFrom(dateFrom);
         fieldValidator.setDateTo(dateTo);
 
-        validatorService.validate(fieldValidator, Group.AccountIdAndPeriodIsValid.class);
+        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
     }
 
     private void validate_accountId_transactionId(String accountId, String transactionId) {
-        FieldValidation fieldValidator = new FieldValidation();
+        ValidationGroup fieldValidator = new ValidationGroup();
         fieldValidator.setAccountId(accountId);
         fieldValidator.setTransactionId(transactionId);
 
-        validatorService.validate(fieldValidator, Group.AccountIdAndTransactionIdIsValid.class);
+        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
     }
 }
