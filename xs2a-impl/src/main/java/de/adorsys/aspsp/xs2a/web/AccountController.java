@@ -55,12 +55,12 @@ public class AccountController {
     @ApiResponse(code = 200, message = "OK", response = Balances.class),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{account-id}/balances", method = RequestMethod.GET)
-    public ResponseEntity<Balances> getBalances(
+    public ResponseEntity<List<Balances>> getBalances(
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
-        Balances balances = accountService.getBalances(accountId, psuInvolved);
+        List<Balances> balances = accountService.getBalances(accountId, psuInvolved);
         LOGGER.debug("getBalances(): balances by account {} and psu-involved {} is {}", accountId, psuInvolved, balances);
 
         return new ResponseEntity<>(balances, HttpStatus.OK);

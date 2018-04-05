@@ -24,9 +24,6 @@ public class Balances {
 	@ApiModelProperty(value = "opening booked: Book balance of the account at the beginning of the account reporting period. It always equals the closing book balance from the previous report.")
 	private SingleBalance openingBooked;
 
-	@ApiModelProperty(value = "closing booked: Balance of the account at the end of the pre-agreed account reporting period. It is the sum of the opening booked balance at the beginning of the period and all entries booked to the account during the pre- agreed account reporting period.")
-	private SingleBalance closing_booked;
-
 	@ApiModelProperty(value = "interim available: Available balance calculated in the course of the account ’servicer's business day, at the time specified, and subject to further changes during the business day. The interim balance is calculated on the basis of booked credit and debit items during the calculation time/period specified.")
 	private SingleBalance interimAvailable;
 }

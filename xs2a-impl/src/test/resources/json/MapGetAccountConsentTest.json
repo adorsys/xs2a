@@ -1,0 +1,30 @@
+{"id": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+  "access": {
+    "balances": [
+      {
+        "iban": "DE2310010010123456789"
+      },
+      {
+        "iban": "DE2310010010123456790",
+        "currency": "USD"
+      },
+      {
+        "iban": "DE2310010010123456788"
+      }
+    ],
+    "transactions": [
+      {
+        "iban": "DE2310010010123456789"
+      },
+      {
+        "maskedPan": "123456xxxxxx1234"
+      }
+    ]
+  },
+  "recurringIndicator": "true",
+  "validUntil": "2017-11-01",
+  "frequencyPerDay": "4",
+  "lastActionDate": "2017-11-01",
+  "spiTransactionStatus": "ACCP",
+  "spiConsentStatus": "VALID"
+}
