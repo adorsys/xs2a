@@ -39,7 +39,7 @@ public class ConsentService {
     }
 
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        return consentMapper.mapGetAccountConsentStatusById(consentSpi.getAccountConsentStatusById(consentId));
+        return consentMapper.mapFromSpiTransactionStatus(consentSpi.getAccountConsentStatusById(consentId));
     }
 
     public AccountConsent getAccountConsentsById(String consentId) {

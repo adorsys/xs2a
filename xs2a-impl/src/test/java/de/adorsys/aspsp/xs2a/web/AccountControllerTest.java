@@ -6,7 +6,8 @@ import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
-import org.junit.Ignore;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,8 @@ public class AccountControllerTest {
     @Before
     public void setUp() throws Exception {
         when(accountService.getAccountDetailsList(anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
-        when(accountService.getBalances(any(String.class), anyBoolean())).thenReturn(new ResponseObject(new Gson().fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class)));
+        when(accountService.getBalances(any(String.class), anyBoolean()))
+        .thenReturn(readBalances());
         when(accountService.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }
@@ -80,10 +82,12 @@ public class AccountControllerTest {
     public void getBallances_ResultTest() throws IOException {
         //Given:
         boolean psuInvolved = true;
-        Balances expectedResult = (Balances) new ResponseObject(new Gson().fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class)).getData();
+        Balances expectedBalances = new Gson().fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
+        List<Balances> expectedResult = new ArrayList<>();
+        expectedResult.add(expectedBalances);
 
         //When:
-        Balances result = accountController.getBalances(ACCOUNT_ID, psuInvolved).getBody();
+        List<Balances> result = accountController.getBalances(ACCOUNT_ID, psuInvolved).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -183,7 +187,7 @@ public class AccountControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        List<Balances> expectedResult = accountService.getBalances(accountId, psuInvolved);
+        List<Balances> expectedResult = accountService.getBalances(accountId, psuInvolved).getData();
 
         //When:
         ResponseEntity<List<Balances>> actualResponse = accountController.getBalances(accountId, psuInvolved);
@@ -216,7 +220,7 @@ public class AccountControllerTest {
     private ResponseObject createAccountDetailsList(String path) throws IOException {
         AccountDetails[] array = new Gson().fromJson(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class);
 
-        return new ResponseObject(Arrays.asList(array));
+        return new ResponseObject<>(Arrays.asList(array));
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
@@ -228,5 +232,12 @@ public class AccountControllerTest {
         AccountReport accountReport = new Gson().fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
 
         return new ResponseObject<>(accountReport);
+    }
+
+    private ResponseObject<List<Balances>> readBalances() throws IOException {
+        Balances readed = new Gson().fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
+        List<Balances> res = new ArrayList<>();
+        res.add(readed);
+        return new ResponseObject<>(res);
     }
 }

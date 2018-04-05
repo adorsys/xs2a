@@ -70,7 +70,8 @@ public class AccountController {
 
         LOGGER.debug("getAccount(): response is {} account-id", responseObject.isSuccess() ? responseObject.getData().getId() : responseObject.getMessage().getDescription());
 
-        return new ResponseEntity<>(responseObject.isSuccess() ? responseObject.getData() : null, httpStatus);
+        return new ResponseEntity<>(responseObject.isSuccess()
+                                    ? responseObject.getData() : null, httpStatus);
     }
 
     @ApiOperation(value = "Read a list of the balances for the given account")
@@ -84,13 +85,14 @@ public class AccountController {
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
         ResponseObject responseObject = accountService.getBalances(accountId, psuInvolved);
-        HttpStatus httpStatus = (responseObject.isSuccess()) ? HttpStatus.OK : HttpStatus.valueOf(responseObject.getMessage().getCode());
+        HttpStatus httpStatus = (responseObject.isSuccess())
+                                ? HttpStatus.OK
+                                : HttpStatus.valueOf(responseObject.getMessage().getCode());
 
         LOGGER.debug("getBalances(): balances by account {} and psu-involved {} is {}",
         accountId, psuInvolved, responseObject.getData());
 
-        return new ResponseEntity<>(responseObject.isSuccess() ?
-                                    (List<Balances>) responseObject.getData() : null, httpStatus);
+        return new ResponseEntity<>((List<Balances>) responseObject.getData(), httpStatus);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")

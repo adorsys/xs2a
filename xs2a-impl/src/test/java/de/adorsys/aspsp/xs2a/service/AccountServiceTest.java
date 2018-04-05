@@ -203,11 +203,9 @@ public class AccountServiceTest {
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
-        Balances expectedResult = accountMapper.mapSpiBalances(getBalances());
         List<Balances> expectedResult = accountMapper.mapListSpiBalances(getBalances());
         //When:
-        Balances actualResult = (Balances) accountService.getBalances(accountId, psuInvolved).getData();
-        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved);
+        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getData();
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -288,7 +286,7 @@ public class AccountServiceTest {
         SpiAccountBalance spiAccountBalance = getSpiAccountBalance("1000", "2016-12-12", "2018-23-02");
 
         List<SpiBalances> spiBalances = new ArrayList<SpiBalances>();
-        for(SpiBalances spiBalancesItem: spiBalances){
+        for (SpiBalances spiBalancesItem : spiBalances) {
             spiBalancesItem.setInterimAvailable(spiAccountBalance);
         }
 

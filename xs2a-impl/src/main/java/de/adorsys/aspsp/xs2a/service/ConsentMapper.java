@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 class ConsentMapper {
-    public TransactionStatus mapGetAccountConsentStatusById(SpiTransactionStatus spiTransactionStatus){
+    public TransactionStatus mapFromSpiTransactionStatus(SpiTransactionStatus spiTransactionStatus){
         return Optional.ofNullable(spiTransactionStatus)
         .map(ts-> TransactionStatus.valueOf(ts.name()))
         .orElse(null);

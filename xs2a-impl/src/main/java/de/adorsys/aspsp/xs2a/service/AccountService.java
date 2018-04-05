@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
-import java.util.stream.Collectors;
 import java.util.Date;
 import java.util.List;
 
@@ -41,12 +39,15 @@ public class AccountService {
         List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccounts(withBalance, psuInvolved));
 
         return accountDetailsList != null
-               ? new ResponseObject(accountDetailsList)
-               : new ResponseObject(RESOURCE_UNKNOWN_404);
+               ? new ResponseObject<>(accountDetailsList)
+               : new ResponseObject<>(RESOURCE_UNKNOWN_404);
     }
 
-    public List<Balances> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        return accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+    public ResponseObject<List<Balances>> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
+        List<Balances> result = accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+        return result != null
+               ? new ResponseObject<>(result)
+               : new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404);
     }
 
     public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
@@ -55,7 +56,9 @@ public class AccountService {
                                       ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
                                       : readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
 
-        return accountReport == null ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404) : new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
+        return accountReport == null
+               ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404)
+               : new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
     }
 
     private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
