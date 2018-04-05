@@ -24,7 +24,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:error_message");
-        messageSource.setCacheSeconds(50); //reload messages every 50 seconds
+        messageSource.setCacheSeconds(3600); //reload messages every hour
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
