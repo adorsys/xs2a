@@ -1,7 +1,10 @@
 package de.adorsys.aspsp.xs2a.service;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
@@ -10,6 +13,8 @@ import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
+
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -46,7 +46,10 @@ public class AccountService {
     }
 
     public List<AccountDetails> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
-
+        /*
+            TODO move URL generation to Controller (it could have come as a parameter here)
+            Service should functional indepenedently from Controller
+        */
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
         List<AccountDetails> accountDetails =
@@ -64,12 +67,14 @@ public class AccountService {
         return accountDetails;
     }
 
-    public Balances getBalances(@NotEmpty String accountId, boolean psuInvolved) {
-        return accountMapper.mapSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
+    public List<Balances> getBalances(@NotEmpty String accountId, boolean psuInvolved) {
+        return accountMapper.mapListSpiBalances(accountSpi.readBalances(accountId, psuInvolved));
     }
 
-    public AccountReport getAccountReport(@NotEmpty String accountId, Date dateFrom, Date dateTo, String transactionId,
-                                          boolean psuInvolved) {
+    public AccountReport getAccountReport(
+    @NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
+    boolean psuInvolved
+    ) {
         AccountReport accountReport;
 
         if (StringUtils.isEmpty(transactionId)) {
@@ -106,13 +111,17 @@ public class AccountService {
         }
     }
 
-    private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
-                                                   Date dateTo, boolean psuInvolved) {
+     private AccountReport readTransactionsByPeriod(
+     @javax.validation.constraints.NotEmpty String accountId, @NotNull Date dateFrom,
+     @NotNull Date dateTo, boolean psuInvolved
+    ) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
-    private AccountReport readTransactionsById(String accountId, String transactionId,
-                                               boolean psuInvolved) {
+     private AccountReport readTransactionsById(
+     @javax.validation.constraints.NotEmpty String accountId, @javax.validation.constraints.NotEmpty String transactionId,
+     boolean psuInvolved
+    ) {
         return accountMapper.mapAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 

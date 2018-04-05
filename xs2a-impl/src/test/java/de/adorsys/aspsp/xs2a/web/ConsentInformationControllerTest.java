@@ -169,6 +169,20 @@ public class ConsentInformationControllerTest {
     }
 
     @Test
+    public void deleteAccountConsent_wrongId() throws IOException {
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+
+        String wrongConsentId = "SomeWrongId";
+
+        //When:
+        ResponseEntity<Void> actualResponse = consentInformationController.deleteAccountConsent(wrongConsentId);
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     public void createAccountConsent_availableAccounts() throws IOException {
         //Given:
         boolean withBalance = true;

@@ -18,11 +18,11 @@ public class SingleBalance {
     @NotNull
     private Amount amount;
 
-    @ApiModelProperty(value = "last action date time", required = false, example = "2017-10-25T15:30:35.035Z")
+    @ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
     @JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN)
     private Date lastActionDateTime;
 
-    @ApiModelProperty(value = "Date", required = false, example = "2007-01-01")
+    @ApiModelProperty(value = "Date", example = "2007-01-01")
     @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
     private Date date;
 }

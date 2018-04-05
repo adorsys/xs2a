@@ -66,12 +66,12 @@ public class AccountController {
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<Balances> getBalances(
-    @PathVariable(name = "account-id", required = true) @NotNull String accountId,
+    public ResponseEntity<List<Balances>> getBalances(
+    @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
 
-        Balances balances = accountService.getBalances(accountId, psuInvolved);
+        List<Balances> balances = accountService.getBalances(accountId, psuInvolved);
         LOGGER.debug("getBalances(): balances by account {} and psu-involved {} is {}", accountId, psuInvolved, balances);
 
         return new ResponseEntity<>(balances, HttpStatus.OK);

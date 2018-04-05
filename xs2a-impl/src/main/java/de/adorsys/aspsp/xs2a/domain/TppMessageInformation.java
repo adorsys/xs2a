@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class TppMessageInformation {
 
-	@ApiModelProperty(value = "Category of the error permitted", required = true, example = "Error")
+	@ApiModelProperty(value = "Category of the error, Only ”ERROR” or \"WARNING\" permitted", required = true, example = "ERROR")
 	private String category;
 
 	@ApiModelProperty(value = "Code", required = true)
@@ -22,7 +22,7 @@ public class TppMessageInformation {
 	@ApiModelProperty(value = "Path", example = "")
 	private String path;
 
-	@ApiModelProperty(value = "Additional explanation text", example = "Additional Text")
+	@ApiModelProperty(value = "Additional explanation text", example = "Additional text information of the ASPSP up to 512 characters")
     @Size(max = 512)
 	private String text;
 
