@@ -68,7 +68,7 @@ public class AccountController {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(accountId, withBalance, psuInvolved);
         HttpStatus httpStatus = responseObject.isSuccess() ? HttpStatus.OK : HttpStatus.valueOf(responseObject.getMessage().getCode());
 
-        LOGGER.debug("getAccount(): response is {} account-id", responseObject.isSuccess() ? responseObject.getData().getId() : responseObject.getMessage().getDescription());
+        LOGGER.debug("getAccount(): response is {} account-id", responseObject.isSuccess() ? responseObject.getData().getId() : responseObject.getMessage().name());
 
         return new ResponseEntity<>(responseObject.isSuccess()
                                     ? responseObject.getData() : null, httpStatus);
