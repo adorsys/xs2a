@@ -3,7 +3,6 @@ package de.adorsys.aspsp.xs2a.spi.domain.account;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import org.springframework.data.annotation.Id;
 
 import java.util.Currency;
@@ -25,5 +24,5 @@ public class SpiAccountDetails {
     private String accountType;
     private SpiAccountType cashSpiAccountType;
     private String bic;
-    private SpiBalances balances;
+    private List<SpiBalances> balances;
 }

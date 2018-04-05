@@ -5,7 +5,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -29,23 +28,11 @@ public class AccountSpiImpl implements AccountSpi {
             String url = spiMockUrls.get("getAllAccounts");
             SpiAccountDetails[] spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails[].class);
                 return Arrays.asList(spiAccountDetails);
-//            return getNoBalanceAccountList(AccountMockData.getAccountDetails());
         }
 
         return AccountMockData.getAccountDetails();
     }
 
-    private List<SpiAccountDetails> getNoBalanceAccountList(List<SpiAccountDetails> accountDetails) {
-        return accountDetails.stream()
-               .map(account -> AccountMockData.createAccount(
-               account.getId(),
-               account.getCurrency(),
-               new ArrayList<SpiBalances>(),
-               account.getIban(),
-               account.getBic(),
-               account.getName(),
-               account.getAccountType())).collect(Collectors.toList());
-    }
 
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
