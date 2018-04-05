@@ -9,6 +9,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +32,14 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountMapperTest {
-    private final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
-    private final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
-    private final String SPI_TRANSACTION_JSON_PATH = "/json/mapAccountReportTest.json";
-    private final Charset UTF_8 = Charset.forName("utf-8");
+    private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
+    private static final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
+    private static final String SPI_TRANSACTION_JSON_PATH = "/json/mapAccountReportTest.json";
+    private static final Charset UTF_8 = Charset.forName("utf-8");
     private final Date expectedDate = getDate("2017-10-25T15:30:35.035Z");
 
     @Autowired
-    AccountMapper accountMapper;
+    private AccountMapper accountMapper;
 
     public AccountMapperTest() throws ParseException {
     }
@@ -61,9 +62,10 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getName()).isEqualTo("Main Account");
         assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
-        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(expectedDate);
-        assertThat(actualAccountDetails.getBalances().get(0).getClosingBooked().getDate()).isEqualTo("2007-01-01");
+        SingleBalance closingBooked = actualAccountDetails.getBalances().get(0).getClosingBooked();
+        assertThat(closingBooked.getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
+        assertThat(closingBooked.getLastActionDateTime()).isEqualTo(expectedDate);
+        assertThat(closingBooked.getDate()).isEqualTo("2007-01-01");
     }
 
     @Test
@@ -71,7 +73,7 @@ public class AccountMapperTest {
         //Given:
         String spiBalancesJson = IOUtils.resourceToString(SPI_BALANCES_JSON_PATH, UTF_8);
         SpiBalances donorBalances = new Gson().fromJson(spiBalancesJson, SpiBalances.class);
-        List<SpiBalances> donorBalancesList = new ArrayList<SpiBalances>();
+        List<SpiBalances> donorBalancesList = new ArrayList<>();
         donorBalancesList.add(donorBalances);
 
         //When:
@@ -101,7 +103,7 @@ public class AccountMapperTest {
         //Given:
         String spiTransactionJson = IOUtils.resourceToString(SPI_TRANSACTION_JSON_PATH, UTF_8);
         SpiTransaction donorSpiTransaction = new Gson().fromJson(spiTransactionJson, SpiTransaction.class);
-        List<SpiTransaction> donorSpiTransactions = new ArrayList<SpiTransaction>();
+        List<SpiTransaction> donorSpiTransactions = new ArrayList<>();
         donorSpiTransactions.add(donorSpiTransaction);
         SpiTransaction[] expectedBooked = donorSpiTransactions.stream()
                                           .filter(transaction -> transaction.getBookingDate() != null)
@@ -112,7 +114,8 @@ public class AccountMapperTest {
         AccountReport actualAccountReport = accountMapper.mapFromSpiAccountReport(donorSpiTransactions);
 
         //Then:
-        assertThat(actualAccountReport.getBooked()[0].getTransactionId()).isEqualTo(expectedBooked[0].getTransactionId());
+        assertThat(actualAccountReport.getBooked()[0].getTransactionId())
+            .isEqualTo(expectedBooked[0].getTransactionId());
         assertThat(actualAccountReport.getBooked()[0].getBookingDate()).isEqualTo(expectedBooked[0].getBookingDate());
         assertThat(actualAccountReport.getBooked()[0].getCreditorId()).isEqualTo(expectedBooked[0].getCreditorId());
         assertThat(actualAccountReport.getBooked()[0].getCreditorName()).isEqualTo(expectedBooked[0].getCreditorName());
@@ -123,9 +126,12 @@ public class AccountMapperTest {
         assertThat(actualAccountReport.getBooked()[0].getRemittanceInformationUnstructured()).isEqualTo(expectedBooked[0].getRemittanceInformationUnstructured());
         assertThat(actualAccountReport.getBooked()[0].getUltimateCreditor()).isEqualTo(expectedBooked[0].getUltimateCreditor());
         assertThat(actualAccountReport.getBooked()[0].getValueDate()).isEqualTo(expectedBooked[0].getValueDate());
-        assertThat(actualAccountReport.getBooked()[0].getAmount().getContent()).isEqualTo(expectedBooked[0].getSpiAmount().getContent());
-        assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount().getCurrency());
-        assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode().getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
+        assertThat(actualAccountReport.getBooked()[0].getAmount().getContent()).isEqualTo(expectedBooked[0].getSpiAmount()
+        .getContent());
+        assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount()
+        .getCurrency());
+        assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode()
+        .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
         assertThat(actualAccountReport.getBooked()[0].getPurposeCode().getCode()).isEqualTo(expectedBooked[0].getPurposeCode());
     }
 

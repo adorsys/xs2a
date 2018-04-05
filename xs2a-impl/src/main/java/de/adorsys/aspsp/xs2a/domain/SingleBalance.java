@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @ApiModel(description = "Balance Information", value = "SingleBalance")
@@ -18,9 +18,9 @@ public class SingleBalance {
 
 	@ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
 	@JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN)
-	private Date lastActionDateTime;
+	private Instant lastActionDateTime;
 
 	@ApiModelProperty(value = "Date", example = "2017-03-26")
 	@JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
-	private Date date;
+	private Instant date;
 }
