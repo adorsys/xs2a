@@ -6,21 +6,17 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/bulk-payments")
 @Api(value = "api/v1/consents", tags = "Bulk payment initiation", description = "Payment Initiation for Bulk Payments and Multiple Payments")
 public class BulkPaymentInitiationController {
     private PaymentService paymentService;
-
-    @Autowired
-    public BulkPaymentInitiationController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
 
     @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),

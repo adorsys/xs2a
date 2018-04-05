@@ -2,10 +2,12 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiation;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitiation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.springframework.stereotype.Service;
@@ -77,7 +79,22 @@ public class PaymentMapper {
         return null;
     }
 
-    public PaymentInitiation mapFromSpiPaymentInitiation(SpiPaymentInitiation payment) {
-        return null;
+    public PaymentInitiation mapFromSpiPaymentInitiation(SpiPaymentInitiation spiPayment) {
+
+        return new PaymentInitiation(
+        mapFromSpiTransactionStatus(spiPayment.getSpiTransactionStatus()),
+        spiPayment.getPaymentId(),
+        mapFromSpiAmount(spiPayment.getSpiTransactionFees()),
+        spiPayment.isSpiTransactionFeeIndicator(),
+        null,
+        spiPayment.getPsuMessage(),
+        null,
+        true);
+    }
+
+    private TransactionStatus mapFromSpiTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
+        return Optional.ofNullable(spiTransactionStatus)
+               .map(ts -> TransactionStatus.valueOf(ts.name()))
+               .orElse(null);
     }
 }

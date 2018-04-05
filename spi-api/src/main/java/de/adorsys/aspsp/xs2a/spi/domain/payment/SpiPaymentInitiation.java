@@ -13,5 +13,4 @@ public class SpiPaymentInitiation {
     private final String[] scaMethods;
     private final String psuMessage;
     private final String[] tppMessages;
-    private final boolean tppRedirectPreferred;
 }

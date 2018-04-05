@@ -38,7 +38,7 @@ public class PaymentInitiation {
     private final MessageCode[] tppMessages;
 
     @ApiModelProperty(value = "Links: a list of hyperlinks to be recognised by the TPP.")
-    private final Links _links;
+    private Links _links;
 
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @JsonIgnore
