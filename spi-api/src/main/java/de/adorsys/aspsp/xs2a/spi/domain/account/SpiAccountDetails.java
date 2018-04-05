@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.spi.domain.account;
 import lombok.Data;
 
 import java.util.Currency;
+import java.util.List;
 
 @Data
 public class SpiAccountDetails {
@@ -17,5 +18,5 @@ public class SpiAccountDetails {
     private final String accountType;
     private final SpiAccountType cashSpiAccountType;
     private final String bic;
-    private final SpiBalances balances;
+    private final List<SpiBalances> balances;
 }

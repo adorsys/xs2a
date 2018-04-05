@@ -53,9 +53,6 @@ public class AccountMockData {
             case opening_booked:
                 balance.setOpeningBooked(sb);
                 break;
-            case closing_booked:
-                balance.setClosing_booked(sb);
-                break;
             case interim_available:
                 balance.setInterimAvailable(sb);
                 break;
@@ -66,12 +63,12 @@ public class AccountMockData {
         balances.add(balance);
     }
 
-    public static void addAccount(String ID, Currency currency, SpiBalances balance, String iban, String BIC, String name, String account_type) {
+    public static void addAccount(String ID, Currency currency, List<SpiBalances> balance, String iban, String BIC, String name, String account_type) {
         SpiAccountDetails accountDetails = createAccount(ID, currency, balance, iban, BIC, name, account_type);
         AccountMockData.accountDetails.add(accountDetails);
     }
 
-    public static SpiAccountDetails createAccount(String id, Currency currency, SpiBalances balance, String iban, String bic, String name, String accountType) {
+    public static SpiAccountDetails createAccount(String id, Currency currency, List<SpiBalances> balance, String iban, String bic, String name, String accountType) {
         return new SpiAccountDetails(
             id,
             iban,

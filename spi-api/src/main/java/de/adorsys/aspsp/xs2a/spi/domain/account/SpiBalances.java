@@ -8,6 +8,5 @@ public class SpiBalances {
 	private SpiAccountBalance expected;
 	private SpiAccountBalance authorised;
 	private SpiAccountBalance openingBooked;
-	private SpiAccountBalance closing_booked;
 	private SpiAccountBalance interimAvailable;
 }
