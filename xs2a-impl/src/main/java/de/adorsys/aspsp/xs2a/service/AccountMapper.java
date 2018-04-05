@@ -53,8 +53,8 @@ class AccountMapper {
 
     private CashAccountType mapFromSpiAccountType(SpiAccountType spiAccountType) {
         return Optional.ofNullable(spiAccountType)
-               .map(type -> CashAccountType.valueOf(type.name()))
-               .orElse(null);
+        .map(type -> CashAccountType.valueOf(type.name()))
+        .orElse(null);
     }
 
     public List<Balances> mapFromSpiBalancesList(List<SpiBalances> spiBalances) {
@@ -62,12 +62,12 @@ class AccountMapper {
             return null;
         }
 
-        List<Balances> balances = spiBalances
-                                  .stream()
-                                  .map(this::mapFromSpiBalances)
-                                  .collect(Collectors.toList());
+        return spiBalances
+        .stream()
+        .map(this::mapFromSpiBalances)
+        .collect(Collectors.toList());
 
-        return balances;
+
     }
 
     private Balances mapFromSpiBalances(SpiBalances spiBalances) {
@@ -89,8 +89,8 @@ class AccountMapper {
                .map(b -> {
                    SingleBalance singleBalance = new SingleBalance();
                    singleBalance.setAmount(mapFromSpiAmount(b.getSpiAmount()));
-                   singleBalance.setDate(b.getDate());
-                   singleBalance.setLastActionDateTime(b.getLastActionDateTime());
+                   singleBalance.setDate(b.getDate().toInstant());
+                   singleBalance.setLastActionDateTime(b.getLastActionDateTime().toInstant());
                    return singleBalance;
                })
                .orElse(null);

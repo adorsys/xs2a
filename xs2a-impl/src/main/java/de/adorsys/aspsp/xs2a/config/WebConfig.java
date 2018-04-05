@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.registerModule(new Jdk8Module());
         return objectMapper;
     }
 }
