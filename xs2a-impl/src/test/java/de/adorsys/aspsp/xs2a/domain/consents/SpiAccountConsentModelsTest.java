@@ -30,14 +30,8 @@ public class SpiAccountConsentModelsTest {
     private static final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private static final String ALL_ACCOUNTS_AVAILABLE_REQ_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
     private static final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
-    private static final Charset UTF_8 = Charset.forName("utf-8");
-
-
-
-    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
-    private final String ALL_ACCOUNTS_AVAILABLE_REQ_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
-    private final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
+    private static final Charset UTF_8 = Charset.forName("utf-8");
     private ObjectMapper mapper = new ObjectMapper();
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -57,7 +51,8 @@ public class SpiAccountConsentModelsTest {
     @Test
     public void shouldFail_createConsentReqValidation_json() throws IOException {
         //Given:
-        String requestStringJson = getStringFromFile(CREATE_CONSENT_REQ_WRONG_JSON_PATH);
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_WRONG_JSON_PATH,UTF_8);
+
         CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
 
         //When:
@@ -93,7 +88,7 @@ public class SpiAccountConsentModelsTest {
     @Test
     public void createConsentReqValidation() throws IOException {
         //Given:
-        String requestStringJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH,UTF_8);
         CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
 
         //When:

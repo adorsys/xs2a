@@ -23,9 +23,4 @@ public class AccountRequestParameter implements RequestParameter {
     @ApiModelProperty(value = "End date of the account statement", example = "2017-11-30")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateTo;
-
-    @ApiModelProperty(value = "Account Id", example = "21d40f65-a150-8343-b539-b9a822ae98c0")
-    @JsonProperty(value = "account-id")
-    @NotNull
-    private String accountId;
 }

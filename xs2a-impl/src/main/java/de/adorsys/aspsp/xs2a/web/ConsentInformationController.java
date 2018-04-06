@@ -9,7 +9,6 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,10 +46,7 @@ public class ConsentInformationController {
 
         LOGGER.debug("createAccountConsent(): response {} ", aicCreateResponse);
 
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.add("Location", linkTo(ConsentInformationController.class).slash(aicCreateResponse.getConsentId()).toString());
-
-        return new ResponseEntity<>(aicCreateResponse, responseHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(aicCreateResponse, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource")
