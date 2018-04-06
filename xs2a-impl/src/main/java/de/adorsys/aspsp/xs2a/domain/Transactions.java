@@ -1,9 +1,9 @@
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateUTC;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,11 +33,11 @@ public class Transactions {
     private String creditorId;
 
     @ApiModelProperty(value = "Booking Date", example = "2017-01-01")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormatDateUTC
     private Date bookingDate;
 
     @ApiModelProperty(value = "Value Date", example = "2017-01-01")
-    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN)
+    @JsonFormatDateUTC
     private Date valueDate;
 
     @ApiModelProperty(value = "Amount", required = true)
