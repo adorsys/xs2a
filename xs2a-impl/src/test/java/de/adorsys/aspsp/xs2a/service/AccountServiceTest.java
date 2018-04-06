@@ -80,7 +80,7 @@ public class AccountServiceTest {
         //When:
         accountService.getBalancesList(accountId, psuInvoilved);
     }
-
+/*
     @Test(expected = ConstraintViolationException.class)
     public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
         //Given:
@@ -91,7 +91,7 @@ public class AccountServiceTest {
         //When
         accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false);
     }
-
+*/
     @Test(expected = ConstraintViolationException.class)
     public void shouldFail_getTransactions_noAccountId() {
         //Given:
