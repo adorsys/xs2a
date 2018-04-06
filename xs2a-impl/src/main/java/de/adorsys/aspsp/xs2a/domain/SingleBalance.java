@@ -1,7 +1,8 @@
 package de.adorsys.aspsp.xs2a.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateTimeUTC;
+import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateUTC;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -18,8 +19,8 @@ public class SingleBalance {
 	private Amount amount;
 
 	@ApiModelProperty(value = "last action date time", example = "2017-10-25T15:30:35.035Z")
-	@JsonFormatDateTimeUTC
-	private Instant lastActionDateTime;
+    @JsonFormat(pattern = ApiDateConstants.DATE_TIME_PATTERN, timezone = ApiDateConstants.UTC)
+    private Instant lastActionDateTime;
 
 	@ApiModelProperty(value = "Date", example = "2017-03-26")
 	@JsonFormatDateUTC

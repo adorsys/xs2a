@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -16,12 +16,12 @@ import java.util.TimeZone;
  * and not local one.
  * Also supports both date and datetime formats for parsing.
  */
-public class GsonUTCDateAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
+public class GsonUtcInstantAdapter implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
 
     private final DateFormat dateTimeFormat;
     private final DateFormat dateFormat;
 
-    public GsonUTCDateAdapter() {
+    public GsonUtcInstantAdapter() {
         dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
         dateTimeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -29,20 +29,20 @@ public class GsonUTCDateAdapter implements JsonSerializer<Date>, JsonDeserialize
     }
 
     @Override
-    public synchronized JsonElement serialize(Date date, Type type, JsonSerializationContext jsonSerializationContext) {
+    public synchronized JsonElement serialize(Instant date, Type type, JsonSerializationContext jsonSerializationContext) {
         return new JsonPrimitive(dateTimeFormat.format(date));
     }
 
     @Override
-    public synchronized Date deserialize(JsonElement jsonElement, Type type,
+    public synchronized Instant deserialize(JsonElement jsonElement, Type type,
                                          JsonDeserializationContext jsonDeserializationContext
                                         ) {
         try {
             String asString = jsonElement.getAsString();
             if (asString.matches("[0-9]{2,4}-[0-9]{1,2}-[0-9]{1,2}")) {
-                return dateFormat.parse(asString);
+                return dateFormat.parse(asString).toInstant();
             }
-            return dateTimeFormat.parse(asString);
+            return dateTimeFormat.parse(asString).toInstant();
         } catch (ParseException e) {
             throw new JsonParseException(e);
         }

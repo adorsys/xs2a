@@ -6,7 +6,7 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.util.GsonUTCDateAdapter;
+import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +42,7 @@ public class AccountMapperTest {
 
     // By default Gson parses date to your local time zone. Therefore adapter for it is needed.
     private final Gson gson = new GsonBuilder()
-                              .registerTypeAdapter(Date.class, new GsonUTCDateAdapter())
+                              .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
                               .create();
 
     @Autowired
