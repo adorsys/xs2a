@@ -51,7 +51,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorAccountDetails);
-        AccountDetails actualAccountDetails = accountMapper.mapSpiAccountDetailsToXs2aAccountDetails(donorAccountDetails);
+        AccountDetails actualAccountDetails = accountMapper.mapFromSpiAccountDetails(donorAccountDetails);
 
         //Then:
         assertThat(actualAccountDetails.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
@@ -76,7 +76,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorBalances);
-        List<Balances> actualBalances = accountMapper.mapListSpiBalances(donorBalancesList);
+        List<Balances> actualBalances = accountMapper.mapFromSpiBalancesList(donorBalancesList);
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
@@ -103,14 +103,13 @@ public class AccountMapperTest {
         SpiTransaction donorSpiTransaction = new Gson().fromJson(spiTransactionJson, SpiTransaction.class);
         List<SpiTransaction> donorSpiTransactions = new ArrayList<SpiTransaction>();
         donorSpiTransactions.add(donorSpiTransaction);
-        SpiTransaction[] expectedBooked = donorSpiTransactions
-                                          .stream()
+        SpiTransaction[] expectedBooked = donorSpiTransactions.stream()
                                           .filter(transaction -> transaction.getBookingDate() != null)
                                           .toArray(SpiTransaction[]::new);
 
         //When:
         assertNotNull(donorSpiTransaction);
-        AccountReport actualAccountReport = accountMapper.mapAccountReport(donorSpiTransactions);
+        AccountReport actualAccountReport = accountMapper.mapFromSpiAccountReport(donorSpiTransactions);
 
         //Then:
         assertThat(actualAccountReport.getBooked()[0].getTransactionId()).isEqualTo(expectedBooked[0].getTransactionId());

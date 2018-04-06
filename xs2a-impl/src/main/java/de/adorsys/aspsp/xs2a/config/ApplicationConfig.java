@@ -2,8 +2,10 @@ package de.adorsys.aspsp.xs2a.config;
 
 import de.adorsys.aspsp.xs2a.spi.impl.AccountSpiImpl;
 import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
+import de.adorsys.aspsp.xs2a.spi.impl.PaymentSpiImpl;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,5 +26,10 @@ public class ApplicationConfig {
     @Bean
     public String consentsLinkRedirectToSource() {
         return consentsLinkRedirectToSource;
+    }
+
+    @Bean
+    public PaymentSpi paymentSpi() {
+        return new PaymentSpiImpl();
     }
 }

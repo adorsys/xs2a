@@ -1,0 +1,14 @@
+[
+  {
+    "id": "33333-999999999",
+    "iban": "DE371234599997",
+    "currency": "EUR",
+    "name": "Schmidt",
+    "accountType": "SCT",
+    "bic": "GENODEF1N02",
+    "_links": {
+      "viewBalances": "/api/v1/accounts/33333-999999999/balances",
+      "viewTransactions": "/api/v1/accounts/33333-999999999/transactions"
+    }
+  }
+]

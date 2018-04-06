@@ -23,7 +23,7 @@ public class ResponseMapper {
     private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {
         MessageError messageError = response.getError();
         return messageError != null
-               ? new ResponseEntity(messageError, valueOf(messageError.getTppMessage().getCode().getCode()))
-               : new ResponseEntity(response.getBody(), status);
+               ? new ResponseEntity<>(messageError, valueOf(messageError.getTppMessage().getCode().getCode()))
+               : new ResponseEntity<>(response.getBody(), status);
     }
 }
