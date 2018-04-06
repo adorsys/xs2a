@@ -1,0 +1,34 @@
+{
+  "booked": [
+    {
+      "transactionId": "1234578",
+      "endToEndId": "EndToEndId",
+      "mandateId": "MandateId",
+      "creditorId": "CreditorId",
+      "bookingDate": "2018-03-09",
+      "amount": {
+        "currency": "EUR",
+        "content": "3000.45"
+      },
+      "creditorName": "",
+      "debtorName": "AccountMockData.getAccounts().get(2)",
+      "debtorAccount": {
+        "iban": "DE371234599997",
+        "currency": "EUR"
+      },
+      "ultimateDebtor": "",
+      "remittanceInformationUnstructured": "Ref Number Merchant",
+      "remittanceInformationStructured": "Ref Number Merchant",
+      "purposeCode": {
+        "code": "PurposeCode"
+      },
+      "bankTransactionCodeCode": {
+        "code": "BankTransactionCode"
+      }
+    }
+  ],
+  "pending": [],
+  "_links": {
+    "viewAccount": "http://localhost:8080/api/v1/accounts/33333-999999999"
+  }
+}

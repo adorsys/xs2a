@@ -3,7 +3,9 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.service.ResponseMapper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +29,12 @@ import java.util.Map;
 public class AccountController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
     private AccountService accountService;
+    private ResponseMapper responseMapper;
 
     @Autowired
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, ResponseMapper responseMapper) {
         this.accountService = accountService;
+        this.responseMapper = responseMapper;
     }
 
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
@@ -47,14 +51,30 @@ public class AccountController {
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
+        ResponseObject<Map<String,List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
 
-        List<AccountDetails> accountDetails = accountService.getAccountDetailsList(withBalance, psuInvolved);
-        HashMap<String, List<AccountDetails>> accountDetailsList = new HashMap<>();
-        accountDetailsList.put("accountList", accountDetails);
+        return responseMapper.okOrNotFound(responseObject);
+    }
 
-        LOGGER.debug("getAccounts(): response has {} accounts", accountDetails.size());
+    @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token")
+    @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "OK"),
+    @ApiResponse(code = 400, message = "Bad request")})
+    @RequestMapping(value = "/{account-id}", method = RequestMethod.GET)
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    ResponseEntity<AccountDetails> readAccountDetails(
+    @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
+    @PathVariable(name = "account-id", required = true) String accountId,
+    @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
+    @RequestParam(name = "with-balance", required = false) boolean withBalance,
+    @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
+    @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
+        ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(accountId, withBalance, psuInvolved);
 
-        return new ResponseEntity<>(accountDetailsList, HttpStatus.OK);
+        return responseMapper.okOrNotFound(responseObject);
     }
 
     @ApiOperation(value = "Read a list of the balances for the given account")
@@ -70,11 +90,9 @@ public class AccountController {
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
+        ResponseObject<List<Balances>> responseObject = accountService.getBalancesList(accountId, psuInvolved);
 
-        List<Balances> balances = accountService.getBalances(accountId, psuInvolved);
-        LOGGER.debug("getBalances(): balances by account {} and psu-involved {} is {}", accountId, psuInvolved, balances);
-
-        return new ResponseEntity<>(balances, HttpStatus.OK);
+        return responseMapper.okOrNotFound(responseObject);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")
@@ -86,23 +104,24 @@ public class AccountController {
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<AccountReport> getTransactions(@PathVariable(name = "account-id") String accountId,
+    public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource")
+                                                         @PathVariable(name = "account-id") String accountId,
                                                          @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
-                                                         @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
+                                                         @RequestParam(name = "dateFrom", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                          @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
-                                                         @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
+                                                         @RequestParam(name = "dateTo", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
                                                          @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
                                                          @RequestParam(name = "transactionId", required = false) String transactionId,
                                                          @ApiParam(name = "psuInvolved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-                                                         @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved) {
-        try {
+                                                         @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
+                                                         @ApiParam(name = "bookingStatus", value = "Permited codes are 'booked', 'pending','both", example = "both")
+                                                         @RequestParam(name = "bookingStatus", required = false) String bookingStatus,
+                                                         @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
+                                                         @RequestParam(name = "withBalance", required = false) boolean withBalance,
+                                                         @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
+                                                         @RequestParam(name = "deltaList", required = false) boolean deltaList) {
+        ResponseObject<AccountReport> responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
 
-            AccountReport accountReport = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved);
-            LOGGER.debug("getTransactionsForAccount(): report for account {} date_from {} date_to {} transaction_id {} and psu-involved {} is {}"
-            , accountId, dateFrom, dateTo, transactionId, psuInvolved, accountReport);
-            return new ResponseEntity<>(accountReport, HttpStatus.OK);
-        } catch (ValidationException ex) {
-            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return responseMapper.okOrNotFound(responseObject);
     }
 }

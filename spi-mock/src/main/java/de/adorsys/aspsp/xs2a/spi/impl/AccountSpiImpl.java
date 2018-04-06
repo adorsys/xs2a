@@ -71,6 +71,20 @@ public class AccountSpiImpl implements AccountSpi {
         return Collections.unmodifiableList(filteredSpiTransactions);
     }
 
+    @Override
+    public SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
+        SpiAccountDetails spiAccountDetails = AccountMockData.getAccountsHashMap().get(accountId);
+
+        return Optional.ofNullable(spiAccountDetails)
+               .map(ad -> new SpiAccountDetails(
+               ad.getId(), ad.getIban(), ad.getBban(),
+               ad.getMaskedPan(), ad.getMaskedPan(), ad.getMsisdn(),
+               ad.getCurrency(), ad.getName(), ad.getAccountType(),
+               ad.getCashSpiAccountType(), ad.getBic(),
+               withBalance ? ad.getBalances() : null)
+               ).orElse(null);
+    }
+
     private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) {
         return spiTransactions.parallelStream()
                .filter(this::isPendingTransaction)

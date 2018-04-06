@@ -18,8 +18,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 @RestController
 @RequestMapping(path = "api/v1/consents")
 @Api(value = "api/v1/consents", tags = "AISP Consents", description = "Provides access to the Psu Consents")
@@ -114,4 +112,5 @@ public class ConsentInformationController {
 
         return new ResponseEntity<>(status);
     }
+
 }
