@@ -2,10 +2,10 @@ package de.adorsys.aspsp.xs2a.domain.consents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
