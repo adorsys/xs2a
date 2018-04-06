@@ -7,6 +7,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +59,7 @@ class AccountMapper {
     }
 
     public List<Balances> mapFromSpiBalancesList(List<SpiBalances> spiBalances) {
-        if (spiBalances == null) {
+        if (CollectionUtils.isEmpty(spiBalances)) {
             return null;
         }
 
@@ -114,7 +115,7 @@ class AccountMapper {
     }
 
     public AccountReport mapFromSpiAccountReport(List<SpiTransaction> spiTransactions) {
-        if (spiTransactions == null) {
+        if (CollectionUtils.isEmpty(spiTransactions)) {
             return null;
         }
 

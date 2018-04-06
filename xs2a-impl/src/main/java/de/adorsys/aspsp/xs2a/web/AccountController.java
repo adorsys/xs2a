@@ -11,12 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +42,7 @@ public class AccountController {
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<Map<String,List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
+        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
 
         return responseMapper.okOrNotFound(responseObject);
     }
@@ -88,9 +86,9 @@ public class AccountController {
     public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource")
                                                          @PathVariable(name = "account-id") String accountId,
                                                          @ApiParam(name = "date_from", value = "Starting date of the account statement", example = "2017-10-30")
-                                                         @RequestParam(name = "date_from", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
+                                                         @RequestParam(name = "date_from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                          @ApiParam(name = "date_to", value = "End date of the account statement", example = "2017-11-30")
-                                                         @RequestParam(name = "date_to", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
+                                                         @RequestParam(name = "date_to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo,
                                                          @ApiParam(name = "transaction_id", value = "Transaction identification", example = "1234567")
                                                          @RequestParam(name = "transaction_id", required = false) String transactionId,
                                                          @ApiParam(name = "psu-involved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")

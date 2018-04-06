@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
@@ -51,13 +52,13 @@ public class AccountService {
 
     public ResponseObject<List<Balances>> getBalancesList(@NotEmpty String accountId, boolean psuInvolved) {
         List<Balances> result = accountMapper.mapFromSpiBalancesList(accountSpi.readBalances(accountId, psuInvolved));
-        return result != null
-               ? new ResponseObject<>(result)
-               : new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
+        return CollectionUtils.isEmpty(result)
+               ? new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+               : new ResponseObject<>(result);
     }
 
-    public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom,
-                                                          @NotNull Date dateTo, String transactionId,
+    public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, Date dateFrom,
+                                                          Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
         AccountReport accountReport = StringUtils.isEmpty(transactionId)
                                       ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)

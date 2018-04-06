@@ -88,7 +88,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void getBallances_ResultTest() throws IOException {
+    public void getBalances_ResultTest() throws IOException {
         //Given:
         boolean psuInvolved = true;
         Balances expectedBalances = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
@@ -265,9 +265,9 @@ public class AccountControllerTest {
     }
 
     private ResponseObject<List<Balances>> readBalances() throws IOException {
-        Balances readed = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
+        Balances fromJson = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
         List<Balances> res = new ArrayList<>();
-        res.add(readed);
+        res.add(fromJson);
         return new ResponseObject<>(res);
     }
 }
