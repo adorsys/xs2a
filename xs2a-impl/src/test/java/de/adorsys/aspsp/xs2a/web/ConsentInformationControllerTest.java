@@ -98,7 +98,7 @@ public class ConsentInformationControllerTest {
     @Test
     public void shouldFail_getAccountConsentsStatusById_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
+        HttpStatus expectedStatusCode = HttpStatus.FORBIDDEN;
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
@@ -137,9 +137,9 @@ public class ConsentInformationControllerTest {
     }
 
     @Test
-    public void getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() {
+    public void shouldFail_getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
+        HttpStatus expectedStatusCode = HttpStatus.FORBIDDEN;
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";

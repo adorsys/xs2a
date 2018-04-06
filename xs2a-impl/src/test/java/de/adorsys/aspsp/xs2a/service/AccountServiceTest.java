@@ -19,8 +19,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -59,7 +61,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountDetails_withBalanace() throws IOException {
+    public void getAccountDetails_withBalance() throws IOException {
         //Given:
         boolean withBalance = true;
         boolean psuInvolved = true;
@@ -70,38 +72,6 @@ public class AccountServiceTest {
 
         //Then:
         assertThat(result.getBody()).isEqualTo(expectedResult);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getBalance_NoAccountId() {
-        //Given:
-        String accountId = "";
-        boolean psuInvoilved = true;
-        //When:
-        accountService.getBalancesList(accountId, psuInvoilved);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
-        //Given:
-        String transactionId = "";
-        boolean psuInvolved = false;
-        Date dateFrom = null;
-        Date dateTo = null;
-        //When
-        accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false);
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFail_getTransactions_noAccountId() {
-        //Given:
-        String accountId = "";
-        String transactionId = "";
-        Date dateFrom = null;
-        Date dateTo = null;
-        boolean psuInvolved = false;
-
-        accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, "both", false, false);
     }
 
     @Test
