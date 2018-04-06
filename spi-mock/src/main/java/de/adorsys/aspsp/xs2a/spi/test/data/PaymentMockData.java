@@ -6,6 +6,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PaymentMockData {
@@ -13,11 +14,9 @@ public class PaymentMockData {
     private static Map<String, SpiPaymentInitiation> paymentMap = new HashMap<>();
 
     public static SpiTransactionStatus getPaymentStatusById(String paymentId) {
-        SpiPaymentInitiation spiPaymentInitiation = paymentMap.get(paymentId);
-        if (spiPaymentInitiation != null) {
-            return spiPaymentInitiation.getSpiTransactionStatus();
-        }
-        return null;
+        return Optional.ofNullable(paymentMap.get(paymentId))
+        .map(SpiPaymentInitiation::getSpiTransactionStatus)
+        .orElse(null);
     }
 
     public static String createPaymentInitiation(SpiSinglePayments pisRequest,
@@ -44,3 +43,4 @@ public class PaymentMockData {
         return UUID.randomUUID().toString();
     }
 }
+

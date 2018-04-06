@@ -82,7 +82,7 @@ public class PaymentInitiationControllerTest {
 
     @Test
     public void getAccountConsentsStatusById_wrongId() {
-        //Given:
+        //Given:короч
         HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
 
         //When:

@@ -56,8 +56,7 @@ public class PaymentInitiationController {
     public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
     @ApiParam(name = "paymentId", value = "Resource Identification of the related payment")
     @PathVariable("paymentId") String paymentId) {
-        ResponseEntity responseEntity = responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId));
-        return responseEntity;
+        return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId));
     }
 
     private PaymentInitiationResponse createResponse() {
