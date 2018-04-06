@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Service
@@ -35,7 +35,8 @@ public class PaymentService {
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
         if (transactionStatus==null) {
-            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN)));
+            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
+            .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
         }
         return new ResponseObject<>(paymentStatusResponse);
     }
