@@ -1,7 +1,7 @@
-package de.adorsys.aspsp.xs2a.domain.headers;
+package de.adorsys.aspsp.xs2a.service.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.headers.impl.*;
+import de.adorsys.aspsp.xs2a.service.validator.header.impl.*;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import de.adorsys.aspsp.xs2a.web.FundsConfirmationController;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
@@ -25,8 +25,8 @@ public class HeadersFactory {
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
     }
 
-    public static RequestHeaders getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {
-        Class<? extends RequestHeaders> headerClass = controllerClassMap.get(controllerClass);
+    public static RequestHeader getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {
+        Class<? extends RequestHeader> headerClass = controllerClassMap.get(controllerClass);
 
         if (headerClass == null) {
             return new NotMatchedHeaderImpl();

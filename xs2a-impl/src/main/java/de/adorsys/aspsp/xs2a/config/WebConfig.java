@@ -3,10 +3,11 @@ package de.adorsys.aspsp.xs2a.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.MessageSource;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
+import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -54,8 +55,13 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
+    public ParametersFactory parametersFactory(){
+        return new ParametersFactory(objectMapper());
+    }
+
+    @Bean
     public RequestValidatorService requestValidatorService() {
-        return new RequestValidatorService(validator());
+        return new RequestValidatorService(validator(), parametersFactory());
     }
 
     @Override

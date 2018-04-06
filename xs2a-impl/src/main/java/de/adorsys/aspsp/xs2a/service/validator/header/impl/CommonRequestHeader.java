@@ -1,9 +1,9 @@
-package de.adorsys.aspsp.xs2a.domain.headers.impl;
+package de.adorsys.aspsp.xs2a.service.validator.header.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.domain.headers.RequestHeaders;
+import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @ApiModel(description = "Common request header", value = "CommonRequestHeader")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-abstract class CommonRequestHeader implements RequestHeaders {
+abstract class CommonRequestHeader implements RequestHeader {
 
     @ApiModelProperty(value = "ID of the transaction as determined by the initiating party", required = true, example = "16d40f49-a110-4344-a949-f99828ae13c9")
     @JsonProperty(value = "tpp-transaction-id")

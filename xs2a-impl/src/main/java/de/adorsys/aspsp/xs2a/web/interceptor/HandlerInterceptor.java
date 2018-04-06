@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.web.interceptor;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -20,6 +21,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
 
     private RequestValidatorService requestValidatorService;
 
+    @Autowired
     public HandlerInterceptor(RequestValidatorService requestValidatorService) {
         this.requestValidatorService = requestValidatorService;
     }
@@ -30,14 +32,13 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
     }
 
     private boolean isRequestValidAndSendRespIfError(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        Map<String, String> violationsMap = requestValidatorService.getRequestViolationMap(request, handler);
 
-        Map<String, String> requestHeaderViolationsMap = requestValidatorService.getRequestHeaderViolationMap(request, handler);
-
-        if (requestHeaderViolationsMap.isEmpty()) {
+        if (violationsMap.isEmpty()) {
             return true;
         } else {
 
-            final List<String> violations = requestHeaderViolationsMap.entrySet().stream()
+            final List<String> violations = violationsMap.entrySet().stream()
                                    .map(entry -> entry.getKey() + " : " + entry.getValue()).collect(Collectors.toList());
 
             LOGGER.debug(violations.toString());
