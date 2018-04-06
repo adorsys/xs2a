@@ -1,10 +1,13 @@
 package de.adorsys.aspsp.xs2a.service;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +17,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Validated

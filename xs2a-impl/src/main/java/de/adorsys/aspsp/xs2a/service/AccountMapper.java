@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
@@ -21,11 +23,11 @@ class AccountMapper {
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
         return Optional.ofNullable(spiAccountDetailsList)
-        .map(acl -> acl.stream()
-                    .map(this::mapFromSpiAccountDetails)
-                    .peek(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount))
-                    .collect(Collectors.toList()))
-        .orElse(Collections.emptyList());
+               .map(acl -> acl.stream()
+                           .map(this::mapFromSpiAccountDetails)
+                           .peek(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount))
+                           .collect(Collectors.toList()))
+               .orElse(Collections.emptyList());
     }
 
     public AccountDetails mapFromSpiAccountDetails(SpiAccountDetails accountDetails) {
@@ -172,5 +174,23 @@ class AccountMapper {
                })
                .orElse(null);
 
+    }
+
+    public SpiAccountReference toSpi(AccountReference account){
+        return ofNullable(account)
+            .map(ac -> new SpiAccountReference(ac.getAccountId(),
+                ac.getIban(),
+                ac.getBban(),
+                ac.getPan(),
+                ac.getMaskedPan(),
+                ac.getMsisdn(),
+                ac.getCurrency()))
+            .orElse(null);
+    }
+
+    public SpiAmount toSpi(Amount amount){
+        return ofNullable(amount)
+            .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
+        .orElse(null);
     }
 }

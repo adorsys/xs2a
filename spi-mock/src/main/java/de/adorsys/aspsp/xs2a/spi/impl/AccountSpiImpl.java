@@ -1,39 +1,43 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
+
+    private final RemoteSpiUrls remoteSpiUrls;
+
+    @Autowired
+    public AccountSpiImpl(RemoteSpiUrls remoteSpiUrls) {
+        this.remoteSpiUrls = remoteSpiUrls;
+    }
 
     @Override
     public List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved) {
 
         if (!withBalance) {
-            return getNoBalanceAccountList(AccountMockData.getAccountDetails());
+            RestTemplate restTemplate = new RestTemplate();
+            String url = remoteSpiUrls.getUrl("getAllAccounts");
+            SpiAccountDetails[] spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails[].class);
+                return Arrays.asList(spiAccountDetails);
         }
 
         return AccountMockData.getAccountDetails();
     }
 
-    private List<SpiAccountDetails> getNoBalanceAccountList(List<SpiAccountDetails> accountDetails) {
-        return accountDetails.stream()
-               .map(account -> AccountMockData.createAccount(
-               account.getId(),
-               account.getCurrency(),
-               new ArrayList<SpiBalances>(),
-               account.getIban(),
-               account.getBic(),
-               account.getName(),
-               account.getAccountType())).collect(Collectors.toList());
-    }
 
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {

@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,7 +8,6 @@ import java.util.Currency;
 
 @Data
 @ApiModel(description = "Amount information", value = "Amount")
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 public class Amount {
 
 	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")

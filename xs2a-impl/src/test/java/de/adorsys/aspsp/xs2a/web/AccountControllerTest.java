@@ -1,5 +1,8 @@
 package de.adorsys.aspsp.xs2a.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
@@ -17,6 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -202,9 +212,31 @@ public class AccountControllerTest {
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
         //Given:
+        AccountDetails accountDetails = new AccountDetails(
+        "21fef",
+        "DE1234523543",
+        null,
+        null,
+        null,
+        null,
+        Currency.getInstance("EUR"),
+        "name",
+        "GIRO",
+        null,
+        "XE3DDD",
+        null,
+        null
+        );
+        List<AccountDetails> accountDetailsList = new ArrayList<>();
+        accountDetailsList.add(accountDetails);
+
         HttpStatus expectedStatusCode = HttpStatus.OK;
         Map<String, List<AccountDetails>> expectedResult = new HashMap<>();
         expectedResult.put("accountList", accountService.getAccountDetailsList(withBalance, psuInvolved).getData().get("accountList"));
+        expectedResult.put("accountList", accountDetailsList);
+
+        when(accountService.getAccountDetailsList(withBalance, psuInvolved))
+        .thenReturn(Collections.singletonList(accountDetails));
 
         //When:
         ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
