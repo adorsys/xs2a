@@ -89,7 +89,6 @@ public class ConsentServiceTest {
         String wrongId = "111111";
 
         //When:
-
         TransactionStatus actualStatus = consentService.getAccountConsentsStatusById(wrongId);
 
         //Then:
@@ -125,8 +124,61 @@ public class ConsentServiceTest {
         assertThat(actualAccountConsent).isNull();
     }
 
-    private CreateConsentReq getCreateConsentsRequestTest() {
+    @Test
+    public void deleteAccountConsentsById() {
+        //Given:
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        //When:
+        String consentId = createAccountConsent(withBalance, tppRedirectPreferred).getId();
 
+        //Then:
+        assertThat(consentService.getAccountConsentsById(consentId)).isNotNull();
+
+        //When:
+        consentService.deleteAccountConsentsById(consentId);
+
+        //Then:
+        assertThat(consentService.getAccountConsentsById(consentId)).isNull();
+    }
+
+    @Test
+    public void deleteAccountConsentsById_Success() {
+        //Given:
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        boolean expectedResult = true;
+        String concentId = createAccountConsent(withBalance, tppRedirectPreferred).getId();
+        //When:
+        boolean result = consentService.deleteAccountConsentsById(concentId);
+        //Then:
+        assertThat(result).isEqualTo(expectedResult);
+
+    }
+
+    @Test
+    public void deleteAccountConsentsById_Failure() {
+        //Given:
+        boolean withBalance = true;
+        boolean tppRedirectPreferred = false;
+        boolean expectedResult = false;
+        String concentId = "Some wrong Id";
+        //When:
+        boolean result = consentService.deleteAccountConsentsById(concentId);
+        //Then:
+        assertThat(result).isEqualTo(expectedResult);
+
+    }
+
+    private AccountConsent createAccountConsent(boolean withBalance, boolean tppRedirectPreferred) {
+        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
+        boolean wBalance = withBalance;
+        boolean tppRedirect = tppRedirectPreferred;
+        String id = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        return consentService.getAccountConsentsById(id);
+    }
+
+    private CreateConsentReq getCreateConsentsRequestTest() {
         AccountReference iban1 = new AccountReference();
         iban1.setIban("DE2310010010123456789");
 
@@ -169,23 +221,4 @@ public class ConsentServiceTest {
         }
     }
 
-    @Test
-    public void deleteAccountConsentsById(){
-
-        //Given:
-        CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
-        boolean withBalance = true;
-        boolean tppRedirectPreferred = false;
-        //When:
-        String consentId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
-
-        //Then:
-        assertThat(consentService.getAccountConsentsById(consentId)).isNotNull();
-
-        //When:
-        consentService.deleteAccountConsentsById(consentId);
-
-        //Then:
-        assertThat(consentService.getAccountConsentsById(consentId)).isNull();
-    }
 }

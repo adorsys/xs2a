@@ -1,0 +1,25 @@
+{"id": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+  "iban": "DE2310010010123456789",
+  "bban": "DE2310010010123452343",
+  "pan": "1111222233334444",
+  "maskedPan": "111122xxxxxx4444",
+  "msisdn": "4905123123",
+  "currency": "EUR",
+  "name": "Main Account",
+  "accountType": "Girokonto",
+  "cashSpiAccountType": "CURRENT_ACCOUNT",
+  "bic": "EDEKDEHHXXX",
+  "balances":
+    [{
+      "closingBooked":
+      {
+        "spiAmount":
+        {
+          "currency": "EUR",
+          "content": "1000.0"
+        },
+        "lastActionDateTime":"2017-10-25T15:30:35.035Z",
+        "date":"2007-01-01"
+      }
+    }]
+}
