@@ -11,6 +11,11 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 public class SSAServiceTest {
 
 	@Test
+	public void testValidate() {
+
+	}
+
+	@Test
 	public void ssaGenerate() {
 
 		String[] software_roles = { "PISP", "AISP" };

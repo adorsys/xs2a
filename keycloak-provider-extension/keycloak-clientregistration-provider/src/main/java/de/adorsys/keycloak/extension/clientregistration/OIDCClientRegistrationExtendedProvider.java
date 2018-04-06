@@ -53,7 +53,6 @@ import org.keycloak.services.clientregistration.AbstractClientRegistrationProvid
 import org.keycloak.services.clientregistration.ClientRegistrationException;
 import org.keycloak.services.clientregistration.ErrorCodes;
 import org.keycloak.services.clientregistration.oidc.OIDCClientRegistrationContext;
-import org.keycloak.services.clientregistration.oidc.OIDCClientRegistrationProvider;
 
 public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegistrationProvider {
 
@@ -76,15 +75,13 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 		}
 
 		try {
-
-			// this could throw invalid_software_statement or
-			// unapproved_software_statement exception
-			// https://tools.ietf.org/html/rfc7591#section-3.2.1
+			
+			//this could throw invalid_software_statement or unapproved_software_statement exception
+			//https://tools.ietf.org/html/rfc7591#section-3.2.1
 			SSAService.validate(clientOIDC);
-
-			// set some attribute of the client(... like role) with ssa
-			// attributes
-
+			
+			//set some attribute of the client(... like role) with ssa attributes
+			
 			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
 			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
 					clientOIDC);
@@ -105,48 +102,44 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 					Response.Status.BAD_REQUEST);
 		}
 	}
-
+	
 	@GET
-	@Path("{clientId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getOIDC(@PathParam("clientId") String clientId) {
-		ClientRepresentation client = get(clientId);
-		OIDCClientRepresentation clientOIDC = DescriptionConverter.toExternalResponse(session, client,
-				session.getContext().getUri().getRequestUri());
-		return Response.ok(clientOIDC).build();
-	}
+    @Path("{clientId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOIDC(@PathParam("clientId") String clientId) {
+        ClientRepresentation client = get(clientId);
+        OIDCClientRepresentation clientOIDC = DescriptionConverter.toExternalResponse(session, client, session.getContext().getUri().getRequestUri());
+        return Response.ok(clientOIDC).build();
+    }
 
-	@PUT
-	@Path("{clientId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response updateOIDC(@PathParam("clientId") String clientId, OIDCClientRepresentationExtended clientOIDC) {
-		try {
-			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
-			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
-					clientOIDC);
-			client = update(clientId, oidcContext);
+    @PUT
+    @Path("{clientId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateOIDC(@PathParam("clientId") String clientId, OIDCClientRepresentationExtended clientOIDC) {
+        try {
+            ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
+            OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this, clientOIDC);
+            client = update(clientId, oidcContext);
 
-			ClientModel clientModel = session.getContext().getRealm().getClientByClientId(client.getClientId());
-			updatePairwiseSubMappers(clientModel, SubjectType.parse(clientOIDC.getSubjectType()),
-					clientOIDC.getSectorIdentifierUri());
-			updateClientRepWithProtocolMappers(clientModel, client);
+            ClientModel clientModel = session.getContext().getRealm().getClientByClientId(client.getClientId());
+            updatePairwiseSubMappers(clientModel, SubjectType.parse(clientOIDC.getSubjectType()), clientOIDC.getSectorIdentifierUri());
+            updateClientRepWithProtocolMappers(clientModel, client);
 
-			URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
-			clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
-			return Response.ok(clientOIDC).build();
-		} catch (ClientRegistrationException cre) {
-			ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
-			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid",
-					Response.Status.BAD_REQUEST);
-		}
-	}
+            URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
+            clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
+            return Response.ok(clientOIDC).build();
+        } catch (ClientRegistrationException cre) {
+            ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
+            throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid", Response.Status.BAD_REQUEST);
+        }
+    }
 
-	@DELETE
-	@Path("{clientId}")
-	public void deleteOIDC(@PathParam("clientId") String clientId) {
-		delete(clientId);
-	}
+    @DELETE
+    @Path("{clientId}")
+    public void deleteOIDC(@PathParam("clientId") String clientId) {
+        delete(clientId);
+    }
 
 	private void updatePairwiseSubMappers(ClientModel clientModel, SubjectType subjectType,
 			String sectorIdentifierUri) {
