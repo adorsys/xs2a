@@ -68,7 +68,7 @@ public class AccountServiceTest {
         ResponseObject<AccountDetails> result = accountService.getAccountDetails(ACCOUNT_ID, withBalance, psuInvolved);
 
         //Then:
-        assertThat(result.getData()).isEqualTo(expectedResult);
+        assertThat(result.getBody()).isEqualTo(expectedResult);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -160,7 +160,7 @@ public class AccountServiceTest {
         AccountReport expectedResult = accountService.getAccountReportWithDownloadLink(ACCOUNT_ID);
 
         //When:
-        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", false, false).getData();
+        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", false, false).getBody();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
@@ -182,7 +182,7 @@ public class AccountServiceTest {
         //Given:
         AccountReport expectedReport = getAccountReport(accountId);
         //When:
-        AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved, "both", false, false).getData();
+        AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved, "both", false, false).getBody();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedReport);
@@ -194,7 +194,7 @@ public class AccountServiceTest {
         AccountReport expectedReport = getAccountReport(accountId);
 
         //When:
-        AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved, "both", false, false).getData();
+        AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved, "both", false, false).getBody();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedReport);
@@ -204,7 +204,7 @@ public class AccountServiceTest {
         //Given:
         List<Balances> expectedResult = accountMapper.mapFromSpiBalancesList(getBalances());
         //When:
-        List<Balances> actualResult = accountService.getBalancesList(accountId, psuInvolved).getData();
+        List<Balances> actualResult = accountService.getBalancesList(accountId, psuInvolved).getBody();
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -219,7 +219,7 @@ public class AccountServiceTest {
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
 
         //When:
-        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved).getData().get("accountList");
+        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved).getBody().get("accountList");
 
         //Then:
         assertThat(expectedResult).isEqualTo(actualResponse);

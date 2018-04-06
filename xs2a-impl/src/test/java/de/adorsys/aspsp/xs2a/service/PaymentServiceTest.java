@@ -54,10 +54,9 @@ public class PaymentServiceTest {
         ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(paymentProdct, tppRedirectPreferred, periodicPayment);
 
         //Than:
-        assertThat(result.isSuccess()).isEqualTo(expectedResult.isSuccess());
-        assertThat(result.getMessage()).isEqualTo(expectedResult.getMessage());
-        assertThat(result.getData().getTransaction_status().getName()).isEqualTo(expectedResult.getData().getTransaction_status().getName());
-        assertThat(result.getData().get_links()).isEqualTo(expectedResult.getData().get_links());
+        assertThat(result.getError()).isEqualTo(expectedResult.getError());
+        assertThat(result.getBody().getTransaction_status().getName()).isEqualTo(expectedResult.getBody().getTransaction_status().getName());
+        assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
     }
 
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {

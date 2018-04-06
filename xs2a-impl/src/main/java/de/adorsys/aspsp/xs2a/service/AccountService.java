@@ -5,6 +5,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 
@@ -37,31 +39,32 @@ public class AccountService {
         this.accountMapper = accountMapper;
     }
 
-    public ResponseObject<Map<String,List<AccountDetails>>> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
+    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
         List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccounts(withBalance, psuInvolved));
-        Map<String,List<AccountDetails>> accountDetailsMap = new HashMap<>();
-        accountDetailsMap.put("accountList",accountDetailsList);
+        Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
+        accountDetailsMap.put("accountList", accountDetailsList);
 
         return accountDetailsList != null
                ? new ResponseObject<>(accountDetailsMap)
-               : new ResponseObject<>(RESOURCE_UNKNOWN_404);
+               : new ResponseObject(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
     }
 
     public ResponseObject<List<Balances>> getBalancesList(@NotEmpty String accountId, boolean psuInvolved) {
         List<Balances> result = accountMapper.mapFromSpiBalancesList(accountSpi.readBalances(accountId, psuInvolved));
         return result != null
                ? new ResponseObject<>(result)
-               : new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404);
+               : new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
     }
 
-    public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom, @NotNull Date dateTo, String transactionId,
+    public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, @NotNull Date dateFrom,
+                                                          @NotNull Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
         AccountReport accountReport = StringUtils.isEmpty(transactionId)
                                       ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
                                       : readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
 
         return accountReport == null
-               ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404)
+               ? new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
                : new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
     }
 
@@ -109,6 +112,8 @@ public class AccountService {
     public ResponseObject<AccountDetails> getAccountDetails(@NotEmpty String accountId, boolean withBalance, boolean psuInvolved) {
         AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
 
-        return accountDetails == null ? new ResponseObject<>(MessageCode.RESOURCE_UNKNOWN_404) : new ResponseObject<>(accountDetails);
+        return accountDetails == null
+               ? new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+               : new ResponseObject<>(accountDetails);
     }
 }

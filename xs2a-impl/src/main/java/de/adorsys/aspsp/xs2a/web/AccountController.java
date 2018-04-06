@@ -5,6 +5,7 @@ import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.service.ResponseMapper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,12 @@ import java.util.Map;
 public class AccountController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
     private AccountService accountService;
+    private ResponseMapper responseMapper;
 
     @Autowired
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, ResponseMapper responseMapper) {
         this.accountService = accountService;
+        this.responseMapper = responseMapper;
     }
 
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
@@ -42,11 +45,8 @@ public class AccountController {
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<Map<String,List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
-        HttpStatus httpStatus = responseObject.isSuccess() ? HttpStatus.OK : HttpStatus.valueOf(responseObject.getMessage().getCode());
 
-        LOGGER.debug("getAccounts(): response has {} accounts", responseObject.getData().get("accountList").size());
-
-        return new ResponseEntity<>(responseObject.isSuccess() ? responseObject.getData() : null, httpStatus);
+        return responseMapper.okOrNotFound(responseObject);
     }
 
     @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token")
@@ -62,12 +62,8 @@ public class AccountController {
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(accountId, withBalance, psuInvolved);
-        HttpStatus httpStatus = responseObject.isSuccess() ? HttpStatus.OK : HttpStatus.valueOf(responseObject.getMessage().getCode());
 
-        LOGGER.debug("getAccount(): response is {} account-id", responseObject.isSuccess() ? responseObject.getData().getId() : responseObject.getMessage().name());
-
-        return new ResponseEntity<>(responseObject.isSuccess()
-                                    ? responseObject.getData() : null, httpStatus);
+        return responseMapper.okOrNotFound(responseObject);
     }
 
     @ApiOperation(value = "Read a list of the balances for the given account")
@@ -79,16 +75,9 @@ public class AccountController {
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-
         ResponseObject<List<Balances>> responseObject = accountService.getBalancesList(accountId, psuInvolved);
-        HttpStatus httpStatus = (responseObject.isSuccess())
-                                ? HttpStatus.OK
-                                : HttpStatus.valueOf(responseObject.getMessage().getCode());
 
-        LOGGER.debug("getBalances(): balances by account {} and psu-involved {} is {}",
-        accountId, psuInvolved, responseObject.getData());
-
-        return new ResponseEntity<>(responseObject.getData(), httpStatus);
+        return responseMapper.okOrNotFound(responseObject);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")
@@ -112,12 +101,8 @@ public class AccountController {
                                                          @RequestParam(name = "with-balance", required = false) boolean withBalance,
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
+        ResponseObject<AccountReport> responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
 
-        ResponseObject<AccountReport> accountReport = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
-        LOGGER.debug("getTransactionsForAccount(): report for account {} date_from {} date_to {} transaction_id {} and psu-involved {} is {}"
-        , accountId, dateFrom, dateTo, transactionId, psuInvolved, accountReport);
-        HttpStatus httpStatus = accountReport.isSuccess() ? HttpStatus.OK : HttpStatus.valueOf(accountReport.getMessage().getCode());
-
-        return new ResponseEntity<>(accountReport.getData(), httpStatus);
+        return responseMapper.okOrNotFound(responseObject);
     }
 }

@@ -29,16 +29,6 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AccountSpi accountSpi() {
-        return new AccountSpiImpl();
-    }
-
-    @Bean
-    public ConsentSpi consentSpi() {
-        return new ConsentSpiImpl();
-    }
-
-    @Bean
     public PaymentSpi paymentSpi() {
         return new PaymentSpiImpl();
     }
