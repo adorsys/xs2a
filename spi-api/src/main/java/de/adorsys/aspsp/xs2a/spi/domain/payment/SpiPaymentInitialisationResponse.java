@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class SpiPaymentInitialisationResponse {
-    @JsonProperty("transaction_status")
     private SpiTransactionStatus transactionStatus;
     private String paymentId;
     private SpiAmount spiTransactionFees;

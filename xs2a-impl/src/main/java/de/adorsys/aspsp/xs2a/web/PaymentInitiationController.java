@@ -5,10 +5,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.ResponseMapper;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +17,7 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/payments/{product-name}")
+@Api(value = "api/v1/payments/{product-name}", tags = "PISP Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
 
     private final ResponseMapper responseMapper;
@@ -38,9 +36,15 @@ public class PaymentInitiationController {
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profile."),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profile.", response = Map.class),
     @ApiResponse(code = 404, message = "Not found")})
     @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "authorization bearer", value = "Some bearer", required = false, dataType = "String", paramType = "header"),
+    @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
     @ApiParam(name = "paymentId", value = "Resource Identification of the related payment")
     @PathVariable("paymentId") String paymentId) {
@@ -53,5 +57,6 @@ public class PaymentInitiationController {
     }
 
 }
+
 
 
