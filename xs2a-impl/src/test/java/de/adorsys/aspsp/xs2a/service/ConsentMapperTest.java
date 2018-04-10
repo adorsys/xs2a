@@ -1,8 +1,6 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
-import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.ConsentStatus;
@@ -20,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
@@ -39,7 +37,7 @@ public class ConsentMapperTest {
         SpiTransactionStatus expectedTransactionStatus = SpiTransactionStatus.ACCP;
 
         //When:
-        TransactionStatus actualTransactionStatus = consentMapper.mapGetAccountConsentStatusById(expectedTransactionStatus);
+        TransactionStatus actualTransactionStatus = consentMapper.mapFromSpiTransactionStatus(expectedTransactionStatus);
 
         //Then:
         assertThat(expectedTransactionStatus.name()).isEqualTo(actualTransactionStatus.name());
@@ -53,21 +51,21 @@ public class ConsentMapperTest {
         SpiCreateConsentRequest expectedRequest = new Gson().fromJson(aicRequestJson, SpiCreateConsentRequest.class);
 
         //When:
-        SpiCreateConsentRequest actualRequest = consentMapper.mapSpiCreateConsentRequest(donorRequest);
+        SpiCreateConsentRequest actualRequest = consentMapper.mapToSpiCreateConsentRequest(donorRequest);
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);
     }
 
     @Test
-    public void mapGetAccountConsent() throws IOException{
+    public void mapGetAccountConsent() throws IOException {
         //Given:
         String accountConsentJson = IOUtils.resourceToString(SPI_ACCOUNT_CONSENT_REQ_JSON_PATH, UTF_8);
         SpiAccountConsent donorAccountConsent = new Gson().fromJson(accountConsentJson, SpiAccountConsent.class);
 
         //When:
         assertNotNull(donorAccountConsent);
-        AccountConsent actualAccountConsent = consentMapper.mapGetAccountConsent(donorAccountConsent);
+        AccountConsent actualAccountConsent = consentMapper.mapFromSpiAccountConsent(donorAccountConsent);
 
         //Then:
         assertThat(actualAccountConsent.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");

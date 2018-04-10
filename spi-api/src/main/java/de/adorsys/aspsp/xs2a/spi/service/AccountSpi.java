@@ -15,4 +15,6 @@ public interface AccountSpi {
     List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved);
 
     List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved);
+
+    SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved);
 }

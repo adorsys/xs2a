@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SpiRemittance {
-    private final String reference;
-    private final String referenceType;
-    private final String referenceIssuer;
+    private String reference;
+    private String referenceType;
+    private String referenceIssuer;
 }

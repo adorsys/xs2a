@@ -9,18 +9,20 @@ import java.util.Date;
 
 @Data
 public class SpiSinglePayments {
-    private final String endToEndIdentification;
-    private final SpiAccountReference debtorAccount;
-    private final String ultimateDebtor;
-    private final SpiAmount instructedAmount;
-    private final SpiAccountReference creditorAccount;
-    private final String creditorAgent;
-    private final String creditorName;
-    private final SpiAddress creditorAddress;
-    private final String ultimateCreditor;
-    private final String purposeCode;
-    private final String remittanceInformationUnstructured;
-    private final SpiRemittance remittanceInformationStructured;
-    private final Date requestedExecutionDate;
-    private final Date requestedExecutionTime;
+
+    private String endToEndIdentification;
+    private SpiAccountReference debtorAccount;
+    private String ultimateDebtor;
+    private SpiAmount instructedAmount;
+    private SpiAccountReference creditorAccount;
+    private String creditorAgent;
+    private String creditorName;
+    private SpiAddress creditorAddress;
+    private String ultimateCreditor;
+    private String purposeCode;
+    private String remittanceInformationUnstructured;
+    private SpiRemittance remittanceInformationStructured;
+    private Date requestedExecutionDate;
+    private Date requestedExecutionTime;
+
 }

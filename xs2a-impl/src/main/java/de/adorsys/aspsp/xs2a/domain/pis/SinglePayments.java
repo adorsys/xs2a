@@ -22,20 +22,20 @@ public class SinglePayments {
     @Size(max = 35)
     private String endToEndIdentification;
 
-    @ApiModelProperty(value = "debtor account", required = true, example = "'iban': 'DE2310010010123456789'")
+    @ApiModelProperty(value = "debtor account", required = true)
     private AccountReference debtorAccount;
 
     @ApiModelProperty(value = "ultimate debtor", required = false, example = "Mueller")
     @Size(max = 70)
     private String ultimateDebtor;
 
-    @ApiModelProperty(value = "instructed amount", required = true, example = "'EUR' , '123.50'")
+    @ApiModelProperty(value = "instructed amount", required = true)
     private Amount instructedAmount;
 
-    @ApiModelProperty(value = "creditor account", required = true, example = "'iban': 'DE23100120020123456789'")
+    @ApiModelProperty(value = "creditor account", required = true)
     private AccountReference creditorAccount;
 
-    @ApiModelProperty(value = "creditor agent", required = false, example = "BCENECEQ")
+    @ApiModelProperty(value = "creditor agent", required = false)
     private BICFI creditorAgent;
 
     @ApiModelProperty(value = "creditor name", required = true, example = "Telekom")
@@ -56,7 +56,7 @@ public class SinglePayments {
     @Size(max = 140)
     private String remittanceInformationUnstructured;
 
-    @ApiModelProperty(value = "remittance information structured", required = false, example = "Telekom")
+    @ApiModelProperty(value = "remittance information structured", required = false)
     private Remittance remittanceInformationStructured;
 
     @ApiModelProperty(value = "requested execution date", required = false, example = "2017-01-01")

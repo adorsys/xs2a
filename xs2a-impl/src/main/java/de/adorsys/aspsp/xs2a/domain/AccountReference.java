@@ -14,7 +14,7 @@ public class AccountReference {
     @JsonIgnore
     private String accountId;
 
-    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE2310010010123456789")
+    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = false, example = "DE371234599999")
     private String iban;
 
     @ApiModelProperty(value = "BBAN: This data elements is used for payment accounts which have no IBAN", example = "1111111111")

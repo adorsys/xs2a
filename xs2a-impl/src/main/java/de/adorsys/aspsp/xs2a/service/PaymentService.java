@@ -9,6 +9,12 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -34,7 +40,7 @@ public class PaymentService {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
-        if (transactionStatus==null) {
+        if (transactionStatus == null) {
             return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
             .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
         }
@@ -43,5 +49,15 @@ public class PaymentService {
 
     public String createPaymentInitiationAndReturnId(SinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
         return paymentSpi.createPaymentInitiation(paymentMapper.mapSinlePayments(paymentInitiationRequest), tppRedirectPreferred);
+    }
+
+    public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
+
+        PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponsepaymentSpi(
+        paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
+
+        return response == null
+        ? new ResponseObject(MessageCode.PAYMENT_FAILED)
+        : new ResponseObject<>(response);
     }
 }
