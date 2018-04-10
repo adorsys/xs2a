@@ -7,7 +7,6 @@ import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import org.springframework.stereotype.Component;
 
@@ -22,14 +21,14 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public String createPaymentInitiation(SpiSinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
-        return PaymentMockData.createPaymentInitiation(paymentInitiationRequest, tppRedirectPreferred);
+    public String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+        return PaymentMockData.createPaymentInitiation(spiSinglePayments,tppRedirectPreferred);
     }
 
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment) {
         SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
-        response.setTransactionStatus(resolveTransactionStatus(periodicPayment));
+        response.setTransactionStatus(SpiTransactionStatus.valueOf(resolveTransactionStatus(periodicPayment)));
 
         return response;
     }

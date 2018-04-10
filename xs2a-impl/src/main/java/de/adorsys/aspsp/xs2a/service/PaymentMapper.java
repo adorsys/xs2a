@@ -1,88 +1,56 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.Remittance;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
-import org.springframework.beans.factory.annotation.Autowired;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.Remittance;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAddress;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class PaymentMapper {
+
+    private final ConsentMapper consentMapper;
+    private final AccountMapper accountMapper;
+
     public TransactionStatus mapGetPaymentStatusById(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
         .map(ts -> TransactionStatus.valueOf(ts.name()))
         .orElse(null);
     }
 
-    public SpiSinglePayments mapSinlePayments(SinglePayments paymentInitiationRequest) {
+    public SpiSinglePayments mapToSpiSinlePayments(SinglePayments paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
         .map(paymentRe -> {
-            SpiSinglePayments spiSinglePayments = new SpiSinglePayments(
-            paymentRe.getEndToEndIdentification(),
-            mapAccountReference(paymentRe.getDebtorAccount()),
-            paymentRe.getUltimateDebtor(),
-            mapAmount(paymentRe.getInstructedAmount()),
-            mapAccountReference(paymentRe.getCreditorAccount()),
-            paymentRe.getCreditorAgent().getCode(),
-            paymentRe.getCreditorName(),
-            mapAddress(paymentRe.getCreditorAddress()),
-            paymentRe.getUltimateCreditor(),
-            paymentRe.getPurposeCode().getCode(),
-            paymentRe.getRemittanceInformationUnstructured(),
-            mapRemittance(paymentRe.getRemittanceInformationStructured()),
-            paymentRe.getRequestedExecutionDate(),
-            paymentRe.getRequestedExecutionTime()
-            );
+            SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
+            spiSinglePayments.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
+            spiSinglePayments.setDebtorAccount(mapAccountReference(paymentRe.getDebtorAccount()));
+            spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
+            spiSinglePayments.setInstructedAmount(mapAmount(paymentRe.getInstructedAmount()));
+            spiSinglePayments.setCreditorAccount(mapAccountReference(paymentRe.getCreditorAccount()));
+            spiSinglePayments.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
+            spiSinglePayments.setCreditorName(paymentRe.getCreditorName());
+            spiSinglePayments.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
+            spiSinglePayments.setUltimateCreditor(paymentRe.getUltimateCreditor());
+            spiSinglePayments.setPurposeCode(paymentRe.getPurposeCode().getCode());
+            spiSinglePayments.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
+            spiSinglePayments.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
+            spiSinglePayments.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
+            spiSinglePayments.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
+
             return spiSinglePayments;
-        })
-        .orElse(null);
-    }
-
-    private SpiRemittance mapRemittance(Remittance remittance) {
-        return Optional.ofNullable(remittance)
-        .map(s -> {
-            SpiRemittance spiRemittance = new SpiRemittance(
-            s.getReference(),
-            s.getReferenceType(),
-            s.getReferenceIssuer()
-            );
-            return spiRemittance;
-        })
-        .orElse(null);
-    }
-
-    private SpiAddress mapAddress(Address address) {
-        return Optional.ofNullable(address)
-        .map(a -> {
-            SpiAddress spiAddress = new SpiAddress(
-            a.getStreet(),
-            a.getBuildingNumber(),
-            a.getCity(),
-            a.getPostalCode(),
-            a.getCountry().getCode()
-            );
-            return spiAddress;
         })
         .orElse(null);
     }
@@ -113,14 +81,6 @@ public class PaymentMapper {
             return spiAccountReference;
         })
         .orElse(null);
-
-    private ConsentMapper consentMapper;
-    private AccountMapper accountMapper;
-
-    @Autowired
-    public PaymentMapper(ConsentMapper consentMapper, AccountMapper accountMapper) {
-        this.consentMapper = consentMapper;
-        this.accountMapper = accountMapper;
     }
 
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment periodicPayment) {
@@ -134,7 +94,7 @@ public class PaymentMapper {
                    spiPeriodicPayment.setCreditorAccount(consentMapper.mapToSpiAccountReference(pp.getCreditorAccount()));
                    spiPeriodicPayment.setCreditorAgent(pp.getCreditorAgent() != null ? pp.getCreditorAgent().getCode() : null);
                    spiPeriodicPayment.setCreditorName(pp.getCreditorName());
-                   spiPeriodicPayment.setCreditorAddress(mapToSpiAdress(pp.getCreditorAddress()));
+                   spiPeriodicPayment.setCreditorAddress(mapToSpiAddress(pp.getCreditorAddress()));
                    spiPeriodicPayment.setUltimateCreditor(pp.getUltimateCreditor());
                    spiPeriodicPayment.setPurposeCode(pp.getPurposeCode() != null ? pp.getPurposeCode().getCode() : null);
                    spiPeriodicPayment.setRemittanceInformationUnstructured(pp.getRemittanceInformationUnstructured());
@@ -158,13 +118,13 @@ public class PaymentMapper {
         return Optional.ofNullable(response)
                .map(pir -> {
                    PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
-                   initialisationResponse.setTransaction_status(TransactionStatus.valueOf(pir.getTransactionStatus()));
+                   initialisationResponse.setTransactionStatus(consentMapper.mapFromSpiTransactionStatus(pir.getTransactionStatus()));
                    initialisationResponse.set_links(new Links());
                    return initialisationResponse;
                }).orElse(null); //TODO Fill in th Linx
     }
 
-    private SpiAddress mapToSpiAdress(Address address) {
+    private SpiAddress mapToSpiAddress(Address address) {
         return Optional.ofNullable(address)
                .map(a -> new SpiAddress(a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()))
                .orElse(null);

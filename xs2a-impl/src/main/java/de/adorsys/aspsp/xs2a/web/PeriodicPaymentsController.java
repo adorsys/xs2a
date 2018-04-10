@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.ResponseMapper;

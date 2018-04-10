@@ -1,7 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAddress;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
 

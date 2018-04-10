@@ -9,8 +9,7 @@ public interface PaymentSpi {
 
     SpiTransactionStatus getPaymentStatusById(String paymentId);
 
-    String createPaymentInitiation(SpiSinglePayments paymentInitiationRequest,
-                                   boolean tppRedirectPreferred);
+    String createPaymentInitiation(SpiSinglePayments spiSinglePayments,boolean tppRedirectPreferred);
 
     SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment);
 }

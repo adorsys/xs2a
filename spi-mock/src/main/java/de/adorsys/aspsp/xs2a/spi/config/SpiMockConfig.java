@@ -175,33 +175,33 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban3 = new SpiAccountReference(
-            null,
-            "DE8710010010653456734",
-            null,
-            null,
-            null,
-            null,
-            null
+        null,
+        "DE8710010010653456734",
+        null,
+        null,
+        null,
+        null,
+        null
         );
 
         SpiAccountReference iban4 = new SpiAccountReference(
-            null,
-            "DE870010010165456745",
-            null,
-            null,
-            null,
-            null,
-            null
+        null,
+        "DE870010010165456745",
+        null,
+        null,
+        null,
+        null,
+        null
         );
 
         SpiAccountReference maskedPan = new SpiAccountReference(
-            null,
-            null,
-            null,
-            null,
-            "873456xxxxxx1245",
-            null,
-            null
+        null,
+        null,
+        null,
+        null,
+        "873456xxxxxx1245",
+        null,
+        null
         );
 
         List<SpiAccountReference> balances = Arrays.asList(iban1, iban2, iban3);
@@ -213,62 +213,62 @@ public class SpiMockConfig {
 
         return new SpiCreateConsentRequest(
         spiAccountAccess,
-            true,
-            getDateFromDateStringNoTimeZone("2017-11-01"),
-            4,
-            false
+        true,
+        getDateFromDateStringNoTimeZone("2017-11-01"),
+        4,
+        false
         );
     }
 
     private SpiCreateConsentRequest getAicRequest_2() {
         SpiAccountReference iban1 = new SpiAccountReference(
-            null,
-            "DE5410010010165456787",
-            null,
-            null,
-            null,
-            null,
-            null
+        null,
+        "DE5410010010165456787",
+        null,
+        null,
+        null,
+        null,
+        null
         );
 
         SpiAccountReference iban2 = new SpiAccountReference(
-            null,
-            "DE650010010123456743",
-            null,
-            null,
-            null,
-            null,
-            Currency.getInstance("USD")
+        null,
+        "DE650010010123456743",
+        null,
+        null,
+        null,
+        null,
+        Currency.getInstance("USD")
         );
 
         SpiAccountReference iban3 = new SpiAccountReference(
-            null,
-            "DE430010010123456534",
-            null,
-            null,
-            null,
-            null,
-            null
+        null,
+        "DE430010010123456534",
+        null,
+        null,
+        null,
+        null,
+        null
         );
 
         SpiAccountReference iban4 = new SpiAccountReference(
-            null,
-            "DE9780010010123452356",
-            null,
-            null,
-            null,
-            null,
-            null
+        null,
+        "DE9780010010123452356",
+        null,
+        null,
+        null,
+        null,
+        null
         );
 
         SpiAccountReference maskedPan = new SpiAccountReference(
-            null,
-            null,
-            null,
-            null,
-            "553456xxxxxx12397",
-            null,
-            null
+        null,
+        null,
+        null,
+        null,
+        "553456xxxxxx12397",
+        null,
+        null
         );
 
         List<SpiAccountReference> balances = Arrays.asList(iban1, iban2, iban3);
@@ -280,10 +280,10 @@ public class SpiMockConfig {
 
         return new SpiCreateConsentRequest(
         spiAccountAccess,
-            true,
-            getDateFromDateStringNoTimeZone("2017-04-25"),
-            4,
-            false
+        true,
+        getDateFromDateStringNoTimeZone("2017-04-25"),
+        4,
+        false
         );
     }
 
@@ -310,22 +310,21 @@ public class SpiMockConfig {
         euro,
         "500"
         );
-        return new SpiSinglePayments(
-        null,
-        accountReference,
-        null,
-        null,
-        accountReference,
-        null,
-        "Merchant123",
-        null,
-        null,
-        null,
-        "Ref Number Merchant",
-        null,
-        new Date(),
-        new Date()
-        );
+        SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
+        spiSinglePayments.setCreditorAccount(accountReference);
+        spiSinglePayments.setCreditorAddress(null);
+        spiSinglePayments.setCreditorAgent("qweqwer");
+        spiSinglePayments.setCreditorName("Merchant123");
+        spiSinglePayments.setDebtorAccount(accountReference);
+        spiSinglePayments.setEndToEndIdentification(null);
+        spiSinglePayments.setInstructedAmount(amount);
+        spiSinglePayments.setRequestedExecutionDate(new Date());
+        spiSinglePayments.setRequestedExecutionTime(new Date());
+        spiSinglePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
+        spiSinglePayments.setUltimateCreditor(null);
+        spiSinglePayments.setPurposeCode(null);
+        spiSinglePayments.setUltimateDebtor(null);
+        return spiSinglePayments;
     }
 
     private SpiSinglePayments getPisRequest_2() {
@@ -342,21 +341,20 @@ public class SpiMockConfig {
         euro,
         "300"
         );
-        return new SpiSinglePayments(
-        null,
-        accountReference,
-        null,
-        null,
-        accountReference,
-        null,
-        "Merchant123",
-        null,
-        null,
-        null,
-        "Ref Number Merchant",
-        null,
-        new Date(),
-        new Date()
-        );
+        SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
+        spiSinglePayments.setCreditorAccount(accountReference);
+        spiSinglePayments.setCreditorAddress(null);
+        spiSinglePayments.setCreditorAgent("q");
+        spiSinglePayments.setCreditorName("Merchant123");
+        spiSinglePayments.setDebtorAccount(accountReference);
+        spiSinglePayments.setEndToEndIdentification(null);
+        spiSinglePayments.setInstructedAmount(amount);
+        spiSinglePayments.setRequestedExecutionDate(new Date());
+        spiSinglePayments.setRequestedExecutionTime(new Date());
+        spiSinglePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
+        spiSinglePayments.setUltimateCreditor(null);
+        spiSinglePayments.setPurposeCode(null);
+        spiSinglePayments.setUltimateDebtor(null);
+        return spiSinglePayments;
     }
 }

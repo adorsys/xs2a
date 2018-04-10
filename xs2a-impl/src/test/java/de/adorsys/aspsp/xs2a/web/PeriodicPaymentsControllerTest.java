@@ -2,9 +2,9 @@ package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
@@ -57,7 +57,7 @@ public class PeriodicPaymentsControllerTest {
 
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
-        assertThat(result.getBody().getTransaction_status().getName()).isEqualTo(expectedResult.getBody().getTransaction_status().getName());
+        assertThat(result.getBody().getTransactionStatus().getName()).isEqualTo(expectedResult.getBody().getTransactionStatus().getName());
         assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
     }
 
@@ -72,7 +72,7 @@ public class PeriodicPaymentsControllerTest {
 
     private PaymentInitialisationResponse getPaymentInitializationResponse() {
         PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
-        resp.setTransaction_status(TransactionStatus.ACCP);
+        resp.setTransactionStatus(TransactionStatus.ACCP);
         resp.set_links(new Links());
         return resp;
     }
