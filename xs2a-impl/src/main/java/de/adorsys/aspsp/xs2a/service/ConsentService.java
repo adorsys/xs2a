@@ -36,15 +36,15 @@ public class ConsentService {
     }
 
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
-        return consentSpi.createAccountConsents(consentMapper.mapSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred);
+        return consentSpi.createAccountConsents(consentMapper.mapToSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred);
     }
 
     public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        return consentMapper.mapGetAccountConsentStatusById(consentSpi.getAccountConsentStatusById(consentId));
+        return consentMapper.mapFromSpiTransactionStatus(consentSpi.getAccountConsentStatusById(consentId));
     }
 
     public AccountConsent getAccountConsentsById(String consentId) {
-        return consentMapper.mapGetAccountConsent(consentSpi.getAccountConsentById(consentId));
+        return consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
     }
 
     public boolean deleteAccountConsentsById(String consentId) {

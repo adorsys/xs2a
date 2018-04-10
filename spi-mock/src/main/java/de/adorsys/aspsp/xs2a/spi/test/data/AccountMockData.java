@@ -53,9 +53,6 @@ public class AccountMockData {
             case opening_booked:
                 balance.setOpeningBooked(sb);
                 break;
-            case closing_booked:
-                balance.setClosing_booked(sb);
-                break;
             case interim_available:
                 balance.setInterimAvailable(sb);
                 break;
@@ -66,25 +63,25 @@ public class AccountMockData {
         balances.add(balance);
     }
 
-    public static void addAccount(String ID, Currency currency, SpiBalances balance, String iban, String BIC, String name, String account_type) {
+    public static void addAccount(String ID, Currency currency, List<SpiBalances> balance, String iban, String BIC, String name, String account_type) {
         SpiAccountDetails accountDetails = createAccount(ID, currency, balance, iban, BIC, name, account_type);
         AccountMockData.accountDetails.add(accountDetails);
     }
 
-    public static SpiAccountDetails createAccount(String id, Currency currency, SpiBalances balance, String iban, String bic, String name, String accountType) {
+    public static SpiAccountDetails createAccount(String id, Currency currency, List<SpiBalances> balance, String iban, String bic, String name, String accountType) {
         return new SpiAccountDetails(
-            id,
-            iban,
-            null,
-            null,
-            null,
-            null,
-            currency,
-            name,
-            accountType,
-            null,
-            bic,
-            balance
+        id,
+        iban,
+        null,
+        null,
+        null,
+        null,
+        currency,
+        name,
+        accountType,
+        null,
+        bic,
+        balance
         );
     }
 
@@ -96,22 +93,22 @@ public class AccountMockData {
                                           String ultimateDebtor, String remittanceInformation) {
 
         SpiTransaction t = new SpiTransaction(transactionId,
-            "EndToEndId",
-            "MandateId",
-            "CreditorId",
-            createDate(nrDaysToBooking, when),
-            createDate(nrDaysToValue, when),
+        "EndToEndId",
+        "MandateId",
+        "CreditorId",
+        createDate(nrDaysToBooking, when),
+        createDate(nrDaysToValue, when),
         spiAmount,
-            creditorName,
-            creditorAccount,
-            ultimateCreditor,
-            debtorName,
-            debtorAccount,
-            ultimateDebtor,
-            "Ref Number Merchant",
-            "Ref Number Merchant",
-            "PurposeCode",
-            "BankTransactionCode"
+        creditorName,
+        creditorAccount,
+        ultimateCreditor,
+        debtorName,
+        debtorAccount,
+        ultimateDebtor,
+        "Ref Number Merchant",
+        "Ref Number Merchant",
+        "PurposeCode",
+        "BankTransactionCode"
         );
 
         spiTransactions.add(t);

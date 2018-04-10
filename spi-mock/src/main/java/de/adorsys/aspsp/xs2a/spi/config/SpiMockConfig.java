@@ -7,23 +7,47 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.impl.AccountSpiImpl;
+import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Configuration
+@Profile("mockspi")
 public class SpiMockConfig {
+    private Map<String, String> spiMockUrls;
+
+    @Value("${mockspi.baseurl:http://localhost:28080}")
+    private String mockSpiBaseUrl;
+
+    @Bean
+    public RemoteSpiUrls remoteSpiUrls() {
+        return new RemoteSpiUrls(mockSpiBaseUrl);
+    }
 
     public SpiMockConfig() {
         fillAccounts();
         fillConsents();
+    }
+
+    @Bean
+    public AccountSpi accountSpi() {
+        return new AccountSpiImpl(remoteSpiUrls());
+    }
+
+    @Bean
+    public ConsentSpi consentSpi() {
+        return new ConsentSpiImpl();
     }
 
     private void fillAccounts() {
@@ -64,11 +88,11 @@ public class SpiMockConfig {
             i++;
         }
 
-        AccountMockData.addAccount("11111-999999999", euro, AccountMockData.getBalances().get(0), "DE371234599999", "GENODEF1N02", "Müller", "SCT");
-        AccountMockData.addAccount("22222-999999999", euro, AccountMockData.getBalances().get(1), "DE371234599998", "GENODEF1N02", "Albert", "SCT");
-        AccountMockData.addAccount("33333-999999999", euro, AccountMockData.getBalances().get(2), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
-        AccountMockData.addAccount("44444-999999999", euro, AccountMockData.getBalances().get(3), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
-        AccountMockData.addAccount("55555-999999999", euro, AccountMockData.getBalances().get(4), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
+        AccountMockData.addAccount("11111-999999999", euro, AccountMockData.getBalances(), "DE371234599999", "GENODEF1N02", "Müller", "SCT");
+        AccountMockData.addAccount("22222-999999999", euro, AccountMockData.getBalances(), "DE371234599998", "GENODEF1N02", "Albert", "SCT");
+        AccountMockData.addAccount("33333-999999999", euro, AccountMockData.getBalances(), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT");
+        AccountMockData.addAccount("44444-999999999", euro, AccountMockData.getBalances(), "DE371234599996", "GENODEF1N02", "Telekom", "SCT");
+        AccountMockData.addAccount("55555-999999999", euro, AccountMockData.getBalances(), "DE371234599995", "GENODEF1N02", "Bauer", "SCT");
 
         AccountMockData.createAccountsHashMap();
 
@@ -76,30 +100,31 @@ public class SpiMockConfig {
         AccountMockData.getSpiAmounts().get(0), "12345",
         7, 4, "future",
         "debit", AccountMockData.getAccountDetails().get(3).getName(), convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(3)), "",
-        "", null, "", "Example for remittance information");
+        "debtor name", null, "", "Example for remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(4), "123456",
         4, 6, "future",
         "debit", AccountMockData.getAccountDetails().get(4).getName(), convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(4)), "",
-        "", null, "", "Another Example for remittance information");
+        "debtor name", null, "", "Another Example for remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(1), "123457",
         6, 10, "past",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(2)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
+        "debtor name", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
 
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(2), "1234578",
         17, 20, "past",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(2)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
+        "debtor name", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(2)), "", "remittance information");
+
         AccountMockData.createTransactions(
         AccountMockData.getSpiAmounts().get(3), "1234578",
         5, 3, "future",
         "credit", "", null, "",
-        "AccountMockData.getAccounts().get(1)", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(1)), "", "remittance information");
+        "debtor name", convertAccountDetailsToAccountReference(AccountMockData.getAccountDetails().get(1)), "", "remittance information");
 
     }
 

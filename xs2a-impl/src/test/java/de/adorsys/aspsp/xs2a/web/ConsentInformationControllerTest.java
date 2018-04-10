@@ -3,13 +3,13 @@ package de.adorsys.aspsp.xs2a.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
+import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,7 +98,7 @@ public class ConsentInformationControllerTest {
     @Test
     public void shouldFail_getAccountConsentsStatusById_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
+        HttpStatus expectedStatusCode = HttpStatus.FORBIDDEN;
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
@@ -137,9 +137,9 @@ public class ConsentInformationControllerTest {
     }
 
     @Test
-    public void getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() {
+    public void shouldFail_getAccountConsentsInformationById_wrongId_shouldReturnEmptyObject() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
+        HttpStatus expectedStatusCode = HttpStatus.FORBIDDEN;
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", null);
         String wrongId = "111111";
