@@ -2,35 +2,43 @@ package de.adorsys.aspsp.xs2a.domain.consents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.ApiDateConstants;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpiAccountConsentModelsTest {
-    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
-    private final String ALL_ACCOUNTS_AVAILABLE_REQ_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
-    private final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
+    private static final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
+    private static final String ALL_ACCOUNTS_AVAILABLE_REQ_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
+    private static final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
+    private final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
+    private static final Charset UTF_8 = Charset.forName("utf-8");
     private ObjectMapper mapper = new ObjectMapper();
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     public void createConsentReq_jsonTest() throws IOException {
         //Given:
-        String requestStringJson = getStringFromFile(CREATE_CONSENT_REQ_JSON_PATH);
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
 
         //When:
@@ -41,9 +49,59 @@ public class SpiAccountConsentModelsTest {
     }
 
     @Test
+    public void shouldFail_createConsentReqValidation_json() throws IOException {
+        //Given:
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_WRONG_JSON_PATH,UTF_8);
+
+        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldFail_createConsentReqValidation_object() throws IOException {
+        //Given:
+        CreateConsentReq wrongCreateConsentsRequest = getCreateConsentsRequestTest();
+        wrongCreateConsentsRequest.setAccess(null);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualOneViolation = validator.validate(wrongCreateConsentsRequest);
+
+        //Then:
+        assertThat(actualOneViolation.size()).isEqualTo(1);
+
+        //Given:
+        wrongCreateConsentsRequest.setValidUntil(null);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualTwoViolations = validator.validate(wrongCreateConsentsRequest);
+
+        //Then:
+        assertThat(actualTwoViolations.size()).isEqualTo(2);
+    }
+
+
+    @Test
+    public void createConsentReqValidation() throws IOException {
+        //Given:
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH,UTF_8);
+        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(0);
+    }
+
+    @Test
     public void createConsentAllAccountsAvailableReq_jsonTest() throws IOException {
         //Given:
-        String requestStringJson = getStringFromFile(ALL_ACCOUNTS_AVAILABLE_REQ_PATH);
+        String requestStringJson = IOUtils.resourceToString(ALL_ACCOUNTS_AVAILABLE_REQ_PATH, UTF_8);
         CreateConsentReq expectedRequest = getAicAvailableAccountsRequest();
 
         //When:
@@ -56,7 +114,7 @@ public class SpiAccountConsentModelsTest {
     @Test
     public void createConsentNoDedicateAccountReq_jsonTest() throws IOException {
         //Given:
-        String requestStringJson = getStringFromFile(NO_DEDICATE_REQ_PATH);
+        String requestStringJson = IOUtils.resourceToString(NO_DEDICATE_REQ_PATH, UTF_8);
         CreateConsentReq expectedRequest = getAicNoDedicatedAccountRequest();
 
         //When:
@@ -133,17 +191,10 @@ public class SpiAccountConsentModelsTest {
     private static Date getDateFromDateString(String dateString) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
-            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             return dateFormat.parse(dateString);
         } catch (ParseException e) {
             return null;
         }
-    }
-
-    private String getStringFromFile(String pathToFile) throws IOException {
-        InputStream inputStream = getClass().getResourceAsStream(pathToFile);
-
-        return (String) IOUtils.readLines(inputStream).stream()
-        .collect(Collectors.joining());
     }
 }
