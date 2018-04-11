@@ -5,5 +5,6 @@
   "name": "Schmidt",
   "accountType": "SCT",
   "bic": "GENODEF1N02",
+  "balances": [],
   "_links": {}
 }
