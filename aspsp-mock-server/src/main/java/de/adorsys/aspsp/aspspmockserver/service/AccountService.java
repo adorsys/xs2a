@@ -27,4 +27,12 @@ public class AccountService {
     public Optional<SpiAccountDetails> getAccount(String id) {
         return Optional.ofNullable(accountRepository.findOne(id));
     }
+
+    public boolean deleteAccountById(String id) {
+        if(accountRepository.exists(id)) {
+            accountRepository.delete(id);
+            return true;
+        }
+        return false;
+    }
 }
