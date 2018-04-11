@@ -121,7 +121,7 @@ public class PaymentMapper {
                    initialisationResponse.setTransactionStatus(consentMapper.mapFromSpiTransactionStatus(pir.getTransactionStatus()));
                    initialisationResponse.set_links(new Links());
                    return initialisationResponse;
-               }).orElse(null); //TODO Fill in th Linx
+               }).orElse(null); //TODO Fill in the Links
     }
 
     private SpiAddress mapToSpiAddress(Address address) {

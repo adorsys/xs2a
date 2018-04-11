@@ -24,10 +24,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -115,7 +112,10 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorSpiTransaction);
-        AccountReport actualAccountReport = accountMapper.mapFromSpiAccountReport(donorSpiTransactions);
+        Optional<AccountReport> aAR = accountMapper.mapFromSpiAccountReport(donorSpiTransactions);
+        AccountReport actualAccountReport;
+        actualAccountReport = aAR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
+
 
         //Then:
         assertThat(actualAccountReport.getBooked()[0].getTransactionId())
@@ -150,7 +150,7 @@ public class AccountMapperTest {
         return null;
     }
 
-    private static Instant getDate(String date)  {
+    private static Instant getDate(String date) {
         DateTimeFormatter FMT = new DateTimeFormatterBuilder()
                                 .appendPattern("yyyy-MM-dd")
                                 .parseDefaulting(ChronoField.NANO_OF_DAY, 0)

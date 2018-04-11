@@ -9,7 +9,6 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,13 +34,13 @@ public class PeriodicPaymentsController {
     public ResponseEntity<PaymentInitialisationResponse> initiationForStandingOrdersForRecurringOrPeriodicPayments(
     @ApiParam(name = "payment-product", value = "Named payment product", example = "sepa-credit-transfers")
     @PathVariable(name = "payment-product", required = true) String paymentProduct,
-    @ApiParam()
-    @RequestParam(name = "", required = false) boolean tppRedirectPreferred,
+    @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+    @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.")
     @RequestBody PeriodicPayment periodicPayment) {
         ResponseObject responseObject = paymentService.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, periodicPayment);
 
-        return responseMapper.okOrNotFound(responseObject);
+        return responseMapper.okOrByTransactionStatus(responseObject);
     }
 
 }

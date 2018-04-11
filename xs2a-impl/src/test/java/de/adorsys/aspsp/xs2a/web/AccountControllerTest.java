@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,8 +70,8 @@ public class AccountControllerTest {
     @Test
     public void getTransactions_onlyByPeriod() {
         //Given:
-        Date dateFrom = new Date();
-        Date dateTo = new Date();
+        Date dateFrom = getDateFromDateString("2017-12-12");
+        Date dateTo = getDateFromDateString("2018-12-12");
         String transactionId = "";
         boolean psuInvolved = false;
 
@@ -116,5 +120,14 @@ public class AccountControllerTest {
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isEqualTo(expectedResult);
+    }
+    private static Date getDateFromDateString(String dateString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

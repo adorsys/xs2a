@@ -43,7 +43,6 @@ public class PaymentInitialisationResponse {
     private Links _links;
 
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
-    @JsonIgnore
     private boolean tppRedirectPreferred;
 }
 
