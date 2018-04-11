@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import lombok.Data;

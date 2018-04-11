@@ -44,8 +44,8 @@ public class SpiMockConfig {
     }
 
     private void fillPayments() {
-        PaymentMockData.createPaymentInitiation(getPisRequest_1(), "529e0507-7539-4a65-9b74-bdf87061e99b", false);
-        PaymentMockData.createPaymentInitiation(getPisRequest_2(), generatePaymentId(),false);
+        PaymentMockData.createPaymentInitiation(getPisRequest_1(), false);
+        PaymentMockData.createPaymentInitiation(getPisRequest_2(), false);
     }
 
     @Bean

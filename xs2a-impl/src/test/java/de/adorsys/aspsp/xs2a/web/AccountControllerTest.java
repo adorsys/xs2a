@@ -2,6 +2,9 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.junit.Test;
@@ -78,13 +81,26 @@ public class AccountControllerTest {
         checkTransactionResults(ACCOUNT_ID, dateFrom, dateTo, transactionId, psuInvolved);
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void shouldFail_getTransactions_noTransactionIdNoPsuInvolved() {
         //Given:
         String transactionId = "";
         boolean psuInvolved = false;
+        HttpStatus expectedStatusCode = HttpStatus.BAD_REQUEST;
 
-        checkTransactionResults(ACCOUNT_ID, null, null, transactionId, psuInvolved);
+        //When:
+        ResponseEntity actualResponse = accountController.getTransactions(ACCOUNT_ID,null, null, transactionId, psuInvolved, "both", false, false);
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isInstanceOf(MessageError.class);
+
+        MessageError messageError = (MessageError) actualResponse.getBody();
+
+        assertThat(messageError.getTppMessage().getCategory()).isEqualTo(MessageCategory.ERROR);
+        assertThat(messageError.getTppMessage().getCode()).isEqualTo(MessageCode.FORMAT_ERROR);
     }
 
     private void checkTransactionResults(String accountId, Date dateFrom, Date dateTo, String transactionId,

@@ -4,10 +4,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class PaymentMockData {
 
@@ -15,12 +12,16 @@ public class PaymentMockData {
 
     public static SpiTransactionStatus getPaymentStatusById(String paymentId) {
         return Optional.ofNullable(paymentMap.get(paymentId))
-        .map(SpiPaymentInitialisationResponse::getTransactionStatus)
-        .orElse(null);
+                       .map(SpiPaymentInitialisationResponse::getTransactionStatus)
+                       .orElse(null);
     }
 
-    public static String createPaymentInitiation(SpiSinglePayments spiSinglePayments, String givenPaymentId, boolean tppRedirectPreferred) {
-        String paymentId = givenPaymentId;
+    public static SpiPaymentInitialisationResponse createMultiplePayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        return paymentMap.get(createPaymentInitiation(null, tppRedirectPreferred));
+    }
+
+    public static String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+        String paymentId = generatePaymentId();
         SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
         response.setTransactionStatus(SpiTransactionStatus.ACCP);
         response.setPaymentId(paymentId);
@@ -30,9 +31,12 @@ public class PaymentMockData {
         response.setPsuMessage(null);
         response.setTppMessages(new String[0]);
         response.setSpiTransactionFeeIndicator(false);
-        paymentMap.put(paymentId,response);
+        paymentMap.put(paymentId, response);
         return paymentId;
     }
 
+    private static String generatePaymentId() {
+        return UUID.randomUUID().toString();
+    }
 }
 

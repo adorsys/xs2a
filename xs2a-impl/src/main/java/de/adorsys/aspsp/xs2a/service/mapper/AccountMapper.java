@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
@@ -19,7 +19,7 @@ import static java.util.Optional.ofNullable;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
-class AccountMapper {
+public class AccountMapper {
     public List<AccountDetails> mapFromSpiAccountDetailsList(List<SpiAccountDetails> spiAccountDetailsList) {
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
@@ -95,7 +95,7 @@ class AccountMapper {
                .orElse(null);
     }
 
-    private Amount mapFromSpiAmount(SpiAmount spiAmount) {
+    public Amount mapFromSpiAmount(SpiAmount spiAmount) {
         return Optional.ofNullable(spiAmount)
                .map(a -> {
                    Amount amount = new Amount();
