@@ -7,7 +7,6 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
@@ -32,22 +31,22 @@ public class PaymentService {
         paymentStatusResponse.put("transactionStatus", transactionStatus);
         if (transactionStatus == null) {
             return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
-            .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
+                                                                 .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
         }
         return new ResponseObject<>(paymentStatusResponse);
     }
 
     public String createPaymentInitiationAndReturnId(SinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
-        return paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinlePayments(paymentInitiationRequest),tppRedirectPreferred);
+        return paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinlePayments(paymentInitiationRequest), tppRedirectPreferred);
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
 
         PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponsepaymentSpi(
-        paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
+                paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
 
         return response == null
-        ? new ResponseObject(MessageCode.PAYMENT_FAILED)
-        : new ResponseObject<>(response);
+                       ? new ResponseObject(MessageCode.PAYMENT_FAILED)
+                       : new ResponseObject<>(response);
     }
 }
