@@ -1,14 +1,10 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitiation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
@@ -45,8 +41,9 @@ public class PaymentSpiImpl implements PaymentSpi {
                                                            .equals(payment.getCreditorAccount().getIban()));
         return isPresent ? "ACCP" : "RJCT";
     }
-    public SpiPaymentInitiation createBulkPayments(List<SpiSinglePayment> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        return PaymentMockData.createMultiplePayments(payments,paymentProduct,tppRedirectPreferred);
+
+    public SpiPaymentInitialisationResponse createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        return PaymentMockData.createMultiplePayments(payments, paymentProduct, tppRedirectPreferred);
     }
 
 }

@@ -48,8 +48,9 @@ public class PaymentInitiationRequestHeader extends CommonRequestHeader {
     @JsonProperty(value = "psu-agent")
     private String psuAgent;
 
-    @ApiModelProperty(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP", required = false, example = "192.168.8.78")
+    @ApiModelProperty(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP", required = true, example = "192.168.8.78")
     @JsonProperty(value = "psu-ip-address")
+    @NotNull
     private String psuIpAddress;
 
     @ApiModelProperty(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP", required = false, example = "GEO:52.506931,13.144558")

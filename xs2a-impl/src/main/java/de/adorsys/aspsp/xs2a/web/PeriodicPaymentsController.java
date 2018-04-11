@@ -31,6 +31,10 @@ public class PeriodicPaymentsController {
     @ApiResponse(code = 200, message = "OK"),
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{payment-product}", method = RequestMethod.POST)
+    @ApiImplicitParams({
+    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"),
+    @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> initiationForStandingOrdersForRecurringOrPeriodicPayments(
     @ApiParam(name = "payment-product", value = "Named payment product", example = "sepa-credit-transfers")
     @PathVariable(name = "payment-product", required = true) String paymentProduct,

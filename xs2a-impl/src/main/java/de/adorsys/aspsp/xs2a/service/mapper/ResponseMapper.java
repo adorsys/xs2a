@@ -20,6 +20,11 @@ public class ResponseMapper {
                                    ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
+    public ResponseEntity createdOrBadRequest(ResponseObject response) {
+        return getEntity(response, response.getBody() != null
+                                           ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
+    }
+
     private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {
         MessageError messageError = response.getError();
         return messageError != null

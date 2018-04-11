@@ -3,16 +3,18 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,19 +28,45 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById_successesResult() {
         //Given:
-        String paymentProduct = "123123";
         boolean tppRedirectPreferred = false;
         SinglePayments expectedRequest = getCreatePaymentInitiationRequestTest();
         String validAccountConsentsId = paymentService.createPaymentInitiationAndReturnId(expectedRequest, tppRedirectPreferred);
         TransactionStatus expectedStatus = TransactionStatus.ACCP;
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, periodicPayment);
         ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(validAccountConsentsId);
 
         //Then:
         assertThat(actualStatus.getBody()).isNotNull();
         assertThat(actualStatus.getBody().get("transactionStatus")).isEqualTo(expectedStatus);
+    }
+
+    @Test
+    public void getPaymentStatusById_wrongId() {
+        //Given:
+        String wrongId = "111111";
+
+        //When:
+        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(wrongId);
+
+        //Then:
+        assertThat(actualStatus.getBody()).isNull();
+        assertThat(actualStatus.getError().getTppMessage().getCode()).isEqualTo(MessageCode.PRODUCT_UNKNOWN);
+    }
+
+    @Test
+    public void createBulkPayments() {
+        // Given
+        List<SinglePayments> payments = Collections.singletonList(getCreatePaymentInitiationRequestTest());
+        PaymentProduct paymentProduct = PaymentProduct.SCT;
+        boolean tppRedirectPreferred = false;
+
+        //When:
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
+
+        //Then:
+        assertThat(actualResponse.getBody()).isNotNull();
+        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.ACCP);
     }
 
     private SinglePayments getCreatePaymentInitiationRequestTest() {
@@ -60,18 +88,5 @@ public class PaymentServiceTest {
         singlePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
 
         return singlePayments;
-    }
-
-    @Test
-    public void getPaymentStatusById_wrongId() {
-        //Given:
-        String wrongId = "111111";
-
-        //When:
-        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(wrongId);
-
-        //Then:
-        assertThat(actualStatus.getBody()).isNull();
-        assertThat(actualStatus.getError().getTppMessage().getCode()).isEqualTo(MessageCode.PRODUCT_UNKNOWN);
     }
 }

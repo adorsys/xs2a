@@ -1,40 +1,32 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiation;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitiation;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import lombok.AllArgsConstructor;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
-
-@AllArgsConstructor
-import java.util.List;
-
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+
 @Service
+@AllArgsConstructor
 public class PaymentService {
+    private String redirectLinkToSource;
     private final MessageService messageService;
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
@@ -49,17 +41,9 @@ public class PaymentService {
         }
         return new ResponseObject<>(paymentStatusResponse);
     }
-    private String redirectLinkToSource;
-    private PaymentSpi paymentSpi;
-    private de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper paymentMapper;
 
     public String createPaymentInitiationAndReturnId(SinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
         return paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayments(paymentInitiationRequest), tppRedirectPreferred);
-    @Autowired
-    public PaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, String redirectLinkToSource) {
-        this.paymentSpi = paymentSpi;
-        this.paymentMapper = paymentMapper;
-        this.redirectLinkToSource = redirectLinkToSource;
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
@@ -72,17 +56,17 @@ public class PaymentService {
                        : new ResponseObject<>(response);
     }
 
-    public PaymentInitiation createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<PaymentInitialisationResponse> createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
 
-        List<SpiSinglePayment> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
-        SpiPaymentInitiation spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
-        PaymentInitiation paymentInitiation = paymentMapper.mapFromSpiPaymentInitiation(spiPaymentInitiation);
+        List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
+        SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
+        PaymentInitialisationResponse paymentInitiation = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
 
         Links links = new Links();
         links.setRedirect(redirectLinkToSource);
-        links.setSelf(linkTo(PaymentInitiationController.class).slash(paymentProduct).slash(paymentInitiation.getPaymentId()).toString());
+        links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
         paymentInitiation.set_links(links);
 
-        return paymentInitiation;
+        return new ResponseObject<PaymentInitialisationResponse>(paymentInitiation);
     }
 }
