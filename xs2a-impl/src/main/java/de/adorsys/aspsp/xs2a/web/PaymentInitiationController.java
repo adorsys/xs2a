@@ -55,8 +55,4 @@ public class PaymentInitiationController {
         // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
         return null;
     }
-
 }
-
-
-

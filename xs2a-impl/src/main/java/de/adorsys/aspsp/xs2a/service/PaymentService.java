@@ -42,7 +42,7 @@ public class PaymentService {
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
 
-        PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponsepaymentSpi(
+        PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponse(
                 paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
 
         return response == null
