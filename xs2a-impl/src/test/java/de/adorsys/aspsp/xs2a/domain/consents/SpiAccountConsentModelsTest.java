@@ -9,10 +9,16 @@ import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.Date;
@@ -24,9 +30,10 @@ public class SpiAccountConsentModelsTest {
     private static final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private static final String ALL_ACCOUNTS_AVAILABLE_REQ_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
     private static final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
+    private final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
-
     private ObjectMapper mapper = new ObjectMapper();
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     public void createConsentReq_jsonTest() throws IOException {
@@ -39,6 +46,56 @@ public class SpiAccountConsentModelsTest {
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);
+    }
+
+    @Test
+    public void shouldFail_createConsentReqValidation_json() throws IOException {
+        //Given:
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_WRONG_JSON_PATH,UTF_8);
+
+        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldFail_createConsentReqValidation_object() throws IOException {
+        //Given:
+        CreateConsentReq wrongCreateConsentsRequest = getCreateConsentsRequestTest();
+        wrongCreateConsentsRequest.setAccess(null);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualOneViolation = validator.validate(wrongCreateConsentsRequest);
+
+        //Then:
+        assertThat(actualOneViolation.size()).isEqualTo(1);
+
+        //Given:
+        wrongCreateConsentsRequest.setValidUntil(null);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualTwoViolations = validator.validate(wrongCreateConsentsRequest);
+
+        //Then:
+        assertThat(actualTwoViolations.size()).isEqualTo(2);
+    }
+
+
+    @Test
+    public void createConsentReqValidation() throws IOException {
+        //Given:
+        String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH,UTF_8);
+        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+
+        //When:
+        Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
+
+        //Then:
+        assertThat(actualViolations.size()).isEqualTo(0);
     }
 
     @Test

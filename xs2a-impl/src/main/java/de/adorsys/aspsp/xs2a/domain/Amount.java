@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotNull;
 import java.util.Currency;
 
 @Data
@@ -11,8 +13,10 @@ import java.util.Currency;
 public class Amount {
 
 	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
-	private Currency currency;
+    @NotNull
+    private Currency currency;
 
 	@ApiModelProperty(value = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
-	private String content;
+    @NotNull
+    private String content;
 }
