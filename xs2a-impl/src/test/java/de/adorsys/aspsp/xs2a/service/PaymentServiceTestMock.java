@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.web;
+package de.adorsys.aspsp.xs2a.service;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.Links;
@@ -6,7 +6,9 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -28,35 +28,34 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PeriodicPaymentsControllerTest {
+public class PaymentServiceTestMock {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
     @Autowired
-    private PeriodicPaymentsController periodicPaymentsController;
-
-    @MockBean(name = "paymentService")
     private PaymentService paymentService;
+
+    @MockBean(name = "paymentSpi")
+    private PaymentSpi paymentSpi;
 
     @Before
     public void setUp() {
-        when(paymentService.initiatePeriodicPayment(any(), anyBoolean(), any())).thenReturn(readResponseObject());
+        when(paymentSpi.initiatePeriodicPayment(any(), anyBoolean(), any())).thenReturn(readSpiPaymentInitializationResponse());
     }
 
     @Test
-    public void initiationForStandingOrdersForRecurringOrPeriodicPayments() throws IOException {
-        //Given
-        String paymentProduct = "123123";
+    public void initiatePeriodicPayment() throws IOException {
+        //Given:
+        String paymentProdct = "123123";
         boolean tppRedirectPreferred = false;
         PeriodicPayment periodicPayment = readPeriodicPayment();
-        ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.OK);
+        ResponseObject<PaymentInitialisationResponse> expectedResult = readResponseObject();
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController
-                                                               .initiationForStandingOrdersForRecurringOrPeriodicPayments(paymentProduct, tppRedirectPreferred, periodicPayment);
+        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(paymentProdct, tppRedirectPreferred, periodicPayment);
 
-        //Then:
-        assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
+        //Than:
+        assertThat(result.getError()).isEqualTo(expectedResult.getError());
         assertThat(result.getBody().getTransactionStatus().getName()).isEqualTo(expectedResult.getBody().getTransactionStatus().getName());
         assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
     }
@@ -76,4 +75,12 @@ public class PeriodicPaymentsControllerTest {
         resp.set_links(new Links());
         return resp;
     }
+
+    private SpiPaymentInitialisationResponse readSpiPaymentInitializationResponse() {
+        SpiPaymentInitialisationResponse resp = new SpiPaymentInitialisationResponse();
+        resp.setTransactionStatus(SpiTransactionStatus.ACCP);
+
+        return resp;
+    }
+
 }

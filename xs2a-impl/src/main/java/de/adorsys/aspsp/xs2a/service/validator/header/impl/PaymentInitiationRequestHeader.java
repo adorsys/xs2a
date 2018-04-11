@@ -16,9 +16,8 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentInitiationRequestHeader extends CommonRequestHeader {
 
-    @ApiModelProperty(value = "Content type", required = true, example = "application/json")
+    @ApiModelProperty(value = "Content type", example = "application/json")
     @JsonProperty(value = "content-type")
-    @NotNull
     private ContentType contentType;
 
     @ApiModelProperty(value = "Might be mandated in the ASPSP's documentation, if OAuth is not chosen as Pre-Step", required = false, example = "PSU-1234")
