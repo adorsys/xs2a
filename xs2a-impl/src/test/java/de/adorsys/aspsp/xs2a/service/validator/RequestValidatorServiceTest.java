@@ -48,7 +48,6 @@ public class RequestValidatorServiceTest {
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
-        assertThat(actualViolations.get("tppRequestId")).isEqualTo("may not be null");
     }
 
     @Test

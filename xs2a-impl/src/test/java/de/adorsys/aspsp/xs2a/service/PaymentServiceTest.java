@@ -45,13 +45,13 @@ public class PaymentServiceTest {
     @Test
     public void initiatePeriodicPayment() throws IOException {
         //Given:
-        String paymentProdct = "123123";
+        String paymentProduct = "123123";
         boolean tppRedirectPreferred = false;
         PeriodicPayment periodicPayment = readPeriodicPayment();
         ResponseObject<PaymentInitialisationResponse> expectedResult = readResponseObject();
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(paymentProdct, tppRedirectPreferred, periodicPayment);
+        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, periodicPayment);
 
         //Than:
         assertThat(result.getError()).isEqualTo(expectedResult.getError());

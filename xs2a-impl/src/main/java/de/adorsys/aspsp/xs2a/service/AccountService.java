@@ -3,8 +3,6 @@ package de.adorsys.aspsp.xs2a.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -59,8 +56,9 @@ public class AccountService {
                                       ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
                                       : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
 
-        return accountReport.map(accountReport1 ->
-                                 new ResponseObject<>(getReportAccordingMaxSize(accountReport1, accountId)))
+        return Optional.of(accountReport)
+               .map(aR ->
+                                 new ResponseObject<>(getReportAccordingMaxSize(aR, accountId)))
                .orElseGet(() ->
                           new ResponseObject(getReportAccordingMaxSize(new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()), accountId)));
     }
@@ -100,12 +98,12 @@ public class AccountService {
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
                                                    Date dateTo, boolean psuInvolved, boolean withBalance) {
-        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
+        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved)).get();
     }
 
     private AccountReport readTransactionsById(String accountId, String transactionId,
                                                boolean psuInvolved, boolean withBalance) {
-        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
+        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved)).get();
     }
 
     public AccountReport getAccountReportWithDownloadLink(String accountId) {
