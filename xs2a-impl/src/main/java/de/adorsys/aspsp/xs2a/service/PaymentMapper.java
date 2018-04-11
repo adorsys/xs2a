@@ -31,7 +31,7 @@ public class PaymentMapper {
         .orElse(null);
     }
 
-    public SpiSinglePayments mapToSpiSinlePayments(SinglePayments paymentInitiationRequest) {
+    public SpiSinglePayments mapToSpiSinglePayments(SinglePayments paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
         .map(paymentRe -> {
             SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
