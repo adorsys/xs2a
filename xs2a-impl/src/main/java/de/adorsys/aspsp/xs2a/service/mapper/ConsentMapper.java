@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-class ConsentMapper {
+public class ConsentMapper {
     public TransactionStatus mapFromSpiTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
                .map(ts -> TransactionStatus.valueOf(ts.name()))
