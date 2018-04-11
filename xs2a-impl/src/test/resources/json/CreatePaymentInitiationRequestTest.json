@@ -1,0 +1,10 @@
+{
+  "transactionFees": {
+    "currency": "EUR",
+    "content": "20"
+  },
+  "transactionFeeIndicator": "true",
+  "scaMethods": [],
+  "psuMessage": "",
+  "tppMessages": []
+}
