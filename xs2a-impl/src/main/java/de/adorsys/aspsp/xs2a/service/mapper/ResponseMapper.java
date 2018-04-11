@@ -29,6 +29,11 @@ public class ResponseMapper {
                                            ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
     }
 
+    public ResponseEntity okOrBadRequest(ResponseObject response) {
+        return getEntity(response, response.getBody() != null
+                                   ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
     public ResponseEntity okOrByTransactionStatus(ResponseObject response) {
         PaymentInitialisationResponse pi = (PaymentInitialisationResponse) response.getBody();
         return (pi.getTransactionStatus() == TransactionStatus.ACCP)

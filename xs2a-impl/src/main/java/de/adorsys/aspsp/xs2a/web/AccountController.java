@@ -118,11 +118,8 @@ public class AccountController {
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
 
-        try {
-            ResponseObject<AccountReport> responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
-            return responseMapper.okOrNotFound(responseObject);
-        } catch (ValidationException ex) {
-            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        ResponseObject responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
+
+        return (ResponseEntity<AccountReport>) responseMapper.okOrBadRequest(responseObject);
     }
 }

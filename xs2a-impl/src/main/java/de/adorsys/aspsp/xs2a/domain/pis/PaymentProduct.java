@@ -22,6 +22,7 @@ public enum PaymentProduct {
     public String getCode() {
         return code;
     }
+
     public static PaymentProduct forValue(String code) {
         for (PaymentProduct prod : values()) {
             if (prod.code.equals(code)) {

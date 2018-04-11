@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.ValidationException;
 import java.util.*;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -58,12 +59,25 @@ public class AccountService {
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
             return new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
         } else {
-            AccountReport accountReport = StringUtils.isEmpty(transactionId)
-                                          ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
-                                          : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
 
-            return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
+            try {
+                AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
+
+                return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
+            } catch (ValidationException ex) {
+
+                TppMessageInformation tppMessageInformation = new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR);
+                tppMessageInformation.setText(ex.getMessage());
+
+                return new ResponseObject<>(new MessageError(tppMessageInformation));
+            }
         }
+    }
+
+    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
+        return StringUtils.isEmpty(transactionId)
+                                      ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+                                      : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 
     private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance) {
