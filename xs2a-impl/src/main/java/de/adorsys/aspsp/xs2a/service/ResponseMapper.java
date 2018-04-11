@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import org.springframework.http.HttpStatus;
@@ -23,10 +24,10 @@ public class ResponseMapper {
 
     public ResponseEntity okOrByTransactionStatus(ResponseObject response) {
         PaymentInitialisationResponse pi = (PaymentInitialisationResponse) response.getBody();
-        return (pi.getTransaction_status() == TransactionStatus.ACCP)
+        return (pi.getTransactionStatus() == TransactionStatus.ACCP)
                ? new ResponseEntity<>(response.getBody(), HttpStatus.OK)
                : new ResponseEntity<>(
-        new MessageError(pi.getTransaction_status(), new TppMessageInformation(MessageCategory.ERROR, MessageCode.PAYMENT_FAILED)),
+        new MessageError(pi.getTransactionStatus(), new TppMessageInformation(MessageCategory.ERROR, MessageCode.PAYMENT_FAILED)),
         HttpStatus.valueOf(MessageCode.PAYMENT_FAILED.getCode()));
     }
 

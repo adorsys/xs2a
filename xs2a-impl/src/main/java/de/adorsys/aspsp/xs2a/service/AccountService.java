@@ -3,6 +3,8 @@ package de.adorsys.aspsp.xs2a.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -52,15 +54,15 @@ public class AccountService {
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
-        AccountReport accountReport = StringUtils.isEmpty(transactionId)
-                                      ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
-                                      : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
+        if (accountSpi.readAccountDetails(accountId, false, false) == null) {
+            return new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
+        } else {
+            AccountReport accountReport = StringUtils.isEmpty(transactionId)
+                                          ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+                                          : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
 
-        return Optional.of(accountReport)
-               .map(aR ->
-                                 new ResponseObject<>(getReportAccordingMaxSize(aR, accountId)))
-               .orElseGet(() ->
-                          new ResponseObject(getReportAccordingMaxSize(new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()), accountId)));
+            return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
+        }
     }
 
     private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance) {
@@ -98,12 +100,19 @@ public class AccountService {
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
                                                    Date dateTo, boolean psuInvolved, boolean withBalance) {
-        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved)).get();
+        Optional result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
+
+        return (result.isPresent()) ? (AccountReport) result.get()
+               : new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links());
     }
 
     private AccountReport readTransactionsById(String accountId, String transactionId,
                                                boolean psuInvolved, boolean withBalance) {
-        return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved)).get();
+        Optional result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
+
+        return (result.isPresent()) ? (AccountReport) result.get()
+               : new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links());
+
     }
 
     public AccountReport getAccountReportWithDownloadLink(String accountId) {
