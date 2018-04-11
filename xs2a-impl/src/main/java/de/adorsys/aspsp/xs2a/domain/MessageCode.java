@@ -68,8 +68,12 @@ public enum MessageCode {
         this.code = code;
     }
 
-    @JsonValue
     public int getCode() {
         return code;
+    }
+
+    @JsonValue
+    public String getName() {
+        return this.name();
     }
 }

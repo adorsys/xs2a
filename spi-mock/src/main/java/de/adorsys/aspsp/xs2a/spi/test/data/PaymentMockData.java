@@ -1,44 +1,38 @@
 package de.adorsys.aspsp.xs2a.spi.test.data;
 
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitiation;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 
 import java.util.*;
 
 public class PaymentMockData {
 
-    private static Map<String, SpiPaymentInitiation> paymentMap = new HashMap<>();
-
-    public String createSpiSinglePayment(SpiSinglePayment spiSinglePayment) {
-        return "";
-    }
-
-    public static SpiPaymentInitiation createMultiplePayments(List<SpiSinglePayment> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        return paymentMap.get(createPaymentInitiation());
-    }
+    private static Map<String, SpiPaymentInitialisationResponse> paymentMap = new HashMap<>();
 
     public static SpiTransactionStatus getPaymentStatusById(String paymentId) {
-        SpiPaymentInitiation spiPaymentInitiation = paymentMap.get(paymentId);
-        if (spiPaymentInitiation != null) {
-            return spiPaymentInitiation.getSpiTransactionStatus();
-        }
-        return null;
+        return Optional.ofNullable(paymentMap.get(paymentId))
+        .map(SpiPaymentInitialisationResponse::getTransactionStatus)
+        .orElse(null);
     }
 
-    public static String createPaymentInitiation() {
+    public static SpiPaymentInitialisationResponse createMultiplePayments(List<SpiSinglePayment> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        return paymentMap.get(createPaymentInitiation(tppRedirectPreferred));
+    }
 
+    public static String createPaymentInitiation(boolean tppRedirectPreferred) {
         String paymentId = generatePaymentId();
-        paymentMap.put(paymentId, new SpiPaymentInitiation(
-        SpiTransactionStatus.ACCP,
-        paymentId,
-        new SpiAmount(Currency.getInstance("EUR"), "0"),
-        false,
-        new String[]{},
-        "psu processing",
-        new String[]{"tpp processing"}));
-
+        SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
+        response.setTransactionStatus(SpiTransactionStatus.ACCP);
+        response.setPaymentId(paymentId);
+        response.setScaMethods(null);
+        response.setTppRedirectPreferred(tppRedirectPreferred);
+        response.setSpiTransactionFees(null);
+        response.setPsuMessage(null);
+        response.setTppMessages(new String[0]);
+        response.setSpiTransactionFeeIndicator(false);
+        paymentMap.put(paymentId,response);
+        System.out.println("Payment id: " + paymentId);
         return paymentId;
     }
 
@@ -46,3 +40,4 @@ public class PaymentMockData {
         return UUID.randomUUID().toString();
     }
 }
+
