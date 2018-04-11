@@ -46,7 +46,7 @@ public class PaymentInitiationController {
     @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
-    @ApiParam(name = "paymentId", value = "Resource Identification of the related payment")
+    @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
         return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId));
     }

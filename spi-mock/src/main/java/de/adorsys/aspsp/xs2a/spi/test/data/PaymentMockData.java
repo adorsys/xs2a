@@ -19,8 +19,8 @@ public class PaymentMockData {
         .orElse(null);
     }
 
-    public static String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
-        String paymentId = generatePaymentId();
+    public static String createPaymentInitiation(SpiSinglePayments spiSinglePayments, String givenPaymentId, boolean tppRedirectPreferred) {
+        String paymentId = givenPaymentId;
         SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
         response.setTransactionStatus(SpiTransactionStatus.ACCP);
         response.setPaymentId(paymentId);
@@ -31,12 +31,8 @@ public class PaymentMockData {
         response.setTppMessages(new String[0]);
         response.setSpiTransactionFeeIndicator(false);
         paymentMap.put(paymentId,response);
-        System.out.println("Payment id: " + paymentId);
         return paymentId;
     }
 
-    private static String generatePaymentId() {
-        return UUID.randomUUID().toString();
-    }
 }
 

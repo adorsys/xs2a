@@ -21,8 +21,8 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
-        return PaymentMockData.createPaymentInitiation(spiSinglePayments, tppRedirectPreferred);
+    public String createPaymentInitiation(SpiSinglePayments spiSinglePayments, String givenPaymentId, boolean tppRedirectPreferred) {
+        return PaymentMockData.createPaymentInitiation(spiSinglePayments, givenPaymentId, tppRedirectPreferred);
     }
 
     @Override
