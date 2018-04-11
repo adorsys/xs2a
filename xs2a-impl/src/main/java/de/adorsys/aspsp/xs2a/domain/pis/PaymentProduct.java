@@ -11,15 +11,15 @@ public enum PaymentProduct {
     T2P("target-2-payments"),
     CBCT("cross-border-credit-transfers");
 
-    private String name;
+    private String code;
 
     @JsonCreator
-    PaymentProduct(String name) {
-        this.name = name;
+    PaymentProduct(String code) {
+        this.code = code;
     }
 
     @JsonValue
-    public String getName() {
-        return name;
+    public String getCode() {
+        return code;
     }
 }

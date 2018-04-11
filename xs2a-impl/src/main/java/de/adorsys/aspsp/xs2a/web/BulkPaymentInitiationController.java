@@ -23,12 +23,12 @@ public class BulkPaymentInitiationController {
     @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping("/{payment-product}")
     public PaymentInitiation createBulkPaymentInitiation(
-    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers")
-    @PathVariable("payment-product") PaymentProduct paymentProduct,
+    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
+    @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @RequestBody List<SinglePayments> payments) {
 
-        return paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
+        return paymentService.createBulkPayments(payments, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred);
     }
 }

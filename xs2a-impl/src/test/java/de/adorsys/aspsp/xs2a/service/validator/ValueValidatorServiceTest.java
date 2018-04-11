@@ -1,13 +1,13 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.validation.ValidationException;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -54,7 +54,7 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-        .hasMessageContaining("[transactionId : may not be null]");
+        .isInstanceOf(ValidationException.class);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-        .hasMessageContaining("[accountId : may not be null]");
+        .isInstanceOf(ValidationException.class);
     }
 
     @Test
@@ -77,6 +77,6 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class))
-        .hasMessageContaining("[dateFrom : may not be null]");
+        .isInstanceOf(ValidationException.class);
     }
 }

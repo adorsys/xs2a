@@ -46,7 +46,7 @@ public class PaymentService {
     public PaymentInitiation createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
 
         List<SpiSinglePayment> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
-        SpiPaymentInitiation spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getName(), tppRedirectPreferred);
+        SpiPaymentInitiation spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
         PaymentInitiation paymentInitiation = paymentMapper.mapFromSpiPaymentInitiation(spiPaymentInitiation);
 
         Links links = new Links();

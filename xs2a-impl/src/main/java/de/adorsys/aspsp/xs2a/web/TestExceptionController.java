@@ -2,7 +2,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.service.ExceptionService;
-import de.adorsys.aspsp.xs2a.service.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

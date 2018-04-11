@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.exception.MessageError;

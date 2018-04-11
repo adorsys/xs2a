@@ -4,12 +4,11 @@ import de.adorsys.aspsp.xs2a.domain.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
-import de.adorsys.aspsp.xs2a.service.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
