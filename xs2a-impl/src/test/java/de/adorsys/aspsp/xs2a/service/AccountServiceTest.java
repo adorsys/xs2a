@@ -303,7 +303,9 @@ public class AccountServiceTest {
     }
 
     private AccountReport getAccountReport(String accountId) {
-        AccountReport accountReport = accountMapper.mapFromSpiAccountReport(getTransactionList());
+        Optional<AccountReport> aR = accountMapper.mapFromSpiAccountReport(getTransactionList());
+        AccountReport accountReport;
+        accountReport = aR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
         String jsonReport = null;
 
         ObjectMapper objectMapper = new ObjectMapper();

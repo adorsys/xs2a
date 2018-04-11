@@ -9,13 +9,13 @@ import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
-
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
@@ -54,21 +54,19 @@ class AccountMapper {
 
     private CashAccountType mapFromSpiAccountType(SpiAccountType spiAccountType) {
         return Optional.ofNullable(spiAccountType)
-        .map(type -> CashAccountType.valueOf(type.name()))
-        .orElse(null);
+               .map(type -> CashAccountType.valueOf(type.name()))
+               .orElse(null);
     }
 
     public List<Balances> mapFromSpiBalancesList(List<SpiBalances> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
-            return null;
+            return new ArrayList<>();
         }
 
         return spiBalances
-        .stream()
-        .map(this::mapFromSpiBalances)
-        .collect(Collectors.toList());
-
-
+               .stream()
+               .map(this::mapFromSpiBalances)
+               .collect(Collectors.toList());
     }
 
     private Balances mapFromSpiBalances(SpiBalances spiBalances) {
@@ -114,9 +112,10 @@ class AccountMapper {
                .orElse(null);
     }
 
-    public AccountReport mapFromSpiAccountReport(List<SpiTransaction> spiTransactions) {
-        if (CollectionUtils.isEmpty(spiTransactions)) {
-            return null;
+    public Optional<AccountReport> mapFromSpiAccountReport(List<SpiTransaction> spiTransactions) {
+
+        if (spiTransactions.isEmpty()) {
+            return Optional.empty();
         }
 
         Transactions[] booked = spiTransactions
@@ -131,7 +130,7 @@ class AccountMapper {
                                  .map(this::mapFromSpiTransaction)
                                  .toArray(Transactions[]::new);
 
-        return new AccountReport(booked, pending, new Links());
+        return Optional.of(new AccountReport(booked, pending, new Links()));
     }
 
     private Transactions mapFromSpiTransaction(SpiTransaction spiTransaction) {
@@ -177,21 +176,21 @@ class AccountMapper {
 
     }
 
-    public SpiAccountReference toSpi(AccountReference account){
+    public SpiAccountReference toSpi(AccountReference account) {
         return ofNullable(account)
-            .map(ac -> new SpiAccountReference(ac.getAccountId(),
-                ac.getIban(),
-                ac.getBban(),
-                ac.getPan(),
-                ac.getMaskedPan(),
-                ac.getMsisdn(),
-                ac.getCurrency()))
-            .orElse(null);
+               .map(ac -> new SpiAccountReference(ac.getAccountId(),
+               ac.getIban(),
+               ac.getBban(),
+               ac.getPan(),
+               ac.getMaskedPan(),
+               ac.getMsisdn(),
+               ac.getCurrency()))
+               .orElse(null);
     }
 
-    public SpiAmount toSpi(Amount amount){
+    public SpiAmount toSpi(Amount amount) {
         return ofNullable(amount)
-            .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
-        .orElse(null);
+               .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
+               .orElse(null);
     }
 }

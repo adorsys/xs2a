@@ -1,28 +1,22 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
 @Validated
@@ -45,28 +39,25 @@ public class AccountService {
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
-        return accountDetailsList != null
-               ? new ResponseObject<>(accountDetailsMap)
-               : new ResponseObject(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
+        return new ResponseObject<>(accountDetailsMap);
     }
 
     public ResponseObject<List<Balances>> getBalancesList(@NotEmpty String accountId, boolean psuInvolved) {
         List<Balances> result = accountMapper.mapFromSpiBalancesList(accountSpi.readBalances(accountId, psuInvolved));
-        return CollectionUtils.isEmpty(result)
-               ? new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
-               : new ResponseObject<>(result);
+        return new ResponseObject<>(result);
     }
 
     public ResponseObject<AccountReport> getAccountReport(@NotEmpty String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
-        AccountReport accountReport = StringUtils.isEmpty(transactionId)
-                                      ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
-                                      : readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
+        Optional<AccountReport> accountReport = StringUtils.isEmpty(transactionId)
+                                                ? readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+                                                : readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
 
-        return accountReport == null
-               ? new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
-               : new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
+        return accountReport.map(accountReport1 ->
+                                 new ResponseObject<>(getReportAccordingMaxSize(accountReport1, accountId)))
+               .orElseGet(() ->
+                          new ResponseObject(getReportAccordingMaxSize(new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()), accountId)));
     }
 
     private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
@@ -92,13 +83,13 @@ public class AccountService {
         }
     }
 
-    private AccountReport readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
-                                                   @NotNull Date dateTo, boolean psuInvolved, boolean withBalance) {
+    private Optional<AccountReport> readTransactionsByPeriod(@NotEmpty String accountId, @NotNull Date dateFrom,
+                                                             @NotNull Date dateTo, boolean psuInvolved, boolean withBalance) {
         return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
     }
 
-    private AccountReport readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
-                                               boolean psuInvolved, boolean withBalance) {
+    private Optional<AccountReport> readTransactionsById(@NotEmpty String accountId, @NotEmpty String transactionId,
+                                                         boolean psuInvolved, boolean withBalance) {
         return accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
     }
 
@@ -113,8 +104,6 @@ public class AccountService {
     public ResponseObject<AccountDetails> getAccountDetails(@NotEmpty String accountId, boolean withBalance, boolean psuInvolved) {
         AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
 
-        return accountDetails == null
-               ? new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
-               : new ResponseObject<>(accountDetails);
+        return new ResponseObject<>(accountDetails);
     }
 }

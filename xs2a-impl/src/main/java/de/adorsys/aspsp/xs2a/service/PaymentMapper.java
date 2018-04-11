@@ -56,7 +56,7 @@ public class PaymentMapper {
                }).orElse(null);
     }
 
-    public PaymentInitialisationResponse mapFromSpiPaymentInitializationResponsepaymentSpi(SpiPaymentInitialisationResponse response) {
+    public PaymentInitialisationResponse mapFromSpiPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
 
         return Optional.ofNullable(response)
                .map(pir -> {

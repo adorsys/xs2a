@@ -41,7 +41,7 @@ public class PeriodicPaymentsController {
     @RequestBody PeriodicPayment periodicPayment) {
         ResponseObject responseObject = paymentService.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, periodicPayment);
 
-        return responseMapper.okOrNotFound(responseObject);
+        return responseMapper.okOrByTransactionStatus(responseObject);
     }
 
 }
