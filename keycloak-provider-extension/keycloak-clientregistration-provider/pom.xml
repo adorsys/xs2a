@@ -39,6 +39,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
+							<archiveBaseDirectory>${project.basedir}</archiveBaseDirectory>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
 								<descriptor>assembly.xml</descriptor>
