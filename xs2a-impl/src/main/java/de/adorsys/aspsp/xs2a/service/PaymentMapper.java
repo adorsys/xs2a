@@ -37,7 +37,7 @@ public class PaymentMapper {
                    spiPeriodicPayment.setCreditorAccount(consentMapper.mapToSpiAccountReference(pp.getCreditorAccount()));
                    spiPeriodicPayment.setCreditorAgent(pp.getCreditorAgent() != null ? pp.getCreditorAgent().getCode() : null);
                    spiPeriodicPayment.setCreditorName(pp.getCreditorName());
-                   spiPeriodicPayment.setCreditorAddress(mapToSpiAdress(pp.getCreditorAddress()));
+                   spiPeriodicPayment.setCreditorAddress(mapToSpiAddress(pp.getCreditorAddress()));
                    spiPeriodicPayment.setUltimateCreditor(pp.getUltimateCreditor());
                    spiPeriodicPayment.setPurposeCode(pp.getPurposeCode() != null ? pp.getPurposeCode().getCode() : null);
                    spiPeriodicPayment.setRemittanceInformationUnstructured(pp.getRemittanceInformationUnstructured());
@@ -64,10 +64,10 @@ public class PaymentMapper {
                    initialisationResponse.setTransaction_status(TransactionStatus.valueOf(pir.getTransactionStatus()));
                    initialisationResponse.set_links(new Links());
                    return initialisationResponse;
-               }).orElse(null); //TODO Fill in th Linx
+               }).orElse(null); //TODO Fill in the Links
     }
 
-    private SpiAddress mapToSpiAdress(Address address) {
+    private SpiAddress mapToSpiAddress(Address address) {
         return Optional.ofNullable(address)
                .map(a -> new SpiAddress(a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()))
                .orElse(null);
