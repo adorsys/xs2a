@@ -79,6 +79,21 @@ build_package:
     <<: *java_artifacts
     expire_in: "1 day"
 
+check_pmd:
+  stage: "build:src"
+  image: "adorsys/openjdk-build-base:8"
+  tags:
+    - aws_docker
+  script:
+    - mvn clean pmd:pmd
+  artifacts:
+    paths:
+    - "qa/pmd/pmd-ruleset.xml"
+    - "**/*/pmd.html"
+    - "**/*/pmd.xml"
+    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
+    expire_in: "10 day"
+
 # Develop
 
 build_image_integ:
