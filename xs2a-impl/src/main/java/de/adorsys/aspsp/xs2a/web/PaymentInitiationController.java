@@ -2,6 +2,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -16,8 +17,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "api/v1/payments/{product-name}")
-@Api(value = "api/v1/payments/{product-name}", tags = "PISP Payments", description = "Provides access to the PIS")
+@RequestMapping(path = "api/v1/payments/{payment-product}")
+@Api(value = "api/v1/payments/{payment-product}", tags = "PISP Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
 
     private final ResponseMapper responseMapper;
@@ -46,9 +47,11 @@ public class PaymentInitiationController {
     @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
+    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
+    @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
-        return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId));
+        return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
     }
 
     private PaymentInitialisationResponse createResponse() {

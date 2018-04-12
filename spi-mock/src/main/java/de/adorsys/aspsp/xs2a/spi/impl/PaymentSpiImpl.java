@@ -17,8 +17,8 @@ import java.util.Map;
 public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
-    public SpiTransactionStatus getPaymentStatusById(String paymentId) {
-        return PaymentMockData.getPaymentStatusById(paymentId);
+    public SpiTransactionStatus getPaymentStatusById(String paymentId, String  paymentProduct) {
+        return PaymentMockData.getPaymentStatusById(paymentId, paymentProduct);
     }
 
     @Override

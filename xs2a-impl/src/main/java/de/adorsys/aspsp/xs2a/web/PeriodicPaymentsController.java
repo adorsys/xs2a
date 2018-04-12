@@ -36,8 +36,8 @@ public class PeriodicPaymentsController {
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> initiationForStandingOrdersForRecurringOrPeriodicPayments(
-    @ApiParam(name = "payment-product", value = "Named payment product", example = "sepa-credit-transfers")
-    @PathVariable(name = "payment-product", required = true) String paymentProduct,
+    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
+    @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.")

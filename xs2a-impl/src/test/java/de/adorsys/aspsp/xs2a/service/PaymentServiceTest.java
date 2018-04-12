@@ -34,7 +34,7 @@ public class PaymentServiceTest {
         TransactionStatus expectedStatus = TransactionStatus.ACCP;
 
         //When:
-        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(validAccountConsentsId);
+        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(validAccountConsentsId, PaymentProduct.SCT);
 
         //Then:
         assertThat(actualStatus.getBody()).isNotNull();
@@ -47,7 +47,7 @@ public class PaymentServiceTest {
         String wrongId = "111111";
 
         //When:
-        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(wrongId);
+        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(wrongId, PaymentProduct.SCT);
 
         //Then:
         assertThat(actualStatus.getBody()).isNull();

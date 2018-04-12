@@ -10,7 +10,7 @@ public class PaymentMockData {
 
     private static Map<String, SpiPaymentInitialisationResponse> paymentMap = new HashMap<>();
 
-    public static SpiTransactionStatus getPaymentStatusById(String paymentId) {
+    public static SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
         return Optional.ofNullable(paymentMap.get(paymentId))
                        .map(SpiPaymentInitialisationResponse::getTransactionStatus)
                        .orElse(null);
