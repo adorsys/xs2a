@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/v1/periodic-payments")
 @Api(value = "api/v1/periodic-payments", tags = "PISP, Payments", description = "Orders for periodic payments")
 public class PeriodicPaymentsController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class); //NOPMD TODO review and check PMD assertion
     private PaymentService paymentService;
     private ResponseMapper responseMapper;
 
