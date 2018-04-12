@@ -104,7 +104,7 @@ public class ConsentInformationController {
     @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted")
     @PathVariable("consent-id") String consentId) {
         boolean serviceResult = consentService.deleteAccountConsentsById(consentId);
-        HttpStatus status = (serviceResult) ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
+        HttpStatus status = serviceResult ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
 
         return new ResponseEntity<>(status);
     }

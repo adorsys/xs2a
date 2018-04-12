@@ -1,16 +1,15 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import static org.springframework.http.HttpStatus.valueOf;
 
 @Service
 public class ResponseMapper {
@@ -46,7 +45,7 @@ public class ResponseMapper {
     private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {
         MessageError messageError = response.getError();
         return messageError != null
-               ? new ResponseEntity<>(messageError, valueOf(messageError.getTppMessage().getCode().getCode()))
+               ? new ResponseEntity<>(messageError, HttpStatus.valueOf(messageError.getTppMessage().getCode().getCode()))
                : new ResponseEntity<>(response.getBody(), status);
     }
 }

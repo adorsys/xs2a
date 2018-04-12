@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.Optional.ofNullable;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Service
@@ -177,7 +176,7 @@ public class AccountMapper {
     }
 
     public SpiAccountReference toSpi(AccountReference account) {
-        return ofNullable(account)
+        return Optional.ofNullable(account)
                .map(ac -> new SpiAccountReference(ac.getAccountId(),
                ac.getIban(),
                ac.getBban(),
@@ -189,7 +188,7 @@ public class AccountMapper {
     }
 
     public SpiAmount toSpi(Amount amount) {
-        return ofNullable(amount)
+        return Optional.ofNullable(amount)
                .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
                .orElse(null);
     }

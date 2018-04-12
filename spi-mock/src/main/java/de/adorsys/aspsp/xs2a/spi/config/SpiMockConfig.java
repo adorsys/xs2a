@@ -7,16 +7,16 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.impl.AccountSpiImpl;
 import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
+import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
@@ -27,7 +27,7 @@ import java.util.*;
 @Configuration
 @Profile("mockspi")
 public class SpiMockConfig {
-    private Map<String, String> spiMockUrls;
+    private Map<String, String> spiMockUrls;//NOPMD TODO review and check PMD assertion
 
     @Value("${mockspi.baseurl:http://localhost:28080}")
     private String mockSpiBaseUrl;
@@ -358,7 +358,7 @@ public class SpiMockConfig {
         return spiSinglePayments;
     }
 
-    private static String generatePaymentId() {
+    private static String generatePaymentId() { //NOPMD TODO review and check PMD assertion
         return UUID.randomUUID().toString();
     }
 }
