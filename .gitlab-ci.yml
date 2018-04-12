@@ -35,6 +35,7 @@ variables:
     - aws_docker
   script:
     - mvn clean package
+    - mvn pmd:check
 
 .build_image_script: &build_image_script
   tags:
@@ -85,7 +86,7 @@ check_pmd:
   tags:
     - aws_docker
   script:
-    - mvn clean pmd:pmd
+    - mvn clean package pmd:pmd
   artifacts:
     paths:
     - "qa/pmd/pmd-ruleset.xml"

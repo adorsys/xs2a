@@ -69,16 +69,6 @@
                     <failOnViolation>true</failOnViolation>
                     <printFailingErrors>true</printFailingErrors>
                 </configuration>
-
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
 
         </plugins>
