@@ -11,11 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ValidationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +22,7 @@ import java.util.Map;
 @RequestMapping(path = "api/v1/accounts")
 @Api(value = "api/v1/accounts", tags = "AISP, Accounts", description = "Provides access to the Psu account")
 public class AccountController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class); //NOPMD TODO review and check PMD assertion
     private AccountService accountService;
     private ResponseMapper responseMapper;
 
@@ -50,7 +48,7 @@ public class AccountController {
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
 
-        return responseMapper.okOrNotFound(responseObject);
+        return responseMapper.okOrNotFound(responseObject); //TODO clarify how to avoid unchecked casts
     }
 
     @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token")

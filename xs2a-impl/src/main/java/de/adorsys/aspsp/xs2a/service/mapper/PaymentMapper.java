@@ -121,11 +121,11 @@ public class PaymentMapper {
                        }).orElse(null);
     }
 
-    private AuthenticationObject[] mapFromSpiAuthenticationObjects(String[] authObjects) {
+    private AuthenticationObject[] mapFromSpiAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion
         return new AuthenticationObject[]{};//TODO Fill in th Linx
     }
 
-    private MessageCode[] mapFromSpiMessageCodes(String[] messageCodes) {
+    private MessageCode[] mapFromSpiMessageCodes(String[] messageCodes) { //NOPMD TODO review and check PMD assertion
         return new MessageCode[]{};//TODO Fill in th Linx
     }
 

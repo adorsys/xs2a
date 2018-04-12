@@ -30,6 +30,9 @@
         <javax.validation.api.version>2.0.1.Final</javax.validation.api.version>
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.6</commons.io.version>
+        <pmd.plugin.version>3.9.0</pmd.plugin.version>
+        <dependency.locations.enabled>false</dependency.locations.enabled>
+        <ruleset.basedir>${project.basedir}</ruleset.basedir>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -47,6 +50,29 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.plugin.version}</version>
+
+                <configuration>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                    <targetJdk>1.8</targetJdk>
+
+                    <rulesets>
+                        <ruleset>${ruleset.basedir}/qa/pmd/pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                    <failOnViolation>true</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
     <scm>
         <connection>scm:git:https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a.git</connection>

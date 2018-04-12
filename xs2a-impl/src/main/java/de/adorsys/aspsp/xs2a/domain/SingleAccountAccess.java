@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class SingleAccountAccess {
 
 	@ApiModelProperty(value = "account", required = true)
-	private AccountReference account;
+	private AccountReference account; //NOPMD TODO review and check PMD assertion
 	@ApiModelProperty(value = "access type: The values balance and transactions are permitted. ", required = true, example = "balance, transactions")
-	private String[] access_type;
+	private String[] access_type; //NOPMD TODO review and check PMD assertion
 }

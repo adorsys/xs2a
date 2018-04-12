@@ -114,19 +114,20 @@ public class AccountService {
     }
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
-                                                   Date dateTo, boolean psuInvolved, boolean withBalance) {
-        Optional result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
+                                                   Date dateTo, boolean psuInvolved, boolean withBalance) { //NOPMD TODO review and check PMD assertion
+        Optional<AccountReport> result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved));
 
-        return (result.isPresent()) ? (AccountReport) result.get()
-               : new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links());
+        return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
     }
 
     private AccountReport readTransactionsById(String accountId, String transactionId,
-                                               boolean psuInvolved, boolean withBalance) {
-        Optional result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
+                                               boolean psuInvolved, boolean withBalance) { //NOPMD TODO review and check PMD assertion
+        Optional<AccountReport> result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
 
-        return (result.isPresent()) ? (AccountReport) result.get()
-               : new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links());
+        return result.orElseGet(() -> new AccountReport(new Transactions[]{},
+                                                        new Transactions[]{},
+                                                        new Links()
+        ));
 
     }
 

@@ -85,13 +85,13 @@ public class AccountSpiImpl implements AccountSpi {
                ).orElse(null);
     }
 
-    private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) {
+    private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
         return spiTransactions.parallelStream()
                .filter(this::isPendingTransaction)
                .toArray(SpiTransaction[]::new);
     }
 
-    private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) {
+    private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
         return spiTransactions.parallelStream()
                .filter(transaction -> !isPendingTransaction(transaction))
                .toArray(SpiTransaction[]::new);
