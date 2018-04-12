@@ -7,6 +7,7 @@
     <artifactId>xs2a</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
+        <module>build-tools</module>
         <module>spi-api</module>
         <module>spi-mock</module>
         <module>aspsp-mock-server</module>
@@ -31,6 +32,7 @@
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.6</commons.io.version>
         <pmd.plugin.version>3.9.0</pmd.plugin.version>
+        <dependency.locations.enabled>false</dependency.locations.enabled>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -60,23 +62,30 @@
                     <sourceEncoding>utf-8</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
                     <targetJdk>1.8</targetJdk>
-                    <excludeRoots>
-                        <excludeRoot>target/generated-sources/stubs</excludeRoot>
-                    </excludeRoots>
 
                     <rulesets>
-                        <ruleset>rulesets/java/naming.xml</ruleset>
-                        <ruleset>rulesets/java/imports.xml</ruleset>
+                        <ruleset>qa/pmd/pmd-ruleset.xml</ruleset>
                     </rulesets>
+                    <failOnViolation>true</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
                 </configuration>
 
                 <executions>
                     <execution>
+                        <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>de.adorsys.aspsp</groupId>
+                        <artifactId>build-tools</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
         </plugins>
