@@ -34,7 +34,7 @@ variables:
   tags:
     - aws_docker
   script:
-    - mvn clean package
+    - mvn clean install
     - mvn pmd:check
 
 .build_image_script: &build_image_script
@@ -86,11 +86,12 @@ check_pmd:
   tags:
     - aws_docker
   script:
-    - mvn clean package pmd:pmd
+    - mvn clean install
+    - mvn pmd:pmd
   artifacts:
     paths:
     - "qa/pmd/pmd-ruleset.xml"
-    - "**/*/pmd.html"
+    - "**/**/*/pmd.html"
     - "**/*/pmd.xml"
     name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
     expire_in: "10 day"
