@@ -11,6 +11,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <ruleset.basedir>..</ruleset.basedir>
+    </properties>
+
     <dependencies>
 
         <dependency>
