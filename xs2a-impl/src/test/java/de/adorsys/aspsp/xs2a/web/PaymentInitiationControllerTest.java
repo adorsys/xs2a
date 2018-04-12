@@ -5,6 +5,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
@@ -48,9 +49,9 @@ public class PaymentInitiationControllerTest {
         paymentStatusResponse.put("transactionStatus", TransactionStatus.ACCP);
         when(paymentService.createPaymentInitiationAndReturnId(getExpectedRequest(), false))
         .thenReturn(PAYMENT_ID);
-        when(paymentService.getPaymentStatusById(PAYMENT_ID))
+        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(new ResponseObject<>(paymentStatusResponse));
-        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID))
+        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))));
     }
 
@@ -66,7 +67,7 @@ public class PaymentInitiationControllerTest {
         expectedResult.put("transactionStatus", TransactionStatus.ACCP);
 
         //When:
-        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(paymentId);
+        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), paymentId);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
@@ -86,7 +87,7 @@ public class PaymentInitiationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
 
         //When:
-        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(WRONG_PAYMENT_ID);
+        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
 
         //Then:

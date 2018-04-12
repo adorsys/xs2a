@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PaymentSpi {
 
-    SpiTransactionStatus getPaymentStatusById(String paymentId);
+    SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
 
     String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred);
 

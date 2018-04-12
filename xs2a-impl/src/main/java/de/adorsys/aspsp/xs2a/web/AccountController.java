@@ -111,8 +111,8 @@ public class AccountController {
                                                          @RequestParam(name = "transactionId", required = false) String transactionId,
                                                          @ApiParam(name = "psuInvolved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
                                                          @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
-                                                         @ApiParam(name = "bookingStatus", value = "Permited codes are 'booked', 'pending','both", example = "both")
-                                                         @RequestParam(name = "bookingStatus", required = false) String bookingStatus,
+                                                         @ApiParam(name = "bookingStatus", example = "both", required = true, allowableValues = "booked, pending, both")
+                                                         @RequestParam(name = "bookingStatus") String bookingStatus,
                                                          @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
                                                          @RequestParam(name = "withBalance", required = false) boolean withBalance,
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
