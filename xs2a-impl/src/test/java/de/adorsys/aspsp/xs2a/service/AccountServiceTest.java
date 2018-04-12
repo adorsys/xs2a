@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -57,7 +58,7 @@ public class AccountServiceTest {
         when(accountSpi.readTransactionsByPeriod(any(), any(), any(), anyBoolean())).thenReturn(getTransactionList());
         when(accountSpi.readBalances(any(), anyBoolean())).thenReturn(getBalances());
         when(accountSpi.readTransactionsById(any(), any(), anyBoolean())).thenReturn(getTransactionList());
-        when(accountSpi.readAccountDetails(any(), eq(true), anyBoolean())).thenReturn(createSpiAccountDeatails());
+        when(accountSpi.readAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(createSpiAccountDeatails());
     }
 
     @Test
@@ -125,13 +126,13 @@ public class AccountServiceTest {
     @Test
     public void getTransactions_jsonBiggerLimitSize_returnDownloadLink() {
         //Given:
-        Date dateFrom = addMonth(new Date(), -12);
-        Date dateTo = addMonth(dateFrom, 12);
+        Date dateFrom = getDateFromDateString("2015-12-12");
+        Date dateTo = getDateFromDateString("2018-12-12");
         boolean psuInvolved = false;
         AccountReport expectedResult = accountService.getAccountReportWithDownloadLink(ACCOUNT_ID);
 
         //When:
-        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", false, false).getBody();
+        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", true, false).getBody();
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
@@ -273,7 +274,9 @@ public class AccountServiceTest {
     }
 
     private AccountReport getAccountReport(String accountId) {
-        AccountReport accountReport = accountMapper.mapFromSpiAccountReport(getTransactionList());
+        Optional<AccountReport> aR = accountMapper.mapFromSpiAccountReport(getTransactionList());
+        AccountReport accountReport;
+        accountReport = aR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
         String jsonReport = null;
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,0 +1,11 @@
+{
+  "transactionStatus": "AcceptedCustomerProfile",
+  "paymentId": "932f8184-59dc-4fdb-848e-58b887b3ba02",
+  "transactionFeeIndicator": false,
+  "scaMethods": [],
+  "tppMessages": [],
+  "_links": {
+    "redirect": "https://www.example.com/authentication",
+    "self": "http://localhost:8080/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02"
+  }
+}

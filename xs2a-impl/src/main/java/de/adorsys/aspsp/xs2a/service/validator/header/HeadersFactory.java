@@ -2,10 +2,7 @@ package de.adorsys.aspsp.xs2a.service.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.*;
-import de.adorsys.aspsp.xs2a.web.AccountController;
-import de.adorsys.aspsp.xs2a.web.FundsConfirmationController;
-import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
-import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +18,9 @@ public class HeadersFactory {
     static {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
         controllerClassMap.put(ConsentInformationController.class, ConsentRequestHeader.class);
-        controllerClassMap.put(PaymentInitiationController.class, PaymentInitiationRequestHeader.class);
+        controllerClassMap.put(PaymentInitiationController.class, PaymentRequestHeader.class);
+        controllerClassMap.put(BulkPaymentInitiationController.class, PaymentInitiationRequestHeader.class);
+        controllerClassMap.put(PeriodicPaymentsController.class, PaymentInitiationRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
     }
 

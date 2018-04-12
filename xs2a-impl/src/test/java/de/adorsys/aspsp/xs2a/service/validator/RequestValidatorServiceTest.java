@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +49,6 @@ public class RequestValidatorServiceTest {
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
-        assertThat(actualViolations.get("tppRequestId")).isEqualTo("may not be null");
     }
 
     @Test
