@@ -29,7 +29,8 @@ public class AccountService {
     }
 
     public boolean deleteAccountById(String id) {
-        if(accountRepository.exists(id)) {
+        if(id!=null&&accountRepository.exists(id))
+        {
             accountRepository.delete(id);
             return true;
         }

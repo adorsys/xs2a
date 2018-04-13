@@ -102,6 +102,18 @@ public class AccountServiceTest {
         assertThat(actualResult).isFalse();
     }
 
+    @Test
+    public void deleteAccountById_Null() {
+        //Given
+        String wrongId = null;
+
+        //When
+        boolean actualResult  = accountService.deleteAccountById(wrongId);
+
+        //Then
+        assertThat(actualResult).isFalse();
+    }
+
     private SpiAccountDetails getSpiAccountDetails_1(){
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
         spiAccountDetails.setId("21fefdsdvds212sa");
