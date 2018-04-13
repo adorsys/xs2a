@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ********************** INFO *********************
 # This file is used to override default settings.
 # Therefore only the functions that deviate from
@@ -72,6 +72,5 @@ function build_release_modules {
 # Should set version numbers in your modules
 # Parameter $1 - version as text
 function set_modules_version {
-  sed -i .versionBackup "s/\(VERSION=\)[0-9a-zA-Z.-]*\( \#\)/\1$1\2/" .version.sh
   mvn versions:set -DnewVersion=$1
 }
