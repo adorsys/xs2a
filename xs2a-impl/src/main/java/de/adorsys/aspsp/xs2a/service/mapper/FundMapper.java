@@ -2,19 +2,15 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class FundMapper {
-    private AccountMapper accountMapper;
+    private final AccountMapper accountMapper;
 
-    @Autowired
-    public FundMapper(AccountMapper accountMapper){
-        this.accountMapper = accountMapper;
-    }
-
-    public SpiFundsConfirmationRequest toModel(FundsConfirmationRequest request){
+    public SpiFundsConfirmationRequest mapToSpiFundsConfirmationRequest(FundsConfirmationRequest request) {
         return new SpiFundsConfirmationRequest(request.getCardNumber(),
         accountMapper.toSpi(request.getPsuAccount()),
         request.getPayee(),
