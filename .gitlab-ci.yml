@@ -7,6 +7,7 @@ variables:
   GITLAB_IMAGE_NAME: "adorsys/keycloak-xs2a"
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
   OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/aspsp-xs2a/keycloak-xs2a"
+  JAVA_TOOL_OPTIONS: "-Xmx512M"
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
