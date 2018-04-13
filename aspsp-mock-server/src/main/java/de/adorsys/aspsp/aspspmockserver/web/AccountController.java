@@ -18,23 +18,25 @@ import java.util.List;
 public class AccountController {
     private AccountService accountService;
 
-    public AccountController(AccountService accountService) {this.accountService = accountService;}
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @GetMapping(path = "/{id}/")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("id") String id) {
         return accountService.getAccount(id)
-        .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+               .map(ResponseEntity::ok)
+               .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping(path = "/")
     public ResponseEntity createAccount(HttpServletRequest request,
-                                    @RequestBody SpiAccountDetails account) throws Exception {
+                                        @RequestBody SpiAccountDetails account) throws Exception {
         String uriString = getUriString(request);
         SpiAccountDetails saved = accountService.addAccount(account);
         return ResponseEntity.created(new URI(uriString + saved.getId())).build();
@@ -44,10 +46,9 @@ public class AccountController {
         return UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request)).build().toUriString();
     }
 
-    @DeleteMapping(path = "/{id}/")
-    public ResponseEntity deleteAccount(@PathVariable("id") String id){
-        if(accountService.deleteAccountById(id))
-        {
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity deleteAccount(@PathVariable("id") String id) {
+        if (accountService.deleteAccountById(id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

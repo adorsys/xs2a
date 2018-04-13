@@ -14,7 +14,9 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository) {this.accountRepository = accountRepository;}
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     public SpiAccountDetails addAccount(SpiAccountDetails accountDetails) {
         return accountRepository.save(accountDetails);
@@ -29,8 +31,7 @@ public class AccountService {
     }
 
     public boolean deleteAccountById(String id) {
-        if(id!=null&&accountRepository.exists(id))
-        {
+        if (id != null && accountRepository.exists(id)) {
             accountRepository.delete(id);
             return true;
         }
