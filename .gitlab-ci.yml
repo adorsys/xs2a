@@ -4,9 +4,9 @@
 
 variables:
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
-  GITLAB_IMAGE_NAME: "adorsys/keycloak-xs2a"
+  GITLAB_IMAGE_NAME: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-idp"
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
-  OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/aspsp-xs2a/keycloak-xs2a"
+  OPENSHIFT_IMAGE_NAME: "openshift-registry.adorsys.de:443/multibanking-xs2a/keycloak-xs2a"
   JAVA_TOOL_OPTIONS: "-Xmx512M"
 # ------------------------------------------------------------------
 # stages
@@ -29,7 +29,7 @@ stages:
 .java_artifacts: &java_artifacts
   paths:
     - "keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
-    - "config/*.yml"
+
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
 .build_java: &build_java
@@ -63,7 +63,6 @@ build_snapshot_image:
     - docker push "$GITLAB_IMAGE_NAME:integ"
 
 deploy_snapshot:
-  when: manual
   stage: deploy
   only:
     - develop
