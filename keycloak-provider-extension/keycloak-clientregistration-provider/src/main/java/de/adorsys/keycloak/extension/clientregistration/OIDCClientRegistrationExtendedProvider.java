@@ -16,14 +16,18 @@
 package de.adorsys.keycloak.extension.clientregistration;
 
 import java.net.URI;
-import java.security.cert.CertificateException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -45,11 +49,12 @@ import org.keycloak.representations.idm.ProtocolMapperRepresentation;
 import org.keycloak.representations.oidc.OIDCClientRepresentation;
 import org.keycloak.services.ErrorResponseException;
 import org.keycloak.services.ServicesLogger;
+import org.keycloak.services.clientregistration.AbstractClientRegistrationProvider;
 import org.keycloak.services.clientregistration.ClientRegistrationException;
 import org.keycloak.services.clientregistration.ErrorCodes;
-import org.keycloak.services.clientregistration.oidc.OIDCClientRegistrationProvider;
+import org.keycloak.services.clientregistration.oidc.OIDCClientRegistrationContext;
 
-public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrationProvider {
+public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegistrationProvider {
 
 	private static final Logger logger = Logger.getLogger(OIDCClientRegistrationExtendedProvider.class);
 
@@ -63,14 +68,20 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Override
-	public Response createOIDC(OIDCClientRepresentation clientOIDC) {
+	public Response createOIDC(OIDCClientRepresentationExtended clientOIDC) {
 		if (clientOIDC.getClientId() != null) {
 			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client Identifier included",
 					Response.Status.BAD_REQUEST);
 		}
 
 		try {
+			
+			//this could throw invalid_software_statement or unapproved_software_statement exception
+			//https://tools.ietf.org/html/rfc7591#section-3.2.1
+			SSAService.validate(clientOIDC);
+			
+			//set some attribute of the client(... like role) with ssa attributes
+			
 			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
 			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
 					clientOIDC);
@@ -91,6 +102,44 @@ public class OIDCClientRegistrationExtendedProvider extends OIDCClientRegistrati
 					Response.Status.BAD_REQUEST);
 		}
 	}
+	
+	@GET
+    @Path("{clientId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOIDC(@PathParam("clientId") String clientId) {
+        ClientRepresentation client = get(clientId);
+        OIDCClientRepresentation clientOIDC = DescriptionConverter.toExternalResponse(session, client, session.getContext().getUri().getRequestUri());
+        return Response.ok(clientOIDC).build();
+    }
+
+    @PUT
+    @Path("{clientId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateOIDC(@PathParam("clientId") String clientId, OIDCClientRepresentationExtended clientOIDC) {
+        try {
+            ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
+            OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this, clientOIDC);
+            client = update(clientId, oidcContext);
+
+            ClientModel clientModel = session.getContext().getRealm().getClientByClientId(client.getClientId());
+            updatePairwiseSubMappers(clientModel, SubjectType.parse(clientOIDC.getSubjectType()), clientOIDC.getSectorIdentifierUri());
+            updateClientRepWithProtocolMappers(clientModel, client);
+
+            URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
+            clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
+            return Response.ok(clientOIDC).build();
+        } catch (ClientRegistrationException cre) {
+            ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
+            throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid", Response.Status.BAD_REQUEST);
+        }
+    }
+
+    @DELETE
+    @Path("{clientId}")
+    public void deleteOIDC(@PathParam("clientId") String clientId) {
+        delete(clientId);
+    }
 
 	private void updatePairwiseSubMappers(ClientModel clientModel, SubjectType subjectType,
 			String sectorIdentifierUri) {

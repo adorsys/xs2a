@@ -19,7 +19,9 @@ import java.net.URI;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.keycloak.OAuth2Constants;
@@ -50,7 +52,7 @@ import org.keycloak.util.JWKSUtils;
 
 public class DescriptionConverter {
 
-	public static ClientRepresentation toInternal(KeycloakSession session, OIDCClientRepresentation clientOIDC)
+	public static ClientRepresentation toInternal(KeycloakSession session, OIDCClientRepresentationExtended clientOIDC)
 			throws ClientRegistrationException {
 		ClientRepresentation client = new ClientRepresentation();
 
@@ -58,6 +60,11 @@ public class DescriptionConverter {
 		client.setName(clientOIDC.getClientName());
 		client.setRedirectUris(clientOIDC.getRedirectUris());
 		client.setBaseUrl(clientOIDC.getClientUri());
+
+		// set new attributes in clientModel attributes Map
+		Map<String, String> attributes = new HashMap<>();
+		attributes.put("software_statement", clientOIDC.getSoftware_statement());
+		client.setAttributes(attributes);
 
 		List<String> oidcResponseTypes = clientOIDC.getResponseTypes();
 		if (oidcResponseTypes == null || oidcResponseTypes.isEmpty()) {
@@ -151,10 +158,12 @@ public class DescriptionConverter {
 		}
 	}
 
-	public static OIDCClientRepresentation toExternalResponse(KeycloakSession session, ClientRepresentation client,
-			URI uri) {
-		OIDCClientRepresentation response = new OIDCClientRepresentation();
+	public static OIDCClientRepresentationExtended toExternalResponse(KeycloakSession session,
+			ClientRepresentation client, URI uri) {
+		OIDCClientRepresentationExtended response = new OIDCClientRepresentationExtended();
 		response.setClientId(client.getClientId());
+
+		response.setSoftware_statement(client.getAttributes().get("software_statement"));
 
 		ClientAuthenticatorFactory clientAuth = (ClientAuthenticatorFactory) session.getKeycloakSessionFactory()
 				.getProviderFactory(ClientAuthenticator.class, client.getClientAuthenticatorType());
