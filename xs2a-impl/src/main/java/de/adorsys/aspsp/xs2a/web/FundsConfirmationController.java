@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/funds-confirmations")
@@ -30,6 +29,5 @@ public class FundsConfirmationController {
     public ResponseEntity<FundsConfirmationResponse> fundConfirmation(@RequestBody FundsConfirmationRequest request) {
 
         return responseMapper.okOrNotFound(fundsConfirmationService.fundsConfirmation(request));
-
     }
 }
