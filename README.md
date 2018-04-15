@@ -44,7 +44,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Development and contributing
 
-Please read [CONTRIBUTING](src/doc/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING](doc/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning and Releasing
 
@@ -70,7 +70,7 @@ $ scripts/release-scripts/release.sh 1.0 1.1
 
 * **[Francis Pouchata](mailto:fpo@adorsys.de)** - *Initial work* - [adorsys](https://www.adorsys.de)
 
-See also the list of [contributors](src/doc/contributors.md) who participated in this project.
+See also the list of [contributors](doc/contributors.md) who participated in this project.
 
 ## License
 
