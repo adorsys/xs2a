@@ -36,9 +36,9 @@ public class SpiMockConfig {
 
     @Value("${mockspi.baseurl:http://localhost:28080}")
     private String mockSpiBaseUrl;
-    @Value("${http-client.read-timeout:10000}")
+    @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
-    @Value("${http-client.connection-timeout:10000}")
+    @Value("${http-client.connection-timeout.ms:10000}")
     private int connectionTimeout;
 
     @Bean
