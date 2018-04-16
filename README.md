@@ -40,14 +40,31 @@ Add additional notes about how to deploy this on a live system
 
 * [Java, version 1.8](http://java.oracle.com) - The main language of implementation
 * [Maven, version 3.0](https://maven.apache.org/) - Dependency Management
+* [Spring Boot](https://projects.spring.io/spring-boot/) - Spring boot as core Java framework
 
 ## Development and contributing
 
 Please read [CONTRIBUTING](src/doc/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Versioning
+## Versioning and Releasing
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+
+Release is being done using the [release scripts](https://github.com/borisskert/release-scripts) ( (C) by [Boris Skert](https://github.com/borisskert) ) located under scripts/release-scripts.
+For detailed info see [README for release-scripts](scripts/release-scripts/README.md).
+
+### Steps to make a release
+
+**Release is made from local copy! Ensure that you have enough rights to push to master and develop branches**
+```bash
+$ git submodule update
+$ scripts/release-scripts/release.sh <release-version> <next-develop-version>
+``` 
+Example
+```bash
+$ scripts/release-scripts/release.sh 1.0 1.1
+```
+ 
 
 ## Authors
 

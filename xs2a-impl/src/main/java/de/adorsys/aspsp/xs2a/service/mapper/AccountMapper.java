@@ -6,7 +6,7 @@ import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-@Service
+@Component
 public class AccountMapper {
     public List<AccountDetails> mapFromSpiAccountDetailsList(List<SpiAccountDetails> spiAccountDetailsList) {
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();

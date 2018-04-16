@@ -33,7 +33,7 @@ public class PaymentInitiationController {
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @RequestBody SinglePayments paymentInitialisationRequest) {
         // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
-        return createResponse();
+        return null;
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ")
@@ -52,10 +52,5 @@ public class PaymentInitiationController {
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
         return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
-    }
-
-    private PaymentInitialisationResponse createResponse() {
-        // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
-        return null;
     }
 }
