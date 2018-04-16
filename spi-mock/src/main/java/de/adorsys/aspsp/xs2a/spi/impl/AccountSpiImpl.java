@@ -7,13 +7,16 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 @Profile("mockspi")
@@ -26,25 +29,25 @@ public class AccountSpiImpl implements AccountSpi {
     public List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved) {
 
         if (!withBalance) {
-            RestTemplate restTemplate = new RestTemplate();
             String url = remoteSpiUrls.getUrl("getAllAccounts");
             SpiAccountDetails[] spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails[].class);
             return Arrays.asList(spiAccountDetails);
         }
-
         return AccountMockData.getAccountDetails();
     }
 
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
-        List<SpiBalances> balances = new ArrayList<>();
-        SpiAccountDetails accountDetails = AccountMockData.getAccountsHashMap().get(accountId);
+        String urlPattern = remoteSpiUrls.getUrl("getAccountBalances");
+        String getBalanceUrl = urlPattern.replace("{id}", accountId);
 
-        if (accountDetails != null) {
-            balances = accountDetails.getBalances();
+        try {
+            SpiBalances[] spiAccountBalances = restTemplate.getForObject(getBalanceUrl, SpiBalances[].class);
+            return Arrays.asList(spiAccountBalances);
+        } catch (HttpClientErrorException ex) {
+            log.info("Wrong account ID: {}", accountId);
+            return null;
         }
-
-        return balances;
     }
 
     @Override
