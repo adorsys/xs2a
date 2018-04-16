@@ -8,9 +8,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import de.adorsys.aspsp.xs2a.spi.impl.AccountSpiImpl;
 import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
@@ -36,9 +34,9 @@ public class SpiMockConfig {
 
     @Value("${mockspi.baseurl:http://localhost:28080}")
     private String mockSpiBaseUrl;
-    @Value("${http-client.read-timeout:10000}")
+    @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
-    @Value("${http-client.connection-timeout:10000}")
+    @Value("${http-client.connection-timeout.ms:10000}")
     private int connectionTimeout;
 
     @Bean
@@ -55,11 +53,6 @@ public class SpiMockConfig {
     private void fillPayments() {
         PaymentMockData.createPaymentInitiation(getPisRequest_1(), false);
         PaymentMockData.createPaymentInitiation(getPisRequest_2(), false);
-    }
-
-    @Bean
-    public AccountSpi accountSpi() {
-        return new AccountSpiImpl(remoteSpiUrls());
     }
 
     @Bean

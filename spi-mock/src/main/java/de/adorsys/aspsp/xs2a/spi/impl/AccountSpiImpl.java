@@ -6,7 +6,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -15,15 +15,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@AllArgsConstructor
 @Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
 
     private final RemoteSpiUrls remoteSpiUrls;
-
-    @Autowired
-    public AccountSpiImpl(RemoteSpiUrls remoteSpiUrls) {
-        this.remoteSpiUrls = remoteSpiUrls;
-    }
+    private final RestTemplate restTemplate;
 
     @Override
     public List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved) {
@@ -32,12 +29,11 @@ public class AccountSpiImpl implements AccountSpi {
             RestTemplate restTemplate = new RestTemplate();
             String url = remoteSpiUrls.getUrl("getAllAccounts");
             SpiAccountDetails[] spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails[].class);
-                return Arrays.asList(spiAccountDetails);
+            return Arrays.asList(spiAccountDetails);
         }
 
         return AccountMockData.getAccountDetails();
     }
-
 
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
@@ -134,5 +130,9 @@ public class AccountSpiImpl implements AccountSpi {
                                        .orElse(false);
 
         return isCreditorAccountValid || isDebtorAccountValid;
+    }
+
+    public RemoteSpiUrls getRemoteSpiUrls() {
+        return remoteSpiUrls;
     }
 }
