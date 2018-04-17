@@ -14,7 +14,6 @@ import java.util.UUID;
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
-    private final AccountService accountService;
 
     public ResponseEntity<SpiSinglePayments> addPayment(SpiSinglePayments payment) {
         if (payment != null) {
@@ -25,14 +24,6 @@ public class PaymentService {
             }
         }
         return ResponseEntity.badRequest().build();
-    }
-
-    private boolean authoriseUser(SpiSinglePayments payment) {
-        String id = Optional.ofNullable(payment.getDebtorAccount().getAccountId()).orElse(null);
-        if (!accountService.getAccount(id).equals(Optional.empty())) {
-            return true;
-        }
-        return false;
     }
 
     private static String generatePaymentId() {

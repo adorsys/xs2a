@@ -4,10 +4,7 @@ import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -22,7 +19,7 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @PutMapping(path = "/")
+    @PostMapping(path = "/")
     public ResponseEntity<SpiSinglePayments> createPayment(
                                         @RequestBody SpiSinglePayments payment) throws Exception {
         return paymentService.addPayment(payment);

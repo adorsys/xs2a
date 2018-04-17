@@ -37,12 +37,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.consents.link.redirect-to}")
     private String consentsLinkRedirectToSource;
 
-    @Value("10000")
-    private int readTimeout;
-
-    @Value("10000")
-    private int connectionTimeout;
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
@@ -103,19 +97,4 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    @Bean
-    public RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
-        RestTemplate rest = new RestTemplate(clientHttpRequestFactory);
-        rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        rest.getMessageConverters().add(new StringHttpMessageConverter());
-        return rest;
-    }
-
-    @Bean
-    public ClientHttpRequestFactory clientHttpRequestFactory() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setReadTimeout(readTimeout);
-        factory.setConnectTimeout(connectionTimeout);
-        return factory;
-    }
 }
