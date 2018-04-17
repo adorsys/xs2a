@@ -1,23 +1,25 @@
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
+import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.service.mapper.FundMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.spi.service.FundsConfirmationSpi;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class FundsConfirmationService {
-    private FundsConfirmationSpi fundsConfirmationSpi;
-    private FundMapper fundMapper;
+    private final FundsConfirmationSpi fundsConfirmationSpi;
+    private final FundMapper fundMapper;
 
-    @Autowired
-    public FundsConfirmationService(FundsConfirmationSpi fundsConfirmationSpi, FundMapper fundMapper) {
-        this.fundsConfirmationSpi = fundsConfirmationSpi;
-        this.fundMapper = fundMapper;
-    }
+    public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
 
-    public boolean fundsConfirmation(FundsConfirmationRequest request){
-        return fundsConfirmationSpi.fundsConfirmation(fundMapper.toModel(request));
+        SpiFundsConfirmationRequest spiRequest = fundMapper.mapToSpiFundsConfirmationRequest(request);
+        Boolean areSufficientFunds = fundsConfirmationSpi.fundsConfirmation(spiRequest);
+
+        return new ResponseObject<>(new FundsConfirmationResponse(areSufficientFunds));
     }
 }

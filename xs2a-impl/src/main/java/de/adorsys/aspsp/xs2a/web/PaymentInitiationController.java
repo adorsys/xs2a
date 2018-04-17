@@ -70,4 +70,9 @@ public class PaymentInitiationController {
     @PathVariable("paymentId") String paymentId) {
         return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
     }
+
+    private PaymentInitialisationResponse createResponse() {
+        // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
+        return null;
+    }
 }

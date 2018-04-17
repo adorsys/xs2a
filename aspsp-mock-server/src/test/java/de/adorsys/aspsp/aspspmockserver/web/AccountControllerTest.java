@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class AccountControllerTest {
     private static final String ACCOUNT_ID = "2123sndjk2w23";
+    private static final String WRONG_ACCOUNT_ID = "0";
 
     @MockBean
     private AccountService accountService;
@@ -44,6 +45,10 @@ public class AccountControllerTest {
         .thenReturn(accountList);
         when(accountService.addAccount(getSpiAccountDetails_1()))
         .thenReturn(getSpiAccountDetails_1());
+        when(accountService.deleteAccountById(ACCOUNT_ID))
+        .thenReturn(true);
+        when(accountService.deleteAccountById(WRONG_ACCOUNT_ID))
+        .thenReturn(false);
     }
 
 
@@ -95,6 +100,32 @@ public class AccountControllerTest {
         //Then
         assertThat(actualSpiAccountDetails).isNotNull();
         assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
+    }
+
+    @Test
+    public void deleteAccount_Success(){
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
+
+        //When:
+        ResponseEntity actualResponse = accountController.deleteAccount(ACCOUNT_ID);
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+    }
+
+    @Test
+    public void deleteAccount_WrongId(){
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+
+        //When:
+        ResponseEntity actualResponse = accountController.deleteAccount(WRONG_ACCOUNT_ID);
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
     }
 
     private SpiAccountDetails getSpiAccountDetails_1(){
