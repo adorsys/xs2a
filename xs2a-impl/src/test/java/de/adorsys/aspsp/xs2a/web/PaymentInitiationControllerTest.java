@@ -24,7 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
