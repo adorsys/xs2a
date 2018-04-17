@@ -15,6 +15,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -31,6 +36,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("${application.ais.consents.link.redirect-to}")
     private String consentsLinkRedirectToSource;
+
+    @Value("1000")
+    private int readTimeout;
+
+    @Value("1000")
+    private int connectionTimeout;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -90,5 +101,21 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Validator validator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
+        RestTemplate rest = new RestTemplate(clientHttpRequestFactory);
+        rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rest.getMessageConverters().add(new StringHttpMessageConverter());
+        return rest;
+    }
+
+    @Bean
+    public ClientHttpRequestFactory clientHttpRequestFactory() {
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setReadTimeout(readTimeout);
+        factory.setConnectTimeout(connectionTimeout);
+        return factory;
     }
 }

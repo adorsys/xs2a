@@ -44,12 +44,13 @@ public class PaymentInitiationController {
     @ApiImplicitParam(name = "tpp-redirect-uri", value = "Uri of TPP", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "signature", value = "A signature of the request by TPP", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-certificate", value = "The sertificate used for signing the request", required = false, dataType = "String", paramType = "header")})
-    public PaymentInitialisationResponse createPaymentInitiation(
+    public ResponseEntity<PaymentInitialisationResponse> createPaymentInitiation(
+    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
+    @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
-    @RequestBody SinglePayments paymentInitialisationRequest) {
-        // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
-        return createResponse();
+    @RequestBody SinglePayments singlePayment) {
+        return responseMapper.createdOrBadRequest(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct),tppRedirectPreferred));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ")
@@ -68,10 +69,5 @@ public class PaymentInitiationController {
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
         return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
-    }
-
-    private PaymentInitialisationResponse createResponse() {
-        // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
-        return null;
     }
 }
