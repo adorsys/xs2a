@@ -33,25 +33,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class PaymentServiceTest {
 
-    private static final String PAYMENT_ID = "12345";
-
     @Autowired
     private PaymentService paymentService;
-    @MockBean
-    private PaymentSpi paymentSpi;
-    @MockBean
-    private PaymentMapper paymentMapper;
-
-
-    @Before
-    public void setUpPaymentServiceMock() throws IOException {
-        when(paymentMapper.mapToSpiSinglePayments(getCreatePaymentInitiationRequestTest()))
-        .thenReturn(getSpiPayment());
-        when(paymentMapper.mapFromSpiPaymentInitializationResponse(getSpiPaymentResponse()))
-        .thenReturn(getPaymentResponse());
-        when(paymentSpi.createPaymentInitiationMockServer(getSpiPayment(), PaymentProduct.SCT.getCode(), false))
-        .thenReturn(getSpiPaymentResponse());
-    }
 
     @Test
     public void getPaymentStatusById_successesResult() {
@@ -116,39 +99,5 @@ public class PaymentServiceTest {
         singlePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
 
         return singlePayments;
-    }
-
-    @Test
-    public void createPaymentInitiation() {
-        // Given
-        SinglePayments payment = getCreatePaymentInitiationRequestTest();
-        PaymentProduct paymentProduct = PaymentProduct.SCT;
-        boolean tppRedirectPreferred = false;
-
-        //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, paymentProduct, tppRedirectPreferred);
-
-        //Then:
-        assertThat(actualResponse.getBody()).isNotNull();
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
-    }
-
-    private SpiSinglePayments getSpiPayment() {
-        SpiSinglePayments spiPayment = new SpiSinglePayments();
-        return spiPayment;
-    }
-
-    private SpiPaymentInitialisationResponse getSpiPaymentResponse(){
-        SpiPaymentInitialisationResponse spiPaymentInitialisationResponse = new SpiPaymentInitialisationResponse();
-        spiPaymentInitialisationResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-        spiPaymentInitialisationResponse.setPaymentId(PAYMENT_ID);
-        return  spiPaymentInitialisationResponse;
-    }
-
-    private PaymentInitialisationResponse getPaymentResponse(){
-        PaymentInitialisationResponse paymentInitialisationResponse = new PaymentInitialisationResponse();
-        paymentInitialisationResponse.setTransactionStatus(TransactionStatus.RCVD);
-        paymentInitialisationResponse.setPaymentId(PAYMENT_ID);
-        return paymentInitialisationResponse;
     }
 }
