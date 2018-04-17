@@ -2,7 +2,6 @@ package de.adorsys.aspsp.aspspmockserver.config;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.Mongo;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -25,6 +24,4 @@ public class FongoConfig extends AbstractMongoConfiguration {
         // uses fongo for in-memory tests
         return new Fongo("mockspi").getMongo();
     }
-
-
 }

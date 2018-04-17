@@ -1,15 +1,16 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -114,6 +115,22 @@ public class AccountServiceTest {
         assertThat(actualResult).isFalse();
     }
 
+    @Test
+    public void getBalances() {
+        //Given
+        SpiAccountDetails spiAccountDetails = getSpiAccountDetails_1();
+        String spiAccountDetailsId = spiAccountDetails.getId();
+        List<SpiBalances> expectedBalance = getNewBalanceList();
+        spiAccountDetails.setBalances(expectedBalance);
+        accountService.addAccount(spiAccountDetails);
+
+        //When
+        Optional<List<SpiBalances>> actualBalanceList = accountService.getBalances(spiAccountDetailsId);
+
+        //Then
+        assertThat(actualBalanceList.get()).isEqualTo(expectedBalance);
+    }
+
     private SpiAccountDetails getSpiAccountDetails_1(){
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
         spiAccountDetails.setId("21fefdsdvds212sa");
@@ -148,5 +165,23 @@ public class AccountServiceTest {
         spiAccountDetails.setBalances(null);
 
         return spiAccountDetails;
+    }
+
+    private List<SpiBalances> getNewBalanceList() {
+        Currency euro = Currency.getInstance("EUR");
+
+        SpiBalances balance = new SpiBalances();
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, "1000")));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, "200")));
+
+        return Collections.singletonList(balance);
+    }
+
+    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
+        SpiAccountBalance sb = new SpiAccountBalance();
+        sb.setDate(new Date(1523951451537L));
+        sb.setSpiAmount(spiAmount);
+        sb.setLastActionDateTime(new Date(1523951451537L));
+        return sb;
     }
 }
