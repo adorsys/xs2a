@@ -48,9 +48,9 @@ public class AccountService {
         List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
         return Optional.ofNullable(spiBalances)
-               .map(sb -> new ResponseObject<>(accountMapper.mapFromSpiBalancesList(sb)))
-               .orElse(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                                                             .text("Wrong account ID"))));
+                       .map(sb -> new ResponseObject<>(accountMapper.mapFromSpiBalancesList(sb)))
+                       .orElse(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
+                                                                             .text("Wrong account ID"))));
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
@@ -76,8 +76,8 @@ public class AccountService {
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
         return StringUtils.isEmpty(transactionId)
-               ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
-               : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
+                                      ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+                                      : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 
     private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance) {
@@ -125,8 +125,8 @@ public class AccountService {
         Optional<AccountReport> result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{},
-        new Transactions[]{},
-        new Links()
+                                                        new Transactions[]{},
+                                                        new Links()
         ));
 
     }
