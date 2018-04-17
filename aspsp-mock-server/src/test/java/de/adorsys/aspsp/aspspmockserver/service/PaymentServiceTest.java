@@ -20,7 +20,7 @@ public class PaymentServiceTest {
     @Test
     public void addPayment() {
         //Given
-        SpiSinglePayments expectedPayment = getSpiPayment();
+        SpiSinglePayments expectedPayment = new SpiSinglePayments();
 
         //When
         SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment);
@@ -29,9 +29,4 @@ public class PaymentServiceTest {
         assertThat(actualPayment).isNotNull();
     }
 
-
-    public SpiSinglePayments getSpiPayment() {
-        SpiSinglePayments spiPayment = new SpiSinglePayments();
-        return spiPayment;
-    }
 }

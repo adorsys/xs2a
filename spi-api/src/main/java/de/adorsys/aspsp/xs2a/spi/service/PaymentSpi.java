@@ -11,11 +11,9 @@ public interface PaymentSpi {
 
     SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
 
-    String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred);
-
     SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment);
 
     SpiPaymentInitialisationResponse createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred);
 
-    SpiPaymentInitialisationResponse createPaymentInitiationMockServer(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred);
+    SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred);
 }

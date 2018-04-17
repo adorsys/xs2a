@@ -43,7 +43,8 @@ public class PaymentService {
     }
 
     public String createPaymentInitiationAndReturnId(SinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
-        return paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayments(paymentInitiationRequest), tppRedirectPreferred);
+        //TODO according to PIS_01_04 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/81
+        return "12345";
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
@@ -70,7 +71,7 @@ public class PaymentService {
 
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
         SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
-        SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiationMockServer(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
+        SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
         PaymentInitialisationResponse paymentInitiation = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
 
         if (paymentInitiation != null) {

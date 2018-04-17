@@ -30,11 +30,6 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public String createPaymentInitiation(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
-        return PaymentMockData.createPaymentInitiation(spiSinglePayments, tppRedirectPreferred);
-    }
-
-    @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment) {
         SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
         response.setTransactionStatus(SpiTransactionStatus.valueOf(resolveTransactionStatus(periodicPayment)));
@@ -55,7 +50,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public SpiPaymentInitialisationResponse createPaymentInitiationMockServer(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred) {
+    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred) {
         ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment") + code + "/", spiSinglePayments,SpiSinglePayments.class);
         return getResponse(responseEntity, tppRedirectPreferred);
     }

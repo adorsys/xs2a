@@ -55,7 +55,7 @@ public class PaymentServiceTestMock {
         .thenReturn(getSpiPayment());
         when(paymentMapper.mapFromSpiPaymentInitializationResponse(getSpiPaymentResponse()))
         .thenReturn(getPaymentResponse());
-        when(paymentSpi.createPaymentInitiationMockServer(getSpiPayment(), PaymentProduct.SCT.getCode(), false))
+        when(paymentSpi.createPaymentInitiation(getSpiPayment(), PaymentProduct.SCT.getCode(), false))
         .thenReturn(getSpiPaymentResponse());
     }
 

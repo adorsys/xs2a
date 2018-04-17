@@ -6,28 +6,18 @@ import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import de.adorsys.aspsp.xs2a.spi.impl.PaymentSpiImpl;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -38,18 +28,7 @@ public class PaymentServiceTest {
 
     @Test
     public void getPaymentStatusById_successesResult() {
-        //Given:
-        boolean tppRedirectPreferred = false;
-        SinglePayments expectedRequest = getCreatePaymentInitiationRequestTest();
-        String validAccountConsentsId = paymentService.createPaymentInitiationAndReturnId(expectedRequest, tppRedirectPreferred);
-        TransactionStatus expectedStatus = TransactionStatus.ACCP;
-
-        //When:
-        ResponseObject<Map<String, TransactionStatus>> actualStatus = paymentService.getPaymentStatusById(validAccountConsentsId, PaymentProduct.SCT);
-
-        //Then:
-        assertThat(actualStatus.getBody()).isNotNull();
-        assertThat(actualStatus.getBody().get("transactionStatus")).isEqualTo(expectedStatus);
+       //TODO according to task PIS_01_04 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/81
     }
 
     @Test
