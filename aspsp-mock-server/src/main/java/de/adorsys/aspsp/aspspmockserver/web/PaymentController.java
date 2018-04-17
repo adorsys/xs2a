@@ -23,7 +23,7 @@ public class PaymentController {
     }
 
     @PutMapping(path = "/")
-    public ResponseEntity<SpiSinglePayments> createPayment(HttpServletRequest request,
+    public ResponseEntity<SpiSinglePayments> createPayment(
                                         @RequestBody SpiSinglePayments payment) throws Exception {
         return paymentService.addPayment(payment);
     }

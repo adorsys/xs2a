@@ -29,7 +29,6 @@ public class PaymentInitiationController {
     @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.POST)
     @ApiImplicitParams({
-    @ApiImplicitParam(name = "content-type", value = "application/json", required = true, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "psu-ip-address", value = "192.168.8.78", required = true, dataType = "String", paramType = "header"),

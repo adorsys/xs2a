@@ -17,7 +17,7 @@ public class PaymentService {
     private final AccountService accountService;
 
     public ResponseEntity<SpiSinglePayments> addPayment(SpiSinglePayments payment) {
-        if (payment != null && authoriseUser(payment)) {
+        if (payment != null) {
             payment.setPaymentId(generatePaymentId());
             SpiSinglePayments saved = paymentRepository.save(payment);
             if (saved != null) {

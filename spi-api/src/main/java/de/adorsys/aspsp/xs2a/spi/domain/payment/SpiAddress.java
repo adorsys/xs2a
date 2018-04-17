@@ -1,12 +1,16 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SpiAddress {
-    private final String street;
-    private final String buildingNumber;
-    private final String city;
-    private final String postalCode;
-    private final String country;
+    private String street;
+    private String buildingNumber;
+    private String city;
+    private String postalCode;
+    private String country;
 }

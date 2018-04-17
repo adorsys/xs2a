@@ -10,6 +10,7 @@ import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class PaymentSpiImpl implements PaymentSpi {
     @Autowired
     private RestTemplate restTemplate;
-    private static final String baseUri = "http://localhost:28080/swagger-ui.html/payment-controller/payment/{payment-product}";
+    private static final String baseUri = "http://localhost:28080/payments/";
 
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
@@ -57,8 +58,8 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiationMockServer(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred) {
-        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.exchange(baseUri, HttpMethod.POST, null, new ParameterizedTypeReference<SpiSinglePayments>() {});
-        return getResponse(responseEntity,tppRedirectPreferred);
+        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(baseUri + code + "/", spiSinglePayments, SpiSinglePayments.class);
+        return getResponse(responseEntity, tppRedirectPreferred);
     }
 
     private SpiPaymentInitialisationResponse getResponse(ResponseEntity<SpiSinglePayments> responseEntity, boolean tppRedirectPreferred) {

@@ -37,10 +37,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.consents.link.redirect-to}")
     private String consentsLinkRedirectToSource;
 
-    @Value("1000")
+    @Value("10000")
     private int readTimeout;
 
-    @Value("1000")
+    @Value("10000")
     private int connectionTimeout;
 
     @Override
