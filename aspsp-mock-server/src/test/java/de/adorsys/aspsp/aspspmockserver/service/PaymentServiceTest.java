@@ -21,15 +21,12 @@ public class PaymentServiceTest {
     public void addPayment() {
         //Given
         SpiSinglePayments expectedPayment = getSpiPayment();
-        HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<SpiSinglePayments> actualPayment = paymentService.addPayment(expectedPayment);
-        HttpStatus actualStatus = actualPayment.getStatusCode();
+        SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment);
 
         //Then
-        assertThat(actualPayment.getBody().getPaymentId()).isNotNull();
-        assertThat(actualStatus).isEqualTo(expectedStatus);
+        assertThat(actualPayment).isNotNull();
     }
 
 

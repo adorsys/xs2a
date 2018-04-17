@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/payments/{payment-product}")
+@RequestMapping(path = "/payments")
 public class PaymentController {
     private PaymentService paymentService;
 
@@ -17,7 +17,7 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping(path = "/")
+    @PostMapping(path = "/{payment-product}")
     public ResponseEntity<SpiSinglePayments> createPayment(
     @RequestBody SpiSinglePayments payment) throws Exception {
         SpiSinglePayments saved = paymentService.addPayment(payment);

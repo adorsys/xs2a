@@ -30,7 +30,7 @@ public class PaymentControllerTest {
     public void setUpPaymentServiceMock() throws IOException {
         SpiSinglePayments response = getExpectedRequest();
         response.setPaymentId("12345");
-        when(paymentService.addPayment(getExpectedRequest())).thenReturn(new ResponseEntity<SpiSinglePayments>(response, HttpStatus.CREATED));
+        when(paymentService.addPayment(getExpectedRequest())).thenReturn(response);
     }
 
     @Test
