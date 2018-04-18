@@ -57,7 +57,7 @@ public class ConsentService {
     private SpiAccountAccess checkAccess(SpiAccountAccess access, String psuId) {
         SpiAccountAccess acc = null;
         if (access != null) {
-            if (access.getAvailableAccounts() != SpiAccountAccessType.ALL_ACCOUNTS || access.getAllPsd2() != SpiAccountAccessType.ALL_ACCOUNTS) {
+            if (access.getAvailableAccounts() == SpiAccountAccessType.ALL_ACCOUNTS || access.getAllPsd2() == SpiAccountAccessType.ALL_ACCOUNTS) {
                 if (psuId != null) {
                     Psu psu = psuRepository.findOne(psuId);
                     if (psu != null) {
@@ -76,8 +76,7 @@ public class ConsentService {
                         }
                     }
                 }
-            }
-            if (testAccess(access)) {
+            } else if (testAccess(access)) {
                 acc = new SpiAccountAccess();
                 acc.setAccounts(checkReference(access.getAccounts()));
                 acc.setBalances(checkReference(access.getBalances()));
@@ -86,24 +85,28 @@ public class ConsentService {
                     acc = null;
                 }
             }
+
         }
 
         return acc;
     }
 
     private boolean testAccess(SpiAccountAccess access) {
-        return !access.getAccounts().isEmpty() || !access.getBalances().isEmpty() || !access.getTransactions().isEmpty();
+        return access.getAccounts() != null && !access.getAccounts().isEmpty()
+               || access.getBalances() != null && !access.getBalances().isEmpty()
+               || access.getTransactions() != null && !access.getTransactions().isEmpty();
     }
 
     private List<SpiAccountReference> checkReference(List<SpiAccountReference> accounts) {
         List<SpiAccountReference> result = new ArrayList<>();
-
-        for (SpiAccountReference aR : accounts) {
-            Psu psu = psuRepository.findPsuByAccountDetailsList_Iban(aR.getIban());
-            if (psu != null) {
-                for (SpiAccountDetails det : psu.getAccountDetailsList()) {
-                    if (det.getIban().equals(aR.getIban())) {
-                        aR = mapFromSpiAccountDetails(det);
+        if (accounts != null) {
+            for (SpiAccountReference aR : accounts) {
+                Psu psu = psuRepository.findPsuByAccountDetailsList_Iban(aR.getIban());
+                if (psu != null) {
+                    for (SpiAccountDetails det : psu.getAccountDetailsList()) {
+                        if (det.getIban().equals(aR.getIban())) {
+                            result.add(mapFromSpiAccountDetails(det));
+                        }
                     }
                 }
             }
