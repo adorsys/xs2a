@@ -13,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
@@ -129,6 +127,9 @@ public class AccountControllerTest {
     }
 
     private SpiAccountDetails getSpiAccountDetails_1(){
+        //TODO rework to allargsconstructor
+
+/*
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
         spiAccountDetails.setId(ACCOUNT_ID);
         spiAccountDetails.setIban("DE12345235431234");
@@ -144,9 +145,13 @@ public class AccountControllerTest {
         spiAccountDetails.setBalances(null);
 
         return spiAccountDetails;
+*/
+        return null;
     }
 
     private SpiAccountDetails getSpiAccountDetails_2(){
+        //TODO rework to allargsconstructor
+/*
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
         spiAccountDetails.setId("qwertyuiop12345678");
         spiAccountDetails.setIban("DE99999999999999");
@@ -162,5 +167,7 @@ public class AccountControllerTest {
         spiAccountDetails.setBalances(null);
 
         return spiAccountDetails;
+*/
+        return null;
     }
 }

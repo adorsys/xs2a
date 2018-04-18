@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,6 +114,9 @@ public class AccountServiceTest {
     }
 
     private SpiAccountDetails getSpiAccountDetails_1(){
+        //TODO rework to allargsconstructor
+
+/*
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
         spiAccountDetails.setId("21fefdsdvds212sa");
         spiAccountDetails.setIban("DE12345235431234");
@@ -130,9 +132,14 @@ public class AccountServiceTest {
         spiAccountDetails.setBalances(null);
 
         return spiAccountDetails;
+*/
+        return null;
     }
 
     private SpiAccountDetails getSpiAccountDetails_2(){
+        //TODO rework to allargsconstructor
+
+/*
         SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
         spiAccountDetails.setId("qwertyuiop12345678");
         spiAccountDetails.setIban("DE99999999999999");
@@ -148,5 +155,7 @@ public class AccountServiceTest {
         spiAccountDetails.setBalances(null);
 
         return spiAccountDetails;
+*/
+        return null;
     }
 }
