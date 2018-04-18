@@ -3,7 +3,6 @@ package de.adorsys.aspsp.xs2a.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
@@ -57,7 +56,7 @@ public class AccountService {
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
-            return new ResponseObject<>(new MessageError(new TppMessageInformation(MessageCategory.ERROR, RESOURCE_UNKNOWN_404)));
+            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)));
         } else {
 
             try {
@@ -66,7 +65,7 @@ public class AccountService {
                 return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
             } catch (ValidationException ex) {
 
-                TppMessageInformation tppMessageInformation = new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR);
+                TppMessageInformation tppMessageInformation = new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR);
                 tppMessageInformation.setText(ex.getMessage());
 
                 return new ResponseObject<>(new MessageError(tppMessageInformation));

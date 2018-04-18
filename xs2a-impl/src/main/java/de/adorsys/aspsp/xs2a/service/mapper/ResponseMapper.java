@@ -5,12 +5,13 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Component
 @AllArgsConstructor
@@ -40,7 +41,7 @@ public class ResponseMapper {
         return (pi.getTransactionStatus() == TransactionStatus.ACCP)
                ? new ResponseEntity<>(response.getBody(), HttpStatus.OK)
                : new ResponseEntity<>(
-        new MessageError(pi.getTransactionStatus(), new TppMessageInformation(MessageCategory.ERROR, MessageCode.PAYMENT_FAILED)),
+        new MessageError(pi.getTransactionStatus(), new TppMessageInformation(ERROR, MessageCode.PAYMENT_FAILED)),
         HttpStatus.valueOf(MessageCode.PAYMENT_FAILED.getCode()));
     }
 

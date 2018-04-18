@@ -114,13 +114,14 @@ public class AccountServiceTest {
         //Then
         assertThat(actualResult).isFalse();
     }
+
     @Test
     public void getBalances() {
         //Given
-        SpiAccountDetails spiAccountDetails = getSpiAccountDetails_1();
+        SpiAccountDetails spiAccountDetails = getSpiAccountDetailsWithBalance();
         String spiAccountDetailsId = spiAccountDetails.getId();
-        List<SpiBalances> expectedBalance = getNewBalanceList();
-        spiAccountDetails.setBalances(expectedBalance);
+        List<SpiBalances> expectedBalance = spiAccountDetails.getBalances();
+
         accountService.addAccount(spiAccountDetails);
 
         //When
@@ -140,6 +141,12 @@ public class AccountServiceTest {
         return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
         "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
         "GIRO", null, "ACVB222", null);
+    }
+
+    private SpiAccountDetails getSpiAccountDetailsWithBalance() {
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+        "GIRO", null, "ACVB222", getNewBalanceList());
     }
 
     private List<SpiBalances> getNewBalanceList() {

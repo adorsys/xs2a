@@ -1,14 +1,10 @@
 package de.adorsys.aspsp.xs2a.spi.domain.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.util.Currency;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
 public class SpiAmount {
     private Currency currency;
     private String content;
