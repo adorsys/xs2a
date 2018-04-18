@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,7 +77,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void deleteAccountById_Success(){
+    public void deleteAccountById_Success() {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         String spiAccountDetailsId = expectedSpiAccountDetails.getId();
@@ -95,7 +96,7 @@ public class AccountServiceTest {
         String wrongId = "Really wrong id";
 
         //When
-        boolean actualResult  = accountService.deleteAccountById(wrongId);
+        boolean actualResult = accountService.deleteAccountById(wrongId);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -107,55 +108,21 @@ public class AccountServiceTest {
         String wrongId = null;
 
         //When
-        boolean actualResult  = accountService.deleteAccountById(wrongId);
+        boolean actualResult = accountService.deleteAccountById(wrongId);
 
         //Then
         assertThat(actualResult).isFalse();
     }
 
-    private SpiAccountDetails getSpiAccountDetails_1(){
-        //TODO rework to allargsconstructor
-
-/*
-        SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId("21fefdsdvds212sa");
-        spiAccountDetails.setIban("DE12345235431234");
-        spiAccountDetails.setBban(null);
-        spiAccountDetails.setPan("1111222233334444");
-        spiAccountDetails.setMaskedPan("111122xxxxxx44");
-        spiAccountDetails.setMsisdn(null);
-        spiAccountDetails.setCurrency(Currency.getInstance("EUR"));
-        spiAccountDetails.setName("Jack");
-        spiAccountDetails.setAccountType("GIRO");
-        spiAccountDetails.setCashSpiAccountType(null);
-        spiAccountDetails.setBic("XE3DDD");
-        spiAccountDetails.setBalances(null);
-
-        return spiAccountDetails;
-*/
-        return null;
+    private SpiAccountDetails getSpiAccountDetails_1() {
+        return new SpiAccountDetails("21fefdsdvds212sa", "DE12345235431234", null, "1111222233334444",
+        "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+        null, "XE3DDD", null);
     }
 
-    private SpiAccountDetails getSpiAccountDetails_2(){
-        //TODO rework to allargsconstructor
-
-/*
-        SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId("qwertyuiop12345678");
-        spiAccountDetails.setIban("DE99999999999999");
-        spiAccountDetails.setBban(null);
-        spiAccountDetails.setPan("4444333322221111");
-        spiAccountDetails.setMaskedPan("444433xxxxxx1111");
-        spiAccountDetails.setMsisdn(null);
-        spiAccountDetails.setCurrency(Currency.getInstance("EUR"));
-        spiAccountDetails.setName("Emily");
-        spiAccountDetails.setAccountType("GIRO");
-        spiAccountDetails.setCashSpiAccountType(null);
-        spiAccountDetails.setBic("ACVB222");
-        spiAccountDetails.setBalances(null);
-
-        return spiAccountDetails;
-*/
-        return null;
+    private SpiAccountDetails getSpiAccountDetails_2() {
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+        "GIRO", null, "ACVB222", null);
     }
 }
