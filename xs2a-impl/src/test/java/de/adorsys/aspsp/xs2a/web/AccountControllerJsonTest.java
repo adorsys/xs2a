@@ -88,7 +88,7 @@ public class AccountControllerJsonTest {
     }
 
     @Test
-    public void getBallances_ResultTest() throws IOException {
+    public void getBalances_ResultTest() throws IOException {
         //Given:
         boolean psuInvolved = true;
         Balances expectedBalances = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);

@@ -134,8 +134,4 @@ public class AccountSpiImpl implements AccountSpi {
 
         return isCreditorAccountValid || isDebtorAccountValid;
     }
-
-    public RemoteSpiUrls getRemoteSpiUrls() {
-        return remoteSpiUrls;
-    }
 }
