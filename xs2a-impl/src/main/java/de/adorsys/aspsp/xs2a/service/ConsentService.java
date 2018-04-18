@@ -1,14 +1,17 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
 public class ConsentService {
@@ -23,20 +26,16 @@ public class ConsentService {
         this.consentMapper = consentMapper;
     }
 
-    public CreateConsentResp createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
+    public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
 
-        String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred);
-
-        return new CreateConsentResp(
-        TransactionStatus.RCVD,
-        consentId,
-        null,
-        getLinkToConsent(consentId),
-        null);
+        String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
+        return isEmpty(consentId)
+               ? new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+               : new ResponseObject<>(new CreateConsentResp(TransactionStatus.RCVD, consentId, null, getLinkToConsent(consentId), null));
     }
 
-    public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred) {
-        return consentSpi.createAccountConsents(consentMapper.mapToSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred);
+    public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
+        return consentSpi.createAccountConsents(consentMapper.mapToSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred, psuId);
     }
 
     public TransactionStatus getAccountConsentsStatusById(String consentId) {

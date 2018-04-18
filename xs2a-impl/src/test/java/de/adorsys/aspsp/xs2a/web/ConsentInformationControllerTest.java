@@ -3,18 +3,19 @@ package de.adorsys.aspsp.xs2a.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountAccessType;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.*;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -26,6 +27,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,41 +41,37 @@ public class ConsentInformationControllerTest {
     private final String CREATE_CONSENT_NOSELECTED_REQ_JSON_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
     private final String CREATE_CONSENT_ALLPSD2_REQ_JSON_PATH = "/json/CreateConsentsPSD2AllAccountsAvailableReqTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private final String PSU_ID = "123456789";
+    private final String CONSENT_ID = "987654321";
 
     @Autowired
     private ConsentInformationController consentInformationController;
-    @Autowired
+
+    @MockBean(name = "consentService")
     private ConsentService consentService;
 
+    @Before
+    public void setUp() {
+        when(consentService.createAccountConsentsWithResponse(any(), anyBoolean(), anyBoolean(), anyString())).thenReturn(createConsentResponse());
+    }
+
     @Test
-    public void createConsentForAccounts_withBalanceAndTppRedirect() throws IOException {
+    public void createAccountConsentTest() throws IOException {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
+        HttpStatus expectedStatusCode = HttpStatus.CREATED;
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
 
         //When:
-        ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, expectedRequest);
+        ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(PSU_ID, withBalance, tppRedirectPreferred, expectedRequest);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
         CreateConsentResp actualResult = actualResponse.getBody();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
-
-        //Given:
-        String consentId = actualResult.getConsentId();
-
-        //When:
-        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
-
-        //Then:
-        assertThat(actualAccountConsent.getAccess()).isEqualTo(expectedRequest.getAccess());
-        assertThat(actualAccountConsent.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
-        assertThat(actualAccountConsent.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
-        assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
     }
 
     @Test
@@ -81,7 +82,7 @@ public class ConsentInformationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
         String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
-        String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID);
         Map<String, TransactionStatus> expectedResult = new HashMap<>();
         expectedResult.put("transactionStatus", TransactionStatus.ACTC);
 
@@ -121,7 +122,7 @@ public class ConsentInformationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
         String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = new Gson().fromJson(aicRequestJson, CreateConsentReq.class);
-        String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        String accountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID);
 
         //When:
         ResponseEntity<AccountConsent> actualResponse = consentInformationController.getAccountConsentsInformationById(accountConsentsId);
@@ -258,7 +259,7 @@ public class ConsentInformationControllerTest {
         CreateConsentReq createConsentReq = MAPPER.readValue(requestJson, CreateConsentReq.class);
 
         // When:
-        ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(withBalance, tppRedirectPreferred, createConsentReq);
+        ResponseEntity<CreateConsentResp> actualResponse = consentInformationController.createAccountConsent(PSU_ID, withBalance, tppRedirectPreferred, createConsentReq);
 
         // Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
@@ -266,6 +267,11 @@ public class ConsentInformationControllerTest {
 
         CreateConsentResp actualResult = actualResponse.getBody();
         return actualResult;
+    }
+
+    private ResponseObject<CreateConsentResp> createConsentResponse() {
+        CreateConsentResp resp = new CreateConsentResp(TransactionStatus.RCVD, CONSENT_ID, new AuthenticationObject[]{}, new Links(), "message");
+        return new ResponseObject<>(resp);
     }
 
     private static Date getDateFromDateString(String dateString) {

@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ConsentServiceTest {
+    private final String PSU_ID = "123456789";
     @Autowired
     private ConsentService consentService;
 
@@ -36,7 +37,7 @@ public class ConsentServiceTest {
         boolean tppRedirectPreferred = false;
 
         //When:
-        CreateConsentResp actualAicResponse = consentService.createAccountConsentsWithResponse(expectedRequest, withBalance, tppRedirectPreferred);
+        CreateConsentResp actualAicResponse = (CreateConsentResp) consentService.createAccountConsentsWithResponse(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID).getBody();
 
         //Then:
         assertThat(actualAicResponse.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
@@ -61,7 +62,7 @@ public class ConsentServiceTest {
         boolean tppRedirectPreferred = false;
 
         //When:
-        String actualConsentId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        String actualConsentId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID);
 
         //Then:
         assertThat(actualConsentId).isNotEmpty();
@@ -73,7 +74,7 @@ public class ConsentServiceTest {
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
-        String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID);
         TransactionStatus expectedStatus = TransactionStatus.ACTC;
 
         //When:
@@ -101,7 +102,7 @@ public class ConsentServiceTest {
         boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
-        String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        String validAccountConsentsId = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID);
 
         //When:
         AccountConsent actualAccountConsent = consentService.getAccountConsentsById(validAccountConsentsId);
@@ -174,7 +175,7 @@ public class ConsentServiceTest {
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
         boolean wBalance = withBalance;
         boolean tppRedirect = tppRedirectPreferred;
-        String id = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred);
+        String id = consentService.createAccountConsentsAndReturnId(expectedRequest, withBalance, tppRedirectPreferred, PSU_ID);
         return consentService.getAccountConsentsById(id);
     }
 

@@ -36,4 +36,9 @@ public class ResponseObject<T> {
     public ResponseObject(MessageError error) {
         this.error = error;
     }
+
+    public ResponseObject fail(MessageError error) {
+        this.error = error;
+        return this;
+    }
 }

@@ -1,10 +1,12 @@
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +26,12 @@ public class ConsentInformationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsentInformationController.class);
     private ConsentService consentService;
+    private ResponseMapper responseMapper;
 
     @Autowired
-    public ConsentInformationController(ConsentService consentService) {
+    public ConsentInformationController(ConsentService consentService, ResponseMapper responseMapper) {
         this.consentService = consentService;
+        this.responseMapper = responseMapper;
     }
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.")
@@ -35,18 +39,19 @@ public class ConsentInformationController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "psu-id", value = "31d50f56-a543-3664-b345-b9a822ae98a7", dataType = "UUID", paramType = "header")})
     public ResponseEntity<CreateConsentResp> createAccountConsent(
+    @RequestHeader(name = "psu-id") String psuId,
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "withBalance", required = false) boolean withBalance,
     @Valid @RequestBody CreateConsentReq createConsent) {
-        CreateConsentResp aicCreateResponse = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred);
+        ResponseObject response = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred, psuId);
 
-        LOGGER.debug("createAccountConsent(): response {} ", aicCreateResponse);
 
-        return new ResponseEntity<>(aicCreateResponse, HttpStatus.OK);
+        return responseMapper.createdOrBadRequest(response);
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource")

@@ -64,7 +64,7 @@ public class SpiMockConfig {
 
     @Bean
     public ConsentSpi consentSpi() {
-        return new ConsentSpiImpl();
+        return new ConsentSpiImpl(remoteSpiUrls());
     }
 
     @Bean
@@ -235,14 +235,14 @@ public class SpiMockConfig {
         SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
         spiAccountAccess.setBalances(balances);
         spiAccountAccess.setTransactions(transactions);
+        SpiCreateConsentRequest req = new SpiCreateConsentRequest();
+        req.setAccess(spiAccountAccess);
+        req.setRecurringIndicator(true);
+        req.setValidUntil(getDateFromDateStringNoTimeZone("2017-11-01"));
+        req.setFrequencyPerDay(4);
+        req.setCombinedServiceIndicator(false);
 
-        return new SpiCreateConsentRequest(
-        spiAccountAccess,
-        true,
-        getDateFromDateStringNoTimeZone("2017-11-01"),
-        4,
-        false
-        );
+        return req;
     }
 
     private SpiCreateConsentRequest getAicRequest_2() {
@@ -303,13 +303,14 @@ public class SpiMockConfig {
         spiAccountAccess.setBalances(balances);
         spiAccountAccess.setTransactions(transactions);
 
-        return new SpiCreateConsentRequest(
-        spiAccountAccess,
-        true,
-        getDateFromDateStringNoTimeZone("2017-04-25"),
-        4,
-        false
-        );
+        SpiCreateConsentRequest req = new SpiCreateConsentRequest();
+        req.setAccess(spiAccountAccess);
+        req.setRecurringIndicator(true);
+        req.setValidUntil(getDateFromDateStringNoTimeZone("2017-04-25"));
+        req.setFrequencyPerDay(4);
+        req.setCombinedServiceIndicator(false);
+
+        return req;
     }
 
     private static Date getDateFromDateStringNoTimeZone(String dateString) {
