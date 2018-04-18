@@ -55,7 +55,7 @@ public class AccountControllerJsonTest {
     public void setUp() throws Exception {
         when(accountServiceMocked.getAccountDetailsList(anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
-        when(accountServiceMocked.getBalancesList(any(String.class), anyBoolean())).thenReturn(balances);
+        when(accountServiceMocked.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
         when(accountServiceMocked.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountServiceMocked.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }

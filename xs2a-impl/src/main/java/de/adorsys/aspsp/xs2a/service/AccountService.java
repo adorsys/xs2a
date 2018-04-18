@@ -11,19 +11,21 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.client.HttpClientErrorException;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
+@Slf4j
 @Service
 @Validated
 @AllArgsConstructor
@@ -43,40 +45,36 @@ public class AccountService {
         return new ResponseObject<>(accountDetailsMap);
     }
 
-    public ResponseObject<List<Balances>> getBalancesList(String accountId, boolean psuInvolved) {
-        List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
+    public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
+        try {
 
-        return Optional.ofNullable(spiBalances)
-                       .map(sb -> new ResponseObject<>(accountMapper.mapFromSpiBalancesList(sb)))
-                       .orElse(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                                                                             .text("Wrong account ID"))));
+            List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
+            return new ResponseObject<>(accountMapper.mapFromSpiBalancesList(spiBalances));
+        } catch (HttpClientErrorException ex) {
+
+            log.info("Wrong account ID: {}", accountId);
+            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
+                                                         .text("Wrong account ID")));
+        }
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
+
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
             return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)));
         } else {
 
-            try {
-                AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
-
-                return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
-            } catch (ValidationException ex) {
-
-                TppMessageInformation tppMessageInformation = new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR);
-                tppMessageInformation.setText(ex.getMessage());
-
-                return new ResponseObject<>(new MessageError(tppMessageInformation));
-            }
+            AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
+            return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
         }
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
         return StringUtils.isEmpty(transactionId)
-                                      ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
-                                      : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
+               ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+               : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 
     private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance) {
@@ -124,8 +122,8 @@ public class AccountService {
         Optional<AccountReport> result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{},
-                                                        new Transactions[]{},
-                                                        new Links()
+        new Transactions[]{},
+        new Links()
         ));
 
     }
