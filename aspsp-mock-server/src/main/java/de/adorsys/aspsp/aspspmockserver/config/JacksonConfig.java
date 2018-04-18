@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import de.adorsys.aspsp.aspspmockserver.util.jackson.ConstructorPropertiesModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +21,6 @@ public class JacksonConfig {
         objectMapper.registerModule(new Jdk8Module()); // add support for Optionals
         objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
         objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
-        objectMapper.registerModule(new ConstructorPropertiesModule());
         return objectMapper;
     }
 
