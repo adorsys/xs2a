@@ -18,6 +18,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -35,7 +39,7 @@ public class AccountControllerTest {
 
 
     @Before
-    public void setUpAccountServiceMock(){
+    public void setUpAccountServiceMock() {
         List<SpiAccountDetails> accountList = new ArrayList<>();
         accountList.add(getSpiAccountDetails_1());
         accountList.add(getSpiAccountDetails_2());
@@ -98,7 +102,7 @@ public class AccountControllerTest {
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
 
         //When
-        accountController.createAccount(expectedRequest,expectedSpiAccountDetails);
+        accountController.createAccount(expectedRequest, expectedSpiAccountDetails);
         SpiAccountDetails actualSpiAccountDetails = accountService.getAccount(ACCOUNT_ID).get();
 
         //Then
@@ -107,7 +111,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void deleteAccount_Success(){
+    public void deleteAccount_Success() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
@@ -120,7 +124,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void deleteAccount_WrongId(){
+    public void deleteAccount_WrongId() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
 
@@ -160,40 +164,16 @@ public class AccountControllerTest {
         assertThat(actualResponse.getBody()).isNull();
     }
 
-    private SpiAccountDetails getSpiAccountDetails_1(){
-        SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId(ACCOUNT_ID);
-        spiAccountDetails.setIban("DE12345235431234");
-        spiAccountDetails.setBban(null);
-        spiAccountDetails.setPan("1111222233334444");
-        spiAccountDetails.setMaskedPan("111122xxxxxx44");
-        spiAccountDetails.setMsisdn(null);
-        spiAccountDetails.setCurrency(Currency.getInstance("EUR"));
-        spiAccountDetails.setName("Jack");
-        spiAccountDetails.setAccountType("GIRO");
-        spiAccountDetails.setCashSpiAccountType(null);
-        spiAccountDetails.setBic("XE3DDD");
-        spiAccountDetails.setBalances(null);
-
-        return spiAccountDetails;
+    private SpiAccountDetails getSpiAccountDetails_1() {
+        return new SpiAccountDetails(ACCOUNT_ID, "DE12345235431234", null, "1111222233334444",
+        "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+        null, "XE3DDD", null);
     }
 
-    private SpiAccountDetails getSpiAccountDetails_2(){
-        SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId("qwertyuiop12345678");
-        spiAccountDetails.setIban("DE99999999999999");
-        spiAccountDetails.setBban(null);
-        spiAccountDetails.setPan("4444333322221111");
-        spiAccountDetails.setMaskedPan("444433xxxxxx1111");
-        spiAccountDetails.setMsisdn(null);
-        spiAccountDetails.setCurrency(Currency.getInstance("EUR"));
-        spiAccountDetails.setName("Emily");
-        spiAccountDetails.setAccountType("GIRO");
-        spiAccountDetails.setCashSpiAccountType(null);
-        spiAccountDetails.setBic("ACVB222");
-        spiAccountDetails.setBalances(null);
-
-        return spiAccountDetails;
+    private SpiAccountDetails getSpiAccountDetails_2() {
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
+        "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
+        null, "ACVB222", null);
     }
 
     private List<SpiBalances> getNewBalanceList() {

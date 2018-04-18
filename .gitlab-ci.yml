@@ -86,7 +86,7 @@ check_pmd:
   tags:
     - aws_docker
   script:
-    - mvn clean install
+    - mvn -DskipTests clean install
     - mvn pmd:pmd
   artifacts:
     paths:
