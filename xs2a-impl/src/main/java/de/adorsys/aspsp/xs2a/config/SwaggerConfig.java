@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.config;
 import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -29,14 +30,12 @@ public class SwaggerConfig {
     }
 
     private ApiInfo getApiInfo() {
-        return new ApiInfo(
-        "XS2A REST Api",
-        "",
-        "1.0",
-        "urn:tos",
-        new Contact("aro, adorsys GmbH & Co. KG", null, "aro@adorsys.de"),
-        "License of API",
-        "API license URL"
-        );
+        return new ApiInfoBuilder()
+               .title("XS2A REST Api")
+               .contact(new Contact("dgo, adorsys GmbH & Co. KG", "http://www.adorsys.de", "dgo@adorsys.de"))
+               .version("1.0")
+               .license("License of API")
+               .licenseUrl("API license URL")
+               .build();
     }
 }
