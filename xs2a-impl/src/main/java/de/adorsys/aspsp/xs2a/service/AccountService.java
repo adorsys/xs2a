@@ -47,7 +47,10 @@ public class AccountService {
     public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
         List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
-        return new ResponseObject<>(accountMapper.mapFromSpiBalancesList(spiBalances));
+        return Optional.ofNullable(spiBalances)
+                       .map(sb -> new ResponseObject<>(accountMapper.mapFromSpiBalancesList(sb)))
+                       .orElse(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
+                                                                             .text("Wrong account ID"))));
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
