@@ -10,6 +10,7 @@ public class SpiAddress {
     @Id
     @Setter
     @NonFinal
+    private String id;
     private String street;
     private String buildingNumber;
     private String city;
