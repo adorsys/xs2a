@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.OAuthBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -52,9 +49,13 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
     }
 
     private OAuth securitySchema() {
+        GrantType grantType = new AuthorizationCodeGrantBuilder()
+                              .tokenEndpoint(new TokenEndpoint(authUrl + "/protocol/openid-connect/token", "oauthtoken"))
+                              .tokenRequestEndpoint(new TokenRequestEndpoint(authUrl + "/protocol/openid-connect/auth", "aspsp-mock", "1166b089-1868-442f-aa66-ad38100715b4"))
+                              .build();
         return new OAuthBuilder()
                .name("oauth2")
-               .grantTypes(asList(new ResourceOwnerPasswordCredentialsGrant(authUrl + "/protocol/openid-connect/token")))
+               .grantTypes(asList(grantType))
                .scopes(scopes())
                .build();
     }
