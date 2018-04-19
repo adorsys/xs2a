@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
 
