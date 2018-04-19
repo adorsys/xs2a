@@ -12,6 +12,7 @@ variables:
   GITLAB_IMAGE_NAME_MOCKSRV: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/aspsp-mock-server"
   OPENSHIFT_IMAGE_NAME_MOCKSRV: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-mock-server"
 
+  GITHUB_REPO: "adorsys/xs2a"
 # ------------------------------------------------------------------
 # reusable yaml anchors
 # ------------------------------------------------------------------
