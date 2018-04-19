@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
 
@@ -46,16 +45,9 @@ public class AccountService {
     }
 
     public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
-        try {
+        List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
-            List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
-            return new ResponseObject<>(accountMapper.mapFromSpiBalancesList(spiBalances));
-        } catch (HttpClientErrorException ex) {
-
-            log.info("Wrong account ID: {}", accountId);
-            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                                                         .text("Wrong account ID")));
-        }
+        return new ResponseObject<>(accountMapper.mapFromSpiBalancesList(spiBalances));
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
