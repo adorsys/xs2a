@@ -79,7 +79,8 @@ public class BulkPaymentInitiationControllerTest {
     }
 
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() throws IOException {
-        return new ResponseObject<>(readPaymentInitialisationResponse());
+        return ResponseObject.builder()
+               .body(readPaymentInitialisationResponse()).build();
     }
 
     private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {

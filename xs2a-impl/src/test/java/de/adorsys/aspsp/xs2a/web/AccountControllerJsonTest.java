@@ -174,9 +174,10 @@ public class AccountControllerJsonTest {
         );
         List<AccountDetails> accountDetailsList = new ArrayList<>();
         accountDetailsList.add(accountDetails);
-        Map<String, List<AccountDetails>> mockMap = new HashMap<String, List<AccountDetails>>();
+        Map<String, List<AccountDetails>> mockMap = new HashMap<>();
         mockMap.put("accountList", accountDetailsList);
-        ResponseObject mockedResponse = new ResponseObject<>(mockMap);
+        ResponseObject mockedResponse = ResponseObject.builder()
+                                        .body(mockMap).build();
 
         Map<String, List<AccountDetails>> expectedMap = new HashMap<>();
         expectedMap.put("accountList", accountDetailsList);
@@ -196,24 +197,28 @@ public class AccountControllerJsonTest {
         AccountDetails[] array = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class);
         Map<String, List<AccountDetails>> result = new HashMap<>();
         result.put("accountList", Arrays.asList(array));
-        return new ResponseObject<>(result);
+        return ResponseObject.builder()
+               .body(result).build();
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
         Map<String, List<AccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
-        return new ResponseObject<>(map.get("accountList").get(0));
+        return ResponseObject.builder()
+               .body(map.get("accountList").get(0)).build();
     }
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
         AccountReport accountReport = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
 
-        return new ResponseObject<>(accountReport);
+        return ResponseObject.builder()
+               .body(accountReport).build();
     }
 
     private ResponseObject<List<Balances>> readBalances() throws IOException {
         Balances read = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
         List<Balances> res = new ArrayList<>();
         res.add(read);
-        return new ResponseObject<>(res);
+        return ResponseObject.builder()
+               .body(res).build();
     }
 }

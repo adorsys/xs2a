@@ -55,10 +55,13 @@ public class PaymentService {
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
         if (transactionStatus == null) {
-            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
-                                                                 .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
+            return ResponseObject.builder()
+                   .fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
+                                                                 .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))))
+                   .build();
         }
-        return new ResponseObject<>(paymentStatusResponse);
+        return ResponseObject.builder()
+               .body(paymentStatusResponse).build();
     }
 
     public String createPaymentInitiationAndReturnId(SinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
@@ -70,7 +73,8 @@ public class PaymentService {
         PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponse(
         paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
 
-        return new ResponseObject<>(response);
+        return ResponseObject.builder()
+               .body(response).build();
     }
 
     public ResponseObject<PaymentInitialisationResponse> createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -84,6 +88,7 @@ public class PaymentService {
         links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
         paymentInitiation.set_links(links);
 
-        return new ResponseObject<PaymentInitialisationResponse>(paymentInitiation);
+        return ResponseObject.builder()
+               .body(paymentInitiation).build();
     }
 }
