@@ -1,11 +1,6 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,15 +28,6 @@ public class ResponseMapper {
     public ResponseEntity okOrBadRequest(ResponseObject response) {
         return getEntity(response, response.getBody() != null
                                    ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
-    }
-
-    public ResponseEntity okOrByTransactionStatus(ResponseObject response) {
-        PaymentInitialisationResponse pi = (PaymentInitialisationResponse) response.getBody();
-        return (pi.getTransactionStatus() == TransactionStatus.ACCP)
-               ? new ResponseEntity<>(response.getBody(), HttpStatus.OK)
-               : new ResponseEntity<>(
-        new MessageError(pi.getTransactionStatus(), new TppMessageInformation(MessageCategory.ERROR, MessageCode.PAYMENT_FAILED)),
-        HttpStatus.valueOf(MessageCode.PAYMENT_FAILED.getCode()));
     }
 
     public ResponseEntity delete(ResponseObject response) {
