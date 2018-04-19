@@ -40,7 +40,7 @@ public class PaymentControllerTest {
         HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<SpiSinglePayments> actualResponse = paymentController.createPayment("sepa-credit-transfers", getExpectedRequest());
+        ResponseEntity<SpiSinglePayments> actualResponse = paymentController.createPayment(getExpectedRequest());
         HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
