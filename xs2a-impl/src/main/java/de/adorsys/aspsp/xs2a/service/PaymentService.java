@@ -53,7 +53,7 @@ public class PaymentService {
 
         TransactionStatus status = response.getTransactionStatus();
 
-        return EnumSet.of(ACCP).contains(status)
+        return ACCP.equals(status)
                ? new ResponseObject<>(response)
                : new ResponseObject<>().fail(new MessageError(status, new TppMessageInformation(ERROR, MessageCode.PAYMENT_FAILED)));
     }

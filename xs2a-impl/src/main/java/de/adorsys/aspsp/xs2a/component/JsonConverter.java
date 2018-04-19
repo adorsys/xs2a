@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -14,23 +15,23 @@ import java.io.IOException;
 public class JsonConverter {
     private final ObjectMapper objectMapper;
 
-    public <T> String toJson(final T object){
+    public <T> Optional<String> toJson(final T object){
         try {
-            return objectMapper.writeValueAsString(object);
+            return Optional.ofNullable(objectMapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {
             log.error("Can't convert object to json: {}", e);
         }
-        return "";
+        return Optional.empty();
     }
 
-    public <T> T toObject(final String json, final Class<T> target){
+    public <T> Optional<T> toObject(final String json, final Class<T> target){
         try {
-            return objectMapper.readValue(json, target);
+            return Optional.ofNullable(objectMapper.readValue(json, target));
         } catch (JsonProcessingException e) {
             log.error("Can't convert json to object: {}", e);
         } catch (IOException e) {
             log.error("Can't convert json to object: {}", e);
         }
-        return null;
+        return Optional.empty();
     }
 }
