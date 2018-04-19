@@ -1,6 +1,22 @@
-# Project Title
+# Reference Java implementation of PSD2 XS2A Interface of Berlin Group
+With **PSD2** (Directive (EU) 2015/2366 of the European Parliament and of the Council on Payment Services in the 
+Internal Market, published 25 November 2016) the European Union has published a new directive on payment services 
+in the internal market. 
+Among others PSD2 contains regulations on new services to be operated by so called 
+*Third Party Payment Service Providers* (TPP) on behalf of a *Payment Service User* (PSU).
+ 
+These new services are:
+* *Payment Initiation Service* (PIS) to be operated by a Payment Initiation Service Provider (PISP) TPP as defined by article 66 of [PSD2],
+* *Account Information Service* (AIS) to be operated by an Account Information Service Provider (AISP) TPP as defined by article 67 of [PSD2], and
+* *Confirmation on the Availability of Funds Service* (FCS) to be used by a Payment Instrument Issuing Service Provider (PIISP) TPP as defined by article 65 of [PSD2].
 
-Implementation of PSD2 XS2A Interface of Berlin Group 
+To implement these new services (subject to PSU consent) a TPP needs to access the account of the PSU. 
+The account is usually managed by another PSP called the *Account Servicing Payment Service Provider* (ASPSP). 
+To support the TPP in accessing the accounts managed by an ASPSP, each ASPSP has to provide an **"access to account 
+interface"** (**XS2A interface**).
+Responsibilities and rights of TPP and ASPSP concerning the interaction at the XS2A interface are defined and 
+regulated by PSD2.
+ 
 
 ## Getting Started
 
@@ -8,33 +24,59 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-```
-- Java JDK version 1.8.x
-- Docker
+- Java JDK version 1.8.x, Maven 3.x
 - IDP-Server (we recommend Keycloak)
+- Docker (Optional)
+- MongoDB for persistent mocks (Optional)
+
+### Brief architecture description
+
+This implementation provides a REST-interface and underlying services, that could be operated as a proxy to underlying ASPSP-Systems,
+providing capabilities to interoperate with TPP by defined XS2A Standard Interface of Berlin Group.
+![Component diagram][Whitebox.png]
+
+[Whitebox.png]: doc/architecture/Whitebox.png "Component diagram"
+
+The modules provided by this implementation are:
+* **xs2a-impl** - a REST-interface and services operating to serve TPPs
+* **aspsp-mock-server** - a mock-implementation of ASPSP for the purposes of testing and introspecting of xs2a-functionality
+* **spi-api** - internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems
+* **spi-mock** - an implementation of spi-api interface to connect XS2A-services with ASPSP-Mock-Server
+
+More details available in [the documentation](doc/README.md)
+
+### Installing and running development environment
+
+Clone git repository and build a project:
+```bash
+$ git clone https://github.com/adorsys/xs2a.git
+$ cd xs2a
+$ mvn clean install
 ```
 
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
+Run an ASPSP-Mock-Server:
+```bash
+$ cd aspsp-mock-server
+$ mvn spring-boot:run
 ```
-Give the example
-```
+Open a browser on page [https://localhost:28080/swagger-ui.html]()
 
-And repeat
-
+Run a XS2A-Server:
+```bash
+$ cd xs2a-impl
+$ mvn spring-boot:run 
 ```
-until finished
-```
+Open a browser on page [https://localhost:8080/swagger-ui.html]()
 
-End with an example of getting some data out of the system or using it for a little demo
+Now you may try to put some data using the mock-server and to access it using the xs2a-interface.
+See [detailed documentation](doc/spec/README.md) for a requests specification.
+If you are not using a real MongoDB server on port localhost:27017, the InMemory database will be used instead.
+this means that all mock data will be lost upon restart.
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+Dockerfiles provided in the project allow to put the build artifacts into a docker images. Those images are to be
+configured through your environment (documentation follows) to interact properly.
 
 ## Built With
 
@@ -75,9 +117,3 @@ See also the list of [contributors](doc/contributors.md) who participated in thi
 ## License
 
 This project is licensed under the Apache License version 2.0 - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
