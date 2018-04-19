@@ -19,6 +19,7 @@ public class PaymentController {
 
     @PostMapping(path = "/{payment-product}")
     public ResponseEntity<SpiSinglePayments> createPayment(
+    @PathVariable("payment-product") String paymentProduct,
     @RequestBody SpiSinglePayments payment) throws Exception {
         return paymentService.addPayment(payment)
         .map(saved -> new ResponseEntity<>(saved, CREATED))
