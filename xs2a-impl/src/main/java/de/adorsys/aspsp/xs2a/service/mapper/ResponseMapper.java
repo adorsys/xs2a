@@ -1,17 +1,11 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Component
 @AllArgsConstructor
@@ -34,15 +28,6 @@ public class ResponseMapper {
     public ResponseEntity okOrBadRequest(ResponseObject response) {
         return getEntity(response, response.getBody() != null
                                    ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
-    }
-
-    public ResponseEntity okOrByTransactionStatus(ResponseObject response) {
-        PaymentInitialisationResponse pi = (PaymentInitialisationResponse) response.getBody();
-        return (pi.getTransactionStatus() == TransactionStatus.ACCP)
-               ? new ResponseEntity<>(response.getBody(), HttpStatus.OK)
-               : new ResponseEntity<>(
-        new MessageError(pi.getTransactionStatus(), new TppMessageInformation(ERROR, MessageCode.PAYMENT_FAILED)),
-        HttpStatus.valueOf(MessageCode.PAYMENT_FAILED.getCode()));
     }
 
     private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {
