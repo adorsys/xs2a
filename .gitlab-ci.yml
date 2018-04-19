@@ -175,5 +175,5 @@ push_on_github:
       - git remote add github https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git
       - git config push.default simple
       - git checkout ${CI_COMMIT_REF_NAME}
-      - git diff HEAD..github/master
-#      - git push -q github
+      - git fetch github
+      - git push --verbose --follow-tags --atomic --dry-run github
