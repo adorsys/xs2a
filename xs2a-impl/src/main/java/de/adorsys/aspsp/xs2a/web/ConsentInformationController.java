@@ -8,8 +8,6 @@ import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +19,6 @@ import java.util.Map;
 @RequestMapping(path = "api/v1/consents")
 @Api(value = "api/v1/consents", tags = "AISP Consents", description = "Provides access to the Psu Consents")
 public class ConsentInformationController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsentInformationController.class);
     private ConsentService consentService;
     private ResponseMapper responseMapper;
 

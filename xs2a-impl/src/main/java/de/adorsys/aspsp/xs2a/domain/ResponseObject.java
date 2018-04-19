@@ -40,9 +40,4 @@ public class ResponseObject<T> {
             return new ResponseObject(this);
         }
     }
-
-    public ResponseObject fail(MessageError error) {
-        this.error = error;
-        return this;
-    }
 }

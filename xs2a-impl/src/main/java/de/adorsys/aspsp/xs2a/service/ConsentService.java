@@ -30,8 +30,8 @@ public class ConsentService {
 
         String consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
         return isEmpty(consentId)
-               ? new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
-               : new ResponseObject<>(new CreateConsentResp(TransactionStatus.RCVD, consentId, null, getLinkToConsent(consentId), null));
+               ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
+               : ResponseObject.builder().body(new CreateConsentResp(TransactionStatus.RCVD, consentId, null, getLinkToConsent(consentId), null)).build();
     }
 
     public String createAccountConsentsAndReturnId(CreateConsentReq accountInformationConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
@@ -41,15 +41,15 @@ public class ConsentService {
     public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
         AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
         return isEmpty(consent)
-               ? new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
-               : new ResponseObject<>(consent.getTransactionStatus());
+               ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
+               : ResponseObject.builder().body(consent.getTransactionStatus()).build();
     }
 
     public ResponseObject<AccountConsent> getAccountConsentsById(String consentId) {
         AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
         return isEmpty(consent)
-               ? new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
-               : new ResponseObject<>(consent);
+               ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
+               : ResponseObject.builder().body(consent).build();
     }
 
     public ResponseObject<Boolean> deleteAccountConsentsById(String consentId) {
@@ -59,8 +59,8 @@ public class ConsentService {
         }
 
         return present
-               ? new ResponseObject<>(true)
-               : new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
+               ? ResponseObject.builder().body(true).build()
+               : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
     }
 
     private Links getLinkToConsent(String consentId) {
