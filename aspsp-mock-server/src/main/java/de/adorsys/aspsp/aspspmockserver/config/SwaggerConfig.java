@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.aspspmockserver.config;
 
 import com.google.common.base.Predicates;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,8 @@ import static java.util.Collections.singletonList;
 public class SwaggerConfig extends WebMvcConfigurerAdapter {
     @Value("${auth_server_url}")
     String authUrl;
+    @Autowired
+    private KeycloakConfig keycloakConfig;
 
     @Bean
     public Docket api() {
@@ -51,7 +54,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
     private OAuth securitySchema() {
         GrantType grantType = new AuthorizationCodeGrantBuilder()
                               .tokenEndpoint(new TokenEndpoint(authUrl + "/protocol/openid-connect/token", "oauthtoken"))
-                              .tokenRequestEndpoint(new TokenRequestEndpoint(authUrl + "/protocol/openid-connect/auth", "aspsp-mock", "1166b089-1868-442f-aa66-ad38100715b4"))
+                              .tokenRequestEndpoint(new TokenRequestEndpoint(authUrl + "/protocol/openid-connect/auth", keycloakConfig.getResource(), keycloakConfig.getCredentials().getSecret()))
                               .build();
         return new OAuthBuilder()
                .name("oauth2")
@@ -67,10 +70,10 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
     @Bean
     public SecurityConfiguration security() {
         return SecurityConfigurationBuilder.builder()
-               .clientId("aspsp-mock")
-               .clientSecret("1166b089-1868-442f-aa66-ad38100715b4")
-               .realm("xs2a")
-               .appName("aspsp-mock")
+               .clientId(keycloakConfig.getResource())
+               .clientSecret(keycloakConfig.getCredentials().getSecret())
+               .realm(keycloakConfig.getRealm())
+               .appName(keycloakConfig.getResource())
                .scopeSeparator(",")
                .useBasicAuthenticationWithAccessCodeGrant(false)
         .build();
