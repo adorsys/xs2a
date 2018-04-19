@@ -27,9 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -192,7 +190,7 @@ public class ConsentInformationControllerTest {
         String consentId = consentRequest.getConsentId();
 
         //When:
-        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId).getBody();
 
         //Then:
         assertThat(actualAccountConsent.getId()).isNotNull();
@@ -215,7 +213,7 @@ public class ConsentInformationControllerTest {
         String consentId = consentRequest.getConsentId();
 
         //When:
-        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId).getBody();
 
         //Then:
         assertThat(actualAccountConsent.getId()).isNotNull();
@@ -238,7 +236,7 @@ public class ConsentInformationControllerTest {
         String consentId = consentRequest.getConsentId();
 
         //When:
-        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId);
+        AccountConsent actualAccountConsent = consentService.getAccountConsentsById(consentId).getBody();
 
         //Then:
         assertThat(actualAccountConsent.getId()).isNotNull();

@@ -27,7 +27,7 @@ public class ResponseMapper {
 
     public ResponseEntity createdOrBadRequest(ResponseObject response) {
         return getEntity(response, response.getBody() != null
-                                           ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
+                                   ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity okOrBadRequest(ResponseObject response) {
@@ -42,6 +42,11 @@ public class ResponseMapper {
                : new ResponseEntity<>(
         new MessageError(pi.getTransactionStatus(), new TppMessageInformation(MessageCategory.ERROR, MessageCode.PAYMENT_FAILED)),
         HttpStatus.valueOf(MessageCode.PAYMENT_FAILED.getCode()));
+    }
+
+    public ResponseEntity delete(ResponseObject response) {
+        return getEntity(response, response.getBody() != null
+                                   ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {

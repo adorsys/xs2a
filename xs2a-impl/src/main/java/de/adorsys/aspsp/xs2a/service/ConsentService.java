@@ -38,16 +38,29 @@ public class ConsentService {
         return consentSpi.createAccountConsents(consentMapper.mapToSpiCreateConsentRequest(accountInformationConsentRequest), withBalance, tppRedirectPreferred, psuId);
     }
 
-    public TransactionStatus getAccountConsentsStatusById(String consentId) {
-        return consentMapper.mapFromSpiTransactionStatus(consentSpi.getAccountConsentStatusById(consentId));
+    public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
+        AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
+        return isEmpty(consent)
+               ? new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+               : new ResponseObject<>(consent.getTransactionStatus());
     }
 
-    public AccountConsent getAccountConsentsById(String consentId) {
-        return consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
+    public ResponseObject<AccountConsent> getAccountConsentsById(String consentId) {
+        AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
+        return isEmpty(consent)
+               ? new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+               : new ResponseObject<>(consent);
     }
 
-    public boolean deleteAccountConsentsById(String consentId) {
-        return consentSpi.deleteAccountConsentsById(consentId);
+    public ResponseObject<Boolean> deleteAccountConsentsById(String consentId) {
+        boolean present = getAccountConsentsById(consentId).getBody() != null;
+        if (present) {
+            consentSpi.deleteAccountConsentsById(consentId);
+        }
+
+        return present
+               ? new ResponseObject<>(true)
+               : new ResponseObject<>().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)));
     }
 
     private Links getLinkToConsent(String consentId) {

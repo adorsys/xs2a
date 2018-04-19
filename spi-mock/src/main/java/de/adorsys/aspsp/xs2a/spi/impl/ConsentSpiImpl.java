@@ -6,6 +6,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class ConsentSpiImpl implements ConsentSpi {
-
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ConsentSpiImpl.class);
     private final RemoteSpiUrls remoteSpiUrls;
 
     @Autowired
@@ -44,7 +45,7 @@ public class ConsentSpiImpl implements ConsentSpi {
         try {
             response = template.postForEntity(builder.build().encode().toUri(), requestEntity, String.class);
         } catch (HttpClientErrorException e) {
-            System.out.println("error received\n" + e.getLocalizedMessage());
+            LOGGER.debug("error received:" + e.getLocalizedMessage());
         }
         return response == null
                ? null : (String) response.getBody();
@@ -58,15 +59,33 @@ public class ConsentSpiImpl implements ConsentSpi {
 
     @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
-        return ConsentMockData.getAccountConsent(consentId);
+        RestTemplate template = new RestTemplate();
+        String url = remoteSpiUrls.getUrl("getAllConsents");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        builder.queryParam("consentId", consentId);
+
+
+        ResponseEntity response = null;
+        try {
+            response = template.getForEntity(builder.build().encode().toUri(), SpiAccountConsent.class);
+        } catch (HttpClientErrorException e) {
+            LOGGER.debug("error received:" + e.getLocalizedMessage());
+        }
+        return response == null
+               ? null : (SpiAccountConsent) response.getBody();
     }
 
     @Override
-    public boolean deleteAccountConsentsById(String consentId) {
-        if (ConsentMockData.getAccountConsent(consentId) != null) {
-            ConsentMockData.deleteAccountConcent(consentId);
-            return true;
+    public void deleteAccountConsentsById(String consentId) {
+        RestTemplate template = new RestTemplate();
+        String url = remoteSpiUrls.getUrl("getAllConsents");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        builder.queryParam("consentId", consentId);
+
+        try {
+            template.delete(builder.build().encode().toUri());
+        } catch (HttpClientErrorException e) {
+            LOGGER.debug("error received:" + e.getLocalizedMessage());
         }
-        return false;
     }
 }

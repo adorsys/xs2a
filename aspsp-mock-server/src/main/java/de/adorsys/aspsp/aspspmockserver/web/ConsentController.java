@@ -21,20 +21,21 @@ public class ConsentController {
         this.consentService = consentService;
     }
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "/allConsents")
     public ResponseEntity<List<SpiAccountConsent>> readAllConsents() {
         return ResponseEntity.ok(consentService.getAllConsents());
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<SpiAccountConsent> readConsentById(@PathVariable("id") String id) {
-        return consentService.getConsent(id)
-               .map(ResponseEntity::ok)
-               .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping(path = "/")
+    public ResponseEntity<SpiAccountConsent> readConsentById(@RequestParam(name = "consentId") String id) {
+        SpiAccountConsent consent = consentService.getConsent(id);
+        return consent == null
+               ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+               : new ResponseEntity<>(consent, HttpStatus.OK);
     }
 
     @PostMapping(path = "/")
-    public ResponseEntity<String> createConsent(@RequestBody SpiCreateConsentRequest requestConsent, @RequestParam String psuId) {
+    public ResponseEntity<String> createConsent(@RequestBody SpiCreateConsentRequest requestConsent, @RequestParam(required = false) String psuId) {
         String saved = consentService.createConsentAndReturnId(requestConsent, psuId);
         return saved == null ? new ResponseEntity<>(HttpStatus.BAD_REQUEST) : new ResponseEntity<>(saved, HttpStatus.CREATED);
     }

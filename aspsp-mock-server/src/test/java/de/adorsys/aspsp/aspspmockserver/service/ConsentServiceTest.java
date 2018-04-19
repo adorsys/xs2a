@@ -26,6 +26,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -52,10 +53,15 @@ public class ConsentServiceTest {
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN)).thenReturn(null);
         when(psuRepository.findOne(CORRECT_PSU_ID)).thenReturn(getPsu(CORRECT_IBAN));
         when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
+        when(consentRepository.findOne(CORRECT_PSU_ID)).thenReturn(getConsent());
+        when(consentRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
+        when(consentRepository.exists(CORRECT_PSU_ID)).thenReturn(true);
+        when(consentRepository.exists(WRONG_PSU_ID)).thenReturn(false);
+        consentRepository.delete(anyString());
     }
 
     @Test
-    public void createAccountConsentTest_Success() {
+    public void createConsentAndReturnIdTest_Success() {
         //When:
         String response = consentService.createConsentAndReturnId(createConsentRequestBalances(CORRECT_IBAN, null, null), CORRECT_PSU_ID);
 
@@ -64,7 +70,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentTest_Failure() {
+    public void createConsentAndReturnIdTest_Failure() {
         //When:
         String response = consentService.createConsentAndReturnId(createConsentRequestBalances(WRONG_IBAN, null, null), CORRECT_PSU_ID);
 
@@ -73,7 +79,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentTest_allAccounts_Success() {
+    public void createConsentAndReturnIdTest_allAccounts_Success() {
         //When:
         String response = consentService.createConsentAndReturnId(createConsentRequestBalances("", SpiAccountAccessType.ALL_ACCOUNTS, null), CORRECT_PSU_ID);
 
@@ -82,13 +88,50 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentTest_allAccounts_Failure() {
+    public void createConsentAndReturnIdTest_allAccounts_Failure() {
         //When:
         String response = consentService.createConsentAndReturnId(createConsentRequestBalances("", SpiAccountAccessType.ALL_ACCOUNTS, null), WRONG_PSU_ID);
 
         //Then:
         assertThat(response).isNullOrEmpty();
     }
+
+    @Test
+    public void getConsentTest_Success() {
+        //When:
+        SpiAccountConsent response = consentService.getConsent(CORRECT_PSU_ID);
+
+        //Then:
+        assertThat(response).isNotNull();
+    }
+
+    @Test
+    public void getConsentTest_Failure() {
+        //When:
+        SpiAccountConsent response = consentService.getConsent(WRONG_PSU_ID);
+
+        //Then:
+        assertThat(response).isNull();
+    }
+
+    @Test
+    public void deleteConsentById_Success() {
+        //When:
+        boolean response = consentService.deleteConsentById(CORRECT_PSU_ID);
+
+        //Then:
+        assertThat(response).isTrue();
+    }
+
+    @Test
+    public void deleteConsentById_Failure() {
+        //When:
+        boolean response = consentService.deleteConsentById(WRONG_PSU_ID);
+
+        //Then:
+        assertThat(response).isFalse();
+    }
+
 
     private SpiCreateConsentRequest createConsentRequestBalances(String iban, SpiAccountAccessType allAccounts, SpiAccountAccessType allPsd2) {
         List<SpiAccountReference> list = new ArrayList<>();
@@ -109,13 +152,13 @@ public class ConsentServiceTest {
         SpiAccountAccess acc = new SpiAccountAccess();
         SpiAccountDetails det = getPsu(CORRECT_PSU_ID).getAccountDetailsList().get(0);
         List<SpiAccountReference> ref = new ArrayList<>();
-        ref.add(new SpiAccountReference(det.getId(),det.getIban(),det.getBban(),det.getPan(),det.getMaskedPan(),det.getMsisdn(),det.getCurrency()));
+        ref.add(new SpiAccountReference(det.getId(), det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
         acc.setBalances(ref);
 
-        return new SpiAccountConsent(CORRECT_PSU_ID,acc,true,new Date(),4,new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID,true,true);
+        return new SpiAccountConsent(CORRECT_PSU_ID, acc, true, new Date(), 4, new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID, true, true);
     }
 
-    private List<SpiAccountDetails> getDetails(){
+    private List<SpiAccountDetails> getDetails() {
         List<SpiAccountDetails> list = new ArrayList<>();
         list.add(new SpiAccountDetails("9999999", CORRECT_IBAN, "", "", "",
         "", CURRENCY, "David", null, null, "", null));

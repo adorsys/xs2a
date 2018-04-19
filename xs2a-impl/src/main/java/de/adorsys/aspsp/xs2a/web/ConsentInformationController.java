@@ -11,12 +11,10 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -42,7 +40,7 @@ public class ConsentInformationController {
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "psu-id", value = "31d50f56-a543-3664-b345-b9a822ae98a7", dataType = "UUID", paramType = "header")})
     public ResponseEntity<CreateConsentResp> createAccountConsent(
-    @RequestHeader(name = "psu-id") String psuId,
+    @RequestHeader(name = "psu-id", required = false) String psuId,
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
@@ -64,18 +62,8 @@ public class ConsentInformationController {
     public ResponseEntity<Map<String, TransactionStatus>> getAccountConsentsStatusById(
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
     @PathVariable("consent-id") String consentId) {
-
-        TransactionStatus transactionStatus = consentService.getAccountConsentsStatusById(consentId);
-
-        Map<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
-        accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
-        LOGGER.debug("getAccountConsentStatusById(): response {} ", transactionStatus);
-
-        if (transactionStatus == null) {
-            return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.FORBIDDEN);
-        }
-
-        return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.OK);
+        ResponseObject response = consentService.getAccountConsentsStatusById(consentId);
+        return responseMapper.okOrNotFound(response);
     }
 
     @ApiOperation(value = "Returns the content of an account information consent object")
@@ -88,14 +76,8 @@ public class ConsentInformationController {
     public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
     @PathVariable("consent-id") String consentId) {
-        AccountConsent accountConsent = consentService.getAccountConsentsById(consentId);
-
-        LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsent);
-        if (accountConsent == null) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-
-        return new ResponseEntity<>(accountConsent, HttpStatus.OK);
+        ResponseObject response = consentService.getAccountConsentsById(consentId);
+        return responseMapper.okOrNotFound(response);
     }
 
     @ApiOperation(value = " Delete information consent object")
@@ -108,10 +90,9 @@ public class ConsentInformationController {
     public ResponseEntity<Void> deleteAccountConsent(
     @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
     @PathVariable("consent-id") String consentId) {
-        boolean serviceResult = consentService.deleteAccountConsentsById(consentId);
-        HttpStatus status = serviceResult ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND;
+        ResponseObject response = consentService.deleteAccountConsentsById(consentId);
 
-        return new ResponseEntity<>(status);
+        return responseMapper.delete(response);
     }
 
 }

@@ -14,7 +14,10 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ConsentService {
@@ -38,8 +41,8 @@ public class ConsentService {
         return consent != null ? consent.getId() : null;
     }
 
-    public Optional<SpiAccountConsent> getConsent(String id) {
-        return Optional.ofNullable(consentRepository.findOne(id));
+    public SpiAccountConsent getConsent(String id) {
+        return consentRepository.findOne(id);
     }
 
     public List<SpiAccountConsent> getAllConsents() {
