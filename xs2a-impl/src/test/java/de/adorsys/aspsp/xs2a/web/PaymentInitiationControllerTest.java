@@ -97,8 +97,8 @@ public class PaymentInitiationControllerTest {
         assertThat(actualResult.getBody()).isEqualTo(expectedResult.getBody());
     }
 
-    private ResponseObject<PaymentInitialisationResponse> readResponseObject() throws IOException {
-        return new ResponseObject<>(readPaymentInitialisationResponse());
+    private ResponseObject readResponseObject() throws IOException {
+        return ResponseObject.builder().body(readPaymentInitialisationResponse()).build();
     }
 
     private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {

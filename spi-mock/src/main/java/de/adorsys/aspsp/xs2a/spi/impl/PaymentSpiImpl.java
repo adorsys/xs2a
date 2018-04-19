@@ -56,7 +56,7 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
-        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(String.format(remoteSpiUrls.getUrl("createPayment"),paymentProduct), spiSinglePayments, SpiSinglePayments.class);
+        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class, paymentProduct);
         if (responseEntity.getStatusCode().value() == 201) {
             SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);

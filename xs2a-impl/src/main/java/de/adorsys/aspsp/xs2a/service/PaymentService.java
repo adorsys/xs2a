@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.PAYMENT_FAILED;
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -31,17 +33,18 @@ public class PaymentService {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
 
-    public ResponseObject<Map<String, TransactionStatus>> getPaymentStatusById(String paymentId, PaymentProduct paymentProduct) {
+    public ResponseObject getPaymentStatusById(String paymentId, PaymentProduct paymentProduct) {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
         if (transactionStatus == null) {
             return ResponseObject.builder()
                    .fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
-                                                                 .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))))
+                                          .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))))
                    .build();
         }
-        return new ResponseObject<>(paymentStatusResponse);
+        return ResponseObject.builder()
+               .body(paymentStatusResponse).build();
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
@@ -53,7 +56,7 @@ public class PaymentService {
                .body(response).build();
     }
 
-    public ResponseObject<PaymentInitialisationResponse> createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
 
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
@@ -68,7 +71,7 @@ public class PaymentService {
                .body(paymentInitiation).build();
     }
 
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
         SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
         SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
         PaymentInitialisationResponse paymentInitiation = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
@@ -79,9 +82,12 @@ public class PaymentService {
                    links.setRedirect(redirectLinkToSource);
                    links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
                    paymentInitiation.set_links(links);
-                   return new ResponseObject<PaymentInitialisationResponse>(paymentInitiation);
+                   return ResponseObject.builder()
+                          .body(paymentInitiation).build();
                })
-               .orElse(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-
+               .orElse(ResponseObject.builder()
+                              .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
+                                                     .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+                              .build());
     }
 }

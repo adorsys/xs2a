@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -30,7 +31,7 @@ public class PaymentControllerTest {
     public void setUpPaymentServiceMock() throws IOException {
         SpiSinglePayments response = getExpectedRequest();
         response.setPaymentId("12345");
-        when(paymentService.addPayment(getExpectedRequest())).thenReturn(response);
+        when(paymentService.addPayment(getExpectedRequest())).thenReturn(Optional.of(response));
     }
 
     @Test

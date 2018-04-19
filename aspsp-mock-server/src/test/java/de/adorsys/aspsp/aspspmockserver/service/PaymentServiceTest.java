@@ -23,7 +23,7 @@ public class PaymentServiceTest {
         SpiSinglePayments expectedPayment = new SpiSinglePayments();
 
         //When
-        SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment);
+        SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment).get();
 
         //Then
         assertThat(actualPayment).isNotNull();
