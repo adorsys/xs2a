@@ -56,33 +56,10 @@ public class PaymentInitiationControllerTest {
     public void setUpPaymentServiceMock() throws IOException {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         paymentStatusResponse.put("transactionStatus", TransactionStatus.ACCP);
-        when(paymentService.createPaymentInitiationAndReturnId(getExpectedRequest(), false))
-        .thenReturn(PAYMENT_ID);
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(new ResponseObject<>(paymentStatusResponse));
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))));
-    }
-
-    @Test
-    public void getPaymentInitiationStatusById_successesResult() throws IOException {
-        //Given:
-        boolean tppRedirectPreferred = false;
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-        String pisRequestJson = IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8);
-        SinglePayments expectedRequest = new Gson().fromJson(pisRequestJson, SinglePayments.class);
-        String paymentId = paymentService.createPaymentInitiationAndReturnId(expectedRequest, tppRedirectPreferred);
-        Map<String, TransactionStatus> expectedResult = new HashMap<>();
-        expectedResult.put("transactionStatus", TransactionStatus.ACCP);
-
-        //When:
-        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), paymentId);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        Map<String, TransactionStatus> actualResult = actualResponse.getBody();
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     private SinglePayments getExpectedRequest() throws IOException {

@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
 public class PaymentService {
     private final PaymentRepository paymentRepository;
 
-    public SpiSinglePayments addPayment(@NotNull SpiSinglePayments payment) {
-        return paymentRepository.save(payment);
+    public Optional<SpiSinglePayments> addPayment(@NotNull SpiSinglePayments payment) {
+        return Optional.ofNullable(paymentRepository.save(payment));
     }
 }

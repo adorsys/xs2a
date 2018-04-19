@@ -16,6 +16,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 
 @Component
 @AllArgsConstructor
@@ -32,17 +36,18 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment) {
         SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
-        response.setTransactionStatus(SpiTransactionStatus.valueOf(resolveTransactionStatus(periodicPayment)));
+        response.setTransactionStatus(resolveTransactionStatus(periodicPayment));
 
         return response;
     }
 
-    private String resolveTransactionStatus(SpiPeriodicPayment payment) {
+    private SpiTransactionStatus resolveTransactionStatus(SpiPeriodicPayment payment) {
         Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
-        boolean isPresent = map.entrySet().stream()
-                            .anyMatch(a -> a.getValue().getIban()
-                                           .equals(payment.getCreditorAccount().getIban()));
-        return isPresent ? "ACCP" : "RJCT";
+        return Optional.of(map.values().stream()
+                           .anyMatch(a -> a.getIban()
+                                          .equals(payment.getCreditorAccount().getIban())))
+               .map(present -> ACCP)
+               .orElse(RJCT);
     }
 
     public SpiPaymentInitialisationResponse createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
@@ -50,12 +55,8 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred) {
-        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment") + code + "/", spiSinglePayments,SpiSinglePayments.class);
-        return getResponse(responseEntity, tppRedirectPreferred);
-    }
-
-    private SpiPaymentInitialisationResponse getResponse(ResponseEntity<SpiSinglePayments> responseEntity, boolean tppRedirectPreferred) {
+    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
+        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(String.format(remoteSpiUrls.getUrl("createPayment"),paymentProduct), spiSinglePayments, SpiSinglePayments.class);
         if (responseEntity.getStatusCode().value() == 201) {
             SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);

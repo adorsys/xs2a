@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
@@ -40,11 +41,6 @@ public class PaymentService {
                                                          .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
         }
         return new ResponseObject<>(paymentStatusResponse);
-    }
-
-    public String createPaymentInitiationAndReturnId(SinglePayments paymentInitiationRequest, boolean tppRedirectPreferred) {
-        //TODO according to PIS_01_04 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/81
-        return "12345";
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
@@ -74,15 +70,15 @@ public class PaymentService {
         SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
         PaymentInitialisationResponse paymentInitiation = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
 
-        if (paymentInitiation != null) {
-            Links links = new Links();
-            links.setRedirect(redirectLinkToSource);
-            links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
-            paymentInitiation.set_links(links);
-
-            return new ResponseObject<PaymentInitialisationResponse>(paymentInitiation);
-        }
-        return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                                                                            .text(messageService.getMessage(PAYMENT_FAILED.name()))));
+        return Optional.ofNullable(paymentInitiation)
+               .map(response -> {
+                   Links links = new Links();
+                   links.setRedirect(redirectLinkToSource);
+                   links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
+                   paymentInitiation.set_links(links);
+                   return new ResponseObject<PaymentInitialisationResponse>(paymentInitiation);
+               })
+               .orElse(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
+                                                             .text(messageService.getMessage(PAYMENT_FAILED.name())))));
     }
 }
