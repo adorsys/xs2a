@@ -176,4 +176,4 @@ push_on_github:
       - git config push.default simple
       - git checkout ${CI_COMMIT_REF_NAME}
       - git fetch github
-      - git push --verbose --follow-tags --atomic --dry-run github
+      - git push --follow-tags --atomic github
