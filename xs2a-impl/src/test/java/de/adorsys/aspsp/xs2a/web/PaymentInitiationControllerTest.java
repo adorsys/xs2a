@@ -57,9 +57,9 @@ public class PaymentInitiationControllerTest {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         paymentStatusResponse.put("transactionStatus", TransactionStatus.ACCP);
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
-        .thenReturn(new ResponseObject<>(paymentStatusResponse));
+        .thenReturn(ResponseObject.builder().body(paymentStatusResponse).build());
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
-        .thenReturn(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))));
+        .thenReturn(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))).build());
     }
 
     private SinglePayments getExpectedRequest() throws IOException {

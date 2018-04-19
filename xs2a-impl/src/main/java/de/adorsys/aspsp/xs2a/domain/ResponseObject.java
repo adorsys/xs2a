@@ -10,30 +10,34 @@ import lombok.Getter;
  */
 @Getter
 public class ResponseObject<T> {
-    private T body;
-    private MessageError error;
+    private final T body;
+    private final MessageError error;
 
-    /**
-     * Success Response without any additional information
-     */
-    public ResponseObject() {
+    private ResponseObject(ResponseBuilder<T> builder) {
+        this.body = builder.body;
+        this.error = builder.error;
     }
 
-    /**
-     * Success Response including the Requested Object as a parameter
-     *
-     * @param body Targeted object. (Any object that has to be passed back to the service)
-     */
-    public ResponseObject(T body) {
-        this.body = body;
+    public static ResponseBuilder builder(){
+        return new ResponseBuilder();
     }
 
-    /**
-     * Failure Response including addition failure information for TPP
-     *
-     * @param error MessageError
-     */
-    public ResponseObject(MessageError error) {
-        this.error = error;
+    public static class ResponseBuilder<T> {
+        private T body;
+        private MessageError error;
+
+        public ResponseBuilder body(T body){
+            this.body = body;
+            return this;
+        }
+
+        public ResponseBuilder fail(MessageError error){
+            this.error = error;
+            return this;
+        }
+
+        public ResponseObject build() {
+            return new ResponseObject(this);
+        }
     }
 }
