@@ -17,7 +17,7 @@ For run Mock ASPSP app with command line
 
 ```
 mvn clean install 
-mvn spring-boot: run -fongo 
+mvn spring-boot:run -Drun.profiles=fongo
  
 ```
 
@@ -25,7 +25,7 @@ mvn spring-boot: run -fongo
 
 ```
 mvn clean install 
-mvn spring-boot: run -fongo, data_test 
+mvn spring-boot:run -Drun.profiles=fongo,data_test 
  
 ```
 
@@ -34,6 +34,6 @@ mvn spring-boot: run -fongo, data_test
 
 ```
 mvn clean install 
-mvn spring-boot: run 
+mvn spring-boot:run -Drun.profiles=mongo 
  
 ```
