@@ -28,7 +28,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Service
 @AllArgsConstructor
 public class PaymentService {
-    private String redirectLinkToSource;
+    private final String redirectLinkToSource;
     private final MessageService messageService;
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;

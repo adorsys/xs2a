@@ -29,8 +29,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
-    @Value("${application.ais.consents.link.redirect-to}")
-    private String consentsLinkRedirectToSource;
+    @Value("${application.link.redirect-to}")
+    private String redirectLinkToSource;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -83,8 +83,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public String consentsLinkRedirectToSource() {
-        return consentsLinkRedirectToSource;
+    public String redirectLinkToSource() {
+        return redirectLinkToSource;
     }
 
     @Bean
