@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @Component
 @AllArgsConstructor
@@ -57,7 +58,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
         ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class, paymentProduct);
-        if (responseEntity.getStatusCode().value() == 201) {
+        if (responseEntity.getStatusCode() == CREATED) {
             SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
             paymentResponse.setPaymentId(responseEntity.getBody().getPaymentId());
