@@ -12,6 +12,7 @@ public class RemoteSpiUrls {
         this.urls = new HashMap<>();
         this.urls.put("getAllAccounts", "/account/");
         this.urls.put("createPayment", "/payments/");
+        this.urls.put("getPaymentStatus", "/payments/{paymentId}/status/");
     }
 
     public String getUrl(String key) {

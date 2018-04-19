@@ -21,6 +21,7 @@ import java.util.Optional;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Component
 @AllArgsConstructor
@@ -31,7 +32,8 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
-        return PaymentMockData.getPaymentStatusById(paymentId, paymentProduct);
+        ResponseEntity responseEntity = restTemplate.getForEntity(remoteSpiUrls.getUrl("getPaymentStatus"), SpiTransactionStatus.class, paymentId);
+        return responseEntity.getStatusCode() == OK ? ACCP : RJCT;
     }
 
     @Override

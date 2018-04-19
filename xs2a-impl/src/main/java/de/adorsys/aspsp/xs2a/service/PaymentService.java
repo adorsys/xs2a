@@ -37,14 +37,14 @@ public class PaymentService {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
-        if (transactionStatus == null) {
-            return ResponseObject.builder()
-                   .fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
-                                          .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))))
-                   .build();
-        }
-        return ResponseObject.builder()
-               .body(paymentStatusResponse).build();
+
+        return Optional.ofNullable(transactionStatus)
+               .map(response -> ResponseObject.builder()
+                                .body(paymentStatusResponse).build())
+               .orElse(ResponseObject.builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
+                                              .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))))
+                       .build());
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
@@ -86,8 +86,8 @@ public class PaymentService {
                           .body(paymentInitiation).build();
                })
                .orElse(ResponseObject.builder()
-                              .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                                                     .text(messageService.getMessage(PAYMENT_FAILED.name()))))
-                              .build());
+                       .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
+                                              .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+                       .build());
     }
 }
