@@ -52,7 +52,7 @@ public class PaymentInitiationControllerTest {
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(new ResponseObject<>(paymentStatusResponse));
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
-        .thenReturn(new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))));
+        .thenReturn(new ResponseObject<>().fail(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))));
     }
 
     @Test

@@ -33,7 +33,8 @@ public class ResponseObject<T> {
      *
      * @param error MessageError
      */
-    public ResponseObject(MessageError error) {
+    public ResponseObject fail(MessageError error) {
         this.error = error;
+        return this;
     }
 }

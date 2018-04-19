@@ -1,6 +1,9 @@
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
@@ -14,11 +17,14 @@ import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.PAYMENT_FAILED;
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
+import static de.adorsys.aspsp.xs2a.domain.TransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -36,8 +42,8 @@ public class PaymentService {
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
         if (transactionStatus == null) {
-            return new ResponseObject<>(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
-                                                                 .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
+            return new ResponseObject<>().fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
+                                                                .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))));
         }
         return new ResponseObject<>(paymentStatusResponse);
     }
@@ -46,12 +52,15 @@ public class PaymentService {
         return paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayments(paymentInitiationRequest), tppRedirectPreferred);
     }
 
-    public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
-
+    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
         PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponse(
         paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
 
-        return new ResponseObject<>(response);
+        TransactionStatus status = response.getTransactionStatus();
+
+        return EnumSet.of(ACCP).contains(status)
+               ? new ResponseObject<>(response)
+               : new ResponseObject<>().fail(new MessageError(status, new TppMessageInformation(ERROR, PAYMENT_FAILED)));
     }
 
     public ResponseObject<PaymentInitialisationResponse> createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -65,6 +74,6 @@ public class PaymentService {
         links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
         paymentInitiation.set_links(links);
 
-        return new ResponseObject<PaymentInitialisationResponse>(paymentInitiation);
+        return new ResponseObject<>(paymentInitiation);
     }
 }
