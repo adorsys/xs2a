@@ -17,4 +17,8 @@ public class RemoteSpiUrls {
     public String getUrl(String key) {
         return this.baseUrl + this.urls.getOrDefault(key, "");
     }
+
+    public String getUrl(String key, String... parameters) {
+        return String.format(getUrl(key), parameters);
+    }
 }
