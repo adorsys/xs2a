@@ -39,35 +39,39 @@ public class AccountService {
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
-        return new ResponseObject<>(accountDetailsMap);
+        return ResponseObject.builder()
+               .body(accountDetailsMap).build();
     }
 
     public ResponseObject<List<Balances>> getBalancesList(String accountId, boolean psuInvolved) {
         List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
         return Optional.ofNullable(spiBalances)
-                       .map(sb -> new ResponseObject<>(accountMapper.mapFromSpiBalancesList(sb)))
-                       .orElse(new ResponseObject<>().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                                                                            .text("Wrong account ID"))));
+                       .map(sb -> ResponseObject.builder().body(accountMapper.mapFromSpiBalancesList(sb)).build())
+                       .orElse(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
+                                                                            .text("Wrong account ID"))).build());
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
-            return new ResponseObject<>().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)));
+            return ResponseObject.builder()
+                   .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
 
             try {
                 AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
 
-                return new ResponseObject<>(getReportAccordingMaxSize(accountReport, accountId));
+                return ResponseObject.builder()
+                       .body(getReportAccordingMaxSize(accountReport, accountId)).build();
             } catch (ValidationException ex) {
 
                 TppMessageInformation tppMessageInformation = new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR);
                 tppMessageInformation.setText(ex.getMessage());
 
-                return new ResponseObject<>().fail(new MessageError(tppMessageInformation));
+                return ResponseObject.builder()
+                       .fail(new MessageError(tppMessageInformation)).build();
             }
         }
     }
@@ -131,7 +135,8 @@ public class AccountService {
     public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
         AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
 
-        return new ResponseObject<>(accountDetails);
+        return ResponseObject.builder()
+               .body(accountDetails).build();
     }
 
     // Validation
