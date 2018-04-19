@@ -94,8 +94,7 @@ public class AccountService {
 
     private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
         Optional<String> optionalAccount = jsonConverter.toJson(accountReport);
-        String jsonReport = optionalAccount.isPresent()
-                            ? optionalAccount.get() : "";
+        String jsonReport = optionalAccount.orElse("");
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             return getAccountReportWithDownloadLink(accountId);
