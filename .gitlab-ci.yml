@@ -169,6 +169,7 @@ deploy_image_release:
 
 push_on_github:
   stage: "sync_repos"
+  image: alpine/git:1.0.4
   when: manual
   script:
       - git remote add github https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git
