@@ -1,7 +1,6 @@
 package de.adorsys.aspsp.xs2a.exception;
 
 import de.adorsys.aspsp.xs2a.domain.MessageCode;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,8 +22,8 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
         log.warn("ValidationException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
-        return new ResponseEntity(new ResponseObject(new MessageError(new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR)
-                                                                      .text(ex.getMessage()))), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new MessageError(new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR)
+                                                                      .text(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
