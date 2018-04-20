@@ -38,8 +38,8 @@ providing capabilities to interoperate with TPP by defined XS2A Standard Interfa
 [Whitebox.png]: doc/architecture/Whitebox.png "Component diagram"
 
 The modules provided by this implementation are:
-* **xs2a-impl** - a REST-interface and services operating to serve TPPs
-* **aspsp-mock-server** - a mock-implementation of ASPSP for the purposes of testing and introspecting of xs2a-functionality
+* [**xs2a-impl**](xs2a-impl/README.md) - a REST-interface and services operating to serve TPPs
+* [**aspsp-mock-server**](aspsp-mock-server/README.md) - a mock-implementation of ASPSP for the purposes of testing and introspecting of xs2a-functionality
 * **spi-api** - internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems
 * **spi-mock** - an implementation of spi-api interface to connect XS2A-services with ASPSP-Mock-Server
 
