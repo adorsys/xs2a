@@ -1,8 +1,3 @@
 <component name="CopyrightManager">
-  <settings default="adorsys - APACHE 2.0">
-    <module2copyright>
-      <element module="Production" copyright="adorsys - APACHE 2.0" />
-      <element module="Project Files" copyright="adorsys - APACHE 2.0" />
-    </module2copyright>
-  </settings>
+  <settings default="adorsys - APACHE 2.0" />
 </component>
