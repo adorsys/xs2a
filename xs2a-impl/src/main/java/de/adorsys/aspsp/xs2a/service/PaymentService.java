@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.PAYMENT_FAILED;
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -38,13 +37,8 @@ public class PaymentService {
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
 
-        return Optional.ofNullable(transactionStatus)
-               .map(response -> ResponseObject.builder()
-                                .body(paymentStatusResponse).build())
-               .orElse(ResponseObject.builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_UNKNOWN)
-                                              .text(messageService.getMessage(PRODUCT_UNKNOWN.name()))))
-                       .build());
+        return ResponseObject.builder()
+               .body(paymentStatusResponse).build();
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {

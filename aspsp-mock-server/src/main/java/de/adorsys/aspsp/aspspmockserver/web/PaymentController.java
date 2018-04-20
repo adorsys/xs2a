@@ -1,13 +1,12 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +33,6 @@ public class PaymentController {
     public ResponseEntity getPaymentStatusById(
     @PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentStatusById(paymentId)
-               ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+               ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
 }
