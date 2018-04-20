@@ -5,6 +5,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -27,6 +28,8 @@ import java.util.Map;
 
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -34,6 +37,7 @@ import static org.mockito.Mockito.when;
 public class PaymentInitiationControllerTest {
 
     private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
+    private static final String CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH = "/json/CreatePaymentInitiationResponseTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "Really wrong id";
@@ -44,36 +48,18 @@ public class PaymentInitiationControllerTest {
     private PaymentService paymentService;
 
     @Before
+    public void setUp() throws IOException {
+        when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+    }
+
+    @Before
     public void setUpPaymentServiceMock() throws IOException {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         paymentStatusResponse.put("transactionStatus", TransactionStatus.ACCP);
-        when(paymentService.createPaymentInitiationAndReturnId(getExpectedRequest(), false))
-        .thenReturn(PAYMENT_ID);
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(ResponseObject.builder().body(paymentStatusResponse).build());
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
         .thenReturn(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, MessageCode.PRODUCT_UNKNOWN))).build());
-    }
-
-    @Test
-    public void getPaymentInitiationStatusById_successesResult() throws IOException {
-        //Given:
-        boolean tppRedirectPreferred = false;
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-        String pisRequestJson = IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8);
-        SinglePayments expectedRequest = new Gson().fromJson(pisRequestJson, SinglePayments.class);
-        String paymentId = paymentService.createPaymentInitiationAndReturnId(expectedRequest, tppRedirectPreferred);
-        Map<String, TransactionStatus> expectedResult = new HashMap<>();
-        expectedResult.put("transactionStatus", TransactionStatus.ACCP);
-
-        //When:
-        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), paymentId);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        Map<String, TransactionStatus> actualResult = actualResponse.getBody();
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     private SinglePayments getExpectedRequest() throws IOException {
@@ -95,7 +81,32 @@ public class PaymentInitiationControllerTest {
     }
 
     @Test
-    public void createPaymentInitiation() {
-        // TODO according task PIS_01_01. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/9
+    public void createPaymentInitiation() throws IOException {
+        //Given
+        PaymentProduct paymentProduct = PaymentProduct.SCT;
+        boolean tppRedirectPreferred = false;
+        SinglePayments payment = readSinglePayments();
+        ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
+
+        //When:
+        ResponseEntity<PaymentInitialisationResponse> actualResult = paymentInitiationController
+                                                                     .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
+
+        //Then:
+        assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
+        assertThat(actualResult.getBody()).isEqualTo(expectedResult.getBody());
     }
+
+    private ResponseObject readResponseObject() throws IOException {
+        return ResponseObject.builder().body(readPaymentInitialisationResponse()).build();
+    }
+
+    private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class);
+    }
+
+    private SinglePayments readSinglePayments() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8), SinglePayments.class);
+    }
+
 }

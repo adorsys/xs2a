@@ -11,6 +11,7 @@ public class RemoteSpiUrls {
         this.baseUrl = baseUrl;
         this.urls = new HashMap<>();
         this.urls.put("getAllAccounts", "/account/");
+        this.urls.put("createPayment", "/payments/");
     }
 
     public String getUrl(String key) {
