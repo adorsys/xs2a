@@ -11,7 +11,7 @@ Implementation of Mock ASPSP for XS2A Interface of Berlin Group
 
 ## Deployment
 
-For run Mock ASPSP app with command line
+To run Mock ASPSP app from command line
 
 1. with in-memory DB fongo:
 
@@ -29,8 +29,8 @@ mvn spring-boot:run -Drun.profiles=fongo,data_test
  
 ```
 
-3. with real mongo DB at first need to put the correct credentials to mongo-mongo.properties. 
-   then use command line for run app:  
+3. In order to run app with real DB, please input correct connection credentials into mongo.properties.
+   Then use command line to run the app.:  
 
 ```
 mvn clean install 

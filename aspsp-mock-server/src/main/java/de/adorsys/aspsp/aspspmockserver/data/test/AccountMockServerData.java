@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * AccountMockServerData is used for creating test data in DB.
- * For filling DB with test data 'aspsp-mock-server' app should be running with profile "data_test"
+ * AccountMockServerData is used to create test data in DB.
+ * To fill DB with test data 'aspsp-mock-server' app should be running with profile "data_test"
  *
  * AFTER TESTING THIS CLASS MUST BE DELETED todo https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/87
  */
