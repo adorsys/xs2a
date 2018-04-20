@@ -8,9 +8,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import de.adorsys.aspsp.xs2a.spi.impl.AccountSpiImpl;
 import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
@@ -55,11 +53,6 @@ public class SpiMockConfig {
     private void fillPayments() {
         PaymentMockData.createPaymentInitiation(getPisRequest_1(), false);
         PaymentMockData.createPaymentInitiation(getPisRequest_2(), false);
-    }
-
-    @Bean
-    public AccountSpi accountSpi() {
-        return new AccountSpiImpl(remoteSpiUrls());
     }
 
     @Bean

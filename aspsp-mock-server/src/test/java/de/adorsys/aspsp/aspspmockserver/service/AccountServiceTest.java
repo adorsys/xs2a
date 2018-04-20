@@ -1,15 +1,16 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -114,6 +115,22 @@ public class AccountServiceTest {
         assertThat(actualResult).isFalse();
     }
 
+    @Test
+    public void getBalances() {
+        //Given
+        SpiAccountDetails spiAccountDetails = getSpiAccountDetailsWithBalance();
+        String spiAccountDetailsId = spiAccountDetails.getId();
+        List<SpiBalances> expectedBalance = spiAccountDetails.getBalances();
+
+        accountService.addAccount(spiAccountDetails);
+
+        //When
+        Optional<List<SpiBalances>> actualBalanceList = accountService.getBalances(spiAccountDetailsId);
+
+        //Then
+        assertThat(actualBalanceList.get()).isEqualTo(expectedBalance);
+    }
+
     private SpiAccountDetails getSpiAccountDetails_1() {
         return new SpiAccountDetails("21fefdsdvds212sa", "DE12345235431234", null, "1111222233334444",
         "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
@@ -124,5 +141,29 @@ public class AccountServiceTest {
         return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
         "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
         "GIRO", null, "ACVB222", null);
+    }
+
+    private SpiAccountDetails getSpiAccountDetailsWithBalance() {
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+        "GIRO", null, "ACVB222", getNewBalanceList());
+    }
+
+    private List<SpiBalances> getNewBalanceList() {
+        Currency euro = Currency.getInstance("EUR");
+
+        SpiBalances balance = new SpiBalances();
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, "1000")));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, "200")));
+
+        return Collections.singletonList(balance);
+    }
+
+    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
+        SpiAccountBalance sb = new SpiAccountBalance();
+        sb.setDate(new Date(1523951451537L));
+        sb.setSpiAmount(spiAmount);
+        sb.setLastActionDateTime(new Date(1523951451537L));
+        return sb;
     }
 }

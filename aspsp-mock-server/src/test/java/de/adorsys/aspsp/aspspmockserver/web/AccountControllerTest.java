@@ -1,7 +1,10 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -48,6 +53,10 @@ public class AccountControllerTest {
         .thenReturn(true);
         when(accountService.deleteAccountById(WRONG_ACCOUNT_ID))
         .thenReturn(false);
+        when(accountService.getBalances(ACCOUNT_ID))
+        .thenReturn(Optional.of(getNewBalanceList()));
+        when(accountService.getBalances(WRONG_ACCOUNT_ID))
+        .thenReturn(Optional.empty());
     }
 
 
@@ -127,6 +136,34 @@ public class AccountControllerTest {
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
     }
 
+    @Test
+    public void readBalancesById(){
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+        List<SpiBalances> expectedBalanceList = getNewBalanceList();
+
+        //When:
+        ResponseEntity actualResponse = accountController.readBalancesById(ACCOUNT_ID);
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(expectedBalanceList);
+    }
+    @Test
+    public void readBalancesById_wrongID(){
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+
+        //When:
+        ResponseEntity actualResponse = accountController.readBalancesById(WRONG_ACCOUNT_ID);
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isNull();
+    }
+
     private SpiAccountDetails getSpiAccountDetails_1() {
         return new SpiAccountDetails(ACCOUNT_ID, "DE12345235431234", null, "1111222233334444",
         "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
@@ -137,5 +174,23 @@ public class AccountControllerTest {
         return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
         "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
         null, "ACVB222", null);
+    }
+
+    private List<SpiBalances> getNewBalanceList() {
+        Currency euro = Currency.getInstance("EUR");
+
+        SpiBalances balance = new SpiBalances();
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, "1000")));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, "200")));
+
+        return Collections.singletonList(balance);
+    }
+
+    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
+        SpiAccountBalance sb = new SpiAccountBalance();
+        sb.setDate(new Date(1523951451537L));
+        sb.setSpiAmount(spiAmount);
+        sb.setLastActionDateTime(new Date(1523951451537L));
+        return sb;
     }
 }
