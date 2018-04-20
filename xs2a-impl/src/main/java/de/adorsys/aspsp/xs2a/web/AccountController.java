@@ -85,7 +85,7 @@ public class AccountController {
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<List<Balances>> responseObject = accountService.getBalancesList(accountId, psuInvolved);
+        ResponseObject<List<Balances>> responseObject = accountService.getBalances(accountId, psuInvolved);
 
         return responseMapper.okOrNotFound(responseObject);
     }

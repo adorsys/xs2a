@@ -19,11 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -31,7 +28,8 @@ import java.time.ZoneId;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -176,7 +174,7 @@ public class AccountServiceTest {
         //Given:
         List<Balances> expectedResult = accountMapper.mapFromSpiBalancesList(getBalances());
         //When:
-        List<Balances> actualResult = accountService.getBalancesList(accountId, psuInvolved).getBody();
+        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getBody();
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }

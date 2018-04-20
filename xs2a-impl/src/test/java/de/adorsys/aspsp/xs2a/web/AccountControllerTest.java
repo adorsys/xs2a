@@ -1,10 +1,6 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
-import de.adorsys.aspsp.xs2a.exception.MessageCategory;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.junit.Test;
@@ -15,15 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,29 +31,6 @@ public class AccountControllerTest {
 
     @Autowired
     private AccountService accountService;
-
-    @Test
-    public void getBalance_withPsuInvolved() {
-        //Given:
-        boolean psuInvolved = true;
-        checkBalanceResults(ACCOUNT_ID, psuInvolved);
-    }
-
-    @Test
-    public void getBalance_noPsuInvolved() {
-        //Given:
-        boolean psuInvolved = false;
-        checkBalanceResults(ACCOUNT_ID, psuInvolved);
-    }
-
-    @Test
-    public void shouldFail_getBalance_emptyAccountWithBalanceAndPsuInvolved() {
-        //Given:
-        String accountId = "";
-        boolean psuInvolved = true;
-
-        checkBalanceResults(accountId, psuInvolved);
-    }
 
     @Test
     public void getTransactions_withPeriodAndTransactionIdNoPsuInvolved() {
@@ -86,21 +58,10 @@ public class AccountControllerTest {
         //Given:
         String transactionId = "";
         boolean psuInvolved = false;
-        HttpStatus expectedStatusCode = HttpStatus.BAD_REQUEST;
 
-        //When:
-        ResponseEntity actualResponse = accountController.getTransactions(ACCOUNT_ID,null, null, transactionId, psuInvolved, "both", false, false);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isInstanceOf(MessageError.class);
-
-        MessageError messageError = (MessageError) actualResponse.getBody();
-
-        assertThat(messageError.getTppMessage().getCategory()).isEqualTo(MessageCategory.ERROR);
-        assertThat(messageError.getTppMessage().getCode()).isEqualTo(MessageCode.FORMAT_ERROR);
+        //When Then:
+        assertThatThrownBy(() -> accountController.getTransactions(ACCOUNT_ID, null, null, transactionId, psuInvolved, "both", false, false))
+        .isInstanceOf(ValidationException.class);
     }
 
     private void checkTransactionResults(String accountId, Date dateFrom, Date dateTo, String transactionId,
@@ -121,22 +82,6 @@ public class AccountControllerTest {
         assertThat(actualResult).isEqualTo(expectedResult);
     }
 
-    private void checkBalanceResults(String accountId, boolean psuInvolved) {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        List<Balances> expectedResult = accountService.getBalancesList(accountId, psuInvolved).getBody();
-
-        //When:
-        ResponseEntity<List<Balances>> actualResponse = accountController.getBalances(accountId, psuInvolved);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        List<Balances> actualResult = actualResponse.getBody();
-
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(expectedResult);
-    }
     private static Date getDateFromDateString(String dateString) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);

@@ -6,49 +6,46 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Component
+@AllArgsConstructor
 @Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
 
     private final RemoteSpiUrls remoteSpiUrls;
-
-    @Autowired
-    public AccountSpiImpl(RemoteSpiUrls remoteSpiUrls) {
-        this.remoteSpiUrls = remoteSpiUrls;
-    }
+    private final RestTemplate restTemplate;
 
     @Override
     public List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved) {
 
         if (!withBalance) {
-            RestTemplate restTemplate = new RestTemplate();
             String url = remoteSpiUrls.getUrl("getAllAccounts");
             SpiAccountDetails[] spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails[].class);
-                return Arrays.asList(spiAccountDetails);
+            return Arrays.asList(spiAccountDetails);
         }
-
         return AccountMockData.getAccountDetails();
     }
 
-
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
-        List<SpiBalances> balances = new ArrayList<>();
-        SpiAccountDetails accountDetails = AccountMockData.getAccountsHashMap().get(accountId);
+        String getBalanceUrl = remoteSpiUrls.getUrl("getAccountBalances");
 
-        if (accountDetails != null) {
-            balances = accountDetails.getBalances();
-        }
+        ResponseEntity<List<SpiBalances>> response = restTemplate.exchange(getBalanceUrl, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<SpiBalances>>() {
+                }, accountId);
 
-        return balances;
+        return response.getBody();
     }
 
     @Override
@@ -76,25 +73,25 @@ public class AccountSpiImpl implements AccountSpi {
         SpiAccountDetails spiAccountDetails = AccountMockData.getAccountsHashMap().get(accountId);
 
         return Optional.ofNullable(spiAccountDetails)
-               .map(ad -> new SpiAccountDetails(
-               ad.getId(), ad.getIban(), ad.getBban(),
-               ad.getMaskedPan(), ad.getMaskedPan(), ad.getMsisdn(),
-               ad.getCurrency(), ad.getName(), ad.getAccountType(),
-               ad.getCashSpiAccountType(), ad.getBic(),
-               withBalance ? ad.getBalances() : null)
-               ).orElse(null);
+                       .map(ad -> new SpiAccountDetails(
+                               ad.getId(), ad.getIban(), ad.getBban(),
+                               ad.getMaskedPan(), ad.getMaskedPan(), ad.getMsisdn(),
+                               ad.getCurrency(), ad.getName(), ad.getAccountType(),
+                               ad.getCashSpiAccountType(), ad.getBic(),
+                               withBalance ? ad.getBalances() : null)
+                       ).orElse(null);
     }
 
     private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
         return spiTransactions.parallelStream()
-               .filter(this::isPendingTransaction)
-               .toArray(SpiTransaction[]::new);
+                       .filter(this::isPendingTransaction)
+                       .toArray(SpiTransaction[]::new);
     }
 
     private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
         return spiTransactions.parallelStream()
-               .filter(transaction -> !isPendingTransaction(transaction))
-               .toArray(SpiTransaction[]::new);
+                       .filter(transaction -> !isPendingTransaction(transaction))
+                       .toArray(SpiTransaction[]::new);
     }
 
     private boolean isPendingTransaction(SpiTransaction spiTransaction) {
@@ -103,8 +100,8 @@ public class AccountSpiImpl implements AccountSpi {
 
     private List<SpiTransaction> filterTransactionsByPeriod(List<SpiTransaction> spiTransactions, Date dateFrom, Date dateTo) {
         return spiTransactions.parallelStream()
-               .filter(transaction -> isDateInTimeFrame(transaction.getBookingDate(), dateFrom, dateTo))
-               .collect(Collectors.toList());
+                       .filter(transaction -> isDateInTimeFrame(transaction.getBookingDate(), dateFrom, dateTo))
+                       .collect(Collectors.toList());
     }
 
     private static boolean isDateInTimeFrame(Date currentDate, Date dateFrom, Date dateTo) {
@@ -113,25 +110,25 @@ public class AccountSpiImpl implements AccountSpi {
 
     private List<SpiTransaction> filterValidTransactionsByAccountId(List<SpiTransaction> spiTransactions, String accountId) {
         return spiTransactions.parallelStream()
-               .filter(transaction -> transactionIsValid(transaction, accountId))
-               .collect(Collectors.toList());
+                       .filter(transaction -> transactionIsValid(transaction, accountId))
+                       .collect(Collectors.toList());
     }
 
     private List<SpiTransaction> filterValidTransactionsByTransactionId(List<SpiTransaction> spiTransactions, String transactionId) {
         return spiTransactions.parallelStream()
-               .filter(transaction -> transactionId.equals(transaction.getTransactionId()))
-               .collect(Collectors.toList());
+                       .filter(transaction -> transactionId.equals(transaction.getTransactionId()))
+                       .collect(Collectors.toList());
     }
 
     private boolean transactionIsValid(SpiTransaction spiTransaction, String accountId) {
 
         boolean isCreditorAccountValid = Optional.ofNullable(spiTransaction.getCreditorAccount())
-                                         .map(creditorAccount -> creditorAccount.getAccountId().trim().equals(accountId))
-                                         .orElse(false);
+                                                 .map(creditorAccount -> creditorAccount.getAccountId().trim().equals(accountId))
+                                                 .orElse(false);
 
         boolean isDebtorAccountValid = Optional.ofNullable(spiTransaction.getDebtorAccount())
-                                       .map(debtorAccount -> debtorAccount.getAccountId().trim().equals(accountId))
-                                       .orElse(false);
+                                               .map(debtorAccount -> debtorAccount.getAccountId().trim().equals(accountId))
+                                               .orElse(false);
 
         return isCreditorAccountValid || isDebtorAccountValid;
     }

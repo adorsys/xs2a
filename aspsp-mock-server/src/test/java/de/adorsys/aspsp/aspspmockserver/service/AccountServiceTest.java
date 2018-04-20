@@ -1,15 +1,16 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,7 +78,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void deleteAccountById_Success(){
+    public void deleteAccountById_Success() {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         String spiAccountDetailsId = expectedSpiAccountDetails.getId();
@@ -96,7 +97,7 @@ public class AccountServiceTest {
         String wrongId = "Really wrong id";
 
         //When
-        boolean actualResult  = accountService.deleteAccountById(wrongId);
+        boolean actualResult = accountService.deleteAccountById(wrongId);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -108,45 +109,61 @@ public class AccountServiceTest {
         String wrongId = null;
 
         //When
-        boolean actualResult  = accountService.deleteAccountById(wrongId);
+        boolean actualResult = accountService.deleteAccountById(wrongId);
 
         //Then
         assertThat(actualResult).isFalse();
     }
 
-    private SpiAccountDetails getSpiAccountDetails_1(){
-        SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId("21fefdsdvds212sa");
-        spiAccountDetails.setIban("DE12345235431234");
-        spiAccountDetails.setBban(null);
-        spiAccountDetails.setPan("1111222233334444");
-        spiAccountDetails.setMaskedPan("111122xxxxxx44");
-        spiAccountDetails.setMsisdn(null);
-        spiAccountDetails.setCurrency(Currency.getInstance("EUR"));
-        spiAccountDetails.setName("Jack");
-        spiAccountDetails.setAccountType("GIRO");
-        spiAccountDetails.setCashSpiAccountType(null);
-        spiAccountDetails.setBic("XE3DDD");
-        spiAccountDetails.setBalances(null);
+    @Test
+    public void getBalances() {
+        //Given
+        SpiAccountDetails spiAccountDetails = getSpiAccountDetailsWithBalance();
+        String spiAccountDetailsId = spiAccountDetails.getId();
+        List<SpiBalances> expectedBalance = spiAccountDetails.getBalances();
 
-        return spiAccountDetails;
+        accountService.addAccount(spiAccountDetails);
+
+        //When
+        Optional<List<SpiBalances>> actualBalanceList = accountService.getBalances(spiAccountDetailsId);
+
+        //Then
+        assertThat(actualBalanceList.get()).isEqualTo(expectedBalance);
     }
 
-    private SpiAccountDetails getSpiAccountDetails_2(){
-        SpiAccountDetails spiAccountDetails = new SpiAccountDetails();
-        spiAccountDetails.setId("qwertyuiop12345678");
-        spiAccountDetails.setIban("DE99999999999999");
-        spiAccountDetails.setBban(null);
-        spiAccountDetails.setPan("4444333322221111");
-        spiAccountDetails.setMaskedPan("444433xxxxxx1111");
-        spiAccountDetails.setMsisdn(null);
-        spiAccountDetails.setCurrency(Currency.getInstance("EUR"));
-        spiAccountDetails.setName("Emily");
-        spiAccountDetails.setAccountType("GIRO");
-        spiAccountDetails.setCashSpiAccountType(null);
-        spiAccountDetails.setBic("ACVB222");
-        spiAccountDetails.setBalances(null);
+    private SpiAccountDetails getSpiAccountDetails_1() {
+        return new SpiAccountDetails("21fefdsdvds212sa", "DE12345235431234", null, "1111222233334444",
+        "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+        null, "XE3DDD", null);
+    }
 
-        return spiAccountDetails;
+    private SpiAccountDetails getSpiAccountDetails_2() {
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+        "GIRO", null, "ACVB222", null);
+    }
+
+    private SpiAccountDetails getSpiAccountDetailsWithBalance() {
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+        "GIRO", null, "ACVB222", getNewBalanceList());
+    }
+
+    private List<SpiBalances> getNewBalanceList() {
+        Currency euro = Currency.getInstance("EUR");
+
+        SpiBalances balance = new SpiBalances();
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, "1000")));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, "200")));
+
+        return Collections.singletonList(balance);
+    }
+
+    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
+        SpiAccountBalance sb = new SpiAccountBalance();
+        sb.setDate(new Date(1523951451537L));
+        sb.setSpiAmount(spiAmount);
+        sb.setLastActionDateTime(new Date(1523951451537L));
+        return sb;
     }
 }

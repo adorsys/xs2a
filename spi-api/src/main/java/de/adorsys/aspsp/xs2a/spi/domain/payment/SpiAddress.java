@@ -1,12 +1,19 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.NonFinal;
+import org.springframework.data.annotation.Id;
 
-@Data
+@Value
+@AllArgsConstructor
 public class SpiAddress {
-    private final String street;
-    private final String buildingNumber;
-    private final String city;
-    private final String postalCode;
-    private final String country;
+    @Id
+    @Setter
+    @NonFinal
+    private String id;
+    private String street;
+    private String buildingNumber;
+    private String city;
+    private String postalCode;
+    private String country;
 }
