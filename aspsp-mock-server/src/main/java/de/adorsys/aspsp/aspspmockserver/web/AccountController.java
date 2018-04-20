@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.AllArgsConstructor;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,12 @@ public class AccountController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping(path = "/{id}/balances")
+    public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("id") String id) {
+        return accountService.getBalances(id)
+               .map(ResponseEntity::ok)
+               .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

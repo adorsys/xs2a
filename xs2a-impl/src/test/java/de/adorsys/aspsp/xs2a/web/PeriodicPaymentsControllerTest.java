@@ -63,7 +63,8 @@ public class PeriodicPaymentsControllerTest {
 
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
-        return new ResponseObject<>(getPaymentInitializationResponse());
+        return ResponseObject.builder()
+               .body(getPaymentInitializationResponse()).build();
     }
 
     private PeriodicPayment readPeriodicPayment() throws IOException {

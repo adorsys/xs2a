@@ -2,7 +2,7 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.AccountRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,5 +36,10 @@ public class AccountService {
             return true;
         }
         return false;
+    }
+
+    public Optional<List<SpiBalances>> getBalances(String accountId) {
+        return Optional.ofNullable(accountRepository.findOne(accountId))
+               .map(SpiAccountDetails::getBalances);
     }
 }
