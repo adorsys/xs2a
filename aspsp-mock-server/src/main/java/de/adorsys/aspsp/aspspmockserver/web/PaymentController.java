@@ -29,10 +29,10 @@ public class PaymentController {
                .orElse(ResponseEntity.badRequest().build());
     }
 
-    @GetMapping(path = "{paymentId}/status/")
+    @GetMapping(path = "/{paymentId}/status/")
     public ResponseEntity getPaymentStatusById(
     @PathVariable("paymentId") String paymentId) {
-        return paymentService.getPaymentStatusById(paymentId)
+        return paymentService.isPaymentExist(paymentId)
                ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
 }

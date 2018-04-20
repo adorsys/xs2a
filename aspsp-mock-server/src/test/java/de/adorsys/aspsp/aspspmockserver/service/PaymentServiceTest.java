@@ -50,7 +50,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById() {
         //Then
-        assertThat(paymentService.getPaymentStatusById(PAYMENT_ID)).isTrue();
-        assertThat(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID)).isFalse();
+        assertThat(paymentService.isPaymentExist(PAYMENT_ID)).isTrue();
+        assertThat(paymentService.isPaymentExist(WRONG_PAYMENT_ID)).isFalse();
     }
 }

@@ -37,9 +37,9 @@ public class PaymentControllerTest {
         response.setPaymentId("12345");
         when(paymentService.addPayment(getExpectedRequest()))
         .thenReturn(Optional.of(response));
-        when(paymentService.getPaymentStatusById(PAYMENT_ID))
+        when(paymentService.isPaymentExist(PAYMENT_ID))
         .thenReturn(true);
-        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID))
+        when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))
         .thenReturn(false);
     }
 

@@ -17,7 +17,7 @@ public class PaymentService {
         return Optional.ofNullable(paymentRepository.save(payment));
     }
 
-    public boolean getPaymentStatusById(String paymentId) {
+    public boolean isPaymentExist(String paymentId) {
         return paymentRepository.exists(paymentId);
     }
 }
