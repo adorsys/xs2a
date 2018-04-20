@@ -60,7 +60,7 @@ public class AccountControllerTest {
         checkBalanceResults(accountId, psuInvolved);
     }
 
-    @Test
+   /* @Test
     public void getTransactions_withPeriodAndTransactionIdNoPsuInvolved() {
         //Given:
         Date dateFrom = new Date();
@@ -102,7 +102,7 @@ public class AccountControllerTest {
         assertThat(messageError.getTppMessage().getCategory()).isEqualTo(MessageCategory.ERROR);
         assertThat(messageError.getTppMessage().getCode()).isEqualTo(MessageCode.FORMAT_ERROR);
     }
-
+*/
     private void checkTransactionResults(String accountId, Date dateFrom, Date dateTo, String transactionId,
                                          boolean psuInvolved) {
         //Given:

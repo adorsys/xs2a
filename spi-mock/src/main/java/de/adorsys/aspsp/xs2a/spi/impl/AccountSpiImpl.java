@@ -73,7 +73,9 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        SpiAccountDetails spiAccountDetails = AccountMockData.getAccountsHashMap().get(accountId);
+        RestTemplate restTemplate = new RestTemplate();
+        String url = remoteSpiUrls.getUrl("getAccountById");
+        SpiAccountDetails spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails.class, accountId);
 
         return Optional.ofNullable(spiAccountDetails)
                .map(ad -> new SpiAccountDetails(
