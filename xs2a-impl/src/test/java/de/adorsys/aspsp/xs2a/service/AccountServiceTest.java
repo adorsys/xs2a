@@ -190,7 +190,7 @@ public class AccountServiceTest {
         //Given:
         List<Balances> expectedResult = accountMapper.mapFromSpiBalancesList(getBalances());
         //When:
-        List<Balances> actualResult = accountService.getBalancesList(accountId, psuInvolved).getBody();
+        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getBody();
         //Then:
         assertThat(actualResult).isEqualTo(expectedResult);
     }

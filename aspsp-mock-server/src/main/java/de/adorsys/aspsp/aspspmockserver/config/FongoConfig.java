@@ -40,6 +40,4 @@ public class FongoConfig extends AbstractMongoConfiguration {
         // uses fongo for in-memory tests
         return new Fongo("mockspi").getMongo();
     }
-
-
 }

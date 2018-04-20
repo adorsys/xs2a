@@ -147,7 +147,7 @@ public class PaymentMapper {
 
     private SpiAddress mapToSpiAddress(Address address) {
         return Optional.ofNullable(address)
-                       .map(a -> new SpiAddress(a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()))
+                       .map(a -> new SpiAddress(null, a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()))
                        .orElse(null);
     }
 

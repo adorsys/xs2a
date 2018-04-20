@@ -47,6 +47,7 @@
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.6</commons.io.version>
         <pmd.plugin.version>3.9.0</pmd.plugin.version>
+        <keycloak.version>3.4.3.Final</keycloak.version>
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
     </properties>
@@ -75,9 +76,9 @@
                 <version>${pmd.plugin.version}</version>
 
                 <configuration>
-                    <sourceEncoding>utf-8</sourceEncoding>
+                    <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
-                    <targetJdk>1.8</targetJdk>
+                    <targetJdk>${java.version}</targetJdk>
 
                     <rulesets>
                         <ruleset>${ruleset.basedir}/qa/pmd/pmd-ruleset.xml</ruleset>
