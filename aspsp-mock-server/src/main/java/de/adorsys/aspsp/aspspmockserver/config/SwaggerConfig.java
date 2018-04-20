@@ -23,9 +23,11 @@ import static java.util.Collections.singletonList;
 @EnableSwagger2
 public class SwaggerConfig extends WebMvcConfigurerAdapter {
     @Value("${auth_server_url}")
-    String authUrl;
+    private String authUrl;
+    @Value("${license.url}")
+    private String licenseUrl;
     @Autowired
-    private KeycloakConfig keycloakConfig;
+    private KeycloakConfigProperties keycloakConfig;
 
     @Bean
     public Docket api() {
@@ -47,7 +49,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
         .contact(new Contact("dgo, adorsys GmbH & Co. KG", "http://www.adorsys.de", "dgo@adorsys.de"))
         .version("1.0")
         .license("Apache License 2.0")
-        .licenseUrl("API license URL")
+        .licenseUrl(licenseUrl)
         .build();
     }
 

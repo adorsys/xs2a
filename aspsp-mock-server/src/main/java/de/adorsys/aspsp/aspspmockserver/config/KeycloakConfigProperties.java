@@ -2,12 +2,12 @@ package de.adorsys.aspsp.aspspmockserver.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 @Data
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "keycloak")
-public class KeycloakConfig {
+public class KeycloakConfigProperties {
     private String resource;
     private Credentials credentials;
     private String realm;
