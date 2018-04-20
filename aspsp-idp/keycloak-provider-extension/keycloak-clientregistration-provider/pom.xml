@@ -16,6 +16,10 @@
 	<artifactId>keycloak-clientregistration-provider</artifactId>
 	<version>0.2-SNAPSHOT</version>
 
+    <properties>
+        <ruleset.basedir>../../..</ruleset.basedir>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.auth0</groupId>

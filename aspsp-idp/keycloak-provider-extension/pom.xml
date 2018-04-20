@@ -15,6 +15,10 @@
 	<version>0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+    <properties>
+        <ruleset.basedir>../..</ruleset.basedir>
+    </properties>
+
 	<modules>
 		<module>keycloak-clientregistration-provider</module>
 	</modules>
