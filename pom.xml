@@ -7,6 +7,7 @@
     <artifactId>xs2a</artifactId>
     <version>0.2-SNAPSHOT</version>
     <modules>
+        <module>aspsp-idp</module>
         <module>spi-api</module>
         <module>spi-mock</module>
         <module>aspsp-mock-server</module>
