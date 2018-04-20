@@ -15,25 +15,6 @@
  */
 package de.adorsys.keycloak.extension.clientregistration;
 
-import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.jboss.logging.Logger;
 import org.keycloak.common.util.Time;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.KeycloakSession;
@@ -54,16 +35,19 @@ import org.keycloak.services.clientregistration.ClientRegistrationException;
 import org.keycloak.services.clientregistration.ErrorCodes;
 import org.keycloak.services.clientregistration.oidc.OIDCClientRegistrationContext;
 
-public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegistrationProvider {
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-	private static final Logger logger = Logger.getLogger(OIDCClientRegistrationExtendedProvider.class);
+public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegistrationProvider {
 
 	public OIDCClientRegistrationExtendedProvider(KeycloakSession session) {
 		super(session);
 	}
-
-	@Context
-	private HttpServletRequest request;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -75,13 +59,13 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 		}
 
 		try {
-			
+
 			//this could throw invalid_software_statement or unapproved_software_statement exception
 			//https://tools.ietf.org/html/rfc7591#section-3.2.1
 			SSAService.validate(clientOIDC);
-			
+
 			//set some attribute of the client(... like role) with ssa attributes
-			
+
 			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
 			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
 					clientOIDC);
@@ -102,7 +86,7 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 					Response.Status.BAD_REQUEST);
 		}
 	}
-	
+
 	@GET
     @Path("{clientId}")
     @Produces(MediaType.APPLICATION_JSON)

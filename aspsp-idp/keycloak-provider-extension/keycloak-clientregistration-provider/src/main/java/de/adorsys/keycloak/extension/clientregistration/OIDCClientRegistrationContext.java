@@ -15,9 +15,7 @@
  */
 package de.adorsys.keycloak.extension.clientregistration;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import org.apache.commons.lang3.StringUtils;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.protocol.oidc.utils.SubjectType;
 import org.keycloak.representations.idm.ClientRepresentation;
@@ -26,6 +24,9 @@ import org.keycloak.services.clientregistration.AbstractClientRegistrationContex
 import org.keycloak.services.clientregistration.ClientRegistrationProvider;
 import org.keycloak.services.validation.PairwiseClientValidator;
 import org.keycloak.services.validation.ValidationMessages;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class OIDCClientRegistrationContext extends AbstractClientRegistrationContext {
 
@@ -51,7 +52,7 @@ public class OIDCClientRegistrationContext extends AbstractClientRegistrationCon
 		String sectorIdentifierUri = oidcRep.getSectorIdentifierUri();
 
 		// If sector_identifier_uri is in oidc config, then always validate it
-		if (SubjectType.PAIRWISE == subjectType || (sectorIdentifierUri != null && !sectorIdentifierUri.isEmpty())) {
+		if (SubjectType.PAIRWISE == subjectType || StringUtils.isNotBlank(sectorIdentifierUri)) {
 			valid = valid && PairwiseClientValidator.validate(session, rootUrl, redirectUris,
 					oidcRep.getSectorIdentifierUri(), validationMessages);
 		}
