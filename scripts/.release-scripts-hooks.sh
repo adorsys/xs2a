@@ -13,7 +13,7 @@ set -e
 # Parameter $1 - version as text
 # Returns tag as text
 function format_release_tag {
-  echo "v$1"
+  echo "$1"
 }
 
 # Hook method to format your next snapshot version
