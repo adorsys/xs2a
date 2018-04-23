@@ -32,7 +32,7 @@ variables:
   paths:
     - "xs2a-impl/target/aspsp-xs2a*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
-    - "keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider*.jar"
+    - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
     - "config/*.yml"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
