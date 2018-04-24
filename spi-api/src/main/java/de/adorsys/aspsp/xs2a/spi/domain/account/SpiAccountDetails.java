@@ -22,7 +22,6 @@ import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Currency;
 import java.util.List;
@@ -51,7 +50,7 @@ public class SpiAccountDetails {
 
     @JsonIgnore
     public Optional<SpiBalances> getFirstBalance() {
-        return isEmpty(balances)
+        return !isEmpty(balances)
                ? Optional.of(balances.get(0))
                : Optional.empty();
     }
