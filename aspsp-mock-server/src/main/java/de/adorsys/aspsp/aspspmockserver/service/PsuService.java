@@ -26,11 +26,11 @@ public class PsuService {
         return psu.getId();
     }
 
-    public Optional<Psu> getPsu(String id) {
+    public Optional<Psu> getPsuById(String id) {
         return Optional.ofNullable(psuRepository.findOne(id));
     }
 
-    public List<Psu> getAllPsus() {
+    public List<Psu> getAllPsuList() {
         return psuRepository.findAll();
     }
 

@@ -11,7 +11,9 @@ public class RemoteSpiUrls {
         this.baseUrl = baseUrl;
         this.urls = new HashMap<>();
         this.urls.put("getAllAccounts", "/account/");
-        this.urls.put("getAllConsents", "/consent/");
+        this.urls.put("getConsents", "/consent/");
+        this.urls.put("getConsentById", "/consent/{id}");
+        this.urls.put("deleteConsentById", "/consent/{id}");
     }
 
     public String getUrl(String key) {

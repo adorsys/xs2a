@@ -14,10 +14,10 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 public class ConsentService {
@@ -30,15 +30,26 @@ public class ConsentService {
         this.psuRepository = psuRepository;
     }
 
-    public String createConsentAndReturnId(SpiCreateConsentRequest request, String psuId) {
-        SpiAccountAccess access = checkAccess(request.getAccess(), psuId);
+    public Optional<String> createConsentAndReturnId(SpiCreateConsentRequest request, String psuId) {
+        return readAccountAccessFromDb(request.getAccess(), psuId)
+                       .filter(access -> !isEmptyAccess(access))
+                       .map(access -> saveNewConsentWithAccess(access, request.isRecurringIndicator(), request.getValidUntil(), request.getFrequencyPerDay()))
+                       .map(SpiAccountConsent::getId);
+    }
 
-        SpiAccountConsent consent = access == null ? null
-                                    : consentRepository.save(new SpiAccountConsent(UUID.randomUUID().toString(), access,
-        request.isRecurringIndicator(), request.getValidUntil(), request.getFrequencyPerDay(), new Date(),
-        SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
+    private SpiAccountConsent saveNewConsentWithAccess(SpiAccountAccess access, boolean recurringIndicator, Date validUntil, Integer frequencyPerDay) {
+        return consentRepository.save(
+                new SpiAccountConsent(UUID.randomUUID().toString(), access,
+                        recurringIndicator, validUntil, frequencyPerDay, new Date(),
+                        SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
+    }
 
-        return consent != null ? consent.getId() : null;
+    private boolean isEmptyAccess(SpiAccountAccess access) {
+        return isEmpty(access.getAccounts())
+                       && isEmpty(access.getBalances())
+                       && isEmpty(access.getTransactions())
+                       && access.getAllPsd2() == null
+                       && access.getAvailableAccounts() == null;
     }
 
     public SpiAccountConsent getConsent(String id) {
@@ -57,64 +68,97 @@ public class ConsentService {
         return false;
     }
 
-    private SpiAccountAccess checkAccess(SpiAccountAccess access, String psuId) {
-        SpiAccountAccess acc = null;
-        if (access != null) {
-            if (access.getAvailableAccounts() == SpiAccountAccessType.ALL_ACCOUNTS || access.getAllPsd2() == SpiAccountAccessType.ALL_ACCOUNTS) {
-                if (psuId != null) {
-                    Psu psu = psuRepository.findOne(psuId);
-                    if (psu != null) {
-                        List<SpiAccountReference> list = new ArrayList<>();
-                        for (SpiAccountDetails det : psu.getAccountDetailsList()) {
-                            list.add(mapFromSpiAccountDetails(det));
-                        }
-                        acc = new SpiAccountAccess();
-                        acc.setAccounts(list);
-                        acc.setBalances(list);
-                        acc.setTransactions(list);
-                        if (access.getAvailableAccounts() != null) {
-                            acc.setAvailableAccounts(SpiAccountAccessType.ALL_ACCOUNTS);
-                        } else {
-                            acc.setAllPsd2(SpiAccountAccessType.ALL_ACCOUNTS);
-                        }
-                    }
-                }
-            } else if (testAccess(access)) {
-                acc = new SpiAccountAccess();
-                acc.setAccounts(checkReference(access.getAccounts()));
-                acc.setBalances(checkReference(access.getBalances()));
-                acc.setTransactions(checkReference(access.getTransactions()));
-                if (!testAccess(acc)) {
-                    acc = null;
-                }
-            }
-
-        }
-
-        return acc;
+    private Optional<SpiAccountAccess> readAccountAccessFromDb(SpiAccountAccess accountAccess, String psuId) {
+        return Optional.ofNullable(accountAccess)
+                       .flatMap(access -> getActualAccess(access, psuId));
     }
 
-    private boolean testAccess(SpiAccountAccess access) {
-        return access.getAccounts() != null && !access.getAccounts().isEmpty()
-               || access.getBalances() != null && !access.getBalances().isEmpty()
-               || access.getTransactions() != null && !access.getTransactions().isEmpty();
+    private Optional<SpiAccountAccess> getActualAccess(SpiAccountAccess access, String psuId) {
+        if (hasAccessToAllAccounts(access)) {
+            return getActualAccessForAllAccounts(access, psuId);
+        } else {
+            return getActualAccessToCertainAccounts(access);
+        }
     }
 
-    private List<SpiAccountReference> checkReference(List<SpiAccountReference> accounts) {
-        List<SpiAccountReference> result = new ArrayList<>();
-        if (accounts != null) {
-            for (SpiAccountReference aR : accounts) {
-                Psu psu = psuRepository.findPsuByAccountDetailsList_Iban(aR.getIban());
-                if (psu != null) {
-                    for (SpiAccountDetails det : psu.getAccountDetailsList()) {
-                        if (det.getIban().equals(aR.getIban())) {
-                            result.add(mapFromSpiAccountDetails(det));
-                        }
-                    }
-                }
-            }
+    private Optional<SpiAccountAccess> getActualAccessForAllAccounts(SpiAccountAccess access, String psuId) {
+        return getAccountReferencesByPsuId(psuId)
+                       .map(references -> new SpiAccountAccess(
+                               references,
+                               references,
+                               references,
+                               getActualAccessType(access.getAvailableAccounts()),
+                               getActualAccessType(access.getAllPsd2())));
+    }
+
+    private Optional<SpiAccountAccess> getActualAccessToCertainAccounts(SpiAccountAccess access) {
+        return Optional.of(new SpiAccountAccess(
+                mapActualAccountReferences(access.getAccounts()),
+                mapActualAccountReferences(access.getBalances()),
+                mapActualAccountReferences(access.getTransactions()),
+                null,
+                null));
+    }
+
+    private SpiAccountAccessType getActualAccessType(SpiAccountAccessType type) {
+        if (type == SpiAccountAccessType.ALL_ACCOUNTS) {
+            return SpiAccountAccessType.ALL_ACCOUNTS;
+        } else {
+            return null;
         }
-        return result;
+    }
+
+    private Optional<List<SpiAccountReference>> getAccountReferencesByPsuId(String psuId) {
+        return Optional.ofNullable(psuRepository.findOne(psuId))
+                       .filter(Objects::nonNull)
+                       .map(psu -> mapFromSpiAccountDetails(psu.getAccountDetailsList()));
+    }
+
+    private boolean hasAccessToAllAccounts(SpiAccountAccess access) {
+        return access.getAvailableAccounts() == SpiAccountAccessType.ALL_ACCOUNTS
+                       || access.getAllPsd2() == SpiAccountAccessType.ALL_ACCOUNTS;
+    }
+
+    private List<SpiAccountReference> mapActualAccountReferences(List<SpiAccountReference> references) {
+        List<String> ibans = getIbanListFromAccountReferences(references);
+
+        if (ibans.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        return getAccountsReferencesByIbans(ibans);
+    }
+
+
+    private List<String> getIbanListFromAccountReferences(List<SpiAccountReference> references) {
+        return Optional.ofNullable(references)
+                       .map(refs -> refs.stream().map(SpiAccountReference::getIban).collect(Collectors.toList()))
+                       .orElse(Collections.EMPTY_LIST);
+    }
+
+    private List<SpiAccountReference> getAccountsReferencesByIbans(List<String> ibans) {
+        return psuRepository.findPsuByAccountDetailsList_IbanIn(ibans)
+                       .map(psuList -> mapPsuListToAccountRefList(psuList, ibans))
+                       .orElse(Collections.EMPTY_LIST);
+    }
+
+    private List<SpiAccountReference> mapPsuListToAccountRefList(List<Psu> psuList, List<String> ibans) {
+        return psuList.stream()
+                       .map(Psu::getAccountDetailsList)
+                       .map(accList -> filterAccountDetailsByIbans(accList, ibans))
+                       .map(this::mapFromSpiAccountDetails)
+                       .flatMap(List::stream)
+                       .collect(Collectors.toList());
+    }
+
+    private List<SpiAccountDetails> filterAccountDetailsByIbans(List<SpiAccountDetails> accountDetails, List<String> ibans) {
+        return accountDetails.stream()
+                       .filter(acc -> ibans.contains(acc.getIban())).collect(Collectors.toList());
+    }
+
+    private List<SpiAccountReference> mapFromSpiAccountDetails(List<SpiAccountDetails> detailsList) {
+        return detailsList.stream()
+                       .map(this::mapFromSpiAccountDetails).collect(Collectors.toList());
     }
 
     private SpiAccountReference mapFromSpiAccountDetails(SpiAccountDetails details) {

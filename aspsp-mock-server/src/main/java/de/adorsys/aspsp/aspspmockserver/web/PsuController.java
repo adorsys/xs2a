@@ -22,13 +22,13 @@ public class PsuController {
     }
 
     @GetMapping(path = "/")
-    public ResponseEntity<List<Psu>> readAllPsus() {
-        return ResponseEntity.ok(psuService.getAllPsus());
+    public ResponseEntity<List<Psu>> readAllPsuList() {
+        return ResponseEntity.ok(psuService.getAllPsuList());
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Psu> readPsuById(@PathVariable("id") String id) {
-        return psuService.getPsu(id)
+        return psuService.getPsuById(id)
                .map(ResponseEntity::ok)
                .orElseGet(() -> ResponseEntity.notFound().build());
     }

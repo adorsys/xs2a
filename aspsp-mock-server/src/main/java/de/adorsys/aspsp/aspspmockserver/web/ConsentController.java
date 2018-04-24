@@ -18,28 +18,29 @@ public class ConsentController {
         this.consentService = consentService;
     }
 
-    @GetMapping(path = "/allConsents")
+    @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountConsent>> readAllConsents() {
         return ResponseEntity.ok(consentService.getAllConsents());
     }
 
-    @GetMapping(path = "/")
-    public ResponseEntity<SpiAccountConsent> readConsentById(@RequestParam(name = "consentId") String id) {
-        SpiAccountConsent consent = consentService.getConsent(id);
+    @GetMapping(path = "/{consent-id}")
+    public ResponseEntity<SpiAccountConsent> readConsentById(@PathVariable("consent-id") String consentId) {
+        SpiAccountConsent consent = consentService.getConsent(consentId);
         return consent == null
-               ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-               : new ResponseEntity<>(consent, HttpStatus.OK);
+                       ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                       : new ResponseEntity<>(consent, HttpStatus.OK);
     }
 
     @PostMapping(path = "/")
     public ResponseEntity<String> createConsent(@RequestBody SpiCreateConsentRequest requestConsent, @RequestParam(required = false) String psuId) {
-        String saved = consentService.createConsentAndReturnId(requestConsent, psuId);
-        return saved == null ? new ResponseEntity<>(HttpStatus.BAD_REQUEST) : new ResponseEntity<>(saved, HttpStatus.CREATED);
+        return consentService.createConsentAndReturnId(requestConsent, psuId)
+                       .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                       .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity deleteConsent(@PathVariable("id") String id) {
-        if (consentService.deleteConsentById(id)) {
+    @DeleteMapping(path = "/{consent-id}")
+    public ResponseEntity deleteConsent(@PathVariable("consent-id") String consentId) {
+        if (consentService.deleteConsentById(consentId)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

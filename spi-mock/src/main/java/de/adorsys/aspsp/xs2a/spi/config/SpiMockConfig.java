@@ -63,11 +63,6 @@ public class SpiMockConfig {
     }
 
     @Bean
-    public ConsentSpi consentSpi() {
-        return new ConsentSpiImpl(remoteSpiUrls());
-    }
-
-    @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory);
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());

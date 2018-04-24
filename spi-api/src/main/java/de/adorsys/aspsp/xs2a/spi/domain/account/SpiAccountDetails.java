@@ -1,8 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 

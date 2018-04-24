@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class ConsentControllerTest {
     private final String CORRECT_PSU_ID = "123456789";
-    private final String WRONG_PSU_ID = "987654321";
+    private final String WRONG_PSU_ID = "wrong psu id";
 
     @Autowired
     private ConsentController consentController;
@@ -34,8 +35,8 @@ public class ConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID))).thenReturn("someString");
-        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID))).thenReturn(null);
+        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID))).thenReturn(Optional.of("someString"));
+        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID))).thenReturn(Optional.empty());
     }
 
     @Test
@@ -57,6 +58,6 @@ public class ConsentControllerTest {
     }
 
     private SpiCreateConsentRequest createConsentRequest() {
-        return new SpiCreateConsentRequest(new SpiAccountAccess(), true, new Date(), 4, false);
+        return new SpiCreateConsentRequest(new SpiAccountAccess(null, null, null, null, null), true, new Date(), 4, false);
     }
 }
