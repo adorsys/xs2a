@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
@@ -55,7 +71,7 @@ public class AccountControllerJsonTest {
     public void setUp() throws Exception {
         when(accountServiceMocked.getAccountDetailsList(anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
-        when(accountServiceMocked.getBalancesList(any(String.class), anyBoolean())).thenReturn(balances);
+        when(accountServiceMocked.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
         when(accountServiceMocked.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountServiceMocked.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }
@@ -88,7 +104,7 @@ public class AccountControllerJsonTest {
     }
 
     @Test
-    public void getBallances_ResultTest() throws IOException {
+    public void getBalances_ResultTest() throws IOException {
         //Given:
         boolean psuInvolved = true;
         Balances expectedBalances = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
