@@ -22,9 +22,8 @@ import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import io.swagger.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,25 +32,21 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/consents")
 @Api(value = "api/v1/consents", tags = "AISP Consents", description = "Provides access to the Psu Consents")
 public class ConsentInformationController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsentInformationController.class);
-    private ConsentService consentService;
-
-    @Autowired
-    public ConsentInformationController(ConsentService consentService) {
-        this.consentService = consentService;
-    }
+    private final ConsentService consentService;
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class), @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.POST)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<CreateConsentResp> createAccountConsent(
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
@@ -60,7 +55,7 @@ public class ConsentInformationController {
     @Valid @RequestBody CreateConsentReq createConsent) {
         CreateConsentResp aicCreateResponse = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred);
 
-        LOGGER.debug("createAccountConsent(): response {} ", aicCreateResponse);
+        log.debug("createAccountConsent(): response {} ", aicCreateResponse);
 
         return new ResponseEntity<>(aicCreateResponse, HttpStatus.OK);
     }
@@ -71,7 +66,8 @@ public class ConsentInformationController {
     @RequestMapping(value = "/{consent-id}/status", method = RequestMethod.GET)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, TransactionStatus>> getAccountConsentsStatusById(
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
     @PathVariable("consent-id") String consentId) {
@@ -80,7 +76,7 @@ public class ConsentInformationController {
 
         Map<String, TransactionStatus> accountConsentsStatusResponse = new HashMap<>();
         accountConsentsStatusResponse.put("transactionStatus", transactionStatus);
-        LOGGER.debug("getAccountConsentStatusById(): response {} ", transactionStatus);
+        log.debug("getAccountConsentStatusById(): response {} ", transactionStatus);
 
         if (transactionStatus == null) {
             return new ResponseEntity<>(accountConsentsStatusResponse, HttpStatus.FORBIDDEN);
@@ -95,13 +91,14 @@ public class ConsentInformationController {
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
     @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
     @PathVariable("consent-id") String consentId) {
         AccountConsent accountConsent = consentService.getAccountConsentsById(consentId);
 
-        LOGGER.debug("getAccountConsentsInformationById(): response {} ", accountConsent);
+        log.debug("getAccountConsentsInformationById(): response {} ", accountConsent);
         if (accountConsent == null) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -115,7 +112,8 @@ public class ConsentInformationController {
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.DELETE)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<Void> deleteAccountConsent(
     @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
     @PathVariable("consent-id") String consentId) {

@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.xs2a.spi.rest.RestInvoker;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,14 +40,14 @@ import java.util.stream.Collectors;
 public class AccountSpiImpl implements AccountSpi {
 
     private final RemoteSpiUrls remoteSpiUrls;
-    private final RestTemplate restTemplate;
+    private final RestInvoker restInvoker;
 
     @Override
     public List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved) {
 
         if (!withBalance) {
             String url = remoteSpiUrls.getUrl("getAllAccounts");
-            SpiAccountDetails[] spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails[].class);
+            SpiAccountDetails[] spiAccountDetails = restInvoker.getRestTemplate().getForObject(url, SpiAccountDetails[].class);
             return Arrays.asList(spiAccountDetails);
         }
         return AccountMockData.getAccountDetails();
@@ -56,8 +56,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
         String getBalanceUrl = remoteSpiUrls.getUrl("getAccountBalances");
-
-        ResponseEntity<List<SpiBalances>> response = restTemplate.exchange(getBalanceUrl, HttpMethod.GET, null,
+        ResponseEntity<List<SpiBalances>> response = restInvoker.getRestTemplate().exchange(getBalanceUrl, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<SpiBalances>>() {
                 }, accountId);
 

@@ -23,9 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,18 +33,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/accounts")
 @Api(value = "api/v1/accounts", tags = "AISP, Accounts", description = "Provides access to the Psu account")
 public class AccountController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class); //NOPMD TODO review and check PMD assertion
-    private AccountService accountService;
-    private ResponseMapper responseMapper;
-
-    @Autowired
-    public AccountController(AccountService accountService, ResponseMapper responseMapper) {
-        this.accountService = accountService;
-        this.responseMapper = responseMapper;
-    }
+    private final AccountService accountService;
+    private final ResponseMapper responseMapper;
 
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
     @ApiResponses(value = {
@@ -56,7 +48,8 @@ public class AccountController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
@@ -75,7 +68,8 @@ public class AccountController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     ResponseEntity<AccountDetails> readAccountDetails(
     @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
     @PathVariable(name = "account-id", required = true) String accountId,
@@ -96,7 +90,8 @@ public class AccountController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<List<Balances>> getBalances(
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
@@ -114,7 +109,8 @@ public class AccountController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
+    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource")
                                                          @PathVariable(name = "account-id") String accountId,
                                                          @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
