@@ -115,11 +115,11 @@ public class PaymentServiceTest {
         boolean tppRedirectPreferred = false;
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
+        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
 
         //Then:
         assertThat(actualResponse.getBody()).isNotNull();
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.ACCP);
+        assertThat(actualResponse.getBody().get(0).getTransactionStatus()).isEqualTo(TransactionStatus.ACCP);
     }
 
     @Test
