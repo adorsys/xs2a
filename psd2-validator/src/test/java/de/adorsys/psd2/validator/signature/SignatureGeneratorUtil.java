@@ -127,7 +127,7 @@ public class SignatureGeneratorUtil {
 		}			
 	}
 	
-	private static String generateDigest(){
+	public static String generateDigest(){
 		
 		String payload = "{client_name:XS2A Client,redirect_uris:[*]}";
 		String digestHeader = null;

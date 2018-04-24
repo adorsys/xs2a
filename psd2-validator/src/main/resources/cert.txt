@@ -1,23 +1,4 @@
-package de.adorsys.psd2.validator.signature;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.tomitribe.auth.signatures.MissingRequiredHeaderException;
-
-import junit.framework.Assert;
-
-public class TppSignatureValidatorTest {
-
-	private String signature;
-
-	//tpp cert example coming from e-Szigno
-	private String tppEncodedCert = "-----BEGIN CERTIFICATE-----\n" +
+"-----BEGIN CERTIFICATE-----\n" +
 "MIIKEDCCCPigAwIBAgINOFNxaoP6/Za+1YqpCjANBgkqhkiG9w0BAQsFADBqMQsw\n" +
 "CQYDVQQGEwJIVTERMA8GA1UEBwwIQnVkYXBlc3QxFjAUBgNVBAoMDU1pY3Jvc2Vj\n" +
 "IEx0ZC4xFDASBgNVBAsMC2UtU3ppZ25vIENBMRowGAYDVQQDDBFlLVN6aWdubyBU\n" +
@@ -72,58 +53,4 @@ public class TppSignatureValidatorTest {
 "vgDcoevoGUAVvF98eJnPbYgAWiiK4PrrLTrQzSZ3UtLmde/LWZLBAA4vWCgXj9t0\n" +
 "YECEexIWZVg1hch8G3gauhPczCCIe9jGn8zYeW30ewQ3KL97sBTNWoSfSk5C7iQ8\n" +
 "cyb+bQbyMI8P40FgPzKHhPiIzb+KCGkLQqUDg4gs3yd22NER\n" +
-"-----END CERTIFICATE-----";
-	
-	//wrong public key
-	 private final String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
-	            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDCFENGw33yGihy92pDjZQhl0C3\n" +
-	            "6rPJj+CvfSC8+q28hxA161QFNUd13wuCTUcq0Qd2qsBe/2hFyc2DCJJg0h1L78+6\n" +
-	            "Z4UMR7EOcpfdUE9Hf3m/hs+FUR45uBJeDK1HSFHD8bHKD6kv8FPGfJTotc+2xjJw\n" +
-	            "oYi+1hqp1fIekaxsyQIDAQAB\n" +
-	            "-----END PUBLIC KEY-----\n";
-
-	@Before
-	public void init() {
-
-		signature = new SignatureGeneratorUtil().generateSignature();
-	}
-
-	@Test
-	public void when_ValidSignature_Expected_true() throws NoSuchAlgorithmException, SignatureException, IOException {
-		
-		 Map<String, String> headersMap = new HashMap<>();
-		 headersMap.put("Digest", SignatureGeneratorUtil.generateDigest());
-		 headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
-		 headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
-		 headersMap.put("PSU-ID", "PSU-1234");
-		 headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");	
-
-		Assert.assertEquals(TppSignatureValidator.verifySignature(signature, tppEncodedCert, headersMap), true);
-	}
-
-	
-	@Test(expected = MissingRequiredHeaderException.class)
-	public void when_ValidSignature_And_MissingHeaderAttribute_Expected_False() throws NoSuchAlgorithmException, SignatureException, IOException {
-		
-		 Map<String, String> headersMap = new HashMap<>();
-		 headersMap.put("Digest", SignatureGeneratorUtil.generateDigest());
-		 headersMap.put("TPP-Transaction-ID", "xxxxxx");
-		 headersMap.put("TPP-Request-ID", "0000000");
-		 headersMap.put("PSU-ID", "PSU-1234");
-
-		 TppSignatureValidator.verifySignature(signature, tppEncodedCert, headersMap);
-	}
-	
-	@Test(expected = Exception.class)
-	public void when_ValidSignatureAndFalseCert_Expected_true() throws NoSuchAlgorithmException, SignatureException, IOException {
-		
-		Map<String, String> headersMap = new HashMap<>();
-		 headersMap.put("Digest", SignatureGeneratorUtil.generateDigest());
-		 headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
-		 headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
-		 headersMap.put("PSU-ID", "PSU-1234");
-		 headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");
-
-		TppSignatureValidator.verifySignature(signature, publicKeyPem, headersMap);
-	}
-}
+"-----END CERTIFICATE-----"
