@@ -18,21 +18,24 @@ public class FutureBookingsService {
     private final PaymentService paymentService;
 
     public Optional<SpiAccountDetails> changeBalances(String accountId) {
-
-        SpiAccountDetails account = accountService.getAccount(accountId).get();
-        SpiBalances balance = account.getFirstBalance();
-        double oldBalanceAmount = Double.parseDouble(balance.getInterimAvailable().getSpiAmount().getContent());
-        double newBalanceAmount = oldBalanceAmount - paymentService.amountToBeCharged(accountId);
-
-        SpiAmount newAmount = new SpiAmount(Currency.getInstance("EUR"),String.valueOf(newBalanceAmount));
-        SpiAccountBalance newAccountBalance = new SpiAccountBalance();
-        newAccountBalance.setSpiAmount(newAmount);
-        newAccountBalance.setLastActionDateTime(new Date());
-        newAccountBalance.setDate(new Date());
-
-        balance.setInterimAvailable(newAccountBalance);
-        account.updateFirstBalance(balance);
-
-        return Optional.ofNullable(accountService.addAccount(account));
+        return accountService.getAccount(accountId)
+               .map(account -> {
+                   SpiBalances balance = account.getFirstBalance()
+                   .map(b -> {
+                       double oldBalanceAmount = Double.parseDouble(b.getInterimAvailable().getSpiAmount().getContent());
+                       double newBalanceAmount = oldBalanceAmount - paymentService.amountToBeCharged(accountId);
+                       SpiAmount newAmount = new SpiAmount(Currency.getInstance("EUR"),String.valueOf(newBalanceAmount));
+                       SpiAccountBalance newAccountBalance = new SpiAccountBalance();
+                       newAccountBalance.setSpiAmount(newAmount);
+                       newAccountBalance.setLastActionDateTime(new Date());
+                       newAccountBalance.setDate(new Date());
+                       b.setInterimAvailable(newAccountBalance);
+                       return b;
+                   }).orElse(null);
+                   account.updateFirstBalance(balance);
+                   return Optional.of(accountService.addAccount(account));
+               })
+               .orElse(null);
     }
 }
+

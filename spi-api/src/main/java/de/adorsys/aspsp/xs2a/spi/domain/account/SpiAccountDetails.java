@@ -34,8 +34,10 @@ public class SpiAccountDetails {
     private List<SpiBalances> balances;
 
     @JsonIgnore
-    public SpiBalances getFirstBalance() {
-        return balances.get(0);
+    public Optional<SpiBalances> getFirstBalance() {
+        return isEmpty(balances)
+               ? Optional.of(balances.get(0))
+               : Optional.empty();
     }
 
     public void updateFirstBalance(SpiBalances balance) {
