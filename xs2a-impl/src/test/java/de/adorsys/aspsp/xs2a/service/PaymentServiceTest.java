@@ -73,8 +73,8 @@ public class PaymentServiceTest {
         .thenReturn(getSpiPaymentResponse(ACCP));
         when(paymentSpi.createPaymentInitiation(any(), any(), anyBoolean()))
         .thenReturn(getSpiPaymentResponse(RCVD));
-        when(paymentSpi.createBulkPayments(any(), any(), anyBoolean()))
-        .thenReturn(getSpiPaymentResponse(ACCP));
+     //   when(paymentSpi.createBulkPayments(any(), any(), anyBoolean()))
+     //   .thenReturn(OPgetSpiPaymentResponse(ACCP));
         when(paymentSpi.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
         .thenReturn(ACCP);
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))

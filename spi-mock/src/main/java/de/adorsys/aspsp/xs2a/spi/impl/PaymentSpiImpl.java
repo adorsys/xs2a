@@ -26,13 +26,18 @@ import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import lombok.AllArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
@@ -61,14 +66,28 @@ public class PaymentSpiImpl implements PaymentSpi {
     private SpiTransactionStatus resolveTransactionStatus(SpiPeriodicPayment payment) {
         Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
         return Optional.of(map.values().stream()
-                           .anyMatch(a -> a.getIban()
-                                          .equals(payment.getCreditorAccount().getIban())))
-               .map(present -> ACCP)
-               .orElse(RJCT);
+                               .anyMatch(a -> a.getIban()
+                                                  .equals(payment.getCreditorAccount().getIban())))
+                   .map(present -> ACCP)
+                   .orElse(RJCT);
     }
 
-    public SpiPaymentInitialisationResponse createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        return PaymentMockData.createMultiplePayments(payments, paymentProduct, tppRedirectPreferred);
+    @Override
+    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        ResponseEntity<List<SpiSinglePayments>> responseEntity = restTemplate.exchange(remoteSpiUrls.getUrl("createBulkPayments"), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
+        });
+        if (responseEntity.getStatusCode() == CREATED) {
+            List<SpiSinglePayments> responses = responseEntity.getBody();
+            return responses.stream()
+                       .map(s -> {
+                           SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
+                           paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
+                           paymentResponse.setPaymentId(s.getPaymentId());
+                           paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
+                           return paymentResponse;
+                       }).collect(Collectors.toList());
+        }
+        return null;
     }
 
     @Override

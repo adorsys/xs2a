@@ -18,9 +18,14 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
@@ -44,6 +49,16 @@ public class PaymentController {
                .orElse(ResponseEntity.badRequest().build());
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @PostMapping(path = "/bulk-payments/")
+    public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
+        @RequestBody List<SpiSinglePayments> payments) throws Exception {
+        return paymentService.addBulkPayments(payments)
+                   .map(saved -> new ResponseEntity<>(saved, CREATED))
+                   .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @GetMapping(path = "/{paymentId}/status/")
     public ResponseEntity getPaymentStatusById(
     @PathVariable("paymentId") String paymentId) {
