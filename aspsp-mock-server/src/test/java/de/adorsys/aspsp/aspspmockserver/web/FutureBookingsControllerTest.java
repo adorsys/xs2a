@@ -17,7 +17,10 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Currency;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -40,6 +42,9 @@ import static org.mockito.Mockito.when;
 public class FutureBookingsControllerTest {
     private static final String ACCOUNT_ID = "123456789";
     private static final String WRONG_ACCOUNT_ID = "0";
+    private static final double BALANCE = 2000;
+    private static final double AMOUNT_TO_BE_CHARGED = 500;
+
 
     @Autowired
     private FutureBookingsController futureBookingsController;
@@ -50,25 +55,59 @@ public class FutureBookingsControllerTest {
     @Before
     public void setUp() {
         when(futureBookingsService.changeBalances(ACCOUNT_ID))
-            .thenReturn(getSpiAccountDetails());
+            .thenReturn(getSpiAccountDetails((BALANCE - AMOUNT_TO_BE_CHARGED)));
+        when(futureBookingsService.changeBalances(WRONG_ACCOUNT_ID))
+            .thenReturn(Optional.empty());
     }
 
     @Test
     public void changeBalances_Success() throws Exception {
         //Given
         HttpStatus expectedStatusCode = HttpStatus.OK;
+        double expectedAmount = BALANCE - AMOUNT_TO_BE_CHARGED;
 
         //When:
         ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(ACCOUNT_ID);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResult.getBody()).isEqualTo(getSpiAccountDetails());
+        assertThat(actualResult.getBody()).isEqualTo(getSpiAccountDetails(expectedAmount).get());
     }
 
-    private Optional<SpiAccountDetails> getSpiAccountDetails() {
+    @Test
+    public void changeBalances_WrongId() throws Exception {
+        //Given
+        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+
+        //When:
+        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(WRONG_ACCOUNT_ID);
+
+        //Then:
+        assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
+    }
+
+    private Optional<SpiAccountDetails> getSpiAccountDetails(double amount) {
         return Optional.of(new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
             "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
-            null, "ACVB222", null));
+            null, "ACVB222", getNewBalanceList(amount)));
+    }
+
+    private ArrayList<SpiBalances> getNewBalanceList(double amount) {
+        Currency euro = Currency.getInstance("EUR");
+
+        SpiBalances balance = new SpiBalances();
+        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, Double.toString(amount))));
+        ArrayList<SpiBalances> balances = new ArrayList<>();
+        balances.add(balance);
+
+        return balances;
+    }
+
+    private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
+        SpiAccountBalance sb = new SpiAccountBalance();
+        sb.setDate(new Date(1523951451537L));
+        sb.setSpiAmount(spiAmount);
+        sb.setLastActionDateTime(new Date(1523951451537L));
+        return sb;
     }
 }

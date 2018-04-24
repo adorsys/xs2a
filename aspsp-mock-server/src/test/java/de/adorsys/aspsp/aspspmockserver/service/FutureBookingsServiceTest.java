@@ -57,7 +57,7 @@ public class FutureBookingsServiceTest {
         when(accountService.getAccount(ACCOUNT_ID))
             .thenReturn(Optional.of(getSpiAccountDetailsWithBalance(BALANCE)));
         when(accountService.getAccount(WRONG_ACCOUNT_ID))
-            .thenReturn(null);
+            .thenReturn(Optional.empty());
         when(accountService.addAccount(notNull(SpiAccountDetails.class)))
             .thenReturn(getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED)));
         when(accountService.addAccount(null))
@@ -65,12 +65,24 @@ public class FutureBookingsServiceTest {
     }
 
     @Test
-    public void changeBalances() {
+    public void changeBalances_Success() {
         //Given
         SpiAccountDetails expectedAccountDetails = getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED));
 
         //When
         SpiAccountDetails actualAccountDetails = futureBookingsService.changeBalances(ACCOUNT_ID).get();
+
+        //Then
+        assertThat(actualAccountDetails).isEqualTo(expectedAccountDetails);
+    }
+
+    @Test
+    public void changeBalances_WrongId() {
+        //Given
+        Optional expectedAccountDetails = Optional.empty();
+
+        //When
+        Optional<SpiAccountDetails> actualAccountDetails = futureBookingsService.changeBalances(WRONG_ACCOUNT_ID);
 
         //Then
         assertThat(actualAccountDetails).isEqualTo(expectedAccountDetails);
