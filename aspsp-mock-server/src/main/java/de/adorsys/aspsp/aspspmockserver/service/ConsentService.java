@@ -55,17 +55,17 @@ public class ConsentService {
 
     private boolean isEmptyAccess(SpiAccountAccess access) {
         return isEmpty(access.getAccounts())
-               && isEmpty(access.getBalances())
-               && isEmpty(access.getTransactions())
-               && access.getAllPsd2() == null
-               && access.getAvailableAccounts() == null;
+                       && isEmpty(access.getBalances())
+                       && isEmpty(access.getTransactions())
+                       && access.getAllPsd2() == null
+                       && access.getAvailableAccounts() == null;
     }
 
     private SpiAccountConsent saveNewConsentWithAccess(SpiAccountAccess access, boolean recurringIndicator, Date validUntil, Integer frequencyPerDay) {
         return consentRepository.save(
-        new SpiAccountConsent(UUID.randomUUID().toString(), access,
-        recurringIndicator, validUntil, frequencyPerDay, new Date(),
-        SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
+                new SpiAccountConsent(UUID.randomUUID().toString(), access,
+                        recurringIndicator, validUntil, frequencyPerDay, new Date(),
+                        SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
     }
 
     private Optional<SpiAccountAccess> readActualAccountAccess(SpiAccountAccess accountAccess, String psuId) {
