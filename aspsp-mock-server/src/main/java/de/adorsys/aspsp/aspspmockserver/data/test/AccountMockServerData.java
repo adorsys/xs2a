@@ -59,7 +59,7 @@ public class AccountMockServerData {
 
     private SpiAccountDetails getNewAccount(String id, Currency currency, List<SpiBalances> balance, String iban, String bic, String name, String accountType) {
         return new SpiAccountDetails(
-        null,
+        id,
         iban,
         null,
         null,

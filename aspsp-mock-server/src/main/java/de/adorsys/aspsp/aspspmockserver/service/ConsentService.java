@@ -31,25 +31,10 @@ public class ConsentService {
     }
 
     public Optional<String> createConsentAndReturnId(SpiCreateConsentRequest request, String psuId) {
-        return readAccountAccessFromDb(request.getAccess(), psuId)
+        return readActualAccountAccess(request.getAccess(), psuId)
                        .filter(access -> !isEmptyAccess(access))
                        .map(access -> saveNewConsentWithAccess(access, request.isRecurringIndicator(), request.getValidUntil(), request.getFrequencyPerDay()))
                        .map(SpiAccountConsent::getId);
-    }
-
-    private SpiAccountConsent saveNewConsentWithAccess(SpiAccountAccess access, boolean recurringIndicator, Date validUntil, Integer frequencyPerDay) {
-        return consentRepository.save(
-                new SpiAccountConsent(UUID.randomUUID().toString(), access,
-                        recurringIndicator, validUntil, frequencyPerDay, new Date(),
-                        SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
-    }
-
-    private boolean isEmptyAccess(SpiAccountAccess access) {
-        return isEmpty(access.getAccounts())
-                       && isEmpty(access.getBalances())
-                       && isEmpty(access.getTransactions())
-                       && access.getAllPsd2() == null
-                       && access.getAvailableAccounts() == null;
     }
 
     public SpiAccountConsent getConsent(String id) {
@@ -68,7 +53,22 @@ public class ConsentService {
         return false;
     }
 
-    private Optional<SpiAccountAccess> readAccountAccessFromDb(SpiAccountAccess accountAccess, String psuId) {
+    private boolean isEmptyAccess(SpiAccountAccess access) {
+        return isEmpty(access.getAccounts())
+               && isEmpty(access.getBalances())
+               && isEmpty(access.getTransactions())
+               && access.getAllPsd2() == null
+               && access.getAvailableAccounts() == null;
+    }
+
+    private SpiAccountConsent saveNewConsentWithAccess(SpiAccountAccess access, boolean recurringIndicator, Date validUntil, Integer frequencyPerDay) {
+        return consentRepository.save(
+        new SpiAccountConsent(UUID.randomUUID().toString(), access,
+        recurringIndicator, validUntil, frequencyPerDay, new Date(),
+        SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
+    }
+
+    private Optional<SpiAccountAccess> readActualAccountAccess(SpiAccountAccess accountAccess, String psuId) {
         return Optional.ofNullable(accountAccess)
                        .flatMap(access -> getActualAccess(access, psuId));
     }
@@ -128,7 +128,6 @@ public class ConsentService {
 
         return getAccountsReferencesByIbans(ibans);
     }
-
 
     private List<String> getIbanListFromAccountReferences(List<SpiAccountReference> references) {
         return Optional.ofNullable(references)
