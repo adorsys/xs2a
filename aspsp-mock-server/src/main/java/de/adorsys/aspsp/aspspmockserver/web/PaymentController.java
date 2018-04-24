@@ -20,11 +20,10 @@ import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
@@ -43,5 +42,12 @@ public class PaymentController {
         return paymentService.addPayment(payment)
                .map(saved -> new ResponseEntity<>(saved, CREATED))
                .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping(path = "/{paymentId}/status/")
+    public ResponseEntity getPaymentStatusById(
+    @PathVariable("paymentId") String paymentId) {
+        return paymentService.isPaymentExist(paymentId)
+               ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
 }

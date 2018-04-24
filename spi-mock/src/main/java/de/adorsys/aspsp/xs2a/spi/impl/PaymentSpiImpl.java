@@ -47,7 +47,7 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
-        return PaymentMockData.getPaymentStatusById(paymentId, paymentProduct);
+        return restTemplate.getForEntity(remoteSpiUrls.getUrl("getPaymentStatus"), SpiTransactionStatus.class, paymentId).getBody();
     }
 
     @Override

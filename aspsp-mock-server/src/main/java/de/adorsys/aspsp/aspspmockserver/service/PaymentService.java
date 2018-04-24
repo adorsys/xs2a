@@ -32,4 +32,8 @@ public class PaymentService {
     public Optional<SpiSinglePayments> addPayment(@NotNull SpiSinglePayments payment) {
         return Optional.ofNullable(paymentRepository.save(payment));
     }
+
+    public boolean isPaymentExist(String paymentId) {
+        return paymentRepository.exists(paymentId);
+    }
 }
