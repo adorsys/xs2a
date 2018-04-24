@@ -28,6 +28,7 @@
         <module>spi-mock</module>
         <module>aspsp-mock-server</module>
         <module>xs2a-impl</module>
+        <module>psd2-validator</module>
     </modules>
     <packaging>pom</packaging>
 
