@@ -52,10 +52,6 @@ public class PaymentInitiationRequestHeader extends CommonRequestHeader {
     @JsonProperty(value = "psu-corporate-id-type")
     private String psuCorporateIdType;
 
-    @ApiModelProperty(value = "Is contained only, if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in the related consent authorisation", required = false, example = "b5eee7b9-9e05-4d72-a9f2-aec8b86256a1")
-    @JsonProperty(value = "authorization bearer")
-    private String authorizationBearer;
-
     @ApiModelProperty(value = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation.", required = false, example = "91306384-e37a-4536-a51e-1ced42e37a5c")
     @JsonProperty(value = "psu-consent-id")
     private String psuConsentId;
