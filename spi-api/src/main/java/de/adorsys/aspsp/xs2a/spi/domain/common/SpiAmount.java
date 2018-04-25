@@ -27,6 +27,7 @@ public class SpiAmount {
     private Currency currency;
     private String content;
 
+    // todo make content with BigDecimal format: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/90
     public double getDoubleContent() {
         try {
             return Double.parseDouble(content);
