@@ -22,13 +22,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import de.adorsys.aspsp.xs2a.spi.rest.RestInvoker;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -41,13 +41,13 @@ import static org.springframework.http.HttpStatus.CREATED;
 @Component
 @AllArgsConstructor
 public class PaymentSpiImpl implements PaymentSpi {
-    private final RestInvoker restInvoker;
+    private final RestTemplate restTemplate;
     private final RemoteSpiUrls remoteSpiUrls;
 
 
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
-        return restInvoker.getRestTemplate().getForEntity(remoteSpiUrls.getUrl("getPaymentStatus"), SpiTransactionStatus.class, paymentId).getBody();
+        return restTemplate.getForEntity(remoteSpiUrls.getUrl("getPaymentStatus"), SpiTransactionStatus.class, paymentId).getBody();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
-        ResponseEntity<SpiSinglePayments> responseEntity = restInvoker.getRestTemplate().postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class);
+        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class);
         if (responseEntity.getStatusCode() == CREATED) {
             SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);

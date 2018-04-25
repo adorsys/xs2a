@@ -44,7 +44,7 @@ import javax.validation.Validator;
 @Configuration
 @EnableWebMvc
 public class WebConfig extends WebMvcConfigurerAdapter {
-    private final String TOKEN = "token";
+    private final String AUTHORIZATION_HEADER = "Authorization";
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
@@ -114,6 +114,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public BearerToken getBearerToken(HttpServletRequest request) {
-        return new BearerToken(request.getHeader(TOKEN));
+        return new BearerToken(request.getHeader(AUTHORIZATION_HEADER));
     }
 }

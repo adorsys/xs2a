@@ -48,7 +48,6 @@ public class PaymentInitiationController {
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "psu-ip-address", value = "192.168.8.78", required = true, dataType = "String", paramType = "header"), //NOPMD.AvoidUsingHardCodedIP ignored because the value is right according to documentation
-    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-id", value = "12312324", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-id-type", value = "Type of the PSU-ID", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-corporate-id", value = "Might be mandated in the ASPSP’s documentation", required = false, dataType = "String", paramType = "header"),
@@ -75,7 +74,6 @@ public class PaymentInitiationController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "token", value = "AfCqxt9QdIhcUltY954hNi8mcju", required = true, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
