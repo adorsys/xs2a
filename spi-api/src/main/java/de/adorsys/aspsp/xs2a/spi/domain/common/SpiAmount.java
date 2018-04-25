@@ -35,7 +35,7 @@ public class SpiAmount {
             return Double.parseDouble(content);
         } catch (NumberFormatException ex) {
             log.warn("Problem with converting amount content '{}' to double format: {}", content, ex.getMessage());
-            return 0.0;
+            return 0.0d;
         }
     }
 }
