@@ -38,8 +38,7 @@ public class FutureBookingsController {
     }
 
     @PostMapping(path = "/{accountId}")
-    public ResponseEntity<SpiAccountDetails> changeBalances(
-        @PathVariable("accountId") String accountId) throws Exception {
+    public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("accountId") String accountId) throws Exception {
         return futureBookingsService.changeBalances(accountId)
                    .map(saved -> new ResponseEntity<>(saved, OK))
                    .orElse(ResponseEntity.notFound().build());
