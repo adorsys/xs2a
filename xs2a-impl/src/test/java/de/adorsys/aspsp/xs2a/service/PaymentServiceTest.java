@@ -39,10 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RCVD;
@@ -69,16 +66,18 @@ public class PaymentServiceTest {
 
     @Before
     public void setUp() throws IOException {
+        List<SpiPaymentInitialisationResponse> responseList = new ArrayList<>();
+        responseList.add(getSpiPaymentResponse(ACCP));
         when(paymentSpi.initiatePeriodicPayment(any(), anyBoolean(), any()))
-        .thenReturn(getSpiPaymentResponse(ACCP));
+            .thenReturn(getSpiPaymentResponse(ACCP));
         when(paymentSpi.createPaymentInitiation(any(), any(), anyBoolean()))
-        .thenReturn(getSpiPaymentResponse(RCVD));
-     //   when(paymentSpi.createBulkPayments(any(), any(), anyBoolean()))
-     //   .thenReturn(OPgetSpiPaymentResponse(ACCP));
+            .thenReturn(getSpiPaymentResponse(RCVD));
+        when(paymentSpi.createBulkPayments(any(), any(), anyBoolean()))
+            .thenReturn(responseList);
         when(paymentSpi.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
-        .thenReturn(ACCP);
+            .thenReturn(ACCP);
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
-        .thenReturn(RJCT);
+            .thenReturn(RJCT);
     }
 
     @Test
@@ -142,7 +141,7 @@ public class PaymentServiceTest {
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
         return ResponseObject.builder()
-               .body(getPaymentInitializationResponse()).build();
+                   .body(getPaymentInitializationResponse()).build();
     }
 
     private PeriodicPayment readPeriodicPayment() throws IOException {

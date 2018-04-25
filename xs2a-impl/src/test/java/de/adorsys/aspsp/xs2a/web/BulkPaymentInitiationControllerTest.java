@@ -35,6 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,10 +68,10 @@ public class BulkPaymentInitiationControllerTest {
         PaymentProduct paymentProduct = PaymentProduct.SCT;
         boolean tppRedirectPreferred = false;
         List<SinglePayments> payments = readBulkPayments();
-        ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
+        ResponseEntity<List<PaymentInitialisationResponse>> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> actualResult = bulkPaymentInitiationController
+        ResponseEntity<List<PaymentInitialisationResponse>> actualResult = bulkPaymentInitiationController
                                                                        .createBulkPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payments);
 
         //Then:
@@ -78,13 +79,17 @@ public class BulkPaymentInitiationControllerTest {
         assertThat(actualResult.getBody()).isEqualTo(expectedResult.getBody());
     }
 
-    private ResponseObject<PaymentInitialisationResponse> readResponseObject() throws IOException {
+    private ResponseObject<List<PaymentInitialisationResponse>> readResponseObject() throws IOException {
         return ResponseObject.builder()
                .body(readPaymentInitialisationResponse()).build();
     }
 
-    private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class);
+    private List<PaymentInitialisationResponse> readPaymentInitialisationResponse() throws IOException {
+        PaymentInitialisationResponse response = new Gson().fromJson(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class);
+        List<PaymentInitialisationResponse> responseList = new ArrayList<>();
+        responseList.add(response);
+
+        return responseList;
     }
 
     private List<SinglePayments> readBulkPayments() throws IOException {
