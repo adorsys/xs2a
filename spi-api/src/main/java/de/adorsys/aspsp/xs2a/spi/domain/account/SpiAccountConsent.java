@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 import java.util.Date;
 
@@ -29,6 +30,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 public class SpiAccountConsent {
+    @Id
     private String id;
     private SpiAccountAccess access;
     private boolean recurringIndicator;

@@ -3,6 +3,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
 import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/psu")
 public class PsuController {
-    private PsuService psuService;
-
-    public PsuController(PsuService psuService) {
-        this.psuService = psuService;
-    }
+    private final PsuService psuService;
 
     @GetMapping(path = "/")
     public ResponseEntity<List<Psu>> readAllPsuList() {

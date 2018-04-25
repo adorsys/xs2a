@@ -32,7 +32,7 @@ public class ConsentService {
 
     public Optional<String> createConsentAndReturnId(SpiCreateConsentRequest request, String psuId) {
         return readActualAccountAccess(request.getAccess(), psuId)
-                       .filter(access -> !isEmptyAccess(access))
+                       .filter(access -> access.isNotEmpty())
                        .map(access -> saveNewConsentWithAccess(access, request.isRecurringIndicator(), request.getValidUntil(), request.getFrequencyPerDay()))
                        .map(SpiAccountConsent::getId);
     }
@@ -53,17 +53,9 @@ public class ConsentService {
         return false;
     }
 
-    private boolean isEmptyAccess(SpiAccountAccess access) {
-        return isEmpty(access.getAccounts())
-                       && isEmpty(access.getBalances())
-                       && isEmpty(access.getTransactions())
-                       && access.getAllPsd2() == null
-                       && access.getAvailableAccounts() == null;
-    }
-
     private SpiAccountConsent saveNewConsentWithAccess(SpiAccountAccess access, boolean recurringIndicator, Date validUntil, Integer frequencyPerDay) {
         return consentRepository.save(
-                new SpiAccountConsent(UUID.randomUUID().toString(), access,
+                new SpiAccountConsent(/*UUID.randomUUID().toString()*/"", access,
                         recurringIndicator, validUntil, frequencyPerDay, new Date(),
                         SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
     }
@@ -111,7 +103,7 @@ public class ConsentService {
     private Optional<List<SpiAccountReference>> getAccountReferencesByPsuId(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                        .filter(Objects::nonNull)
-                       .map(psu -> mapFromSpiAccountDetails(psu.getAccountDetailsList()));
+                       .map(psu -> mapToSpiAccountReference(psu.getAccountDetailsList()));
     }
 
     private boolean hasAccessToAllAccounts(SpiAccountAccess access) {
@@ -123,7 +115,7 @@ public class ConsentService {
         List<String> ibans = getIbanListFromAccountReferences(references);
 
         if (ibans.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         return getAccountsReferencesByIbans(ibans);
@@ -132,20 +124,20 @@ public class ConsentService {
     private List<String> getIbanListFromAccountReferences(List<SpiAccountReference> references) {
         return Optional.ofNullable(references)
                        .map(refs -> refs.stream().map(SpiAccountReference::getIban).collect(Collectors.toList()))
-                       .orElse(Collections.EMPTY_LIST);
+                       .orElse(Collections.emptyList());
     }
 
     private List<SpiAccountReference> getAccountsReferencesByIbans(List<String> ibans) {
         return psuRepository.findPsuByAccountDetailsList_IbanIn(ibans)
                        .map(psuList -> mapPsuListToAccountRefList(psuList, ibans))
-                       .orElse(Collections.EMPTY_LIST);
+                       .orElse(Collections.emptyList());
     }
 
     private List<SpiAccountReference> mapPsuListToAccountRefList(List<Psu> psuList, List<String> ibans) {
         return psuList.stream()
                        .map(Psu::getAccountDetailsList)
                        .map(accList -> filterAccountDetailsByIbans(accList, ibans))
-                       .map(this::mapFromSpiAccountDetails)
+                       .map(this::mapToSpiAccountReference)
                        .flatMap(List::stream)
                        .collect(Collectors.toList());
     }
@@ -155,12 +147,12 @@ public class ConsentService {
                        .filter(acc -> ibans.contains(acc.getIban())).collect(Collectors.toList());
     }
 
-    private List<SpiAccountReference> mapFromSpiAccountDetails(List<SpiAccountDetails> detailsList) {
+    private List<SpiAccountReference> mapToSpiAccountReference(List<SpiAccountDetails> detailsList) {
         return detailsList.stream()
-                       .map(this::mapFromSpiAccountDetails).collect(Collectors.toList());
+                       .map(this::mapToSpiAccountReference).collect(Collectors.toList());
     }
 
-    private SpiAccountReference mapFromSpiAccountDetails(SpiAccountDetails details) {
+    private SpiAccountReference mapToSpiAccountReference(SpiAccountDetails details) {
         return new SpiAccountReference(details.getId(), details.getIban(), details.getBban(), details.getPan(), details.getMaskedPan(), details.getMsisdn(), details.getCurrency());
     }
 }

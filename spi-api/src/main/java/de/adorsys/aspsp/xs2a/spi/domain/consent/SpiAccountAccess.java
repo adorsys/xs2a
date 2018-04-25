@@ -23,6 +23,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,4 +34,12 @@ public class SpiAccountAccess {
     private List<SpiAccountReference> transactions;
     private SpiAccountAccessType availableAccounts;
     private SpiAccountAccessType allPsd2;
+
+    public boolean isNotEmpty(){
+        return isEmpty(this.getAccounts())
+                   && isEmpty(this.getBalances())
+                   && isEmpty(this.getTransactions())
+                   && this.getAllPsd2() == null
+                   && this.getAvailableAccounts() == null;
+    }
 }
