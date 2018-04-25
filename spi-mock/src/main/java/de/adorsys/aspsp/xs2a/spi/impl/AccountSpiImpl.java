@@ -85,7 +85,6 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        RestTemplate restTemplate = new RestTemplate();
         String url = remoteSpiUrls.getUrl("getAccountById");
         SpiAccountDetails spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails.class, accountId);
 
