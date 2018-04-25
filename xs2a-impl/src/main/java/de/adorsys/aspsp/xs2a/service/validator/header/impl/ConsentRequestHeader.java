@@ -45,10 +45,6 @@ public class ConsentRequestHeader extends CommonRequestHeader {
     @JsonProperty(value = "psu-corporate-id-type")
     private String psuCorporateIdType;
 
-    @ApiModelProperty(value = "If OAuth2 has been chosen as pre-step to authenticate the PSU", required = false, example = "5845f9b0-cef6-4f2d-97e0-ed1e0469a907")
-    @JsonProperty(value = "authorization bearer")
-    private String authorizationBearer;
-
     @ApiModelProperty(value = "URI of the TPP, where the transaction flow shall be redirected to after a Redirect. Shall be contained at least if the tppRedirectPreferred parameter is set to true or is missing.", required = false, example = "5845f9b0-cef6-4f2d-97e0-ed1e0469a907")
     @JsonProperty(value = "tpp-redirect-uri")
     private String tppRedirectUri;

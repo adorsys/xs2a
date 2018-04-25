@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.exception;
 
 import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.spi.rest.exception.RestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import org.springframework.web.method.HandlerMethod;
 import javax.validation.ValidationException;
 
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice
@@ -43,7 +45,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
-    public ResponseEntity handleTppException(HttpMessageNotReadableException ex, HandlerMethod handlerMethod) {
+    public ResponseEntity httpMessageException(HttpMessageNotReadableException ex, HandlerMethod handlerMethod) {
         log.warn("HttpMessageNotReadableException handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -51,10 +53,18 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity handleTppException(Exception ex, HandlerMethod handlerMethod) {
+    public ResponseEntity exception(Exception ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
 
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        HttpStatus status = INTERNAL_SERVER_ERROR;
         return new ResponseEntity(status.getReasonPhrase(), status);
+    }
+
+    @ExceptionHandler(value = {RestException.class})
+    public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
+        log.warn("RestException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+
+        return new ResponseEntity(new MessageError(new TppMessageInformation(ERROR, MessageCode.INTERNAL_SERVER_ERROR)
+                                                       .text(ex.getMessage())), INTERNAL_SERVER_ERROR);
     }
 }

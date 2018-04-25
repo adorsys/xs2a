@@ -56,7 +56,6 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
         String getBalanceUrl = remoteSpiUrls.getUrl("getAccountBalances");
-
         ResponseEntity<List<SpiBalances>> response = restTemplate.exchange(getBalanceUrl, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<SpiBalances>>() {
                 }, accountId);

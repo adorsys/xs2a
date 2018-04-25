@@ -23,9 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,18 +33,12 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/accounts")
 @Api(value = "api/v1/accounts", tags = "AISP, Accounts", description = "Provides access to the Psu account")
 public class AccountController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class); //NOPMD TODO review and check PMD assertion
-    private AccountService accountService;
-    private ResponseMapper responseMapper;
-
-    @Autowired
-    public AccountController(AccountService accountService, ResponseMapper responseMapper) {
-        this.accountService = accountService;
-        this.responseMapper = responseMapper;
-    }
+    private final AccountService accountService;
+    private final ResponseMapper responseMapper;
 
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
     @ApiResponses(value = {
