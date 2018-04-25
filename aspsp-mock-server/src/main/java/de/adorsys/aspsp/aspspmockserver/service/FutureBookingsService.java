@@ -35,22 +35,25 @@ public class FutureBookingsService {
 
     public Optional<SpiAccountDetails> changeBalances(String accountId) {
         return accountService.getAccount(accountId)
-                   .map(account -> {
-                       SpiBalances balance = account.getFirstBalance()
-                                                 .map(b -> {
-                                                     double oldBalanceAmount = Double.parseDouble(b.getInterimAvailable().getSpiAmount().getContent());
-                                                     double newBalanceAmount = oldBalanceAmount - paymentService.amountToBeCharged(accountId);
-                                                     SpiAmount newAmount = new SpiAmount(Currency.getInstance("EUR"), String.valueOf(newBalanceAmount));
-                                                     SpiAccountBalance newAccountBalance = new SpiAccountBalance();
-                                                     newAccountBalance.setSpiAmount(newAmount);
-                                                     newAccountBalance.setLastActionDateTime(new Date());
-                                                     newAccountBalance.setDate(new Date());
-                                                     b.setInterimAvailable(newAccountBalance);
-                                                     return b;
-                                                 }).orElse(account.getFirstBalance().get());
+                   .flatMap(account -> {
+                       SpiBalances balance = calculateNewBalance(account);
                        account.updateFirstBalance(balance);
                        return Optional.of(accountService.addAccount(account));
-                   })
-                   .orElse(Optional.empty());
+                   });
+    }
+
+    private SpiBalances calculateNewBalance(SpiAccountDetails account) {
+        return account.getFirstBalance()
+                   .map(b -> {
+                       double oldBalanceAmount = Double.parseDouble(b.getInterimAvailable().getSpiAmount().getContent());
+                       double newBalanceAmount = oldBalanceAmount - paymentService.calculateAmountToBeCharged(account.getId());
+                       SpiAmount newAmount = new SpiAmount(Currency.getInstance("EUR"), String.valueOf(newBalanceAmount));
+                       SpiAccountBalance newAccountBalance = new SpiAccountBalance();
+                       newAccountBalance.setSpiAmount(newAmount);
+                       newAccountBalance.setLastActionDateTime(new Date());
+                       newAccountBalance.setDate(new Date());
+                       b.setInterimAvailable(newAccountBalance);
+                       return b;
+                   }).orElse(account.getFirstBalance().get());
     }
 }

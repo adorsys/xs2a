@@ -35,7 +35,7 @@ public class PaymentService {
         return Optional.ofNullable(paymentRepository.save(payment));
     }
 
-    public double amountToBeCharged(String accountId) {
+    public double calculateAmountToBeCharged(String accountId) {
         List<SpiSinglePayments> payments = paymentRepository.findAll().stream()
                                            .filter(a -> a.getDebtorAccount().getAccountId().equals(accountId))
                                            .collect(Collectors.toList());

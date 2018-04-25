@@ -52,7 +52,7 @@ public class FutureBookingsServiceTest {
 
     @Before
     public void setUp() {
-        when(paymentService.amountToBeCharged(any()))
+        when(paymentService.calculateAmountToBeCharged(any()))
             .thenReturn(500.0);
         when(accountService.getAccount(ACCOUNT_ID))
             .thenReturn(Optional.of(getSpiAccountDetailsWithBalance(BALANCE)));
