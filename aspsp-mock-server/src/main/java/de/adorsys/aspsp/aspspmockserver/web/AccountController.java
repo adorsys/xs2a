@@ -57,7 +57,7 @@ public class AccountController {
     public ResponseEntity createAccount(HttpServletRequest request,
                                         @RequestBody SpiAccountDetails account) throws Exception {
         String uriString = getUriString(request);
-        SpiAccountDetails saved = accountService.addOrUpdateAccount(account).get();
+        SpiAccountDetails saved = accountService.addOrUpdateAccount(account);
         return ResponseEntity.created(new URI(uriString + saved.getId())).build();
     }
 

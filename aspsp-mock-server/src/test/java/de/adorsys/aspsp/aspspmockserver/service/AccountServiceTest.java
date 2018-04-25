@@ -42,7 +42,7 @@ public class AccountServiceTest {
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
 
         //When
-        SpiAccountDetails actualSpiAccountDetails = accountService.addOrUpdateAccount(expectedSpiAccountDetails).get();
+        SpiAccountDetails actualSpiAccountDetails = accountService.addOrUpdateAccount(expectedSpiAccountDetails);
 
         //Then
         assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);

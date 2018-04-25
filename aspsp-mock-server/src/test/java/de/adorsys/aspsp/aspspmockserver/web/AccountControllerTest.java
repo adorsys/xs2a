@@ -63,7 +63,7 @@ public class AccountControllerTest {
         when(accountService.getAllAccounts())
         .thenReturn(accountList);
         when(accountService.addOrUpdateAccount(getSpiAccountDetails_1()))
-        .thenReturn(Optional.of(getSpiAccountDetails_1()));
+        .thenReturn(getSpiAccountDetails_1());
         when(accountService.deleteAccountById(ACCOUNT_ID))
         .thenReturn(true);
         when(accountService.deleteAccountById(WRONG_ACCOUNT_ID))
