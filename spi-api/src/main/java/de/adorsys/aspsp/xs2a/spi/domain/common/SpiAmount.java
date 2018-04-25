@@ -17,11 +17,23 @@
 package de.adorsys.aspsp.xs2a.spi.domain.common;
 
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Currency;
 
+@Slf4j
 @Value
 public class SpiAmount {
-    private final Currency currency;
-    private final String content;
+    private Currency currency;
+    private String content;
+
+    // todo make content with BigDecimal format: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/90
+    public double getDoubleContent() {
+        try {
+            return Double.parseDouble(content);
+        } catch (NumberFormatException ex) {
+            log.warn("Problem with converting amount content to double format: {}", ex.getMessage());
+            return 0.0;
+        }
+    }
 }
