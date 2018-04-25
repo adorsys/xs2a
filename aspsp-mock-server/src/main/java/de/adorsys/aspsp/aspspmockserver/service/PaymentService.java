@@ -19,11 +19,9 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,8 +41,7 @@ public class PaymentService {
 
     public Optional<List<SpiSinglePayments>> addBulkPayments(List<SpiSinglePayments> payments) {
         return Optional.ofNullable(payments.stream()
-                                       .map(p -> {
-                                           return paymentRepository.save(p);
-                                       }).collect(Collectors.toList()));
+                                       .map(p -> paymentRepository.save(p))
+                                       .collect(Collectors.toList()));
     }
 }

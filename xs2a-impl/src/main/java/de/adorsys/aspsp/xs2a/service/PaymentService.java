@@ -43,7 +43,6 @@ import static de.adorsys.aspsp.xs2a.domain.MessageCode.PAYMENT_FAILED;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-
 @Service
 @AllArgsConstructor
 public class PaymentService {
