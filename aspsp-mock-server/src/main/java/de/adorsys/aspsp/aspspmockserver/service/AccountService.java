@@ -34,7 +34,7 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public SpiAccountDetails addAccount(SpiAccountDetails accountDetails) {
+    public SpiAccountDetails addOrUpdateAccount(SpiAccountDetails accountDetails) {
         return accountRepository.save(accountDetails);
     }
 

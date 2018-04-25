@@ -51,11 +51,11 @@ public class AccountMockServerData {
     private void fillAccounts() {
         Currency euro = Currency.getInstance("EUR");
 
-        accountService.addAccount(getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"));
-        accountService.addAccount(getNewAccount("22222-999999999", euro, getNewBalanceList("2500", "300"), "DE371234599998", "GENODEF1N02", "Albert", "SCT"));
-        accountService.addAccount(getNewAccount("33333-999999999", euro, getNewBalanceList("3000", "400"), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT"));
-        accountService.addAccount(getNewAccount("44444-999999999", euro, getNewBalanceList("3500", "500"), "DE371234599996", "GENODEF1N02", "Telekom", "SCT"));
-        accountService.addAccount(getNewAccount("55555-999999999", euro, getNewBalanceList("4000", "600"), "DE371234599995", "GENODEF1N02", "Bauer", "SCT"));
+        accountService.addOrUpdateAccount(getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"));
+        accountService.addOrUpdateAccount(getNewAccount("22222-999999999", euro, getNewBalanceList("2500", "300"), "DE371234599998", "GENODEF1N02", "Albert", "SCT"));
+        accountService.addOrUpdateAccount(getNewAccount("33333-999999999", euro, getNewBalanceList("3000", "400"), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT"));
+        accountService.addOrUpdateAccount(getNewAccount("44444-999999999", euro, getNewBalanceList("3500", "500"), "DE371234599996", "GENODEF1N02", "Telekom", "SCT"));
+        accountService.addOrUpdateAccount(getNewAccount("55555-999999999", euro, getNewBalanceList("4000", "600"), "DE371234599995", "GENODEF1N02", "Bauer", "SCT"));
     }
 
     private SpiAccountDetails getNewAccount(String id, Currency currency, List<SpiBalances> balance, String iban, String bic, String name, String accountType) {

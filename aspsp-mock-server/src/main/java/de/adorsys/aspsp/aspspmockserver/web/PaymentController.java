@@ -18,6 +18,9 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,17 +39,17 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @PostMapping(path = "/")
-    public ResponseEntity<SpiSinglePayments> createPayment(
-    @RequestBody SpiSinglePayments payment) throws Exception {
+    public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) throws Exception {
         return paymentService.addPayment(payment)
                .map(saved -> new ResponseEntity<>(saved, CREATED))
                .orElse(ResponseEntity.badRequest().build());
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @GetMapping(path = "/{paymentId}/status/")
-    public ResponseEntity getPaymentStatusById(
-    @PathVariable("paymentId") String paymentId) {
+    public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
                ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }

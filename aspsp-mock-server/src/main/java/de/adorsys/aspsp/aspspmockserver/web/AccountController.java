@@ -52,11 +52,12 @@ public class AccountController {
                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @PutMapping(path = "/")
     public ResponseEntity createAccount(HttpServletRequest request,
                                         @RequestBody SpiAccountDetails account) throws Exception {
         String uriString = getUriString(request);
-        SpiAccountDetails saved = accountService.addAccount(account);
+        SpiAccountDetails saved = accountService.addOrUpdateAccount(account);
         return ResponseEntity.created(new URI(uriString + saved.getId())).build();
     }
 
