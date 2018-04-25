@@ -85,10 +85,7 @@ public class PaymentService {
                                                                     }).collect(Collectors.toList());
 
         return Optional.ofNullable(paymentInitiation)
-                   .map(response -> {
-                       return ResponseObject.builder()
-                                  .body(response).build();
-                   })
+                   .map(response -> ResponseObject.builder().body(response).build())
                    .orElse(ResponseObject.builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
                                                           .text(messageService.getMessage(PAYMENT_FAILED.name()))))
