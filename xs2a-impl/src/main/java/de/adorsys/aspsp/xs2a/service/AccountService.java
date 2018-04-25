@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
@@ -11,11 +27,10 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.ValidationException;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
@@ -43,7 +58,7 @@ public class AccountService {
                .body(accountDetailsMap).build();
     }
 
-    public ResponseObject<List<Balances>> getBalancesList(String accountId, boolean psuInvolved) {
+    public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
         List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
         return Optional.ofNullable(spiBalances)
@@ -55,24 +70,15 @@ public class AccountService {
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
+
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
             return ResponseObject.builder()
                    .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
 
-            try {
-                AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
-
-                return ResponseObject.builder()
-                       .body(getReportAccordingMaxSize(accountReport, accountId)).build();
-            } catch (ValidationException ex) {
-
-                TppMessageInformation tppMessageInformation = new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR);
-                tppMessageInformation.setText(ex.getMessage());
-
-                return ResponseObject.builder()
-                       .fail(new MessageError(tppMessageInformation)).build();
-            }
+            AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
+            return ResponseObject.builder()
+                           .body(getReportAccordingMaxSize(accountReport, accountId)).build();
         }
     }
 
