@@ -122,7 +122,7 @@ public class DescriptionConverter {
         return client;
     }
 
-    private static boolean setPublicKey(OIDCClientRepresentation clientOIDC, ClientRepresentation clientRep) { //NOPMD
+    private static boolean setPublicKey(OIDCClientRepresentation clientOIDC, ClientRepresentation clientRep) {
         if (clientOIDC.getJwksUri() == null && clientOIDC.getJwks() == null) {
             return false;
         }
