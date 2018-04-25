@@ -36,11 +36,10 @@ public class PaymentService {
     }
 
     public double calculateAmountToBeCharged(String accountId) {
-        List<SpiSinglePayments> payments = paymentRepository.findAll().stream()
-                                           .filter(a -> a.getDebtorAccount().getAccountId().equals(accountId))
-                                           .collect(Collectors.toList());
-
-        return payments.stream().mapToDouble(a -> Double.parseDouble(a.getInstructedAmount().getContent())).sum();
+        return paymentRepository.findAll().stream()
+                   .filter(a -> a.getDebtorAccount().getAccountId().equals(accountId))
+                   .mapToDouble(a -> Optional.of(Double.parseDouble(a.getInstructedAmount().getContent())).orElse(0.0))
+                   .sum();
     }
 
     public boolean isPaymentExist(String paymentId) {

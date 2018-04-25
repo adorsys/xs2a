@@ -58,9 +58,9 @@ public class FutureBookingsServiceTest {
             .thenReturn(Optional.of(getSpiAccountDetailsWithBalance(BALANCE)));
         when(accountService.getAccount(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        when(accountService.addAccount(notNull(SpiAccountDetails.class)))
-            .thenReturn(getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED)));
-        when(accountService.addAccount(null))
+        when(accountService.addOrUpdateAccount(notNull(SpiAccountDetails.class)))
+            .thenReturn(Optional.of(getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED))));
+        when(accountService.addOrUpdateAccount(null))
             .thenReturn(null);
     }
 

@@ -32,7 +32,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -63,8 +62,8 @@ public class AccountControllerTest {
         .thenReturn(Optional.of(getSpiAccountDetails_1()));
         when(accountService.getAllAccounts())
         .thenReturn(accountList);
-        when(accountService.addAccount(getSpiAccountDetails_1()))
-        .thenReturn(getSpiAccountDetails_1());
+        when(accountService.addOrUpdateAccount(getSpiAccountDetails_1()))
+        .thenReturn(Optional.of(getSpiAccountDetails_1()));
         when(accountService.deleteAccountById(ACCOUNT_ID))
         .thenReturn(true);
         when(accountService.deleteAccountById(WRONG_ACCOUNT_ID))
