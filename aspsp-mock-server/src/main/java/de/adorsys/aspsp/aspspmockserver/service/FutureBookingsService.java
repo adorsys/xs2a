@@ -40,10 +40,10 @@ public class FutureBookingsService {
 
     private Optional<SpiAccountDetails> updateAccount(SpiAccountDetails account) {
         return calculateNewBalance(account)
-                   .flatMap(bal -> saveUpdatedAccount(account, bal));
+                   .map(bal -> saveUpdatedAccount(account, bal));
     }
 
-    private Optional<SpiAccountDetails> saveUpdatedAccount(SpiAccountDetails account, SpiBalances balance) {
+    private SpiAccountDetails saveUpdatedAccount(SpiAccountDetails account, SpiBalances balance) {
         account.updateFirstBalance(balance);
         return accountService.addOrUpdateAccount(account);
     }
@@ -65,8 +65,8 @@ public class FutureBookingsService {
         return new SpiAmount(Currency.getInstance("EUR"), String.valueOf(getNewBalanceAmount(account, b)));
     }
 
-    private double getNewBalanceAmount(SpiAccountDetails account, SpiBalances b) {
-        double oldBalanceAmount = Double.parseDouble(b.getInterimAvailable().getSpiAmount().getContent());
+    private double getNewBalanceAmount(SpiAccountDetails account, SpiBalances balance) {
+        double oldBalanceAmount = balance.getInterimAvailable().getSpiAmount().getDoubleContent();
         return oldBalanceAmount - paymentService.calculateAmountToBeCharged(account.getId());
     }
 }

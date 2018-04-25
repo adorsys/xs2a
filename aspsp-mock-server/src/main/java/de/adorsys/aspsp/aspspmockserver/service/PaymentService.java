@@ -56,7 +56,7 @@ public class PaymentService {
 
     private double getDoubleContentFromAmount(SpiAmount amount) {
         return Optional.ofNullable(amount)
-                   .map(am -> Double.parseDouble(am.getContent()))
+                   .map(SpiAmount::getDoubleContent)
                    .orElse(0.0);
     }
 

@@ -34,8 +34,8 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Optional<SpiAccountDetails> addOrUpdateAccount(SpiAccountDetails accountDetails) {
-        return Optional.ofNullable(accountRepository.save(accountDetails));
+    public SpiAccountDetails addOrUpdateAccount(SpiAccountDetails accountDetails) {
+        return accountRepository.save(accountDetails);
     }
 
     public List<SpiAccountDetails> getAllAccounts() {
