@@ -42,7 +42,7 @@ public class AccountServiceTest {
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
 
         //When
-        SpiAccountDetails actualSpiAccountDetails = accountService.addAccount(expectedSpiAccountDetails);
+        SpiAccountDetails actualSpiAccountDetails = accountService.addOrUpdateAccount(expectedSpiAccountDetails);
 
         //Then
         assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
@@ -53,8 +53,8 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails1 = getSpiAccountDetails_1();
         SpiAccountDetails expectedSpiAccountDetails2 = getSpiAccountDetails_2();
-        accountService.addAccount(expectedSpiAccountDetails1);
-        accountService.addAccount(expectedSpiAccountDetails2);
+        accountService.addOrUpdateAccount(expectedSpiAccountDetails1);
+        accountService.addOrUpdateAccount(expectedSpiAccountDetails2);
 
         //When
         List<SpiAccountDetails> actualListSpiAccountDetails = accountService.getAllAccounts();
@@ -70,7 +70,7 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         String spiAccountDetailsId = expectedSpiAccountDetails.getId();
-        accountService.addAccount(expectedSpiAccountDetails);
+        accountService.addOrUpdateAccount(expectedSpiAccountDetails);
 
         //When
         Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccount(spiAccountDetailsId);
@@ -84,7 +84,7 @@ public class AccountServiceTest {
     public void getAccount_WrongId() {
         //Given
         String wrongId = "Really wrong id";
-        accountService.addAccount(getSpiAccountDetails_1());
+        accountService.addOrUpdateAccount(getSpiAccountDetails_1());
 
         //When
         Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccount(wrongId);
@@ -98,7 +98,7 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         String spiAccountDetailsId = expectedSpiAccountDetails.getId();
-        accountService.addAccount(expectedSpiAccountDetails);
+        accountService.addOrUpdateAccount(expectedSpiAccountDetails);
 
         //When
         boolean actualResult = accountService.deleteAccountById(spiAccountDetailsId);
@@ -138,7 +138,7 @@ public class AccountServiceTest {
         String spiAccountDetailsId = spiAccountDetails.getId();
         List<SpiBalances> expectedBalance = spiAccountDetails.getBalances();
 
-        accountService.addAccount(spiAccountDetails);
+        accountService.addOrUpdateAccount(spiAccountDetails);
 
         //When
         Optional<List<SpiBalances>> actualBalanceList = accountService.getBalances(spiAccountDetailsId);

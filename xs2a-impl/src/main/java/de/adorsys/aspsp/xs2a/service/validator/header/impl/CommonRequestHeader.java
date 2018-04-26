@@ -50,4 +50,8 @@ abstract class CommonRequestHeader implements RequestHeader {
     @ApiModelProperty(value = "The certificate used for signing the request, in base64 encoding. It shall be contained if a signature is used, see above", required = false, example = "TPP's_eIDAS_Certificate")
     @JsonProperty(value = "tpp-certificate")
     private String tppCertificate;
+
+    @ApiModelProperty(value = "If OAuth2 has been chosen as pre-step to authenticate the PSU", required = false, example = "FJFJWOIEJFOIWEJOEWJ")
+    @JsonProperty(value = "Authorization")
+    private String bearerToken;
 }

@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,31 @@ public class PaymentService {
 
     public Optional<SpiSinglePayments> addPayment(@NotNull SpiSinglePayments payment) {
         return Optional.ofNullable(paymentRepository.save(payment));
+    }
+
+    public double calculateAmountToBeCharged(String accountId) {
+        return paymentRepository.findAll().stream()
+                   .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
+                   .mapToDouble(this::getAmountFromPayment)
+                   .sum();
+    }
+
+    private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
+        return Optional.ofNullable(payment.getDebtorAccount())
+                   .map(SpiAccountReference::getAccountId)
+                   .orElse("");
+    }
+
+    private double getAmountFromPayment(SpiSinglePayments payment) {
+        return Optional.ofNullable(payment)
+                   .map(paym -> getDoubleContentFromAmount(payment.getInstructedAmount()))
+                   .orElse(0.0);
+    }
+
+    private double getDoubleContentFromAmount(SpiAmount amount) {
+        return Optional.ofNullable(amount)
+                   .map(SpiAmount::getDoubleContent)
+                   .orElse(0.0);
     }
 
     public boolean isPaymentExist(String paymentId) {

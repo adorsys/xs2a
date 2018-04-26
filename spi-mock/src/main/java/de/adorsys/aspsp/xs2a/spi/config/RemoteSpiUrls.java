@@ -30,6 +30,7 @@ public class RemoteSpiUrls {
         this.urls.put("getAccountBalances", "/account/{id}/balances");
         this.urls.put("createPayment", "/payments/");
         this.urls.put("getPaymentStatus", "/payments/{paymentId}/status/");
+        this.urls.put("getAccountById", "/account/{id}");
         this.urls.put("createBulkPayments", "/payments/bulk-payments/");
     }
 

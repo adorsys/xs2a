@@ -41,14 +41,15 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @PostMapping(path = "/")
-    public ResponseEntity<SpiSinglePayments> createPayment(
-    @RequestBody SpiSinglePayments payment) throws Exception {
+    public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) throws Exception {
         return paymentService.addPayment(payment)
                .map(saved -> new ResponseEntity<>(saved, CREATED))
                .orElse(ResponseEntity.badRequest().build());
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @PostMapping(path = "/bulk-payments/")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
@@ -60,8 +61,7 @@ public class PaymentController {
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @GetMapping(path = "/{paymentId}/status/")
-    public ResponseEntity getPaymentStatusById(
-    @PathVariable("paymentId") String paymentId) {
+    public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
                ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
