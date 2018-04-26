@@ -36,10 +36,10 @@ public class SpiAccountAccess {
     private SpiAccountAccessType allPsd2;
 
     public boolean isNotEmpty(){
-        return isEmpty(this.getAccounts())
+        return !(isEmpty(this.getAccounts())
                    && isEmpty(this.getBalances())
                    && isEmpty(this.getTransactions())
                    && this.getAllPsd2() == null
-                   && this.getAvailableAccounts() == null;
+                   && this.getAvailableAccounts() == null);
     }
 }

@@ -55,7 +55,7 @@ public class ConsentService {
 
     private SpiAccountConsent saveNewConsentWithAccess(SpiAccountAccess access, boolean recurringIndicator, Date validUntil, Integer frequencyPerDay) {
         return consentRepository.save(
-                new SpiAccountConsent(/*UUID.randomUUID().toString()*/"", access,
+                new SpiAccountConsent(null, access,
                         recurringIndicator, validUntil, frequencyPerDay, new Date(),
                         SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true));
     }

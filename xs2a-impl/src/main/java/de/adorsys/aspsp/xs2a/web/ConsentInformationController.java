@@ -25,15 +25,17 @@ import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
 
-@AllArgsConstructor
+@Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "api/v1/consents")
 @Api(value = "api/v1/consents", tags = "AISP Consents", description = "Provides access to the Psu Consents")
 public class ConsentInformationController {
@@ -55,8 +57,6 @@ public class ConsentInformationController {
     @RequestParam(name = "withBalance", required = false) boolean withBalance,
     @Valid @RequestBody CreateConsentReq createConsent) {
         ResponseObject response = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred, psuId);
-
-
         return responseMapper.createdOrBadRequest(response);
     }
 
@@ -99,7 +99,6 @@ public class ConsentInformationController {
     @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
     @PathVariable("consent-id") String consentId) {
         ResponseObject response = consentService.deleteAccountConsentsById(consentId);
-
         return responseMapper.delete(response);
     }
 
