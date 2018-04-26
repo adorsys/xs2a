@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class ResponseMapper {
-
+//TODO Refactor success operation validation methodology (response.getBody() != null  "bad practice") https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/91
     public ResponseEntity ok(ResponseObject response) {
         return getEntity(response, HttpStatus.OK);
     }
@@ -38,12 +38,17 @@ public class ResponseMapper {
 
     public ResponseEntity createdOrBadRequest(ResponseObject response) {
         return getEntity(response, response.getBody() != null
-                                           ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
+                                   ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity okOrBadRequest(ResponseObject response) {
         return getEntity(response, response.getBody() != null
                                    ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity deleteOrNotFound(ResponseObject response) {
+        return getEntity(response, response.getBody() != null
+                                   ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {

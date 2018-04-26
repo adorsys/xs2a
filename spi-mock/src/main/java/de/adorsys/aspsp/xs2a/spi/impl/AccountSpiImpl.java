@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
-
     private final RemoteSpiUrls remoteSpiUrls;
     private final RestTemplate restTemplate;
 

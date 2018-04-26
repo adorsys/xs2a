@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.data.test;
 
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
+import de.adorsys.aspsp.aspspmockserver.service.PsuService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
@@ -24,10 +25,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Currency;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * AccountMockServerData is used to create test data in DB.
@@ -41,11 +39,28 @@ import java.util.List;
 public class AccountMockServerData {
 
     private final AccountService accountService;
+    private final PsuService psuService;
 
-    public AccountMockServerData(AccountService accountService) {
+    public AccountMockServerData(AccountService accountService,PsuService psuService) {
         this.accountService = accountService;
-
+        this.psuService = psuService;
         fillAccounts();
+        fillPsu();
+    }
+
+    private void fillPsu(){
+        Currency euro = Currency.getInstance("EUR");
+
+        List<SpiAccountDetails> newList = Arrays.asList(
+        getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"),
+        getNewAccount("99999-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599988", "GENODEF1N03", "Müller", "SCT"));
+
+        psuService.createPsuAndReturnId(newList);
+        psuService.createPsuAndReturnId(Collections.singletonList(getNewAccount("22222-999999999", euro, getNewBalanceList("2500", "300"), "DE371234599998", "GENODEF1N02", "Albert", "SCT")));
+        psuService.createPsuAndReturnId(Collections.singletonList(getNewAccount("33333-999999999", euro, getNewBalanceList("3000", "400"), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT")));
+        psuService.createPsuAndReturnId(Collections.singletonList(getNewAccount("44444-999999999", euro, getNewBalanceList("3500", "500"), "DE371234599996", "GENODEF1N02", "Telekom", "SCT")));
+        psuService.createPsuAndReturnId(Collections.singletonList(getNewAccount("55555-999999999", euro, getNewBalanceList("4000", "600"), "DE371234599995", "GENODEF1N02", "Bauer", "SCT")));
+
     }
 
     private void fillAccounts() {
