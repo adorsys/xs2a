@@ -132,9 +132,9 @@ public class ConsentService {
 
     private List<SpiAccountReference> mapPsuListToAccountRefList(List<Psu> psuList, List<String> ibans) {
         return psuList.stream()
-                   .flatMap(psu -> psu.getAccountDetailsList().stream()
-                                       .filter(acc -> ibans.contains(acc.getIban()))
-                                       .map(this::mapToSpiAccountReference))
+                   .flatMap(psu -> psu.getAccountDetailsList().stream())
+                   .filter(acc -> ibans.contains(acc.getIban()))
+                   .map(this::mapToSpiAccountReference)
                    .collect(Collectors.toList());
     }
 
