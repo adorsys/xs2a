@@ -42,7 +42,6 @@ public class PsuController {
                                     @RequestBody List<SpiAccountDetails> accountDetailsList) throws Exception {
         String uriString = getUriString(request);
         String saved = psuService.createPsuAndReturnId(accountDetailsList);
-        System.out.println(saved);
         return ResponseEntity.created(new URI(uriString + saved)).build();
     }
 

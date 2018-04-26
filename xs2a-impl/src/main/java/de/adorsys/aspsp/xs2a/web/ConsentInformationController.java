@@ -98,7 +98,7 @@ public class ConsentInformationController {
         @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
         @PathVariable("consent-id") String consentId) {
         ResponseObject response = consentService.deleteAccountConsentsById(consentId);
-        return responseMapper.delete(response);
+        return responseMapper.deleteOrNotFound(response);
     }
 
 }

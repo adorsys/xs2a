@@ -50,11 +50,11 @@ public class ConsentServiceTest {
 
         when(psuRepository.findPsuByAccountDetailsList_Iban(CORRECT_IBAN)).thenReturn(Optional.of(getPsu(CORRECT_IBAN)));
         when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(CORRECT_IBAN)))
-                .thenReturn(Optional.of(Collections.singletonList(getPsu(CORRECT_IBAN))));
+                .thenReturn(Collections.singletonList(getPsu(CORRECT_IBAN)));
         when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(WRONG_IBAN)))
-                .thenReturn(Optional.empty());
+                .thenReturn(Collections.emptyList());
         when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(EMPTY_IBAN)))
-                .thenReturn(Optional.empty());
+                .thenReturn(Collections.emptyList());
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN)).thenReturn(null);
         when(psuRepository.findOne(CORRECT_PSU_ID)).thenReturn(getPsu(CORRECT_IBAN));
         when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);

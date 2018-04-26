@@ -126,23 +126,16 @@ public class ConsentService {
     }
 
     private List<SpiAccountReference> getAccountsReferencesByIbans(List<String> ibans) {
-        return psuRepository.findPsuByAccountDetailsList_IbanIn(ibans)
-                       .map(psuList -> mapPsuListToAccountRefList(psuList, ibans))
-                       .orElse(Collections.emptyList());
+        List<Psu> psuList = psuRepository.findPsuByAccountDetailsList_IbanIn(ibans);
+        return mapPsuListToAccountRefList(psuList, ibans);
     }
 
     private List<SpiAccountReference> mapPsuListToAccountRefList(List<Psu> psuList, List<String> ibans) {
         return psuList.stream()
-                       .map(Psu::getAccountDetailsList)
-                       .map(accList -> filterAccountDetailsByIbans(accList, ibans))
-                       .map(this::mapToSpiAccountReference)
-                       .flatMap(List::stream)
-                       .collect(Collectors.toList());
-    }
-
-    private List<SpiAccountDetails> filterAccountDetailsByIbans(List<SpiAccountDetails> accountDetails, List<String> ibans) {
-        return accountDetails.stream()
-                       .filter(acc -> ibans.contains(acc.getIban())).collect(Collectors.toList());
+                   .flatMap(psu -> psu.getAccountDetailsList().stream()
+                                       .filter(acc -> ibans.contains(acc.getIban()))
+                                       .map(this::mapToSpiAccountReference))
+                   .collect(Collectors.toList());
     }
 
     private List<SpiAccountReference> mapToSpiAccountReference(List<SpiAccountDetails> detailsList) {
