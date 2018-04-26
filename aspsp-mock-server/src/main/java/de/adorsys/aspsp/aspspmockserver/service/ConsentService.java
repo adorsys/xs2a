@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 @Service
 public class ConsentService {
     private ConsentRepository consentRepository;
