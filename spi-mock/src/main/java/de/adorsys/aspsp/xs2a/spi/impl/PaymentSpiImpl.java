@@ -74,30 +74,25 @@ public class PaymentSpiImpl implements PaymentSpi {
     public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
         ResponseEntity<List<SpiSinglePayments>> responseEntity = restTemplate.exchange(remoteSpiUrls.getUrl("createBulkPayments"), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
         });
-        if (responseEntity.getStatusCode() == CREATED) {
-            List<SpiSinglePayments> responses = responseEntity.getBody();
-            return responses.stream()
-                       .map(s -> {
-                           SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-                           paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-                           paymentResponse.setPaymentId(s.getPaymentId());
-                           paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
-                           return paymentResponse;
-                       }).collect(Collectors.toList());
-        }
-        return null;
+        return (responseEntity.getStatusCode() == CREATED)
+                   ? responseEntity.getBody().stream()
+                         .map(spiPaym -> createSpiPaymentResponse(spiPaym, tppRedirectPreferred))
+                         .collect(Collectors.toList())
+                   : null;
     }
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
         ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class);
-        if (responseEntity.getStatusCode() == CREATED) {
-            SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-            paymentResponse.setPaymentId(responseEntity.getBody().getPaymentId());
-            paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
-            return paymentResponse;
-        }
-        return null;
+        return responseEntity.getStatusCode() == CREATED ? createSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
+    }
+
+    private SpiPaymentInitialisationResponse createSpiPaymentResponse(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+        SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
+        paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
+        paymentResponse.setPaymentId(spiSinglePayments.getPaymentId());
+        paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
+
+        return paymentResponse;
     }
 }

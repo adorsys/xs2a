@@ -73,19 +73,11 @@ public class PaymentService {
 
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
-        List<PaymentInitialisationResponse> paymentInitiation = spiPaymentInitiation.stream()
-                                                                    .map(s -> {
-                                                                        PaymentInitialisationResponse response = paymentMapper.mapFromSpiPaymentInitializationResponse(s);
-                                                                        Links links = new Links();
-                                                                        links.setRedirect(redirectLinkToSource);
-                                                                        links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(response.getPaymentId()).toString());
-                                                                        response.set_links(links);
+        List<PaymentInitialisationResponse> paymentInitialisationResponse = spiPaymentInitiation.stream()
+                                                                                .map(spiPaym -> createPaymentResponse(spiPaym, paymentProduct)).collect(Collectors.toList());
 
-                                                                        return response;
-                                                                    }).collect(Collectors.toList());
-
-        return Optional.ofNullable(paymentInitiation)
-                   .map(response -> ResponseObject.builder().body(response).build())
+        return Optional.ofNullable(paymentInitialisationResponse)
+                   .map(resp -> ResponseObject.builder().body(resp).build())
                    .orElse(ResponseObject.builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
                                                           .text(messageService.getMessage(PAYMENT_FAILED.name()))))
@@ -95,20 +87,24 @@ public class PaymentService {
     public ResponseObject createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
         SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
         SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
-        PaymentInitialisationResponse paymentInitiation = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
+        PaymentInitialisationResponse paymentInitialisationResponse = createPaymentResponse(spiPaymentInitiation, paymentProduct);
 
-        return Optional.ofNullable(paymentInitiation)
-                   .map(response -> {
-                       Links links = new Links();
-                       links.setRedirect(redirectLinkToSource);
-                       links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiation.getPaymentId()).toString());
-                       paymentInitiation.set_links(links);
-                       return ResponseObject.builder()
-                                  .body(paymentInitiation).build();
-                   })
+        return Optional.ofNullable(paymentInitialisationResponse)
+                   .map(resp -> ResponseObject.builder().body(paymentInitialisationResponse).build())
                    .orElse(ResponseObject.builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
                                                           .text(messageService.getMessage(PAYMENT_FAILED.name()))))
                                .build());
     }
+
+    private PaymentInitialisationResponse createPaymentResponse(SpiPaymentInitialisationResponse spiPaymentInitialisationResponse, PaymentProduct paymentProduct) {
+        PaymentInitialisationResponse paymentInitiationResponse = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitialisationResponse);
+        Links links = new Links();
+        links.setRedirect(redirectLinkToSource);
+        links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentInitiationResponse.getPaymentId()).toString());
+        paymentInitiationResponse.set_links(links);
+
+        return paymentInitiationResponse;
+    }
+
 }
