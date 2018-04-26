@@ -57,8 +57,8 @@ public class ConsentSpiImpl implements ConsentSpi {
     @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
         String url = remoteSpiUrls.getUrl("getConsentById");
-        ResponseEntity<SpiAccountConsent> response = restTemplate.getForEntity(url, SpiAccountConsent.class, consentId);
-
+        //ResponseEntity<SpiAccountConsent> response = restTemplate.getForEntity(url, SpiAccountConsent.class, consentId);
+        ResponseEntity<SpiAccountConsent> response = restTemplate.getForEntity("http://localhost:28080/consent/"+consentId, SpiAccountConsent.class);
         return response.getBody();
     }
 

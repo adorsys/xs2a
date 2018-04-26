@@ -18,6 +18,9 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +40,7 @@ public class FutureBookingsController {
         this.futureBookingsService = futureBookingsService;
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @PostMapping(path = "/{accountId}")
     public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("accountId") String accountId) throws Exception {
         return futureBookingsService.changeBalances(accountId)

@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class SpiAccountAccess {
     private SpiAccountAccessType availableAccounts;
     private SpiAccountAccessType allPsd2;
 
+    @JsonIgnore
     public boolean isNotEmpty(){
         return !(isEmpty(this.getAccounts())
                    && isEmpty(this.getBalances())
