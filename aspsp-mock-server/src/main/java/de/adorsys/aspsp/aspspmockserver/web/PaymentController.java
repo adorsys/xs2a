@@ -50,7 +50,6 @@ public class PaymentController {
     }
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @PostMapping(path = "/bulk-payments/")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) throws Exception {
