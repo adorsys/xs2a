@@ -46,9 +46,9 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("id") String id) {
-        return accountService.getAccount(id)
+    @GetMapping(path = "/{accountId}")
+    public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
+        return accountService.getAccount(accountId)
                .map(ResponseEntity::ok)
                .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -67,18 +67,18 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity deleteAccount(@PathVariable("id") String id) {
-        if (accountService.deleteAccountById(id)) {
+    @DeleteMapping(path = "/{accountId}")
+    public ResponseEntity deleteAccount(@PathVariable("accountId") String accountId) {
+        if (accountService.deleteAccountById(accountId)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
 
     @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
-    @GetMapping(path = "/{id}/balances")
-    public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("id") String id) {
-        return accountService.getBalances(id)
+    @GetMapping(path = "/{accountId}/balances")
+    public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
+        return accountService.getBalances(accountId)
                .map(ResponseEntity::ok)
                .orElseGet(() -> ResponseEntity.notFound().build());
     }

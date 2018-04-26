@@ -24,6 +24,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
@@ -67,22 +69,6 @@ public class SpiMockConfig {
     private void fillPayments() {
         PaymentMockData.createPaymentInitiation(getPisRequest_1(), false);
         PaymentMockData.createPaymentInitiation(getPisRequest_2(), false);
-    }
-
-    @Bean
-    public RestTemplate restTemplate(ClientHttpRequestFactory clientHttpRequestFactory) {
-        RestTemplate rest = new RestTemplate(clientHttpRequestFactory);
-        rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        rest.getMessageConverters().add(new StringHttpMessageConverter());
-        return rest;
-    }
-
-    @Bean
-    public ClientHttpRequestFactory clientHttpRequestFactory() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(readTimeout);
-        factory.setConnectTimeout(connectionTimeout);
-        return factory;
     }
 
     private void fillAccounts() {
@@ -237,14 +223,14 @@ public class SpiMockConfig {
         SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
         spiAccountAccess.setBalances(balances);
         spiAccountAccess.setTransactions(transactions);
-        SpiCreateConsentRequest req = new SpiCreateConsentRequest();
-        req.setAccess(spiAccountAccess);
-        req.setRecurringIndicator(true);
-        req.setValidUntil(getDateFromDateStringNoTimeZone("2017-11-01"));
-        req.setFrequencyPerDay(4);
-        req.setCombinedServiceIndicator(false);
 
-        return req;
+        return new SpiCreateConsentRequest(
+        spiAccountAccess,
+        true,
+        getDateFromDateStringNoTimeZone("2017-11-01"),
+        4,
+        false
+        );
     }
 
     private SpiCreateConsentRequest getAicRequest_2() {
@@ -305,14 +291,13 @@ public class SpiMockConfig {
         spiAccountAccess.setBalances(balances);
         spiAccountAccess.setTransactions(transactions);
 
-        SpiCreateConsentRequest req = new SpiCreateConsentRequest();
-        req.setAccess(spiAccountAccess);
-        req.setRecurringIndicator(true);
-        req.setValidUntil(getDateFromDateStringNoTimeZone("2017-04-25"));
-        req.setFrequencyPerDay(4);
-        req.setCombinedServiceIndicator(false);
-
-        return req;
+        return new SpiCreateConsentRequest(
+        spiAccountAccess,
+        true,
+        getDateFromDateStringNoTimeZone("2017-04-25"),
+        4,
+        false
+        );
     }
 
     private static Date getDateFromDateStringNoTimeZone(String dateString) {
