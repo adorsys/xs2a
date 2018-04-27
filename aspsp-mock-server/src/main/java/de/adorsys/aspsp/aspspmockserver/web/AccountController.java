@@ -45,6 +45,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @GetMapping(path = "/{accountId}")
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccount(accountId)
@@ -65,6 +66,7 @@ public class AccountController {
         return UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request)).build().toUriString();
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @DeleteMapping(path = "/{accountId}")
     public ResponseEntity deleteAccount(@PathVariable("accountId") String accountId) {
         if (accountService.deleteAccountById(accountId)) {
@@ -73,6 +75,7 @@ public class AccountController {
         return ResponseEntity.notFound().build();
     }
 
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @GetMapping(path = "/{accountId}/balances")
     public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
         return accountService.getBalances(accountId)

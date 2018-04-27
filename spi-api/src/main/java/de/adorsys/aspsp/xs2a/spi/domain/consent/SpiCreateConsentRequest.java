@@ -16,15 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SpiCreateConsentRequest {
-    private final SpiAccountAccess access;
-    private final boolean recurringIndicator;
-    private final Date validUntil;
-    private final Integer frequencyPerDay;
-    private final boolean combinedServiceIndicator;
+    private SpiAccountAccess access;
+    private boolean recurringIndicator;
+    private Date validUntil;
+    private Integer frequencyPerDay;
+    private boolean combinedServiceIndicator;
 }

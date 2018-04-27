@@ -22,11 +22,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 
 public interface ConsentSpi {
     String createAccountConsents(SpiCreateConsentRequest accountInformationConsentRequest,
-                                 boolean withBalance, boolean tppRedirectPreferred);
+                                 boolean withBalance, boolean tppRedirectPreferred, String psuId);
 
     SpiTransactionStatus getAccountConsentStatusById(String consentId);
 
     SpiAccountConsent getAccountConsentById(String consentId);
 
-    boolean deleteAccountConsentsById(String consentId);
+    void deleteAccountConsentsById(String consentId);
 }

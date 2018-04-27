@@ -16,38 +16,54 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+@Component
+@AllArgsConstructor
 public class ConsentSpiImpl implements ConsentSpi {
+    private final RestTemplate restTemplate;
+    private final RemoteSpiUrls remoteSpiUrls;
 
     @Override
-    public String createAccountConsents(SpiCreateConsentRequest accountInformationConsentRequest,
-                                        boolean withBalance, boolean tppRedirectPreferred) {
+    public String createAccountConsents(SpiCreateConsentRequest createConsentRequest,
+                                        boolean withBalance, boolean tppRedirectPreferred, String psuId) {
 
-        return ConsentMockData.createAccountConsent(accountInformationConsentRequest, withBalance, tppRedirectPreferred);
+        String url = remoteSpiUrls.getUrl("getConsents");
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+        builder.queryParam("withBalance", withBalance);
+        builder.queryParam("tppRedirectPreferred", tppRedirectPreferred);
+        builder.queryParam("psuId", psuId);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(builder.build().encode().toUri(), createConsentRequest, String.class);
+        return response.getBody();
     }
 
     @Override
     public SpiTransactionStatus getAccountConsentStatusById(String consentId) {
         return ConsentMockData.getAccountConsentsStatus(consentId);
-
     }
 
     @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
-        return ConsentMockData.getAccountConsent(consentId);
+        String url = remoteSpiUrls.getUrl("getConsentById");
+        ResponseEntity<SpiAccountConsent> response = restTemplate.getForEntity(url, SpiAccountConsent.class, consentId);
+        return response.getBody();
     }
 
     @Override
-    public boolean deleteAccountConsentsById(String consentId) {
-        if (ConsentMockData.getAccountConsent(consentId) != null) {
-            ConsentMockData.deleteAccountConcent(consentId);
-            return true;
-        }
-        return false;
+    public void deleteAccountConsentsById(String consentId) {
+        String url = remoteSpiUrls.getUrl("deleteConsentById");
+        restTemplate.delete(url, consentId);
     }
 }
