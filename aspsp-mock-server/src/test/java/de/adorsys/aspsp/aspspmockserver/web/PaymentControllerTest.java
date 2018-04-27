@@ -62,7 +62,7 @@ public class PaymentControllerTest {
         when(paymentService.addPayment(getSpiSinglePayment()))
             .thenReturn(Optional.of(response));
         when(paymentService.addBulkPayments(any()))
-            .thenReturn(Optional.of(responseList));
+            .thenReturn(responseList);
         when(paymentService.isPaymentExist(PAYMENT_ID))
             .thenReturn(true);
         when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))

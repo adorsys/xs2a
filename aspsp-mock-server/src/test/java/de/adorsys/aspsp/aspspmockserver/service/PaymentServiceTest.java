@@ -83,7 +83,7 @@ public class PaymentServiceTest {
         expectedPayments.add(getSpiSinglePayment());
 
         //When
-        List<SpiSinglePayments> actualPayments = paymentService.addBulkPayments(expectedPayments).get();
+        List<SpiSinglePayments> actualPayments = paymentService.addBulkPayments(expectedPayments);
 
         //Then
         assertThat(actualPayments).isNotNull();
