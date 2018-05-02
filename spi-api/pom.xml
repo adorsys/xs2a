@@ -36,7 +36,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <swagger.version>1.5.10</swagger.version>
+        <swagger.version>1.5.19</swagger.version>
         <java.version>1.8</java.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>

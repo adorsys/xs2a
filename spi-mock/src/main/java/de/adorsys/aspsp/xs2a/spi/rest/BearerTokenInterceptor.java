@@ -22,7 +22,7 @@ public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
     }
 
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        request.getHeaders().add("Authorization", "Bearer " + this.bearerToken);
+        request.getHeaders().add("Authorization", this.bearerToken);
         return execution.execute(request, body);
     }
 }
