@@ -35,14 +35,14 @@ public class ConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID))).thenReturn(Optional.of("someString"));
-        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID))).thenReturn(Optional.empty());
+        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID), true)).thenReturn(Optional.of("someString"));
+        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID), true)).thenReturn(Optional.empty());
     }
 
     @Test
     public void createAccountConsentTest_Success() {
         //When:
-        ResponseEntity expectedResponse = consentController.createConsent(createConsentRequest(), CORRECT_PSU_ID);
+        ResponseEntity expectedResponse = consentController.createConsent(createConsentRequest(), CORRECT_PSU_ID, true, true);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -51,7 +51,7 @@ public class ConsentControllerTest {
     @Test
     public void createAccountConsentTest_Failure() {
         //When:
-        ResponseEntity expectedResponse = consentController.createConsent(createConsentRequest(), WRONG_PSU_ID);
+        ResponseEntity expectedResponse = consentController.createConsent(createConsentRequest(), WRONG_PSU_ID, true, true);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
