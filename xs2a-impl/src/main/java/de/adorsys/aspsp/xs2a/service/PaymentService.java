@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.component.LinkComponent;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -46,6 +47,7 @@ public class PaymentService {
     private final MessageService messageService;
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
+    private final LinkComponent linkComponent;
 
     public ResponseObject getPaymentStatusById(String paymentId, PaymentProduct paymentProduct) {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
@@ -70,7 +72,7 @@ public class PaymentService {
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
         List<PaymentInitialisationResponse> paymentInitialisationResponse = spiPaymentInitiation.stream()
-                                                                                .map(spiPaym -> paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaym)).collect(Collectors.toList());
+                                                                                .map(spiPaym -> getPaymentInitiationResponse(spiPaym, paymentProduct)).collect(Collectors.toList());
 
         return Optional.ofNullable(paymentInitialisationResponse)
                    .map(resp -> ResponseObject.builder().body(resp).build())
@@ -80,10 +82,17 @@ public class PaymentService {
                                .build());
     }
 
+    private PaymentInitialisationResponse getPaymentInitiationResponse(SpiPaymentInitialisationResponse spiPaym, PaymentProduct paymentProduct) {
+        PaymentInitialisationResponse payment= paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaym);
+        payment.set_links(linkComponent.createPaymentLinks(payment.getPaymentId(), paymentProduct));
+
+        return payment;
+    }
+
     public ResponseObject createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
         SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
         SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
-        PaymentInitialisationResponse paymentInitialisationResponse = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
+        PaymentInitialisationResponse paymentInitialisationResponse = getPaymentInitiationResponse(spiPaymentInitiation, paymentProduct);
 
         return Optional.ofNullable(paymentInitialisationResponse)
                    .map(resp -> ResponseObject.builder().body(paymentInitialisationResponse).build())

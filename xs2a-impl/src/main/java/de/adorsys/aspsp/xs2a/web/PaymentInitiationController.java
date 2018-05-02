@@ -36,10 +36,8 @@ import java.util.Map;
 @RequestMapping(path = "api/v1/payments/{payment-product}")
 @Api(value = "api/v1/payments/{payment-product}", tags = "PISP Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
-
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
-    private final String redirectLinkToSource;
 
     @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
