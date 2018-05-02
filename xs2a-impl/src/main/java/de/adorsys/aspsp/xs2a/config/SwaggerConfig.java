@@ -60,8 +60,8 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-               .title("XS2A REST Api")
-               .contact(new Contact("dgo, adorsys GmbH & Co. KG", "http://www.adorsys.de", "dgo@adorsys.de"))
+               .title("XS2A REST API")
+               .contact(new Contact("adorsys GmbH & Co. KG", "http://www.github.com/adorsys/xs2a", "fpo@adorsys.de"))
                .version("1.0")
                .license("Apache License 2.0")
                .licenseUrl(licenseUrl)
