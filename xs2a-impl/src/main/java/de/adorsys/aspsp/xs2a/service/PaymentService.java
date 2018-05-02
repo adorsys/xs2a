@@ -76,11 +76,11 @@ public class PaymentService {
                                                                                 .map(spiPaym -> getPaymentInitiationResponse(spiPaym, paymentProduct)).collect(Collectors.toList());
 
         return isEmpty(paymentInitialisationResponse)
-                   ? ResponseObject.builder().body(paymentInitialisationResponse).build()
-                   : ResponseObject.builder()
-                               .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                                                          .text(messageService.getMessage(PAYMENT_FAILED.name()))))
-                               .build();
+                   ? ResponseObject.builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
+                                                    .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+                         .build()
+                   : ResponseObject.builder().body(paymentInitialisationResponse).build();
     }
 
     private PaymentInitialisationResponse getPaymentInitiationResponse(SpiPaymentInitialisationResponse spiPaym, PaymentProduct paymentProduct) {
