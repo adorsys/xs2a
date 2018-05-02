@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.PAYMENT_FAILED;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @AllArgsConstructor
@@ -74,12 +75,12 @@ public class PaymentService {
         List<PaymentInitialisationResponse> paymentInitialisationResponse = spiPaymentInitiation.stream()
                                                                                 .map(spiPaym -> getPaymentInitiationResponse(spiPaym, paymentProduct)).collect(Collectors.toList());
 
-        return Optional.ofNullable(paymentInitialisationResponse)
-                   .map(resp -> ResponseObject.builder().body(resp).build())
-                   .orElse(ResponseObject.builder()
+        return isEmpty(paymentInitialisationResponse)
+                   ? ResponseObject.builder().body(paymentInitialisationResponse).build()
+                   : ResponseObject.builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
                                                           .text(messageService.getMessage(PAYMENT_FAILED.name()))))
-                               .build());
+                               .build();
     }
 
     private PaymentInitialisationResponse getPaymentInitiationResponse(SpiPaymentInitialisationResponse spiPaym, PaymentProduct paymentProduct) {

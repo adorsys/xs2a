@@ -32,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -76,18 +77,18 @@ public class PaymentSpiImpl implements PaymentSpi {
         });
         return (responseEntity.getStatusCode() == CREATED)
                    ? responseEntity.getBody().stream()
-                         .map(spiPaym -> createSpiPaymentResponse(spiPaym, tppRedirectPreferred))
+                         .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
                          .collect(Collectors.toList())
-                   : null;
+                   : Collections.emptyList();
     }
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
         ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class);
-        return responseEntity.getStatusCode() == CREATED ? createSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
+        return responseEntity.getStatusCode() == CREATED ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
     }
 
-    private SpiPaymentInitialisationResponse createSpiPaymentResponse(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+    private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
         SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
         paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
         paymentResponse.setPaymentId(spiSinglePayments.getPaymentId());

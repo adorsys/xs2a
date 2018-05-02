@@ -81,9 +81,9 @@ public class PaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
 
         //Then:
+        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
         assertThat(actualResponse.getBody().get("transactionStatus")).isEqualTo(expectedTransactionStatus);
     }
@@ -96,9 +96,9 @@ public class PaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
 
         //Then:
+        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
         assertThat(actualResponse.getBody().get("transactionStatus")).isEqualTo(expectedTransactionStatus);
     }

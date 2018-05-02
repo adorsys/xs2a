@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class PaymentControllerTest {
     private static final String PAYMENT_ID = "123456789";
-    private static final String WRONG_PAYMENT_ID = "0";
+    private static final String WRONG_PAYMENT_ID = "Wrong payment id";
 
     @Autowired
     private PaymentController paymentController;
@@ -56,7 +56,7 @@ public class PaymentControllerTest {
     @Before
     public void setUpPaymentServiceMock() throws IOException {
         SpiSinglePayments response = getSpiSinglePayment();
-        response.setPaymentId("12345");
+        response.setPaymentId(PAYMENT_ID);
         List<SpiSinglePayments> responseList = new ArrayList<>();
         responseList.add(response);
         when(paymentService.addPayment(getSpiSinglePayment()))
@@ -76,9 +76,9 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity<SpiSinglePayments> actualResponse = paymentController.createPayment(getSpiSinglePayment());
-        HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody().getPaymentId()).isNotNull();
@@ -93,11 +93,12 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity<List<SpiSinglePayments>> actualResponse = paymentController.createBulkPayments(expectedRequest);
-        HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
+        assertThat(actualResponse.getBody().get(0).getPaymentId()).isEqualTo(PAYMENT_ID);
     }
 
     @Test
@@ -107,9 +108,9 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity<SpiSinglePayments> actualResponse = paymentController.getPaymentStatusById(PAYMENT_ID);
-        HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody()).isEqualTo(ACCP);
@@ -122,9 +123,9 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity<SpiSinglePayments> actualResponse = paymentController.getPaymentStatusById(WRONG_PAYMENT_ID);
-        HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody()).isEqualTo(RJCT);
