@@ -34,7 +34,7 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/payments/{payment-product}")
-@Api(value = "api/v1/payments/{payment-product}", tags = "PISP Payments", description = "Provides access to the PIS")
+@Api(value = "api/v1/payments/{payment-product}", tags = "PISP, Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
 
     private final ResponseMapper responseMapper;
