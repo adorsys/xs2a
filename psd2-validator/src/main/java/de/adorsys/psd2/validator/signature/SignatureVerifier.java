@@ -8,13 +8,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SignatureException;
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.crypto.Mac;
 
 import org.tomitribe.auth.signatures.Algorithm;
-import org.tomitribe.auth.signatures.Base64;
 import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signatures;
 import org.tomitribe.auth.signatures.UnsupportedAlgorithmException;
@@ -27,7 +25,6 @@ public class SignatureVerifier {
 	private final Verify verify;
 	private final Signature signature;
 	private final Algorithm algorithm;
-	private final Provider provider;
 
 	public SignatureVerifier(final Key key, final Signature signature) {
 		this(key, signature, null);
@@ -37,7 +34,6 @@ public class SignatureVerifier {
 		requireNonNull(key, "Key cannot be null");
 		this.signature = requireNonNull(signature, "Signature cannot be null");
 		this.algorithm = signature.getAlgorithm();
-		this.provider = provider;
 
 		if (java.security.Signature.class.equals(algorithm.getType())) {
 

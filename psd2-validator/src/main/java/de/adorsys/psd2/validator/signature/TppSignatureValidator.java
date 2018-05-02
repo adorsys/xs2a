@@ -5,8 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +14,8 @@ import com.nimbusds.jose.util.X509CertUtils;
 
 public class TppSignatureValidator {
 
-	private static final List<String> MANDATODY_HEADERS_PSD2 = Arrays
-			.asList(new String[] { "Digest", "TPP-Transaction", "TPP-Request-ID", "Date" });
+	/*private static final List<String> MANDATODY_HEADERS_PSD2 = Arrays
+			.asList(new String[] { "Digest", "TPP-Transaction", "TPP-Request-ID", "Date" });*/
 
 	/**
 	 * signature should not be null signature should be conform with psd2
