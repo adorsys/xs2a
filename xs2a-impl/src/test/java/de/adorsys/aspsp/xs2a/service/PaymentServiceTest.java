@@ -138,23 +138,6 @@ public class PaymentServiceTest {
         assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
     }
 
-    private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
-
-        return ResponseObject.builder()
-                   .body(getPaymentInitializationResponse()).build();
-    }
-
-    private PeriodicPayment readPeriodicPayment() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(PERIODIC_PAYMENT_DATA, UTF_8), PeriodicPayment.class);
-    }
-
-    private PaymentInitialisationResponse getPaymentInitializationResponse() {
-        PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
-        resp.setTransactionStatus(TransactionStatus.ACCP);
-        resp.set_links(new Links());
-        return resp;
-    }
-
     @Test
     public void createPaymentInitiation() {
         // Given
@@ -168,11 +151,6 @@ public class PaymentServiceTest {
         //Then:
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
-    }
-
-    private SpiSinglePayments getSpiPayment() {
-        SpiSinglePayments spiPayment = new SpiSinglePayments();
-        return spiPayment;
     }
 
     private SpiPaymentInitialisationResponse getSpiPaymentResponse(SpiTransactionStatus status) {
@@ -202,4 +180,23 @@ public class PaymentServiceTest {
 
         return singlePayments;
     }
+
+
+    private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
+
+        return ResponseObject.builder()
+                   .body(getPaymentInitializationResponse()).build();
+    }
+
+    private PeriodicPayment readPeriodicPayment() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(PERIODIC_PAYMENT_DATA, UTF_8), PeriodicPayment.class);
+    }
+
+    private PaymentInitialisationResponse getPaymentInitializationResponse() {
+        PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
+        resp.setTransactionStatus(TransactionStatus.ACCP);
+        resp.set_links(new Links());
+        return resp;
+    }
+
 }

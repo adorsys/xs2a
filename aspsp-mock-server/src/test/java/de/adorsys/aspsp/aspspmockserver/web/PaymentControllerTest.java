@@ -84,21 +84,6 @@ public class PaymentControllerTest {
         assertThat(actualResponse.getBody().getPaymentId()).isNotNull();
     }
 
-    private SpiSinglePayments getSpiSinglePayment() {
-        SpiSinglePayments payment = new SpiSinglePayments();
-        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), "20");
-        SpiAccountReference accountReference = new SpiAccountReference("11234", "DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
-        payment.setInstructedAmount(amount);
-        payment.setDebtorAccount(accountReference);
-        payment.setCreditorName("Merchant123");
-        payment.setPurposeCode("BEQNSD");
-        payment.setCreditorAgent("sdasd");
-        payment.setCreditorAccount(accountReference);
-        payment.setRemittanceInformationUnstructured("Ref Number Merchant");
-
-        return payment;
-    }
-
     @Test
     public void createBulkPayments() throws Exception {
         //Given
@@ -143,5 +128,20 @@ public class PaymentControllerTest {
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody()).isEqualTo(RJCT);
+    }
+
+    private SpiSinglePayments getSpiSinglePayment() {
+        SpiSinglePayments payment = new SpiSinglePayments();
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), "20");
+        SpiAccountReference accountReference = new SpiAccountReference("11234", "DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
+        payment.setInstructedAmount(amount);
+        payment.setDebtorAccount(accountReference);
+        payment.setCreditorName("Merchant123");
+        payment.setPurposeCode("BEQNSD");
+        payment.setCreditorAgent("sdasd");
+        payment.setCreditorAccount(accountReference);
+        payment.setRemittanceInformationUnstructured("Ref Number Merchant");
+
+        return payment;
     }
 }
