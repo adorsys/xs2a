@@ -29,13 +29,13 @@ public class SignatureGeneratorUtil {
 	 * the Digest within the context of this specification are 
 	 * SHA-256 and SHA-512 as defined in [RFC5843].
 	 */
-	private final static String digest = generateDigest();
+	private String digest = generateDigest();
 	
 	/**
 	 * According to psd2, the value must be
 	 * Serial Number of the TPP's certificate 
 	 */
-	private final static String keyId = "1.3.6.1.4.1.21528.2.2.99.11534";
+	private String keyId = "1.3.6.1.4.1.21528.2.2.99.11534";
 
 	/**
 	 * According to Psd2 The algorithm must identify the same algorithm 
@@ -43,7 +43,7 @@ public class SignatureGeneratorUtil {
 	 * (Element “TPP- Certificate”) of this Request.
 	 * It must identify SHA-256 or SHA-512 as Hash algorithm
 	 */
-	private final static String algorithm = "rsa-sha256";
+	private String algorithm = "rsa-sha256";
 	
 	/**
 	 * According to Psd2, it Must include
@@ -55,10 +55,10 @@ public class SignatureGeneratorUtil {
 	 * “Date”
 	 * No other entries may be included
 	 */
-	private final static String headers = "Digest TPP-Transaction-ID TPP-Request-ID PSU-ID Date";
+	private String headers = "Digest TPP-Transaction-ID TPP-Request-ID PSU-ID Date";
 
 	
-	private final static String privateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
+	private String privateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
 			"MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDGAzkeZgKRpqaE\n" +
 			"yT+ZuLhMuHXfDaGgimCQSToqGORHQPeDqy6g1CfT9sEYDQzSIA10oMI7c0kuxhNX\n" +
 			"4/FW7yXeT4Dxw4LuprnUUovZas2lAhiK7XVR6ppRUvHMFTqWHsURQQgXYWJFcAo4\n" +
@@ -88,10 +88,10 @@ public class SignatureGeneratorUtil {
 			"-----END PRIVATE KEY-----\n";
 	
 	
-	private static PrivateKey privateKey = null;
+	private PrivateKey privateKey = null;
 	
 	
-	private static void stringToPrivateKey() {
+	private void stringToPrivateKey() {
         try {
 			privateKey = PEM.readPrivateKey(new ByteArrayInputStream(privateKeyPem.getBytes()));
 		} catch (InvalidKeySpecException e) {
@@ -104,7 +104,7 @@ public class SignatureGeneratorUtil {
     }
 	
 	
-	public static String generateSignature(){
+	public String generateSignature(){
 		
 		 Map<String, String> headersMap = new HashMap<>();
 		 headersMap.put("Digest", digest);
@@ -127,7 +127,7 @@ public class SignatureGeneratorUtil {
 		}			
 	}
 	
-	public static String generateDigest(){
+	public String generateDigest(){
 		
 		String payload = "{client_name:XS2A Client,redirect_uris:[*]}";
 		String digestHeader = null;

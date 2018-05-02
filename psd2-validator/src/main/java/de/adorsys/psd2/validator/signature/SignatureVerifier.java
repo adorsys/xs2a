@@ -41,11 +41,11 @@ public class SignatureVerifier {
 
         if (java.security.Signature.class.equals(algorithm.getType())) {
 
-            this.verify = new Asymmetric(PublicKey.class.cast(key));
+            this.verify = new Asymmetric(PublicKey.class.cast(key), provider, algorithm, signature);
 
         } else if (Mac.class.equals(algorithm.getType())) {
 
-            this.verify = new Symmetric(key);
+            this.verify = new Symmetric(key, provider, algorithm, signature);
 
         } else {
 
@@ -78,69 +78,8 @@ public class SignatureVerifier {
         return Signatures.createSigningString(signature.getHeaders(), method, uri, headers);
     }
 
-    private interface Verify {
-        boolean verify(byte[] signingStringBytes);
-    }
+    
 
-    private class Asymmetric implements Verify {
 
-        private final PublicKey key;
-
-        private Asymmetric(final PublicKey key) {
-            this.key = key;
-        }
-
-        @Override
-        public boolean verify(final byte[] signingStringBytes) {
-            try {
-
-                final java.security.Signature instance = provider == null ?
-                        java.security.Signature.getInstance(algorithm.getJmvName()) :
-                        java.security.Signature.getInstance(algorithm.getJmvName(), provider);
-
-                instance.initVerify(key);
-                instance.update(signingStringBytes);
-                return instance.verify(Base64.decodeBase64(signature.getSignature().getBytes()));
-
-            } catch (NoSuchAlgorithmException e) {
-
-                throw new UnsupportedAlgorithmException(algorithm.getJmvName());
-
-            } catch (Exception e) {
-
-                throw new IllegalStateException(e);
-            }
-        }
-    }
-
-    private class Symmetric implements Verify {
-
-        private final Key key;
-
-        private Symmetric(final Key key) {
-            this.key = key;
-        }
-
-        @Override
-        public boolean verify(final byte[] signingStringBytes) {
-
-            try {
-
-                final Mac mac = provider == null ? Mac.getInstance(algorithm.getJmvName()) : Mac.getInstance(algorithm.getJmvName(), provider);
-                mac.init(key);
-                byte[] hash = mac.doFinal(signingStringBytes);
-                byte[] encoded = Base64.encodeBase64(hash);
-                return Arrays.equals(encoded, signature.getSignature().getBytes());
-
-            } catch (NoSuchAlgorithmException e) {
-
-                throw new UnsupportedAlgorithmException(algorithm.getJmvName());
-
-            } catch (Exception e) {
-
-                throw new IllegalStateException(e);
-
-            }
-        }
-    }
+    
 }

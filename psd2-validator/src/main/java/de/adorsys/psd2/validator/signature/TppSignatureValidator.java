@@ -30,14 +30,14 @@ public class TppSignatureValidator {
 	 * @throws SignatureException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static boolean verifySignature(String signature, String tppEncodedCert, Map<String, String> headers)
+	public boolean verifySignature(String signature, String tppEncodedCert, Map<String, String> headers)
 			throws NoSuchAlgorithmException, SignatureException, IOException {
 
-		if (StringUtils.isEmpty(signature)) {
+		if (StringUtils.isBlank(signature)) {
 			throw new IllegalArgumentException("SIGNATURE_MISSING");
 		}
 
-		if (StringUtils.isEmpty(tppEncodedCert)) {
+		if (StringUtils.isBlank(tppEncodedCert)) {
 			throw new IllegalArgumentException("CERTIFICAT_MISSING");
 		}
 

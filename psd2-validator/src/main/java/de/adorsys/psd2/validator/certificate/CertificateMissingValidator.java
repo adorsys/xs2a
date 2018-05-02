@@ -11,7 +11,7 @@ public class CertificateMissingValidator implements CertificateValidator {
 	@Override
 	public void validate(String encodedCert) throws CertificateException {
 
-		if (StringUtils.isEmpty(encodedCert)) {
+		if (StringUtils.isBlank(encodedCert)) {
 			throw new CertificateMissingException(CertificateErrorMessageCode.CERTIFICATE_MISSING.name(),
 					CertificateErrorMessageCode.CERTIFICATE_MISSING.toString());
 		}

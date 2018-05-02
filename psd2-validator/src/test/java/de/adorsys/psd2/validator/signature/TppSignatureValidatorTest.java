@@ -92,13 +92,13 @@ public class TppSignatureValidatorTest {
 	public void when_ValidSignature_Expected_true() throws NoSuchAlgorithmException, SignatureException, IOException {
 		
 		 Map<String, String> headersMap = new HashMap<>();
-		 headersMap.put("Digest", SignatureGeneratorUtil.generateDigest());
+		 headersMap.put("Digest", new SignatureGeneratorUtil().generateDigest());
 		 headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
 		 headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
 		 headersMap.put("PSU-ID", "PSU-1234");
 		 headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");	
 
-		Assert.assertEquals(TppSignatureValidator.verifySignature(signature, tppEncodedCert, headersMap), true);
+		Assert.assertEquals(new TppSignatureValidator().verifySignature(signature, tppEncodedCert, headersMap), true);
 	}
 
 	
@@ -106,24 +106,24 @@ public class TppSignatureValidatorTest {
 	public void when_ValidSignature_And_MissingHeaderAttribute_Expected_False() throws NoSuchAlgorithmException, SignatureException, IOException {
 		
 		 Map<String, String> headersMap = new HashMap<>();
-		 headersMap.put("Digest", SignatureGeneratorUtil.generateDigest());
+		 headersMap.put("Digest", new SignatureGeneratorUtil().generateDigest());
 		 headersMap.put("TPP-Transaction-ID", "xxxxxx");
 		 headersMap.put("TPP-Request-ID", "0000000");
 		 headersMap.put("PSU-ID", "PSU-1234");
 
-		 TppSignatureValidator.verifySignature(signature, tppEncodedCert, headersMap);
+		 new TppSignatureValidator().verifySignature(signature, tppEncodedCert, headersMap);
 	}
 	
 	@Test(expected = Exception.class)
 	public void when_ValidSignatureAndFalseCert_Expected_true() throws NoSuchAlgorithmException, SignatureException, IOException {
 		
 		Map<String, String> headersMap = new HashMap<>();
-		 headersMap.put("Digest", SignatureGeneratorUtil.generateDigest());
+		 headersMap.put("Digest", new SignatureGeneratorUtil().generateDigest());
 		 headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
 		 headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
 		 headersMap.put("PSU-ID", "PSU-1234");
 		 headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");
 
-		TppSignatureValidator.verifySignature(signature, publicKeyPem, headersMap);
+		new TppSignatureValidator().verifySignature(signature, publicKeyPem, headersMap);
 	}
 }
