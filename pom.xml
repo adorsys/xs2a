@@ -52,6 +52,8 @@
         <pmd.plugin.version>3.9.0</pmd.plugin.version>
         <keycloak.version>3.4.3.Final</keycloak.version>
         <com.auth0.java-jwt.version>3.3.0</com.auth0.java-jwt.version>
+        <tomitribe-http-signatures.version>1.0</tomitribe-http-signatures.version>
+        <nimbus-jose-jwt.version>5.8</nimbus-jose-jwt.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>

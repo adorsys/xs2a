@@ -20,9 +20,9 @@ public class CertificateInvalidValidator implements CertificateValidator {
 	public void validate(String encodedCert) throws CertificateException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
-		
-		//NOPMD TODO check if certificate contain psd2 attributes
-		//cert.getExtendedKeyUsage().containsAll(listPsd2RequiredAttributes);
+
+		// NOPMD TODO check if certificate contain psd2 attributes
+		// cert.getExtendedKeyUsage().containsAll(listPsd2RequiredAttributes);
 
 		List<X509Certificate> listRootCertificate = CertificateUtils.getRootCertificate(TRUSTSTORE_PATH);
 
@@ -38,7 +38,7 @@ public class CertificateInvalidValidator implements CertificateValidator {
 				}
 			}
 		}
-		
+
 		throw new CertificateInvalidException(CertificateErrorMessageCode.CERTIFICATE_INVALID.name(),
 				CertificateErrorMessageCode.CERTIFICATE_INVALID.toString());
 	}

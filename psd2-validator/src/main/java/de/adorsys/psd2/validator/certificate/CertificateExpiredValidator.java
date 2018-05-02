@@ -5,9 +5,8 @@ import java.security.cert.X509Certificate;
 
 import com.nimbusds.jose.util.X509CertUtils;
 
-public class CertificateExpiredValidator  implements CertificateValidator{
+public class CertificateExpiredValidator implements CertificateValidator {
 
-	
 	@Override
 	public void validate(String encodedCert) throws CertificateException {
 

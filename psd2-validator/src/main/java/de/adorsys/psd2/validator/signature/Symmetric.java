@@ -14,37 +14,38 @@ import org.tomitribe.auth.signatures.UnsupportedAlgorithmException;
 
 public class Symmetric implements Verify {
 
-    private final Key key;
-    private final Algorithm algorithm;
-    private final Provider provider;
-    private final Signature signature;
+	private final Key key;
+	private final Algorithm algorithm;
+	private final Provider provider;
+	private final Signature signature;
 
-    Symmetric(final Key key, final Provider provider, final Algorithm algorithm, final Signature signature) {
-        this.key = key;
-        this.provider = provider;
-        this.algorithm = algorithm;
-        this.signature = signature;
-    }
+	Symmetric(final Key key, final Provider provider, final Algorithm algorithm, final Signature signature) {
+		this.key = key;
+		this.provider = provider;
+		this.algorithm = algorithm;
+		this.signature = signature;
+	}
 
-    @Override
-    public boolean verify(final byte[] signingStringBytes) {
+	@Override
+	public boolean verify(final byte[] signingStringBytes) {
 
-        try {
+		try {
 
-            final Mac mac = provider == null ? Mac.getInstance(algorithm.getJmvName()) : Mac.getInstance(algorithm.getJmvName(), provider);
-            mac.init(key);
-            byte[] hash = mac.doFinal(signingStringBytes);
-            byte[] encoded = Base64.encodeBase64(hash);
-            return Arrays.equals(encoded, signature.getSignature().getBytes());
+			final Mac mac = provider == null ? Mac.getInstance(algorithm.getJmvName())
+					: Mac.getInstance(algorithm.getJmvName(), provider);
+			mac.init(key);
+			byte[] hash = mac.doFinal(signingStringBytes);
+			byte[] encoded = Base64.encodeBase64(hash);
+			return Arrays.equals(encoded, signature.getSignature().getBytes());
 
-        } catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException e) {
 
-            throw new UnsupportedAlgorithmException(algorithm.getJmvName());
+			throw new UnsupportedAlgorithmException(algorithm.getJmvName());
 
-        } catch (Exception e) {
+		} catch (Exception e) {
 
-            throw new IllegalStateException(e);
+			throw new IllegalStateException(e);
 
-        }
-    }
+		}
+	}
 }

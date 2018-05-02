@@ -8,7 +8,6 @@ public class CertificateValidatorFactory {
 	private List<CertificateValidator> certValidators = new ArrayList<>();
 
 	public CertificateValidatorFactory() {
-		super();
 		certValidators.add(new CertificateBlockedValidator());
 		certValidators.add(new CertificateExpiredValidator());
 		certValidators.add(new CertificateInvalidValidator());
@@ -23,7 +22,5 @@ public class CertificateValidatorFactory {
 	public void setCertValidators(List<CertificateValidator> certValidators) {
 		this.certValidators = certValidators;
 	}
-	
-	
 
 }

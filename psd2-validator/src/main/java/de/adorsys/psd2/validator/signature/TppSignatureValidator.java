@@ -47,7 +47,8 @@ public class TppSignatureValidator {
 
 		Signature signatureData = Signature.fromString(signature);
 
-		//TODO 01 check if signature headers contain the mandory psd2 headers attribute
+		// TODO 01 check if signature headers contain the mandory psd2 headers
+		// attribute
 
 		SignatureVerifier verifier = new SignatureVerifier(key, signatureData);
 		verifier.verify("method", "uri", headers);

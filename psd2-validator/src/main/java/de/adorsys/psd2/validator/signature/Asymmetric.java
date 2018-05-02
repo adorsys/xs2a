@@ -11,37 +11,37 @@ import org.tomitribe.auth.signatures.UnsupportedAlgorithmException;
 
 public class Asymmetric implements Verify {
 
-    private final PublicKey key;
-    private final Algorithm algorithm;
-    private final Provider provider;
-    private final Signature signature;
+	private final PublicKey key;
+	private final Algorithm algorithm;
+	private final Provider provider;
+	private final Signature signature;
 
-    Asymmetric(final PublicKey key, final Provider provider, final Algorithm algorithm, final Signature signature) {
-        this.key = key;
-        this.provider = provider;
-        this.algorithm = algorithm;
-        this.signature = signature;
-    }
+	Asymmetric(final PublicKey key, final Provider provider, final Algorithm algorithm, final Signature signature) {
+		this.key = key;
+		this.provider = provider;
+		this.algorithm = algorithm;
+		this.signature = signature;
+	}
 
-    @Override
-    public boolean verify(final byte[] signingStringBytes) {
-        try {
+	@Override
+	public boolean verify(final byte[] signingStringBytes) {
+		try {
 
-            final java.security.Signature instance = provider == null ?
-                    java.security.Signature.getInstance(algorithm.getJmvName()) :
-                    java.security.Signature.getInstance(algorithm.getJmvName(), provider);
+			final java.security.Signature instance = provider == null
+					? java.security.Signature.getInstance(algorithm.getJmvName())
+					: java.security.Signature.getInstance(algorithm.getJmvName(), provider);
 
-            instance.initVerify(key);
-            instance.update(signingStringBytes);
-            return instance.verify(Base64.decodeBase64(signature.getSignature().getBytes()));
+			instance.initVerify(key);
+			instance.update(signingStringBytes);
+			return instance.verify(Base64.decodeBase64(signature.getSignature().getBytes()));
 
-        } catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException e) {
 
-            throw new UnsupportedAlgorithmException(algorithm.getJmvName());
+			throw new UnsupportedAlgorithmException(algorithm.getJmvName());
 
-        } catch (Exception e) {
+		} catch (Exception e) {
 
-            throw new IllegalStateException(e);
-        }
-    }
+			throw new IllegalStateException(e);
+		}
+	}
 }
