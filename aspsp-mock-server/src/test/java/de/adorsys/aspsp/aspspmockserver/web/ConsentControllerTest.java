@@ -35,8 +35,8 @@ public class ConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID), true)).thenReturn(Optional.of("someString"));
-        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID), true)).thenReturn(Optional.empty());
+        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID), eq(true))).thenReturn(Optional.of("someString"));
+        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID), eq(true))).thenReturn(Optional.empty());
     }
 
     @Test
