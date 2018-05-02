@@ -36,6 +36,14 @@ public class PaymentService {
         return Optional.ofNullable(paymentRepository.save(payment));
     }
 
+    public boolean isPaymentExist(String paymentId) {
+        return paymentRepository.exists(paymentId);
+    }
+
+    public List<SpiSinglePayments> addBulkPayments(List<SpiSinglePayments> payments) {
+        return paymentRepository.save(payments);
+    }
+
     public double calculateAmountToBeCharged(String accountId) {
         return paymentRepository.findAll().stream()
                    .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
@@ -59,13 +67,5 @@ public class PaymentService {
         return Optional.ofNullable(amount)
                    .map(SpiAmount::getDoubleContent)
                    .orElse(0.0);
-    }
-
-    public boolean isPaymentExist(String paymentId) {
-        return paymentRepository.exists(paymentId);
-    }
-
-    public List<SpiSinglePayments> addBulkPayments(List<SpiSinglePayments> payments) {
-        return paymentRepository.save(payments);
     }
 }
