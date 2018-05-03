@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config;
+package de.adorsys.aspsp.xs2a.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "keycloak")
 public class KeycloakConfigProperties {
+    private String realm;
     private String resource;
     private Credentials credentials;
-    private String realm;
     private String authServerUrl;
 
     @Data
