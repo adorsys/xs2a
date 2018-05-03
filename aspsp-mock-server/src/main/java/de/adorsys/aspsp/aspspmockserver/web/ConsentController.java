@@ -30,8 +30,8 @@ public class ConsentController {
     public ResponseEntity<SpiAccountConsent> readConsentById(@PathVariable("consent-id") String consentId) {
         SpiAccountConsent consent = consentService.getConsent(consentId);
         return consent == null
-            ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-            : new ResponseEntity<>(consent, HttpStatus.OK);
+                   ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                   : new ResponseEntity<>(consent, HttpStatus.OK);
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -41,8 +41,8 @@ public class ConsentController {
                                                 @RequestParam(required = false) boolean withBalance,
                                                 @RequestParam(required = false) boolean tppRedirectPreferred) {
         return consentService.createConsentAndReturnId(requestConsent, psuId, withBalance)
-            .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
-            .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

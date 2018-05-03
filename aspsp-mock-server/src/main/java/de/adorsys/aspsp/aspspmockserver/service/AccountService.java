@@ -24,8 +24,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,18 +41,21 @@ public class AccountService {
     }
 
     public List<SpiAccountDetails> getAllAccounts(String consentId, boolean withBalance) {
-        SpiAccountConsent consent = consentService.getConsent(consentId);
-        List<SpiAccountDetails> result = null;
-        if (consent != null) {
-            Set<String> accounts = Optional.ofNullable(getAccounts(consent.getAccess().getAccounts()))
-                .orElse(null);
-            result = accountRepository.findByIdIn(accounts);
+        return Optional.ofNullable(consentService.getConsent(consentId))
+                   .map(con -> getSpiAccountDetailsByConsent(con, withBalance))
+                   .orElse(Collections.emptyList());
+    }
 
-            if (!withBalance || !consent.isWithBalance()) {
-                result = Objects.requireNonNull(result).stream().map(this::deleteBalances).collect(Collectors.toList());
-            }
+    private List<SpiAccountDetails> getSpiAccountDetailsByConsent(SpiAccountConsent consent, boolean withBalance) {
+        Set<String> accounts = getAccounts(consent.getAccess().getAccounts());
+        List<SpiAccountDetails> accountDetailsList = accountRepository.findByIdIn(accounts);
+
+        if (!withBalance || !consent.isWithBalance()) {
+            return accountDetailsList.stream()
+                       .map(this::getAccountDetailsWithoutBalances)
+                       .collect(Collectors.toList());
         }
-        return result;
+        return accountDetailsList;
     }
 
     public Optional<SpiAccountDetails> getAccount(String id) {
@@ -69,19 +72,20 @@ public class AccountService {
 
     public Optional<List<SpiBalances>> getBalances(String accountId) {
         return Optional.ofNullable(accountRepository.findOne(accountId))
-            .map(SpiAccountDetails::getBalances);
+                   .map(SpiAccountDetails::getBalances);
     }
 
-    private SpiAccountDetails deleteBalances(SpiAccountDetails initialId) {
-        return new SpiAccountDetails(initialId.getId(), initialId.getIban(), initialId.getBban(), initialId.getPan(),
-            initialId.getMaskedPan(), initialId.getMsisdn(), initialId.getCurrency(), initialId.getName(),
-            initialId.getAccountType(), initialId.getCashSpiAccountType(), initialId.getBic(), null);
+    private SpiAccountDetails getAccountDetailsWithoutBalances(SpiAccountDetails accountDetails) {
+        return new SpiAccountDetails(accountDetails.getId(), accountDetails.getIban(), accountDetails.getBban(), accountDetails.getPan(),
+            accountDetails.getMaskedPan(), accountDetails.getMsisdn(), accountDetails.getCurrency(), accountDetails.getName(),
+            accountDetails.getAccountType(), accountDetails.getCashSpiAccountType(), accountDetails.getBic(), null);
     }
 
     private Set<String> getAccounts(List<SpiAccountReference> list) {
         return Optional.ofNullable(list)
-            .map(l -> l.stream()
-                .map(SpiAccountReference::getAccountId)
-                .collect(Collectors.toSet())).orElse(null);
+                   .map(l -> l.stream()
+                                 .map(SpiAccountReference::getAccountId)
+                                 .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 }
