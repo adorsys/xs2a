@@ -35,7 +35,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <swagger.version>1.5.19</swagger.version>
+        <swagger.annotations.version>1.5.19</swagger.annotations.version>
         <java.version>1.8</java.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.version}</version>
+            <version>${swagger.annotations.version}</version>
         </dependency>
 
         <dependency>
