@@ -16,10 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.constant;
 
-public class Constant {
+public class AuthorizationConstant {
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String SPACE_SEPARATOR = " ";
+    public static final String BEARER_TOKEN_PREFIX = "Bearer ";
 
-    private Constant(){}
+    private AuthorizationConstant(){}
 }

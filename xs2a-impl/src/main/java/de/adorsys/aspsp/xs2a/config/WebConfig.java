@@ -44,7 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.Constant.AUTHORIZATION_HEADER;
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
 @EnableWebMvc
