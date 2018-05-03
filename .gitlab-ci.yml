@@ -192,5 +192,7 @@ push_on_github:
       - git remote add github https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git
       - git config push.default simple
       - git checkout ${CI_COMMIT_REF_NAME}
-      - git fetch github
       - git push --follow-tags --atomic github
+      - git fetch -p github
+      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github
+      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github | sed 's#  github/##g' | xargs -n 1 -r -I {} git push github :{}
