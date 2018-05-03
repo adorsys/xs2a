@@ -41,7 +41,7 @@ public class ConsentInformationController {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;
 
-    @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.")
+    @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class), @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.POST)
     @ApiImplicitParams({
@@ -59,7 +59,7 @@ public class ConsentInformationController {
         return responseMapper.createdOrBadRequest(response);
     }
 
-    @ApiOperation(value = "Can check the status of an account information consent resource")
+    @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Map.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}/status", method = RequestMethod.GET)
@@ -73,7 +73,7 @@ public class ConsentInformationController {
         return responseMapper.okOrNotFound(response);
     }
 
-    @ApiOperation(value = "Returns the content of an account information consent object")
+    @ApiOperation(value = "Returns the content of an account information consent object", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
@@ -87,7 +87,7 @@ public class ConsentInformationController {
         return responseMapper.okOrNotFound(response);
     }
 
-    @ApiOperation(value = " Delete information consent object")
+    @ApiOperation(value = " Delete information consent object", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.DELETE)

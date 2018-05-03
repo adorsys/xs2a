@@ -40,7 +40,7 @@ public class AccountController {
     private final AccountService accountService;
     private final ResponseMapper responseMapper;
 
-    @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
+    @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "OK", response = Map.class),
     @ApiResponse(code = 400, message = "Bad request")})
@@ -59,7 +59,7 @@ public class AccountController {
         return responseMapper.okOrNotFound(responseObject); //TODO clarify how to avoid unchecked casts
     }
 
-    @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token")
+    @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token",authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "OK"),
     @ApiResponse(code = 400, message = "Bad request")})
@@ -80,7 +80,7 @@ public class AccountController {
         return responseMapper.okOrNotFound(responseObject);
     }
 
-    @ApiOperation(value = "Read a list of the balances for the given account")
+    @ApiOperation(value = "Read a list of the balances for the given account", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "OK", response = Balances.class),
     @ApiResponse(code = 400, message = "Bad request")})
@@ -98,7 +98,7 @@ public class AccountController {
         return responseMapper.okOrNotFound(responseObject);
     }
 
-    @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")
+    @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {
     @ApiResponse(code = 200, message = "OK", response = AccountReport.class),
     @ApiResponse(code = 400, message = "Bad request")})
