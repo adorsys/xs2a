@@ -194,7 +194,4 @@ push_on_github:
       - git checkout ${CI_COMMIT_REF_NAME}
       - git push --follow-tags --atomic github
       - git fetch -p github
-      - git branch -r --merged
-      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)"
-      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github
-      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github | sed 's#  github/##g' | xargs -n 1 -r -I {} git push github :{}
+      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github | sed 's#  github/##g' | xargs -n 1 -r -I {} git push github :{} || true
