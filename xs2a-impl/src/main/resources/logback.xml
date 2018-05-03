@@ -38,6 +38,7 @@
     <logger name="org.springframework" level="WARN" />
     <logger name="springfox.documentation" level="OFF" />
     <logger name="org.hibernate.validator" level="OFF" />
+    <logger name="org.keycloak.adapters" level="OFF" />
 
     <root level="DEBUG">
         <appender-ref ref="FILE"/>

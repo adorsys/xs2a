@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/funds-confirmations")
-@Api(value = "api/v1/funds-confirmations", tags = "AISP Funds confirmation", description = "Provides access to the funds confirmation")
+@Api(value = "api/v1/funds-confirmations", tags = "PIISP, Funds confirmation", description = "Provides access to the funds confirmation")
 public class FundsConfirmationController {
     private final FundsConfirmationService fundsConfirmationService;
     private final ResponseMapper responseMapper;
