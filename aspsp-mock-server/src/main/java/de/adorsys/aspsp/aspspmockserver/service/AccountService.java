@@ -48,6 +48,8 @@ public class AccountService {
 
     private List<SpiAccountDetails> getSpiAccountDetailsByConsent(SpiAccountConsent consent, boolean withBalance) {
         Set<String> accounts = getAccounts(consent.getAccess().getAccounts());
+        accounts.addAll(getAccounts(consent.getAccess().getBalances()));
+        accounts.addAll(getAccounts(consent.getAccess().getTransactions()));
         List<SpiAccountDetails> accountDetailsList = accountRepository.findByIdIn(accounts);
 
         if (!withBalance || !consent.isWithBalance()) {
