@@ -44,10 +44,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.Constant.AUTHORIZATION_HEADER;
+
 @Configuration
 @EnableWebMvc
 public class WebConfig extends WebMvcConfigurerAdapter {
-    private final String AUTHORIZATION_HEADER = "Authorization";
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
