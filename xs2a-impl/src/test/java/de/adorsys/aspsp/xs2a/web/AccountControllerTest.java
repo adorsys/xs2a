@@ -42,8 +42,7 @@ import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -57,9 +56,9 @@ public class AccountControllerTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
 
     private static final Gson GSON = new GsonBuilder()
-                                     .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
-                                     .registerTypeAdapter(Instant.class, new GsonUtcInstantAdapter())
-                                     .create();
+        .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
+        .registerTypeAdapter(Instant.class, new GsonUtcInstantAdapter())
+        .create();
 
     @Autowired
     private AccountController accountController;
@@ -69,7 +68,7 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        when(accountServiceMocked.getAccountDetailsList(anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
+        when(accountServiceMocked.getAccountDetailsList(anyString(), anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
         when(accountServiceMocked.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
         when(accountServiceMocked.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
@@ -98,7 +97,7 @@ public class AccountControllerTest {
         Map<String, List<AccountDetails>> expectedResult = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
 
         //When:
-        Map<String, List<AccountDetails>> result = accountController.getAccounts(withBalance, psuInvolved).getBody();
+        Map<String, List<AccountDetails>> result = accountController.getAccounts("id", withBalance, psuInvolved).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -159,36 +158,36 @@ public class AccountControllerTest {
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
         //Given:
         AccountDetails accountDetails = new AccountDetails(
-        "21fef",
-        "DE1234523543",
-        null,
-        null,
-        null,
-        null,
-        Currency.getInstance("EUR"),
-        "name",
-        "GIRO",
-        null,
-        "XE3DDD",
-        null,
-        null
+            "21fef",
+            "DE1234523543",
+            null,
+            null,
+            null,
+            null,
+            Currency.getInstance("EUR"),
+            "name",
+            "GIRO",
+            null,
+            "XE3DDD",
+            null,
+            null
         );
         List<AccountDetails> accountDetailsList = new ArrayList<>();
         accountDetailsList.add(accountDetails);
         Map<String, List<AccountDetails>> mockMap = new HashMap<>();
         mockMap.put("accountList", accountDetailsList);
         ResponseObject mockedResponse = ResponseObject.builder()
-                                        .body(mockMap).build();
+            .body(mockMap).build();
 
         Map<String, List<AccountDetails>> expectedMap = new HashMap<>();
         expectedMap.put("accountList", accountDetailsList);
         ResponseEntity<Map<String, List<AccountDetails>>> expectedResult = new ResponseEntity<>(expectedMap, HttpStatus.OK);
 
-        when(accountServiceMocked.getAccountDetailsList(withBalance, psuInvolved))
-        .thenReturn(mockedResponse);
+        when(accountServiceMocked.getAccountDetailsList("id", withBalance, psuInvolved))
+            .thenReturn(mockedResponse);
 
         //When:
-        ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts(withBalance, psuInvolved);
+        ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts("id", withBalance, psuInvolved);
 
         //Then:
         assertThat(actualResponse).isEqualTo(expectedResult);
@@ -199,20 +198,20 @@ public class AccountControllerTest {
         Map<String, List<AccountDetails>> result = new HashMap<>();
         result.put("accountList", Arrays.asList(array));
         return ResponseObject.builder()
-               .body(result).build();
+            .body(result).build();
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
         Map<String, List<AccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
         return ResponseObject.builder()
-               .body(map.get("accountList").get(0)).build();
+            .body(map.get("accountList").get(0)).build();
     }
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
         AccountReport accountReport = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
 
         return ResponseObject.builder()
-               .body(accountReport).build();
+            .body(accountReport).build();
     }
 
     private ResponseObject<List<Balances>> readBalances() throws IOException {
@@ -220,6 +219,6 @@ public class AccountControllerTest {
         List<Balances> res = new ArrayList<>();
         res.add(read);
         return ResponseObject.builder()
-               .body(res).build();
+            .body(res).build();
     }
 }

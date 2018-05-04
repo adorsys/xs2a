@@ -16,25 +16,47 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.aspspmockserver.repository.AccountRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountServiceTest {
+    private static final String CONSENT_ID_WITH_BALANCE_TRUE = "123456789";
+    private static final String CONSENT_ID_WITH_BALANCE_FALSE = "987654321";
+
     @Autowired
     private AccountService accountService;
+    @MockBean
+    AccountRepository accountRepository;
+    @MockBean
+    ConsentService consentService;
+
+    @Before
+    public void setUp() {
+        when(consentService.getConsent(CONSENT_ID_WITH_BALANCE_TRUE)).thenReturn(getConsent(true));
+        when(consentService.getConsent(CONSENT_ID_WITH_BALANCE_FALSE)).thenReturn(getConsent(false));
+        when(accountRepository.findByIdIn(new HashSet<>(Arrays.asList("21fefdsdvds212sa", "qwertyuiop12345678")))).thenReturn(getAccounts());
+        when(accountRepository.findOne("21fefdsdvds212sa")).thenReturn(getSpiAccountDetails_1());
+        when(accountRepository.exists("21fefdsdvds212sa")).thenReturn(true);
+        when(accountRepository.findOne("qwertyuiop12345678")).thenReturn(getSpiAccountDetailsWithBalance());
+        when(accountRepository.save(getSpiAccountDetails_1())).thenReturn(getSpiAccountDetails_1());
+    }
 
     @Test
     public void addAccount() {
@@ -53,11 +75,9 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails1 = getSpiAccountDetails_1();
         SpiAccountDetails expectedSpiAccountDetails2 = getSpiAccountDetails_2();
-        accountService.addOrUpdateAccount(expectedSpiAccountDetails1);
-        accountService.addOrUpdateAccount(expectedSpiAccountDetails2);
 
         //When
-        List<SpiAccountDetails> actualListSpiAccountDetails = accountService.getAllAccounts();
+        List<SpiAccountDetails> actualListSpiAccountDetails = accountService.getAllAccounts(CONSENT_ID_WITH_BALANCE_FALSE, false);
 
         //Then
         assertThat(actualListSpiAccountDetails).isNotNull();
@@ -70,7 +90,6 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         String spiAccountDetailsId = expectedSpiAccountDetails.getId();
-        accountService.addOrUpdateAccount(expectedSpiAccountDetails);
 
         //When
         Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccount(spiAccountDetailsId);
@@ -98,7 +117,6 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         String spiAccountDetailsId = expectedSpiAccountDetails.getId();
-        accountService.addOrUpdateAccount(expectedSpiAccountDetails);
 
         //When
         boolean actualResult = accountService.deleteAccountById(spiAccountDetailsId);
@@ -138,8 +156,6 @@ public class AccountServiceTest {
         String spiAccountDetailsId = spiAccountDetails.getId();
         List<SpiBalances> expectedBalance = spiAccountDetails.getBalances();
 
-        accountService.addOrUpdateAccount(spiAccountDetails);
-
         //When
         Optional<List<SpiBalances>> actualBalanceList = accountService.getBalances(spiAccountDetailsId);
 
@@ -149,20 +165,20 @@ public class AccountServiceTest {
 
     private SpiAccountDetails getSpiAccountDetails_1() {
         return new SpiAccountDetails("21fefdsdvds212sa", "DE12345235431234", null, "1111222233334444",
-        "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
-        null, "XE3DDD", null);
+            "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+            null, "XE3DDD", null);
     }
 
     private SpiAccountDetails getSpiAccountDetails_2() {
         return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
-        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
-        "GIRO", null, "ACVB222", null);
+            "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+            "GIRO", null, "ACVB222", null);
     }
 
     private SpiAccountDetails getSpiAccountDetailsWithBalance() {
         return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
-        "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
-        "GIRO", null, "ACVB222", getNewBalanceList());
+            "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
+            "GIRO", null, "ACVB222", getNewBalanceList());
     }
 
     private List<SpiBalances> getNewBalanceList() {
@@ -181,5 +197,25 @@ public class AccountServiceTest {
         sb.setSpiAmount(spiAmount);
         sb.setLastActionDateTime(new Date(1523951451537L));
         return sb;
+    }
+
+    private List<SpiAccountDetails> getAccounts() {
+        List<SpiAccountDetails> list = new ArrayList<>();
+        list.add(getSpiAccountDetails_1());
+        list.add(getSpiAccountDetails_2());
+        return list;
+    }
+
+    private List<SpiAccountReference> getReferencesList(List<SpiAccountDetails> details) {
+        return details.stream()
+            .map(det -> new SpiAccountReference(det.getId(), det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(),
+                det.getMsisdn(), det.getCurrency())).collect(Collectors.toList());
+    }
+
+    private SpiAccountConsent getConsent(boolean withBalance) {
+        return new SpiAccountConsent(withBalance ? CONSENT_ID_WITH_BALANCE_TRUE : CONSENT_ID_WITH_BALANCE_FALSE, new SpiAccountAccess(
+            getReferencesList(getAccounts()), null, null, null, null),
+            false, new Date(), 4, new Date(), null, null,
+            withBalance, false);
     }
 }

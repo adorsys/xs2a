@@ -49,22 +49,22 @@ public class AccountService {
     private final ValueValidatorService validatorService;
     private final JsonConverter jsonConverter;
 
-    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(boolean withBalance, boolean psuInvolved) {
-        List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccounts(withBalance, psuInvolved));
+    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
+        List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccounts(consentId, withBalance, psuInvolved));
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
         return ResponseObject.builder()
-               .body(accountDetailsMap).build();
+            .body(accountDetailsMap).build();
     }
 
     public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
         List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
         return Optional.ofNullable(spiBalances)
-                       .map(sb -> ResponseObject.builder().body(accountMapper.mapFromSpiBalancesList(sb)).build())
-                       .orElse(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                                                                            .text("Wrong account ID"))).build());
+            .map(sb -> ResponseObject.builder().body(accountMapper.mapFromSpiBalancesList(sb)).build())
+            .orElse(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
+                .text("Wrong account ID"))).build());
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
@@ -73,19 +73,19 @@ public class AccountService {
 
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
             return ResponseObject.builder()
-                   .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+                .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
 
             AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
             return ResponseObject.builder()
-                           .body(getReportAccordingMaxSize(accountReport, accountId)).build();
+                .body(getReportAccordingMaxSize(accountReport, accountId)).build();
         }
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
         return StringUtils.isEmpty(transactionId)
-                                      ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
-                                      : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
+            ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+            : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 
     private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance) {
@@ -123,8 +123,8 @@ public class AccountService {
         Optional<AccountReport> result = accountMapper.mapFromSpiAccountReport(accountSpi.readTransactionsById(accountId, transactionId, psuInvolved));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{},
-                                                        new Transactions[]{},
-                                                        new Links()
+            new Transactions[]{},
+            new Links()
         ));
 
     }
@@ -141,7 +141,7 @@ public class AccountService {
         AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
 
         return ResponseObject.builder()
-               .body(accountDetails).build();
+            .body(accountDetails).build();
     }
 
     // Validation

@@ -50,11 +50,11 @@ public class ConsentServiceTest {
 
         when(psuRepository.findPsuByAccountDetailsList_Iban(CORRECT_IBAN)).thenReturn(Optional.of(getPsu(CORRECT_IBAN)));
         when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(CORRECT_IBAN)))
-                .thenReturn(Collections.singletonList(getPsu(CORRECT_IBAN)));
+            .thenReturn(Collections.singletonList(getPsu(CORRECT_IBAN)));
         when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(WRONG_IBAN)))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
         when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(EMPTY_IBAN)))
-                .thenReturn(Collections.emptyList());
+            .thenReturn(Collections.emptyList());
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN)).thenReturn(null);
         when(psuRepository.findOne(CORRECT_PSU_ID)).thenReturn(getPsu(CORRECT_IBAN));
         when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
@@ -71,7 +71,7 @@ public class ConsentServiceTest {
         SpiCreateConsentRequest consent = createConsentRequestBalances(CORRECT_IBAN, null, null);
 
         //When:
-        Optional<String> response = consentService.createConsentAndReturnId(consent, CORRECT_PSU_ID);
+        Optional<String> response = consentService.createConsentAndReturnId(consent, CORRECT_PSU_ID, true);
 
         //Then:
         assertThat(response).isEqualTo(Optional.of(CORRECT_PSU_ID));
@@ -80,7 +80,7 @@ public class ConsentServiceTest {
     @Test
     public void createConsentAndReturnIdTest_Failure() {
         //When:
-        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(WRONG_IBAN, null, null), CORRECT_PSU_ID);
+        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(WRONG_IBAN, null, null), CORRECT_PSU_ID, true);
 
         //Then:
         assertThat(response).isEqualTo(Optional.empty());
@@ -89,7 +89,7 @@ public class ConsentServiceTest {
     @Test
     public void createConsentAndReturnIdTest_allAccounts_Success() {
         //When:
-        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(EMPTY_IBAN, SpiAccountAccessType.ALL_ACCOUNTS, null), CORRECT_PSU_ID);
+        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(EMPTY_IBAN, SpiAccountAccessType.ALL_ACCOUNTS, null), CORRECT_PSU_ID, true);
 
         //Then:
         assertThat(response).isEqualTo(Optional.of(CORRECT_PSU_ID));
@@ -98,7 +98,7 @@ public class ConsentServiceTest {
     @Test
     public void createConsentAndReturnIdTest_allAccounts_Failure() {
         //When:
-        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(EMPTY_IBAN, SpiAccountAccessType.ALL_ACCOUNTS, null), WRONG_PSU_ID);
+        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(EMPTY_IBAN, SpiAccountAccessType.ALL_ACCOUNTS, null), WRONG_PSU_ID, true);
 
         //Then:
         assertThat(response).isEqualTo(Optional.empty());
@@ -166,7 +166,7 @@ public class ConsentServiceTest {
     private List<SpiAccountDetails> getDetails() {
         List<SpiAccountDetails> list = new ArrayList<>();
         list.add(new SpiAccountDetails("9999999", CORRECT_IBAN, "", "", "",
-                "", CURRENCY, "David", null, null, "", null));
+            "", CURRENCY, "David", null, null, "", null));
         return list;
     }
 }

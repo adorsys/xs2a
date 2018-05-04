@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface AccountSpi {
-    List<SpiAccountDetails> readAccounts(boolean withBalance, boolean psuInvolved);
+    List<SpiAccountDetails> readAccounts(String consentId, boolean withBalance, boolean psuInvolved);
 
     List<SpiBalances> readBalances(String accountId, boolean psuInvolved);
 

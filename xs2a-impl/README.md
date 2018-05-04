@@ -1,6 +1,6 @@
 # Project Title
 
-Implementation of Mock ASPSP for XS2A Interface of Berlin Group 
+XS2A-Server
 
 ## Built With
 
@@ -14,40 +14,23 @@ To interact with keycloak server properly, please add following parameters to yo
 ```
 keycloak.auth-server-url=http://localhost:8081/auth
 keycloak.realm=xs2a
-keycloak.resource=aspsp-mock
+keycloak.resource=xs2a-impl
 keycloak.public-client=true
 keycloak.principal-attribute=preferred_username
-keycloak.credentials.secret=70088701-3e98-4343-9573-21ed4334f477
+keycloak.credentials.secret=74cae234-510c-4094-9439-1ee734e8eefb
 keycloak.bearer-only=true
 keycloak.cors=false
 ```
 Some of these parameters you can obtain after install and run keycloak server (see 'Keycloak run and setting instruction' section below)
 
-To run Mock ASPSP app from command line
-
-1. with in-memory DB fongo:
+To run XS2A-Server app from command line
 
 ```
 mvn clean install 
-mvn spring-boot:run -Drun.profiles=fongo
+mvn spring-boot:run
  
 ```
 
-2. with test data in-memory DB fongo:
-
-```
-mvn clean install 
-mvn spring-boot:run -Drun.profiles=fongo,data_test 
- 
-```
-
-3. In order to run app with real DB, please input correct connection credentials into mongo.properties.
-   Then use command line to run the app.:  
-
-```
-mvn clean install 
-mvn spring-boot:run -Drun.profiles=mongo 
- 
 ``` 
 # Keycloak run and setting instruction
 ```
@@ -56,8 +39,8 @@ https://www.keycloak.org/downloads.html
 - Go to keycloak-3.4.3.Final/bin folder and run keycloak server:
 standalone.bat (for Windows users, *.sh for Linux)
 - Create realm with name: xs2a
-- Create client with name: aspsp-mock
-- Go to 'aspsp-mock' client settings tab and set 'Valid redirect URIs' field to: http://localhost:28080/*
+- Create client with name: xs2a-impl
+- Go to 'xs2a-impl' client settings tab and set 'Valid redirect URIs' field to: http://localhost:8080/*
 - Set 'Web origins' field to: *
 - Set 'Access Type' field to: confidential
 - Go to Credential tab, copy user secret and put it to keycloak.credentials.secret in application.properties file

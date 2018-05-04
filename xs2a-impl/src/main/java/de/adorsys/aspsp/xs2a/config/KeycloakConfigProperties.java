@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.repository;
+package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
+@Data
+@Component
+@ConfigurationProperties(prefix = "keycloak")
+public class KeycloakConfigProperties {
+    private String realm;
+    private String resource;
+    private Credentials credentials;
+    private String authServerUrl;
 
-@Repository
-@Profile({"mongo", "fongo"})
-public interface AccountRepository extends MongoRepository<SpiAccountDetails, String> {
-    List<SpiAccountDetails> findByIdIn(Collection<String> ids);
+    @Data
+    public static class Credentials {
+        private String secret;
+    }
 }

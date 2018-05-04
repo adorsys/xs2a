@@ -9,6 +9,8 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import java.io.IOException;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
 import static org.springframework.util.StringUtils.isEmpty;
 
 public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
@@ -22,7 +24,7 @@ public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
     }
 
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        request.getHeaders().add("Authorization", "Bearer " + this.bearerToken);
+        request.getHeaders().add(AUTHORIZATION_HEADER, BEARER_TOKEN_PREFIX + this.bearerToken);
         return execution.execute(request, body);
     }
 }

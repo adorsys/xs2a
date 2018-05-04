@@ -37,7 +37,7 @@ public class BulkPaymentInitiationController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
 
-    @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP")
+    @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
     @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping("/{payment-product}")

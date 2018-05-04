@@ -27,6 +27,7 @@ public class KeycloakConfigProperties {
     private String resource;
     private Credentials credentials;
     private String realm;
+    private String authServerUrl;
 
     @Data
     public static class Credentials {

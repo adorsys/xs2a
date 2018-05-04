@@ -19,30 +19,33 @@ import java.util.List;
 public class ConsentController {
     private final ConsentService consentService;
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountConsent>> readAllConsents() {
         return ResponseEntity.ok(consentService.getAllConsents());
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{consent-id}")
     public ResponseEntity<SpiAccountConsent> readConsentById(@PathVariable("consent-id") String consentId) {
         SpiAccountConsent consent = consentService.getConsent(consentId);
         return consent == null
-                       ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                       : new ResponseEntity<>(consent, HttpStatus.OK);
+                   ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                   : new ResponseEntity<>(consent, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/")
-    public ResponseEntity<String> createConsent(@RequestBody SpiCreateConsentRequest requestConsent, @RequestParam(required = false) String psuId) {
-        return consentService.createConsentAndReturnId(requestConsent, psuId)
-                       .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
-                       .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    public ResponseEntity<String> createConsent(@RequestBody SpiCreateConsentRequest requestConsent,
+                                                @RequestParam(required = false) String psuId,
+                                                @RequestParam(required = false) boolean withBalance,
+                                                @RequestParam(required = false) boolean tppRedirectPreferred) {
+        return consentService.createConsentAndReturnId(requestConsent, psuId, withBalance)
+                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @DeleteMapping(path = "/{consent-id}")
     public ResponseEntity deleteConsent(@PathVariable("consent-id") String consentId) {
         if (consentService.deleteConsentById(consentId)) {
