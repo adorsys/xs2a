@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -39,10 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RCVD;
@@ -69,16 +65,18 @@ public class PaymentServiceTest {
 
     @Before
     public void setUp() throws IOException {
+        List<SpiPaymentInitialisationResponse> responseList = new ArrayList<>();
+        responseList.add(getSpiPaymentResponse(ACCP));
         when(paymentSpi.initiatePeriodicPayment(any(), anyBoolean(), any()))
-        .thenReturn(getSpiPaymentResponse(ACCP));
+            .thenReturn(getSpiPaymentResponse(ACCP));
         when(paymentSpi.createPaymentInitiation(any(), any(), anyBoolean()))
-        .thenReturn(getSpiPaymentResponse(RCVD));
+            .thenReturn(getSpiPaymentResponse(RCVD));
         when(paymentSpi.createBulkPayments(any(), any(), anyBoolean()))
-        .thenReturn(getSpiPaymentResponse(ACCP));
+            .thenReturn(responseList);
         when(paymentSpi.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
-        .thenReturn(ACCP);
+            .thenReturn(ACCP);
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
-        .thenReturn(RJCT);
+            .thenReturn(RJCT);
     }
 
     @Test
@@ -115,11 +113,11 @@ public class PaymentServiceTest {
         boolean tppRedirectPreferred = false;
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
+        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
 
         //Then:
         assertThat(actualResponse.getBody()).isNotNull();
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.ACCP);
+        assertThat(actualResponse.getBody().get(0).getTransactionStatus()).isEqualTo(TransactionStatus.ACCP);
     }
 
     @Test
@@ -136,24 +134,7 @@ public class PaymentServiceTest {
         //Than:
         assertThat(result.getError()).isEqualTo(expectedResult.getError());
         assertThat(result.getBody().getTransactionStatus()).isEqualTo(expectedResult.getBody().getTransactionStatus());
-        assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
-    }
-
-    private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
-
-        return ResponseObject.builder()
-               .body(getPaymentInitializationResponse()).build();
-    }
-
-    private PeriodicPayment readPeriodicPayment() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(PERIODIC_PAYMENT_DATA, UTF_8), PeriodicPayment.class);
-    }
-
-    private PaymentInitialisationResponse getPaymentInitializationResponse() {
-        PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
-        resp.setTransactionStatus(TransactionStatus.ACCP);
-        resp.set_links(new Links());
-        return resp;
+        assertThat(result.getBody().getLinks()).isEqualTo(expectedResult.getBody().getLinks());
     }
 
     @Test
@@ -169,11 +150,6 @@ public class PaymentServiceTest {
         //Then:
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
-    }
-
-    private SpiSinglePayments getSpiPayment() {
-        SpiSinglePayments spiPayment = new SpiSinglePayments();
-        return spiPayment;
     }
 
     private SpiPaymentInitialisationResponse getSpiPaymentResponse(SpiTransactionStatus status) {
@@ -203,4 +179,23 @@ public class PaymentServiceTest {
 
         return singlePayments;
     }
+
+
+    private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
+
+        return ResponseObject.builder()
+            .body(getPaymentInitializationResponse()).build();
+    }
+
+    private PeriodicPayment readPeriodicPayment() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(PERIODIC_PAYMENT_DATA, UTF_8), PeriodicPayment.class);
+    }
+
+    private PaymentInitialisationResponse getPaymentInitializationResponse() {
+        PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
+        resp.setTransactionStatus(TransactionStatus.ACCP);
+        resp.setLinks(new Links());
+        return resp;
+    }
+
 }

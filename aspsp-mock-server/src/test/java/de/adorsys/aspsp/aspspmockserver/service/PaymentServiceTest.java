@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -44,17 +50,17 @@ public class PaymentServiceTest {
     @Before
     public void setUp() {
         when(paymentRepository.save(any(SpiSinglePayments.class)))
-        .thenReturn(new SpiSinglePayments());
+            .thenReturn(getSpiSinglePayment());
         when(paymentRepository.exists(PAYMENT_ID))
-        .thenReturn(true);
+            .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
-        .thenReturn(false);
+            .thenReturn(false);
     }
 
     @Test
     public void addPayment() {
         //Given
-        SpiSinglePayments expectedPayment = new SpiSinglePayments();
+        SpiSinglePayments expectedPayment = getSpiSinglePayment();
 
         //When
         SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment).get();
@@ -68,5 +74,33 @@ public class PaymentServiceTest {
         //Then
         assertThat(paymentService.isPaymentExist(PAYMENT_ID)).isTrue();
         assertThat(paymentService.isPaymentExist(WRONG_PAYMENT_ID)).isFalse();
+    }
+
+    @Test
+    public void addBulkPayments() {
+        //Given
+        List<SpiSinglePayments> expectedPayments = new ArrayList<>();
+        expectedPayments.add(getSpiSinglePayment());
+
+        //When
+        List<SpiSinglePayments> actualPayments = paymentService.addBulkPayments(expectedPayments);
+
+        //Then
+        assertThat(actualPayments).isNotNull();
+    }
+
+    private SpiSinglePayments getSpiSinglePayment(){
+        SpiSinglePayments payment = new SpiSinglePayments();
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"),"20");
+        SpiAccountReference accountReference = new SpiAccountReference("11234","DE23100120020123456789",null,null,null,null,Currency.getInstance("EUR"));
+        payment.setInstructedAmount(amount);
+        payment.setDebtorAccount(accountReference);
+        payment.setCreditorName("Merchant123");
+        payment.setPurposeCode("BEQNSD");
+        payment.setCreditorAgent("sdasd");
+        payment.setCreditorAccount(accountReference);
+        payment.setRemittanceInformationUnstructured("Ref Number Merchant");
+
+        return payment;
     }
 }

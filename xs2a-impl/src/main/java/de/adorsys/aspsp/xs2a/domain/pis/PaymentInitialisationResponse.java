@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageCode;
@@ -53,7 +54,8 @@ public class PaymentInitialisationResponse {
     private MessageCode[] tppMessages;
 
     @ApiModelProperty(value = "Links: a list of hyperlinks to be recognised by the TPP.")
-    private Links _links;
+    @JsonProperty("_links")
+    private Links links;
 
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     private boolean tppRedirectPreferred;

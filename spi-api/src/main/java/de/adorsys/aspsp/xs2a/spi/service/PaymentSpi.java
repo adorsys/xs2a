@@ -29,7 +29,7 @@ public interface PaymentSpi {
 
     SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment);
 
-    SpiPaymentInitialisationResponse createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred);
+    List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred);
 
     SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred);
 }

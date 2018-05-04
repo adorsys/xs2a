@@ -24,15 +24,19 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
-import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import lombok.AllArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
@@ -61,26 +65,35 @@ public class PaymentSpiImpl implements PaymentSpi {
     private SpiTransactionStatus resolveTransactionStatus(SpiPeriodicPayment payment) {
         Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
         return Optional.of(map.values().stream()
-                           .anyMatch(a -> a.getIban()
-                                          .equals(payment.getCreditorAccount().getIban())))
-               .map(present -> ACCP)
-               .orElse(RJCT);
+            .anyMatch(a -> a.getIban()
+                .equals(payment.getCreditorAccount().getIban())))
+            .map(present -> ACCP)
+            .orElse(RJCT);
     }
 
-    public SpiPaymentInitialisationResponse createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        return PaymentMockData.createMultiplePayments(payments, paymentProduct, tppRedirectPreferred);
+    @Override
+    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        ResponseEntity<List<SpiSinglePayments>> responseEntity = restTemplate.exchange(remoteSpiUrls.getUrl("createBulkPayments"), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
+        });
+        return (responseEntity.getStatusCode() == CREATED)
+            ? responseEntity.getBody().stream()
+            .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
+            .collect(Collectors.toList())
+            : Collections.emptyList();
     }
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
         ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPayment"), spiSinglePayments, SpiSinglePayments.class);
-        if (responseEntity.getStatusCode() == CREATED) {
-            SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-            paymentResponse.setPaymentId(responseEntity.getBody().getPaymentId());
-            paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
-            return paymentResponse;
-        }
-        return null;
+        return responseEntity.getStatusCode() == CREATED ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
+    }
+
+    private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+        SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
+        paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
+        paymentResponse.setPaymentId(spiSinglePayments.getPaymentId());
+        paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
+
+        return paymentResponse;
     }
 }

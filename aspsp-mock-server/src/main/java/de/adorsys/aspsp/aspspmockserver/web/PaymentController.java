@@ -25,9 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RestController
 @RequestMapping(path = "/payments")
@@ -45,6 +48,16 @@ public class PaymentController {
         return paymentService.addPayment(payment)
             .map(saved -> new ResponseEntity<>(saved, CREATED))
             .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @PostMapping(path = "/bulk-payments/")
+    public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
+        @RequestBody List<SpiSinglePayments> payments) throws Exception {
+        List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
+        return isEmpty(saved)
+            ? ResponseEntity.badRequest().build()
+            : new ResponseEntity<>(saved, CREATED);
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

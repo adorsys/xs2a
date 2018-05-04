@@ -36,7 +36,6 @@ import java.util.Map;
 @RequestMapping(path = "api/v1/payments/{payment-product}")
 @Api(value = "api/v1/payments/{payment-product}", tags = "PISP, Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
-
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
 

@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,18 +31,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PaymentControllerTest {
     private static final String PAYMENT_ID = "123456789";
-    private static final String WRONG_PAYMENT_ID = "0";
+    private static final String WRONG_PAYMENT_ID = "Wrong payment id";
 
     @Autowired
     private PaymentController paymentController;
@@ -49,14 +55,18 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
-        SpiSinglePayments response = getExpectedRequest();
-        response.setPaymentId("12345");
-        when(paymentService.addPayment(getExpectedRequest()))
-        .thenReturn(Optional.of(response));
+        SpiSinglePayments response = getSpiSinglePayment();
+        response.setPaymentId(PAYMENT_ID);
+        List<SpiSinglePayments> responseList = new ArrayList<>();
+        responseList.add(response);
+        when(paymentService.addPayment(getSpiSinglePayment()))
+            .thenReturn(Optional.of(response));
+        when(paymentService.addBulkPayments(any()))
+            .thenReturn(responseList);
         when(paymentService.isPaymentExist(PAYMENT_ID))
-        .thenReturn(true);
+            .thenReturn(true);
         when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))
-        .thenReturn(false);
+            .thenReturn(false);
     }
 
     @Test
@@ -65,18 +75,30 @@ public class PaymentControllerTest {
         HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<SpiSinglePayments> actualResponse = paymentController.createPayment(getExpectedRequest());
-        HttpStatus actualStatus = actualResponse.getStatusCode();
+        ResponseEntity<SpiSinglePayments> actualResponse = paymentController.createPayment(getSpiSinglePayment());
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody().getPaymentId()).isNotNull();
     }
 
-    private SpiSinglePayments getExpectedRequest() {
-        SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
-        return spiSinglePayments;
+    @Test
+    public void createBulkPayments() throws Exception {
+        //Given
+        HttpStatus expectedStatus = HttpStatus.CREATED;
+        List<SpiSinglePayments> expectedRequest = new ArrayList<>();
+        expectedRequest.add(getSpiSinglePayment());
+
+        //When
+        ResponseEntity<List<SpiSinglePayments>> actualResponse = paymentController.createBulkPayments(expectedRequest);
+
+        //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
+        assertThat(actualStatus).isEqualTo(expectedStatus);
+        assertThat(actualResponse.getBody()).isNotNull();
+        assertThat(actualResponse.getBody().get(0).getPaymentId()).isEqualTo(PAYMENT_ID);
     }
 
     @Test
@@ -86,9 +108,9 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity<SpiSinglePayments> actualResponse = paymentController.getPaymentStatusById(PAYMENT_ID);
-        HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody()).isEqualTo(ACCP);
@@ -101,11 +123,26 @@ public class PaymentControllerTest {
 
         //When
         ResponseEntity<SpiSinglePayments> actualResponse = paymentController.getPaymentStatusById(WRONG_PAYMENT_ID);
-        HttpStatus actualStatus = actualResponse.getStatusCode();
 
         //Then
+        HttpStatus actualStatus = actualResponse.getStatusCode();
         assertThat(actualStatus).isEqualTo(expectedStatus);
         assertThat(actualResponse.getBody()).isNotNull();
         assertThat(actualResponse.getBody()).isEqualTo(RJCT);
+    }
+
+    private SpiSinglePayments getSpiSinglePayment() {
+        SpiSinglePayments payment = new SpiSinglePayments();
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), "20");
+        SpiAccountReference accountReference = new SpiAccountReference("11234", "DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
+        payment.setInstructedAmount(amount);
+        payment.setDebtorAccount(accountReference);
+        payment.setCreditorName("Merchant123");
+        payment.setPurposeCode("BEQNSD");
+        payment.setCreditorAgent("sdasd");
+        payment.setCreditorAccount(accountReference);
+        payment.setRemittanceInformationUnstructured("Ref Number Merchant");
+
+        return payment;
     }
 }

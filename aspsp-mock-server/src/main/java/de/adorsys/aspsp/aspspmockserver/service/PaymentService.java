@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,32 +36,36 @@ public class PaymentService {
         return Optional.ofNullable(paymentRepository.save(payment));
     }
 
+    public boolean isPaymentExist(String paymentId) {
+        return paymentRepository.exists(paymentId);
+    }
+
+    public List<SpiSinglePayments> addBulkPayments(List<SpiSinglePayments> payments) {
+        return paymentRepository.save(payments);
+    }
+
     public double calculateAmountToBeCharged(String accountId) {
         return paymentRepository.findAll().stream()
-                   .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
-                   .mapToDouble(this::getAmountFromPayment)
-                   .sum();
+            .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
+            .mapToDouble(this::getAmountFromPayment)
+            .sum();
     }
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment.getDebtorAccount())
-                   .map(SpiAccountReference::getAccountId)
-                   .orElse("");
+            .map(SpiAccountReference::getAccountId)
+            .orElse("");
     }
 
     private double getAmountFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment)
-                   .map(paym -> getDoubleContentFromAmount(payment.getInstructedAmount()))
-                   .orElse(0.0);
+            .map(paym -> getDoubleContentFromAmount(payment.getInstructedAmount()))
+            .orElse(0.0);
     }
 
     private double getDoubleContentFromAmount(SpiAmount amount) {
         return Optional.ofNullable(amount)
-                   .map(SpiAmount::getDoubleContent)
-                   .orElse(0.0);
-    }
-
-    public boolean isPaymentExist(String paymentId) {
-        return paymentRepository.exists(paymentId);
+            .map(SpiAmount::getDoubleContent)
+            .orElse(0.0);
     }
 }
