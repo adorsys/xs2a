@@ -65,10 +65,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     private SpiTransactionStatus resolveTransactionStatus(SpiPeriodicPayment payment) {
         Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
         return Optional.of(map.values().stream()
-                               .anyMatch(a -> a.getIban()
-                                                  .equals(payment.getCreditorAccount().getIban())))
-                   .map(present -> ACCP)
-                   .orElse(RJCT);
+            .anyMatch(a -> a.getIban()
+                .equals(payment.getCreditorAccount().getIban())))
+            .map(present -> ACCP)
+            .orElse(RJCT);
     }
 
     @Override
@@ -76,10 +76,10 @@ public class PaymentSpiImpl implements PaymentSpi {
         ResponseEntity<List<SpiSinglePayments>> responseEntity = restTemplate.exchange(remoteSpiUrls.getUrl("createBulkPayments"), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
         });
         return (responseEntity.getStatusCode() == CREATED)
-                   ? responseEntity.getBody().stream()
-                         .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
-                         .collect(Collectors.toList())
-                   : Collections.emptyList();
+            ? responseEntity.getBody().stream()
+            .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
+            .collect(Collectors.toList())
+            : Collections.emptyList();
     }
 
     @Override

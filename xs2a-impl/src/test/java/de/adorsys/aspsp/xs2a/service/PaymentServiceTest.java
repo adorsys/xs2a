@@ -184,7 +184,7 @@ public class PaymentServiceTest {
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
         return ResponseObject.builder()
-                   .body(getPaymentInitializationResponse()).build();
+            .body(getPaymentInitializationResponse()).build();
     }
 
     private PeriodicPayment readPeriodicPayment() throws IOException {

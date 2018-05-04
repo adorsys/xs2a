@@ -40,11 +40,11 @@ public class FutureBookingsController {
         this.futureBookingsService = futureBookingsService;
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/{accountId}")
     public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("accountId") String accountId) throws Exception {
         return futureBookingsService.changeBalances(accountId)
-                   .map(saved -> new ResponseEntity<>(saved, OK))
-                   .orElse(ResponseEntity.notFound().build());
+            .map(saved -> new ResponseEntity<>(saved, OK))
+            .orElse(ResponseEntity.notFound().build());
     }
 }

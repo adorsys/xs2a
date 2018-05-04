@@ -56,7 +56,7 @@ public class PaymentService {
         paymentStatusResponse.put("transactionStatus", transactionStatus);
 
         return ResponseObject.builder()
-                   .body(paymentStatusResponse).build();
+            .body(paymentStatusResponse).build();
     }
 
     public ResponseObject initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, PeriodicPayment periodicPayment) {
@@ -65,7 +65,7 @@ public class PaymentService {
             paymentSpi.initiatePeriodicPayment(paymentProduct, tppRedirectPreferred, paymentMapper.mapToSpiPeriodicPayment(periodicPayment)));
 
         return ResponseObject.builder()
-                   .body(response).build();
+            .body(response).build();
     }
 
     public ResponseObject createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -73,15 +73,15 @@ public class PaymentService {
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
         List<PaymentInitialisationResponse> paymentInitialisationResponse = spiPaymentInitiation.stream()
-                                                                                .map(spiPaym -> getPaymentInitiationResponse(spiPaym, paymentProduct))
-                                                                                .collect(Collectors.toList());
+            .map(spiPaym -> getPaymentInitiationResponse(spiPaym, paymentProduct))
+            .collect(Collectors.toList());
 
         return isEmpty(paymentInitialisationResponse)
-                   ? ResponseObject.builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                                                    .text(messageService.getMessage(PAYMENT_FAILED.name()))))
-                         .build()
-                   : ResponseObject.builder().body(paymentInitialisationResponse).build();
+            ? ResponseObject.builder()
+            .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
+                .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+            .build()
+            : ResponseObject.builder().body(paymentInitialisationResponse).build();
     }
 
     public ResponseObject createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -90,17 +90,17 @@ public class PaymentService {
         PaymentInitialisationResponse paymentInitialisationResponse = getPaymentInitiationResponse(spiPaymentInitiation, paymentProduct);
 
         return Optional.ofNullable(paymentInitialisationResponse)
-                   .map(resp -> ResponseObject.builder().body(resp).build())
-                   .orElse(ResponseObject.builder()
-                               .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                                                          .text(messageService.getMessage(PAYMENT_FAILED.name()))))
-                               .build());
+            .map(resp -> ResponseObject.builder().body(resp).build())
+            .orElse(ResponseObject.builder()
+                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
+                    .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+                .build());
     }
 
     private PaymentInitialisationResponse getPaymentInitiationResponse(SpiPaymentInitialisationResponse spiPaym, PaymentProduct paymentProduct) {
         //TODO Create a task to move out the creation of links from service layer
 
-        PaymentInitialisationResponse payment= paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaym);
+        PaymentInitialisationResponse payment = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaym);
         payment.setLinks(linkComponent.createPaymentLinks(payment.getPaymentId(), paymentProduct));
 
         return payment;
