@@ -64,7 +64,7 @@ public class PaymentService {
         PaymentInitialisationResponse paymentInitiation = getPaymentInitiationResponse(spiPeriodicPayment, paymentProduct);
 
         return Optional.ofNullable(paymentInitiation)
-            .map(response -> ResponseObject.builder().body(paymentInitiation).build())
+            .map(resp -> ResponseObject.builder().body(resp).build())
             .orElse(ResponseObject.builder()
                 .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
                     .text(messageService.getMessage(PAYMENT_FAILED.name()))))
