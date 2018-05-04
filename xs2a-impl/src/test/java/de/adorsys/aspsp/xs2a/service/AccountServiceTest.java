@@ -196,7 +196,7 @@ public class AccountServiceTest {
     }
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-        List<SpiAccountDetails> list = accountSpi.readAccounts(withBalance, psuInvolved);
+        List<SpiAccountDetails> list = accountSpi.readAccounts("id", withBalance, psuInvolved);
         List<AccountDetails> accountDetails = new ArrayList<>();
         for (SpiAccountDetails s : list) {
             accountDetails.add(accountMapper.mapFromSpiAccountDetails(s));
@@ -205,7 +205,7 @@ public class AccountServiceTest {
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
 
         //When:
-        List<AccountDetails> actualResponse = accountService.getAccountDetailsList(withBalance, psuInvolved).getBody().get("accountList");
+        List<AccountDetails> actualResponse = accountService.getAccountDetailsList("id", withBalance, psuInvolved).getBody().get("accountList");
 
         //Then:
         assertThat(expectedResult).isEqualTo(actualResponse);
@@ -215,7 +215,7 @@ public class AccountServiceTest {
         String urlToAccount = linkTo(AccountController.class).toString();
 
         accountDetails
-        .forEach(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount));
+            .forEach(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount));
         return accountDetails;
 
     }

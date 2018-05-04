@@ -35,6 +35,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -42,6 +44,7 @@ import static org.mockito.Mockito.when;
 public class AccountControllerTest {
     private static final String ACCOUNT_ID = "2123sndjk2w23";
     private static final String WRONG_ACCOUNT_ID = "wrong account id";
+    private static final String CONSENT_ID = "123456789";
 
     @MockBean
     private AccountService accountService;
@@ -57,7 +60,7 @@ public class AccountControllerTest {
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
         when(accountService.getAccount(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        when(accountService.getAllAccounts())
+        when(accountService.getAllAccounts(anyString(), anyBoolean()))
             .thenReturn(accountList);
         when(accountService.addOrUpdateAccount(getSpiAccountDetails_1()))
             .thenReturn(getSpiAccountDetails_1());
@@ -77,7 +80,7 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAllAccounts();
+        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAllAccounts(CONSENT_ID, false);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();

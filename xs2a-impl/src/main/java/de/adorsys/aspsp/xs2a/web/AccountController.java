@@ -50,11 +50,12 @@ public class AccountController {
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
+    @RequestHeader(name = "consent-id", required = false) String consentId,
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
     @RequestParam(name = "with-balance", required = false) boolean withBalance,
     @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(withBalance, psuInvolved);
+        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance, psuInvolved);
 
         return responseMapper.okOrNotFound(responseObject); //TODO clarify how to avoid unchecked casts
     }
