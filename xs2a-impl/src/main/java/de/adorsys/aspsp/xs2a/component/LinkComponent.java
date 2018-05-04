@@ -27,15 +27,15 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @Component
 @AllArgsConstructor
 public class LinkComponent {
-    private  final String redirectLinkToSource;
+    private final String redirectLinkToSource;
 
-    public Links createPaymentLinks(String paymentId, PaymentProduct paymentProduct){
+    public Links createPaymentLinks(String paymentId, PaymentProduct paymentProduct) {
         Links links = new Links();
         links.setRedirect(redirectLinkToSource);
         links.setSelf(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentId).toString());
         links.setUpdatePsuIdentification(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentId).toString());
         links.setUpdatePsuAuthentication(linkTo(PaymentInitiationController.class, paymentProduct.getCode()).slash(paymentId).toString());
-        links.setStatus(linkTo(PaymentInitiationController.class, paymentProduct.getCode(),paymentId).slash("status").toString());
+        links.setStatus(linkTo(PaymentInitiationController.class, paymentProduct.getCode(), paymentId).slash("status").toString());
         return links;
     }
 }

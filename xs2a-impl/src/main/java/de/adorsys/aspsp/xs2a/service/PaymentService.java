@@ -90,7 +90,7 @@ public class PaymentService {
         PaymentInitialisationResponse paymentInitialisationResponse = getPaymentInitiationResponse(spiPaymentInitiation, paymentProduct);
 
         return Optional.ofNullable(paymentInitialisationResponse)
-                   .map(resp -> ResponseObject.builder().body(paymentInitialisationResponse).build())
+                   .map(resp -> ResponseObject.builder().body(resp).build())
                    .orElse(ResponseObject.builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
                                                           .text(messageService.getMessage(PAYMENT_FAILED.name()))))
@@ -101,7 +101,7 @@ public class PaymentService {
         //TODO Create a task to move out the creation of links from service layer
 
         PaymentInitialisationResponse payment= paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaym);
-        payment.set_links(linkComponent.createPaymentLinks(payment.getPaymentId(), paymentProduct));
+        payment.setLinks(linkComponent.createPaymentLinks(payment.getPaymentId(), paymentProduct));
 
         return payment;
     }

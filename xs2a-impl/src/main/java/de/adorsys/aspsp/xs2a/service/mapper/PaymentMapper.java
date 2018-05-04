@@ -132,7 +132,7 @@ public class PaymentMapper {
                            initialisationResponse.setTppRedirectPreferred(pir.isTppRedirectPreferred());
                            initialisationResponse.setScaMethods(mapFromSpiAuthenticationObjects(pir.getScaMethods()));
                            initialisationResponse.setTppMessages(mapFromSpiMessageCodes(pir.getTppMessages()));
-                           initialisationResponse.set_links(new Links());
+                           initialisationResponse.setLinks(new Links());
                            return initialisationResponse;
                        }).orElse(null);
     }

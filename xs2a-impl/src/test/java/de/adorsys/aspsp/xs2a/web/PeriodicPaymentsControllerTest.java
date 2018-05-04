@@ -74,7 +74,7 @@ public class PeriodicPaymentsControllerTest {
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
         assertThat(result.getBody().getTransactionStatus().getName()).isEqualTo(expectedResult.getBody().getTransactionStatus().getName());
-        assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
+        assertThat(result.getBody().getLinks()).isEqualTo(expectedResult.getBody().getLinks());
     }
 
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
@@ -90,7 +90,7 @@ public class PeriodicPaymentsControllerTest {
     private PaymentInitialisationResponse getPaymentInitializationResponse() {
         PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
         resp.setTransactionStatus(TransactionStatus.ACCP);
-        resp.set_links(new Links());
+        resp.setLinks(new Links());
         return resp;
     }
 }

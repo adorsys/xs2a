@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -135,7 +134,7 @@ public class PaymentServiceTest {
         //Than:
         assertThat(result.getError()).isEqualTo(expectedResult.getError());
         assertThat(result.getBody().getTransactionStatus()).isEqualTo(expectedResult.getBody().getTransactionStatus());
-        assertThat(result.getBody().get_links()).isEqualTo(expectedResult.getBody().get_links());
+        assertThat(result.getBody().getLinks()).isEqualTo(expectedResult.getBody().getLinks());
     }
 
     @Test
@@ -195,7 +194,7 @@ public class PaymentServiceTest {
     private PaymentInitialisationResponse getPaymentInitializationResponse() {
         PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
         resp.setTransactionStatus(TransactionStatus.ACCP);
-        resp.set_links(new Links());
+        resp.setLinks(new Links());
         return resp;
     }
 
