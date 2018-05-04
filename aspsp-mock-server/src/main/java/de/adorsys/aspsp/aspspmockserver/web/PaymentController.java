@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -65,5 +66,13 @@ public class PaymentController {
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
             ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
+    }
+
+    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @PostMapping(path = "/createPeriodicPayment/")
+    public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) throws Exception {
+        return paymentService.addPeriodicPayment(payment)
+            .map(saved -> new ResponseEntity<>(saved, CREATED))
+            .orElse(ResponseEntity.badRequest().build());
     }
 }

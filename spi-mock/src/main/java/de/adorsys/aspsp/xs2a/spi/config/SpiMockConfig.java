@@ -23,10 +23,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.TransactionsArt;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import de.adorsys.aspsp.xs2a.spi.test.data.ConsentMockData;
-import de.adorsys.aspsp.xs2a.spi.test.data.PaymentMockData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,12 +50,6 @@ public class SpiMockConfig {
     public SpiMockConfig() {
         fillAccounts();
         fillConsents();
-        fillPayments();
-    }
-
-    private void fillPayments() {
-        PaymentMockData.createPaymentInitiation(getPisRequest_1(), false);
-        PaymentMockData.createPaymentInitiation(getPisRequest_2(), false);
     }
 
     private void fillAccounts() {
@@ -296,71 +288,5 @@ public class SpiMockConfig {
         } catch (ParseException e) {
             return null;
         }
-    }
-
-    private SpiSinglePayments getPisRequest_1() {
-        Currency euro = Currency.getInstance("EUR");
-        SpiAccountReference accountReference = new SpiAccountReference(
-            "1111111",
-            "DE23100120020123456789",
-            null,
-            null,
-            null,
-            null,
-            euro);
-        SpiAmount amount = new SpiAmount(
-            euro,
-            "500"
-        );
-        SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
-        spiSinglePayments.setCreditorAccount(accountReference);
-        spiSinglePayments.setCreditorAddress(null);
-        spiSinglePayments.setCreditorAgent("qweqwer");
-        spiSinglePayments.setCreditorName("Merchant123");
-        spiSinglePayments.setDebtorAccount(accountReference);
-        spiSinglePayments.setEndToEndIdentification(null);
-        spiSinglePayments.setInstructedAmount(amount);
-        spiSinglePayments.setRequestedExecutionDate(new Date());
-        spiSinglePayments.setRequestedExecutionTime(new Date());
-        spiSinglePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
-        spiSinglePayments.setUltimateCreditor(null);
-        spiSinglePayments.setPurposeCode(null);
-        spiSinglePayments.setUltimateDebtor(null);
-        return spiSinglePayments;
-    }
-
-    private SpiSinglePayments getPisRequest_2() {
-        Currency euro = Currency.getInstance("EUR");
-        SpiAccountReference accountReference = new SpiAccountReference(
-            "2222222",
-            "DE2310012012323246789",
-            null,
-            null,
-            null,
-            null,
-            euro);
-        SpiAmount amount = new SpiAmount(
-            euro,
-            "300"
-        );
-        SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
-        spiSinglePayments.setCreditorAccount(accountReference);
-        spiSinglePayments.setCreditorAddress(null);
-        spiSinglePayments.setCreditorAgent("q");
-        spiSinglePayments.setCreditorName("Merchant123");
-        spiSinglePayments.setDebtorAccount(accountReference);
-        spiSinglePayments.setEndToEndIdentification(null);
-        spiSinglePayments.setInstructedAmount(amount);
-        spiSinglePayments.setRequestedExecutionDate(new Date());
-        spiSinglePayments.setRequestedExecutionTime(new Date());
-        spiSinglePayments.setRemittanceInformationUnstructured("Ref Number Merchant");
-        spiSinglePayments.setUltimateCreditor(null);
-        spiSinglePayments.setPurposeCode(null);
-        spiSinglePayments.setUltimateDebtor(null);
-        return spiSinglePayments;
-    }
-
-    private static String generatePaymentId() { //NOPMD TODO review and check PMD assertion
-        return UUID.randomUUID().toString();
     }
 }

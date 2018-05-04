@@ -67,7 +67,7 @@ public class PaymentServiceTest {
     public void setUp() throws IOException {
         List<SpiPaymentInitialisationResponse> responseList = new ArrayList<>();
         responseList.add(getSpiPaymentResponse(ACCP));
-        when(paymentSpi.initiatePeriodicPayment(any(), anyBoolean(), any()))
+        when(paymentSpi.initiatePeriodicPayment(any(), any(), anyBoolean()))
             .thenReturn(getSpiPaymentResponse(ACCP));
         when(paymentSpi.createPaymentInitiation(any(), any(), anyBoolean()))
             .thenReturn(getSpiPaymentResponse(RCVD));
@@ -123,18 +123,17 @@ public class PaymentServiceTest {
     @Test
     public void initiatePeriodicPayment() throws IOException {
         //Given:
-        String paymentProdct = "123123";
+        PaymentProduct paymentProduct = PaymentProduct.SCT;
         boolean tppRedirectPreferred = false;
         PeriodicPayment periodicPayment = readPeriodicPayment();
         ResponseObject<PaymentInitialisationResponse> expectedResult = readResponseObject();
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(paymentProdct, tppRedirectPreferred, periodicPayment);
+        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct, tppRedirectPreferred);
 
         //Than:
         assertThat(result.getError()).isEqualTo(expectedResult.getError());
         assertThat(result.getBody().getTransactionStatus()).isEqualTo(expectedResult.getBody().getTransactionStatus());
-        assertThat(result.getBody().getLinks()).isEqualTo(expectedResult.getBody().getLinks());
     }
 
     @Test
