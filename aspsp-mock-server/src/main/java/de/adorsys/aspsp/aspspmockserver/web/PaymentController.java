@@ -35,6 +35,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RestController
 @RequestMapping(path = "/payments")
+@ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
 public class PaymentController {
     private PaymentService paymentService;
 
@@ -43,7 +44,6 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/")
     public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) {
         return paymentService.addPayment(payment)
@@ -51,7 +51,6 @@ public class PaymentController {
             .orElse(ResponseEntity.badRequest().build());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/bulk-payments/")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) throws Exception {
@@ -61,16 +60,14 @@ public class PaymentController {
             : new ResponseEntity<>(saved, CREATED);
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{paymentId}/status/")
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
             ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
-    @PostMapping(path = "/createPeriodicPayment/")
-    public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) throws Exception {
+    @PostMapping(path = "/createPeriodicPayment")
+    public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
             .map(saved -> new ResponseEntity<>(saved, CREATED))
             .orElse(ResponseEntity.badRequest().build());
