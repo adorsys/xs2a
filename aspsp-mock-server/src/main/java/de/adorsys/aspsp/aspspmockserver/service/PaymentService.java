@@ -53,7 +53,7 @@ public class PaymentService {
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment.getDebtorAccount())
-            .map(SpiAccountReference::getAccountId)
+            .map(SpiAccountReference::getIban)
             .orElse("");
     }
 

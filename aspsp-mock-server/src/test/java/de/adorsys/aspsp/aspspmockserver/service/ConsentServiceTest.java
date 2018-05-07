@@ -143,7 +143,7 @@ public class ConsentServiceTest {
 
     private SpiCreateConsentRequest createConsentRequestBalances(String iban, SpiAccountAccessType allAccounts, SpiAccountAccessType allPsd2) {
         List<SpiAccountReference> list = new ArrayList<>();
-        list.add(new SpiAccountReference("", iban, "", "", "", "", CURRENCY));
+        list.add(new SpiAccountReference( iban, "", "", "", "", CURRENCY));
         SpiAccountAccess access = new SpiAccountAccess(null, list, null, allAccounts, allPsd2);
         return new SpiCreateConsentRequest(access, true, new Date(), 4, false);
     }
@@ -157,7 +157,7 @@ public class ConsentServiceTest {
 
         SpiAccountDetails det = getPsu(CORRECT_PSU_ID).getAccountDetailsList().get(0);
         List<SpiAccountReference> ref = new ArrayList<>();
-        ref.add(new SpiAccountReference(det.getId(), det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
+        ref.add(new SpiAccountReference( det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
         SpiAccountAccess acc = new SpiAccountAccess(null, ref, null, null, null);
 
         return new SpiAccountConsent(CORRECT_PSU_ID, acc, true, new Date(), 4, new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID, true, true);

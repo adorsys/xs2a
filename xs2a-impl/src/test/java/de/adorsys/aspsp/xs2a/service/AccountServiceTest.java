@@ -250,8 +250,8 @@ public class AccountServiceTest {
         Date bookingDate = getDateFromDateString("2017-11-07");
         Date valueDate = getDateFromDateString("2018-20-08");
         SpiAmount spiAmount = new SpiAmount(usd, "15000");
-        SpiAccountReference creditorAccount = new SpiAccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
-        SpiAccountReference debtorAccount = new SpiAccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
+        SpiAccountReference creditorAccount = new SpiAccountReference("cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
+        SpiAccountReference debtorAccount = new SpiAccountReference("dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
 
         return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", bookingDate, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
     }
@@ -261,8 +261,8 @@ public class AccountServiceTest {
         //transaction 1:
         Date valueDate = getDateFromDateString("2018-20-08");
         SpiAmount spiAmount = new SpiAmount(usd, "15000");
-        SpiAccountReference creditorAccount = new SpiAccountReference("11111-999999999", "cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
-        SpiAccountReference debtorAccount = new SpiAccountReference("dAccId", "dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
+        SpiAccountReference creditorAccount = new SpiAccountReference("cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
+        SpiAccountReference debtorAccount = new SpiAccountReference("dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
 
         return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", null, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
     }

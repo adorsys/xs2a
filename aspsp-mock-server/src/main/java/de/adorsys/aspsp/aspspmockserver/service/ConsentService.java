@@ -144,6 +144,6 @@ public class ConsentService {
     }
 
     private SpiAccountReference mapToSpiAccountReference(SpiAccountDetails details) {
-        return new SpiAccountReference(details.getId(), details.getIban(), details.getBban(), details.getPan(), details.getMaskedPan(), details.getMsisdn(), details.getCurrency());
+        return new SpiAccountReference( details.getIban(), details.getBban(), details.getPan(), details.getMaskedPan(), details.getMsisdn(), details.getCurrency());
     }
 }

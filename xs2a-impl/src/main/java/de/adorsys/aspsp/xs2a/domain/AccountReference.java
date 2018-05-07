@@ -20,16 +20,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
 import java.util.Currency;
 
 @Data
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
-
-    @ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required = true, example = "3dc3d5b3-7023-4848-9853-f5400a64e80f")
-    @Size(max = 35)
-    private String accountId;
 
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = false, example = "DE371234599999")
     private String iban;

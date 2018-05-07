@@ -87,7 +87,6 @@ public class ConsentMapper {
         return Optional.ofNullable(reference)
                .map(ar -> {
                    AccountReference accountReference = new AccountReference();
-                   accountReference.setAccountId(ar.getAccountId());
                    accountReference.setIban(ar.getIban());
                    accountReference.setBban(ar.getBban());
                    accountReference.setPan(ar.getPan());
@@ -134,7 +133,6 @@ public class ConsentMapper {
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
         return Optional.of(reference)
                .map(ar -> new SpiAccountReference(
-               ar.getAccountId(),
                ar.getIban(),
                ar.getBban(),
                ar.getPan(),

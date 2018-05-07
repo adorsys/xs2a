@@ -140,11 +140,11 @@ public class AccountSpiImpl implements AccountSpi {
     private boolean transactionIsValid(SpiTransaction spiTransaction, String accountId) {
 
         boolean isCreditorAccountValid = Optional.ofNullable(spiTransaction.getCreditorAccount())
-            .map(creditorAccount -> creditorAccount.getAccountId().trim().equals(accountId))
+            .map(creditorAccount -> creditorAccount.getIban().trim().equals(accountId))
             .orElse(false);
 
         boolean isDebtorAccountValid = Optional.ofNullable(spiTransaction.getDebtorAccount())
-            .map(debtorAccount -> debtorAccount.getAccountId().trim().equals(accountId))
+            .map(debtorAccount -> debtorAccount.getIban().trim().equals(accountId))
             .orElse(false);
 
         return isCreditorAccountValid || isDebtorAccountValid;

@@ -145,7 +145,6 @@ public class ConsentServiceTest {
         AccountReference reference = new AccountReference();
         reference.setIban(iban);
         reference.setCurrency(CURRENCY);
-        reference.setAccountId("ACCOUNT_ID");
         AccountReference[] list = new AccountReference[]{reference};
 
         AccountAccess access = new AccountAccess();
@@ -165,7 +164,7 @@ public class ConsentServiceTest {
         SpiAccountAccess acc = new SpiAccountAccess();
         SpiAccountDetails det = new SpiAccountDetails("XXXYYYXXX", CORRECT_IBAN, null, null, null, null, CURRENCY, "Buster", null, null, "", null);
         List<SpiAccountReference> ref = new ArrayList<>();
-        ref.add(new SpiAccountReference(det.getId(), det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
+        ref.add(new SpiAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
         acc.setBalances(ref);
 
         return new SpiAccountConsent(CORRECT_PSU_ID, acc, true, new Date(), 4, new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID, true, true);
