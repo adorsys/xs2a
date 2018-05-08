@@ -14,7 +14,12 @@ import de.adorsys.psd2.validator.exception.CertificateInvalidException;
 
 public class CertificateInvalidValidator implements CertificateValidator {
 
-	private static final String TRUSTSTORE_PATH = "resources/truststore";
+	private final String TRUSTSTORE_PATH;
+
+	public CertificateInvalidValidator(String tRUSTSTORE_PATH) {
+		super();
+		TRUSTSTORE_PATH = tRUSTSTORE_PATH;
+	}
 
 	@Override
 	public void validate(String encodedCert) throws CertificateException {
@@ -24,7 +29,7 @@ public class CertificateInvalidValidator implements CertificateValidator {
 		// NOPMD TODO check if certificate contain psd2 attributes
 		// cert.getExtendedKeyUsage().containsAll(listPsd2RequiredAttributes);
 
-		List<X509Certificate> listRootCertificate = CertificateUtils.getRootCertificate(TRUSTSTORE_PATH);
+		List<X509Certificate> listRootCertificate = new CertificateUtils().getRootCertificate(TRUSTSTORE_PATH);
 
 		for (X509Certificate rootCA : listRootCertificate) {
 			if (rootCA.getSubjectDN().equals(cert.getIssuerDN())) {

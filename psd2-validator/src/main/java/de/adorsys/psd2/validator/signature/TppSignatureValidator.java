@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SignatureException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,8 +16,11 @@ import com.nimbusds.jose.util.X509CertUtils;
 
 public class TppSignatureValidator {
 
-	/*private static final List<String> MANDATODY_HEADERS_PSD2 = Arrays
-			.asList(new String[] { "Digest", "TPP-Transaction", "TPP-Request-ID", "Date" });*/
+	/**
+	 * mandatory header fields for http signature in case of psd2
+	 */
+	private static final List<String> MANDATORY_HEADERS_PSD2 = Arrays
+			.asList(new String[] { "digest", "tpp-transaction-id", "tpp-request-id", "date" });
 
 	/**
 	 * signature should not be null signature should be conform with psd2
@@ -45,13 +50,12 @@ public class TppSignatureValidator {
 
 		Signature signatureData = Signature.fromString(signature);
 
-		// TODO 01 check if signature headers contain the mandory psd2 headers
-		// attribute
+		if (!signatureData.getHeaders().containsAll(MANDATORY_HEADERS_PSD2)) {
+			throw new IllegalArgumentException("SIGNATURE_INVALID");
+		}
 
 		SignatureVerifier verifier = new SignatureVerifier(key, signatureData);
-		verifier.verify("method", "uri", headers);
-
-		return true;
+		return verifier.verify("method", "uri", headers);
 	}
 
 }
