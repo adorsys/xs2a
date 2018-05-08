@@ -162,7 +162,7 @@ public class ConsentServiceTest {
 
     private SpiAccountConsent getConsent() {
         SpiAccountAccess acc = new SpiAccountAccess();
-        SpiAccountDetails det = new SpiAccountDetails("XXXYYYXXX", CORRECT_IBAN, null, null, null, null, CURRENCY, "Buster", null, null, "", null);
+        SpiAccountDetails det = new SpiAccountDetails("XXXYYYXXX", CORRECT_IBAN, null, null, null, null, CURRENCY, "Peter Muller", null, null, "", null);
         List<SpiAccountReference> ref = new ArrayList<>();
         ref.add(new SpiAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
         acc.setBalances(ref);
