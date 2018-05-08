@@ -28,8 +28,8 @@ public class FundMapper {
 
     public SpiFundsConfirmationRequest mapToSpiFundsConfirmationRequest(FundsConfirmationRequest request) {
         return new SpiFundsConfirmationRequest(request.getCardNumber(),
-        accountMapper.toSpi(request.getPsuAccount()),
-        request.getPayee(),
-        accountMapper.toSpi(request.getInstructedAmount()));
+            accountMapper.toSpi(request.getPsuAccount()),
+            request.getPayee(),
+            accountMapper.toSpi(request.getInstructedAmount()));
     }
 }

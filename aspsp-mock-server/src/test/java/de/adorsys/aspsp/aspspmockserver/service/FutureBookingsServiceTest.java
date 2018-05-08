@@ -54,20 +54,20 @@ public class FutureBookingsServiceTest {
     public void setUp() {
         when(paymentService.calculateAmountToBeCharged(any()))
             .thenReturn(500.0);
-        when(accountService.getAccount(ACCOUNT_ID))
-            .thenReturn(Optional.of(getSpiAccountDetailsWithBalance(BALANCE)));
-        when(accountService.getAccount(WRONG_ACCOUNT_ID))
+        when(accountService.getAccountById(ACCOUNT_ID))
+            .thenReturn(getSpiAccountDetailsWithBalance(BALANCE));
+        when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        when(accountService.addOrUpdateAccount(notNull(SpiAccountDetails.class)))
+        when(accountService.updateAccount(notNull(SpiAccountDetails.class)))
             .thenReturn(getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED)));
-        when(accountService.addOrUpdateAccount(null))
+        when(accountService.updateAccount(null))
             .thenReturn(null);
     }
 
     @Test
     public void changeBalances_Success() {
         //Given
-        SpiAccountDetails expectedAccountDetails = getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED));
+        SpiAccountDetails expectedAccountDetails = getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED)).get();
 
         //When
         SpiAccountDetails actualAccountDetails = futureBookingsService.changeBalances(ACCOUNT_ID).get();
@@ -88,10 +88,10 @@ public class FutureBookingsServiceTest {
         assertThat(actualAccountDetails).isEqualTo(expectedAccountDetails);
     }
 
-    private SpiAccountDetails getSpiAccountDetailsWithBalance(double amount) {
-        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+    private Optional<SpiAccountDetails> getSpiAccountDetailsWithBalance(double amount) {
+        return Optional.of(new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
             "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
-            "GIRO", null, "ACVB222", getNewBalanceList(amount));
+            "GIRO", null, "ACVB222", getNewBalanceList(amount)));
     }
 
     private ArrayList<SpiBalances> getNewBalanceList(double amount) {

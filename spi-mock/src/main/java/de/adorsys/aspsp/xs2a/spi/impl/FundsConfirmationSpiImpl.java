@@ -16,16 +16,41 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.spi.service.FundsConfirmationSpi;
-import de.adorsys.aspsp.xs2a.spi.test.data.FundsConfirmationMockData;
-import org.springframework.stereotype.Service;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
-@Service
+import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.OK;
+
+@Component
+@AllArgsConstructor
 public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
+    private final RestTemplate restTemplate;
+    private final RemoteSpiUrls remoteSpiUrls;
 
     @Override
-    public boolean fundsConfirmation(SpiFundsConfirmationRequest request) {
-        return FundsConfirmationMockData.fundsConfirmation(request);
+    public SpiAccountDetails getRequestedAccountDetails(SpiFundsConfirmationRequest request) {
+        ResponseEntity<SpiAccountDetails> responseEntity = restTemplate.getForEntity(remoteSpiUrls.getUrl("getAccountByIban"), SpiAccountDetails.class, getRequestedIban(request), getRequestedCurrency(request));
+        return responseEntity.getStatusCode() == OK ? responseEntity.getBody() : null;
     }
+
+    private String getRequestedIban(SpiFundsConfirmationRequest request) {
+        return Optional.ofNullable(request.getPsuAccount())
+            .map(psu -> psu.getIban())
+            .orElse("");
+    }
+
+    private String getRequestedCurrency(SpiFundsConfirmationRequest request) {
+        return Optional.ofNullable(request.getPsuAccount().getCurrency())
+            .map(cur -> cur.getCurrencyCode())
+            .orElse("");
+    }
+
 }

@@ -34,18 +34,19 @@ public class FutureBookingsService {
     private final PaymentService paymentService;
 
     public Optional<SpiAccountDetails> changeBalances(String accountId) {
-        return accountService.getAccount(accountId)
-                   .flatMap(this::updateAccount);
+        return accountService.getAccountById(accountId)
+            .flatMap(this::updateAccountBalance);
     }
 
-    private Optional<SpiAccountDetails> updateAccount(SpiAccountDetails account) {
+    private Optional<SpiAccountDetails> updateAccountBalance(SpiAccountDetails account) {
         return calculateNewBalance(account)
-                   .map(bal -> saveUpdatedAccount(account, bal));
+            .map(bal -> saveUpdatedAccount(account, bal))
+            .orElse(Optional.empty());
     }
 
-    private SpiAccountDetails saveUpdatedAccount(SpiAccountDetails account, SpiBalances balance) {
+    private Optional<SpiAccountDetails> saveUpdatedAccount(SpiAccountDetails account, SpiBalances balance) {
         account.updateFirstBalance(balance);
-        return accountService.addOrUpdateAccount(account);
+        return accountService.updateAccount(account);
     }
 
     private Optional<SpiBalances> calculateNewBalance(SpiAccountDetails account) {

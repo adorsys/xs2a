@@ -16,78 +16,126 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.repository.AccountRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 @AllArgsConstructor
 public class AccountService {
-    private AccountRepository accountRepository;
-    private ConsentService consentService;
+    private final PsuRepository psuRepository;
 
-    public SpiAccountDetails addOrUpdateAccount(SpiAccountDetails accountDetails) {
-        return accountRepository.save(accountDetails);
+    public Optional<SpiAccountDetails> addAccount(SpiAccountDetails accountDetails) {
+        return psuRepository.findPsuByAccountDetailsList_Iban(getAccountIban(accountDetails))
+            .map(psu -> addAccountInPsu(psu, accountDetails))
+            .orElse(Optional.empty());
     }
 
-    public List<SpiAccountDetails> getAllAccounts(String consentId, boolean withBalance) {
-        return Optional.ofNullable(consentService.getConsent(consentId))
-                   .map(con -> getSpiAccountDetailsByConsent(con, withBalance))
-                   .orElse(Collections.emptyList());
+    public Optional<SpiAccountDetails> updateAccount(SpiAccountDetails accountDetails) {
+        return psuRepository.findPsuByAccountDetailsList_Iban(getAccountIban(accountDetails))
+            .map(psu -> updateAccountInPsu(psu, accountDetails))
+            .orElse(Optional.empty());
     }
 
-    private List<SpiAccountDetails> getSpiAccountDetailsByConsent(SpiAccountConsent consent, boolean withBalance) {
-        Set<String> accounts = getAccounts(consent.getAccess().getAccounts());
-        accounts.addAll(getAccounts(consent.getAccess().getBalances()));
-        accounts.addAll(getAccounts(consent.getAccess().getTransactions()));
-        List<SpiAccountDetails> accountDetailsList = accountRepository.findByIbanIn(accounts);
+    public List<SpiAccountDetails> getAllAccounts(String psuId, boolean withBalance) {
+        //TODO this is a task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/71
+        return Collections.emptyList();
+    }
 
-        if (!withBalance || !consent.isWithBalance()) {
-            return accountDetailsList.stream()
-                       .map(this::getAccountDetailsWithoutBalances)
-                       .collect(Collectors.toList());
+    public Optional<SpiAccountDetails> getAccountById(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+            .map(psu -> findAccountInListById(psu.getAccountDetailsList(), accountId))
+            .orElse(Optional.empty());
+    }
+
+    public Optional<SpiAccountDetails> getAccountByIban(String iban, Currency currency) {
+        return psuRepository.findPsuByAccountDetailsList_Iban(iban)
+            .map(psu -> findAccountInListByIban(psu.getAccountDetailsList(), iban, currency))
+            .orElse(Optional.empty());
+    }
+
+    public boolean deleteAccountById(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+            .map(psu -> removeAccountFromPsu(psu, accountId))
+            .orElse(false);
+    }
+
+    public List<SpiBalances> getBalances(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+            .map(psu -> getAccountBalances(psu, accountId))
+            .orElse(Collections.emptyList());
+    }
+
+    private Optional<SpiAccountDetails> addAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {
+        psu.getAccountDetailsList().add(accountDetails);
+        psuRepository.save(psu);
+        return Optional.of(accountDetails);
+    }
+
+    private Optional<SpiAccountDetails> updateAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {
+        List<SpiAccountDetails> newList = deleteAccountFromListById(psu.getAccountDetailsList(), accountDetails.getId());
+        if (isEmpty(newList)) {
+            return Optional.empty();
+        } else {
+            newList.add(accountDetails);
+            psu.setAccountDetailsList(newList);
+            psuRepository.save(psu);
+
+            return Optional.of(accountDetails);
         }
-        return accountDetailsList;
     }
 
-    public Optional<SpiAccountDetails> getAccount(String id) {
-        return Optional.ofNullable(accountRepository.findOne(id));
-    }
-
-    public boolean deleteAccountById(String id) {
-        if (id != null && accountRepository.exists(id)) {
-            accountRepository.delete(id);
+    private boolean removeAccountFromPsu(Psu psu, String id) {
+        List<SpiAccountDetails> newList = deleteAccountFromListById(psu.getAccountDetailsList(), id);
+        if (isEmpty(newList)) {
+            return false;
+        } else {
+            psu.setAccountDetailsList(newList);
+            psuRepository.save(psu);
             return true;
         }
-        return false;
     }
 
-    public Optional<List<SpiBalances>> getBalances(String accountId) {
-        return Optional.ofNullable(accountRepository.findOne(accountId))
-                   .map(SpiAccountDetails::getBalances);
+    private List<SpiAccountDetails> deleteAccountFromListById(List<SpiAccountDetails> list, String id) {
+        return list.removeIf(acc -> acc.getId().equals(id))
+            ? list
+            : Collections.emptyList();
     }
 
-    private SpiAccountDetails getAccountDetailsWithoutBalances(SpiAccountDetails accountDetails) {
-        return new SpiAccountDetails(accountDetails.getId(), accountDetails.getIban(), accountDetails.getBban(), accountDetails.getPan(),
-            accountDetails.getMaskedPan(), accountDetails.getMsisdn(), accountDetails.getCurrency(), accountDetails.getName(),
-            accountDetails.getAccountType(), accountDetails.getCashSpiAccountType(), accountDetails.getBic(), null);
+    private List<SpiBalances> getAccountBalances(Psu psu, String accountId) {
+        return findAccountInListById(psu.getAccountDetailsList(), accountId)
+            .map(SpiAccountDetails::getBalances)
+            .orElse(Collections.emptyList());
     }
 
-    private Set<String> getAccounts(List<SpiAccountReference> list) {
-        return Optional.ofNullable(list)
-                   .map(l -> l.stream()
-                                 .map(SpiAccountReference::getIban)
-                                 .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
+    private Optional<SpiAccountDetails> findAccountInListById(List<SpiAccountDetails> list, String id) {
+        return list.stream()
+            .filter(acc -> acc.getId().equals(id))
+            .findFirst();
+    }
+
+    private Optional<SpiAccountDetails> findAccountInListByIban(List<SpiAccountDetails> list, String iban, Currency currency) {
+        return list.stream()
+            .filter(acc -> getAccountIban(acc).equals(iban) && getAccountCurrency(acc).equals(currency.getCurrencyCode()))
+            .findFirst();
+    }
+
+    private String getAccountIban(SpiAccountDetails accountDetails) {
+        return Optional.ofNullable(accountDetails)
+            .map(acc -> acc.getIban())
+            .orElse("");
+    }
+
+    private String getAccountCurrency(SpiAccountDetails accountDetails) {
+        return Optional.ofNullable(accountDetails.getCurrency())
+            .map(cur -> cur.getCurrencyCode())
+            .orElse("");
     }
 }
