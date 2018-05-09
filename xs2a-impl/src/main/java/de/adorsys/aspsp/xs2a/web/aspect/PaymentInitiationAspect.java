@@ -40,7 +40,7 @@ public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentInitiatio
     }
 
     private Links buildLink(PaymentInitialisationResponse body, String paymentProduct) {
-        Class<PaymentInitiationController> controller = getController();
+        Class controller = getController();
 
         Links links = new Links();
         links.setRedirect(redirectLinkToSource);
