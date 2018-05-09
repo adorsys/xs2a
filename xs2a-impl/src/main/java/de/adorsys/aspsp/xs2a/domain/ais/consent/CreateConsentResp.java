@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.ais.consent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import io.swagger.annotations.ApiModel;
@@ -38,7 +39,8 @@ public class CreateConsentResp {
     private final AuthenticationObject[] scaMethods;
 
     @ApiModelProperty(value = "A list of hyperlinks to be recognized by Tpp", required = true)
-    private final Links _links;
+    @JsonProperty("_links")
+    private final Links links;
 
     @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach", required = false)
     private final String psuMessage;
