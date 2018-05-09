@@ -13,7 +13,7 @@ public class CertificateValidatorFactory {
 		certValidators.add(new CertificateBlockedValidator(blockedCertificateImpl));
 		certValidators.add(new CertificateExpiredValidator());
 		certValidators.add(new CertificateInvalidValidator(truststore));
-		certValidators.add(new CertificateRevokedValidator());
+		certValidators.add(new CertificateRevokedValidator(truststore));
 	}
 
 	public List<CertificateValidator> getCertValidators() {
