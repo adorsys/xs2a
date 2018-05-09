@@ -27,7 +27,7 @@ public interface PaymentSpi {
 
     SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
 
-    SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment);
+    SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred);
 
     List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred);
 
