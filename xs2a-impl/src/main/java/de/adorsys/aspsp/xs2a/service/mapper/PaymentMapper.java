@@ -77,7 +77,6 @@ public class PaymentMapper {
         return Optional.ofNullable(accountReference)
                        .map(ar -> {
                            SpiAccountReference spiAccountReference = new SpiAccountReference(
-                                   ar.getAccountId(),
                                    ar.getIban(),
                                    ar.getBban(),
                                    ar.getPan(),

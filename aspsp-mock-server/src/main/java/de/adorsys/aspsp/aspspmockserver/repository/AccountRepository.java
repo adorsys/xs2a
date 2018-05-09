@@ -27,5 +27,5 @@ import java.util.List;
 @Repository
 @Profile({"mongo", "fongo"})
 public interface AccountRepository extends MongoRepository<SpiAccountDetails, String> {
-    List<SpiAccountDetails> findByIdIn(Collection<String> ids);
+    List<SpiAccountDetails> findByIbanIn(Collection<String> ibans);
 }

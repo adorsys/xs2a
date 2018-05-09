@@ -28,7 +28,6 @@ public class SpiAccountReference {
     @Id
     @Setter
     @NonFinal
-    private String accountId;
     private String iban;
     private String bban;
     private String pan;

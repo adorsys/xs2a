@@ -137,7 +137,6 @@ public class SpiMockConfig {
 
     private SpiAccountReference convertAccountDetailsToAccountReference(SpiAccountDetails accountDetails) {
         return new SpiAccountReference(
-            accountDetails.getId(),
             accountDetails.getIban(),
             accountDetails.getBban(),
             accountDetails.getMaskedPan(),
@@ -149,7 +148,6 @@ public class SpiMockConfig {
 
     private SpiCreateConsentRequest getAicRequest_1() {
         SpiAccountReference iban1 = new SpiAccountReference(
-            null,
             "DE8710010010653456712",
             null,
             null,
@@ -159,7 +157,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban2 = new SpiAccountReference(
-            null,
             "DE8710010010653456723",
             null,
             null,
@@ -169,7 +166,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban3 = new SpiAccountReference(
-            null,
             "DE8710010010653456734",
             null,
             null,
@@ -179,7 +175,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban4 = new SpiAccountReference(
-            null,
             "DE870010010165456745",
             null,
             null,
@@ -189,7 +184,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference maskedPan = new SpiAccountReference(
-            null,
             null,
             null,
             null,
@@ -216,7 +210,6 @@ public class SpiMockConfig {
 
     private SpiCreateConsentRequest getAicRequest_2() {
         SpiAccountReference iban1 = new SpiAccountReference(
-            null,
             "DE5410010010165456787",
             null,
             null,
@@ -226,7 +219,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban2 = new SpiAccountReference(
-            null,
             "DE650010010123456743",
             null,
             null,
@@ -236,7 +228,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban3 = new SpiAccountReference(
-            null,
             "DE430010010123456534",
             null,
             null,
@@ -246,7 +237,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference iban4 = new SpiAccountReference(
-            null,
             "DE9780010010123452356",
             null,
             null,
@@ -256,7 +246,6 @@ public class SpiMockConfig {
         );
 
         SpiAccountReference maskedPan = new SpiAccountReference(
-            null,
             null,
             null,
             null,

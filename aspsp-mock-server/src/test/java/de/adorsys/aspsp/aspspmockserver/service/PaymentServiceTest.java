@@ -89,10 +89,10 @@ public class PaymentServiceTest {
         assertThat(actualPayments).isNotNull();
     }
 
-    private SpiSinglePayments getSpiSinglePayment(){
+    private SpiSinglePayments getSpiSinglePayment() {
         SpiSinglePayments payment = new SpiSinglePayments();
-        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"),"20");
-        SpiAccountReference accountReference = new SpiAccountReference("11234","DE23100120020123456789",null,null,null,null,Currency.getInstance("EUR"));
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), "20");
+        SpiAccountReference accountReference = new SpiAccountReference("DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(accountReference);
         payment.setCreditorName("Merchant123");
