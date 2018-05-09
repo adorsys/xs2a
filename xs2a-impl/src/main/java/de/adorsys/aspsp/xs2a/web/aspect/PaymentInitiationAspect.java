@@ -39,7 +39,7 @@ public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentInitiatio
         return new ResponseEntity(body, result.getHeaders(), result.getStatusCode());
     }
 
-    public Links buildLink(PaymentInitialisationResponse body, String paymentProduct) {
+    private Links buildLink(PaymentInitialisationResponse body, String paymentProduct) {
         Class<PaymentInitiationController> controller = getController();
 
         Links links = new Links();
