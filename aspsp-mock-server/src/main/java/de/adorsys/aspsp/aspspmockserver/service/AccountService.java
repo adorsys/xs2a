@@ -92,8 +92,8 @@ public class AccountService {
         }
     }
 
-    private boolean removeAccountFromPsu(Psu psu, String id) {
-        List<SpiAccountDetails> newList = deleteAccountFromListById(psu.getAccountDetailsList(), id);
+    private boolean removeAccountFromPsu(Psu psu, String accountId) {
+        List<SpiAccountDetails> newList = deleteAccountFromListById(psu.getAccountDetailsList(), accountId);
         if (isEmpty(newList)) {
             return false;
         } else {
@@ -103,8 +103,8 @@ public class AccountService {
         }
     }
 
-    private List<SpiAccountDetails> deleteAccountFromListById(List<SpiAccountDetails> list, String id) {
-        return list.removeIf(acc -> acc.getId().equals(id))
+    private List<SpiAccountDetails> deleteAccountFromListById(List<SpiAccountDetails> list, String accountId) {
+        return list.removeIf(acc -> acc.getId().equals(accountId))
             ? list
             : Collections.emptyList();
     }
@@ -115,9 +115,9 @@ public class AccountService {
             .orElse(Collections.emptyList());
     }
 
-    private Optional<SpiAccountDetails> findAccountInListById(List<SpiAccountDetails> list, String id) {
+    private Optional<SpiAccountDetails> findAccountInListById(List<SpiAccountDetails> list, String accountId) {
         return list.stream()
-            .filter(acc -> acc.getId().equals(id))
+            .filter(acc -> acc.getId().equals(accountId))
             .findFirst();
     }
 
