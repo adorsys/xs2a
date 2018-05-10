@@ -126,7 +126,6 @@ public class AccountController {
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
 
         ResponseObject responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
-
-        return (ResponseEntity<AccountReport>) responseMapper.okOrBadRequest(responseObject);
+        return responseMapper.okOrBadRequest(responseObject);
     }
 }
