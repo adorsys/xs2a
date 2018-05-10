@@ -17,13 +17,11 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -34,12 +32,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @Component
@@ -54,20 +48,9 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public SpiPaymentInitialisationResponse initiatePeriodicPayment(String paymentProduct, boolean tppRedirectPreferred, SpiPeriodicPayment periodicPayment) {
-        SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
-        response.setTransactionStatus(resolveTransactionStatus(periodicPayment));
-
-        return response;
-    }
-
-    private SpiTransactionStatus resolveTransactionStatus(SpiPeriodicPayment payment) {
-        Map<String, SpiAccountDetails> map = AccountMockData.getAccountsHashMap();
-        return Optional.of(map.values().stream()
-            .anyMatch(a -> a.getIban()
-                .equals(payment.getCreditorAccount().getIban())))
-            .map(present -> ACCP)
-            .orElse(RJCT);
+    public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+        ResponseEntity<SpiPeriodicPayment> responseEntity = restTemplate.postForEntity(remoteSpiUrls.getUrl("createPeriodicPayment"), periodicPayment, SpiPeriodicPayment.class);
+        return responseEntity.getStatusCode() == CREATED ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
     }
 
     @Override
