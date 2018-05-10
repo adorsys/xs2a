@@ -82,6 +82,10 @@ public class AccountService {
         }
     }
 
+    public List<AccountDetails> getAccountDetailsByPsuId(String psuId){
+        return accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountsByPsuId(psuId));
+    }
+
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
         return StringUtils.isEmpty(transactionId)
             ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
@@ -160,5 +164,9 @@ public class AccountService {
         fieldValidator.setTransactionId(transactionId);
 
         validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
+    }
+
+    public List<AccountDetails> getAccountDetailsListByIbans(Set<String> ibans) {
+        return accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
     }
 }

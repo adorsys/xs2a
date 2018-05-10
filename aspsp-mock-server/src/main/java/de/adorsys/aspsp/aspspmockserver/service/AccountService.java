@@ -42,7 +42,7 @@ public class AccountService {
 
     public List<SpiAccountDetails> getAllAccounts(String consentId, boolean withBalance) {
         return Optional.ofNullable(consentService.getConsent(consentId))
-                   .map(con -> getSpiAccountDetailsByConsent(con, withBalance))
+                   .map(con -> getSpiAccountDetailsByConsent(con.get(), withBalance))
                    .orElse(Collections.emptyList());
     }
 

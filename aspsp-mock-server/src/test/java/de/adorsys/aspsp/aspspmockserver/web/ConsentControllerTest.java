@@ -1,8 +1,10 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.ConsentService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +19,6 @@ import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -26,6 +26,8 @@ import static org.mockito.Mockito.when;
 public class ConsentControllerTest {
     private final String CORRECT_PSU_ID = "123456789";
     private final String WRONG_PSU_ID = "wrong psu id";
+    private final SpiAccountConsent CONSENT = createConsent(CORRECT_PSU_ID);
+    private final SpiAccountConsent CONSENT_WRONG = createConsent(WRONG_PSU_ID);
 
     @Autowired
     private ConsentController consentController;
@@ -35,14 +37,18 @@ public class ConsentControllerTest {
 
     @Before
     public void setUp() {
-        when(consentService.createConsentAndReturnId(any(), eq(CORRECT_PSU_ID), eq(true))).thenReturn(Optional.of("someString"));
-        when(consentService.createConsentAndReturnId(any(), eq(WRONG_PSU_ID), eq(true))).thenReturn(Optional.empty());
+        when(consentService.createConsentAndReturnId(CONSENT)).thenReturn(Optional.of(CORRECT_PSU_ID));
+        when(consentService.createConsentAndReturnId(CONSENT_WRONG)).thenReturn(Optional.empty());
+        when(consentService.getConsent(CORRECT_PSU_ID)).thenReturn(Optional.of(CONSENT));
+        when(consentService.getConsent(WRONG_PSU_ID)).thenReturn(Optional.empty());
+        when(consentService.deleteConsentById(CORRECT_PSU_ID)).thenReturn(true);
+        when(consentService.deleteConsentById(WRONG_PSU_ID)).thenReturn(false);
     }
 
     @Test
     public void createAccountConsentTest_Success() {
         //When:
-        ResponseEntity expectedResponse = consentController.createConsent(createConsentRequest(), CORRECT_PSU_ID, true, true);
+        ResponseEntity expectedResponse = consentController.createConsent(CONSENT);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -51,13 +57,54 @@ public class ConsentControllerTest {
     @Test
     public void createAccountConsentTest_Failure() {
         //When:
-        ResponseEntity expectedResponse = consentController.createConsent(createConsentRequest(), WRONG_PSU_ID, true, true);
+        ResponseEntity expectedResponse = consentController.createConsent(CONSENT_WRONG);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
-    private SpiCreateConsentRequest createConsentRequest() {
-        return new SpiCreateConsentRequest(new SpiAccountAccess(null, null, null, null, null), true, new Date(), 4, false);
+    @Test
+    public void readConsentByIdTest_Success(){
+        //When:
+        ResponseEntity expectedResponse = consentController.readConsentById(CORRECT_PSU_ID);
+
+        //Then:
+        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(expectedResponse.getBody()).isEqualTo(CONSENT);
+    }
+
+    @Test
+    public void readConsentByIdTest_Failure(){
+        //When:
+        ResponseEntity expectedResponse = consentController.readConsentById(WRONG_PSU_ID);
+
+        //Then:
+        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(expectedResponse.getBody()).isEqualTo(null);
+    }
+
+    @Test
+    public void deleteConsentTest_Success(){
+        //When:
+        ResponseEntity expectedResponse = consentController.deleteConsent(CORRECT_PSU_ID);
+
+        //Then:
+        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    @Test
+    public void deleteConsentTest_Failure(){
+        //When:
+        ResponseEntity expectedResponse = consentController.deleteConsent(WRONG_PSU_ID);
+
+        //Then:
+        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    private SpiAccountConsent createConsent(String consentId){
+        return new SpiAccountConsent(
+            consentId,
+            new SpiAccountAccess(),
+            false, new Date(), 4, new Date(),SpiTransactionStatus.ACCP,SpiConsentStatus.VALID,true,false);
     }
 }

@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface AccountSpi {
     List<SpiAccountDetails> readAccounts(String consentId, boolean withBalance, boolean psuInvolved);
@@ -33,4 +34,8 @@ public interface AccountSpi {
     List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved);
 
     SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved);
+
+    List<SpiAccountDetails> readAccountsByPsuId(String psuId);
+
+    List<SpiAccountDetails> readAccountDetailsByIbans(Set<String> ibans);
 }

@@ -16,10 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.spi.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class RemoteSpiUrls {
+    @Value("${mockspi.baseurl:http://localhost:28080}")
     private String baseUrl;
     private Map<String, String> urls;
 
@@ -27,9 +32,9 @@ public class RemoteSpiUrls {
         this.baseUrl = baseUrl;
         this.urls = new HashMap<>();
         this.urls.put("getAllAccounts", "/account/");
-        this.urls.put("getConsents", "/consent/");
-        this.urls.put("getConsentById", "/consent/{id}");
-        this.urls.put("deleteConsentById", "/consent/{id}");
+        //this.urls.put("getConsents", "/consent/");
+        //this.urls.put("getConsentById", "/consent/{id}");
+        //this.urls.put("deleteConsentById", "/consent/{id}");
         this.urls.put("getAccountBalances", "/account/{id}/balances");
         this.urls.put("createPayment", "/payments/");
         this.urls.put("getPaymentStatus", "/payments/{paymentId}/status/");
@@ -39,5 +44,31 @@ public class RemoteSpiUrls {
 
     public String getUrl(String key) {
         return this.baseUrl + this.urls.getOrDefault(key, "");
+    }
+
+    //Consents urls
+    public String getConsentById() {
+        return baseUrl + "/consent/{id}";
+    }
+
+    public String deleteConsentById() {
+        return baseUrl + "/consent/{id}";
+    }
+
+    public String createConsent() {
+        return baseUrl + "/consenet/";
+    }
+
+    public String getConsentByAccess() {
+        return baseUrl + "/consent/byAccess/{access}";
+    }
+
+    //Accounts urls
+    public String getAccountDetailsByPsuId() {
+        return baseUrl + "/account/byPsuId/{psuId}";
+    }
+
+    public String getAccountDetailsByIbans() {
+        return baseUrl + "/account/byIbans/{ibans}";
     }
 }

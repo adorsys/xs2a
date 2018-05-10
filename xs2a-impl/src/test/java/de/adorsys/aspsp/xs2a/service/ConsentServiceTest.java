@@ -18,13 +18,14 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.*;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.impl.ConsentSpiImpl;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,13 +34,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -56,25 +56,31 @@ public class ConsentServiceTest {
 
     @MockBean(name = "consentSpi")
     ConsentSpiImpl consentSpi;
+    @MockBean(name = "accountSpi")
+    AccountSpi accountSpi;
 
     @Before
     public void setUp() {
-        when(consentSpi.createAccountConsents(any(), eq(false), eq(false), eq(CORRECT_PSU_ID)))
-        .thenReturn(CORRECT_PSU_ID);
-        when(consentSpi.createAccountConsents(any(), eq(false), eq(false), eq(WRONG_PSU_ID)))
-        .thenReturn(null);
-        when(consentSpi.getAccountConsentById(CORRECT_PSU_ID)).thenReturn(getConsent());
+        when(consentSpi.createAccountConsents(
+            getConsent(CORRECT_PSU_ID,))
+            .thenReturn(CORRECT_PSU_ID);
+        when(consentSpi.createAccountConsents(getConsent(WRONG_PSU_ID)))
+            .thenReturn(null);
+        when(consentSpi.getAccountConsentById(CORRECT_PSU_ID)).thenReturn(getConsent(CORRECT_PSU_ID));
         when(consentSpi.getAccountConsentById(WRONG_PSU_ID)).thenReturn(null);
         consentSpi.deleteAccountConsentsById(anyString());
+        when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID)).thenReturn(getSpiDetailsList());
+        when(accountSpi.readAccountsByPsuId(WRONG_PSU_ID)).thenReturn(Collections.emptyList());
+        consentSpi.expireConsent(any());
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success() {
+    public void createAccountConsentsWithResponse_ByAccInAccAccess_WB_Success() {
         //Given:
-        boolean withBalance = false;
+        boolean withBalance = true;
         boolean tppRedirectPreferred = false;
         //When:
-        ResponseObject responseObj = consentService.createAccountConsentsWithResponse(createConsentRequest(CORRECT_IBAN, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS), withBalance, tppRedirectPreferred, CORRECT_PSU_ID);
+        ResponseObject responseObj = consentService.createAccountConsentsWithResponse(consentReq_byAccount(getReferences(), null, null), withBalance, tppRedirectPreferred, null);
         CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
@@ -141,19 +147,10 @@ public class ConsentServiceTest {
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
 
-    private CreateConsentReq createConsentRequest(String iban, AccountAccessType allAccounts, AccountAccessType allPsd2) {
-        AccountReference reference = new AccountReference();
-        reference.setIban(iban);
-        reference.setCurrency(CURRENCY);
-        reference.setAccountId("ACCOUNT_ID");
-        AccountReference[] list = new AccountReference[]{reference};
-
-        AccountAccess access = new AccountAccess();
-        access.setBalances(list);
-        access.setAvailableAccounts(allAccounts);
-        access.setAllPsd2(allPsd2);
+    //TRUE req
+    private CreateConsentReq consentReq_byPsuId(String psuId, AccountAccessType allAccounts, AccountAccessType allPsd2) {
         CreateConsentReq req = new CreateConsentReq();
-        req.setAccess(access);
+        req.setAccess(createAccountAccess(null, null, null, allAccounts, allPsd2));
         req.setValidUntil(new Date());
         req.setFrequencyPerDay(4);
         req.setRecurringIndicator(true);
@@ -161,21 +158,115 @@ public class ConsentServiceTest {
         return req;
     }
 
-    private SpiAccountConsent getConsent() {
-        SpiAccountAccess acc = new SpiAccountAccess();
-        SpiAccountDetails det = new SpiAccountDetails("XXXYYYXXX", CORRECT_IBAN, null, null, null, null, CURRENCY, "Buster", null, null, "", null);
-        List<SpiAccountReference> ref = new ArrayList<>();
-        ref.add(new SpiAccountReference(det.getId(), det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
-        acc.setBalances(ref);
-
-        return new SpiAccountConsent(CORRECT_PSU_ID, acc, true, new Date(), 4, new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID, true, true);
+    //TRUE req
+    private CreateConsentReq consentReq_byAccount(AccountReference[] accounts, AccountReference[] balances, AccountReference[] transactions) {
+        CreateConsentReq req = new CreateConsentReq();
+        req.setAccess(createAccountAccess(accounts, balances, transactions, null, null));
+        req.setValidUntil(new Date());
+        req.setFrequencyPerDay(4);
+        req.setRecurringIndicator(true);
+        req.setCombinedServiceIndicator(false);
+        return req;
     }
 
+    //TRUE Access
+    private AccountAccess createAccountAccess(AccountReference[] accounts, AccountReference[] balances, AccountReference[] transactions, AccountAccessType allAccounts, AccountAccessType allPsd2) {
+        AccountAccess access = new AccountAccess();
+        access.setAccounts(accounts);
+        access.setBalances(balances);
+        access.setTransactions(transactions);
+        access.setAvailableAccounts(allAccounts);
+        access.setAllPsd2(allPsd2);
+        return access;
+    }
+
+    private SpiAccountConsent getConsent(String consentId, AccountReference[] accounts, AccountReference[] balances, AccountReference[] transactions,
+                                         boolean withBalance, boolean allAccounts, boolean allPsd2) {
+        SpiAccountAccess acc = mapToSpiAccountAccess(
+            createAccountAccess(
+                mapAccountsForAccess(accounts, balances, transactions),
+                balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null));
+
+        return new SpiAccountConsent(consentId, acc, true, new Date(), 4, new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID, true, true);
+    }
+
+    private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
+        return new SpiAccountAccess(mapToSpiAccountReferenceList(access.getAccounts()),
+            mapToSpiAccountReferenceList(access.getBalances()),
+            mapToSpiAccountReferenceList(access.getTransactions()),
+            SpiAccountAccessType.valueOf(access.getAvailableAccounts().name()),
+            SpiAccountAccessType.valueOf(access.getAllPsd2().name()));
+    }
+
+    private List<SpiAccountReference> mapToSpiAccountReferenceList(AccountReference[] accounts) {
+        return Optional.ofNullable(accounts)
+                   .map(Arrays::stream)
+                   .map(ar -> ar
+                                  .map(a -> new SpiAccountReference(a.getAccountId(), a.getIban(), a.getBban(), a.getPan(), a.getMaskedPan(), a.getMsisdn(), a.getCurrency()))
+                                  .collect(Collectors.toList()))
+                   .orElse(null);
+    }
+
+    //Initial details As Array
     private AccountDetails[] getDetails() {
-        AccountDetails[] list = new AccountDetails[]{
-        new AccountDetails("9999999", CORRECT_IBAN, "", "", "", "", CURRENCY,
-        "David", null, null, "", new ArrayList<>(), new Links())};
-        return list;
+        return new AccountDetails[]{
+            new AccountDetails("9999999", CORRECT_IBAN, "", "", "", "", CURRENCY,
+                "David", null, null, "", new ArrayList<>(), new Links())};
+    }
+
+    //Initial details mapped from previous
+    private List<SpiAccountDetails> getSpiDetailsList() {
+        return Optional.of(Arrays.stream(getDetails())
+                               .map(ad -> new SpiAccountDetails(ad.getId(), ad.getIban(), ad.getBban(), ad.getPan(),
+                                   ad.getMaskedPan(), ad.getMsisdn(), ad.getCurrency(), ad.getName(), ad.getAccountType(),
+                                   Optional.ofNullable(ad.getCashAccountType()).map(at -> SpiAccountType.valueOf(at.name())).orElse(null), ad.getBic(), balances(ad.getBalances())))
+                               .collect(Collectors.toList())).orElse(Collections.emptyList());
+    }
+
+    private AccountReference[] getReferences() {
+        return new AccountReference[]{getReference()};
+    }
+
+    //Not used in current
+    private List<SpiBalances> balances(List<Balances> list) {
+        return list.stream().map(b -> {
+            SpiBalances bal = new SpiBalances();
+            bal.setAuthorised(mapBalance(b.getAuthorised()));
+            bal.setExpected(mapBalance(b.getExpected()));
+            bal.setOpeningBooked(mapBalance(b.getOpeningBooked()));
+            bal.setClosingBooked(mapBalance(b.getClosingBooked()));
+            bal.setInterimAvailable(mapBalance(b.getInterimAvailable()));
+            return bal;
+        }).collect(Collectors.toList());
+
+    }
+
+    //Not used in current
+    private SpiAccountBalance mapBalance(SingleBalance balance) {
+        return Optional.of(balance).map(b -> {
+            SpiAccountBalance bal = new SpiAccountBalance();
+            bal.setDate(Date.from(b.getDate()));
+            bal.setLastActionDateTime(Date.from(b.getLastActionDateTime()));
+            bal.setSpiAmount(new SpiAmount(b.getAmount().getCurrency(), b.getAmount().getContent()));
+            return bal;
+        }).orElse(new SpiAccountBalance());
+    }
+
+    private AccountReference getReference() {
+        AccountReference ref = new AccountReference();
+        ref.setAccountId(getDetails()[0].getId());
+        ref.setIban(getDetails()[0].getIban());
+        ref.setBban(getDetails()[0].getBban());
+        ref.setPan(getDetails()[0].getPan());
+        ref.setMaskedPan(getDetails()[0].getMaskedPan());
+        ref.setMsisdn(getDetails()[0].getMsisdn());
+        ref.setCurrency(getDetails()[0].getCurrency());
+        return ref;
+    }
+
+    private AccountReference[] mapAccountsForAccess(AccountReference[] accounts, AccountReference[] balances, AccountReference[] transactions) {
+        accounts = Optional.ofNullable(balances).orElse(accounts);
+        return Optional.ofNullable(transactions).orElse(accounts);
     }
 
 }
