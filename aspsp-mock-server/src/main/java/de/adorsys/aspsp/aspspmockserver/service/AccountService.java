@@ -32,8 +32,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public class AccountService {
     private final PsuRepository psuRepository;
 
-    public Optional<SpiAccountDetails> addAccount(SpiAccountDetails accountDetails) {
-        return psuRepository.findPsuByAccountDetailsList_Iban(getAccountIban(accountDetails))
+    public Optional<SpiAccountDetails> addAccount(String psuId, SpiAccountDetails accountDetails) {
+        return Optional.ofNullable(psuRepository.findOne(psuId))
             .map(psu -> addAccountInPsu(psu, accountDetails))
             .orElse(Optional.empty());
     }

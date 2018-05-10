@@ -45,6 +45,7 @@ public class AccountControllerTest {
     private static final String WRONG_ACCOUNT_ID = "Really wrong id";
     private static final String IBAN = "DE1789232872";
     private static final String WRONG_IBAN = "Wrongest iban ever";
+    private static final String PSU_ID = "111111111111";
 
     @MockBean
     private AccountService accountService;
@@ -62,7 +63,7 @@ public class AccountControllerTest {
             .thenReturn(Optional.empty());
         when(accountService.getAllAccounts(anyString(), anyBoolean()))
             .thenReturn(accountList);
-        when(accountService.addAccount(getSpiAccountDetails_1()))
+        when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
         when(accountService.deleteAccountById(ACCOUNT_ID))
             .thenReturn(true);
@@ -154,7 +155,7 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.CREATED;
 
         //When
-        ResponseEntity actualResponse = accountController.createAccount(expectedSpiAccountDetails);
+        ResponseEntity actualResponse = accountController.createAccount(PSU_ID, expectedSpiAccountDetails);
 
         //Then
         HttpStatus actualStatusCode = actualResponse.getStatusCode();

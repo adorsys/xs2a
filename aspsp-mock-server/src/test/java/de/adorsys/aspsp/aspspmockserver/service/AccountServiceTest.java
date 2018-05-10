@@ -31,6 +31,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -64,6 +66,8 @@ public class AccountServiceTest {
             .thenReturn(getPsuWithRightAccounts());
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
             .thenReturn(Optional.empty());
+        when(psuRepository.findOne(anyString()))
+            .thenReturn(getPsuWithRightAccounts().get());
     }
 
     @Test
@@ -72,7 +76,7 @@ public class AccountServiceTest {
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
 
         //When
-        SpiAccountDetails actualSpiAccountDetails = accountService.addAccount(expectedSpiAccountDetails).get();
+        SpiAccountDetails actualSpiAccountDetails = accountService.addAccount("12234556", expectedSpiAccountDetails).get();
 
         //Then
         assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
@@ -131,7 +135,7 @@ public class AccountServiceTest {
     @Test
     public void getAccount_WrongId() {
         //Given
-        accountService.addAccount(getSpiAccountDetails_1());
+        accountService.addAccount("12234556", getSpiAccountDetails_1());
 
         //When
         Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountById(WRONG_ACCOUNT_ID);

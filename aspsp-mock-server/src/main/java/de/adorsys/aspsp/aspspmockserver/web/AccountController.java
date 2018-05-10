@@ -59,8 +59,8 @@ public class AccountController {
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PutMapping(path = "/")
-    public ResponseEntity createAccount(@RequestBody SpiAccountDetails account) {
-        return accountService.addAccount(account)
+    public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody SpiAccountDetails account) {
+        return accountService.addAccount(psuId,account)
             .map(acc -> new ResponseEntity<>(acc, CREATED))
             .orElse(ResponseEntity.badRequest().build());
     }
