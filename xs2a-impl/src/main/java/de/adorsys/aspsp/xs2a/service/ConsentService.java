@@ -21,13 +21,14 @@ import de.adorsys.aspsp.xs2a.domain.ais.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,8 +75,10 @@ public class ConsentService {
     }
 
     private Optional<String> createAccountConsentsAndReturnId(CreateConsentReq req, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
-        Optional<AccountAccess> access = Optional.ofNullable(createAccountAccess(req.getAccess(), psuId));
-        if (req.isRecurringIndicator()&&access.isPresent()){
+
+        Optional<AccountAccess> access = Optional.ofNullable(req.getAccess())
+                                             .flatMap(acs -> createAccountAccess(acs, psuId));
+        if (req.isRecurringIndicator() && access.isPresent()) {
             consentSpi.expireConsent(consentMapper.mapToSpiAccountAccess(access.get()));
         }
         return access.map(accountAccess -> saveAccountConsent(
@@ -84,103 +87,100 @@ public class ConsentService {
     }
 
     private String saveAccountConsent(AccountConsent consent) {
-        return consentSpi.createAccountConsents(consentMapper.mapToSpiAccountConsent(consent));
+        SpiAccountConsent con = consentMapper.mapToSpiAccountConsent(consent);
+        String str = consentSpi.createAccountConsents(con/*consentMapper.mapToSpiAccountConsent(consent)*/);
+        return str;
     }
 
-    private AccountAccess createAccountAccess(AccountAccess access, String psuId) {
-        if (isAllAccountsOrAllPsd2(access, psuId)) {
-            return createAccessByPsuId(access, psuId);
-        }
-
-        return createAccessByIbans(access);
+    private Optional<AccountAccess> createAccountAccess(AccountAccess access, String psuId) {
+        return isAllAccountsOrAllPsd2(access.getAvailableAccounts(), access.getAllPsd2(), psuId)
+                   ? getNewAccessByPsuId(access.getAvailableAccounts(), access.getAllPsd2(), psuId)
+                   : getNewAccessByIbans(access);
     }
 
-    private AccountAccess createAccessByIbans(AccountAccess access) {
+    private Optional<AccountAccess> getNewAccessByIbans(AccountAccess access) {
         Set<String> ibans = getIbanSetFromAccess(access);
         List<AccountDetails> accountDetails = accountService.getAccountDetailsListByIbans(ibans);
-        Map<String, AccountReference> referenceMap = Optional.ofNullable(accountDetails)
-                                                         .map(ad -> getAccountReferencesMap(getArrayOfReferenses(ad)))
-                                                         .orElse(null);
-        Set<String> balances = getIbansFromAccountReference(access.getBalances(), true);
-        Set<String> transactions = getIbansFromAccountReference(access.getTransactions(), true);
-        Set<String> accounts = fillUpdateAccountsWithAdditionalReferencesFromBalancesAndTransactions(getIbansFromAccountReference(access.getAccounts(), true), balances, transactions);
 
-        AccountAccess resultAccess = setAccountAccess(getAccountReferencesFromMap(referenceMap, accounts), getAccountReferencesFromMap(referenceMap, accounts),
-            getAccountReferencesFromMap(referenceMap, accounts), null, null);
+        Set<AccountReference> accountsRef = extractReferenceSetFromDetailsList(access.getAccounts(), accountDetails);
+        Set<AccountReference> balancesRef = extractReferenceSetFromDetailsList(access.getBalances(), accountDetails);
+        Set<AccountReference> transactionsRef = extractReferenceSetFromDetailsList(access.getTransactions(), accountDetails);
 
-        return isNotEmptyAccountAccess(resultAccess)
-                   ? resultAccess : null;
+        accountsRef = mergeSets(accountsRef, balancesRef, transactionsRef);
+
+        return Optional.of(getNewAccountAccessByReferences(setToArray(accountsRef), setToArray(balancesRef), setToArray(transactionsRef), null, null));
     }
 
-    private AccountReference[] getAccountReferencesFromMap(Map<String, AccountReference> referenceMap, Set<String> accounts) {
-        return Optional.ofNullable(accounts).map(acc -> accounts.stream().map(referenceMap::get).toArray(AccountReference[]::new)).orElse(new AccountReference[]{});
+
+    private Set<AccountReference> extractReferenceSetFromDetailsList(AccountReference[] accountReferencesArr, List<AccountDetails> accountDetails) {
+        return Optional.ofNullable(accountReferencesArr)
+                   .map(arr -> Arrays.stream(arr)
+                                   .map(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
+                                   .filter(Optional::isPresent)
+                                   .map(Optional::get)
+                                   .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 
-    private Set<String> fillUpdateAccountsWithAdditionalReferencesFromBalancesAndTransactions(Set<String> accounts, Set<String> balances, Set<String> transactions) {
+    private Optional<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
+        return accountDetails.stream()
+                   .filter(acc -> acc.getIban().equals(iban))
+                   .filter(acc -> acc.getCurrency() == currency)
+                   .map(this::mapAccountDetailsToReference)
+                   .findFirst();
+    }
 
-        return Stream.of(accounts.stream(), balances.stream(), transactions.stream())
-                   .flatMap(stringStream -> stringStream)
+    private static <T> Set<T> mergeSets(Set<T>... sets) {
+        return Stream.of(sets)
+                   .flatMap(Collection::stream)
                    .collect(Collectors.toSet());
     }
 
-    private Map<String, AccountReference> getAccountReferencesMap(AccountReference[] ar) {
-        return Arrays.stream(ar)
-                   .collect(Collectors.toMap(this::mapUniqueAccountIdentifier, Function.identity()));
+    private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
+        return Optional.ofNullable(accountService.getAccountDetailsByPsuId(psuId))
+                   .map(this::mapAccountListToArrayOfReference)
+                   .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
+                                   ? getNewAccountAccessByReferences(ref, null, null, availableAccounts, null)
+                                   : getNewAccountAccessByReferences(ref, ref, ref, null, allPsd2)
+                   );
+
     }
 
-    private String mapUniqueAccountIdentifier(AccountReference reference) {
-        return reference.getIban() + reference.getCurrency().getDisplayName();
+    private AccountReference[] mapAccountListToArrayOfReference(List<AccountDetails> accountDetails) {
+        return accountDetails.stream()
+                   .map(this::mapAccountDetailsToReference)
+                   .toArray(AccountReference[]::new);
     }
 
-    private AccountAccess createAccessByPsuId(AccountAccess access, String psuId) {
-        List<AccountDetails> accountDetails = accountService.getAccountDetailsByPsuId(psuId);
-        AccountReference[] references = Optional.ofNullable(accountDetails)
-                                            .map(this::getArrayOfReferenses)
-                                            .orElse(null);
-        return Optional.ofNullable(references)
-                   .map(ref -> setAccountAccess(ref,
-                       isAllPsd2(access) ? ref : null,
-                       isAllPsd2(access) ? ref : null,
-                       isAllPsd2(access) ? null : AccountAccessType.ALL_ACCOUNTS,
-                       isAllPsd2(access) ? AccountAccessType.ALL_ACCOUNTS : null))
-                   .orElse(null);
-    }
+    private AccountAccess getNewAccountAccessByReferences(AccountReference[] accounts,
+                                                          AccountReference[] balances,
+                                                          AccountReference[] transactions,
+                                                          AccountAccessType availableAccounts,
+                                                          AccountAccessType allPsd2) {
 
-    private AccountReference[] getArrayOfReferenses(List<AccountDetails> ad) {
-        return ad.isEmpty() ? null : ad.stream().map(this::mapFromAccountDetails).toArray(AccountReference[]::new);
-    }
-
-    private AccountAccess setAccountAccess(AccountReference[] accounts, AccountReference[] balances,
-                                           AccountReference[] transactions, AccountAccessType availableAccounts,
-                                           AccountAccessType allPsd2) {
-        AccountAccess acc = new AccountAccess();
-        acc.setAccounts(accounts);
-        acc.setBalances(balances);
-        acc.setTransactions(transactions);
-        acc.setAvailableAccounts(availableAccounts);
-        acc.setAllPsd2(allPsd2);
-        return acc;
+        return new AccountAccess(accounts, balances, transactions, availableAccounts, allPsd2);
     }
 
     private Set<String> getIbanSetFromAccess(AccountAccess access) {
-        return Optional.ofNullable(access)
-                   .filter(this::isNotEmptyAccountAccess)
-                   .map(this::getIbansFromAccess)
-                   .orElseGet(HashSet::new);
+        if (isNotEmptyAccountAccess(access)) {
+            return getIbansFromAccess(access);
+        }
+        return Collections.emptySet();
     }
 
     private Set<String> getIbansFromAccess(AccountAccess access) {
-        Set<String> ibans = new HashSet<>();
-        getIbansFromAccountReference(Optional.ofNullable(access.getAccounts()).orElse(null), false).addAll(ibans);
-        getIbansFromAccountReference(Optional.ofNullable(access.getBalances()).orElse(null), false).addAll(ibans);
-        getIbansFromAccountReference(Optional.ofNullable(access.getTransactions()).orElse(null), false).addAll(ibans);
-        return ibans;
+        return mergeSets(
+            getIbansFromAccountReference(access.getAccounts()),
+            getIbansFromAccountReference(access.getBalances()),
+            getIbansFromAccountReference(access.getTransactions()));
     }
 
-    private Set<String> getIbansFromAccountReference(AccountReference[] references, boolean withCurrncy) {
-        return Arrays.stream(references)
-                   .map(ar -> withCurrncy ? mapUniqueAccountIdentifier(ar) : ar.getIban())
-                   .collect(Collectors.toSet());
+    private Set<String> getIbansFromAccountReference(AccountReference[] references) {
+        return Optional.ofNullable(references)
+                   .map(ar -> Arrays.stream(ar)
+                                  .map(AccountReference::getIban)
+                                  .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 
     private boolean isNotEmptyAccountAccess(AccountAccess access) {
@@ -191,17 +191,14 @@ public class ConsentService {
                      && access.getAvailableAccounts() == null);
     }
 
-    private boolean isAllAccountsOrAllPsd2(AccountAccess access, String psuId) {
-        if (psuId != null) {
-            if (Optional.ofNullable(access).isPresent()) {
-                return access.getAvailableAccounts() == AccountAccessType.ALL_ACCOUNTS || access.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS;
-            }
+    private boolean isAllAccountsOrAllPsd2(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
+        return !StringUtils.isEmpty(psuId)
+                   && availableAccounts == AccountAccessType.ALL_ACCOUNTS
+                   || allPsd2 == AccountAccessType.ALL_ACCOUNTS;
 
-        }
-        return false;
     }
 
-    private AccountReference mapFromAccountDetails(AccountDetails details) {
+    private AccountReference mapAccountDetailsToReference(AccountDetails details) {
         AccountReference reference = new AccountReference();
         reference.setAccountId(details.getId());
         reference.setIban(details.getIban());
@@ -211,10 +208,6 @@ public class ConsentService {
         reference.setMsisdn(details.getMsisdn());
         reference.setCurrency(details.getCurrency());
         return reference;
-    }
-
-    private boolean isAllPsd2(AccountAccess access) {
-        return access.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS;
     }
 
     private Links getLinkToConsent(String consentId) {
@@ -230,5 +223,10 @@ public class ConsentService {
         linksToConsent.setRedirect(redirectLink);
 
         return linksToConsent;
+    }
+
+
+    private AccountReference[] setToArray(Set<AccountReference> set) {
+        return set.stream().toArray(AccountReference[]::new);
     }
 }

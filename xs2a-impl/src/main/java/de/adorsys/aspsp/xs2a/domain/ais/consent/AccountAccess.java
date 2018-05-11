@@ -28,17 +28,17 @@ import lombok.Data;
 public class AccountAccess {
 
     @ApiModelProperty(value = "detailed account information", required = false)
-    private AccountReference[] accounts;
+    private final AccountReference[] accounts;
 
     @ApiModelProperty(value = "balances of the addressed accounts", required = false)
-    private AccountReference[] balances;
+    private final AccountReference[] balances;
 
     @ApiModelProperty(value = "transactions of the addressed accounts", required = false)
-    private AccountReference[] transactions;
+    private final AccountReference[] transactions;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
-    private AccountAccessType availableAccounts;
+    private final AccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
-    private AccountAccessType allPsd2;
+    private final AccountAccessType allPsd2;
 }

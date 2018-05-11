@@ -136,10 +136,7 @@ public class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getAicNoDedicatedAccountRequest() {
 
-        AccountAccess accountAccess = new AccountAccess();
-        accountAccess.setAccounts(new AccountReference[0]);
-        accountAccess.setBalances(new AccountReference[0]);
-        accountAccess.setTransactions(new AccountReference[0]);
+        AccountAccess accountAccess = new AccountAccess(new AccountReference[0],new AccountReference[0],new AccountReference[0], null,null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
@@ -152,8 +149,7 @@ public class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getAicAvailableAccountsRequest() {
 
-        AccountAccess accountAccess = new AccountAccess();
-        accountAccess.setAvailableAccounts(AccountAccessType.ALL_ACCOUNTS);
+        AccountAccess accountAccess = new AccountAccess(new AccountReference[0],new AccountReference[0],new AccountReference[0], AccountAccessType.ALL_ACCOUNTS,null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
@@ -185,9 +181,7 @@ public class SpiAccountConsentModelsTest {
         AccountReference[] balances = (AccountReference[]) Arrays.asList(iban1, iban2, iban3).toArray();
         AccountReference[] transactions = (AccountReference[]) Arrays.asList(iban4, maskedPan).toArray();
 
-        AccountAccess accountAccess = new AccountAccess();
-        accountAccess.setBalances(balances);
-        accountAccess.setTransactions(transactions);
+        AccountAccess accountAccess = new AccountAccess(null, balances,transactions,null,null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);

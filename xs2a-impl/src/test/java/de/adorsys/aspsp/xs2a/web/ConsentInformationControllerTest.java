@@ -153,7 +153,7 @@ public class ConsentInformationControllerTest {
     private ResponseObject getConsent(String consentId) {
         AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
                                         ? null
-                                        : new AccountConsent(consentId, new AccountAccess(), false, new Date(), 4, new Date(), TransactionStatus.RCVD, ConsentStatus.VALID, false, false);
+                                        : new AccountConsent(consentId, new AccountAccess(null,null,null,null,null), false, new Date(), 4, new Date(), TransactionStatus.RCVD, ConsentStatus.VALID, false, false);
         return isEmpty(accountConsent)
                ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
                : ResponseObject.builder().body(accountConsent).build();

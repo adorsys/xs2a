@@ -64,15 +64,14 @@ public class ConsentMapper {
     //Domain
     private AccountAccess mapFromSpiAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
-                   .map(aa -> {
-                       AccountAccess accountAccess = new AccountAccess();
-                       accountAccess.setAccounts(mapFromSpiAccountReferencesList(aa.getAccounts()));
-                       accountAccess.setBalances(mapFromSpiAccountReferencesList(aa.getBalances()));
-                       accountAccess.setTransactions(mapFromSpiAccountReferencesList(aa.getTransactions()));
-                       accountAccess.setAvailableAccounts(mapFromSpiAccountAccessType(aa.getAvailableAccounts()));
-                       accountAccess.setAllPsd2(mapFromSpiAccountAccessType(aa.getAllPsd2()));
-                       return accountAccess;
-                   })
+                   .map(aa ->
+                       new AccountAccess(
+                           mapFromSpiAccountReferencesList(aa.getAccounts()),
+                           mapFromSpiAccountReferencesList(aa.getBalances()),
+                           mapFromSpiAccountReferencesList(aa.getTransactions()),
+                           mapFromSpiAccountAccessType(aa.getAvailableAccounts()),
+                           mapFromSpiAccountAccessType(aa.getAllPsd2()))
+                   )
                    .orElse(null);
     }
 
@@ -133,7 +132,7 @@ public class ConsentMapper {
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
-        return Optional.of(reference)
+        return Optional.ofNullable(reference)
                    .map(ar -> new SpiAccountReference(
                        ar.getAccountId(),
                        ar.getIban(),
