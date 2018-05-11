@@ -29,21 +29,8 @@ These instructions will get you a copy of the project up and running on your loc
 - Docker (Optional)
 - MongoDB for persistent mocks (Optional)
 
-### Brief architecture description
-
-This implementation provides a REST-interface and underlying services, that could be operated as a proxy to underlying ASPSP-Systems,
-providing capabilities to interoperate with TPP by defined XS2A Standard Interface of Berlin Group.
-![Component diagram][Whitebox.png]
-
-[Whitebox.png]: doc/architecture/Whitebox.png "Component diagram"
-
-The modules provided by this implementation are:
-* [**xs2a-impl**](xs2a-impl/README.md) - a REST-interface and services operating to serve TPPs
-* [**aspsp-mock-server**](aspsp-mock-server/README.md) - a mock-implementation of ASPSP for the purposes of testing and introspecting of xs2a-functionality
-* **spi-api** - internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems
-* **spi-mock** - an implementation of spi-api interface to connect XS2A-services with ASPSP-Mock-Server
-
-More details available in [the documentation](doc/README.md)
+### Brief architecture documentation
+Available in [the documentation](doc/architecture/README.md)
 
 ### Installing and running development environment
 
@@ -78,7 +65,7 @@ this means that all mock data will be lost upon restart.
 Dockerfiles provided in the project allow to put the build artifacts into a docker images. Those images are to be
 configured through your environment (documentation follows) to interact properly.
 
-To get keycloak act under a secured reverse proxy see [instruction](doc/architecture/deployment.md)
+To get keycloak act under a secured reverse proxy see [instruction](doc/deployment.md)
 ## Built With
 
 * [Java, version 1.8](http://java.oracle.com) - The main language of implementation
