@@ -48,7 +48,7 @@ public class AccountServiceTest {
     public void setUp() {
         when(consentService.getConsent(CONSENT_ID_WITH_BALANCE_TRUE)).thenReturn(getConsent(true));
         when(consentService.getConsent(CONSENT_ID_WITH_BALANCE_FALSE)).thenReturn(getConsent(false));
-        when(accountRepository.findByIdIn(new HashSet<>(Arrays.asList("21fefdsdvds212sa", "qwertyuiop12345678")))).thenReturn(getAccounts());
+        when(accountRepository.findByIbanIn(new HashSet<>(Arrays.asList("DE12345235431234", "DE99999999999999")))).thenReturn(getAccounts());
         when(accountRepository.findOne("21fefdsdvds212sa")).thenReturn(getSpiAccountDetails_1());
         when(accountRepository.exists("21fefdsdvds212sa")).thenReturn(true);
         when(accountRepository.findOne("qwertyuiop12345678")).thenReturn(getSpiAccountDetailsWithBalance());
@@ -173,7 +173,7 @@ public class AccountServiceTest {
     }
 
     private SpiAccountDetails getSpiAccountDetailsWithBalance() {
-        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999991", null,
             "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
             "GIRO", null, "ACVB222", getNewBalanceList());
     }
@@ -205,7 +205,7 @@ public class AccountServiceTest {
 
     private List<SpiAccountReference> getReferencesList(List<SpiAccountDetails> details) {
         return details.stream()
-            .map(det -> new SpiAccountReference(det.getId(), det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(),
+            .map(det -> new SpiAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(),
                 det.getMsisdn(), det.getCurrency())).collect(Collectors.toList());
     }
 

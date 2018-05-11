@@ -111,7 +111,7 @@ public class AccountService {
         }
 
         String urlToAccount = linkTo(AccountController.class).slash(accountId).toString();
-        accountReport.get_links().setViewAccount(urlToAccount);
+        accountReport.getLinks().setViewAccount(urlToAccount);
         return accountReport;
     }
 

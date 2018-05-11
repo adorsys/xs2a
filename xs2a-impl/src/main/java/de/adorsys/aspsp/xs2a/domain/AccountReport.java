@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,5 +45,6 @@ public class AccountReport {
                               "current_page_ link (optional)" +
                               "last_page_link (optional)", required = true)
     @NotNull
-    private final Links _links;
+    @JsonProperty("_links")
+    private final Links links;
 }

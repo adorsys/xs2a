@@ -85,15 +85,14 @@ public class ConsentMapper {
 
     private AccountReference mapFromSpiAccountReference(SpiAccountReference reference) {
         return Optional.ofNullable(reference)
-                   .map(ar -> {
-                       AccountReference accountReference = new AccountReference();
-                       accountReference.setAccountId(ar.getAccountId());
-                       accountReference.setIban(ar.getIban());
-                       accountReference.setBban(ar.getBban());
-                       accountReference.setPan(ar.getPan());
-                       accountReference.setMaskedPan(ar.getMaskedPan());
-                       accountReference.setMsisdn(ar.getMsisdn());
-                       accountReference.setCurrency(ar.getCurrency());
+               .map(ar -> {
+                   AccountReference accountReference = new AccountReference();
+                   accountReference.setIban(ar.getIban());
+                   accountReference.setBban(ar.getBban());
+                   accountReference.setPan(ar.getPan());
+                   accountReference.setMaskedPan(ar.getMaskedPan());
+                   accountReference.setMsisdn(ar.getMsisdn());
+                   accountReference.setCurrency(ar.getCurrency());
 
                        return accountReference;
                    }).orElse(null);
@@ -132,15 +131,14 @@ public class ConsentMapper {
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
-        return Optional.ofNullable(reference)
-                   .map(ar -> new SpiAccountReference(
-                       ar.getAccountId(),
-                       ar.getIban(),
-                       ar.getBban(),
-                       ar.getPan(),
-                       ar.getMaskedPan(),
-                       ar.getMsisdn(),
-                       ar.getCurrency())).orElse(null);
+        return Optional.of(reference)
+               .map(ar -> new SpiAccountReference(
+               ar.getIban(),
+               ar.getBban(),
+               ar.getPan(),
+               ar.getMaskedPan(),
+               ar.getMsisdn(),
+               ar.getCurrency())).orElse(null);
     }
 
     private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {

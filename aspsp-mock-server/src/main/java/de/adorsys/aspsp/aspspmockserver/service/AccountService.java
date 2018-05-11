@@ -50,7 +50,7 @@ public class AccountService {
         Set<String> accounts = getAccounts(consent.getAccess().getAccounts());
         accounts.addAll(getAccounts(consent.getAccess().getBalances()));
         accounts.addAll(getAccounts(consent.getAccess().getTransactions()));
-        List<SpiAccountDetails> accountDetailsList = accountRepository.findByIdIn(accounts);
+        List<SpiAccountDetails> accountDetailsList = accountRepository.findByIbanIn(accounts);
 
         if (!withBalance || !consent.isWithBalance()) {
             return accountDetailsList.stream()
@@ -86,7 +86,7 @@ public class AccountService {
     private Set<String> getAccounts(List<SpiAccountReference> list) {
         return Optional.ofNullable(list)
                    .map(l -> l.stream()
-                                 .map(SpiAccountReference::getAccountId)
+                                 .map(SpiAccountReference::getIban)
                                  .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
     }
