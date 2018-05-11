@@ -65,7 +65,8 @@ this means that all mock data will be lost upon restart.
 Dockerfiles provided in the project allow to put the build artifacts into a docker images. Those images are to be
 configured through your environment (documentation follows) to interact properly.
 
-To get keycloak act under a secured reverse proxy see [instruction](doc/deployment.md)
+More details see in [instruction](doc/deployment.md)
+
 ## Built With
 
 * [Java, version 1.8](http://java.oracle.com) - The main language of implementation
