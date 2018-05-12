@@ -78,7 +78,7 @@ public class PeriodicPaymentsControllerTest {
 
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
-        return ResponseObject.builder()
+        return ResponseObject.<PaymentInitialisationResponse>builder()
                .body(getPaymentInitializationResponse()).build();
     }
 

@@ -71,7 +71,7 @@ public class FundsConfirmationControllerTest {
     }
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {
-        return ResponseObject.builder()
+        return ResponseObject.<FundsConfirmationResponse>builder()
                .body(new FundsConfirmationResponse(true)).build();
     }
 

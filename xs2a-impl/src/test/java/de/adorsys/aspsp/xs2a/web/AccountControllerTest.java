@@ -197,20 +197,20 @@ public class AccountControllerTest {
         AccountDetails[] array = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class);
         Map<String, List<AccountDetails>> result = new HashMap<>();
         result.put("accountList", Arrays.asList(array));
-        return ResponseObject.builder()
+        return ResponseObject.<Map<String, List<AccountDetails>>>builder()
             .body(result).build();
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
         Map<String, List<AccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
-        return ResponseObject.builder()
+        return ResponseObject.<AccountDetails>builder()
             .body(map.get("accountList").get(0)).build();
     }
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
         AccountReport accountReport = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
 
-        return ResponseObject.builder()
+        return ResponseObject.<AccountReport>builder()
             .body(accountReport).build();
     }
 
@@ -218,7 +218,7 @@ public class AccountControllerTest {
         Balances read = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
         List<Balances> res = new ArrayList<>();
         res.add(read);
-        return ResponseObject.builder()
+        return ResponseObject.<List<Balances>>builder()
             .body(res).build();
     }
 }

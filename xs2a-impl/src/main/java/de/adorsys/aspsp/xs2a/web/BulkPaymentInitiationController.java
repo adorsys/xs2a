@@ -51,6 +51,6 @@ public class BulkPaymentInitiationController {
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @RequestBody List<SinglePayments> payments) {
-        return responseMapper.createdOrBadRequest(paymentService.createBulkPayments(payments, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.createBulkPayments(payments, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
     }
 }
