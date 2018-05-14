@@ -23,38 +23,35 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.http.HttpStatus.*;
+
 @Component
 @AllArgsConstructor
 public class ResponseMapper {
-//TODO Refactor success operation validation methodology (response.getBody() != null  "bad practice") https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/91
-    public ResponseEntity ok(ResponseObject response) {
-        return getEntity(response, HttpStatus.OK);
+
+    public ResponseEntity ok() {
+        return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity okOrNotFound(ResponseObject response) {
-        return getEntity(response, response.getBody() != null
-                                   ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+    public <T> ResponseEntity<T> ok(ResponseObject<T> response) {
+        return getEntity(response, OK);
     }
 
-    public ResponseEntity createdOrBadRequest(ResponseObject response) {
-        return getEntity(response, response.getBody() != null
-                                   ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
+    public <T> ResponseEntity<T> created(ResponseObject<T> response) {
+        return getEntity(response, CREATED);
     }
 
-    public ResponseEntity okOrBadRequest(ResponseObject response) {
-        return getEntity(response, response.getBody() != null
-                                   ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+    public <T> ResponseEntity<T> delete(ResponseObject<T> response) {
+        return getEntity(response, NO_CONTENT);
     }
 
-    public ResponseEntity deleteOrNotFound(ResponseObject response) {
-        return getEntity(response, response.getBody() != null
-                                   ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND);
+    private <T> ResponseEntity<T> getEntity(ResponseObject<T> response, HttpStatus status) {
+        return response.hasError()
+            ? enrichError(response.getError())
+            : new ResponseEntity<>(response.getBody(), status);
     }
 
-    private ResponseEntity getEntity(ResponseObject response, HttpStatus status) {
-        MessageError messageError = response.getError();
-        return messageError != null
-               ? new ResponseEntity<>(messageError, HttpStatus.valueOf(messageError.getTppMessage().getCode().getCode()))
-               : new ResponseEntity<>(response.getBody(), status);
+    private ResponseEntity enrichError(MessageError error){
+         return new ResponseEntity<>(error, valueOf(error.getTppMessage().getCode().getCode()));
     }
 }

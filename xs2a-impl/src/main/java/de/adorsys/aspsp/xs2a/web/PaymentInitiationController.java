@@ -63,7 +63,7 @@ public class PaymentInitiationController {
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @RequestBody SinglePayments singlePayment) {
-        return responseMapper.createdOrBadRequest(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
@@ -80,6 +80,6 @@ public class PaymentInitiationController {
     @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
-        return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
+        return responseMapper.ok(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
     }
 }

@@ -71,8 +71,8 @@ public class FundsConfirmationControllerTest {
     }
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {
-        return ResponseObject.builder()
-            .body(new FundsConfirmationResponse(true)).build();
+        return ResponseObject.<FundsConfirmationResponse>builder()
+               .body(new FundsConfirmationResponse(true)).build();
     }
 
     private FundsConfirmationRequest readFundsConfirmationRequest() throws IOException {

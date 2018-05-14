@@ -130,7 +130,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(CORRECT_PSU_ID);
         //Than:
-        assertThat(response.getBody()).isEqualTo(true);
+        assertThat(response.hasError()).isEqualTo(false);
     }
 
     @Test
