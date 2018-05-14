@@ -57,7 +57,7 @@ public class AccountController {
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance, psuInvolved);
 
-        return responseMapper.okOrNotFound(responseObject); //TODO clarify how to avoid unchecked casts
+        return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token",authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
@@ -78,7 +78,7 @@ public class AccountController {
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(accountId, withBalance, psuInvolved);
 
-        return responseMapper.okOrNotFound(responseObject);
+        return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Read a list of the balances for the given account", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
@@ -96,7 +96,7 @@ public class AccountController {
     @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<List<Balances>> responseObject = accountService.getBalances(accountId, psuInvolved);
 
-        return responseMapper.okOrNotFound(responseObject);
+        return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
@@ -125,7 +125,7 @@ public class AccountController {
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
 
-        ResponseObject responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
-        return responseMapper.okOrBadRequest(responseObject);
+        ResponseObject<AccountReport> responseObject = accountService.getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
+        return responseMapper.ok(responseObject);
     }
 }

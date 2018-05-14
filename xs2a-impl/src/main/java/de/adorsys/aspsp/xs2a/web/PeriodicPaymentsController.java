@@ -50,6 +50,6 @@ public class PeriodicPaymentsController {
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
     @RequestBody PeriodicPayment periodicPayment) {
-        return responseMapper.createdOrBadRequest(paymentService.initiatePeriodicPayment(periodicPayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.initiatePeriodicPayment(periodicPayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
     }
 }
