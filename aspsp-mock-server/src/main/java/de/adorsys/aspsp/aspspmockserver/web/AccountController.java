@@ -68,10 +68,8 @@ public class AccountController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @DeleteMapping(path = "/{accountId}")
     public ResponseEntity deleteAccount(@PathVariable("accountId") String accountId) {
-        if (accountService.deleteAccountById(accountId)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        accountService.deleteAccountById(accountId);
+        return ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

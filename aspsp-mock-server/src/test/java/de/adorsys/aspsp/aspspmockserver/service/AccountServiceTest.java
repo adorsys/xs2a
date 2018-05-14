@@ -52,22 +52,24 @@ public class AccountServiceTest {
 
     @Before
     public void setUp() {
+        List<Psu> psuList = new ArrayList<>();
+        psuList.add(getPsuWithRightAccounts());
         when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
-            .thenReturn(getPsuWithRightAccounts());
+            .thenReturn(Optional.of(getPsuWithRightAccounts()));
         when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
-            .thenReturn(getPsuWithRightAccounts());
+            .thenReturn(psuList);
         when(psuRepository.findPsuByAccountDetailsList_Id(WRONG_ACCOUNT_ID))
-            .thenReturn(Optional.empty());
+            .thenReturn(Collections.emptyList());
         when(psuRepository.findPsuByAccountDetailsList_Id(null))
-            .thenReturn(Optional.empty());
-        when(psuRepository.save(getPsuWithRightAccounts().get()))
-            .thenReturn(getPsuWithRightAccounts().get());
-        when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
+            .thenReturn(Collections.emptyList());
+        when(psuRepository.save(getPsuWithRightAccounts()))
             .thenReturn(getPsuWithRightAccounts());
+        when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
+            .thenReturn(Optional.of(getPsuWithRightAccounts()));
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
             .thenReturn(Optional.empty());
         when(psuRepository.findOne(anyString()))
-            .thenReturn(getPsuWithRightAccounts().get());
+            .thenReturn(getPsuWithRightAccounts());
     }
 
     @Test
@@ -145,42 +147,6 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void deleteAccountById_Success() {
-        //Given
-        String spiAccountDetailsId = ACCOUNT_ID;
-
-        //When
-        boolean actualResult = accountService.deleteAccountById(spiAccountDetailsId);
-
-        //Then
-        assertThat(actualResult).isTrue();
-    }
-
-    @Test
-    public void deleteAccountById_WrongId() {
-        //Given
-        String wrongId = WRONG_ACCOUNT_ID;
-
-        //When
-        boolean actualResult = accountService.deleteAccountById(wrongId);
-
-        //Then
-        assertThat(actualResult).isFalse();
-    }
-
-    @Test
-    public void deleteAccountById_Null() {
-        //Given
-        String wrongId = null;
-
-        //When
-        boolean actualResult = accountService.deleteAccountById(wrongId);
-
-        //Then
-        assertThat(actualResult).isFalse();
-    }
-
-    @Test
     public void getBalances() {
         //Given
         List<SpiBalances> expectedBalance = getNewBalanceList();
@@ -235,7 +201,7 @@ public class AccountServiceTest {
         return list;
     }
 
-    private Optional<Psu> getPsuWithRightAccounts() {
-        return Optional.of(new Psu("12345678910", getAccounts()));
+    private Psu getPsuWithRightAccounts() {
+        return new Psu("12345678910", getAccounts());
     }
 }

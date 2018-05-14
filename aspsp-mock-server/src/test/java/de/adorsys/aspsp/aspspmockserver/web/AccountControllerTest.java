@@ -65,10 +65,6 @@ public class AccountControllerTest {
             .thenReturn(accountList);
         when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
-        when(accountService.deleteAccountById(ACCOUNT_ID))
-            .thenReturn(true);
-        when(accountService.deleteAccountById(WRONG_ACCOUNT_ID))
-            .thenReturn(false);
         when(accountService.getBalances(ACCOUNT_ID))
             .thenReturn(getNewBalanceList());
         when(accountService.getBalances(WRONG_ACCOUNT_ID))
@@ -169,19 +165,6 @@ public class AccountControllerTest {
 
         //When:
         ResponseEntity actualResponse = accountController.deleteAccount(ACCOUNT_ID);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-    }
-
-    @Test
-    public void deleteAccount_WrongId() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
-
-        //When:
-        ResponseEntity actualResponse = accountController.deleteAccount(WRONG_ACCOUNT_ID);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();

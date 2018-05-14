@@ -24,8 +24,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static org.springframework.util.CollectionUtils.isEmpty;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -39,7 +38,9 @@ public class AccountService {
     }
 
     public Optional<SpiAccountDetails> updateAccount(SpiAccountDetails accountDetails) {
-        return psuRepository.findPsuByAccountDetailsList_Iban(getAccountIban(accountDetails))
+        return Optional.ofNullable(accountDetails.getIban())
+            .map(iban -> psuRepository.findPsuByAccountDetailsList_Iban(iban))
+            .orElse(Optional.empty())
             .map(psu -> updateAccountInPsu(psu, accountDetails))
             .orElse(Optional.empty());
     }
@@ -51,6 +52,8 @@ public class AccountService {
 
     public Optional<SpiAccountDetails> getAccountById(String accountId) {
         return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+            .stream()
+            .findFirst()
             .map(psu -> findAccountInListById(psu.getAccountDetailsList(), accountId))
             .orElse(Optional.empty());
     }
@@ -61,16 +64,32 @@ public class AccountService {
             .orElse(Optional.empty());
     }
 
-    public boolean deleteAccountById(String accountId) {
-        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
-            .map(psu -> removeAccountFromPsu(psu, accountId))
-            .orElse(false);
-    }
-
     public List<SpiBalances> getBalances(String accountId) {
         return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+            .stream()
+            .findFirst()
             .map(psu -> getAccountBalances(psu, accountId))
             .orElse(Collections.emptyList());
+    }
+
+    public void deleteAccountById(String accountId) {
+        Optional.ofNullable(accountId)
+            .map(id -> psuRepository.findPsuByAccountDetailsList_Id(id))
+            .map(lst -> lst.stream()
+                .map(psu -> deleteAccountDetailsFromPsu(psu, accountId)))
+            .map(lst -> lst.map(psu -> psuRepository.save(psu)));
+    }
+
+    private Psu deleteAccountDetailsFromPsu(Psu psu, String accounId) {
+        List<SpiAccountDetails> newList = removeAccountDetailsById(psu.getAccountDetailsList(), accounId);
+        psu.setAccountDetailsList(newList);
+        return psu;
+    }
+
+    private List<SpiAccountDetails> removeAccountDetailsById(List<SpiAccountDetails> details, String accounId) {
+        return details.stream()
+            .filter(ad -> !ad.getId().equals(accounId))
+            .collect(Collectors.toList());
     }
 
     private Optional<SpiAccountDetails> addAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {
@@ -80,33 +99,10 @@ public class AccountService {
     }
 
     private Optional<SpiAccountDetails> updateAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {
-        List<SpiAccountDetails> newList = deleteAccountFromListById(psu.getAccountDetailsList(), accountDetails.getId());
-        if (isEmpty(newList)) {
-            return Optional.empty();
-        } else {
-            newList.add(accountDetails);
-            psu.setAccountDetailsList(newList);
-            psuRepository.save(psu);
-
-            return Optional.of(accountDetails);
-        }
-    }
-
-    private boolean removeAccountFromPsu(Psu psu, String accountId) {
-        List<SpiAccountDetails> newList = deleteAccountFromListById(psu.getAccountDetailsList(), accountId);
-        if (isEmpty(newList)) {
-            return false;
-        } else {
-            psu.setAccountDetailsList(newList);
-            psuRepository.save(psu);
-            return true;
-        }
-    }
-
-    private List<SpiAccountDetails> deleteAccountFromListById(List<SpiAccountDetails> list, String accountId) {
-        return list.removeIf(acc -> acc.getId().equals(accountId))
-            ? list
-            : Collections.emptyList();
+        List<SpiAccountDetails> newList = removeAccountDetailsById(psu.getAccountDetailsList(), accountDetails.getId());
+        newList.add(accountDetails);
+        psu.setAccountDetailsList(newList);
+        return Optional.of(accountDetails);
     }
 
     private List<SpiBalances> getAccountBalances(Psu psu, String accountId) {
