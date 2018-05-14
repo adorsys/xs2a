@@ -44,7 +44,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Service
 @AllArgsConstructor
 public class PaymentService {
-    private final MessageService messageService;
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
 
@@ -53,7 +52,6 @@ public class PaymentService {
         TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
 
-        // TODO add error response
         return ResponseObject.<Map<String, TransactionStatus>>builder()
             .body(paymentStatusResponse).build();
     }
@@ -65,8 +63,7 @@ public class PaymentService {
         return Optional.ofNullable(paymentInitiation)
             .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
             .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                    .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                 .build());
     }
 
@@ -80,8 +77,7 @@ public class PaymentService {
 
         return isEmpty(paymentInitialisationResponse)
             ? ResponseObject.<List<PaymentInitialisationResponse>>builder()
-                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                .text(messageService.getMessage(PAYMENT_FAILED.name())))).build()
+                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build()
             : ResponseObject.<List<PaymentInitialisationResponse>>builder()
                 .body(paymentInitialisationResponse).build();
     }
@@ -94,8 +90,7 @@ public class PaymentService {
         return Optional.ofNullable(paymentInitialisationResponse)
             .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
             .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)
-                 .text(messageService.getMessage(PAYMENT_FAILED.name()))))
+                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                 .build());
     }
 }

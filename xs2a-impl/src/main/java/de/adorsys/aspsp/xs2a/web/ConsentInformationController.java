@@ -66,11 +66,11 @@ public class ConsentInformationController {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<Map<String, TransactionStatus>> getAccountConsentsStatusById(
+    public ResponseEntity<TransactionStatus> getAccountConsentsStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject response = consentService.getAccountConsentsStatusById(consentId);
-        return responseMapper.ok(response); // TODO bug!
+        ResponseObject<TransactionStatus> response = consentService.getAccountConsentsStatusById(consentId);
+        return responseMapper.ok(response);
     }
 
     @ApiOperation(value = "Returns the content of an account information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

@@ -54,7 +54,6 @@ public class AccountService {
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
-        // TODO add error response
         return ResponseObject.<Map<String, List<AccountDetails>>>builder()
             .body(accountDetailsMap).build();
     }
@@ -64,8 +63,7 @@ public class AccountService {
 
         return Optional.ofNullable(spiBalances)
             .map(sb -> ResponseObject.<List<Balances>>builder().body(accountMapper.mapFromSpiBalancesList(sb)).build())
-            .orElse(ResponseObject.<List<Balances>>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                .text("Wrong account ID"))).build());
+            .orElse(ResponseObject.<List<Balances>>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build());
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
@@ -74,7 +72,7 @@ public class AccountService {
 
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
             return ResponseObject.<AccountReport>builder()
-                .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();// TODO check error code
+                .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
             AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
             return ResponseObject.<AccountReport>builder()
