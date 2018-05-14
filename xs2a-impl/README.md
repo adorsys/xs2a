@@ -1,13 +1,6 @@
-# Project Title
+# XS2A Server
 
-XS2A-Server
-
-## Built With
-
-* [Java, version 1.8](http://java.oracle.com) - The main language of implementation
-* [Maven, version 3.0](https://maven.apache.org/) - Dependency Management
-* [Spring Boot](https://projects.spring.io/spring-boot/) - Spring boot as core Java framework
-
+Rest-implementation of PSD2 XS2A Specification of Berlin Group
 
 ## Configuration and deployment
 To interact with keycloak server properly, please add following parameters to your application.properties file 

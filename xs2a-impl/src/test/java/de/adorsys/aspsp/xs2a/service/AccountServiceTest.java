@@ -172,7 +172,7 @@ public class AccountServiceTest {
 
         //Then:
         assertThat(actualResult).isEqualTo(expectedReport);
-        assertThat(actualResult.get_links()).isEqualTo(expectedReport.get_links());
+        assertThat(actualResult.getLinks()).isEqualTo(expectedReport.getLinks());
     }
 
     private void checkTransactionResultsByTransactionId(String accountId, String transactionId, boolean psuInvolved) {
