@@ -11,22 +11,17 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ConsentService {
-    private ConsentRepository consentRepository;
-    private PsuRepository psuRepository;
-
-    @Autowired
-    public ConsentService(ConsentRepository consentRepository, PsuRepository psuRepository) {
-        this.consentRepository = consentRepository;
-        this.psuRepository = psuRepository;
-    }
+    private final ConsentRepository consentRepository;
+    private final PsuRepository psuRepository;
 
     public Optional<String> createConsentAndReturnId(SpiCreateConsentRequest request, String psuId, boolean withBalance) {
         return readActualAccountAccess(request.getAccess(), psuId)

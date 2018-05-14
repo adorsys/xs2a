@@ -34,7 +34,7 @@ public class SpiAmount {
     public double getDoubleContent() {
         try {
             return Optional.ofNullable(content)
-                .map(cont -> Double.parseDouble(cont))
+                .map(Double::parseDouble)
                 .orElse(0.0d);
         } catch (NumberFormatException ex) {
             log.warn("Problem with converting amount content '{}' to double format: {}", content, ex.getMessage());

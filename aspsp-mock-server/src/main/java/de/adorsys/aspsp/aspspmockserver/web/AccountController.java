@@ -43,26 +43,26 @@ public class AccountController {
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts(@RequestParam(value = "consent-id", required = true) String consentId,
                                                                    @RequestParam(value = "withBalance", required = false) boolean withBalance) {
-        List<SpiAccountDetails> result = accountService.getAllAccounts(consentId, withBalance);
-        return result != null
-            ? new ResponseEntity<>(result, HttpStatus.OK)
-            : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<SpiAccountDetails> accountList = accountService.getAllAccounts(consentId, withBalance);
+        return accountList != null
+                   ? new ResponseEntity<>(accountList, HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{accountId}")
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccountById(accountId)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PutMapping(path = "/")
     public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody SpiAccountDetails account) {
-        return accountService.addAccount(psuId,account)
-            .map(acc -> new ResponseEntity<>(acc, CREATED))
-            .orElse(ResponseEntity.badRequest().build());
+        return accountService.addAccount(psuId, account)
+                   .map(acc -> new ResponseEntity<>(acc, CREATED))
+                   .orElse(ResponseEntity.badRequest().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -75,17 +75,17 @@ public class AccountController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{accountId}/balances")
     public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
-        List<SpiBalances> response = accountService.getBalances(accountId);
+        List<SpiBalances> response = accountService.getAccountBalancesById(accountId);
         return isEmpty(response)
-            ? ResponseEntity.notFound().build()
-            : ResponseEntity.ok(response);
+                   ? ResponseEntity.notFound().build()
+                   : ResponseEntity.ok(response);
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{iban}/{currency}")
     public ResponseEntity<SpiAccountDetails> readAccountByIban(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
-        return accountService.getAccountByIban(iban, Currency.getInstance(currency))
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        return accountService.getAccountByIbanAndCurrency(iban, Currency.getInstance(currency))
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

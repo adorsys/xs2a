@@ -40,17 +40,17 @@ public class FutureBookingsService {
 
     private Optional<SpiAccountDetails> updateAccountBalance(SpiAccountDetails account) {
         return calculateNewBalance(account)
-            .map(bal -> saveUpdatedAccount(account, bal))
-            .orElse(Optional.empty());
+            .flatMap(bal -> saveNewBalanceToAccount(account, bal));
     }
 
-    private Optional<SpiAccountDetails> saveUpdatedAccount(SpiAccountDetails account, SpiBalances balance) {
+    private Optional<SpiAccountDetails> saveNewBalanceToAccount(SpiAccountDetails account, SpiBalances balance) {
         account.updateFirstBalance(balance);
         return accountService.updateAccount(account);
     }
 
     private Optional<SpiBalances> calculateNewBalance(SpiAccountDetails account) {
-        return account.getFirstBalance().map(bal -> getNewBalance(account, bal));
+        return account.getFirstBalance()
+                   .map(bal -> getNewBalance(account, bal));
     }
 
     private SpiBalances getNewBalance(SpiAccountDetails account, SpiBalances balance) {

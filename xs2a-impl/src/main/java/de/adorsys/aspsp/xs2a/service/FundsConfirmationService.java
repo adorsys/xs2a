@@ -19,12 +19,11 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.aspsp.xs2a.service.mapper.FundMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
-import de.adorsys.aspsp.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,40 +32,28 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class FundsConfirmationService {
-    private final FundsConfirmationSpi fundsConfirmationSpi;
-    private final FundMapper fundMapper;
+    private final AccountService accountService;
+    private final AccountMapper accountMapper;
 
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
-        SpiFundsConfirmationRequest spiRequest = fundMapper.mapToSpiFundsConfirmationRequest(request);
-        Boolean response = Optional.ofNullable(fundsConfirmationSpi.getRequestedAccountDetails(spiRequest))
-            .map(acc -> checkBalance(acc, spiRequest))
-            .orElse(false);
+        Boolean fundsAvailable = Optional.ofNullable(request)
+                                     .map(this::isFundsAvailable)
+                                     .orElse(false);
 
         return ResponseObject.builder()
-            .body(new FundsConfirmationResponse(response)).build();
+                   .body(new FundsConfirmationResponse(fundsAvailable)).build();
     }
 
-    private boolean checkBalance(SpiAccountDetails accountDetails, SpiFundsConfirmationRequest request) {
-        return accountDetails.getFirstBalance()
-            .map(bal -> compareAmounts(bal, request))
-            .orElse(false);
-    }
+    private boolean isFundsAvailable(FundsConfirmationRequest request) {
+        SpiAmount requiredAmount = accountMapper.mapToSpiAmount(request.getInstructedAmount());
 
-    private boolean compareAmounts(SpiBalances balance, SpiFundsConfirmationRequest request) {
-        return getAvailableAccountBalance(balance)
-            .map(am -> am.getDoubleContent() >= getRequestedAmount(request))
-            .orElse(false);
-    }
-
-    private double getRequestedAmount(SpiFundsConfirmationRequest request) {
-        return Optional.ofNullable(request.getInstructedAmount())
-            .map(am -> am.getDoubleContent())
-            .orElse(0.0d);
-    }
-
-    private Optional<SpiAmount> getAvailableAccountBalance(SpiBalances balance) {
-        return Optional.ofNullable(balance.getInterimAvailable())
-            .map(bal -> Optional.of(bal.getSpiAmount()))
-            .orElse(Optional.empty());
+        return Optional.ofNullable(request.getPsuAccount())
+                   .flatMap(accountService::getSpiAccountDetailsByAccountReference)
+                   .flatMap(SpiAccountDetails::getFirstBalance)
+                   .map(SpiBalances::getInterimAvailable)
+                   .map(SpiAccountBalance::getSpiAmount)
+                   .map(spiAm -> spiAm.getDoubleContent() >= requiredAmount.getDoubleContent() &&
+                                     spiAm.getCurrency() == requiredAmount.getCurrency())
+                   .orElse(false);
     }
 }

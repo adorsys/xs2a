@@ -57,21 +57,25 @@ public class AccountControllerTest {
     public void setUpAccountServiceMock() {
         accountList.add(getSpiAccountDetails_1());
         accountList.add(getSpiAccountDetails_2());
+
         when(accountService.getAccountById(ACCOUNT_ID))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
         when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
+
         when(accountService.getAllAccounts(anyString(), anyBoolean()))
             .thenReturn(accountList);
         when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
-        when(accountService.getBalances(ACCOUNT_ID))
+
+        when(accountService.getAccountBalancesById(ACCOUNT_ID))
             .thenReturn(getNewBalanceList());
-        when(accountService.getBalances(WRONG_ACCOUNT_ID))
+        when(accountService.getAccountBalancesById(WRONG_ACCOUNT_ID))
             .thenReturn(Collections.emptyList());
-        when(accountService.getAccountByIban(IBAN, Currency.getInstance("EUR")))
+
+        when(accountService.getAccountByIbanAndCurrency(IBAN, Currency.getInstance("EUR")))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
-        when(accountService.getAccountByIban(WRONG_IBAN, Currency.getInstance("EUR")))
+        when(accountService.getAccountByIbanAndCurrency(WRONG_IBAN, Currency.getInstance("EUR")))
             .thenReturn(Optional.empty());
     }
 

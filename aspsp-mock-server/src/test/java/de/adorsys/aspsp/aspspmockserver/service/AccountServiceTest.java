@@ -18,7 +18,9 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,13 +44,12 @@ public class AccountServiceTest {
     private static final String WRONG_ACCOUNT_ID = "Really wrong id";
     private static final String IBAN = "DE1789232872";
     private static final String WRONG_IBAN = "Wrongest iban ever";
+    private static final Currency EUR = Currency.getInstance("EUR");
 
     @Autowired
     private AccountService accountService;
     @MockBean
     PsuRepository psuRepository;
-    @MockBean
-    ConsentService consentService;
 
     @Before
     public void setUp() {
@@ -56,18 +57,18 @@ public class AccountServiceTest {
         psuList.add(getPsuWithRightAccounts());
         when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
-        when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
-            .thenReturn(psuList);
-        when(psuRepository.findPsuByAccountDetailsList_Id(WRONG_ACCOUNT_ID))
-            .thenReturn(Collections.emptyList());
-        when(psuRepository.findPsuByAccountDetailsList_Id(null))
-            .thenReturn(Collections.emptyList());
-        when(psuRepository.save(getPsuWithRightAccounts()))
-            .thenReturn(getPsuWithRightAccounts());
-        when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
-            .thenReturn(Optional.of(getPsuWithRightAccounts()));
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
             .thenReturn(Optional.empty());
+
+        when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
+            .thenReturn(Optional.of(getPsuWithRightAccounts()));
+        when(psuRepository.findPsuByAccountDetailsList_Id(WRONG_ACCOUNT_ID))
+            .thenReturn(Optional.empty());
+        when(psuRepository.findPsuByAccountDetailsList_Id(null))
+            .thenReturn(Optional.empty());
+
+        when(psuRepository.save(any(Psu.class)))
+            .thenReturn(getPsuWithRightAccounts());
         when(psuRepository.findOne(anyString()))
             .thenReturn(getPsuWithRightAccounts());
     }
@@ -87,7 +88,7 @@ public class AccountServiceTest {
     @Test
     public void updateAccount() {
         //Given
-        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetailsToUpdate();
+        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
 
         //When
         SpiAccountDetails actualSpiAccountDetails = accountService.updateAccount(expectedSpiAccountDetails).get();
@@ -106,7 +107,7 @@ public class AccountServiceTest {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         //When
-        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountByIban(IBAN, Currency.getInstance("EUR"));
+        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountByIbanAndCurrency(IBAN, Currency.getInstance("EUR"));
 
         //Then
         assertThat(actualSpiAccountDetails).isNotNull();
@@ -116,7 +117,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountByIban_WrongIban() {
         //When
-        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountByIban(WRONG_IBAN, Currency.getInstance("EUR"));
+        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountByIbanAndCurrency(WRONG_IBAN, Currency.getInstance("EUR"));
 
         //Then
         assertThat(actualSpiAccountDetails).isEqualTo(Optional.empty());
@@ -152,7 +153,7 @@ public class AccountServiceTest {
         List<SpiBalances> expectedBalance = getNewBalanceList();
 
         //When
-        List<SpiBalances> actualBalanceList = accountService.getBalances(ACCOUNT_ID);
+        List<SpiBalances> actualBalanceList = accountService.getAccountBalancesById(ACCOUNT_ID);
 
         //Then
         assertThat(actualBalanceList).isEqualTo(expectedBalance);
@@ -168,12 +169,6 @@ public class AccountServiceTest {
         return new SpiAccountDetails("qwertyuiop12345678", IBAN, null,
             "4444333322221111", "444433xxxxxx1111", null, null, "Emily",
             "GIRO", null, "ACVB222", null);
-    }
-
-    private SpiAccountDetails getSpiAccountDetailsToUpdate() {
-        return new SpiAccountDetails("qwertyuiop12345678", IBAN, null,
-            "9999999999999999", "444433xxxxxx1111", null, null, "Irene Forsyte",
-            "GIRO", null, "ACVB222", getNewBalanceList());
     }
 
     private List<SpiBalances> getNewBalanceList() {
@@ -194,14 +189,14 @@ public class AccountServiceTest {
         return sb;
     }
 
+    private Psu getPsuWithRightAccounts() {
+        return new Psu("12345678910", getAccounts());
+    }
+
     private List<SpiAccountDetails> getAccounts() {
         List<SpiAccountDetails> list = new ArrayList<>();
         list.add(getSpiAccountDetails_1());
         list.add(getSpiAccountDetails_2());
         return list;
-    }
-
-    private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", getAccounts());
     }
 }
