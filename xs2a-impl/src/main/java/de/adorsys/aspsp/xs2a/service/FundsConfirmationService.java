@@ -40,7 +40,7 @@ public class FundsConfirmationService {
                                      .map(this::isFundsAvailable)
                                      .orElse(false);
 
-        return ResponseObject.builder()
+        return ResponseObject.<FundsConfirmationResponse>builder()
                    .body(new FundsConfirmationResponse(fundsAvailable)).build();
     }
 
