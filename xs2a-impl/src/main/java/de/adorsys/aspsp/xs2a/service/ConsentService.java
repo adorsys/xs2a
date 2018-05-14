@@ -24,14 +24,14 @@ import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ConsentService {
     private final String consentsLinkRedirectToSource;
     private final ConsentSpi consentSpi;
