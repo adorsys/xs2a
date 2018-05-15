@@ -44,6 +44,6 @@ public class FundsConfirmationController {
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<FundsConfirmationResponse> fundConfirmation(@RequestBody FundsConfirmationRequest request) {
 
-        return responseMapper.okOrNotFound(fundsConfirmationService.fundsConfirmation(request));
+        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(request));
     }
 }

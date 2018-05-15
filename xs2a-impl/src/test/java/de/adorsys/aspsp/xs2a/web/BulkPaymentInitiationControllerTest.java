@@ -80,7 +80,7 @@ public class BulkPaymentInitiationControllerTest {
     }
 
     private ResponseObject<List<PaymentInitialisationResponse>> readResponseObject() throws IOException {
-        return ResponseObject.builder()
+        return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                .body(readPaymentInitialisationResponse()).build();
     }
 

@@ -36,7 +36,7 @@ public class FundsConfirmationService {
         SpiFundsConfirmationRequest spiRequest = fundMapper.mapToSpiFundsConfirmationRequest(request);
         Boolean areSufficientFunds = fundsConfirmationSpi.fundsConfirmation(spiRequest);
 
-        return ResponseObject.builder()
+        return ResponseObject.<FundsConfirmationResponse>builder()
                .body(new FundsConfirmationResponse(areSufficientFunds)).build();
     }
 }
