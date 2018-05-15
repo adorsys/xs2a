@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -37,23 +39,27 @@ public class FundsConfirmationService {
 
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         Boolean fundsAvailable = Optional.ofNullable(request)
-                                     .map(this::isFundsAvailable)
+                                     .map(req-> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))
                                      .orElse(false);
 
         return ResponseObject.<FundsConfirmationResponse>builder()
                    .body(new FundsConfirmationResponse(fundsAvailable)).build();
     }
 
-    private boolean isFundsAvailable(FundsConfirmationRequest request) {
-        SpiAmount requiredAmount = accountMapper.mapToSpiAmount(request.getInstructedAmount());
+    private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
+        SpiAmount spiRequiredAmount = accountMapper.mapToSpiAmount(requiredAmount);
 
-        return Optional.ofNullable(request.getPsuAccount())
+        return Optional.ofNullable(accountReference)
                    .flatMap(accountService::getSpiAccountDetailsByAccountReference)
                    .flatMap(SpiAccountDetails::getFirstBalance)
                    .map(SpiBalances::getInterimAvailable)
                    .map(SpiAccountBalance::getSpiAmount)
-                   .map(spiAm -> spiAm.getDoubleContent() >= requiredAmount.getDoubleContent() &&
-                                     spiAm.getCurrency() == requiredAmount.getCurrency())
+                   .map(spiAm -> isRequiredAmountEnough(spiRequiredAmount, spiAm))
                    .orElse(false);
+    }
+
+    private boolean isRequiredAmountEnough(SpiAmount requiredAmount, SpiAmount availableAmount) {
+        return availableAmount.getDoubleContent() >= requiredAmount.getDoubleContent() &&
+                          availableAmount.getCurrency() == requiredAmount.getCurrency();
     }
 }
