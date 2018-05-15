@@ -76,11 +76,11 @@ public class AccountService {
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
 
         if (accountSpi.readAccountDetails(accountId) == null) {
-            return ResponseObject.builder()
+            return ResponseObject.<AccountReport>builder()
                 .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
             AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
-            return ResponseObject.builder()
+            return ResponseObject.<AccountReport>builder()
                 .body(getReportAccordingMaxSize(accountReport, accountId)).build();
         }
     }

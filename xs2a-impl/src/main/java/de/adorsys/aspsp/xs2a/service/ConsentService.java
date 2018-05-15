@@ -27,7 +27,6 @@ import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,22 +46,22 @@ public class ConsentService {
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         Optional<String> consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
         return consentId.isPresent()
-                   ? ResponseObject.builder().body(new CreateConsentResp(TransactionStatus.RCVD, consentId.get(), null, getLinkToConsent(consentId.get()), null)).build()
-                   : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR))).build();
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(TransactionStatus.RCVD, consentId.get(), null, getLinkToConsent(consentId.get()), null)).build()
+                   : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR))).build();
     }
 
     public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
         AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
         return isEmpty(consent)
-                   ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.builder().body(consent.getTransactionStatus()).build();
+                   ? ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
+                   : ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build();
     }
 
     public ResponseObject<AccountConsent> getAccountConsentsById(String consentId) {
         AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
         return isEmpty(consent)
-                   ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.builder().body(consent).build();
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
+                   : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
     public ResponseObject<Boolean> deleteAccountConsentsById(String consentId) {
@@ -72,8 +71,8 @@ public class ConsentService {
         }
 
         return present
-                   ? ResponseObject.builder().body(true).build()
-                   : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
+                   ? ResponseObject.<Boolean>builder().body(true).build()
+                   : ResponseObject.<Boolean>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
     }
 
     private Optional<String> createAccountConsentsAndReturnId(CreateConsentReq req, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
@@ -189,7 +188,7 @@ public class ConsentService {
     }
 
     private boolean isAllAccountsOrAllPsd2(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
-        return !StringUtils.isEmpty(psuId)
+        return !isEmpty(psuId)
                    && availableAccounts == AccountAccessType.ALL_ACCOUNTS
                    || allPsd2 == AccountAccessType.ALL_ACCOUNTS;
 
