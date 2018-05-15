@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
 public class AccountControllerTest {
     private final String ACCOUNT_ID = "33333-999999999";
     private final String TRANSACTION_ID = "1234578";
-    private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetailsTestData.json";
+    private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetailsList.json";
     private final String ACCOUNT_REPORT_SOURCE = "/json/AccountReportTestData.json";
     private final String BALANCES_SOURCE = "/json/BalancesTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");

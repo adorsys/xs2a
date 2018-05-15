@@ -8,14 +8,15 @@
   "balances": [
     {
       "interimAvailable": {
-        "spiAmount": {
+        "amount": {
           "currency": "EUR",
           "content": "1000"
-        },
-        "lastActionDateTime": "2018-05-15T14:42:08.486+0000",
-        "date": "2018-05-15T14:42:08.486+0000"
+        }
       }
     }
   ],
-  "_links": {}
+  "_links": {
+    "viewBalances": "/api/v1/accounts/33333-999999999/balances",
+    "viewTransactions": "/api/v1/accounts/33333-999999999/transactions"
+  }
 }

@@ -41,9 +41,8 @@ public class AccountController {
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
-    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts(@RequestParam(value = "consent-id", required = true) String consentId,
-                                                                   @RequestParam(value = "withBalance", required = false) boolean withBalance) {
-        List<SpiAccountDetails> accountList = accountService.getAllAccounts(consentId, withBalance);
+    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts(@RequestParam(value = "psu-id", required = true) String psuId) {
+        List<SpiAccountDetails> accountList = accountService.getAllAccounts(psuId);
         return isEmpty(accountList)
                    ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
                    : new ResponseEntity<>(accountList, HttpStatus.OK);

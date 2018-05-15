@@ -55,7 +55,7 @@ public class ConsentServiceTest {
     private ConsentService consentService;
 
     @MockBean(name = "consentSpi")
-    ConsentSpiImpl consentSpi;
+    private ConsentSpiImpl consentSpi;
 
     @Before
     public void setUp() {

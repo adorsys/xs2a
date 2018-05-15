@@ -63,7 +63,7 @@ public class AccountControllerTest {
         when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
 
-        when(accountService.getAllAccounts(anyString(), anyBoolean()))
+        when(accountService.getAllAccounts(anyString()))
             .thenReturn(accountList);
         when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));

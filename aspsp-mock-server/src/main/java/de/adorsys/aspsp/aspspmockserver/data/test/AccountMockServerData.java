@@ -90,15 +90,15 @@ public class AccountMockServerData {
         );
     }
 
-    private List<SpiBalances> getNewBalanceList(String authorisedBalance, String openingBalance) {
-        return Collections.singletonList(getNewBalance(authorisedBalance, openingBalance));
+    private List<SpiBalances> getNewBalanceList(String interimAvailable, String openingBalance) {
+        return Collections.singletonList(getNewBalance(interimAvailable, openingBalance));
     }
 
-    private SpiBalances getNewBalance(String authorisedBalance, String openingBalance) {
+    private SpiBalances getNewBalance(String interimAvailable, String openingBalance) {
         Currency euro = Currency.getInstance("EUR");
 
         SpiBalances balance = new SpiBalances();
-        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, authorisedBalance)));
+        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, interimAvailable)));
         balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, openingBalance)));
 
         return balance;

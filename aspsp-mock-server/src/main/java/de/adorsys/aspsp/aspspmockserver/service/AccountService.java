@@ -47,7 +47,7 @@ public class AccountService {
                    .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
     }
 
-    public List<SpiAccountDetails> getAllAccounts(String psuId, boolean withBalance) {
+    public List<SpiAccountDetails> getAllAccounts(String psuId) {
         //TODO this is a task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/71
         return Collections.emptyList();
     }
