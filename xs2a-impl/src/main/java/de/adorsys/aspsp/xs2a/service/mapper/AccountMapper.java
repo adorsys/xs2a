@@ -60,8 +60,7 @@ public class AccountMapper {
                ad.getAccountType(),
                mapFromSpiAccountType(ad.getCashSpiAccountType()),
                ad.getBic(),
-               mapFromSpiBalancesList(ad.getBalances()),
-               null
+               mapFromSpiBalancesList(ad.getBalances())
                )
                )
                .orElse(null);

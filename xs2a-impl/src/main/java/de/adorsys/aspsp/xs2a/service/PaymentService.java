@@ -76,7 +76,7 @@ public class PaymentService {
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
         List<PaymentInitialisationResponse> paymentInitialisationResponse = spiPaymentInitiation.stream()
-            .map(spiPaym -> paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaym))
+            .map(paymentMapper::mapFromSpiPaymentInitializationResponse)
             .collect(Collectors.toList());
 
         return isEmpty(paymentInitialisationResponse)

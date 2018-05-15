@@ -20,12 +20,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public interface AccountSpi {
-    List<SpiAccountDetails> readAccounts(String consentId, boolean withBalance, boolean psuInvolved);
 
     List<SpiBalances> readBalances(String accountId, boolean psuInvolved);
 
@@ -33,9 +32,11 @@ public interface AccountSpi {
 
     List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved);
 
-    SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved);
+    SpiAccountDetails readAccountDetails(String accountId);
 
     List<SpiAccountDetails> readAccountsByPsuId(String psuId);
 
-    List<SpiAccountDetails> readAccountDetailsByIbans(Set<String> ibans);
+    List<SpiAccountDetails> readAccountDetailsByIban(String iban);
+
+    List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans);
 }

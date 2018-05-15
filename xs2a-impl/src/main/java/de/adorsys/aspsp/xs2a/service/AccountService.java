@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
@@ -48,9 +49,13 @@ public class AccountService {
     private final AccountMapper accountMapper;
     private final ValueValidatorService validatorService;
     private final JsonConverter jsonConverter;
+    private final ConsentService consentService;
 
     public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
-        List<AccountDetails> accountDetailsList = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccounts(consentId, withBalance, psuInvolved));
+        AccountConsent consent = consentService.getAccountConsentsById(consentId).getBody();
+        Set<String> ibans = Optional.ofNullable(consent.getAccess()).map(consentService::getIbanSetFromAccess).orElse(Collections.emptySet());
+
+        List<AccountDetails> accountDetailsList = getAccountDetailsListByIbans(ibans);
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
@@ -71,7 +76,7 @@ public class AccountService {
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
 
-        if (accountSpi.readAccountDetails(accountId, false, false) == null) {
+        if (accountSpi.readAccountDetails(accountId) == null) {
             return ResponseObject.builder()
                 .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
@@ -141,8 +146,8 @@ public class AccountService {
         return new AccountReport(null, null, downloadLink);
     }
 
-    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
+    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved ) {
+        AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId));
 
         return ResponseObject.builder()
             .body(accountDetails).build();

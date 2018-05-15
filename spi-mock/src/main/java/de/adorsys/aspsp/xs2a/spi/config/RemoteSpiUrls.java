@@ -51,25 +51,27 @@ public class RemoteSpiUrls {
     public String getConsentById() {
         return baseUrl + "/consent/{id}";
     }
-
     public String deleteConsentById() {
         return baseUrl + "/consent/{id}";
     }
-
     public String createConsent() {
-        return baseUrl + "/consenet/";
+        return baseUrl + "/consent/";
     }
-
     public String getConsentByAccess() {
         return baseUrl + "/consent/byAccess/{access}";
     }
 
     //Accounts urls
-    public String getAccountDetailsByPsuId() {
-        return baseUrl + "/account/byPsuId/{psuId}";
+    public String getAccountDetailsById() {
+        return baseUrl + "/account/{accountId}";
     }
-
-    public String getAccountDetailsByIbans() {
-        return baseUrl + "/account/byIbans/{ibans}";
+    public String getBalancesByAccountId() {
+        return baseUrl + "/account/{accountId}/balances";
+    }
+    public String getAccountDetailsByPsuId() {
+        return baseUrl + "/account/{psuId}/accountsByPsuId";
+    }
+    public String getAccountDetailsByIban() {
+        return baseUrl + "/account/{iban}/accountsByIban";
     }
 }

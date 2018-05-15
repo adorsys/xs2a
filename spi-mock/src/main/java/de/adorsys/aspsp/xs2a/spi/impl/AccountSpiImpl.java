@@ -29,7 +29,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,14 +42,8 @@ public class AccountSpiImpl implements AccountSpi {
     private final RestTemplate restTemplate;
 
     @Override
-    public List<SpiAccountDetails> readAccounts(String consentId, boolean withBalance, boolean psuInvolved) {
-        String url = remoteSpiUrls.getUrl("getAllAccounts");
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-        builder.queryParam("consent-id", consentId);
-        builder.queryParam("withBalance", withBalance);
-
-        ResponseEntity<SpiAccountDetails[]> response = restTemplate.getForEntity(builder.build().encode().toUri(), SpiAccountDetails[].class);
+    public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
+        ResponseEntity<SpiAccountDetails[]> response = restTemplate.getForEntity(remoteSpiUrls.getAccountDetailsByIban(), SpiAccountDetails[].class, iban);
         return Arrays.asList(response.getBody());
     }
 
@@ -85,32 +78,21 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        String url = remoteSpiUrls.getUrl("getAccountById");
-        SpiAccountDetails spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails.class, accountId);
-
-        return Optional.ofNullable(spiAccountDetails)
-                   .map(ad -> new SpiAccountDetails(
-                       ad.getId(), ad.getIban(), ad.getBban(),
-                       ad.getMaskedPan(), ad.getMaskedPan(), ad.getMsisdn(),
-                       ad.getCurrency(), ad.getName(), ad.getAccountType(),
-                       ad.getCashSpiAccountType(), ad.getBic(),
-                       withBalance ? ad.getBalances() : null)
-                   ).orElse(null);
+    public SpiAccountDetails readAccountDetails(String accountId) {
+        return restTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
     }
 
     @Override
     public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
-        ResponseEntity <List<SpiAccountDetails>> response =  restTemplate.getForEntity(remoteSpiUrls.getAccountDetailsByPsuId(), null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-        }, psuId);
-        return response.getBody();
+
+        SpiAccountDetails[] response =
+            restTemplate.getForObject(remoteSpiUrls.getAccountDetailsByPsuId(), SpiAccountDetails[].class, psuId);
+        return Arrays.stream(response).collect(Collectors.toList());
     }
 
     @Override
-    public List<SpiAccountDetails> readAccountDetailsByIbans(Set<String> ibans) {
-        ResponseEntity<List<SpiAccountDetails>> response = restTemplate.getForEntity(remoteSpiUrls.getAccountDetailsByIbans(), null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
-        }, ibans);
-        return response.getBody();
+    public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
+        return ibans.stream().map(this::readAccountDetailsByIban).flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
@@ -154,12 +136,12 @@ public class AccountSpiImpl implements AccountSpi {
     private boolean transactionIsValid(SpiTransaction spiTransaction, String accountId) {
 
         boolean isCreditorAccountValid = Optional.ofNullable(spiTransaction.getCreditorAccount())
-            .map(creditorAccount -> creditorAccount.getIban().trim().equals(accountId))
-            .orElse(false);
+                                             .map(creditorAccount -> creditorAccount.getIban().trim().equals(accountId))
+                                             .orElse(false);
 
         boolean isDebtorAccountValid = Optional.ofNullable(spiTransaction.getDebtorAccount())
-            .map(debtorAccount -> debtorAccount.getIban().trim().equals(accountId))
-            .orElse(false);
+                                           .map(debtorAccount -> debtorAccount.getIban().trim().equals(accountId))
+                                           .orElse(false);
 
         return isCreditorAccountValid || isDebtorAccountValid;
     }

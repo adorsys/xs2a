@@ -75,16 +75,13 @@ public class PaymentMapper {
 
     private SpiAccountReference mapAccountReference(AccountReference accountReference) {
         return Optional.ofNullable(accountReference)
-                       .map(ar -> {
-                           SpiAccountReference spiAccountReference = new SpiAccountReference(
-                                   ar.getIban(),
-                                   ar.getBban(),
-                                   ar.getPan(),
-                                   ar.getMaskedPan(),
-                                   ar.getMsisdn(),
-                                   ar.getCurrency());
-                           return spiAccountReference;
-                       })
+                       .map(ar -> new SpiAccountReference(
+                               ar.getIban(),
+                               ar.getBban(),
+                               ar.getPan(),
+                               ar.getMaskedPan(),
+                               ar.getMsisdn(),
+                               ar.getCurrency()))
                        .orElse(null);
     }
 

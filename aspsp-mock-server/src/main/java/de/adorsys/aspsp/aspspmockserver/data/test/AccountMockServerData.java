@@ -84,9 +84,9 @@ public class AccountMockServerData {
     }
 
     private void fillPsu() {
-        psuRepository.save(new Psu("PSU_001", Arrays.asList(accountDetails.get(0), accountDetails.get(1))));
-        psuRepository.save(new Psu("PSU_002", Arrays.asList(accountDetails.get(2), accountDetails.get(3))));
-        psuRepository.save(new Psu("PSU_003", Arrays.asList(accountDetails.get(4), accountDetails.get(5))));
+        psuRepository.save(new Psu("PSU_001", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2))));
+        psuRepository.save(new Psu("PSU_002", Arrays.asList(accountDetails.get(3), accountDetails.get(4))));
+        psuRepository.save(new Psu("PSU_003", Arrays.asList(accountDetails.get(5), accountDetails.get(6))));
 
     }
 
@@ -94,6 +94,7 @@ public class AccountMockServerData {
 
         return Arrays.asList(
             getNewAccount("11111-999999999", getNewBalanceList(EUR,"1000", "200"), "DE89370400440532013000", "AEYPM5403H","DEUTDE8EXXX","Müller", "SCT"),
+            getNewAccount("77777-999999999", getNewBalanceList(USD,"350", "100"), "DE89370400440532013000", "FFGHPM5403H","DEUTDE8EXXX","Müller", "SCT"),
             getNewAccount("22222-999999999", getNewBalanceList(USD,"2500", "300"), "DE89370400440532013001", "QWEPM6427U","DEUTDE8EXXX","Müller", "SCT"),
             getNewAccount("33333-999999999", getNewBalanceList( EUR,"3000", "400"), "DE89370400440532013002", "EWQPS8534R","DEUTDE8EXXX","Schmidt", "SCT"),
             getNewAccount("44444-999999999", getNewBalanceList(USD,"3500", "500"), "DE89370400440532013003", "ASDPS9547Z","DEUTDE8EXXX","Schmidt", "SCT"),
@@ -138,7 +139,7 @@ public class AccountMockServerData {
      return accountDetails.stream().map(this::mapToReferenceFromDetails).collect(Collectors.toList());
     }
     private SpiAccountReference mapToReferenceFromDetails(SpiAccountDetails details){
-        return new SpiAccountReference(details.getId(),details.getIban(),details.getBban(),details.getPan(),details.getMaskedPan(),details.getMsisdn(),details.getCurrency());
+        return new SpiAccountReference(details.getIban(),details.getBban(),details.getPan(),details.getMaskedPan(),details.getMsisdn(),details.getCurrency());
     }
 
 }

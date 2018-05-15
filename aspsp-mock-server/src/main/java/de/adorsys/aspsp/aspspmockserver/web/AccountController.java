@@ -23,15 +23,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -41,49 +38,60 @@ public class AccountController {
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
-    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts(@RequestParam(value = "consent-id", required = true) String consentId,
-                                                                   @RequestParam(value = "withBalance", required = false) boolean withBalance) {
-        List<SpiAccountDetails> result = accountService.getAllAccounts(consentId, withBalance);
-        return result != null
-            ? new ResponseEntity<>(result, HttpStatus.OK)
-            : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
+        return Optional.of(accountService.getAllAccounts())
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{accountId}")
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccount(accountId)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PutMapping(path = "/")
     public ResponseEntity createAccount(HttpServletRequest request,
                                         @RequestBody SpiAccountDetails account) throws Exception {
-        String uriString = getUriString(request);
+       /* String uriString = getUriString(request);
         SpiAccountDetails saved = accountService.addOrUpdateAccount(account);
-        return ResponseEntity.created(new URI(uriString + saved.getId())).build();
-    }
-
-    private String getUriString(HttpServletRequest request) {
-        return UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request)).build().toUriString();
+        return ResponseEntity.created(new URI(uriString + saved.getId())).build();*/ //TODO to be refactored by May
+        return null;
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @DeleteMapping(path = "/{accountId}")
     public ResponseEntity deleteAccount(@PathVariable("accountId") String accountId) {
-        if (accountService.deleteAccountById(accountId)) {
+        /*if (accountService.deleteAccountById(accountId)) {
             return ResponseEntity.noContent().build();
-        }
+        }*/ //TODO to be refactore by May
         return ResponseEntity.notFound().build();
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{accountId}/balances")
     public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
-        return accountService.getBalances(accountId)
+        return null/*accountService.getBalances(accountId)
             .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
+            .orElseGet(() -> ResponseEntity.notFound().build())*/;  //TODO to be refactored by DMI
+    }
+
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @GetMapping(path = "/{psuId}/accountsByPsuId")
+    public ResponseEntity<SpiAccountDetails[]> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
+        return Optional.of(accountService.getAccountsByPsuId(psuId))
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @GetMapping(path = "/{iban}/accountsByIban")
+    public ResponseEntity<List<SpiAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
+        return Optional.of(accountService.getAccountsByIban(iban))
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

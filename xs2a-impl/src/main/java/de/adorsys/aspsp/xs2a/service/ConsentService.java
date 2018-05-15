@@ -20,8 +20,9 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.ais.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -40,7 +41,8 @@ public class ConsentService {
     private String consentsLinkRedirectToSource;
     private ConsentSpi consentSpi;
     private ConsentMapper consentMapper;
-    private AccountService accountService;
+    private AccountMapper accountMapper;
+    private AccountSpi accountSpi;
 
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         Optional<String> consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
@@ -87,9 +89,7 @@ public class ConsentService {
     }
 
     private String saveAccountConsent(AccountConsent consent) {
-        SpiAccountConsent con = consentMapper.mapToSpiAccountConsent(consent);
-        String str = consentSpi.createAccountConsents(con/*consentMapper.mapToSpiAccountConsent(consent)*/);
-        return str;
+        return consentSpi.createAccountConsents(consentMapper.mapToSpiAccountConsent(consent));
     }
 
     private Optional<AccountAccess> createAccountAccess(AccountAccess access, String psuId) {
@@ -100,7 +100,7 @@ public class ConsentService {
 
     private Optional<AccountAccess> getNewAccessByIbans(AccountAccess access) {
         Set<String> ibans = getIbanSetFromAccess(access);
-        List<AccountDetails> accountDetails = accountService.getAccountDetailsListByIbans(ibans);
+        List<AccountDetails> accountDetails = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
 
         Set<AccountReference> accountsRef = extractReferenceSetFromDetailsList(access.getAccounts(), accountDetails);
         Set<AccountReference> balancesRef = extractReferenceSetFromDetailsList(access.getBalances(), accountDetails);
@@ -115,19 +115,16 @@ public class ConsentService {
     private Set<AccountReference> extractReferenceSetFromDetailsList(AccountReference[] accountReferencesArr, List<AccountDetails> accountDetails) {
         return Optional.ofNullable(accountReferencesArr)
                    .map(arr -> Arrays.stream(arr)
-                                   .map(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
-                                   .filter(Optional::isPresent)
-                                   .map(Optional::get)
+                                   .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
                                    .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
     }
 
-    private Optional<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
+    private Stream<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
         return accountDetails.stream()
                    .filter(acc -> acc.getIban().equals(iban))
-                   .filter(acc -> acc.getCurrency() == currency)
-                   .map(this::mapAccountDetailsToReference)
-                   .findFirst();
+                   .filter(acc -> currency == null || acc.getCurrency() == currency)//TODO CHECK WITH PO
+                   .map(this::mapAccountDetailsToReference);
     }
 
     private static <T> Set<T> mergeSets(Set<T>... sets) {
@@ -137,7 +134,7 @@ public class ConsentService {
     }
 
     private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
-        return Optional.ofNullable(accountService.getAccountDetailsByPsuId(psuId))
+        return Optional.ofNullable(accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
                    .map(this::mapAccountListToArrayOfReference)
                    .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
                                    ? getNewAccountAccessByReferences(ref, null, null, availableAccounts, null)
@@ -161,7 +158,7 @@ public class ConsentService {
         return new AccountAccess(accounts, balances, transactions, availableAccounts, allPsd2);
     }
 
-    private Set<String> getIbanSetFromAccess(AccountAccess access) {
+    public Set<String> getIbanSetFromAccess(AccountAccess access) {
         if (isNotEmptyAccountAccess(access)) {
             return getIbansFromAccess(access);
         }
@@ -200,7 +197,6 @@ public class ConsentService {
 
     private AccountReference mapAccountDetailsToReference(AccountDetails details) {
         AccountReference reference = new AccountReference();
-        reference.setAccountId(details.getId());
         reference.setIban(details.getIban());
         reference.setBban(details.getBban());
         reference.setPan(details.getPan());
