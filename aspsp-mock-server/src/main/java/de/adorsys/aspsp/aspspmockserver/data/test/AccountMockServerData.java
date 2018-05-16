@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * AccountMockServerData is used to create test data in DB.
  * To fill DB with test data 'aspsp-mock-server' app should be running with profile "data_test"
- *
+ * <p>
  * AFTER TESTING THIS CLASS MUST BE DELETED todo https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/87
  */
 
@@ -41,19 +41,19 @@ public class AccountMockServerData {
     private final AccountService accountService;
     private final PsuService psuService;
 
-    public AccountMockServerData(AccountService accountService,PsuService psuService) {
+    public AccountMockServerData(AccountService accountService, PsuService psuService) {
         this.accountService = accountService;
         this.psuService = psuService;
         fillAccounts();
         fillPsu();
     }
 
-    private void fillPsu(){
+    private void fillPsu() {
         Currency euro = Currency.getInstance("EUR");
 
         List<SpiAccountDetails> newList = Arrays.asList(
-        getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"),
-        getNewAccount("99999-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599988", "GENODEF1N03", "Müller", "SCT"));
+            getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"),
+            getNewAccount("99999-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599988", "GENODEF1N03", "Müller", "SCT"));
 
         psuService.createPsuAndReturnId(newList);
         psuService.createPsuAndReturnId(Collections.singletonList(getNewAccount("22222-999999999", euro, getNewBalanceList("2500", "300"), "DE371234599998", "GENODEF1N02", "Albert", "SCT")));
@@ -66,39 +66,39 @@ public class AccountMockServerData {
     private void fillAccounts() {
         Currency euro = Currency.getInstance("EUR");
 
-        accountService.addOrUpdateAccount(getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"));
-        accountService.addOrUpdateAccount(getNewAccount("22222-999999999", euro, getNewBalanceList("2500", "300"), "DE371234599998", "GENODEF1N02", "Albert", "SCT"));
-        accountService.addOrUpdateAccount(getNewAccount("33333-999999999", euro, getNewBalanceList("3000", "400"), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT"));
-        accountService.addOrUpdateAccount(getNewAccount("44444-999999999", euro, getNewBalanceList("3500", "500"), "DE371234599996", "GENODEF1N02", "Telekom", "SCT"));
-        accountService.addOrUpdateAccount(getNewAccount("55555-999999999", euro, getNewBalanceList("4000", "600"), "DE371234599995", "GENODEF1N02", "Bauer", "SCT"));
+        accountService.addAccount("11111-999999999", getNewAccount("11111-999999999", euro, getNewBalanceList("1000", "200"), "DE371234599999", "GENODEF1N02", "Müller", "SCT"));
+        accountService.addAccount("11111-999999999", getNewAccount("22222-999999999", euro, getNewBalanceList("2500", "300"), "DE371234599998", "GENODEF1N02", "Albert", "SCT"));
+        accountService.addAccount("99999-999999999", getNewAccount("33333-999999999", euro, getNewBalanceList("3000", "400"), "DE371234599997", "GENODEF1N02", "Schmidt", "SCT"));
+        accountService.addAccount("11111-999999999", getNewAccount("44444-999999999", euro, getNewBalanceList("3500", "500"), "DE371234599996", "GENODEF1N02", "Telekom", "SCT"));
+        accountService.addAccount("99999-999999999", getNewAccount("55555-999999999", euro, getNewBalanceList("4000", "600"), "DE371234599995", "GENODEF1N02", "Bauer", "SCT"));
     }
 
     private SpiAccountDetails getNewAccount(String id, Currency currency, List<SpiBalances> balance, String iban, String bic, String name, String accountType) {
         return new SpiAccountDetails(
-        id,
-        iban,
-        null,
-        null,
-        null,
-        null,
-        currency,
-        name,
-        accountType,
-        null,
-        bic,
-        balance
+            id,
+            iban,
+            null,
+            null,
+            null,
+            null,
+            currency,
+            name,
+            accountType,
+            null,
+            bic,
+            balance
         );
     }
 
-    private List<SpiBalances> getNewBalanceList(String authorisedBalance, String openingBalance) {
-        return Collections.singletonList(getNewBalance(authorisedBalance, openingBalance));
+    private List<SpiBalances> getNewBalanceList(String interimAvailable, String openingBalance) {
+        return Collections.singletonList(getNewBalance(interimAvailable, openingBalance));
     }
 
-    private SpiBalances getNewBalance(String authorisedBalance, String openingBalance) {
+    private SpiBalances getNewBalance(String interimAvailable, String openingBalance) {
         Currency euro = Currency.getInstance("EUR");
 
         SpiBalances balance = new SpiBalances();
-        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, authorisedBalance)));
+        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, interimAvailable)));
         balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, openingBalance)));
 
         return balance;

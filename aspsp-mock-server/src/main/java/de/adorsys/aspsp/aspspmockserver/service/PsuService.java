@@ -19,7 +19,7 @@ public class PsuService {
     }
 
     public String createPsuAndReturnId(List<SpiAccountDetails> detailsList) {
-        Psu psu  = psuRepository.save(new Psu(null,detailsList));
+        Psu psu = psuRepository.save(new Psu(null, detailsList));
 
         return psu.getId();
     }
