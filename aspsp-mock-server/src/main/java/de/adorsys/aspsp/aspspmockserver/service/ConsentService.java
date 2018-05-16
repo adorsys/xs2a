@@ -17,8 +17,8 @@ public class ConsentService {
         return Optional.ofNullable(consentRepository.save(consent)).map(SpiAccountConsent::getId);
     }
 
-    public Optional<SpiAccountConsent> getConsent(String id) {
-        return Optional.ofNullable(consentRepository.findOne(id));
+    public Optional<SpiAccountConsent> getConsent(String consentId) {
+        return Optional.ofNullable(consentRepository.findOne(consentId));
     }
 
     public List<SpiAccountConsent> getAllConsents() {

@@ -32,9 +32,9 @@ public class RemoteSpiUrls {
         this.baseUrl = baseUrl;
         this.urls = new HashMap<>();
         this.urls.put("getAllAccounts", "/account/");
-        //this.urls.put("getConsents", "/consent/");
-        //this.urls.put("getConsentById", "/consent/{id}");
-        //this.urls.put("deleteConsentById", "/consent/{id}");
+        this.urls.put("getConsents", "/consent/");
+        this.urls.put("getConsentById", "/consent/{id}");
+        this.urls.put("deleteConsentById", "/consent/{id}");
         this.urls.put("getAccountBalances", "/account/{id}/balances");
         this.urls.put("createPayment", "/payments/");
         this.urls.put("getPaymentStatus", "/payments/{paymentId}/status/");

@@ -22,8 +22,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 public interface ConsentSpi {
     String createAccountConsents(SpiAccountConsent consent);
 
-    //SpiTransactionStatus getAccountConsentStatusById(String consentId); //TODO Check with team of friday 11/05/2018
-
     SpiAccountConsent getAccountConsentById(String consentId);
 
     void deleteAccountConsentsById(String consentId);

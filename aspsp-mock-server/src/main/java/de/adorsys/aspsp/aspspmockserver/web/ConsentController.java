@@ -39,7 +39,7 @@ public class ConsentController {
     public ResponseEntity<String> createConsent(@RequestBody SpiAccountConsent consent) {
         Optional<String> consentId = consentService.createConsentAndReturnId(consent);
 
-               return consentId.map(consentId1 -> new ResponseEntity<>(consentId1, HttpStatus.CREATED))
+        return consentId.map(id -> new ResponseEntity<>(id, HttpStatus.CREATED))
                    .orElse(ResponseEntity.badRequest().build());
     }
 

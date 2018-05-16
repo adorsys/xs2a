@@ -76,6 +76,11 @@ public class ConsentServiceTest {
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
+        //WB Acc noCurrency set Create Case
+        when(consentSpi.createAccountConsents(
+            getSpiConsent(null, getSpiAccountAccess(
+                Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY_2), getSpiReference(CORRECT_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), false, false), true)))
+            .thenReturn(CORRECT_PSU_ID);
         //WoB Acc Create Case
         when(consentSpi.createAccountConsents(
             getSpiConsent(null, getSpiAccountAccess(
@@ -84,7 +89,7 @@ public class ConsentServiceTest {
         //WB PSU allAvailable Create Case
         when(consentSpi.createAccountConsents(
             getSpiConsent(null, getSpiAccountAccess(
-                Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), null, null, true, false), true)))
+                Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), true, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB PSU allPsd2 Create Case
         when(consentSpi.createAccountConsents(
@@ -106,11 +111,15 @@ public class ConsentServiceTest {
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN_1, CURRENCY)), getSpiReferensesList(CORRECT_IBAN), getSpiReferensesList(CORRECT_IBAN_1), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
+        when(consentSpi.createAccountConsents(
+            getSpiConsent(null, getSpiAccountAccess(
+                Arrays.asList(getSpiReference(CORRECT_IBAN_1, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY)), getSpiReferensesList(CORRECT_IBAN), getSpiReferensesList(CORRECT_IBAN_1), false, false), true)))
+            .thenReturn(CORRECT_PSU_ID);
 
-        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(CORRECT_IBAN)))).thenReturn(getSpiDetailsList(CORRECT_PSU_ID, CORRECT_IBAN));
+        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(CORRECT_IBAN)))).thenReturn(getSpiDetailsList("1", CORRECT_IBAN));
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)))).thenReturn(Arrays.asList(getSpiDetails("1", CORRECT_IBAN, CURRENCY), getSpiDetails("2", CORRECT_IBAN_1, CURRENCY)));
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(WRONG_IBAN)))).thenReturn(null);
-        when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID)).thenReturn(getSpiDetailsList(CORRECT_PSU_ID, CORRECT_IBAN));
+        when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID)).thenReturn(getSpiDetailsList("1", CORRECT_IBAN));
         when(accountSpi.readAccountsByPsuId(WRONG_PSU_ID)).thenReturn(Collections.emptyList());
 
         when(consentSpi.getAccountConsentById(CORRECT_PSU_ID)).thenReturn(getSpiConsent(CORRECT_PSU_ID, getSpiAccountAccess(getSpiReferensesList(CORRECT_IBAN), null, null, false, false), false));
@@ -136,7 +145,7 @@ public class ConsentServiceTest {
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
     }
 
-    /*@Test //TODO I WILL REFACTOR THIS CODE TOMORROW
+    @Test
     public void createAccountConsentsWithResponse_ByAccInAccAccess_NoCurrencySet_WB_Success() {
         //Given:
         boolean withBalance = true;
@@ -150,7 +159,7 @@ public class ConsentServiceTest {
         CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
-    }*/
+    }
 
     @Test
     public void createAccountConsentsWithResponse_ByAccInAccAccess_WoB_Success() {
@@ -246,7 +255,7 @@ public class ConsentServiceTest {
         assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
 
-   /* @Test //TODO I WILL REFACTOR THIS CODE TOMORROW
+    @Test
     public void createAccountConsentsWithResponse_ByTransactionsInAccAccess_WB_Success() {
         //Given:
         boolean withBalance = true;
@@ -260,7 +269,7 @@ public class ConsentServiceTest {
         CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
-    }*/
+    }
 
     @Test
     public void createAccountConsentsWithResponse_ByBalancesInAccAccess_WB_Success() {
@@ -278,7 +287,7 @@ public class ConsentServiceTest {
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
     }
 
-   /* @Test //TODO I WILL REFACTOR THIS CODE TOMORROW
+    @Test
     public void createAccountConsentsWithResponse_ByBalancesAndTransactionsInAccAccess_WB_Success() {
         //Given:
         boolean withBalance = true;
@@ -292,7 +301,7 @@ public class ConsentServiceTest {
         CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
-    }*/
+    }
 
 
     @Test

@@ -136,10 +136,9 @@ public class ConsentService {
         return Optional.ofNullable(accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
                    .map(this::mapAccountListToArrayOfReference)
                    .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                                   ? getNewAccountAccessByReferences(ref, null, null, availableAccounts, null)
+                                   ? getNewAccountAccessByReferences(ref, new AccountReference[]{}, new AccountReference[]{}, availableAccounts, null)
                                    : getNewAccountAccessByReferences(ref, ref, ref, null, allPsd2)
                    );
-
     }
 
     private AccountReference[] mapAccountListToArrayOfReference(List<AccountDetails> accountDetails) {
