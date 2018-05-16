@@ -67,6 +67,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
+    // todo  make integration tests for check json-response from controller https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/114
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
