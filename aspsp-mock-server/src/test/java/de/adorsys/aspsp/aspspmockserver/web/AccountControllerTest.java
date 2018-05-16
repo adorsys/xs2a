@@ -29,20 +29,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountControllerTest {
-    private static final String ACCOUNT_ID = "2123sndjk2w23";
-    private static final String WRONG_ACCOUNT_ID = "wrong account id";
-    private static final String CONSENT_ID = "123456789";
+    private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";
+    private static final String WRONG_ACCOUNT_ID = "Really wrong id";
+    private static final String IBAN = "DE1789232872";
+    private static final String WRONG_IBAN = "Wrongest iban ever";
+    private static final String PSU_ID = "111111111111";
 
     @MockBean
     private AccountService accountService;
@@ -54,38 +57,31 @@ public class AccountControllerTest {
     public void setUpAccountServiceMock() {
         accountList.add(getSpiAccountDetails_1());
         accountList.add(getSpiAccountDetails_2());
-        when(accountService.getAccount(ACCOUNT_ID))
+
+        when(accountService.getAccountById(ACCOUNT_ID))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
-        when(accountService.getAccount(WRONG_ACCOUNT_ID))
+        when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        /*when(accountService.getAllAccounts(anyString(), anyBoolean()))
+
+        when(accountService.getAllAccounts(anyString()))
             .thenReturn(accountList);
-        when(accountService.addOrUpdateAccount(getSpiAccountDetails_1()))
-            .thenReturn(getSpiAccountDetails_1());*/
-        /*when(accountService.(ACCOUNT_ID))
-            .thenReturn(true);
-       /* when(accountService.deleteAccountById(WRONG_ACCOUNT_ID))
-            .thenReturn(false);
-        when(accountService.getBalances(ACCOUNT_ID))
-            .thenReturn(Optional.of(getNewBalanceList()));
-        when(accountService.getBalances(WRONG_ACCOUNT_ID))
-            .thenReturn(Optional.empty());*/ //TODO FIX
+        when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
+            .thenReturn(Optional.of(getSpiAccountDetails_1()));
+
+        when(accountService.getAccountBalancesById(ACCOUNT_ID))
+            .thenReturn(getNewBalanceList());
+        when(accountService.getAccountBalancesById(WRONG_ACCOUNT_ID))
+            .thenReturn(Collections.emptyList());
+
+        when(accountService.getAccountByIbanAndCurrency(IBAN, Currency.getInstance("EUR")))
+            .thenReturn(Optional.of(getSpiAccountDetails_1()));
+        when(accountService.getAccountByIbanAndCurrency(WRONG_IBAN, Currency.getInstance("EUR")))
+            .thenReturn(Optional.empty());
     }
 
     @Test
     public void readAllAccounts() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        /*ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAllAccounts(CONSENT_ID, false);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        List<SpiAccountDetails> actualResult = actualResponse.getBody();
-
-        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(accountList);*/ //TODO FIX
+        //TODO this is a task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/71
     }
 
     @Test
@@ -121,21 +117,49 @@ public class AccountControllerTest {
     }
 
     @Test
+    public void readAccountByIban() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountByIban(IBAN, "EUR");
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        SpiAccountDetails actualResult = actualResponse.getBody();
+
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+        assertThat(actualResult).isEqualTo(getSpiAccountDetails_1());
+    }
+
+    @Test
+    public void readAccountByIban_wrongId() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+
+        //When:
+        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountByIban(WRONG_IBAN, "EUR");
+
+        //Then:
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        SpiAccountDetails actualResult = actualResponse.getBody();
+
+        assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
+        assertThat(actualResult).isNull();
+    }
+
+    @Test
     public void createAccount() throws Exception {
         //Given
-        MockHttpServletRequest expectedRequest = new MockHttpServletRequest();
-        expectedRequest.setRequestURI("/account/");
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         HttpStatus expectedStatusCode = HttpStatus.CREATED;
-        String expectedUrl = "/account/" + expectedSpiAccountDetails.getId();
 
         //When
-        ResponseEntity actualResponse = accountController.createAccount(expectedRequest, expectedSpiAccountDetails);
+        ResponseEntity actualResponse = accountController.createAccount(PSU_ID, expectedSpiAccountDetails);
 
         //Then
-/*        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getHeaders().get("Location").toString()).contains(expectedUrl);*/ //TODO FIX test
     }
 
     @Test
@@ -145,19 +169,6 @@ public class AccountControllerTest {
 
         //When:
         ResponseEntity actualResponse = accountController.deleteAccount(ACCOUNT_ID);
-
-        //Then:
-        HttpStatus actualStatusCode = actualResponse.getStatusCode();
-//        assertThat(actualStatusCode).isEqualTo(expectedStatusCode); //TODO Fix test
-    }
-
-    @Test
-    public void deleteAccount_WrongId() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
-
-        //When:
-        ResponseEntity actualResponse = accountController.deleteAccount(WRONG_ACCOUNT_ID);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
@@ -174,9 +185,9 @@ public class AccountControllerTest {
         ResponseEntity actualResponse = accountController.readBalancesById(ACCOUNT_ID);
 
         //Then:
-/*        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(expectedBalanceList);*/ //TODO FIX test
+        assertThat(actualResponse.getBody()).isEqualTo(expectedBalanceList);
     }
 
     @Test
@@ -188,21 +199,21 @@ public class AccountControllerTest {
         ResponseEntity actualResponse = accountController.readBalancesById(WRONG_ACCOUNT_ID);
 
         //Then:
-/*        HttpStatus actualStatusCode = actualResponse.getStatusCode();
+        HttpStatus actualStatusCode = actualResponse.getStatusCode();
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isNull();*/ //TODO Fix test
+        assertThat(actualResponse.getBody()).isNull();
     }
 
     private SpiAccountDetails getSpiAccountDetails_1() {
-        return new SpiAccountDetails(ACCOUNT_ID, "DE12345235431234", null, "1111222233334444",
+        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
             "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
-            null, "XE3DDD", null);
+            null, "XE3DDD", getNewBalanceList());
     }
 
     private SpiAccountDetails getSpiAccountDetails_2() {
-        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
-            "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
-            null, "ACVB222", null);
+        return new SpiAccountDetails("qwertyuiop12345678", IBAN, null, "4444333322221111",
+            "444433xxxxxx1111", null, null, "Emily", "GIRO",
+            null, "ACVB222", getNewBalanceList());
     }
 
     private List<SpiBalances> getNewBalanceList() {

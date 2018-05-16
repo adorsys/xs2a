@@ -28,13 +28,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -56,26 +54,26 @@ public class FutureBookingsServiceTest {
     public void setUp() {
         when(paymentService.calculateAmountToBeCharged(any()))
             .thenReturn(500.0);
-        when(accountService.getAccount(ACCOUNT_ID))
-            .thenReturn(Optional.of(getSpiAccountDetailsWithBalance(BALANCE)));
-        when(accountService.getAccount(WRONG_ACCOUNT_ID))
+        when(accountService.getAccountById(ACCOUNT_ID))
+            .thenReturn(getSpiAccountDetailsWithBalance(BALANCE));
+        when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-        /*when(accountService.addOrUpdateAccount(notNull(SpiAccountDetails.class)))
+        when(accountService.updateAccount(notNull(SpiAccountDetails.class)))
             .thenReturn(getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED)));
-        when(accountService.addOrUpdateAccount(null))
-            .thenReturn(null);*/ //TODO FIX tests
+        when(accountService.updateAccount(null))
+            .thenReturn(null);
     }
 
     @Test
     public void changeBalances_Success() {
         //Given
-        SpiAccountDetails expectedAccountDetails = getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED));
+        SpiAccountDetails expectedAccountDetails = getSpiAccountDetailsWithBalance((BALANCE - AMOUNT_TO_BE_CHARGED)).get();
 
         //When
-       /* SpiAccountDetails actualAccountDetails = futureBookingsService.changeBalances(ACCOUNT_ID).get(); //TODO FIX tests
+        SpiAccountDetails actualAccountDetails = futureBookingsService.changeBalances(ACCOUNT_ID).get();
 
         //Then
-        assertThat(actualAccountDetails).isEqualTo(expectedAccountDetails);*/
+        assertThat(actualAccountDetails).isEqualTo(expectedAccountDetails);
     }
 
     @Test
@@ -90,10 +88,10 @@ public class FutureBookingsServiceTest {
         assertThat(actualAccountDetails).isEqualTo(expectedAccountDetails);
     }
 
-    private SpiAccountDetails getSpiAccountDetailsWithBalance(double amount) {
-        return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
+    private Optional<SpiAccountDetails> getSpiAccountDetailsWithBalance(double amount) {
+        return Optional.of(new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
             "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",
-            "GIRO", null, "ACVB222", getNewBalanceList(amount));
+            "GIRO", null, "ACVB222", getNewBalanceList(amount)));
     }
 
     private ArrayList<SpiBalances> getNewBalanceList(double amount) {

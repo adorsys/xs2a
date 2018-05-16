@@ -55,7 +55,8 @@ public class AccountServiceTest {
     private final String ACCOUNT_ID = "11111-999999999";
     private final String TRANSACTION_ID = "Id-0001";
     private final Currency usd = Currency.getInstance("USD");
-    private final String ACCOUNT_DETAILS_SOURCE = "/json/SpiAccountDetails.json";
+    private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetails.json";
+    private final String SPI_ACCOUNT_DETAILS_SOURCE = "/json/SpiAccountDetails.json";
     private final int maxNumberOfCharInTransactionJson = 1000;
     private final Charset UTF_8 = Charset.forName("utf-8");
 
@@ -68,11 +69,11 @@ public class AccountServiceTest {
     private AccountSpi accountSpi;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         when(accountSpi.readTransactionsByPeriod(any(), any(), any(), anyBoolean())).thenReturn(getTransactionList());
         when(accountSpi.readBalances(any(), anyBoolean())).thenReturn(getBalances());
         when(accountSpi.readTransactionsById(any(), any(), anyBoolean())).thenReturn(getTransactionList());
-        //when(accountSpi.readAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(createSpiAccountDeatails()); //TODO Fix test
+        when(accountSpi.readAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(createSpiAccountDetails());
     }
 
     @Test
@@ -86,7 +87,14 @@ public class AccountServiceTest {
         ResponseObject<AccountDetails> result = accountService.getAccountDetails(ACCOUNT_ID, withBalance, psuInvolved);
 
         //Then:
-//        assertThat(result.getBody()).isEqualTo(expectedResult);
+        AccountDetails actualResult = result.getBody();
+        assertThat(actualResult.getAccountType()).isEqualTo(expectedResult.getAccountType());
+        assertThat(actualResult.getId()).isEqualTo(expectedResult.getId());
+        assertThat(actualResult.getIban()).isEqualTo(expectedResult.getIban());
+        assertThat(actualResult.getCurrency()).isEqualTo(expectedResult.getCurrency());
+        assertThat(actualResult.getName()).isEqualTo(expectedResult.getName());
+        assertThat(actualResult.getAccountType()).isEqualTo(expectedResult.getAccountType());
+        assertThat(actualResult.getBic()).isEqualTo(expectedResult.getBic());
     }
 
     @Test
@@ -124,7 +132,7 @@ public class AccountServiceTest {
         //Given:
         boolean psuInvolved = false;
         String accountId = "11111-999999999";
-//        checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
+        checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
 
     @Test
@@ -134,7 +142,7 @@ public class AccountServiceTest {
         Date dateTo = new Date();
         boolean psuInvolved = false;
         String accountId = "11111-999999999";
-//        checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
+        checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
     }
 
     @Test
@@ -149,7 +157,7 @@ public class AccountServiceTest {
         AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", true, false).getBody();
 
         //Then:
-     //   assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult).isEqualTo(expectedResult);
     }
 
     @Test
@@ -160,8 +168,8 @@ public class AccountServiceTest {
         boolean psuInvolved = false;
         String accountId = "11111-999999999";
 
-    //    checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
-    //    checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
+        checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
+        checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
     }
 
     private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
@@ -196,7 +204,7 @@ public class AccountServiceTest {
     }
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-        /*List<SpiAccountDetails> list = accountSpi.readAccounts("id", withBalance, psuInvolved);
+        List<SpiAccountDetails> list = accountSpi.readAccounts("id", withBalance, psuInvolved);
         List<AccountDetails> accountDetails = new ArrayList<>();
         for (SpiAccountDetails s : list) {
             accountDetails.add(accountMapper.mapFromSpiAccountDetails(s));
@@ -208,7 +216,7 @@ public class AccountServiceTest {
         List<AccountDetails> actualResponse = accountService.getAccountDetailsList("id", withBalance, psuInvolved).getBody().get("accountList");
 
         //Then:
-        assertThat(expectedResult).isEqualTo(actualResponse);*/
+        assertThat(expectedResult).isEqualTo(actualResponse);
     }
 
     private List<AccountDetails> accountsToAccountDetailsList(List<AccountDetails> accountDetails) {
@@ -278,9 +286,9 @@ public class AccountServiceTest {
         return spiBalances;
     }
 
-    private SpiAccountBalance getSpiAccountBalance(String ammount, String date, String lastActionDate) {
+    private SpiAccountBalance getSpiAccountBalance(String amount, String date, String lastActionDate) {
         SpiAccountBalance acb = new SpiAccountBalance();
-        acb.setSpiAmount(new SpiAmount(usd, ammount));
+        acb.setSpiAmount(new SpiAmount(usd, amount));
         acb.setDate(getDateFromDateString(date));
         acb.setLastActionDateTime(getDateFromDateString(lastActionDate));
 
@@ -310,7 +318,7 @@ public class AccountServiceTest {
         }
     }
 
-    private SpiAccountDetails createSpiAccountDeatails() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(ACCOUNT_DETAILS_SOURCE, UTF_8), SpiAccountDetails.class);
+    private SpiAccountDetails createSpiAccountDetails() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(SPI_ACCOUNT_DETAILS_SOURCE, UTF_8), SpiAccountDetails.class);
     }
 }

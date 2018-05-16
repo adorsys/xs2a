@@ -46,7 +46,7 @@ public class ConsentMapperTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
 
     @Autowired
-    ConsentMapper consentMapper;
+    private ConsentMapper consentMapper;
 
     @Test
     public void mapGetAccountConsentStatusById() {
