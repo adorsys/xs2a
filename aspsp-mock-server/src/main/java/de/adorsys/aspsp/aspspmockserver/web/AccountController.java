@@ -26,8 +26,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Currency;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,19 +77,22 @@ public class AccountController {
                    ? ResponseEntity.notFound().build()
                    : ResponseEntity.ok(response);
     }
+
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/psu/{psuId}")
-    public ResponseEntity<SpiAccountDetails[]> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
-        return Optional.of(accountService.getAccountsByPsuId(psuId))
-                   .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<List<SpiAccountDetails>> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
+        List<SpiAccountDetails> response = accountService.getAccountsByPsuId(psuId);
+        return isEmpty(response)
+                   ? ResponseEntity.notFound().build()
+                   : ResponseEntity.ok(response);
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/iban/{iban}")
     public ResponseEntity<List<SpiAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
-        return Optional.of(accountService.getAccountsByIban(iban))
-                   .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+        List<SpiAccountDetails> response = accountService.getAccountsByIban(iban);
+        return isEmpty(response)
+                   ? ResponseEntity.notFound().build()
+                   : ResponseEntity.ok(response);
     }
 }

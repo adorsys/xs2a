@@ -34,11 +34,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringRunner.class) //TODO RE WRITE TESTS
 @SpringBootTest
 public class AccountControllerTest {
     private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";
@@ -46,6 +44,8 @@ public class AccountControllerTest {
     private static final String IBAN = "DE1789232872";
     private static final String WRONG_IBAN = "Wrongest iban ever";
     private static final String PSU_ID = "111111111111";
+    private static final String WRONG_PSU_ID = "Wrong PSU id";
+    private static final Currency CURRENCY = Currency.getInstance("EUR");
 
     @MockBean
     private AccountService accountService;
@@ -62,26 +62,35 @@ public class AccountControllerTest {
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
         when(accountService.getAccountById(WRONG_ACCOUNT_ID))
             .thenReturn(Optional.empty());
-
-        when(accountService.getAllAccounts(anyString()))
+        when(accountService.getAllAccounts())
             .thenReturn(accountList);
         when(accountService.addAccount(PSU_ID, getSpiAccountDetails_1()))
             .thenReturn(Optional.of(getSpiAccountDetails_1()));
-
         when(accountService.getAccountBalancesById(ACCOUNT_ID))
             .thenReturn(getNewBalanceList());
         when(accountService.getAccountBalancesById(WRONG_ACCOUNT_ID))
             .thenReturn(Collections.emptyList());
-
-        when(accountService.getAccountByIbanAndCurrency(IBAN, Currency.getInstance("EUR")))
-            .thenReturn(Optional.of(getSpiAccountDetails_1()));
-        when(accountService.getAccountByIbanAndCurrency(WRONG_IBAN, Currency.getInstance("EUR")))
-            .thenReturn(Optional.empty());
+        when(accountService.getAccountsByIban(IBAN))
+            .thenReturn(accountList);
+        when(accountService.getAccountsByIban(WRONG_IBAN))
+            .thenReturn(Collections.emptyList());
+        when(accountService.getAccountsByPsuId(PSU_ID))
+            .thenReturn(accountList);
+        when(accountService.getAccountsByPsuId(WRONG_PSU_ID))
+            .thenReturn(Collections.emptyList());
     }
 
     @Test
     public void readAllAccounts() {
-        //TODO this is a task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/71
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAllAccounts();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(accountList);
     }
 
     @Test
@@ -122,14 +131,14 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountByIban(IBAN, "EUR");
+        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAccountsByIban(IBAN);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        SpiAccountDetails actualResult = actualResponse.getBody();
+        List<SpiAccountDetails> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
-        assertThat(actualResult).isEqualTo(getSpiAccountDetails_1());
+        assertThat(actualResult).isEqualTo(accountList);
     }
 
     @Test
@@ -138,18 +147,18 @@ public class AccountControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountByIban(WRONG_IBAN, "EUR");
+        ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAccountsByIban(WRONG_IBAN);
 
         //Then:
         HttpStatus actualStatusCode = actualResponse.getStatusCode();
-        SpiAccountDetails actualResult = actualResponse.getBody();
+        List<SpiAccountDetails> actualResult = actualResponse.getBody();
 
         assertThat(actualStatusCode).isEqualTo(expectedStatusCode);
         assertThat(actualResult).isNull();
     }
 
     @Test
-    public void createAccount() throws Exception {
+    public void createAccount() {
         //Given
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
         HttpStatus expectedStatusCode = HttpStatus.CREATED;
@@ -204,9 +213,31 @@ public class AccountControllerTest {
         assertThat(actualResponse.getBody()).isNull();
     }
 
+    @Test
+    public void readAccountsByPsuId(){
+        //Given:
+        HttpStatus expectedStatus = HttpStatus.OK;
+        //When:
+        ResponseEntity<List<SpiAccountDetails>> response = accountController.readAccountsByPsuId(PSU_ID);
+        //Then:
+        assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
+        assertThat(response.getBody()).isEqualTo(accountList);
+    }
+
+    @Test
+    public void readAccountsByPsuId_Failure(){
+        //Given:
+        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        //When:
+        ResponseEntity<List<SpiAccountDetails>> response = accountController.readAccountsByPsuId(WRONG_PSU_ID);
+        //Then:
+        assertThat(response.getStatusCode()).isEqualTo(expectedStatus);
+        assertThat(response.getBody()).isNullOrEmpty();
+    }
+
     private SpiAccountDetails getSpiAccountDetails_1() {
         return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, "1111222233334444",
-            "111122xxxxxx44", null, Currency.getInstance("EUR"), "Jack", "GIRO",
+            "111122xxxxxx44", null, CURRENCY, "Jack", "GIRO",
             null, "XE3DDD", getNewBalanceList());
     }
 
@@ -217,11 +248,9 @@ public class AccountControllerTest {
     }
 
     private List<SpiBalances> getNewBalanceList() {
-        Currency euro = Currency.getInstance("EUR");
-
         SpiBalances balance = new SpiBalances();
-        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, "1000")));
-        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, "200")));
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(CURRENCY, "1000")));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(CURRENCY, "200")));
 
         return Collections.singletonList(balance);
     }

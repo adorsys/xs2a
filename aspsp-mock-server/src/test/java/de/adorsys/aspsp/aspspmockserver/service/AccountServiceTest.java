@@ -34,12 +34,13 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountServiceTest {
+    private static final String PSU_ID = "334455777";
+    private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";
     private static final String WRONG_ACCOUNT_ID = "Really wrong id";
     private static final String IBAN = "DE1789232872";
@@ -55,10 +56,14 @@ public class AccountServiceTest {
     public void setUp() {
         List<Psu> psuList = new ArrayList<>();
         psuList.add(getPsuWithRightAccounts());
+        when(psuRepository.findOne(PSU_ID))
+            .thenReturn(getPsuWithRightAccounts());
+        when(psuRepository.findOne(WRONG_PSU_ID))
+            .thenReturn(null);
         when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
-            .thenReturn(Optional.of(getPsuWithRightAccounts()));
+            .thenReturn(psuList);
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
-            .thenReturn(Optional.empty());
+            .thenReturn(Collections.emptyList());
 
         when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
@@ -69,8 +74,6 @@ public class AccountServiceTest {
 
         when(psuRepository.save(any(Psu.class)))
             .thenReturn(getPsuWithRightAccounts());
-        when(psuRepository.findOne(anyString()))
-            .thenReturn(getPsuWithRightAccounts());
     }
 
     @Test
@@ -79,7 +82,7 @@ public class AccountServiceTest {
         SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
 
         //When
-        SpiAccountDetails actualSpiAccountDetails = accountService.addAccount("12234556", expectedSpiAccountDetails).get();
+        SpiAccountDetails actualSpiAccountDetails = accountService.addAccount(PSU_ID, expectedSpiAccountDetails).get();
 
         //Then
         assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
@@ -105,22 +108,22 @@ public class AccountServiceTest {
     @Test
     public void getAccountByIban_Success() {
         //Given
-        SpiAccountDetails expectedSpiAccountDetails = getSpiAccountDetails_1();
+        List<SpiAccountDetails> expectedSpiAccountDetails = getAccounts();
         //When
-        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountByIbanAndCurrency(IBAN, Currency.getInstance("EUR"));
+        List<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountsByIban(IBAN);
 
         //Then
         assertThat(actualSpiAccountDetails).isNotNull();
-        assertThat(actualSpiAccountDetails.get()).isEqualTo(expectedSpiAccountDetails);
+        assertThat(actualSpiAccountDetails).isEqualTo(expectedSpiAccountDetails);
     }
 
     @Test
     public void getAccountByIban_WrongIban() {
         //When
-        Optional<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountByIbanAndCurrency(WRONG_IBAN, Currency.getInstance("EUR"));
+        List<SpiAccountDetails> actualSpiAccountDetails = accountService.getAccountsByIban(WRONG_IBAN);
 
         //Then
-        assertThat(actualSpiAccountDetails).isEqualTo(Optional.empty());
+        assertThat(actualSpiAccountDetails).isEqualTo(Collections.emptyList());
     }
 
     @Test
@@ -157,6 +160,24 @@ public class AccountServiceTest {
 
         //Then
         assertThat(actualBalanceList).isEqualTo(expectedBalance);
+    }
+
+    @Test
+    public void getAccountsByPsuId(){
+        //When:
+        List<SpiAccountDetails> actualList = accountService.getAccountsByPsuId(PSU_ID);
+        //Then:
+        assertThat(actualList).isNotNull();
+        assertThat(actualList).isNotEmpty();
+        assertThat(actualList).isEqualTo(getAccounts());
+    }
+
+    @Test
+    public void getAccountsByPsuId_Failure(){
+        //When:
+        List<SpiAccountDetails> actualList = accountService.getAccountsByPsuId(WRONG_PSU_ID);
+        //Then:
+        assertThat(actualList).isEmpty();
     }
 
     private SpiAccountDetails getSpiAccountDetails_1() {

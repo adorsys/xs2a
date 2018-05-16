@@ -25,8 +25,8 @@ import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,22 +43,22 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
-        ResponseEntity<SpiAccountDetails[]> response = restTemplate.getForEntity(remoteSpiUrls.getAccountDetailsByIban(), SpiAccountDetails[].class, iban);
-        return Arrays.asList(response.getBody());
+        return Optional.ofNullable(restTemplate.exchange(
+            remoteSpiUrls.getAccountDetailsByIban(), HttpMethod.GET, new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+            }, iban).getBody())
+                   .orElse(Collections.emptyList());
     }
 
     @Override
-    public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
-        String getBalanceUrl = remoteSpiUrls.getUrl("getAccountBalances");
-        ResponseEntity<List<SpiBalances>> response = restTemplate.exchange(getBalanceUrl, HttpMethod.GET, null,
-            new ParameterizedTypeReference<List<SpiBalances>>() {
-            }, accountId);
-
-        return response.getBody();
+    public List<SpiBalances> readBalances(String accountId) {
+        return Optional.ofNullable(restTemplate.exchange(
+            remoteSpiUrls.getBalancesByAccountId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiBalances>>() {
+            }, accountId).getBody())
+                   .orElse(Collections.emptyList());
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
         List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
 
         List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
@@ -68,7 +68,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
+    public List<SpiTransaction> readTransactionsById(String accountId, String transactionId) {
         List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
 
         List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
@@ -84,15 +84,18 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
-
-        SpiAccountDetails[] response =
-            restTemplate.getForObject(remoteSpiUrls.getAccountDetailsByPsuId(), SpiAccountDetails[].class, psuId);
-        return Arrays.stream(response).collect(Collectors.toList());
+        return Optional.ofNullable(restTemplate.exchange(
+            remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+            }, psuId).getBody())
+                   .orElse(Collections.emptyList());
     }
 
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
-        return ibans.stream().map(this::readAccountDetailsByIban).flatMap(Collection::stream).collect(Collectors.toList());
+        return ibans.stream()
+                   .map(this::readAccountDetailsByIban)
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toList());
     }
 
     private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion

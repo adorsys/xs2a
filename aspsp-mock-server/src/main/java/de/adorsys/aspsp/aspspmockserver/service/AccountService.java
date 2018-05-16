@@ -24,7 +24,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,13 +70,11 @@ public class AccountService {
                    .orElse(Collections.emptyList());
     }
 
-    public SpiAccountDetails[] getAccountsByPsuId(String psuId) {
-        List<SpiAccountDetails> list = Optional.ofNullable(psuRepository.findOne(psuId)).map(Psu::getAccountDetailsList)
+    public List<SpiAccountDetails> getAccountsByPsuId(String psuId) {
+        return Optional.ofNullable(psuRepository.findOne(psuId)).map(Psu::getAccountDetailsList)
                                                          .orElse(Collections.emptyList());
-        return list.toArray(new SpiAccountDetails[0]);
 
     }
-
 
     public void deleteAccountById(String accountId) {
         psuRepository.findPsuByAccountDetailsList_Id(accountId)
@@ -95,13 +92,6 @@ public class AccountService {
                    .findFirst();
     }
 
-    private Optional<SpiAccountDetails> findAccountInPsuByIbanAndCurrency(Psu psu, String iban, Currency currency) {
-        return psu.getAccountDetailsList().stream()
-                   .filter(acc -> acc.getIban().equals(iban)
-                                      && acc.getCurrency() == currency)
-                   .findFirst();
-    }
-
     private Psu getPsuWithFilteredAccountListById(Psu psu, String accountId) {
         psu.setAccountDetailsList(getFilteredAccountDetailsListFromPsuById(psu, accountId));
         return psu;
@@ -116,10 +106,5 @@ public class AccountService {
         return psu.getAccountDetailsList().stream()
                    .filter(ad -> !ad.getId().equals(accountId))
                    .collect(Collectors.toList());
-
-    private Optional<SpiAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
-        return psu.getAccountDetailsList().stream()
-                   .filter(acc -> acc.getId().equals(accountId))
-                   .findFirst();
     }
 }

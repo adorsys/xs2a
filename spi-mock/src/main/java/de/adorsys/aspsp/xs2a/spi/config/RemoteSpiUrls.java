@@ -40,8 +40,8 @@ public class RemoteSpiUrls {
         this.urls.put("getPaymentStatus", "/payments/{paymentId}/status/");
         this.urls.put("getAccountById", "/account/{id}");
         this.urls.put("createBulkPayments", "/payments/bulk-payments/");
-        this.urls.put("getAccountByIban","/account/{iban}/{currency}");
-        this.urls.put("createPeriodicPayment","/payments/createPeriodicPayment/");
+        this.urls.put("getAccountByIban", "/account/{iban}/{currency}");
+        this.urls.put("createPeriodicPayment", "/payments/createPeriodicPayment/");
     }
 
     public String getUrl(String key) {
@@ -52,12 +52,15 @@ public class RemoteSpiUrls {
     public String getConsentById() {
         return baseUrl + "/consent/{id}";
     }
+
     public String deleteConsentById() {
         return baseUrl + "/consent/{id}";
     }
+
     public String createConsent() {
         return baseUrl + "/consent/";
     }
+
     public String getConsentByAccess() {
         return baseUrl + "/consent/byAccess/{access}";
     }
@@ -66,13 +69,17 @@ public class RemoteSpiUrls {
     public String getAccountDetailsById() {
         return baseUrl + "/account/{accountId}";
     }
+
     public String getBalancesByAccountId() {
         return baseUrl + "/account/{accountId}/balances";
     }
+
     public String getAccountDetailsByPsuId() {
-        return baseUrl + "/account/{psuId}/accountsByPsuId";
+        return baseUrl + "/account/psu/{psuId}";
     }
+
     public String getAccountDetailsByIban() {
-        return baseUrl + "/account/{iban}/accountsByIban";
+        return baseUrl + "/account/iban/{iban}";
     }
+
 }

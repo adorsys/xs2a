@@ -6,14 +6,13 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile({"mongo", "fongo"})
 public interface PsuRepository extends MongoRepository<Psu, String> {
 
     List<Psu> findPsuByAccountDetailsList_Iban(String iban);
-
-    List<Psu> findPsuByAccountDetailsList_IbanIn(List<String> ibans);
 
     Optional<Psu> findPsuByAccountDetailsList_Id(String accountId);
 }
