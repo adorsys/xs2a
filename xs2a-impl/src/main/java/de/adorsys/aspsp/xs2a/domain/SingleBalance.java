@@ -39,6 +39,6 @@ public class SingleBalance {
     private Instant lastActionDateTime;
 
 	@ApiModelProperty(value = "Date", example = "2017-03-26")
-	@JsonFormatDateUTC
+    @JsonFormat(pattern = ApiDateConstants.DATE_PATTERN, timezone = ApiDateConstants.UTC)
 	private Instant date;
 }
