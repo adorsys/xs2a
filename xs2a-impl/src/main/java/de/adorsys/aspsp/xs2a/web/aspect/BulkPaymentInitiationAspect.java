@@ -16,38 +16,34 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Aspect
 @Component
-public class BulkPaymentInitiationAspect extends AbstractLinkAspect<PaymentInitiationController> {
+public class BulkPaymentInitiationAspect extends AbstractLinkAspect<BulkPaymentInitiationController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController.createBulkPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result")
-    public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
-        PaymentInitialisationResponse body = result.getBody();
-        body.setLinks(buildLink(body, paymentProduct));
-        return new ResponseEntity(body, result.getHeaders(), result.getStatusCode());
+    public ResponseEntity<List<PaymentInitialisationResponse>> invokeAspect(ResponseEntity<List<PaymentInitialisationResponse>> result, String paymentProduct) {
+        List<PaymentInitialisationResponse> body = result.getBody();
+        List<PaymentInitialisationResponse> newBody = body.stream()
+            .map(paym -> setLinksAndReturnResponse(paym, paymentProduct))
+            .collect(Collectors.toList());
+
+        return new ResponseEntity(newBody, result.getHeaders(), result.getStatusCode());
     }
 
-    private Links buildLink(PaymentInitialisationResponse body, String paymentProduct) {
-        Class controller = getController();
-
-        Links links = new Links();
-        links.setRedirect(redirectLinkToSource);
-        links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setStatus(linkTo(controller, paymentProduct).slash("status").toString());
-        return links;
+    private PaymentInitialisationResponse setLinksAndReturnResponse(PaymentInitialisationResponse paymentInitialisationResponse, String paymentProduct) {
+        paymentInitialisationResponse.setLinks(buildPaymentLinks(paymentInitialisationResponse, paymentProduct));
+        return paymentInitialisationResponse;
     }
 }

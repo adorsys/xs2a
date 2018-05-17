@@ -16,38 +16,23 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 @Slf4j
 @Aspect
 @Component
-public class PeriodicPaymentsAspect extends AbstractLinkAspect<PaymentInitiationController> {
+public class PeriodicPaymentsAspect extends AbstractLinkAspect<PeriodicPaymentsController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController.createPeriodicPayment(..)) && args(paymentProduct,..)", returning = "result")
     public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
         PaymentInitialisationResponse body = result.getBody();
-        body.setLinks(buildLink(body, paymentProduct));
+        body.setLinks(buildPaymentLinks(body, paymentProduct));
         return new ResponseEntity(body, result.getHeaders(), result.getStatusCode());
-    }
-
-    private Links buildLink(PaymentInitialisationResponse body, String paymentProduct) {
-        Class controller = getController();
-
-        Links links = new Links();
-        links.setRedirect(redirectLinkToSource);
-        links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setStatus(linkTo(controller, paymentProduct).slash("status").toString());
-        return links;
     }
 }
