@@ -16,14 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Component
 public abstract class AbstractLinkAspect<T> {
