@@ -42,5 +42,10 @@
 		    <artifactId>commons-lang3</artifactId>
 		    <version>${apache.commons-lang3.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>no.difi.commons</groupId>
+		    <artifactId>commons-certvalidator</artifactId>
+		    <version>${commons-certvalidator.version}</version>
+		</dependency>
 	</dependencies>
 </project>

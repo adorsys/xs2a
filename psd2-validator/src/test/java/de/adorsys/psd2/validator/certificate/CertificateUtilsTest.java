@@ -1,7 +1,6 @@
 package de.adorsys.psd2.validator.certificate;
 
 import java.security.cert.X509Certificate;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -14,16 +13,14 @@ public class CertificateUtilsTest {
 	@Test
 	public void test_getRootCertificate() {
 		
-		CertificateUtils certificateUtils = new CertificateUtils();
-		List<X509Certificate> rootCertList = certificateUtils.getRootCertificate("truststore");
-		Assert.assertTrue(rootCertList.size() >= 1);
+		X509Certificate[] rootCertList = CertificateUtils.getCertificates("truststore");
+		Assert.assertTrue(rootCertList.length >= 1);
 	}
 	
 	@Test
 	public void test_getCertificateByName() {
 		
-		CertificateUtils certificateUtils = new CertificateUtils();
-		String encodedCert = certificateUtils.getCertificateByName("certificateValid.crt");
+		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
 		Assert.assertTrue(StringUtils.isNotBlank(encodedCert));
 	}
 

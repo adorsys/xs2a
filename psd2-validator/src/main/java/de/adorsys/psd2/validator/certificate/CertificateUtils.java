@@ -12,12 +12,12 @@ import com.nimbusds.jose.util.X509CertUtils;
 
 public class CertificateUtils {
 
-	public List<X509Certificate> getRootCertificate(String truststore) {
+	public static X509Certificate[] getCertificates(String folderName) {
 
 		List<X509Certificate> listCert = new ArrayList<>();
 
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource(truststore);
+		URL url = loader.getResource(folderName);
 		String path = url.getPath();
 		File[] files = new File(path).listFiles();
 
@@ -32,7 +32,7 @@ public class CertificateUtils {
 				fis.close();
 
 				X509Certificate cert = X509CertUtils.parse(bytesArray);
-				if(cert != null) {
+				if (cert != null) {
 					listCert.add(cert);
 				}
 			} catch (IOException e) {
@@ -42,18 +42,18 @@ public class CertificateUtils {
 
 		}
 
-		return listCert;
+		return listCert.toArray(new X509Certificate[listCert.size()]);
 	}
-	
-	public String getCertificateByName(String filename) {
-		
+
+	public static String getCertificateByName(String filename) {
+
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource("sample_certificate/"+filename);
+		URL url = loader.getResource("certificates/" + filename);
 		String path = url.getPath();
 		File file = new File(path);
-		
-		if(file.exists()) {
-			
+
+		if (file.exists()) {
+
 			byte[] bytesArray = new byte[(int) file.length()];
 			FileInputStream fis;
 			try {
@@ -68,9 +68,9 @@ public class CertificateUtils {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
-				
+
 		return null;
 	}
 }
