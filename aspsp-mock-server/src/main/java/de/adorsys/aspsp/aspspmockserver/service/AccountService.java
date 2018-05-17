@@ -60,6 +60,7 @@ public class AccountService {
     public List<SpiAccountDetails> getAccountsByIban(String iban) {
         return psuRepository.findPsuByAccountDetailsList_Iban(iban).stream()
                    .flatMap(psu -> psu.getAccountDetailsList().stream())
+                   .filter(aD -> aD.getIban().equals(iban))
                    .collect(Collectors.toList());
     }
 

@@ -90,7 +90,8 @@ public class AccountService {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
                    .map(Collection::stream)
-                   .flatMap(accDet -> accDet.filter(aD -> aD.getCurrency() == reference.getCurrency())
+                   .flatMap(accDet -> accDet
+                                          .filter(aD -> aD.getCurrency() == reference.getCurrency())
                                           .findFirst());
     }
 

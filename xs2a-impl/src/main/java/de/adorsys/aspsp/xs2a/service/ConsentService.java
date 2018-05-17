@@ -57,22 +57,20 @@ public class ConsentService {
                    : ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build();
     }
 
+    public ResponseObject<Boolean> deleteAccountConsentsById(String consentId) {
+        if (consentSpi.getAccountConsentById(consentId) != null) {
+            consentSpi.deleteAccountConsentsById(consentId);
+            return ResponseObject.<Boolean>builder().body(true).build();
+        }
+
+        return ResponseObject.<Boolean>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
+    }
+
     public ResponseObject<AccountConsent> getAccountConsentsById(String consentId) {
         AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
         return isEmpty(consent)
                    ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
-    }
-
-    public ResponseObject<Boolean> deleteAccountConsentsById(String consentId) {
-        boolean present = getAccountConsentsById(consentId).getBody() != null;
-        if (present) {
-            consentSpi.deleteAccountConsentsById(consentId);
-        }
-
-        return present
-                   ? ResponseObject.<Boolean>builder().body(true).build()
-                   : ResponseObject.<Boolean>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
     }
 
     private Optional<String> createAccountConsentsAndReturnId(CreateConsentReq req, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
@@ -110,7 +108,6 @@ public class ConsentService {
         return Optional.of(getNewAccountAccessByReferences(setToArray(accountsRef), setToArray(balancesRef), setToArray(transactionsRef), null, null));
     }
 
-
     private Set<AccountReference> extractReferenceSetFromDetailsList(AccountReference[] accountReferencesArr, List<AccountDetails> accountDetails) {
         return Optional.ofNullable(accountReferencesArr)
                    .map(arr -> Arrays.stream(arr)
@@ -124,12 +121,6 @@ public class ConsentService {
                    .filter(acc -> acc.getIban().equals(iban))
                    .filter(acc -> currency == null || acc.getCurrency() == currency)//TODO CHECK WITH PO
                    .map(this::mapAccountDetailsToReference);
-    }
-
-    private static <T> Set<T> mergeSets(Set<T>... sets) {
-        return Stream.of(sets)
-                   .flatMap(Collection::stream)
-                   .collect(Collectors.toSet());
     }
 
     private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
@@ -219,6 +210,11 @@ public class ConsentService {
         return linksToConsent;
     }
 
+    private static <T> Set<T> mergeSets(Set<T>... sets) {
+        return Stream.of(sets)
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toSet());
+    }
 
     private AccountReference[] setToArray(Set<AccountReference> set) {
         return set.stream().toArray(AccountReference[]::new);
