@@ -18,6 +18,9 @@ public class CertificateUtils {
 
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		URL url = loader.getResource(folderName);
+		if(url == null) {
+			return new X509Certificate[] {};
+		}
 		String path = url.getPath();
 		File[] files = new File(path).listFiles();
 

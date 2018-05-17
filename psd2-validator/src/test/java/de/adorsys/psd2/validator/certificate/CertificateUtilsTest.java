@@ -13,7 +13,7 @@ public class CertificateUtilsTest {
 	@Test
 	public void test_getRootCertificate() {
 		
-		X509Certificate[] rootCertList = CertificateUtils.getCertificates("truststore");
+		X509Certificate[] rootCertList = CertificateUtils.getCertificates("rootcert");
 		Assert.assertTrue(rootCertList.length >= 1);
 	}
 	
