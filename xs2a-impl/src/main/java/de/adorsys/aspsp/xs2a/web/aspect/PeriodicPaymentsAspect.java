@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class PeriodicPaymentsAspect extends AbstractLinkAspect<PeriodicPaymentsController> {
+public class PeriodicPaymentsAspect extends AbstractPaymentLink<PeriodicPaymentsController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController.createPeriodicPayment(..)) && args(paymentProduct,..)", returning = "result")
     public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {

@@ -18,26 +18,23 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.ParameterizedType;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-@Component
-public abstract class AbstractLinkAspect<T> {
-    @Autowired
-    protected String redirectLinkToSource;
+public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
-    protected Class<T> getController() {
-        try {
-            String className = ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0]
-                .getTypeName();
-            return (Class<T>) Class.forName(className);
-        } catch (Exception e) {
-            throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");
-        }
+    protected Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentProduct) {
+        Class controller = getController();
+
+        Links links = new Links();
+        links.setRedirect(redirectLinkToSource);
+        links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
+        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
+        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
+        links.setStatus(linkTo(controller, paymentProduct).slash("status").toString());
+        return links;
+
     }
 }
+
+

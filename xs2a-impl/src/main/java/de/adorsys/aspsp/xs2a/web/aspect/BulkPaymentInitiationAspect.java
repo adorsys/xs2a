@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Component
-public class BulkPaymentInitiationAspect extends AbstractLinkAspect<BulkPaymentInitiationController> {
+public class BulkPaymentInitiationAspect extends AbstractPaymentLink<BulkPaymentInitiationController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController.createBulkPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result")
     public ResponseEntity<List<PaymentInitialisationResponse>> invokeAspect(ResponseEntity<List<PaymentInitialisationResponse>> result, String paymentProduct) {
