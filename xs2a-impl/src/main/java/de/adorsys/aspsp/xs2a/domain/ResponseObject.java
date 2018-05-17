@@ -34,26 +34,30 @@ public class ResponseObject<T> {
         this.error = builder.error;
     }
 
-    public static ResponseBuilder builder(){
-        return new ResponseBuilder();
+    public static <T> ResponseBuilder<T> builder(){
+        return new ResponseBuilder<>();
     }
 
     public static class ResponseBuilder<T> {
         private T body;
         private MessageError error;
 
-        public ResponseBuilder body(T body){
+        public ResponseBuilder<T> body(T body){
             this.body = body;
             return this;
         }
 
-        public ResponseBuilder fail(MessageError error){
+        public ResponseBuilder<T> fail(MessageError error){
             this.error = error;
             return this;
         }
 
-        public ResponseObject build() {
-            return new ResponseObject(this);
+        public ResponseObject<T> build() {
+            return new ResponseObject<>(this);
         }
+    }
+
+    public boolean hasError(){
+        return error != null;
     }
 }

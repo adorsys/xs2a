@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
@@ -54,7 +55,7 @@ public class AccountService {
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
-        return ResponseObject.builder()
+        return ResponseObject.<Map<String, List<AccountDetails>>>builder()
             .body(accountDetailsMap).build();
     }
 
@@ -62,9 +63,8 @@ public class AccountService {
         List<SpiBalances> spiBalances = accountSpi.readBalances(accountId, psuInvolved);
 
         return Optional.ofNullable(spiBalances)
-            .map(sb -> ResponseObject.builder().body(accountMapper.mapFromSpiBalancesList(sb)).build())
-            .orElse(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404)
-                .text("Wrong account ID"))).build());
+            .map(sb -> ResponseObject.<List<Balances>>builder().body(accountMapper.mapFromSpiBalancesList(sb)).build())
+            .orElse(ResponseObject.<List<Balances>>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build());
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
@@ -72,14 +72,18 @@ public class AccountService {
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
 
         if (accountSpi.readAccountDetails(accountId, false, false) == null) {
-            return ResponseObject.builder()
+            return ResponseObject.<AccountReport>builder()
                 .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
-
             AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
-            return ResponseObject.builder()
+            return ResponseObject.<AccountReport>builder()
                 .body(getReportAccordingMaxSize(accountReport, accountId)).build();
         }
+    }
+
+    public Optional<SpiAccountDetails> getSpiAccountDetailsByAccountReference(AccountReference reference) {
+        return Optional.ofNullable(reference)
+                   .map(ref -> accountSpi.readAccountDetailsByIbanAndCurrency(ref.getIban(), ref.getCurrency()));
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
@@ -140,8 +144,11 @@ public class AccountService {
     public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
         AccountDetails accountDetails = accountMapper.mapFromSpiAccountDetails(accountSpi.readAccountDetails(accountId, withBalance, psuInvolved));
 
-        return ResponseObject.builder()
-            .body(accountDetails).build();
+        return accountDetails != null
+            ? ResponseObject.<AccountDetails>builder()
+                .body(accountDetails).build()
+            : ResponseObject.<AccountDetails>builder()
+                .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
     }
 
     // Validation

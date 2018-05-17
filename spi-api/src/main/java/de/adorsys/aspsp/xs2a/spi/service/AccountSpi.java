@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -33,4 +34,7 @@ public interface AccountSpi {
     List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved);
 
     SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved);
+
+    SpiAccountDetails readAccountDetailsByIbanAndCurrency(String iban, Currency currency);
+
 }
