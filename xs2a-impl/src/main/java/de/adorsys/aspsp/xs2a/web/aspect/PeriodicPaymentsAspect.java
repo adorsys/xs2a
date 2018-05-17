@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,9 +27,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentInitiationController> {
+public class PeriodicPaymentsAspect extends AbstractPaymentLink<PeriodicPaymentsController> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.PaymentInitiationController.createPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result")
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController.createPeriodicPayment(..)) && args(paymentProduct,..)", returning = "result")
     public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
         PaymentInitialisationResponse body = result.getBody();
         body.setLinks(buildPaymentLinks(body, paymentProduct));
