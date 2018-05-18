@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.ais;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
-@Data
-@ApiModel(description = "Response for the Ais information  request in the AICService")
-public class AisGeneralResponseBody {
+@ApiModel(description = "AccountAccess type", value = "AccountAccessType")
+public enum AccountAccessType {
+	ALL_ACCOUNTS("all-accounts");
 
-	@ApiModelProperty(value = "Text to be displayed to the Psu, e.g. in a Decoupled SCA Approach")
-	private String psu_message;
-	@ApiModelProperty(value = "Tpp Message Information")
-	private TppMessageInformation tpp_message;
+    @ApiModelProperty(value = "description", example = "all-accounts")
+    private String description;
+
+    @JsonCreator
+    AccountAccessType(String description) {
+        this.description = description;
+    }
+
+    @JsonValue
+    public String getDescription() {
+        return description;
+    }
 }
-
-
