@@ -54,7 +54,7 @@ public class ConsentMapperTest {
         SpiTransactionStatus expectedTransactionStatus = SpiTransactionStatus.ACCP;
 
         //When:
-        TransactionStatus actualTransactionStatus = consentMapper.mapFromSpiTransactionStatus(expectedTransactionStatus);
+        TransactionStatus actualTransactionStatus = consentMapper.mapToTransactionStatus(expectedTransactionStatus);
 
         //Then:
         assertThat(expectedTransactionStatus.name()).isEqualTo(actualTransactionStatus.name());
@@ -82,7 +82,7 @@ public class ConsentMapperTest {
 
         //When:
         assertNotNull(donorAccountConsent);
-        AccountConsent actualAccountConsent = consentMapper.mapFromSpiAccountConsent(donorAccountConsent);
+        AccountConsent actualAccountConsent = consentMapper.mapToAccountConsent(donorAccountConsent);
 
         //Then:
         assertThat(actualAccountConsent.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");

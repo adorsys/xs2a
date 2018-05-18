@@ -43,7 +43,7 @@ public class PaymentMapper {
     private final ConsentMapper consentMapper;
     private final AccountMapper accountMapper;
 
-    public TransactionStatus mapGetPaymentStatusById(SpiTransactionStatus spiTransactionStatus) {
+    public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
                        .map(ts -> TransactionStatus.valueOf(ts.name()))
                        .orElse(null);
@@ -54,10 +54,10 @@ public class PaymentMapper {
                        .map(paymentRe -> {
                            SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
                            spiSinglePayments.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
-                           spiSinglePayments.setDebtorAccount(mapAccountReference(paymentRe.getDebtorAccount()));
+                           spiSinglePayments.setDebtorAccount(mapToSpiAccountReference(paymentRe.getDebtorAccount()));
                            spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
                            spiSinglePayments.setInstructedAmount(accountMapper.mapToSpiAmount(paymentRe.getInstructedAmount()));
-                           spiSinglePayments.setCreditorAccount(mapAccountReference(paymentRe.getCreditorAccount()));
+                           spiSinglePayments.setCreditorAccount(mapToSpiAccountReference(paymentRe.getCreditorAccount()));
                            spiSinglePayments.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
                            spiSinglePayments.setCreditorName(paymentRe.getCreditorName());
                            spiSinglePayments.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
@@ -73,7 +73,7 @@ public class PaymentMapper {
                        .orElse(null);
     }
 
-    private SpiAccountReference mapAccountReference(AccountReference accountReference) {
+    private SpiAccountReference mapToSpiAccountReference(AccountReference accountReference) {
         return Optional.ofNullable(accountReference)
                        .map(ar -> new SpiAccountReference(
                                ar.getIban(),
@@ -115,29 +115,29 @@ public class PaymentMapper {
                        }).orElse(null);
     }
 
-    public PaymentInitialisationResponse mapFromSpiPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
+    public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
 
         return Optional.ofNullable(response)
                        .map(pir -> {
                            PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
-                           initialisationResponse.setTransactionStatus(consentMapper.mapFromSpiTransactionStatus(pir.getTransactionStatus()));
+                           initialisationResponse.setTransactionStatus(consentMapper.mapToTransactionStatus(pir.getTransactionStatus()));
                            initialisationResponse.setPaymentId(pir.getPaymentId());
-                           initialisationResponse.setTransactionFees(accountMapper.mapFromSpiAmount(pir.getSpiTransactionFees()));
+                           initialisationResponse.setTransactionFees(accountMapper.mapToAmount(pir.getSpiTransactionFees()));
                            initialisationResponse.setTransactionFeeIndicator(pir.isSpiTransactionFeeIndicator());
                            initialisationResponse.setPsuMessage(pir.getPsuMessage());
                            initialisationResponse.setTppRedirectPreferred(pir.isTppRedirectPreferred());
-                           initialisationResponse.setScaMethods(mapFromSpiAuthenticationObjects(pir.getScaMethods()));
-                           initialisationResponse.setTppMessages(mapFromSpiMessageCodes(pir.getTppMessages()));
+                           initialisationResponse.setScaMethods(mapToAuthenticationObjects(pir.getScaMethods()));
+                           initialisationResponse.setTppMessages(mapToMessageCodes(pir.getTppMessages()));
                            initialisationResponse.setLinks(new Links());
                            return initialisationResponse;
                        }).orElse(null);
     }
 
-    private AuthenticationObject[] mapFromSpiAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion
+    private AuthenticationObject[] mapToAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion
         return new AuthenticationObject[]{};//TODO Fill in th Linx
     }
 
-    private MessageCode[] mapFromSpiMessageCodes(String[] messageCodes) { //NOPMD TODO review and check PMD assertion
+    private MessageCode[] mapToMessageCodes(String[] messageCodes) { //NOPMD TODO review and check PMD assertion
         return new MessageCode[]{};//TODO Fill in th Linx
     }
 

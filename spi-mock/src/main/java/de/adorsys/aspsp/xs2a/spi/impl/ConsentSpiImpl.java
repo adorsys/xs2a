@@ -35,7 +35,7 @@ public class ConsentSpiImpl implements ConsentSpi {
     private final RemoteSpiUrls remoteSpiUrls;
 
     @Override
-    public String createAccountConsents(SpiAccountConsent consent) {
+    public String createAccountConsent(SpiAccountConsent consent) {
         ResponseEntity<String> response = restTemplate.postForEntity(remoteSpiUrls.createConsent(), consent, String.class);
         return response.getBody();
     }
@@ -47,7 +47,7 @@ public class ConsentSpiImpl implements ConsentSpi {
     }
 
     @Override
-    public void deleteAccountConsentsById(String consentId) {
+    public void deleteAccountConsentById(String consentId) {
         restTemplate.delete(remoteSpiUrls.deleteConsentById(), consentId);
     }
 
@@ -56,7 +56,7 @@ public class ConsentSpiImpl implements ConsentSpi {
         Optional.ofNullable(getAccountConsentByAccess(access))
             .ifPresent(consent -> {
                 consent.setSpiConsentStatus(SpiConsentStatus.EXPIRED);
-                createAccountConsents(consent);
+                createAccountConsent(consent);
             });
     }
 

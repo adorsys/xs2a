@@ -16,29 +16,27 @@
 
 package de.adorsys.aspsp.xs2a.domain.ais.consent;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 @ApiModel(description = "Account access", value = "AccountAccess")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountAccess {
+public class AccountAccess { //TODO To be refactored. Arrays should be replaced by Lists. Task #116
 
     @ApiModelProperty(value = "detailed account information", required = false)
-    private final AccountReference[] accounts;
+    private AccountReference[] accounts;
 
     @ApiModelProperty(value = "balances of the addressed accounts", required = false)
-    private final AccountReference[] balances;
+    private AccountReference[] balances;
 
     @ApiModelProperty(value = "transactions of the addressed accounts", required = false)
-    private final AccountReference[] transactions;
+    private AccountReference[] transactions;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
-    private final AccountAccessType availableAccounts;
+    private AccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
-    private final AccountAccessType allPsd2;
+    private AccountAccessType allPsd2;
 }

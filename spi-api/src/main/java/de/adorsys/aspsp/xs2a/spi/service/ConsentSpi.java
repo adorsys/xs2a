@@ -20,11 +20,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 
 public interface ConsentSpi {
-    String createAccountConsents(SpiAccountConsent consent);
+    String createAccountConsent(SpiAccountConsent consent);
 
     SpiAccountConsent getAccountConsentById(String consentId);
 
-    void deleteAccountConsentsById(String consentId);
+    void deleteAccountConsentById(String consentId);
 
     void expireConsent(SpiAccountAccess access);
 }

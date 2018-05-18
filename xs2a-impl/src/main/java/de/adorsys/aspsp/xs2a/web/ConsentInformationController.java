@@ -83,7 +83,7 @@ public class ConsentInformationController {
     public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject<AccountConsent> response = consentService.getAccountConsentsById(consentId);
+        ResponseObject<AccountConsent> response = consentService.getAccountConsentById(consentId);
         return responseMapper.ok(response);
     }
 
@@ -94,10 +94,10 @@ public class ConsentInformationController {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<Boolean> deleteAccountConsent(
+    public ResponseEntity<Void> deleteAccountConsent(
         @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject<Boolean> response = consentService.deleteAccountConsentsById(consentId);
+        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId);
         return responseMapper.delete(response);
     }
 

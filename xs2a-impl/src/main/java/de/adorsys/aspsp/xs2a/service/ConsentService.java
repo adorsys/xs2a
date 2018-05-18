@@ -24,24 +24,23 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
-@AllArgsConstructor
 @Service
-public class ConsentService {
-    private String consentsLinkRedirectToSource;
-    private ConsentSpi consentSpi;
-    private ConsentMapper consentMapper;
-    private AccountMapper accountMapper;
-    private AccountSpi accountSpi;
+@RequiredArgsConstructor
+public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id amd only return data which belongs to certain PSU Task #110
+    private final String consentsLinkRedirectToSource;
+    private final ConsentSpi consentSpi;
+    private final ConsentMapper consentMapper;
+    private final AccountMapper accountMapper;
+    private final AccountSpi accountSpi;
 
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         Optional<String> consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
@@ -51,24 +50,24 @@ public class ConsentService {
     }
 
     public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
-        AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return isEmpty(consent)
-                   ? ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build();
+        AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
+        return consent!=null && consent.getTransactionStatus()!=null
+                   ? ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build()
+                   : ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
     }
 
-    public ResponseObject<Boolean> deleteAccountConsentsById(String consentId) {
+    public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
         if (consentSpi.getAccountConsentById(consentId) != null) {
-            consentSpi.deleteAccountConsentsById(consentId);
-            return ResponseObject.<Boolean>builder().body(true).build();
+            consentSpi.deleteAccountConsentById(consentId);
+            return ResponseObject.<Void>builder().build();
         }
 
-        return ResponseObject.<Boolean>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
+        return ResponseObject.<Void>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
     }
 
-    public ResponseObject<AccountConsent> getAccountConsentsById(String consentId) {
-        AccountConsent consent = consentMapper.mapFromSpiAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return isEmpty(consent)
+    public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
+        AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
+        return consent==null
                    ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
@@ -86,7 +85,7 @@ public class ConsentService {
     }
 
     private String saveAccountConsent(AccountConsent consent) {
-        return consentSpi.createAccountConsents(consentMapper.mapToSpiAccountConsent(consent));
+        return consentSpi.createAccountConsent(consentMapper.mapToSpiAccountConsent(consent));
     }
 
     private Optional<AccountAccess> createAccountAccess(AccountAccess access, String psuId) {
@@ -97,7 +96,7 @@ public class ConsentService {
 
     private Optional<AccountAccess> getNewAccessByIbans(AccountAccess access) {
         Set<String> ibans = getIbanSetFromAccess(access);
-        List<AccountDetails> accountDetails = accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
+        List<AccountDetails> accountDetails = accountMapper.mapToAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
 
         Set<AccountReference> accountsRef = extractReferenceSetFromDetailsList(access.getAccounts(), accountDetails);
         Set<AccountReference> balancesRef = extractReferenceSetFromDetailsList(access.getBalances(), accountDetails);
@@ -119,12 +118,12 @@ public class ConsentService {
     private Stream<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
         return accountDetails.stream()
                    .filter(acc -> acc.getIban().equals(iban))
-                   .filter(acc -> currency == null || acc.getCurrency() == currency)//TODO CHECK WITH PO
+                   .filter(acc -> currency == null || acc.getCurrency() == currency)
                    .map(this::mapAccountDetailsToReference);
     }
 
     private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
-        return Optional.ofNullable(accountMapper.mapFromSpiAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
+        return Optional.ofNullable(accountMapper.mapToAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
                    .map(this::mapAccountListToArrayOfReference)
                    .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
                                    ? getNewAccountAccessByReferences(ref, new AccountReference[]{}, new AccountReference[]{}, availableAccounts, null)
@@ -178,9 +177,9 @@ public class ConsentService {
     }
 
     private boolean isAllAccountsOrAllPsd2(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
-        return !isEmpty(psuId)
-                   && availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                   || allPsd2 == AccountAccessType.ALL_ACCOUNTS;
+        return !StringUtils.isBlank(psuId)
+                   && (availableAccounts == AccountAccessType.ALL_ACCOUNTS
+                   || allPsd2 == AccountAccessType.ALL_ACCOUNTS);
 
     }
 

@@ -74,7 +74,7 @@ public class AccountServiceTest {
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails());
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())))).thenReturn(Collections.singletonList(getSpiAccountDetails()));
         when(accountSpi.readBalances(ACCOUNT_ID)).thenReturn(getSpiBalances());
-        when(consentService.getAccountConsentsById(CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
+        when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess())).thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
 
        /* when(accountSpi.readTransactionsByPeriod(any(), any(), any()))
@@ -85,9 +85,9 @@ public class AccountServiceTest {
             .thenReturn(getTransactionList());
         when(accountSpi.readAccountDetailsByIban(anyString()))
             .thenReturn(Collections.singletonList(createSpiAccountDetails()));
-        when(consentService.getAccountConsentsById(CONSENT_ID))
+        when(consentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
-        when(consentService.getAccountConsentsById(WRONG_CONSENT_ID))
+        when(consentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.CONSENT_UNKNOWN_403))).build());
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess()))
             .thenReturn(new HashSet<String>(Collections.singletonList(getAccountReference().getIban())));*/
@@ -252,7 +252,7 @@ public class AccountServiceTest {
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
-        List<Balances> expectedResult = accountMapper.mapFromSpiBalancesList(getBalances());
+        List<Balances> expectedResult = accountMapper.mapToBalancesList(getBalances());
         //When:
         List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getBody();
         //Then:
@@ -263,7 +263,7 @@ public class AccountServiceTest {
         List<SpiAccountDetails> list = accountSpi.readAccountDetailsByIban("id");
         List<AccountDetails> accountDetails = new ArrayList<>();
         for (SpiAccountDetails s : list) {
-            accountDetails.add(accountMapper.mapFromSpiAccountDetails(s));
+            accountDetails.add(accountMapper.mapToAccountDetails(s));
         }
 
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
@@ -346,7 +346,7 @@ public class AccountServiceTest {
     }
 
     private AccountReport getAccountReport(String accountId) {
-        Optional<AccountReport> aR = accountMapper.mapFromSpiAccountReport(getTransactionList());
+        Optional<AccountReport> aR = accountMapper.mapToAccountReport(getTransactionList());
         AccountReport accountReport;
         accountReport = aR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
         String jsonReport = null;

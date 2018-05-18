@@ -49,7 +49,7 @@ public class PaymentService {
 
     public ResponseObject<Map<String, TransactionStatus>> getPaymentStatusById(String paymentId, PaymentProduct paymentProduct) {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
-        TransactionStatus transactionStatus = paymentMapper.mapGetPaymentStatusById(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
+        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
         paymentStatusResponse.put("transactionStatus", transactionStatus);
 
         return ResponseObject.<Map<String, TransactionStatus>>builder()
@@ -58,7 +58,7 @@ public class PaymentService {
 
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
         SpiPaymentInitialisationResponse spiPeriodicPayment = paymentSpi.initiatePeriodicPayment(paymentMapper.mapToSpiPeriodicPayment(periodicPayment), paymentProduct.getCode(), tppRedirectPreferred);
-        PaymentInitialisationResponse paymentInitiation = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPeriodicPayment);
+        PaymentInitialisationResponse paymentInitiation = paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPayment);
 
         return Optional.ofNullable(paymentInitiation)
             .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
@@ -72,7 +72,7 @@ public class PaymentService {
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
         List<PaymentInitialisationResponse> paymentInitialisationResponse = spiPaymentInitiation.stream()
-            .map(paymentMapper::mapFromSpiPaymentInitializationResponse)
+            .map(paymentMapper::mapToPaymentInitializationResponse)
             .collect(Collectors.toList());
 
         return isEmpty(paymentInitialisationResponse)
@@ -85,7 +85,7 @@ public class PaymentService {
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
         SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
         SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct.getCode(), tppRedirectPreferred);
-        PaymentInitialisationResponse paymentInitialisationResponse = paymentMapper.mapFromSpiPaymentInitializationResponse(spiPaymentInitiation);
+        PaymentInitialisationResponse paymentInitialisationResponse = paymentMapper.mapToPaymentInitializationResponse(spiPaymentInitiation);
 
         return Optional.ofNullable(paymentInitialisationResponse)
             .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())

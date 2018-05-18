@@ -27,8 +27,6 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-
 @Value
 @AllArgsConstructor
 public class SpiAccountDetails {
@@ -81,7 +79,7 @@ public class SpiAccountDetails {
 
     @JsonIgnore
     public Optional<SpiBalances> getFirstBalance() {
-        return isEmpty(balances)
+        return balances.isEmpty()
                    ? Optional.empty()
                    : Optional.of(balances.get(0));
     }

@@ -67,51 +67,51 @@ public class ConsentServiceTest {
     @Before
     public void setUp() {
         //WB Acc Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 getSpiReferensesList(CORRECT_IBAN), Collections.emptyList(), Collections.emptyList(), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB Acc noCurrency set Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB Acc noCurrency set Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY_2), getSpiReference(CORRECT_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WoB Acc Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 getSpiReferensesList(CORRECT_IBAN), Collections.emptyList(), Collections.emptyList(), false, false), false)))
             .thenReturn(CORRECT_PSU_ID);
         //WB PSU allAvailable Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), true, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB PSU allPsd2 Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY_2)), false, true), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB Trans Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 getSpiReferensesList(CORRECT_IBAN), Collections.emptyList(), getSpiReferensesList(CORRECT_IBAN), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB Bal Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 getSpiReferensesList(CORRECT_IBAN), getSpiReferensesList(CORRECT_IBAN), Collections.emptyList(), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
         //WB Bal+Tr Create Case
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN, CURRENCY), getSpiReference(CORRECT_IBAN_1, CURRENCY)), getSpiReferensesList(CORRECT_IBAN), getSpiReferensesList(CORRECT_IBAN_1), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
-        when(consentSpi.createAccountConsents(
+        when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
                 Arrays.asList(getSpiReference(CORRECT_IBAN_1, CURRENCY), getSpiReference(CORRECT_IBAN, CURRENCY)), getSpiReferensesList(CORRECT_IBAN), getSpiReferensesList(CORRECT_IBAN_1), false, false), true)))
             .thenReturn(CORRECT_PSU_ID);
@@ -126,7 +126,7 @@ public class ConsentServiceTest {
         when(consentSpi.getAccountConsentById(WRONG_PSU_ID)).thenReturn(null);
 
         consentSpi.expireConsent(any());
-        consentSpi.deleteAccountConsentsById(anyString());
+        consentSpi.deleteAccountConsentById(anyString());
     }
 
     @Test
@@ -323,7 +323,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsById_Success() {
         //When:
-        ResponseObject response = consentService.getAccountConsentsById(CORRECT_PSU_ID);
+        ResponseObject response = consentService.getAccountConsentById(CORRECT_PSU_ID);
         AccountConsent consent = (AccountConsent) response.getBody();
         //Than:
         assertThat(consent.getAccess().getAccounts()[0].getIban()).isEqualTo(CORRECT_IBAN);
@@ -332,7 +332,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsById_Failure() {
         //When:
-        ResponseObject response = consentService.getAccountConsentsById(WRONG_PSU_ID);
+        ResponseObject response = consentService.getAccountConsentById(WRONG_PSU_ID);
         //Than:
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
