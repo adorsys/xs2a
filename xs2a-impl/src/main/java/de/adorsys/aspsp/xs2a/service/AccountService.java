@@ -24,7 +24,6 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;
@@ -35,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_INVALID;
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -54,22 +54,28 @@ public class AccountService {
 
     public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
         AccountConsent consent = consentService.getAccountConsentById(consentId).getBody();
-        Set<String> ibans = Optional.ofNullable(consent.getAccess()).map(consentService::getIbanSetFromAccess).orElse(Collections.emptySet());
+        Set<String> ibans = Optional.ofNullable(consent.getAccess())
+                                .map(consentService::getIbanSetFromAccess)
+                                .orElse(Collections.emptySet());
 
         List<AccountDetails> accountDetailsList = getAccountDetailsListByIbans(ibans);
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
-        return ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                   .body(accountDetailsMap).build();
+        return accountDetailsList.isEmpty()
+                   ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
+                   : ResponseObject.<Map<String, List<AccountDetails>>>builder()
+                         .body(accountDetailsMap).build();
     }
 
     public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
-        List<SpiBalances> spiBalances = accountSpi.readBalances(accountId);
+        List<Balances> balances = accountMapper.mapToBalancesList(accountSpi.readBalances(accountId));
 
-        return Optional.ofNullable(spiBalances)
-                   .map(sb -> ResponseObject.<List<Balances>>builder().body(accountMapper.mapToBalancesList(sb)).build())
-                   .orElse(ResponseObject.<List<Balances>>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build());
+        return balances.isEmpty()
+                   ? ResponseObject.<List<Balances>>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build()
+                   : ResponseObject.<List<Balances>>builder().body(balances).build();
     }
 
     public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
@@ -97,7 +103,7 @@ public class AccountService {
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
-        return StringUtils.isEmpty(transactionId)
+        return StringUtils.isBlank(transactionId)
                    ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
                    : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }

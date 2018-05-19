@@ -29,6 +29,6 @@ public class SpiCreateConsentRequest {
     private SpiAccountAccess access;
     private boolean recurringIndicator;
     private Date validUntil;
-    private Integer frequencyPerDay;
+    private int frequencyPerDay;
     private boolean combinedServiceIndicator;
 }

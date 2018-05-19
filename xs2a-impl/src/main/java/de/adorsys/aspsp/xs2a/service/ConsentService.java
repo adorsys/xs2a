@@ -51,7 +51,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
         AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return consent!=null && consent.getTransactionStatus()!=null
+        return consent != null && consent.getTransactionStatus() != null
                    ? ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build()
                    : ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
     }
@@ -67,7 +67,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
         AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return consent==null
+        return consent == null
                    ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
@@ -102,7 +102,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         Set<AccountReference> balancesRef = extractReferenceSetFromDetailsList(access.getBalances(), accountDetails);
         Set<AccountReference> transactionsRef = extractReferenceSetFromDetailsList(access.getTransactions(), accountDetails);
 
-        accountsRef = mergeSets(accountsRef, balancesRef, transactionsRef);
+        accountsRef = Stream.of(accountsRef, balancesRef, transactionsRef)
+                          .flatMap(Collection::stream)
+                          .collect(Collectors.toSet());
 
         return Optional.of(getNewAccountAccessByReferences(setToArray(accountsRef), setToArray(balancesRef), setToArray(transactionsRef), null, null));
     }
@@ -154,10 +156,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private Set<String> getIbansFromAccess(AccountAccess access) {
-        return mergeSets(
+        return Stream.of(
             getIbansFromAccountReference(access.getAccounts()),
             getIbansFromAccountReference(access.getBalances()),
-            getIbansFromAccountReference(access.getTransactions()));
+            getIbansFromAccountReference(access.getTransactions())
+        )
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toSet());
     }
 
     private Set<String> getIbansFromAccountReference(AccountReference[] references) {
@@ -179,7 +184,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private boolean isAllAccountsOrAllPsd2(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
         return !StringUtils.isBlank(psuId)
                    && (availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                   || allPsd2 == AccountAccessType.ALL_ACCOUNTS);
+                           || allPsd2 == AccountAccessType.ALL_ACCOUNTS);
 
     }
 
@@ -207,12 +212,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         linksToConsent.setRedirect(redirectLink);
 
         return linksToConsent;
-    }
-
-    private static <T> Set<T> mergeSets(Set<T>... sets) {
-        return Stream.of(sets)
-                   .flatMap(Collection::stream)
-                   .collect(Collectors.toSet());
     }
 
     private AccountReference[] setToArray(Set<AccountReference> set) {
