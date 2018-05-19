@@ -25,11 +25,10 @@ import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,29 +42,23 @@ public class AccountSpiImpl implements AccountSpi {
     private final RestTemplate restTemplate;
 
     @Override
-    public List<SpiAccountDetails> readAccounts(String consentId, boolean withBalance, boolean psuInvolved) {
-        String url = remoteSpiUrls.getUrl("getAllAccounts");
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
-        builder.queryParam("consent-id", consentId);
-        builder.queryParam("withBalance", withBalance);
-
-        ResponseEntity<SpiAccountDetails[]> response = restTemplate.getForEntity(builder.build().encode().toUri(), SpiAccountDetails[].class);
-        return Arrays.asList(response.getBody());
+    public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
+        return Optional.ofNullable(restTemplate.exchange(
+            remoteSpiUrls.getAccountDetailsByIban(), HttpMethod.GET, new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+            }, iban).getBody())
+                   .orElse(Collections.emptyList());
     }
 
     @Override
-    public List<SpiBalances> readBalances(String accountId, boolean psuInvolved) {
-        String getBalanceUrl = remoteSpiUrls.getUrl("getAccountBalances");
-        ResponseEntity<List<SpiBalances>> response = restTemplate.exchange(getBalanceUrl, HttpMethod.GET, null,
-            new ParameterizedTypeReference<List<SpiBalances>>() {
-            }, accountId);
-
-        return response.getBody();
+    public List<SpiBalances> readBalances(String accountId) {
+        return Optional.ofNullable(restTemplate.exchange(
+            remoteSpiUrls.getBalancesByAccountId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiBalances>>() {
+            }, accountId).getBody())
+                   .orElse(Collections.emptyList());
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
         List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
 
         List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
@@ -75,7 +68,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsById(String accountId, String transactionId, boolean psuInvolved) {
+    public List<SpiTransaction> readTransactionsById(String accountId, String transactionId) {
         List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
 
         List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
@@ -85,32 +78,33 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiAccountDetails readAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        String url = remoteSpiUrls.getUrl("getAccountById");
-        SpiAccountDetails spiAccountDetails = restTemplate.getForObject(url, SpiAccountDetails.class, accountId);
-
-        return Optional.ofNullable(spiAccountDetails)
-                   .map(ad -> new SpiAccountDetails(
-                       ad.getId(), ad.getIban(), ad.getBban(),
-                       ad.getMaskedPan(), ad.getMaskedPan(), ad.getMsisdn(),
-                       ad.getCurrency(), ad.getName(), ad.getAccountType(),
-                       ad.getCashSpiAccountType(), ad.getBic(),
-                       withBalance ? ad.getBalances() : null)
-                   ).orElse(null);
+    public SpiAccountDetails readAccountDetails(String accountId) {
+        return restTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
     }
 
     @Override
-    public SpiAccountDetails readAccountDetailsByIbanAndCurrency(String iban, Currency currency) {
-        return restTemplate.getForObject(remoteSpiUrls.getUrl("getAccountByIban"), SpiAccountDetails.class, iban, currency);
+    public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
+        return Optional.ofNullable(restTemplate.exchange(
+            remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
+            }, psuId).getBody())
+                   .orElse(Collections.emptyList());
     }
 
-    private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
+    @Override
+    public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
+        return ibans.stream()
+                   .map(this::readAccountDetailsByIban)
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toList());
+    }
+
+    private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
         return spiTransactions.parallelStream()
                    .filter(this::isPendingTransaction)
                    .toArray(SpiTransaction[]::new);
     }
 
-    private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion
+    private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
         return spiTransactions.parallelStream()
                    .filter(transaction -> !isPendingTransaction(transaction))
                    .toArray(SpiTransaction[]::new);

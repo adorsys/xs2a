@@ -23,12 +23,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -41,11 +40,10 @@ public class AccountController {
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
-    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts(@RequestParam(value = "psu-id", required = true) String psuId) {
-        List<SpiAccountDetails> accountList = accountService.getAllAccounts(psuId);
-        return isEmpty(accountList)
-                   ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                   : new ResponseEntity<>(accountList, HttpStatus.OK);
+    public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
+        return Optional.of(accountService.getAllAccounts())
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -81,10 +79,20 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{iban}/{currency}")
-    public ResponseEntity<SpiAccountDetails> readAccountByIban(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
-        return accountService.getAccountByIbanAndCurrency(iban, Currency.getInstance(currency))
-                   .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping(path = "/psu/{psuId}")
+    public ResponseEntity<List<SpiAccountDetails>> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
+        List<SpiAccountDetails> response = accountService.getAccountsByPsuId(psuId);
+        return isEmpty(response)
+                   ? ResponseEntity.notFound().build()
+                   : ResponseEntity.ok(response);
+    }
+
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @GetMapping(path = "/iban/{iban}")
+    public ResponseEntity<List<SpiAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
+        List<SpiAccountDetails> response = accountService.getAccountsByIban(iban);
+        return isEmpty(response)
+                   ? ResponseEntity.notFound().build()
+                   : ResponseEntity.ok(response);
     }
 }

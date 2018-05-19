@@ -76,7 +76,7 @@ public class AccountDetails {
 
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")
-    private final Links links;
+    private final Links links = new Links();
 
     /**
      * method updates balance and transactions links with 'id' , example: /v1/accounts/3dc3d5b3-7023-4848-9853- f5400a64e80f/balances

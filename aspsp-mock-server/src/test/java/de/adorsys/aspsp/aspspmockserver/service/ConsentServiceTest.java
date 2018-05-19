@@ -1,16 +1,26 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.ConsentRepository;
-import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,154 +29,114 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ConsentServiceTest {
-    private final String CORRECT_PSU_ID = "123456789";
-    private final String WRONG_PSU_ID = "wrong psu id";
-    private final String CORRECT_IBAN = "DE123456789";
-    private final String WRONG_IBAN = "wrong iban";
-    private final String EMPTY_IBAN = "";
-    private final Currency CURRENCY = Currency.getInstance("EUR");
+    private static Date DATE = new Date(1122334455);
+    private static final String CONSENT_ID = "777-888-999";
+    private static final String WRONG_CONSENT_ID = "Wrong consent id";
+    private static final String WRONG_ACCOUNT_ID = "Really wrong id";
 
     @Autowired
     private ConsentService consentService;
-
-    @MockBean(name = "consentRepository")
-    private ConsentRepository consentRepository;
-    @MockBean(name = "psuRepository")
-    private PsuRepository psuRepository;
+    @MockBean
+    ConsentRepository consentRepository;
 
     @Before
     public void setUp() {
-        when(consentRepository.save(any(SpiAccountConsent.class))).thenReturn(getConsent());
 
-        when(psuRepository.findPsuByAccountDetailsList_Iban(CORRECT_IBAN)).thenReturn(Optional.of(getPsu(CORRECT_IBAN)));
-        when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(CORRECT_IBAN)))
-            .thenReturn(Collections.singletonList(getPsu(CORRECT_IBAN)));
-        when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(WRONG_IBAN)))
-            .thenReturn(Collections.emptyList());
-        when(psuRepository.findPsuByAccountDetailsList_IbanIn(Collections.singletonList(EMPTY_IBAN)))
-            .thenReturn(Collections.emptyList());
-        when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN)).thenReturn(null);
-        when(psuRepository.findOne(CORRECT_PSU_ID)).thenReturn(getPsu(CORRECT_IBAN));
-        when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
-        when(consentRepository.findOne(CORRECT_PSU_ID)).thenReturn(getConsent());
-        when(consentRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
-        when(consentRepository.exists(CORRECT_PSU_ID)).thenReturn(true);
-        when(consentRepository.exists(WRONG_PSU_ID)).thenReturn(false);
-        consentRepository.delete(anyString());
+        when(consentRepository.findOne(CONSENT_ID))
+            .thenReturn(getConsent(CONSENT_ID));
+        when(consentRepository.findOne(WRONG_CONSENT_ID))
+            .thenReturn(null);
+        when(consentRepository.save(getConsent(CONSENT_ID)))
+            .thenReturn(getConsent(CONSENT_ID));
+        when(consentRepository.save(getConsent(WRONG_CONSENT_ID)))
+            .thenReturn(null);
+        doNothing().when(consentRepository).delete(CONSENT_ID);
+        when(consentRepository.findAll())
+            .thenReturn(Collections.singletonList(getConsent(CONSENT_ID)));
+        when(consentRepository.exists(CONSENT_ID))
+            .thenReturn(true);
+        when(consentRepository.exists(WRONG_CONSENT_ID))
+            .thenReturn(false);
     }
 
     @Test
-    public void createConsentAndReturnIdTest_Success() {
-        //Given:
-        SpiCreateConsentRequest consent = createConsentRequestBalances(CORRECT_IBAN, null, null);
+    public void createConsentAndReturnId() {
+        //When
+        Optional<String> returnedId = consentService.createConsentAndReturnId(getConsent(CONSENT_ID));
 
-        //When:
-        Optional<String> response = consentService.createConsentAndReturnId(consent, CORRECT_PSU_ID, true);
-
-        //Then:
-        assertThat(response).isEqualTo(Optional.of(CORRECT_PSU_ID));
+        //Then
+        assertThat(returnedId.get()).isEqualTo(CONSENT_ID);
     }
 
     @Test
-    public void createConsentAndReturnIdTest_Failure() {
-        //When:
-        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(WRONG_IBAN, null, null), CORRECT_PSU_ID, true);
+    public void createConsentAndReturnId_Failure() {
+        //When
+        Optional<String> returnedId = consentService.createConsentAndReturnId(getConsent(WRONG_CONSENT_ID));
 
-        //Then:
-        assertThat(response).isEqualTo(Optional.empty());
+        //Then
+        assertThat(returnedId).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void createConsentAndReturnIdTest_allAccounts_Success() {
-        //When:
-        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(EMPTY_IBAN, SpiAccountAccessType.ALL_ACCOUNTS, null), CORRECT_PSU_ID, true);
+    public void getConsent() {
+        //When
+        Optional<SpiAccountConsent> actualConsent = consentService.getConsent(CONSENT_ID);
 
-        //Then:
-        assertThat(response).isEqualTo(Optional.of(CORRECT_PSU_ID));
+        //Then
+        assertThat(actualConsent.get()).isEqualTo(getConsent(CONSENT_ID));
     }
 
     @Test
-    public void createConsentAndReturnIdTest_allAccounts_Failure() {
-        //When:
-        Optional<String> response = consentService.createConsentAndReturnId(createConsentRequestBalances(EMPTY_IBAN, SpiAccountAccessType.ALL_ACCOUNTS, null), WRONG_PSU_ID, true);
+    public void getConsent_Failure() {
+        //When
+        Optional<SpiAccountConsent> actualConsent = consentService.getConsent(WRONG_CONSENT_ID);
 
-        //Then:
-        assertThat(response).isEqualTo(Optional.empty());
+        //Then
+        assertThat(actualConsent).isEqualTo(Optional.empty());
     }
 
     @Test
-    public void getConsentTest_Success() {
-        //When:
-        SpiAccountConsent response = consentService.getConsent(CORRECT_PSU_ID);
+    public void getAllConsents() {
+        //When
+        List<SpiAccountConsent> actualConsentList = consentService.getAllConsents();
 
-        //Then:
-        assertThat(response).isNotNull();
+        //Then
+        assertThat(actualConsentList).isEqualTo(Collections.singletonList(getConsent(CONSENT_ID)));
     }
 
     @Test
-    public void getConsentTest_Failure() {
-        //When:
-        SpiAccountConsent response = consentService.getConsent(WRONG_PSU_ID);
+    public void deleteConsentById() {
+        //When
+        boolean isDeleted = consentService.deleteConsentById(CONSENT_ID);
 
-        //Then:
-        assertThat(response).isNull();
-    }
-
-    @Test
-    public void deleteConsentById_Success() {
-        //When:
-        boolean response = consentService.deleteConsentById(CORRECT_PSU_ID);
-
-        //Then:
-        assertThat(response).isTrue();
+        //Then
+        assertThat(isDeleted).isEqualTo(true);
     }
 
     @Test
     public void deleteConsentById_Failure() {
-        //When:
-        boolean response = consentService.deleteConsentById(WRONG_PSU_ID);
+        //When
+        boolean isDeleted = consentService.deleteConsentById(WRONG_CONSENT_ID);
 
-        //Then:
-        assertThat(response).isFalse();
+        //Then
+        assertThat(isDeleted).isEqualTo(false);
     }
 
-
-    private SpiCreateConsentRequest createConsentRequestBalances(String iban, SpiAccountAccessType allAccounts, SpiAccountAccessType allPsd2) {
-        List<SpiAccountReference> list = new ArrayList<>();
-        list.add(new SpiAccountReference( iban, "", "", "", "", CURRENCY));
-        SpiAccountAccess access = new SpiAccountAccess(null, list, null, allAccounts, allPsd2);
-        return new SpiCreateConsentRequest(access, true, new Date(), 4, false);
-    }
-
-    private Psu getPsu(String id) {
-        List<SpiAccountDetails> list = getDetails();
-        return new Psu(CORRECT_PSU_ID, list);
-    }
-
-    private SpiAccountConsent getConsent() {
-
-        SpiAccountDetails det = getPsu(CORRECT_PSU_ID).getAccountDetailsList().get(0);
-        List<SpiAccountReference> ref = new ArrayList<>();
-        ref.add(new SpiAccountReference( det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()));
-        SpiAccountAccess acc = new SpiAccountAccess(null, ref, null, null, null);
-
-        return new SpiAccountConsent(CORRECT_PSU_ID, acc, true, new Date(), 4, new Date(), SpiTransactionStatus.RCVD, SpiConsentStatus.VALID, true, true);
-    }
-
-    private List<SpiAccountDetails> getDetails() {
-        List<SpiAccountDetails> list = new ArrayList<>();
-        list.add(new SpiAccountDetails("9999999", CORRECT_IBAN, "", "", "",
-            "", CURRENCY, "David", null, null, "", null));
-        return list;
+    private SpiAccountConsent getConsent(String id) {
+        return new SpiAccountConsent(
+            id, new SpiAccountAccess(), false, DATE, 4, null, SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true
+        );
     }
 }

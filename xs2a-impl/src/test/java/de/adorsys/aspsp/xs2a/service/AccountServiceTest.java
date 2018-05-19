@@ -16,17 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
-import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,30 +36,28 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountServiceTest {
-    private final String ACCOUNT_ID = "11111-999999999";
+    private final String ACCOUNT_ID = "33333-999999999";
+    private final String IBAN = "DE123456789";
+    private final Currency CURRENCY = Currency.getInstance("EUR");
     private final String TRANSACTION_ID = "Id-0001";
     private final Currency usd = Currency.getInstance("USD");
     private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetails.json";
     private final String SPI_ACCOUNT_DETAILS_SOURCE = "/json/SpiAccountDetails.json";
     private final int maxNumberOfCharInTransactionJson = 1000;
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private final String CONSENT_ID = "123456789";
+    private final String WRONG_CONSENT_ID = "Wromg consent id";
+    private final Date DATE = new Date(123456789L);
 
     @Autowired
     private AccountService accountService;
@@ -67,16 +66,73 @@ public class AccountServiceTest {
 
     @MockBean(name = "accountSpi")
     private AccountSpi accountSpi;
+    @MockBean
+    private ConsentService consentService;
 
     @Before
-    public void setUp() throws IOException {
-        when(accountSpi.readTransactionsByPeriod(any(), any(), any(), anyBoolean())).thenReturn(getTransactionList());
-        when(accountSpi.readBalances(any(), anyBoolean())).thenReturn(getBalances());
-        when(accountSpi.readTransactionsById(any(), any(), anyBoolean())).thenReturn(getTransactionList());
-        when(accountSpi.readAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(createSpiAccountDetails());
+    public void setUp() {
+        when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails());
+        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())))).thenReturn(Collections.singletonList(getSpiAccountDetails()));
+        when(accountSpi.readBalances(ACCOUNT_ID)).thenReturn(getSpiBalances());
+        when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
+        when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess())).thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
+
+       /* when(accountSpi.readTransactionsByPeriod(any(), any(), any()))
+            .thenReturn(getTransactionList());
+        when(accountSpi.readBalances(any()))
+            .thenReturn(getBalances());
+        when(accountSpi.readTransactionsById(any(), any()))
+            .thenReturn(getTransactionList());
+        when(accountSpi.readAccountDetailsByIban(anyString()))
+            .thenReturn(Collections.singletonList(createSpiAccountDetails()));
+        when(consentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
+        when(consentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.CONSENT_UNKNOWN_403))).build());
+        when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess()))
+            .thenReturn(new HashSet<String>(Collections.singletonList(getAccountReference().getIban())));*/
     }
 
     @Test
+    public void getAccountDetailsByAccountId_WB_Success() {
+        //When:
+        ResponseObject<AccountDetails> response = accountService.getAccountDetails(ACCOUNT_ID, true, true);
+
+        //Then:
+        assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);
+    }
+
+    @Test
+    public void getAccountDetailsListByConsent_Success() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID, true, false);
+        AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
+
+        //Then:
+        assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(respondedDetails.getLinks()).isEqualTo(getAccountDetails().getLinks());
+    }
+
+    @Test
+    public void getBalances() {
+        //When:
+        ResponseObject response = accountService.getBalances(ACCOUNT_ID, false);
+
+        //Then:
+        assertThat(response.getBody()).isEqualTo(getBalancesList());
+    }
+
+    @Test
+    public void getAccountReport() {
+        //When:
+        ResponseObject response = accountService.getAccountReport(ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+
+        //Then:
+        assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
+    }
+
+/*
+    @Test //TODO Global test review
     public void getAccountDetails_withBalance() throws IOException {
         //Given:
         boolean withBalance = true;
@@ -196,7 +252,7 @@ public class AccountServiceTest {
 
     private void checkBalanceResults(String accountId, boolean psuInvolved) {
         //Given:
-        List<Balances> expectedResult = accountMapper.mapFromSpiBalancesList(getBalances());
+        List<Balances> expectedResult = accountMapper.mapToBalancesList(getBalances());
         //When:
         List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getBody();
         //Then:
@@ -204,10 +260,10 @@ public class AccountServiceTest {
     }
 
     private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-        List<SpiAccountDetails> list = accountSpi.readAccounts("id", withBalance, psuInvolved);
+        List<SpiAccountDetails> list = accountSpi.readAccountDetailsByIban("id");
         List<AccountDetails> accountDetails = new ArrayList<>();
         for (SpiAccountDetails s : list) {
-            accountDetails.add(accountMapper.mapFromSpiAccountDetails(s));
+            accountDetails.add(accountMapper.mapToAccountDetails(s));
         }
 
         List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
@@ -226,12 +282,6 @@ public class AccountServiceTest {
             .forEach(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount));
         return accountDetails;
 
-    }
-
-    private static Date addMonth(Date dateFrom, int months) {
-        LocalDateTime localDateTimeFrom = LocalDateTime.ofInstant(dateFrom.toInstant(), ZoneId.systemDefault());
-        LocalDateTime localDateTimeTo = localDateTimeFrom.plusMonths(months);
-        return Date.from(localDateTimeTo.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private List<SpiTransaction> getTransactionList() {
@@ -296,7 +346,7 @@ public class AccountServiceTest {
     }
 
     private AccountReport getAccountReport(String accountId) {
-        Optional<AccountReport> aR = accountMapper.mapFromSpiAccountReport(getTransactionList());
+        Optional<AccountReport> aR = accountMapper.mapToAccountReport(getTransactionList());
         AccountReport accountReport;
         accountReport = aR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
         String jsonReport = null;
@@ -320,5 +370,59 @@ public class AccountServiceTest {
 
     private SpiAccountDetails createSpiAccountDetails() throws IOException {
         return new Gson().fromJson(IOUtils.resourceToString(SPI_ACCOUNT_DETAILS_SOURCE, UTF_8), SpiAccountDetails.class);
+    }*/
+
+    private AccountConsent getAccountConsent(String consentId) {
+        return new AccountConsent(consentId,
+            new AccountAccess(new AccountReference[]{getAccountReference()}, new AccountReference[]{getAccountReference()}, new AccountReference[]{getAccountReference()}, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS),
+            false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, true, true);
+    }
+
+    private AccountReference getAccountReference() {
+        AccountReference rf = new AccountReference();
+        rf.setCurrency(CURRENCY);
+        rf.setIban(getAccountDetails().getIban());
+        rf.setPan(getAccountDetails().getPan());
+        rf.setMaskedPan(getAccountDetails().getMaskedPan());
+        rf.setMsisdn(getAccountDetails().getMsisdn());
+        rf.setBban(getAccountDetails().getBban());
+        return new AccountReference();
+    }
+
+    private AccountDetails getAccountDetails() {
+        AccountDetails details = new AccountDetails(ACCOUNT_ID, IBAN, "zz22", null, null, null, CURRENCY, "David Muller", null, null, null, getBalancesList());
+        details.setBalanceAndTransactionLinksByDefault(linkTo(AccountController.class).toUriComponentsBuilder().build().getPath());
+        return details;
+    }
+
+    private List<Balances> getBalancesList() {
+        Balances balances = new Balances();
+        SingleBalance sb = new SingleBalance();
+        Amount amount = new Amount();
+        amount.setCurrency(CURRENCY);
+        amount.setContent("1000");
+        sb.setAmount(amount);
+        balances.setOpeningBooked(sb);
+        return Collections.singletonList(new Balances());
+    }
+
+    private SpiAccountDetails getSpiAccountDetails() {
+        return new SpiAccountDetails(ACCOUNT_ID, IBAN, "zz22", null, null, null, CURRENCY, "David Muller", null, null, null, getSpiBalances());
+    }
+
+    private List<SpiBalances> getSpiBalances() {
+        SpiBalances balances = new SpiBalances();
+        SpiAccountBalance sb = new SpiAccountBalance();
+        SpiAmount amount = new SpiAmount(CURRENCY, "1000");
+        sb.setSpiAmount(amount);
+        balances.setOpeningBooked(sb);
+        return Collections.singletonList(new SpiBalances());
+    }
+
+    private AccountReport getAccountReportDummy() {
+        Links lnk = new Links();
+        lnk.setViewAccount("http://localhost/api/v1/accounts/33333-999999999");
+        AccountReport report = new AccountReport(new Transactions[]{}, new Transactions[]{}, lnk);
+        return report;
     }
 }

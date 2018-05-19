@@ -2,7 +2,6 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.ConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -19,34 +19,32 @@ import java.util.List;
 public class ConsentController {
     private final ConsentService consentService;
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<List<SpiAccountConsent>> readAllConsents() {
         return ResponseEntity.ok(consentService.getAllConsents());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{consent-id}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<SpiAccountConsent> readConsentById(@PathVariable("consent-id") String consentId) {
-        SpiAccountConsent consent = consentService.getConsent(consentId);
-        return consent == null
-                   ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                   : new ResponseEntity<>(consent, HttpStatus.OK);
+        Optional<SpiAccountConsent> consent = consentService.getConsent(consentId);
+        return consent
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/")
-    public ResponseEntity<String> createConsent(@RequestBody SpiCreateConsentRequest requestConsent,
-                                                @RequestParam(required = false) String psuId,
-                                                @RequestParam(required = false) boolean withBalance,
-                                                @RequestParam(required = false) boolean tppRedirectPreferred) {
-        return consentService.createConsentAndReturnId(requestConsent, psuId, withBalance)
-                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<String> createConsent(@RequestBody SpiAccountConsent consent) {
+        Optional<String> consentId = consentService.createConsentAndReturnId(consent);
+
+        return consentId.map(id -> new ResponseEntity<>(id, HttpStatus.CREATED))
+                   .orElse(ResponseEntity.badRequest().build());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @DeleteMapping(path = "/{consent-id}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity deleteConsent(@PathVariable("consent-id") String consentId) {
         if (consentService.deleteConsentById(consentId)) {
             return ResponseEntity.noContent().build();

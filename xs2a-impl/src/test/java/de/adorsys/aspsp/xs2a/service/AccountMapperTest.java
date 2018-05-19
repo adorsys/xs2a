@@ -70,7 +70,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorAccountDetails);
-        AccountDetails actualAccountDetails = accountMapper.mapFromSpiAccountDetails(donorAccountDetails);
+        AccountDetails actualAccountDetails = accountMapper.mapToAccountDetails(donorAccountDetails);
 
         //Then:
         assertThat(actualAccountDetails.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
@@ -96,7 +96,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorBalances);
-        List<Balances> actualBalances = accountMapper.mapFromSpiBalancesList(donorBalancesList);
+        List<Balances> actualBalances = accountMapper.mapToBalancesList(donorBalancesList);
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
@@ -129,7 +129,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorSpiTransaction);
-        Optional<AccountReport> aAR = accountMapper.mapFromSpiAccountReport(donorSpiTransactions);
+        Optional<AccountReport> aAR = accountMapper.mapToAccountReport(donorSpiTransactions);
         AccountReport actualAccountReport;
         actualAccountReport = aAR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
 

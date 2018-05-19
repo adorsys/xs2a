@@ -24,7 +24,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,9 +46,10 @@ public class AccountService {
                    .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
     }
 
-    public List<SpiAccountDetails> getAllAccounts(String psuId) {
-        //TODO this is a task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/71
-        return Collections.emptyList();
+    public List<SpiAccountDetails> getAllAccounts() {
+        return psuRepository.findAll().stream()
+                   .flatMap(psu -> psu.getAccountDetailsList().stream())
+                   .collect(Collectors.toList());
     }
 
     public Optional<SpiAccountDetails> getAccountById(String accountId) {
@@ -57,9 +57,11 @@ public class AccountService {
                    .flatMap(psu -> findAccountInPsuById(psu, accountId));
     }
 
-    public Optional<SpiAccountDetails> getAccountByIbanAndCurrency(String iban, Currency currency) {
-        return psuRepository.findPsuByAccountDetailsList_Iban(iban)
-                   .flatMap(psu -> findAccountInPsuByIbanAndCurrency(psu, iban, currency));
+    public List<SpiAccountDetails> getAccountsByIban(String iban) {
+        return psuRepository.findPsuByAccountDetailsList_Iban(iban).stream()
+                   .flatMap(psu -> psu.getAccountDetailsList().stream())
+                   .filter(aD -> aD.getIban().equals(iban))
+                   .collect(Collectors.toList());
     }
 
     public List<SpiBalances> getAccountBalancesById(String accountId) {
@@ -67,6 +69,12 @@ public class AccountService {
                    .flatMap(psu -> findAccountInPsuById(psu, accountId))
                    .map(SpiAccountDetails::getBalances)
                    .orElse(Collections.emptyList());
+    }
+
+    public List<SpiAccountDetails> getAccountsByPsuId(String psuId) {
+        return Optional.ofNullable(psuRepository.findOne(psuId)).map(Psu::getAccountDetailsList)
+                                                         .orElse(Collections.emptyList());
+
     }
 
     public void deleteAccountById(String accountId) {
@@ -79,17 +87,9 @@ public class AccountService {
         Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getId());
         return addAccountToPsuAndSave(filteredPsu, accountDetails);
     }
-
     private Optional<SpiAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
         return psu.getAccountDetailsList().stream()
                    .filter(acc -> acc.getId().equals(accountId))
-                   .findFirst();
-    }
-
-    private Optional<SpiAccountDetails> findAccountInPsuByIbanAndCurrency(Psu psu, String iban, Currency currency) {
-        return psu.getAccountDetailsList().stream()
-                   .filter(acc -> acc.getIban().equals(iban)
-                                      && acc.getCurrency() == currency)
                    .findFirst();
     }
 
