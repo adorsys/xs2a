@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
