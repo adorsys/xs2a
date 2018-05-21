@@ -16,30 +16,23 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class FundsConfirmationService {
     private final AccountService accountService;
-    private final AccountMapper accountMapper;
 
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         Boolean fundsAvailable = Optional.ofNullable(request)
-                                     .map(req-> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))
+                                     .map(req -> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))
                                      .orElse(false);
 
         return ResponseObject.<FundsConfirmationResponse>builder()
@@ -47,19 +40,24 @@ public class FundsConfirmationService {
     }
 
     private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
-        SpiAmount spiRequiredAmount = accountMapper.mapToSpiAmount(requiredAmount);
+        List<Balances> balances = accountService.getAccountBalancesByAccountReference(accountReference);
 
-        return Optional.ofNullable(accountReference)
-                   .flatMap(accountService::getSpiAccountDetailsByAccountReference)
-                   .flatMap(SpiAccountDetails::getFirstBalance)
-                   .map(SpiBalances::getInterimAvailable)
-                   .map(SpiAccountBalance::getSpiAmount)
-                   .map(spiAm -> isRequiredAmountEnough(spiRequiredAmount, spiAm))
+        return balances.stream()
+                   .findFirst()
+                   .map(Balances::getInterimAvailable)
+                   .map(SingleBalance::getAmount)
+                   .map(am -> isRequiredAmountEnough(requiredAmount, am))
                    .orElse(false);
     }
 
-    private boolean isRequiredAmountEnough(SpiAmount requiredAmount, SpiAmount availableAmount) {
-        return availableAmount.getDoubleContent() >= requiredAmount.getDoubleContent() &&
-                          availableAmount.getCurrency() == requiredAmount.getCurrency();
+    private boolean isRequiredAmountEnough(Amount requiredAmount, Amount availableAmount) {
+        return getDoubleContent(availableAmount.getContent()) >= getDoubleContent(requiredAmount.getContent()) &&
+                   availableAmount.getCurrency() == requiredAmount.getCurrency();
+    }
+
+    private double getDoubleContent(String content) {
+        return Optional.of(content)
+                   .map(Double::parseDouble)
+                   .orElse(0.0d);
     }
 }

@@ -51,7 +51,7 @@ import static org.junit.Assert.assertNotNull;
 public class AccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
     private static final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
-    private static final String SPI_TRANSACTION_JSON_PATH = "/json/mapAccountReportTest.json";
+    private static final String SPI_TRANSACTION_JSON_PATH = "/json/MapAccountReportTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     // By default Gson parses date to your local time zone. Therefore adapter for it is needed.
