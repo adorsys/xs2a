@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.test.data.AccountMockData;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
@@ -59,7 +58,7 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
-        List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
+        List<SpiTransaction> spiTransactions = new ArrayList<>();
 
         List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
         List<SpiTransaction> transactionsFilteredByPeriod = filterTransactionsByPeriod(validSpiTransactions, dateFrom, dateTo);
@@ -69,7 +68,7 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public List<SpiTransaction> readTransactionsById(String accountId, String transactionId) {
-        List<SpiTransaction> spiTransactions = AccountMockData.getSpiTransactions();
+        List<SpiTransaction> spiTransactions = new ArrayList<>();
 
         List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
         List<SpiTransaction> filteredSpiTransactions = filterValidTransactionsByTransactionId(validSpiTransactions, transactionId);
