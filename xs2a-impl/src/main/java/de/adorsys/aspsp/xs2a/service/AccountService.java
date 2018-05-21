@@ -102,6 +102,16 @@ public class AccountService {
                                           .findFirst());
     }
 
+    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+
+        return accountDetails != null
+                   ? ResponseObject.<AccountDetails>builder()
+                         .body(accountDetails).build()
+                   : ResponseObject.<AccountDetails>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+    }
+
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
         return StringUtils.isBlank(transactionId)
                    ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
@@ -154,16 +164,6 @@ public class AccountService {
         Links downloadLink = new Links();
         downloadLink.setDownload(urlToDownload);
         return new AccountReport(null, null, downloadLink);
-    }
-
-    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-
-        return accountDetails != null
-                   ? ResponseObject.<AccountDetails>builder()
-                         .body(accountDetails).build()
-                   : ResponseObject.<AccountDetails>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
     }
 
     // Validation
