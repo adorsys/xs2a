@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
@@ -33,9 +34,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_INVALID;
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -53,12 +54,31 @@ public class AccountService {
     private final ConsentService consentService;
 
     public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
-        AccountConsent consent = consentService.getAccountConsentById(consentId).getBody();
-        Set<String> ibans = Optional.ofNullable(consent.getAccess())
-                                .map(consentService::getIbanSetFromAccess)
-                                .orElse(Collections.emptySet());
+        AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
+                                     .map(ResponseObject::getBody).orElse(null);
+        if (consent == null) {
+            return ResponseObject.<Map<String, List<AccountDetails>>>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
+        }
 
-        List<AccountDetails> accountDetailsList = getAccountDetailsListByIbans(ibans);
+        Set<AccountReference> refsFromConsent = withBalance
+                                                    ? Arrays.stream(Optional.ofNullable(consent.getAccess().getBalances()).orElse(new AccountReference[]{})).collect(Collectors.toSet())
+                                                    : Arrays.stream(Optional.ofNullable(consent.getAccess().getAccounts()).orElse(new AccountReference[]{})).collect(Collectors.toSet());
+        if (psuInvolved && consent.getConsentStatus() != ConsentStatus.VALID) {
+            return ResponseObject.<Map<String, List<AccountDetails>>>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build(); //TODO review with PO and Team. Subject to Task #71
+        }
+        Set<String> ibansFromConsent = Optional.ofNullable(withBalance
+                                                               ? consent.getAccess().getBalances()
+                                                               : consent.getAccess().getAccounts())
+                                           .map(consentService::getIbansFromAccountReference)
+                                           .orElse(Collections.emptySet());
+
+        List<AccountDetails> accountDetailsList = getAccountDetailsListByIbans(ibansFromConsent).stream()
+                                                      .filter(aD -> getFilteredDetailsByIbanAndCurrency(aD.getIban(), aD.getCurrency(), refsFromConsent))
+                                                      .collect(Collectors.toList());
+        if (!withBalance) {
+            accountDetailsList = removeBalancesInDetails(accountDetailsList);
+        }
+
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
         accountDetailsMap.put("accountList", accountDetailsList);
 
@@ -67,6 +87,16 @@ public class AccountService {
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                    : ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .body(accountDetailsMap).build();
+    }
+
+    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+
+        return accountDetails != null
+                   ? ResponseObject.<AccountDetails>builder()
+                         .body(accountDetails).build()
+                   : ResponseObject.<AccountDetails>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
     }
 
     public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
@@ -102,14 +132,12 @@ public class AccountService {
                                           .findFirst());
     }
 
-    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+    private List<AccountDetails> removeBalancesInDetails(List<AccountDetails> accountDetailsList) {
+        return accountDetailsList.stream().map(this::getAccountDetailsNoBalances).collect(Collectors.toList());
+    }
 
-        return accountDetails != null
-                   ? ResponseObject.<AccountDetails>builder()
-                         .body(accountDetails).build()
-                   : ResponseObject.<AccountDetails>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+    private AccountDetails getAccountDetailsNoBalances(AccountDetails aD) {
+        return new AccountDetails(aD.getId(), aD.getIban(), aD.getBban(), aD.getPan(), aD.getMaskedPan(), aD.getMsisdn(), aD.getCurrency(), aD.getName(), aD.getAccountType(), aD.getCashAccountType(), aD.getBic(), null);
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
@@ -186,5 +214,11 @@ public class AccountService {
 
     private List<AccountDetails> getAccountDetailsListByIbans(Set<String> ibans) {
         return accountMapper.mapToAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
+    }
+
+    private boolean getFilteredDetailsByIbanAndCurrency(String iban, Currency currency, Set<AccountReference> references) {
+        return references.stream()
+                   .filter(acc -> acc.getIban().equals(iban))
+                   .anyMatch(acc -> currency == null || acc.getCurrency() == currency);
     }
 }
