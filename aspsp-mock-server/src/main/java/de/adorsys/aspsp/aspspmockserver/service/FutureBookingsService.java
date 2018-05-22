@@ -33,8 +33,10 @@ public class FutureBookingsService {
     private final AccountService accountService;
     private final PaymentService paymentService;
 
-    public Optional<SpiAccountDetails> changeBalances(String accountId) {
-        return accountService.getAccountById(accountId)
+    public Optional<SpiAccountDetails> changeBalances(String iban, String currency) {
+        return accountService.getAccountsByIban(iban).stream()
+            .filter(acc -> compareAccountCurrencies(acc,currency))
+            .findFirst()
             .flatMap(this::updateAccountBalance);
     }
 
@@ -70,4 +72,11 @@ public class FutureBookingsService {
         double oldBalanceAmount = balance.getInterimAvailable().getSpiAmount().getDoubleContent();
         return oldBalanceAmount - paymentService.calculateAmountToBeCharged(account.getId());
     }
+
+    private boolean compareAccountCurrencies(SpiAccountDetails spiAccountDetails, String currency) {
+        return Optional.ofNullable(spiAccountDetails.getCurrency().getCurrencyCode())
+            .map(curr -> curr.equals(currency))
+            .orElse(false);
+    }
+
 }
