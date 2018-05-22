@@ -8,6 +8,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
+import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.X509CertUtils;
 
 public class CertificateUtils {
@@ -25,26 +28,19 @@ public class CertificateUtils {
 		File[] files = new File(path).listFiles();
 
 		for (File file : files) {
-
-			byte[] bytesArray = new byte[(int) file.length()];
-
-			FileInputStream fis;
+			
 			try {
-				fis = new FileInputStream(file);
-				fis.read(bytesArray); // read file into bytes[]
-				fis.close();
-
+				byte[] bytesArray = FileUtils.readFileToByteArray(file);
 				X509Certificate cert = X509CertUtils.parse(bytesArray);
 				if (cert != null) {
 					listCert.add(cert);
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (IOException e1) {
+				
+				e1.printStackTrace();
 			}
 
 		}
-
 		return listCert.toArray(new X509Certificate[listCert.size()]);
 	}
 
@@ -68,7 +64,6 @@ public class CertificateUtils {
 				String encodeCert = X509CertUtils.toPEMString(cert);
 				return encodeCert;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

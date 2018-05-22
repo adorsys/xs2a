@@ -87,10 +87,8 @@ public class SignatureGeneratorUtil {
 		try {
 			privateKey = PEM.readPrivateKey(new ByteArrayInputStream(privateKeyPem.getBytes()));
 		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

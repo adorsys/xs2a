@@ -11,7 +11,7 @@
 
 	<groupId>de.adorsys</groupId>
 	<artifactId>psd2-validator</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	
@@ -47,5 +47,12 @@
 		    <artifactId>commons-certvalidator</artifactId>
 		    <version>${commons-certvalidator.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>${commons.io.version}</version>
+		</dependency>
+				
 	</dependencies>
 </project>
