@@ -1,7 +1,6 @@
 package de.adorsys.psd2.validator.certificate;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.X509CertUtils;
 
 public class CertificateUtils {
@@ -53,13 +51,8 @@ public class CertificateUtils {
 
 		if (file.exists()) {
 
-			byte[] bytesArray = new byte[(int) file.length()];
-			FileInputStream fis;
 			try {
-				fis = new FileInputStream(file);
-				fis.read(bytesArray); // read file into bytes[]
-				fis.close();
-
+				byte[] bytesArray = FileUtils.readFileToByteArray(file);
 				X509Certificate cert = X509CertUtils.parse(bytesArray);
 				String encodeCert = X509CertUtils.toPEMString(cert);
 				return encodeCert;

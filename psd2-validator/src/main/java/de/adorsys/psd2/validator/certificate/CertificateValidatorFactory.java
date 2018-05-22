@@ -10,10 +10,6 @@ import com.nimbusds.jose.util.X509CertUtils;
 import no.difi.certvalidator.Validator;
 import no.difi.certvalidator.ValidatorBuilder;
 import no.difi.certvalidator.api.CertificateValidationException;
-import no.difi.certvalidator.api.FailedValidationException;
-import no.difi.certvalidator.rule.CRLRule;
-import no.difi.certvalidator.rule.ChainRule;
-import no.difi.certvalidator.rule.ExpirationRule;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
 
 public class CertificateValidatorFactory {
@@ -23,15 +19,16 @@ public class CertificateValidatorFactory {
 	public CertificateValidatorFactory(SimpleCertificateBucket blockedCertBucket,
 			SimpleCertificateBucket rootCertificates, SimpleCertificateBucket intermediateCertificates) {
 
-		validator = ValidatorBuilder.newInstance().addRule(new ExpirationRule()).addRule(new CRLRule())
+		validator = ValidatorBuilder.newInstance().addRule(new ExpirationRuleExt()).addRule(new CRLRuleExt())
 				.addRule(new BlackListRule(blockedCertBucket))
-				.addRule(new ChainRule(rootCertificates, intermediateCertificates)).build();
+				.addRule(new ChainRuleExt(rootCertificates, intermediateCertificates)).build();
 	}
 
 	public boolean validate(String encodedCert) throws CertificateException, CertificateValidationException {
 
 		if (StringUtils.isBlank(encodedCert)) {
-			throw new FailedValidationException("Empty Certificate.");
+			throw new FailedCertValidationException(CertificateErrorMsgCode.CERTIFICATE_MISSING.name(),
+					CertificateErrorMsgCode.CERTIFICATE_MISSING.toString());
 		}
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
