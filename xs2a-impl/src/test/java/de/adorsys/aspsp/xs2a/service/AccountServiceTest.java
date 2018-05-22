@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
@@ -61,8 +60,6 @@ public class AccountServiceTest {
 
     @Autowired
     private AccountService accountService;
-    @Autowired
-    private AccountMapper accountMapper;
 
     @MockBean(name = "accountSpi")
     private AccountSpi accountSpi;
@@ -76,6 +73,9 @@ public class AccountServiceTest {
         when(accountSpi.readBalances(ACCOUNT_ID)).thenReturn(getSpiBalances());
         when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess())).thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
+
+        when(accountSpi.readAccountDetailsByIban(IBAN))
+            .thenReturn(Collections.singletonList(getSpiAccountDetails()));
 
        /* when(accountSpi.readTransactionsByPeriod(any(), any(), any()))
             .thenReturn(getTransactionList());
@@ -129,6 +129,76 @@ public class AccountServiceTest {
 
         //Then:
         assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_referenceIsNull() {
+        // Given:
+        AccountReference reference = null;
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(CURRENCY);
+
+        List<Balances> expectedResult = getBalancesList();
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_wrongCurrency() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(Currency.getInstance("USD"));
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_ibanIsNull() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(null);
+        reference.setCurrency(Currency.getInstance("USD"));
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_currencyIsNull() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(null);
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
     }
 
 /*

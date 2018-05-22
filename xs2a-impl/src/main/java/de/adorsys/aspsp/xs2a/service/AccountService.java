@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;
@@ -92,14 +91,15 @@ public class AccountService {
         }
     }
 
-    public Optional<SpiAccountDetails> getSpiAccountDetailsByAccountReference(AccountReference reference) {
-        //TODO Matter to review Spi should not appear in this layer Task #110
+    public List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
                    .map(Collection::stream)
-                   .flatMap(accDet -> accDet
-                                          .filter(aD -> aD.getCurrency() == reference.getCurrency())
-                                          .findFirst());
+                   .flatMap(accDets -> accDets
+                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
+                                           .findFirst())
+                   .map(spiAcc -> accountMapper.mapToBalancesList(spiAcc.getBalances()))
+                   .orElse(Collections.emptyList());
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
