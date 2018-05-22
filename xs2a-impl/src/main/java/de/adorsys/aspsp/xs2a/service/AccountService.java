@@ -59,33 +59,38 @@ public class AccountService {
             return ResponseObject.<Map<String, List<AccountDetails>>>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
         }
 
-        Set<AccountReference> refsFromConsent = withBalance
-                                                    ? Arrays.stream(Optional.ofNullable(consent.getAccess().getBalances()).orElse(new AccountReference[]{})).collect(Collectors.toSet())
-                                                    : Arrays.stream(Optional.ofNullable(consent.getAccess().getAccounts()).orElse(new AccountReference[]{})).collect(Collectors.toSet());
+        List<AccountReference> refsFromConsent = withBalance
+                                                    ? Arrays.asList(consent.getAccess().getBalances())
+                                                    : Arrays.asList(consent.getAccess().getAccounts());
+
         if (psuInvolved && consent.getConsentStatus() != ConsentStatus.VALID) {
             return ResponseObject.<Map<String, List<AccountDetails>>>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build(); //TODO review with PO and Team. Subject to Task #71
         }
-        Set<String> ibansFromConsent = Optional.ofNullable(withBalance
-                                                               ? consent.getAccess().getBalances()
-                                                               : consent.getAccess().getAccounts())
-                                           .map(consentService::getIbansFromAccountReference)
-                                           .orElse(Collections.emptySet());
 
-        List<AccountDetails> accountDetailsList = getAccountDetailsListByIbans(ibansFromConsent).stream()
-                                                      .filter(aD -> getFilteredDetailsByIbanAndCurrency(aD.getIban(), aD.getCurrency(), refsFromConsent))
-                                                      .collect(Collectors.toList());
-        if (!withBalance) {
-            accountDetailsList = removeBalancesInDetails(accountDetailsList);
-        }
+        Set<String> ibansFromConsent = getIbansFromConsentDependantOnWithBalanceFlag(withBalance, consent);
 
         Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
-        accountDetailsMap.put("accountList", accountDetailsList);
+        accountDetailsMap.put("accountList", getAccountDetailsListAccordingToWithBalance(withBalance, refsFromConsent, ibansFromConsent));
 
-        return accountDetailsList.isEmpty()
+        return accountDetailsMap.get("accountList").isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                    : ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .body(accountDetailsMap).build();
+    }
+
+    private Set<String> getIbansFromConsentDependantOnWithBalanceFlag(boolean withBalance, AccountConsent consent) {
+        return Optional.ofNullable(withBalance
+                                                               ? consent.getAccess().getBalances()
+                                                               : consent.getAccess().getAccounts())
+                                           .map(consentService::getIbansFromAccountReference)
+                                           .orElse(Collections.emptySet());
+    }
+
+    private List<AccountDetails> getAccountDetailsListAccordingToWithBalance(boolean withBalance, List<AccountReference> refsFromConsent, Set<String> ibansFromConsent) {
+        return withBalance
+                                                      ? getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent)
+                                                      : removeBalancesInDetails(getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent));
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
@@ -130,6 +135,12 @@ public class AccountService {
                                            .findFirst())
                    .map(spiAcc -> accountMapper.mapToBalancesList(spiAcc.getBalances()))
                    .orElse(Collections.emptyList());
+    }
+
+    private List<AccountDetails> getAccountDetailsFilteredByReferences(List<AccountReference> refsFromConsent, Set<String> ibansFromConsent) {
+        return getAccountDetailsListByIbans(ibansFromConsent).stream()
+                   .filter(aD -> getFilteredDetailsByIbanAndCurrency(aD.getIban(), aD.getCurrency(), refsFromConsent))
+                   .collect(Collectors.toList());
     }
 
     private List<AccountDetails> removeBalancesInDetails(List<AccountDetails> accountDetailsList) {
@@ -216,7 +227,7 @@ public class AccountService {
         return accountMapper.mapToAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
     }
 
-    private boolean getFilteredDetailsByIbanAndCurrency(String iban, Currency currency, Set<AccountReference> references) {
+    private boolean getFilteredDetailsByIbanAndCurrency(String iban, Currency currency, Collection<AccountReference> references) {
         return references.stream()
                    .filter(acc -> acc.getIban().equals(iban))
                    .anyMatch(acc -> currency == null || acc.getCurrency() == currency);
