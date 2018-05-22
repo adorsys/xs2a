@@ -131,7 +131,7 @@ public class AccountMapperTest {
         assertNotNull(donorSpiTransaction);
         Optional<AccountReport> aAR = accountMapper.mapToAccountReport(donorSpiTransactions);
         AccountReport actualAccountReport;
-        actualAccountReport = aAR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
+        actualAccountReport = aAR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
 
 
         //Then:
