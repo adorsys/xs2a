@@ -69,7 +69,8 @@ public class AccountServiceTest {
         when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID)).thenReturn(null);
         when(accountSpi.readBalances(ACCOUNT_ID)).thenReturn(getSpiBalances());
         when(consentService.getIbansFromAccountReference(new AccountReference[]{getAccountReference()})).thenReturn(new HashSet<>(Collections.singletonList(IBAN)));
-
+        when(accountSpi.readAccountDetailsByIban(IBAN))
+            .thenReturn(Collections.singletonList(getSpiAccountDetails()));
         //getAccountsByConsent Success no balances
         when(consentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(ResponseObject.<AccountConsent>builder().body(new AccountConsent(CONSENT_ID, new AccountAccess(new AccountReference[]{getAccountReference()}, null, null, null, null), false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, false, false)/*getAccountConsent(CONSENT_ID, false, false)*/).build());
@@ -147,6 +148,93 @@ public class AccountServiceTest {
 
     @Test
     public void getAccountDetailsListByConsent_Success_WB() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true, false);
+        AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
+
+        //Then:
+        assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(respondedDetails.getLinks()).isEqualTo(getAccountDetails().getLinks());
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_referenceIsNull() {
+        // Given:
+        AccountReference reference = null;
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(CURRENCY);
+
+        List<Balances> expectedResult = getBalancesList();
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEqualTo(expectedResult);
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_wrongCurrency() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(Currency.getInstance("USD"));
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_ibanIsNull() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(null);
+        reference.setCurrency(Currency.getInstance("USD"));
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+    @Test
+    public void getAccountBalancesByAccountReference_currencyIsNull() {
+        // Given:
+        AccountReference reference = new AccountReference();
+        reference.setIban(IBAN);
+        reference.setCurrency(null);
+
+        //When:
+        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
+
+        //Then:
+        assertThat(actualResult).isEmpty();
+    }
+
+/*
+    @Test //TODO Global test review
+    public void getAccountDetails_withBalance() throws IOException {
+        //Given:
+        boolean withBalance = true;
+        boolean psuInvolved = true;
+        AccountDetails expectedResult = new Gson().fromJson(IOUtils.resourceToString(ACCOUNT_DETAILS_SOURCE, UTF_8), AccountDetails.class);
+
         //When:
         ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true, false);
         AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
