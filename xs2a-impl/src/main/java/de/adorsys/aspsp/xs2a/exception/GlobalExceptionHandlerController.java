@@ -65,6 +65,6 @@ public class GlobalExceptionHandlerController {
         log.warn("RestException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
         return new ResponseEntity(new MessageError(new TppMessageInformation(ERROR, MessageCode.INTERNAL_SERVER_ERROR)
-                                                       .text(ex.getMessage())), INTERNAL_SERVER_ERROR);
+                                                       .text(ex.getMessage())), ex.getHttpStatus());
     }
 }
