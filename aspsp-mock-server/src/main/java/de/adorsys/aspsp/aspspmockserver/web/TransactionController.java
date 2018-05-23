@@ -66,10 +66,10 @@ public class TransactionController {
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{iban}/{currency}")
-    public ResponseEntity<List<SpiTransaction>> readTransactionsByDates(@PathVariable("iban") String iban, @PathVariable("currency") Currency currency,
+    public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("iban") String iban, @PathVariable("currency") Currency currency,
                                                                         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                                         @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo) {
-        List<SpiTransaction> response = transactionService.getTransactionsByAccountId(iban, currency, dateFrom, dateTo);
+        List<SpiTransaction> response = transactionService.getTransactionsByPeriod(iban, currency, dateFrom, dateTo);
         return isEmpty(response)
                    ? ResponseEntity.notFound().build()
                    : ResponseEntity.ok(response);

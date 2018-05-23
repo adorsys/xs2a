@@ -44,7 +44,7 @@ public class TransactionService {
                    .map(SpiTransaction::getTransactionId);
     }
 
-    public List<SpiTransaction> getTransactionsByAccountId(String iban, Currency currency, Date dateFrom, Date dateTo) {
+    public List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo) {
         return transactionRepository.findAllByDates(iban, currency, dateFrom, dateTo);
     }
 
