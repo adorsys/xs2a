@@ -51,7 +51,7 @@ public class PaymentService {
         TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct.getCode()));
 
         return ResponseObject.<TransactionStatus>builder()
-            .body(transactionStatus).build();
+                   .body(transactionStatus).build();
     }
 
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -63,10 +63,10 @@ public class PaymentService {
         }
 
         return Optional.ofNullable(paymentInitiation)
-            .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-            .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
-                .build());
+                   .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
+                   .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
+                               .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                               .build());
     }
 
     public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -76,15 +76,15 @@ public class PaymentService {
             List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
             List<SpiPaymentInitialisationResponse> spiPaymentInitiation = paymentSpi.createBulkPayments(spiPayments, paymentProduct.getCode(), tppRedirectPreferred);
             paymentInitialisationResponse = spiPaymentInitiation.stream()
-                .map(paymentMapper::mapToPaymentInitializationResponse)
-                .collect(Collectors.toList());
+                                                .map(paymentMapper::mapToPaymentInitializationResponse)
+                                                .collect(Collectors.toList());
         }
 
         return isEmpty(paymentInitialisationResponse)
-            ? ResponseObject.<List<PaymentInitialisationResponse>>builder()
-            .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build()
-            : ResponseObject.<List<PaymentInitialisationResponse>>builder()
-            .body(paymentInitialisationResponse).build();
+                   ? ResponseObject.<List<PaymentInitialisationResponse>>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build()
+                   : ResponseObject.<List<PaymentInitialisationResponse>>builder()
+                         .body(paymentInitialisationResponse).build();
     }
 
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, PaymentProduct paymentProduct, boolean tppRedirectPreferred) {
@@ -97,15 +97,15 @@ public class PaymentService {
         }
 
         return Optional.ofNullable(paymentInitialisationResponse)
-            .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-            .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
-                .build());
+                   .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
+                   .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
+                               .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                               .build());
     }
 
     private boolean checkPayment(SinglePayments singlePayment) {
         return Optional.ofNullable(singlePayment)
-            .map(paym -> accountService.isAccountExists(singlePayment.getDebtorAccount()) && accountService.isAccountExists(singlePayment.getCreditorAccount()))
-            .orElse(false);
+                   .map(paym -> accountService.isAccountExists(singlePayment.getDebtorAccount()) && accountService.isAccountExists(singlePayment.getCreditorAccount()))
+                   .orElse(false);
     }
 }
