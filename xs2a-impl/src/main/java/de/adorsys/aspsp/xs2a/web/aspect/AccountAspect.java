@@ -60,7 +60,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getTransactions(..)) && args(accountId,..)", returning = "result")
-    public ResponseEntity<AccountReport> invokeGetTransactions(ResponseEntity<AccountReport> result, String accountId) {
+    public ResponseEntity<AccountReport> invokeGetTransactionsAspect(ResponseEntity<AccountReport> result, String accountId) {
         AccountReport body = result.getBody();
         body.setLinks(buildLinksForAccountReport(body, accountId));
 
