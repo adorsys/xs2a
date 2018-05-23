@@ -60,7 +60,7 @@ public class TransactionControllerTest {
         when(transactionService.getTransactionById(TRANSACTION_ID)).thenReturn(Optional.of(getTransaction()));
         when(transactionService.getTransactionById(WRONG_TRANSACTION_ID)).thenReturn(Optional.empty());
         when(transactionService.saveTransaction(getTransaction())).thenReturn(Optional.of(TRANSACTION_ID));
-        when(transactionService.getTransactionsByAccountId(IBAN, EUR, DATE, DATE)).thenReturn(Collections.singletonList(getTransaction()));
+        when(transactionService.getTransactionsByPeriod(IBAN, EUR, DATE, DATE)).thenReturn(Collections.singletonList(getTransaction()));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class TransactionControllerTest {
     @Test
     public void readTransactionsByDates() {
         //When:
-        ResponseEntity expectedResponse = transactionController.readTransactionsByDates(IBAN, EUR, DATE, DATE);
+        ResponseEntity expectedResponse = transactionController.readTransactionsByPeriod(IBAN, EUR, DATE, DATE);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

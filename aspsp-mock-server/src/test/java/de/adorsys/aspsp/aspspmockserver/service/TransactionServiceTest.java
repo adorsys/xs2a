@@ -90,7 +90,7 @@ public class TransactionServiceTest {
     @Test
     public void getTransactionsByAccountId() {
         //When
-        List<SpiTransaction> transactionList = transactionService.getTransactionsByAccountId(IBAN, EUR, DATE, DATE);
+        List<SpiTransaction> transactionList = transactionService.getTransactionsByPeriod(IBAN, EUR, DATE, DATE);
 
         //Then
         assertThat(transactionList).isNotEmpty();
