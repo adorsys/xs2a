@@ -59,9 +59,8 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return new ResponseEntity<>(setLinksToAccountsMap(body), result.getHeaders(), result.getStatusCode());
     }
 
-
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getTransactions(..)) && args(accountId,..)", returning = "result")
-    public ResponseEntity<AccountReport> invokeGetTransations(ResponseEntity<AccountReport> result, String accountId) {
+    public ResponseEntity<AccountReport> invokeGetTransactions(ResponseEntity<AccountReport> result, String accountId) {
         AccountReport body = result.getBody();
         body.setLinks(buildLinksForAccountReport(body, accountId));
 
@@ -110,5 +109,4 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         accountDetails.setLinks(links);
         return accountDetails;
     }
-
 }
