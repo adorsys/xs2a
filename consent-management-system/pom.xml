@@ -25,6 +25,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <properties>
+        <ruleset.basedir>..</ruleset.basedir>
+    </properties>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>consent-management-system</artifactId>
