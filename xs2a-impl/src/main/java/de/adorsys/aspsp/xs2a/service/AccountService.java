@@ -93,14 +93,12 @@ public class AccountService {
 
     public List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
         return getAccountDetailsByAccountReference(reference)
-                   .map(acc -> acc.getBalances())
+                   .map(AccountDetails::getBalances)
                    .orElse(Collections.emptyList());
     }
 
     public boolean isAccountExists(AccountReference reference) {
-        return getAccountDetailsByAccountReference(reference)
-                   .map(acc -> true)
-                   .orElse(false);
+        return getAccountDetailsByAccountReference(reference).isPresent();
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
