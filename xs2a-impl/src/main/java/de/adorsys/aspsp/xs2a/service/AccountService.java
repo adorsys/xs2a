@@ -66,20 +66,21 @@ public class AccountService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build(); //TODO review with PO and Team. Subject to Task #71
         }
 
-        List<AccountReference> refsFromConsent = withBalance
-                                                     ? Arrays.asList(consent.getAccess().getBalances())
-                                                     : Arrays.asList(consent.getAccess().getAccounts());
-
+        List<AccountReference> refsFromConsent = getReferencesFromAccessByWithBalance(consent, withBalance);
         Set<String> ibansFromConsent = getIbansFromConsentDependantOnWithBalanceFlag(withBalance, consent);
+        List<AccountDetails> accountDetails = getAccountDetailsListAccordingToWithBalance(withBalance, refsFromConsent, ibansFromConsent);
 
-        Map<String, List<AccountDetails>> accountDetailsMap = new HashMap<>();
-        accountDetailsMap.put("accountList", getAccountDetailsListAccordingToWithBalance(withBalance, refsFromConsent, ibansFromConsent));
-
-        return accountDetailsMap.get("accountList").isEmpty()
+        return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                    : ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                         .body(accountDetailsMap).build();
+                         .body(Collections.singletonMap("accountList", accountDetails)).build();
+    }
+
+    private List<AccountReference> getReferencesFromAccessByWithBalance(AccountConsent consent, boolean withBalance) {
+        return withBalance
+                   ? Arrays.asList(consent.getAccess().getBalances())
+                   : Arrays.asList(consent.getAccess().getAccounts());
     }
 
     private Set<String> getIbansFromConsentDependantOnWithBalanceFlag(boolean withBalance, AccountConsent consent) {
