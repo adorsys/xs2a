@@ -94,7 +94,6 @@ public class FutureBookingsServiceTest {
         return accountList;
     }
 
-
     private SpiAccountDetails getSpiAccountDetailsWithBalance(double amount) {
         return new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null,
             "4444333322221111", "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily",

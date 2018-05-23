@@ -35,14 +35,14 @@ public class FutureBookingsService {
 
     public Optional<SpiAccountDetails> changeBalances(String iban, String currency) {
         return accountService.getAccountsByIban(iban).stream()
-            .filter(acc -> compareAccountCurrencies(acc,currency))
-            .findFirst()
-            .flatMap(this::updateAccountBalance);
+                   .filter(acc -> areCurrenciesEqual(acc.getCurrency(), currency))
+                   .findFirst()
+                   .flatMap(this::updateAccountBalance);
     }
 
     private Optional<SpiAccountDetails> updateAccountBalance(SpiAccountDetails account) {
         return calculateNewBalance(account)
-            .flatMap(bal -> saveNewBalanceToAccount(account, bal));
+                   .flatMap(bal -> saveNewBalanceToAccount(account, bal));
     }
 
     private Optional<SpiAccountDetails> saveNewBalanceToAccount(SpiAccountDetails account, SpiBalances balance) {
@@ -73,10 +73,9 @@ public class FutureBookingsService {
         return oldBalanceAmount - paymentService.calculateAmountToBeCharged(account.getId());
     }
 
-    private boolean compareAccountCurrencies(SpiAccountDetails spiAccountDetails, String currency) {
-        return Optional.ofNullable(spiAccountDetails.getCurrency().getCurrencyCode())
-            .map(curr -> curr.equals(currency))
-            .orElse(false);
+    private boolean areCurrenciesEqual(Currency accountCurrency, String givenCurrency) {
+        return Optional.ofNullable(accountCurrency)
+                   .map(curr -> curr.getCurrencyCode().equals(givenCurrency))
+                   .orElse(false);
     }
-
 }
