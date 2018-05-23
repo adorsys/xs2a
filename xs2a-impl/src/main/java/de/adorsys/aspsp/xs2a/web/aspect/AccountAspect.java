@@ -94,19 +94,18 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
     }
 
     private Map<String, List<AccountDetails>> setLinksToAccountsMap(Map<String, List<AccountDetails>> map) {
-        for (Map.Entry<String, List<AccountDetails>> entry : map.entrySet()) {
-            List<AccountDetails> accountDetailsWithLinks = entry.getValue()
-                .stream()
-                .map(acc -> setLinksToAccountDetails(acc, buildLinksForAccountDetails(acc)))
-                .collect(Collectors.toList());
-
-            map.put(entry.getKey(), accountDetailsWithLinks);
-        }
+        map.entrySet().forEach(list -> updateAccountLinks(list.getValue()));
         return map;
     }
 
-    private AccountDetails setLinksToAccountDetails(AccountDetails accountDetails, Links links) {
-        accountDetails.setLinks(links);
+    private List<AccountDetails> updateAccountLinks(List<AccountDetails> accountDetailsList) {
+        return accountDetailsList.stream()
+                   .map(acc -> setLinksToAccount(acc))
+                   .collect(Collectors.toList());
+    }
+
+    private AccountDetails setLinksToAccount(AccountDetails accountDetails) {
+        accountDetails.setLinks(buildLinksForAccountDetails(accountDetails));
         return accountDetails;
     }
 }
