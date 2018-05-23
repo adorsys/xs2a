@@ -59,7 +59,7 @@ public class AisConsentService {
         return Optional.of(consent.getExternalId());
     }
 
-    public List<AisAccount> readAccounts(AisConsentRequest request) {
+    private List<AisAccount> readAccounts(AisConsentRequest request) {
         return request.getAccess().isAllAccountAccess()
             ? readAccountsByPsuId(request.getAccess(), request.getPsuId())
             : readAccountsByIban(request.getAccess());
@@ -87,27 +87,26 @@ public class AisConsentService {
     }
 
     private List<AisAccount> readAccountsByIban(AisAccountAccessInfo access) {
-        Map<String, AccountInfoDetail.InfoDetail> accountsDetail = buildAccountsDetailByAccess(access);
-        Map<String, Set<Currency>> bankAccounts = getAccountAndGroupByIban(accountsDetail);
+        Map<String, AccountInfoDetail.InfoDetail> accountsDetailByAccess = buildAccountsDetailByAccess(access);
+        Map<String, Set<Currency>> bankAccounts = getAccountAndGroupByIban(accountsDetailByAccess);
 
-        accountsDetail = filterAccessAccounts(accountsDetail, bankAccounts);
-        return buildAccounts(accountsDetail);
+        accountsDetailByAccess = filterAccessAccounts(accountsDetailByAccess, bankAccounts);
+        return buildAccounts(accountsDetailByAccess);
     }
 
-    private Map<String, AccountInfoDetail.InfoDetail> filterAccessAccounts(Map<String, AccountInfoDetail.InfoDetail> accountsDetail, Map<String, Set<Currency>> bankAccounts) {
-        accountsDetail.entrySet().stream()
+    private Map<String, AccountInfoDetail.InfoDetail> filterAccessAccounts(Map<String, AccountInfoDetail.InfoDetail> accountsDetailByAccess, Map<String, Set<Currency>> bankAccounts) {
+        accountsDetailByAccess.entrySet().stream()
             .filter(e -> bankAccounts.containsKey(e.getKey()))
             .forEach(e ->  e.getValue().refreshCurrency(bankAccounts.get(e.getKey())));
-        return accountsDetail;
+        return accountsDetailByAccess;
     }
 
-    private Map<String, Set<Currency>> getAccountAndGroupByIban(Map<String, AccountInfoDetail.InfoDetail> accountsDetail) {
-        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(accountsDetail.keySet()))
+    private Map<String, Set<Currency>> getAccountAndGroupByIban(Map<String, AccountInfoDetail.InfoDetail> accountsDetailByAccess) {
+        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(accountsDetailByAccess.keySet()))
             .orElse(Collections.emptyList());
 
-        Map<String, Set<Currency>> groupByIban = accountDetails.stream()
+        return accountDetails.stream()
             .collect(Collectors.groupingBy(SpiAccountDetails::getIban, Collectors.mapping(SpiAccountDetails::getCurrency, toSet())));
-        return groupByIban;
     }
 
 
