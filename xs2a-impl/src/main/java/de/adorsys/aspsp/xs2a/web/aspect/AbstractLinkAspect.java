@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper;
+package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
-@AllArgsConstructor
-public class FundMapper {
-    private final AccountMapper accountMapper;
+import java.lang.reflect.ParameterizedType;
 
-    public SpiFundsConfirmationRequest mapToSpiFundsConfirmationRequest(FundsConfirmationRequest request) {
-        return new SpiFundsConfirmationRequest(request.getCardNumber(),
-        accountMapper.toSpi(request.getPsuAccount()),
-        request.getPayee(),
-        accountMapper.toSpi(request.getInstructedAmount()));
+@Component
+public abstract class AbstractLinkAspect<T> {
+    @Autowired
+    protected String redirectLinkToSource;
+
+    protected Class<T> getController() {
+        try {
+            String className = ((ParameterizedType) getClass().getGenericSuperclass())
+                .getActualTypeArguments()[0]
+                .getTypeName();
+            return (Class<T>) Class.forName(className);
+        } catch (Exception e) {
+            throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");
+        }
     }
 }

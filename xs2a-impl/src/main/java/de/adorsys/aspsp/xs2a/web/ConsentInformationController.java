@@ -18,9 +18,9 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
@@ -55,25 +55,25 @@ public class ConsentInformationController {
         @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
         @RequestParam(name = "withBalance", required = false) boolean withBalance,
         @Valid @RequestBody CreateConsentReq createConsent) {
-        ResponseObject response = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred, psuId);
-        return responseMapper.createdOrBadRequest(response);
+        ResponseObject<CreateConsentResp> response = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred, psuId);
+        return responseMapper.created(response);
     }
 
-    @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Map.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}/status", method = RequestMethod.GET)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<Map<String, TransactionStatus>> getAccountConsentsStatusById(
+    public ResponseEntity<TransactionStatus> getAccountConsentsStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject response = consentService.getAccountConsentsStatusById(consentId);
-        return responseMapper.okOrNotFound(response);
+        ResponseObject<TransactionStatus> response = consentService.getAccountConsentsStatusById(consentId);
+        return responseMapper.ok(response);
     }
 
-    @ApiOperation(value = "Returns the content of an account information consent object", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "Returns the content of an account information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
@@ -83,11 +83,11 @@ public class ConsentInformationController {
     public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject response = consentService.getAccountConsentsById(consentId);
-        return responseMapper.okOrNotFound(response);
+        ResponseObject<AccountConsent> response = consentService.getAccountConsentById(consentId);
+        return responseMapper.ok(response);
     }
 
-    @ApiOperation(value = " Delete information consent object", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = " Delete information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
     @RequestMapping(value = "/{consent-id}", method = RequestMethod.DELETE)
@@ -97,8 +97,8 @@ public class ConsentInformationController {
     public ResponseEntity<Void> deleteAccountConsent(
         @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject response = consentService.deleteAccountConsentsById(consentId);
-        return responseMapper.deleteOrNotFound(response);
+        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId);
+        return responseMapper.delete(response);
     }
 
 }

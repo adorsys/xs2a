@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
@@ -56,30 +57,28 @@ public class PeriodicPaymentsControllerTest {
 
     @Before
     public void setUp() {
-        when(paymentService.initiatePeriodicPayment(any(), anyBoolean(), any())).thenReturn(readResponseObject());
+        when(paymentService.initiatePeriodicPayment(any(), any(), anyBoolean())).thenReturn(readResponseObject());
     }
 
     @Test
     public void initiationForStandingOrdersForRecurringOrPeriodicPayments() throws IOException {
         //Given
-        String paymentProduct = "123123";
+        PaymentProduct paymentProduct = PaymentProduct.SCT;
         boolean tppRedirectPreferred = false;
         PeriodicPayment periodicPayment = readPeriodicPayment();
-        ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.OK);
+        ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED);
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController
-                                                               .initiationForStandingOrdersForRecurringOrPeriodicPayments(paymentProduct, tppRedirectPreferred, periodicPayment);
+        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(), tppRedirectPreferred, periodicPayment);
 
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
-        assertThat(result.getBody().getTransactionStatus().getName()).isEqualTo(expectedResult.getBody().getTransactionStatus().getName());
-        assertThat(result.getBody().getLinks()).isEqualTo(expectedResult.getBody().getLinks());
+        assertThat(result.getBody().getTransactionStatus().name()).isEqualTo(expectedResult.getBody().getTransactionStatus().name());
     }
 
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
-        return ResponseObject.builder()
+        return ResponseObject.<PaymentInitialisationResponse>builder()
                .body(getPaymentInitializationResponse()).build();
     }
 

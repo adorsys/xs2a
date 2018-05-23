@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.domain.ais.consent.AuthenticationType;
+import de.adorsys.aspsp.xs2a.domain.consent.AuthenticationType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

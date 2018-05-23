@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -50,7 +52,10 @@ public class BulkPaymentInitiationControllerTest {
     private final String BULK_PAYMENT_DATA = "/json/BulkPaymentTestData.json";
     private final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private final PaymentProduct PAYMENT_PRODUCT = PaymentProduct.SCT;
 
+    @Autowired
+    protected String redirectLinkToSource;
     @Autowired
     private BulkPaymentInitiationController bulkPaymentInitiationController;
 
@@ -65,14 +70,13 @@ public class BulkPaymentInitiationControllerTest {
     @Test
     public void createBulkPaymentInitiation() throws IOException {
         //Given
-        PaymentProduct paymentProduct = PaymentProduct.SCT;
         boolean tppRedirectPreferred = false;
         List<SinglePayments> payments = readBulkPayments();
         ResponseEntity<List<PaymentInitialisationResponse>> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<List<PaymentInitialisationResponse>> actualResult = bulkPaymentInitiationController
-                                                                       .createBulkPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payments);
+                                                                       .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), tppRedirectPreferred, payments);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -80,13 +84,20 @@ public class BulkPaymentInitiationControllerTest {
     }
 
     private ResponseObject<List<PaymentInitialisationResponse>> readResponseObject() throws IOException {
-        return ResponseObject.builder()
+        return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                .body(readPaymentInitialisationResponse()).build();
     }
 
     private List<PaymentInitialisationResponse> readPaymentInitialisationResponse() throws IOException {
         PaymentInitialisationResponse response = new Gson().fromJson(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class);
         List<PaymentInitialisationResponse> responseList = new ArrayList<>();
+        Links links = new Links();
+        links.setRedirect(redirectLinkToSource);
+        links.setSelf(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
+        links.setUpdatePsuIdentification(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
+        links.setUpdatePsuAuthentication(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
+        links.setStatus(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash("status").toString());
+        response.setLinks(links);
         responseList.add(response);
 
         return responseList;

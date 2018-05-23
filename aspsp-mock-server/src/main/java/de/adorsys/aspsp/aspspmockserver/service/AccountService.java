@@ -16,10 +16,9 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.repository.AccountRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,67 +26,86 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AccountService {
-    private AccountRepository accountRepository;
-    private ConsentService consentService;
+    private final PsuRepository psuRepository;
 
-    public SpiAccountDetails addOrUpdateAccount(SpiAccountDetails accountDetails) {
-        return accountRepository.save(accountDetails);
+    public Optional<SpiAccountDetails> addAccount(String psuId, SpiAccountDetails accountDetails) {
+        return Optional.ofNullable(psuRepository.findOne(psuId))
+                   .map(psu -> addAccountToPsuAndSave(psu, accountDetails))
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
     }
 
-    public List<SpiAccountDetails> getAllAccounts(String consentId, boolean withBalance) {
-        return Optional.ofNullable(consentService.getConsent(consentId))
-                   .map(con -> getSpiAccountDetailsByConsent(con, withBalance))
+    public Optional<SpiAccountDetails> updateAccount(SpiAccountDetails accountDetails) {
+        return Optional.ofNullable(accountDetails.getId())
+                   .flatMap(psuRepository::findPsuByAccountDetailsList_Id)
+                   .map(psu -> updateAccountInPsu(psu, accountDetails))
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
+    }
+
+    public List<SpiAccountDetails> getAllAccounts() {
+        return psuRepository.findAll().stream()
+                   .flatMap(psu -> psu.getAccountDetailsList().stream())
+                   .collect(Collectors.toList());
+    }
+
+    public Optional<SpiAccountDetails> getAccountById(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+                   .flatMap(psu -> findAccountInPsuById(psu, accountId));
+    }
+
+    public List<SpiAccountDetails> getAccountsByIban(String iban) {
+        return psuRepository.findPsuByAccountDetailsList_Iban(iban).stream()
+                   .flatMap(psu -> psu.getAccountDetailsList().stream())
+                   .filter(aD -> aD.getIban().equals(iban))
+                   .collect(Collectors.toList());
+    }
+
+    public List<SpiBalances> getAccountBalancesById(String accountId) {
+        return psuRepository.findPsuByAccountDetailsList_Id(accountId)
+                   .flatMap(psu -> findAccountInPsuById(psu, accountId))
+                   .map(SpiAccountDetails::getBalances)
                    .orElse(Collections.emptyList());
     }
 
-    private List<SpiAccountDetails> getSpiAccountDetailsByConsent(SpiAccountConsent consent, boolean withBalance) {
-        Set<String> accounts = getAccounts(consent.getAccess().getAccounts());
-        accounts.addAll(getAccounts(consent.getAccess().getBalances()));
-        accounts.addAll(getAccounts(consent.getAccess().getTransactions()));
-        List<SpiAccountDetails> accountDetailsList = accountRepository.findByIdIn(accounts);
+    public List<SpiAccountDetails> getAccountsByPsuId(String psuId) {
+        return Optional.ofNullable(psuRepository.findOne(psuId)).map(Psu::getAccountDetailsList)
+                                                         .orElse(Collections.emptyList());
 
-        if (!withBalance || !consent.isWithBalance()) {
-            return accountDetailsList.stream()
-                       .map(this::getAccountDetailsWithoutBalances)
-                       .collect(Collectors.toList());
-        }
-        return accountDetailsList;
     }
 
-    public Optional<SpiAccountDetails> getAccount(String id) {
-        return Optional.ofNullable(accountRepository.findOne(id));
+    public void deleteAccountById(String accountId) {
+        psuRepository.findPsuByAccountDetailsList_Id(accountId)
+            .map(psu -> getPsuWithFilteredAccountListById(psu, accountId))
+            .map(psuRepository::save);
     }
 
-    public boolean deleteAccountById(String id) {
-        if (id != null && accountRepository.exists(id)) {
-            accountRepository.delete(id);
-            return true;
-        }
-        return false;
+    private Psu updateAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {
+        Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getId());
+        return addAccountToPsuAndSave(filteredPsu, accountDetails);
+    }
+    private Optional<SpiAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
+        return psu.getAccountDetailsList().stream()
+                   .filter(acc -> acc.getId().equals(accountId))
+                   .findFirst();
     }
 
-    public Optional<List<SpiBalances>> getBalances(String accountId) {
-        return Optional.ofNullable(accountRepository.findOne(accountId))
-                   .map(SpiAccountDetails::getBalances);
+    private Psu getPsuWithFilteredAccountListById(Psu psu, String accountId) {
+        psu.setAccountDetailsList(getFilteredAccountDetailsListFromPsuById(psu, accountId));
+        return psu;
     }
 
-    private SpiAccountDetails getAccountDetailsWithoutBalances(SpiAccountDetails accountDetails) {
-        return new SpiAccountDetails(accountDetails.getId(), accountDetails.getIban(), accountDetails.getBban(), accountDetails.getPan(),
-            accountDetails.getMaskedPan(), accountDetails.getMsisdn(), accountDetails.getCurrency(), accountDetails.getName(),
-            accountDetails.getAccountType(), accountDetails.getCashSpiAccountType(), accountDetails.getBic(), null);
+    private Psu addAccountToPsuAndSave(Psu psu, SpiAccountDetails accountDetails) {
+        psu.getAccountDetailsList().add(accountDetails);
+        return psuRepository.save(psu);
     }
 
-    private Set<String> getAccounts(List<SpiAccountReference> list) {
-        return Optional.ofNullable(list)
-                   .map(l -> l.stream()
-                                 .map(SpiAccountReference::getAccountId)
-                                 .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
+    private List<SpiAccountDetails> getFilteredAccountDetailsListFromPsuById(Psu psu, String accountId) {
+        return psu.getAccountDetailsList().stream()
+                   .filter(ad -> !ad.getId().equals(accountId))
+                   .collect(Collectors.toList());
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.ais.consent;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateUTC;

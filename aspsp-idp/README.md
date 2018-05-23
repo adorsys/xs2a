@@ -1,10 +1,31 @@
+# A reference implementation of Identity provider using [Keycloak](https://www.keycloack.org)
+
+This module extends Keycloak with several features required by PSD2 and XS2A specifications:
+* openid-connect dynamic client registration
+* client certificate validation
+
+## Deployment using Docker container
+
+1. Build a module and a docker container
+```bash
+$ mvn clean install
+$ docker build -t adorsys/keycloak-xs2a:dev .
 ```
-mvn clean install
+2. Since this implemenation is based on a Keycloak server, please refer general keycloak documentaion to perform it's installation and configuration
 
-docker build -t adorsys/keycloak-xs2a:dev .
+### Configuring WildFly behind a reverse proxy with TLS
+To allow keycloak to act under a secured reverse proxy we should set enviroment key in Docker configuration file or in the docker container runtime environment:  
+```
+ENV PROXY_ADDRESS_FORWARDING true
+```
 
+## Local configuration of a keycloak
+1. Start keycloak container:
+```
 docker run -p 8080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin123 adorsys/keycloak-xs2a:dev
-
+```
+2. Create and configure clients
+```
 curl -X POST \
   http://localhost:8080/auth/realms/demobank/clients-registrations/openid-connect \
   -H 'content-type: application/json' \

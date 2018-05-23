@@ -193,8 +193,3 @@ push_on_github:
       - git config push.default simple
       - git checkout ${CI_COMMIT_REF_NAME}
       - git push --follow-tags --atomic github
-      - git fetch -p github
-      - git branch -r --merged || true
-      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" || true
-      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github || true
-      - git branch -r --merged | grep -Ev "(\*|master|develop|staging|release|origin)" | grep github | sed 's#  github/##g' | xargs -n 1 -r -I {} git push github :{} || true

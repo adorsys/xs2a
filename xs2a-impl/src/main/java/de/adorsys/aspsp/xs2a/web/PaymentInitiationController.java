@@ -46,7 +46,7 @@ public class PaymentInitiationController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "21d40f65-a150-8343-b539-b9a822ae98c0", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.8.78", required = true, dataType = "String", paramType = "header"), //NOPMD.AvoidUsingHardCodedIP ignored because the value is right according to documentation
+    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.8.78 example", required = true, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-id", value = "12312324", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-id-type", value = "Type of the PSU-ID", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-corporate-id", value = "Might be mandated in the ASPSP’s documentation", required = false, dataType = "String", paramType = "header"),
@@ -63,7 +63,7 @@ public class PaymentInitiationController {
     @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @RequestBody SinglePayments singlePayment) {
-        return responseMapper.createdOrBadRequest(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
@@ -80,6 +80,6 @@ public class PaymentInitiationController {
     @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
-        return responseMapper.okOrNotFound(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
+        return responseMapper.ok(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
     }
 }

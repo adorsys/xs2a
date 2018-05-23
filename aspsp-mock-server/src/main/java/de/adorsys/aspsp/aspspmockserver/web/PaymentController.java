@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -34,6 +35,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RestController
 @RequestMapping(path = "/payments")
+@ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
 public class PaymentController {
     private PaymentService paymentService;
 
@@ -42,7 +44,6 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/")
     public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) {
         return paymentService.addPayment(payment)
@@ -50,7 +51,6 @@ public class PaymentController {
             .orElse(ResponseEntity.badRequest().build());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/bulk-payments/")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) throws Exception {
@@ -60,10 +60,16 @@ public class PaymentController {
             : new ResponseEntity<>(saved, CREATED);
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{paymentId}/status/")
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
             ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
+    }
+
+    @PostMapping(path = "/createPeriodicPayment")
+    public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
+        return paymentService.addPeriodicPayment(payment)
+            .map(saved -> new ResponseEntity<>(saved, CREATED))
+            .orElse(ResponseEntity.badRequest().build());
     }
 }

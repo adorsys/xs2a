@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.ais.consent;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 @ApiModel(description = "Account access", value = "AccountAccess")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountAccess {
+public class AccountAccess { //TODO To be refactored. Arrays should be replaced by Lists. Task #116
 
     @ApiModelProperty(value = "detailed account information", required = false)
     private AccountReference[] accounts;

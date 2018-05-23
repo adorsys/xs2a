@@ -12,10 +12,7 @@ import java.util.Optional;
 @Profile({"mongo", "fongo"})
 public interface PsuRepository extends MongoRepository<Psu, String> {
 
-    Optional<Psu> findPsuByAccountDetailsList_Iban(String iban);
+    List<Psu> findPsuByAccountDetailsList_Iban(String iban);
 
-    List<Psu> findPsuByAccountDetailsList_IbanIn(List<String> iban);
-
-    List<Psu> findPsuByAccountDetailsList_Id(String accountId);
-
+    Optional<Psu> findPsuByAccountDetailsList_Id(String accountId);
 }

@@ -16,27 +16,48 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.aspsp.xs2a.service.mapper.FundMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
-import de.adorsys.aspsp.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class FundsConfirmationService {
-    private final FundsConfirmationSpi fundsConfirmationSpi;
-    private final FundMapper fundMapper;
+    private final AccountService accountService;
 
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
+        Boolean fundsAvailable = Optional.ofNullable(request)
+                                     .map(req -> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))
+                                     .orElse(false);
 
-        SpiFundsConfirmationRequest spiRequest = fundMapper.mapToSpiFundsConfirmationRequest(request);
-        Boolean areSufficientFunds = fundsConfirmationSpi.fundsConfirmation(spiRequest);
+        return ResponseObject.<FundsConfirmationResponse>builder()
+                   .body(new FundsConfirmationResponse(fundsAvailable)).build();
+    }
 
-        return ResponseObject.builder()
-               .body(new FundsConfirmationResponse(areSufficientFunds)).build();
+    private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
+        List<Balances> balances = accountService.getAccountBalancesByAccountReference(accountReference);
+
+        return balances.stream()
+                   .findFirst()
+                   .map(Balances::getInterimAvailable)
+                   .map(SingleBalance::getAmount)
+                   .map(am -> isRequiredAmountEnough(requiredAmount, am))
+                   .orElse(false);
+    }
+
+    private boolean isRequiredAmountEnough(Amount requiredAmount, Amount availableAmount) {
+        return getDoubleContent(availableAmount.getContent()) >= getDoubleContent(requiredAmount.getContent()) &&
+                   availableAmount.getCurrency() == requiredAmount.getCurrency();
+    }
+
+    private double getDoubleContent(String content) {
+        return Optional.of(content)
+                   .map(Double::parseDouble)
+                   .orElse(0.0d);
     }
 }

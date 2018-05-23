@@ -17,8 +17,9 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TransactionStatus {
 
     ACCP("AcceptedCustomerProfile"),  //Preceding check of technical validation was successful. Customer profile check was also successful
@@ -31,15 +32,14 @@ public enum TransactionStatus {
     PDNG("Pending"),  //Payment initiation or individual transaction included in the payment initiation is pending. Further checks and status update will be performed
     RJCT("Rejected");  //Payment initiation or individual transaction included in the payment initiation has been rejected
 
-    private String name;
+    private String transactionStatus;
 
     @JsonCreator
-    TransactionStatus(String name) {
-        this.name = name;
+    TransactionStatus(String transactionStatus) {
+        this.transactionStatus = transactionStatus;
     }
 
-    @JsonValue
-    public String getName() {
-        return name;
+    public String getTransactionStatus(){
+        return transactionStatus;
     }
 }

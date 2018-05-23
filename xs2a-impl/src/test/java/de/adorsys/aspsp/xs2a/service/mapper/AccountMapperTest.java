@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
@@ -51,7 +50,7 @@ import static org.junit.Assert.assertNotNull;
 public class AccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
     private static final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
-    private static final String SPI_TRANSACTION_JSON_PATH = "/json/mapAccountReportTest.json";
+    private static final String SPI_TRANSACTION_JSON_PATH = "/json/AccountReportDataTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     // By default Gson parses date to your local time zone. Therefore adapter for it is needed.
@@ -70,7 +69,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorAccountDetails);
-        AccountDetails actualAccountDetails = accountMapper.mapFromSpiAccountDetails(donorAccountDetails);
+        AccountDetails actualAccountDetails = accountMapper.mapToAccountDetails(donorAccountDetails);
 
         //Then:
         assertThat(actualAccountDetails.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
@@ -96,7 +95,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorBalances);
-        List<Balances> actualBalances = accountMapper.mapFromSpiBalancesList(donorBalancesList);
+        List<Balances> actualBalances = accountMapper.mapToBalancesList(donorBalancesList);
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
@@ -129,7 +128,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorSpiTransaction);
-        Optional<AccountReport> aAR = accountMapper.mapFromSpiAccountReport(donorSpiTransactions);
+        Optional<AccountReport> aAR = accountMapper.mapToAccountReport(donorSpiTransactions);
         AccountReport actualAccountReport;
         actualAccountReport = aAR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
 

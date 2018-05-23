@@ -18,12 +18,13 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.springframework.stereotype.Component;
 
@@ -34,60 +35,58 @@ import java.util.stream.Collectors;
 
 @Component
 public class ConsentMapper {
-    public TransactionStatus mapFromSpiTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
+    public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
-               .map(ts -> TransactionStatus.valueOf(ts.name()))
-               .orElse(null);
+                   .map(ts -> TransactionStatus.valueOf(ts.name()))
+                   .orElse(null);
     }
 
     public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
-               .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
-               cr.isRecurringIndicator(), cr.getValidUntil(),
-               cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
-               .orElse(null);
+                   .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
+                       cr.isRecurringIndicator(), cr.getValidUntil(),
+                       cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
+                   .orElse(null);
     }
 
-    public AccountConsent mapFromSpiAccountConsent(SpiAccountConsent spiAccountConsent) {
+    public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
-               .map(ac -> new AccountConsent(
-               ac.getId(), mapFromSpiAccountAccess(ac.getAccess()),
-               ac.isRecurringIndicator(), ac.getValidUntil(),
-               ac.getFrequencyPerDay(), ac.getLastActionDate(),
-               TransactionStatus.valueOf(ac.getSpiTransactionStatus().name()),
-               ConsentStatus.valueOf(ac.getSpiConsentStatus().name()),
-               ac.isWithBalance(), ac.isTppRedirectPreferred()))
-               .orElse(null);
+                   .map(ac -> new AccountConsent(
+                       ac.getId(), mapToAccountAccess(ac.getAccess()),
+                       ac.isRecurringIndicator(), ac.getValidUntil(),
+                       ac.getFrequencyPerDay(), ac.getLastActionDate(),
+                       TransactionStatus.valueOf(ac.getSpiTransactionStatus().name()),
+                       ConsentStatus.valueOf(ac.getSpiConsentStatus().name()),
+                       ac.isWithBalance(), ac.isTppRedirectPreferred()))
+                   .orElse(null);
     }
 
     //Domain
-    private AccountAccess mapFromSpiAccountAccess(SpiAccountAccess access) {
+    private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
-               .map(aa -> {
-                   AccountAccess accountAccess = new AccountAccess();
-                   accountAccess.setAccounts(mapFromSpiAccountReferencesList(aa.getAccounts()));
-                   accountAccess.setBalances(mapFromSpiAccountReferencesList(aa.getBalances()));
-                   accountAccess.setTransactions(mapFromSpiAccountReferencesList(aa.getTransactions()));
-                   accountAccess.setAvailableAccounts(mapFromSpiAccountAccessType(aa.getAvailableAccounts()));
-                   accountAccess.setAllPsd2(mapFromSpiAccountAccessType(aa.getAllPsd2()));
-                   return accountAccess;
-               })
-               .orElse(null);
+                   .map(aa ->
+                       new AccountAccess(
+                           mapToAccountReferenceList(aa.getAccounts()),
+                           mapToAccountReferenceList(aa.getBalances()),
+                           mapToAccountReferenceList(aa.getTransactions()),
+                           mapToAccountAccessType(aa.getAvailableAccounts()),
+                           mapToAccountAccessType(aa.getAllPsd2()))
+                   )
+                   .orElse(null);
     }
 
-    private AccountReference[] mapFromSpiAccountReferencesList(List<SpiAccountReference> references) {
+    private AccountReference[] mapToAccountReferenceList(List<SpiAccountReference> references) {
         if (references == null) {
             return null;
         }
 
-        return references.stream().map(this::mapFromSpiAccountReference).toArray(AccountReference[]::new);
+        return references.stream().map(this::mapToAccountReference).toArray(AccountReference[]::new);
     }
 
-    private AccountReference mapFromSpiAccountReference(SpiAccountReference reference) {
+    private AccountReference mapToAccountReference(SpiAccountReference reference) {
         return Optional.ofNullable(reference)
                .map(ar -> {
                    AccountReference accountReference = new AccountReference();
-                   accountReference.setAccountId(ar.getAccountId());
                    accountReference.setIban(ar.getIban());
                    accountReference.setBban(ar.getBban());
                    accountReference.setPan(ar.getPan());
@@ -95,11 +94,11 @@ public class ConsentMapper {
                    accountReference.setMsisdn(ar.getMsisdn());
                    accountReference.setCurrency(ar.getCurrency());
 
-                   return accountReference;
-               }).orElse(null);
+                       return accountReference;
+                   }).orElse(null);
     }
 
-    private AccountAccessType mapFromSpiAccountAccessType(SpiAccountAccessType accessType) {
+    private AccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
         if (accessType == null) {
             return null;
         } else {
@@ -109,21 +108,21 @@ public class ConsentMapper {
 
     //Spi
 
-    private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
+    public SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
         return Optional.ofNullable(access)
-               .map(aa -> {
-                   SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
-                   spiAccountAccess.setAccounts(mapToSpiAccountReferencesList(aa.getAccounts()));
-                   spiAccountAccess.setBalances(mapToSpiAccountReferencesList(aa.getBalances()));
-                   spiAccountAccess.setTransactions(mapToSpiAccountReferencesList(aa.getTransactions()));
-                   spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
-                   spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
-                   return spiAccountAccess;
-               })
-               .orElse(null);
+                   .map(aa -> {
+                       SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
+                       spiAccountAccess.setAccounts(mapToSpiAccountReferenceList(aa.getAccounts()));
+                       spiAccountAccess.setBalances(mapToSpiAccountReferenceList(aa.getBalances()));
+                       spiAccountAccess.setTransactions(mapToSpiAccountReferenceList(aa.getTransactions()));
+                       spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
+                       spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
+                       return spiAccountAccess;
+                   })
+                   .orElse(null);
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReferencesList(AccountReference[] references) {
+    private List<SpiAccountReference> mapToSpiAccountReferenceList(AccountReference[] references) {
         if (references == null) {
             return null;
         }
@@ -134,7 +133,6 @@ public class ConsentMapper {
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
         return Optional.of(reference)
                .map(ar -> new SpiAccountReference(
-               ar.getAccountId(),
                ar.getIban(),
                ar.getBban(),
                ar.getPan(),
@@ -149,5 +147,19 @@ public class ConsentMapper {
         } else {
             return SpiAccountAccessType.valueOf(accessType.name());
         }
+    }
+
+    public SpiAccountConsent mapToSpiAccountConsent(AccountConsent consent) {
+        return new SpiAccountConsent(consent.getId(), mapToSpiAccountAccess(consent.getAccess()), consent.isRecurringIndicator(),
+            consent.getValidUntil(), consent.getFrequencyPerDay(), consent.getLastActionDate(), mapToSpiTransactionStatus(consent.getTransactionStatus()),
+            mapToSpiConsentStatus(consent.getConsentStatus()), consent.isWithBalance(), consent.isTppRedirectPreferred());
+    }
+
+    private SpiConsentStatus mapToSpiConsentStatus(ConsentStatus consentStatus) {
+    return SpiConsentStatus.valueOf(consentStatus.name());
+    }
+
+    private SpiTransactionStatus mapToSpiTransactionStatus(TransactionStatus transactionStatus) {
+        return SpiTransactionStatus.valueOf(transactionStatus.name());
     }
 }

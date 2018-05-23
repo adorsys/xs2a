@@ -1,13 +1,6 @@
-# Project Title
+# ASPSP Mock Server
 
 Implementation of Mock ASPSP for XS2A Interface of Berlin Group 
-
-## Built With
-
-* [Java, version 1.8](http://java.oracle.com) - The main language of implementation
-* [Maven, version 3.0](https://maven.apache.org/) - Dependency Management
-* [Spring Boot](https://projects.spring.io/spring-boot/) - Spring boot as core Java framework
-
 
 ## Configuration and deployment
 To interact with keycloak server properly, please add following parameters to your application.properties file 

@@ -35,18 +35,18 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Component
 public class AccountMapper {
-    public List<AccountDetails> mapFromSpiAccountDetailsList(List<SpiAccountDetails> spiAccountDetailsList) {
+    public List<AccountDetails> mapToAccountDetailsList(List<SpiAccountDetails> spiAccountDetailsList) {
         String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
 
         return Optional.ofNullable(spiAccountDetailsList)
                .map(acl -> acl.stream()
-                           .map(this::mapFromSpiAccountDetails)
+                           .map(this::mapToAccountDetails)
                            .peek(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount))
                            .collect(Collectors.toList()))
                .orElse(Collections.emptyList());
     }
 
-    public AccountDetails mapFromSpiAccountDetails(SpiAccountDetails accountDetails) {
+    public AccountDetails mapToAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                .map(ad -> new AccountDetails(
                ad.getId(),
@@ -58,51 +58,50 @@ public class AccountMapper {
                ad.getCurrency(),
                ad.getName(),
                ad.getAccountType(),
-               mapFromSpiAccountType(ad.getCashSpiAccountType()),
+               mapToAccountType(ad.getCashSpiAccountType()),
                ad.getBic(),
-               mapFromSpiBalancesList(ad.getBalances()),
-               new Links()
+               mapToBalancesList(ad.getBalances())
                )
                )
                .orElse(null);
     }
 
-    private CashAccountType mapFromSpiAccountType(SpiAccountType spiAccountType) {
+    private CashAccountType mapToAccountType(SpiAccountType spiAccountType) {
         return Optional.ofNullable(spiAccountType)
                .map(type -> CashAccountType.valueOf(type.name()))
                .orElse(null);
     }
 
-    public List<Balances> mapFromSpiBalancesList(List<SpiBalances> spiBalances) {
+    public List<Balances> mapToBalancesList(List<SpiBalances> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
             return new ArrayList<>();
         }
 
         return spiBalances
                .stream()
-               .map(this::mapFromSpiBalances)
+               .map(this::mapToBalances)
                .collect(Collectors.toList());
     }
 
-    private Balances mapFromSpiBalances(SpiBalances spiBalances) {
+    private Balances mapToBalances(SpiBalances spiBalances) {
         return Optional.ofNullable(spiBalances)
                .map(b -> {
                    Balances balances = new Balances();
-                   balances.setAuthorised(mapFromSpiSingleBalances(b.getAuthorised()));
-                   balances.setClosingBooked(mapFromSpiSingleBalances(b.getClosingBooked()));
-                   balances.setExpected(mapFromSpiSingleBalances(b.getExpected()));
-                   balances.setInterimAvailable(mapFromSpiSingleBalances(b.getInterimAvailable()));
-                   balances.setOpeningBooked(mapFromSpiSingleBalances(b.getOpeningBooked()));
+                   balances.setAuthorised(mapToSingleBalance(b.getAuthorised()));
+                   balances.setClosingBooked(mapToSingleBalance(b.getClosingBooked()));
+                   balances.setExpected(mapToSingleBalance(b.getExpected()));
+                   balances.setInterimAvailable(mapToSingleBalance(b.getInterimAvailable()));
+                   balances.setOpeningBooked(mapToSingleBalance(b.getOpeningBooked()));
                    return balances;
                })
                .orElse(null);
     }
 
-    private SingleBalance mapFromSpiSingleBalances(SpiAccountBalance spiAccountBalance) {
+    private SingleBalance mapToSingleBalance(SpiAccountBalance spiAccountBalance) {
         return Optional.ofNullable(spiAccountBalance)
                .map(b -> {
                    SingleBalance singleBalance = new SingleBalance();
-                   singleBalance.setAmount(mapFromSpiAmount(b.getSpiAmount()));
+                   singleBalance.setAmount(mapToAmount(b.getSpiAmount()));
                    singleBalance.setDate(b.getDate().toInstant());
                    singleBalance.setLastActionDateTime(b.getLastActionDateTime().toInstant());
                    return singleBalance;
@@ -110,7 +109,7 @@ public class AccountMapper {
                .orElse(null);
     }
 
-    public Amount mapFromSpiAmount(SpiAmount spiAmount) {
+    public Amount mapToAmount(SpiAmount spiAmount) {
         return Optional.ofNullable(spiAmount)
                .map(a -> {
                    Amount amount = new Amount();
@@ -123,11 +122,11 @@ public class AccountMapper {
 
     public SpiAmount mapToSpiAmount(Amount amount) {
         return Optional.ofNullable(amount)
-               .map(a -> new SpiAmount(a.getCurrency(), a.getContent()))
-               .orElse(null);
+                   .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
+                   .orElse(null);
     }
 
-    public Optional<AccountReport> mapFromSpiAccountReport(List<SpiTransaction> spiTransactions) {
+    public Optional<AccountReport> mapToAccountReport(List<SpiTransaction> spiTransactions) {
 
         if (spiTransactions.isEmpty()) {
             return Optional.empty();
@@ -136,28 +135,28 @@ public class AccountMapper {
         Transactions[] booked = spiTransactions
                                 .stream()
                                 .filter(transaction -> transaction.getBookingDate() != null)
-                                .map(this::mapFromSpiTransaction)
+                                .map(this::mapToTransaction)
                                 .toArray(Transactions[]::new);
 
         Transactions[] pending = spiTransactions
                                  .stream()
                                  .filter(transaction -> transaction.getBookingDate() == null)
-                                 .map(this::mapFromSpiTransaction)
+                                 .map(this::mapToTransaction)
                                  .toArray(Transactions[]::new);
 
         return Optional.of(new AccountReport(booked, pending, new Links()));
     }
 
-    private Transactions mapFromSpiTransaction(SpiTransaction spiTransaction) {
+    private Transactions mapToTransaction(SpiTransaction spiTransaction) {
         return Optional.ofNullable(spiTransaction)
                .map(t -> {
                    Transactions transactions = new Transactions();
-                   transactions.setAmount(mapFromSpiAmount(t.getSpiAmount()));
+                   transactions.setAmount(mapToAmount(t.getSpiAmount()));
                    transactions.setBankTransactionCodeCode(new BankTransactionCode(t.getBankTransactionCodeCode()));
                    transactions.setBookingDate(t.getBookingDate());
                    transactions.setValueDate(t.getValueDate());
-                   transactions.setCreditorAccount(mapFromSpiAccountReference(t.getCreditorAccount()));
-                   transactions.setDebtorAccount(mapFromSpiAccountReference(t.getDebtorAccount()));
+                   transactions.setCreditorAccount(mapToAccountReference(t.getCreditorAccount()));
+                   transactions.setDebtorAccount(mapToAccountReference(t.getDebtorAccount()));
                    transactions.setCreditorId(t.getCreditorId());
                    transactions.setCreditorName(t.getCreditorName());
                    transactions.setUltimateCreditor(t.getUltimateCreditor());
@@ -174,11 +173,10 @@ public class AccountMapper {
                .orElse(null);
     }
 
-    private AccountReference mapFromSpiAccountReference(SpiAccountReference spiAccountReference) {
+    private AccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
         return Optional.ofNullable(spiAccountReference)
                .map(ar -> {
                    AccountReference accountReference = new AccountReference();
-                   accountReference.setAccountId(ar.getAccountId());
                    accountReference.setIban(ar.getIban());
                    accountReference.setBban(ar.getBban());
                    accountReference.setPan(ar.getPan());
@@ -191,9 +189,9 @@ public class AccountMapper {
 
     }
 
-    public SpiAccountReference toSpi(AccountReference account) {
+    public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
         return Optional.ofNullable(account)
-               .map(ac -> new SpiAccountReference(ac.getAccountId(),
+               .map(ac -> new SpiAccountReference(
                ac.getIban(),
                ac.getBban(),
                ac.getPan(),
@@ -203,9 +201,4 @@ public class AccountMapper {
                .orElse(null);
     }
 
-    public SpiAmount toSpi(Amount amount) {
-        return Optional.ofNullable(amount)
-               .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
-               .orElse(null);
-    }
 }

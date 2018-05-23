@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.AccountConsent;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.ConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.ais.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -46,7 +46,7 @@ public class ConsentMapperTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
 
     @Autowired
-    ConsentMapper consentMapper;
+    private ConsentMapper consentMapper;
 
     @Test
     public void mapGetAccountConsentStatusById() {
@@ -54,7 +54,7 @@ public class ConsentMapperTest {
         SpiTransactionStatus expectedTransactionStatus = SpiTransactionStatus.ACCP;
 
         //When:
-        TransactionStatus actualTransactionStatus = consentMapper.mapFromSpiTransactionStatus(expectedTransactionStatus);
+        TransactionStatus actualTransactionStatus = consentMapper.mapToTransactionStatus(expectedTransactionStatus);
 
         //Then:
         assertThat(expectedTransactionStatus.name()).isEqualTo(actualTransactionStatus.name());
@@ -82,7 +82,7 @@ public class ConsentMapperTest {
 
         //When:
         assertNotNull(donorAccountConsent);
-        AccountConsent actualAccountConsent = consentMapper.mapFromSpiAccountConsent(donorAccountConsent);
+        AccountConsent actualAccountConsent = consentMapper.mapToAccountConsent(donorAccountConsent);
 
         //Then:
         assertThat(actualAccountConsent.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");

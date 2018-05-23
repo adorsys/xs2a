@@ -65,11 +65,11 @@ public class PaymentInitiationControllerTest {
         Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
         paymentStatusResponse.put("transactionStatus", TransactionStatus.ACCP);
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
-            .thenReturn(ResponseObject.builder().body(paymentStatusResponse).build());
+            .thenReturn(ResponseObject.<Map<String, TransactionStatus>>builder().body(paymentStatusResponse).build());
         Map<String, TransactionStatus> paymentStatusResponseWrongId = new HashMap<>();
         paymentStatusResponseWrongId.put("transactionStatus", TransactionStatus.RJCT);
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
-            .thenReturn(ResponseObject.builder().body(paymentStatusResponseWrongId).build());
+            .thenReturn(ResponseObject.<Map<String, TransactionStatus>>builder().body(paymentStatusResponseWrongId).build());
         when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
     }
 
