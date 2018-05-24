@@ -47,8 +47,14 @@ public class ConsentSpiImpl implements ConsentSpi {
     }
 
     @Override
+    public SpiConsentStatus getAccountConsentStatusById(String consentId) {
+        ResponseEntity<SpiConsentStatus> response = restTemplate.getForEntity(remoteSpiUrls.getAccountConsentStatusById(), SpiConsentStatus.class, consentId);
+        return response.getBody();
+    }
+
+    @Override
     public void deleteAccountConsentById(String consentId) {
-        restTemplate.delete(remoteSpiUrls.deleteConsentById(), consentId);
+        restTemplate.postForLocation(remoteSpiUrls.deleteConsentById(), null, consentId);
     }
 
     @Override

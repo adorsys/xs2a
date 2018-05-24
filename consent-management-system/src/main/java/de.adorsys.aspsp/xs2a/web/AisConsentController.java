@@ -44,6 +44,7 @@ public class AisConsentController {
     }
 
     @GetMapping(path = "/{consent-id}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<AisConsent> getAccountConsentsById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.getAisConsentById(consentId)
                    .map(consent-> new ResponseEntity<>(consent, HttpStatus.OK))
@@ -51,6 +52,7 @@ public class AisConsentController {
     }
 
     @GetMapping(path = "/spi/{consent-id}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<SpiAccountConsent> getSpiAccountConsentsById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.getSpiAccountConsentById(consentId)
                    .map(consent-> new ResponseEntity<>(consent, HttpStatus.OK))
@@ -58,6 +60,7 @@ public class AisConsentController {
     }
 
     @GetMapping(path = "/{consent-id}/status")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<AisConsentStatus> getAccountConsentsStatusById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
@@ -65,6 +68,7 @@ public class AisConsentController {
     }
 
     @PostMapping(path = "/{consent-id}/status/revoke")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<AisConsent> setRevokeStatusById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.updateConsentStatusById(consentId, AisConsentStatus.REVOKED_BY_PSU)
                    .map(con -> new ResponseEntity<>(con, HttpStatus.OK))

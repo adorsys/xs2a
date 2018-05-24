@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import lombok.Data;
 
 import java.time.LocalDateTime;
