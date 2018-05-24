@@ -18,9 +18,10 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
@@ -35,7 +36,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.nio.charset.Charset;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,15 +46,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @SpringBootTest
 public class AccountServiceTest {
     private final String ACCOUNT_ID = "33333-999999999";
+    private final String WRONG_ACCOUNT_ID = "Wrong account";
     private final String IBAN = "DE123456789";
     private final Currency CURRENCY = Currency.getInstance("EUR");
-    private final String TRANSACTION_ID = "Id-0001";
-    private final Currency usd = Currency.getInstance("USD");
-    private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetails.json";
-    private final String SPI_ACCOUNT_DETAILS_SOURCE = "/json/SpiAccountDetails.json";
-    private final int maxNumberOfCharInTransactionJson = 1000;
-    private final Charset UTF_8 = Charset.forName("utf-8");
     private final String CONSENT_ID = "123456789";
+    private final String CONSENT_ID_WB = "111222333";
+    private final String CONSENT_ID_WOB = "333222111";
     private final String WRONG_CONSENT_ID = "Wromg consent id";
     private final Date DATE = new Date(123456789L);
 
@@ -69,28 +66,31 @@ public class AccountServiceTest {
     @Before
     public void setUp() {
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails());
-        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())))).thenReturn(Collections.singletonList(getSpiAccountDetails()));
+        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID)).thenReturn(null);
         when(accountSpi.readBalances(ACCOUNT_ID)).thenReturn(getSpiBalances());
-        when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
-        when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess())).thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
-
+        when(consentService.getIbansFromAccountReference(new AccountReference[]{getAccountReference()})).thenReturn(new HashSet<>(Collections.singletonList(IBAN)));
         when(accountSpi.readAccountDetailsByIban(IBAN))
             .thenReturn(Collections.singletonList(getSpiAccountDetails()));
-
-       /* when(accountSpi.readTransactionsByPeriod(any(), any(), any()))
-            .thenReturn(getTransactionList());
-        when(accountSpi.readBalances(any()))
-            .thenReturn(getBalances());
-        when(accountSpi.readTransactionsById(any(), any()))
-            .thenReturn(getTransactionList());
-        when(accountSpi.readAccountDetailsByIban(anyString()))
-            .thenReturn(Collections.singletonList(createSpiAccountDetails()));
+        //getAccountsByConsent Success no balances
         when(consentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID)).build());
-        when(consentService.getAccountConsentById(WRONG_CONSENT_ID))
-            .thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.CONSENT_UNKNOWN_403))).build());
-        when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID).getAccess()))
-            .thenReturn(new HashSet<String>(Collections.singletonList(getAccountReference().getIban())));*/
+            .thenReturn(ResponseObject.<AccountConsent>builder().body(new AccountConsent(CONSENT_ID, new AccountAccess(new AccountReference[]{getAccountReference()}, null, null, null, null), false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, false, false)/*getAccountConsent(CONSENT_ID, false, false)*/).build());
+        when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID, false, false).getAccess()))
+            .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
+        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(IBAN))))
+            .thenReturn(Arrays.asList(getSpiAccountDetails()));
+
+        //getAccountsByConsent Success withBalances
+        when(consentService.getAccountConsentById(CONSENT_ID_WB))
+            .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID_WB, true, true)).build());
+        when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID_WB, true, true).getAccess()))
+            .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
+
+        //getAccountsByConsent Failure concent without Balances
+        when(consentService.getAccountConsentById(CONSENT_ID_WOB)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID_WOB, false, false)).build());
+        when(accountSpi.readAccountDetailsByIbans(Collections.emptyList())).thenReturn(Collections.emptyList());
+
+        //getAccountsByConsent Failure wrong consentId
+        when(consentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
     }
 
     @Test
@@ -103,32 +103,58 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getAccountDetailsByAccountId_WB_Failure() {
+        //When:
+        ResponseObject<AccountDetails> response = accountService.getAccountDetails(WRONG_ACCOUNT_ID, true, true);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.RESOURCE_UNKNOWN_404);
+    }
+
+    @Test
     public void getAccountDetailsListByConsent_Success() {
         //When:
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID, true, false);
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID, false, false);
+        AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
+
+        //Then:
+        assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(respondedDetails.getLinks()).isEqualTo(new Links());
+    }
+
+    @Test
+    public void getAccountDetailsListByConsent_Failure_Wrong_Consent() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(WRONG_CONSENT_ID, false, false);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_UNKNOWN_403);
+    }
+
+    @Test
+    public void getAccountDetailsListByConsent_Failure_WB_No_BalancesInConsent() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WOB, true, false);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_INVALID);
+    }
+
+    @Test
+    public void getAccountDetailsListByConsent_Success_WB() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true, false);
         AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
 
         //Then:
         assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
         assertThat(respondedDetails.getLinks()).isEqualTo(getAccountDetails().getLinks());
-    }
-
-    @Test
-    public void getBalances() {
-        //When:
-        ResponseObject response = accountService.getBalances(ACCOUNT_ID, false);
-
-        //Then:
-        assertThat(response.getBody()).isEqualTo(getBalancesList());
-    }
-
-    @Test
-    public void getAccountReport() {
-        //When:
-        ResponseObject response = accountService.getAccountReport(ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
-
-        //Then:
-        assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
     }
 
     @Test
@@ -201,262 +227,50 @@ public class AccountServiceTest {
         assertThat(actualResult).isEmpty();
     }
 
-/*
-    @Test //TODO Global test review
-    public void getAccountDetails_withBalance() throws IOException {
-        //Given:
-        boolean withBalance = true;
-        boolean psuInvolved = true;
-        AccountDetails expectedResult = new Gson().fromJson(IOUtils.resourceToString(ACCOUNT_DETAILS_SOURCE, UTF_8), AccountDetails.class);
-
+    @Test
+    public void getBalances() {
         //When:
-        ResponseObject<AccountDetails> result = accountService.getAccountDetails(ACCOUNT_ID, withBalance, psuInvolved);
+        ResponseObject response = accountService.getBalances(ACCOUNT_ID, false);
 
         //Then:
-        AccountDetails actualResult = result.getBody();
-        assertThat(actualResult.getAccountType()).isEqualTo(expectedResult.getAccountType());
-        assertThat(actualResult.getId()).isEqualTo(expectedResult.getId());
-        assertThat(actualResult.getIban()).isEqualTo(expectedResult.getIban());
-        assertThat(actualResult.getCurrency()).isEqualTo(expectedResult.getCurrency());
-        assertThat(actualResult.getName()).isEqualTo(expectedResult.getName());
-        assertThat(actualResult.getAccountType()).isEqualTo(expectedResult.getAccountType());
-        assertThat(actualResult.getBic()).isEqualTo(expectedResult.getBic());
+        assertThat(response.getBody()).isEqualTo(getBalancesList());
     }
 
     @Test
-    public void getAccountDetails_withBalanceNoPsuInvolved() {
-        //Given:
-        boolean withBalance = true;
-        boolean psuInvolved = false;
-        checkAccountResults(withBalance, psuInvolved);
-    }
-
-    @Test
-    public void getAccountDetails_noBalanceNoPsuInvolved() {
-        //Given:
-        boolean withBalance = true;
-        boolean psuInvolved = false;
-        checkAccountResults(withBalance, psuInvolved);
-    }
-
-    @Test
-    public void getBalances_noPsuInvolved() {
-        //Given:
-        boolean psuInvolved = false;
-        checkBalanceResults(ACCOUNT_ID, psuInvolved);
-    }
-
-    @Test
-    public void getBalances_withPsuInvolved() {
-        //Given:
-        boolean psuInvolved = true;
-        checkBalanceResults(ACCOUNT_ID, psuInvolved);
-    }
-
-    @Test
-    public void getTransactions_onlyTransaction() {
-        //Given:
-        boolean psuInvolved = false;
-        String accountId = "11111-999999999";
-        checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
-    }
-
-    @Test
-    public void getTransactions_onlyByPeriod() {
-        //Given:
-        Date dateFrom = new Date();
-        Date dateTo = new Date();
-        boolean psuInvolved = false;
-        String accountId = "11111-999999999";
-        checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
-    }
-
-    @Test
-    public void getTransactions_jsonBiggerLimitSize_returnDownloadLink() {
-        //Given:
-        Date dateFrom = getDateFromDateString("2015-12-12");
-        Date dateTo = getDateFromDateString("2018-12-12");
-        boolean psuInvolved = false;
-        AccountReport expectedResult = accountService.getAccountReportWithDownloadLink(ACCOUNT_ID);
-
+    public void getAccountReport() {
         //When:
-        AccountReport actualResult = accountService.getAccountReport(ACCOUNT_ID, dateFrom, dateTo, null, psuInvolved, "both", true, false).getBody();
+        ResponseObject response = accountService.getAccountReport(ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
 
         //Then:
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
     }
 
-    @Test
-    public void getTransactions_withPeriodAndTransactionIdNoPsuInvolved() {
-        //Given:
-        Date dateFrom = new Date();
-        Date dateTo = new Date();
-        boolean psuInvolved = false;
-        String accountId = "11111-999999999";
-
-        checkTransactionResultsByPeriod(accountId, dateFrom, dateTo, psuInvolved);
-        checkTransactionResultsByTransactionId(accountId, TRANSACTION_ID, psuInvolved);
-    }
-
-    private void checkTransactionResultsByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved) {
-        //Given:
-        AccountReport expectedReport = getAccountReport(accountId);
-        //When:
-        AccountReport actualResult = accountService.getAccountReport(accountId, dateFrom, dateTo, null, psuInvolved, "both", false, false).getBody();
-
-        //Then:
-        assertThat(actualResult).isEqualTo(expectedReport);
-        assertThat(actualResult.getLinks()).isEqualTo(expectedReport.getLinks());
-    }
-
-    private void checkTransactionResultsByTransactionId(String accountId, String transactionId, boolean psuInvolved) {
-        //Given:
-        AccountReport expectedReport = getAccountReport(accountId);
-
-        //When:
-        AccountReport actualResult = accountService.getAccountReport(accountId, new Date(), new Date(), transactionId, psuInvolved, "both", false, false).getBody();
-
-        //Then:
-        assertThat(actualResult).isEqualTo(expectedReport);
-    }
-
-    private void checkBalanceResults(String accountId, boolean psuInvolved) {
-        //Given:
-        List<Balances> expectedResult = accountMapper.mapToBalancesList(getBalances());
-        //When:
-        List<Balances> actualResult = accountService.getBalances(accountId, psuInvolved).getBody();
-        //Then:
-        assertThat(actualResult).isEqualTo(expectedResult);
-    }
-
-    private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-        List<SpiAccountDetails> list = accountSpi.readAccountDetailsByIban("id");
-        List<AccountDetails> accountDetails = new ArrayList<>();
-        for (SpiAccountDetails s : list) {
-            accountDetails.add(accountMapper.mapToAccountDetails(s));
-        }
-
-        List<AccountDetails> expectedResult = accountsToAccountDetailsList(accountDetails);
-
-        //When:
-        List<AccountDetails> actualResponse = accountService.getAccountDetailsList("id", withBalance, psuInvolved).getBody().get("accountList");
-
-        //Then:
-        assertThat(expectedResult).isEqualTo(actualResponse);
-    }
-
-    private List<AccountDetails> accountsToAccountDetailsList(List<AccountDetails> accountDetails) {
-        String urlToAccount = linkTo(AccountController.class).toString();
-
-        accountDetails
-            .forEach(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount));
-        return accountDetails;
-
-    }
-
-    private List<SpiTransaction> getTransactionList() {
-        List<SpiTransaction> testData = new ArrayList<>();
-        testData.add(getBookedTransaction());
-        testData.add(getPendingTransaction());
-
-        return testData;
-    }
-
-    private static Date getDateFromDateString(String dateString) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
-            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
-    private SpiTransaction getBookedTransaction() {
-        Currency usd = Currency.getInstance("USD");
-        //transaction 1:
-        Date bookingDate = getDateFromDateString("2017-11-07");
-        Date valueDate = getDateFromDateString("2018-20-08");
-        SpiAmount spiAmount = new SpiAmount(usd, "15000");
-        SpiAccountReference creditorAccount = new SpiAccountReference("cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
-        SpiAccountReference debtorAccount = new SpiAccountReference("dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
-
-        return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", bookingDate, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
-    }
-
-    private SpiTransaction getPendingTransaction() {
-        Currency usd = Currency.getInstance("USD");
-        //transaction 1:
-        Date valueDate = getDateFromDateString("2018-20-08");
-        SpiAmount spiAmount = new SpiAmount(usd, "15000");
-        SpiAccountReference creditorAccount = new SpiAccountReference("cAccIban", "cAccBban", "cAccPan", "cAccMaskedPan", "cAccMsisdn", usd);
-        SpiAccountReference debtorAccount = new SpiAccountReference("dAccIban", "dAccBban", "dAccPan", "dAccMaskedPan", "dAccMsisdn", usd);
-
-        return new SpiTransaction("Id-0001", "id-0001", "m-0001", "c-0001", null, valueDate, spiAmount, "Creditor1", creditorAccount, "ultimateCreditor1", "DebitorName", debtorAccount, "UltimateDebtor1", "SomeInformation", "SomeStruturedInformation", "PurposeCode123", "TransactionCode");
-    }
-
-    private List<SpiBalances> getBalances() {
-        SpiAccountBalance spiAccountBalance = getSpiAccountBalance("1000", "2016-12-12", "2018-23-02");
-
-        List<SpiBalances> spiBalances = new ArrayList<SpiBalances>();
-        for (SpiBalances spiBalancesItem : spiBalances) {
-            spiBalancesItem.setInterimAvailable(spiAccountBalance);
-        }
-
-        return spiBalances;
-    }
-
-    private SpiAccountBalance getSpiAccountBalance(String amount, String date, String lastActionDate) {
-        SpiAccountBalance acb = new SpiAccountBalance();
-        acb.setSpiAmount(new SpiAmount(usd, amount));
-        acb.setDate(getDateFromDateString(date));
-        acb.setLastActionDateTime(getDateFromDateString(lastActionDate));
-
-        return acb;
-    }
-
-    private AccountReport getAccountReport(String accountId) {
-        Optional<AccountReport> aR = accountMapper.mapToAccountReport(getTransactionList());
-        AccountReport accountReport;
-        accountReport = aR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
-        String jsonReport = null;
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            jsonReport = objectMapper.writeValueAsString(accountReport);
-        } catch (JsonProcessingException e) {
-            System.out.println("Error converting object {} to json" + accountReport.toString());
-        }
-
-        if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
-            String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
-            Links downloadLink = new Links();
-            downloadLink.setDownload(urlToDownload);
-            return new AccountReport(null, null, downloadLink);
-        } else {
-            return accountReport;
-        }
-    }
-
-    private SpiAccountDetails createSpiAccountDetails() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(SPI_ACCOUNT_DETAILS_SOURCE, UTF_8), SpiAccountDetails.class);
-    }*/
-
-    private AccountConsent getAccountConsent(String consentId) {
+    private AccountConsent getAccountConsent(String consentId, boolean withBalance, boolean withTransactions) {
         return new AccountConsent(consentId,
-            new AccountAccess(new AccountReference[]{getAccountReference()}, new AccountReference[]{getAccountReference()}, new AccountReference[]{getAccountReference()}, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS),
-            false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, true, true);
+            new AccountAccess(
+                consentId.equals(CONSENT_ID_WOB)
+                    ? new AccountReference[]{}
+                    : new AccountReference[]{getAccountReference()},
+                withBalance
+                    ? new AccountReference[]{getAccountReference()}
+                    : new AccountReference[]{},
+                withTransactions
+                    ? new AccountReference[]{getAccountReference()}
+                    : new AccountReference[]{},
+                null, null),
+            false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, false, true);
     }
 
     private AccountReference getAccountReference() {
+        AccountDetails details = getAccountDetails();
         AccountReference rf = new AccountReference();
-        rf.setCurrency(CURRENCY);
-        rf.setIban(getAccountDetails().getIban());
-        rf.setPan(getAccountDetails().getPan());
-        rf.setMaskedPan(getAccountDetails().getMaskedPan());
-        rf.setMsisdn(getAccountDetails().getMsisdn());
-        rf.setBban(getAccountDetails().getBban());
-        return new AccountReference();
+        rf.setCurrency(details.getCurrency());
+        rf.setIban(details.getIban());
+        rf.setPan(details.getPan());
+        rf.setMaskedPan(details.getMaskedPan());
+        rf.setMsisdn(details.getMsisdn());
+        rf.setBban(details.getBban());
+        return rf;
     }
 
     private AccountDetails getAccountDetails() {
@@ -492,7 +306,6 @@ public class AccountServiceTest {
     private AccountReport getAccountReportDummy() {
         Links lnk = new Links();
         lnk.setViewAccount("http://localhost/api/v1/accounts/33333-999999999");
-        AccountReport report = new AccountReport(new Transactions[]{}, new Transactions[]{}, lnk);
-        return report;
+        return new AccountReport(new Transactions[]{}, new Transactions[]{}, lnk);
     }
 }
