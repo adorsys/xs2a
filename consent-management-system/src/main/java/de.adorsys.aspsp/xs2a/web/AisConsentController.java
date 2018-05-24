@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.AisConsent;
+import de.adorsys.aspsp.xs2a.domain.AisConsentStatus;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
@@ -24,10 +27,7 @@ import io.swagger.annotations.AuthorizationScope;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,5 +41,33 @@ public class AisConsentController {
         return aisConsentService.createConsent(request)
             .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
             .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @GetMapping(path = "/{consent-id}")
+    public ResponseEntity<AisConsent> getAccountConsentsById(@PathVariable("consent-id") String consentId) {
+        return aisConsentService.getAisConsentById(consentId)
+                   .map(consent-> new ResponseEntity<>(consent, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @GetMapping(path = "/spi/{consent-id}")
+    public ResponseEntity<SpiAccountConsent> getSpiAccountConsentsById(@PathVariable("consent-id") String consentId) {
+        return aisConsentService.getSpiAccountConsentById(consentId)
+                   .map(consent-> new ResponseEntity<>(consent, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @GetMapping(path = "/{consent-id}/status")
+    public ResponseEntity<AisConsentStatus> getAccountConsentsStatusById(@PathVariable("consent-id") String consentId) {
+        return aisConsentService.getConsentStatusById(consentId)
+                   .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @PostMapping(path = "/{consent-id}/status/revoke")
+    public ResponseEntity<AisConsent> setRevokeStatusById(@PathVariable("consent-id") String consentId) {
+        return aisConsentService.updateConsentStatusById(consentId, AisConsentStatus.REVOKED_BY_PSU)
+                   .map(con -> new ResponseEntity<>(con, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }
