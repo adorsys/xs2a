@@ -119,13 +119,13 @@ public class AccountSpiImpl implements AccountSpi {
                    .collect(Collectors.toList());
     }
 
-    private List<SpiTransaction> getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+    private List<SpiTransaction> getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) {
         return spiTransactions.parallelStream()
                    .filter(this::isPendingTransaction)
                    .collect(Collectors.toList());
     }
 
-    private List<SpiTransaction> getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+    private List<SpiTransaction> getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) {
         return spiTransactions.parallelStream()
                    .filter(transaction -> !isPendingTransaction(transaction))
                    .collect(Collectors.toList());

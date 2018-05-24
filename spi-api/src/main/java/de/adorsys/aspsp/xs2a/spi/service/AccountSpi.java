@@ -30,7 +30,7 @@ public interface AccountSpi {
 
     List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, String bookingStatus);
 
-    List<SpiTransaction> readTransactionsById(String transactionId); //TODO REMOVE LIST!!!
+    List<SpiTransaction> readTransactionsById(String transactionId);
 
     String saveTransaction(SpiTransaction transaction);
 

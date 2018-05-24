@@ -63,7 +63,7 @@ public class AccountService {
 
         if (psuInvolved && consent.getConsentStatus() != ConsentStatus.VALID) {
             return ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build(); //TODO review with PO and Team. Subject to Task #71
+                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build();
         }
 
         List<AccountReference> refsFromConsent = getReferencesFromAccessByWithBalance(consent, withBalance);
@@ -203,14 +203,13 @@ public class AccountService {
     }
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
-                                                   Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+                                                   Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
         Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, bookingStatus));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
     }
 
-    private AccountReport readTransactionsById(String accountId, String transactionId,
-                                               boolean psuInvolved, boolean withBalance) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+    private AccountReport readTransactionsById(String accountId, String transactionId, boolean psuInvolved, boolean withBalance) { //NOPMD TODO to be reviewed upon change to v1.1
         Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsById(transactionId));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{},
