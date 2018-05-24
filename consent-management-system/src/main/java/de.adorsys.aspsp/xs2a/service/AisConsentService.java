@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.AisConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.TypeAccess;
 import de.adorsys.aspsp.xs2a.exception.ConsentException;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
@@ -49,6 +50,7 @@ import static java.util.stream.Collectors.toSet;
 public class AisConsentService {
     private final AccountSpi accountSpi;
     private final AisConsentRepository aisConsentRepository;
+    private  final ConsentMapper consentMapper;
 
     public Optional<String> createConsent(AisConsentRequest request) {
         AisConsent consent = new AisConsent();
@@ -82,7 +84,7 @@ public class AisConsentService {
 
     public Optional<SpiAccountConsent> getSpiAccountConsentById(String consentId) {
         return getAisConsentById(consentId)
-                   .map(this::mapToSpiAccountConsent);
+                   .map(consentMapper::mapToSpiAccountConsent);
     }
 
     private AisConsent setStatusAndSaveConsent(AisConsent consent, AisConsentStatus status) {
@@ -90,52 +92,6 @@ public class AisConsentService {
         return aisConsentRepository.save(consent);
     }
 
-    private SpiAccountConsent mapToSpiAccountConsent(AisConsent consent) {
-        return new SpiAccountConsent(
-            consent.getId().toString(),
-            mapToSpiAccountAccess(consent.getAccounts()),
-            consent.isRecurringIndicator(),
-            convertToDate(consent.getExpireDate()),
-            consent.getFrequencyPerDay(),
-            convertToDate(consent.getRequestDate()),
-            mapToSpiConsentStatus(consent.getConsentStatus()),
-            false, false);
-    }
-
-    private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
-        List<AisAccount> transactions = filterAccountsByTypeAccess(aisAccounts, TypeAccess.TRANSACTION);
-        List<AisAccount> balances = filterAccountsByTypeAccess(aisAccounts, TypeAccess.BALANCE);
-        List<AisAccount> accounts = filterAccountsByTypeAccess(aisAccounts, TypeAccess.ACCOUNT);
-
-        return new SpiAccountAccess(mapToSpiAccountReference(accounts),
-            mapToSpiAccountReference(balances),
-            mapToSpiAccountReference(transactions),
-            SpiAccountAccessType.ALL_ACCOUNTS,
-            SpiAccountAccessType.ALL_ACCOUNTS);
-    }
-
-    private List<SpiAccountReference> mapToSpiAccountReference(List<AisAccount> aisAccounts) {
-        return aisAccounts.stream()
-                   .map(this::mapToSpiAccountReference)
-                   .flatMap(Collection::stream)
-                   .collect(Collectors.toList());
-    }
-
-    private List<SpiAccountReference> mapToSpiAccountReference(AisAccount aisAccount) {
-        return aisAccount.getCurrencies().stream()
-                   .map(cur -> new SpiAccountReference(aisAccount.getIban(), "", "", "", "", cur))
-                   .collect(Collectors.toList());
-    }
-
-    private List<AisAccount> filterAccountsByTypeAccess(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
-        return aisAccounts.stream()
-                   .filter(acc -> acc.getAccesses().contains(typeAccess))
-                   .collect(Collectors.toList());
-    }
-
-    private SpiConsentStatus mapToSpiConsentStatus(AisConsentStatus consentStatus) {
-        return SpiConsentStatus.valueOf(consentStatus.name());
-    }
 
     private List<AisAccount> readAccounts(AisConsentRequest request) {
         return request.getAccess().isAllAccountAccess()
@@ -187,7 +143,6 @@ public class AisConsentService {
                    .collect(Collectors.groupingBy(SpiAccountDetails::getIban, Collectors.mapping(SpiAccountDetails::getCurrency, toSet())));
     }
 
-
     private Map<String, AccountInfoDetail.InfoDetail> buildAccountsDetailByAccess(AisAccountAccessInfo access) {
         List<AisAccountInfo> accounts = access.getAccounts();
         List<AisAccountInfo> balances = access.getBalances();
@@ -218,9 +173,4 @@ public class AisConsentService {
         account.addCurrencies(accountsDetail.getCurrencies());
         return account;
     }
-
-    private Date convertToDate(LocalDateTime dateToConvert) {
-        return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
 }
