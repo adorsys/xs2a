@@ -28,9 +28,11 @@ public interface AccountSpi {
 
     List<SpiBalances> readBalances(String accountId);
 
-    List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo);
+    List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, String bookingStatus);
 
-    List<SpiTransaction> readTransactionsById(String accountId, String transactionId);
+    List<SpiTransaction> readTransactionsById(String transactionId); //TODO REMOVE LIST!!!
+
+    String saveTransaction(SpiTransaction transaction);
 
     SpiAccountDetails readAccountDetails(String accountId);
 

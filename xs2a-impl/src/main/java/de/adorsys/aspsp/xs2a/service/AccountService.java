@@ -77,24 +77,6 @@ public class AccountService {
                          .body(Collections.singletonMap("accountList", accountDetails)).build();
     }
 
-    private List<AccountReference> getReferencesFromAccessByWithBalance(AccountConsent consent, boolean withBalance) {
-        return withBalance
-                   ? Arrays.asList(consent.getAccess().getBalances())
-                   : Arrays.asList(consent.getAccess().getAccounts());
-    }
-
-    private Set<String> getIbansFromConsentDependantOnWithBalanceFlag(boolean withBalance, AccountConsent consent) {
-        return withBalance
-                   ? consentService.getIbansFromAccountReference(consent.getAccess().getBalances())
-                   : consentService.getIbansFromAccountReference(consent.getAccess().getAccounts());
-    }
-
-    private List<AccountDetails> getAccountDetailsListAccordingToWithBalance(boolean withBalance, List<AccountReference> refsFromConsent, Set<String> ibansFromConsent) {
-        return withBalance
-                   ? getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent)
-                   : getAccountDetailsWithoutBalances(getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent));
-    }
-
     public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
 
@@ -114,18 +96,34 @@ public class AccountService {
                    : ResponseObject.<List<Balances>>builder().body(balances).build();
     }
 
-    public ResponseObject<AccountReport> getAccountReport(String accountId, Date dateFrom,
+    public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
-
-        if (accountSpi.readAccountDetails(accountId) == null) {
+        AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
+                                     .map(ResponseObject::getBody)
+                                     .orElse(null);
+        if (consent == null) {
+            return ResponseObject.<AccountReport>builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
+        }
+        AccountDetails details = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+        if (details == null || !accountReferenceConstainsAccount(consent.getAccess().getTransactions(), details)) {
             return ResponseObject.<AccountReport>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
-            AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance);
+            AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance, bookingStatus);
             return ResponseObject.<AccountReport>builder()
                        .body(getReportAccordingMaxSize(accountReport, accountId)).build();
         }
+    }
+
+    private boolean accountReferenceConstainsAccount(AccountReference[] references, AccountDetails details) {
+        return Optional.ofNullable(references)
+                   .map(Arrays::stream)
+                   .map(rStream -> rStream.anyMatch(
+                       ref -> ref.getIban().equals(details.getIban())
+                                  && ref.getCurrency().equals(details.getCurrency())))
+                   .orElse(false);
     }
 
     public List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
@@ -137,6 +135,24 @@ public class AccountService {
                                            .findFirst())
                    .map(spiAcc -> accountMapper.mapToBalancesList(spiAcc.getBalances()))
                    .orElse(Collections.emptyList());
+    }
+
+    private List<AccountReference> getReferencesFromAccessByWithBalance(AccountConsent consent, boolean withBalance) {
+        return withBalance
+                   ? Arrays.asList(consent.getAccess().getBalances())
+                   : Arrays.asList(consent.getAccess().getAccounts());
+    }
+
+    private Set<String> getIbansFromConsentDependantOnWithBalanceFlag(boolean withBalance, AccountConsent consent) {
+        return withBalance
+                   ? consentService.getIbansFromAccountReference(consent.getAccess().getBalances())
+                   : consentService.getIbansFromAccountReference(consent.getAccess().getAccounts());
+    }
+
+    private List<AccountDetails> getAccountDetailsListAccordingToWithBalance(boolean withBalance, List<AccountReference> refsFromConsent, Set<String> ibansFromConsent) {
+        return withBalance
+                   ? getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent)
+                   : getAccountDetailsWithoutBalances(getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent));
     }
 
     private List<AccountDetails> getAccountDetailsFilteredByReferences(List<AccountReference> references, Set<String> ibans) {
@@ -157,15 +173,15 @@ public class AccountService {
             details.getAccountType(), details.getCashAccountType(), details.getBic(), null);
     }
 
-    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance) {
+    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, String bookingStatus) {
         return StringUtils.isBlank(transactionId)
-                   ? getAccountReportByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance)
+                   ? getAccountReportByPeriod(accountId, dateFrom, dateTo == null ? new Date() : dateTo, psuInvolved, withBalance, bookingStatus)
                    : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 
-    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance) {
+    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) {
         validate_accountId_period(accountId, dateFrom, dateTo);
-        return readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance);
+        return readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance, bookingStatus);
     }
 
     private AccountReport getAccountReportByTransaction(String accountId, String transactionId, boolean psuInvolved, boolean withBalance) {
@@ -187,15 +203,15 @@ public class AccountService {
     }
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
-                                                   Date dateTo, boolean psuInvolved, boolean withBalance) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
-        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
+                                                   Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, bookingStatus));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
     }
 
     private AccountReport readTransactionsById(String accountId, String transactionId,
                                                boolean psuInvolved, boolean withBalance) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
-        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsById(accountId, transactionId));
+        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsById(transactionId));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{},
             new Transactions[]{},

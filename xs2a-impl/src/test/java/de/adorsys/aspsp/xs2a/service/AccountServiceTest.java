@@ -38,6 +38,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_UNKNOWN_403;
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -53,6 +55,8 @@ public class AccountServiceTest {
     private final String CONSENT_ID_WB = "111222333";
     private final String CONSENT_ID_WOB = "333222111";
     private final String WRONG_CONSENT_ID = "Wromg consent id";
+    private final String TRANSACTION_ID = "0001";
+    private final String WRONG_TRANSACTION_ID = "Wrong transaction id";
     private final Date DATE = new Date(123456789L);
 
     @Autowired
@@ -78,17 +82,14 @@ public class AccountServiceTest {
             .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(IBAN))))
             .thenReturn(Arrays.asList(getSpiAccountDetails()));
-
         //getAccountsByConsent Success withBalances
         when(consentService.getAccountConsentById(CONSENT_ID_WB))
             .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID_WB, true, true)).build());
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID_WB, true, true).getAccess()))
             .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
-
         //getAccountsByConsent Failure concent without Balances
         when(consentService.getAccountConsentById(CONSENT_ID_WOB)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID_WOB, false, false)).build());
         when(accountSpi.readAccountDetailsByIbans(Collections.emptyList())).thenReturn(Collections.emptyList());
-
         //getAccountsByConsent Failure wrong consentId
         when(consentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
     }
@@ -237,9 +238,38 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountReport() {
+    public void getAccountReport_ByTransactionId_Success() {
         //When:
-        ResponseObject response = accountService.getAccountReport(ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
+
+        //Then:
+        assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
+    }
+
+    @Test
+    public void getAccountReport_ByTransactionId_WrongConsent_Fauilure() {
+        //When:
+        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(CONSENT_UNKNOWN_403);
+    }
+
+    @Test
+    public void getAccountReport_ByTransactionId_AccountMismatch_Fauilure() {
+        //When:
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WOB, WRONG_ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(RESOURCE_UNKNOWN_404);
+    }
+
+    @Test
+    public void getAccountReport_ByPeriod_Success() {
+        //When:
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
 
         //Then:
         assertThat(response.getBody()).isEqualTo(getAccountReportDummy());

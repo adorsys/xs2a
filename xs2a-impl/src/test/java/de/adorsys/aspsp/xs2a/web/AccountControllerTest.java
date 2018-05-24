@@ -56,9 +56,9 @@ public class AccountControllerTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
 
     private static final Gson GSON = new GsonBuilder()
-        .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
-        .registerTypeAdapter(Instant.class, new GsonUtcInstantAdapter())
-        .create();
+                                         .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
+                                         .registerTypeAdapter(Instant.class, new GsonUtcInstantAdapter())
+                                         .create();
 
     @Autowired
     private AccountController accountController;
@@ -71,7 +71,7 @@ public class AccountControllerTest {
         when(accountServiceMocked.getAccountDetailsList(anyString(), anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
         when(accountServiceMocked.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
-        when(accountServiceMocked.getAccountReport(any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
+        when(accountServiceMocked.getAccountReport(any(String.class), any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountServiceMocked.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }
 
@@ -125,7 +125,7 @@ public class AccountControllerTest {
         AccountReport expectedResult = GSON.fromJson(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), AccountReport.class);
 
         //When
-        AccountReport result = accountController.getTransactions(ACCOUNT_ID, null, null, TRANSACTION_ID, psuInvolved, "both", false, false).getBody();
+        AccountReport result = accountController.getTransactions(ACCOUNT_ID, "123", null, null, TRANSACTION_ID, psuInvolved, "both", false, false).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -176,7 +176,7 @@ public class AccountControllerTest {
         Map<String, List<AccountDetails>> mockMap = new HashMap<>();
         mockMap.put("accountList", accountDetailsList);
         ResponseObject mockedResponse = ResponseObject.builder()
-            .body(mockMap).build();
+                                            .body(mockMap).build();
 
         Map<String, List<AccountDetails>> expectedMap = new HashMap<>();
         expectedMap.put("accountList", accountDetailsList);
@@ -197,20 +197,20 @@ public class AccountControllerTest {
         Map<String, List<AccountDetails>> result = new HashMap<>();
         result.put("accountList", Arrays.asList(array));
         return ResponseObject.<Map<String, List<AccountDetails>>>builder()
-            .body(result).build();
+                   .body(result).build();
     }
 
     private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
         Map<String, List<AccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
         return ResponseObject.<AccountDetails>builder()
-            .body(map.get("accountList").get(0)).build();
+                   .body(map.get("accountList").get(0)).build();
     }
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
         AccountReport accountReport = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
-            .body(accountReport).build();
+                   .body(accountReport).build();
     }
 
     private ResponseObject<List<Balances>> readBalances() throws IOException {
@@ -218,6 +218,6 @@ public class AccountControllerTest {
         List<Balances> res = new ArrayList<>();
         res.add(read);
         return ResponseObject.<List<Balances>>builder()
-            .body(res).build();
+                   .body(res).build();
     }
 }
