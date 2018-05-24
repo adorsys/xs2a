@@ -95,16 +95,6 @@ public class AccountService {
                    : getAccountDetailsWithoutBalances(getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent));
     }
 
-    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-
-        return accountDetails != null
-                   ? ResponseObject.<AccountDetails>builder()
-                         .body(accountDetails).build()
-                   : ResponseObject.<AccountDetails>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
-    }
-
     public ResponseObject<List<Balances>> getBalances(String accountId, boolean psuInvolved) {
         List<Balances> balances = accountMapper.mapToBalancesList(accountSpi.readBalances(accountId));
 
@@ -136,6 +126,16 @@ public class AccountService {
 
     public boolean isAccountExists(AccountReference reference) {
         return getAccountDetailsByAccountReference(reference).isPresent();
+    }
+
+    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+
+        return accountDetails != null
+                   ? ResponseObject.<AccountDetails>builder()
+                         .body(accountDetails).build()
+                   : ResponseObject.<AccountDetails>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
     }
 
     private List<AccountDetails> getAccountDetailsFilteredByReferences(List<AccountReference> references, Set<String> ibans) {
