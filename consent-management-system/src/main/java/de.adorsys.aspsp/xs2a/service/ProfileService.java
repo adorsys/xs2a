@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a;
+package de.adorsys.aspsp.xs2a.service;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@EnableScheduling
-@SpringBootApplication
-public class ConsentManagementApplication {
+@Service
+@RequiredArgsConstructor
+public class ProfileService {
+    private final ProfileConfiguration profileConfiguration;
 
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(ConsentManagementApplication.class)
-            .properties("spring.config.name=application,bank_profile")
-            .run(args);
+    public int getMinFrequencyPerDay(int tppFrequency){
+        return Math.min(tppFrequency, profileConfiguration.getFrequencyPerDay());
     }
 }
-

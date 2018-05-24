@@ -42,19 +42,25 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class AisConsentService {
     private final AccountSpi accountSpi;
+    private final ProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
 
     public Optional<String> createConsent(AisConsentRequest request){
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(AisConsentStatus.RECEIVED);
-        consent.setFrequencyPerDay(request.getFrequencyPerDay());
+        consent.setExpectedFrequencyPerDay(profileService.getMinFrequencyPerDay(request.getFrequencyPerDay()));
+        consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(request.getFrequencyPerDay());
         consent.setRequestDate(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
         consent.addAccounts(readAccounts(request));
+        consent.setRecurringIndicator(request.isRecurringIndicator());
+        consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
+        consent.setWithBalance(request.isWithBalance());
+        consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         aisConsentRepository.save(consent);
         return Optional.of(consent.getExternalId());
     }
@@ -66,7 +72,7 @@ public class AisConsentService {
     }
 
     private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId){
-        if(access.isAllAccountAccess() && StringUtils.isBlank(psuId)){
+        if(StringUtils.isBlank(psuId)){
             throw new ConsentException("Psu id must not be empty");
         }
         AccountInfoDetail info = buildAccountInfoDetailByPsu(access, psuId);

@@ -16,8 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import org.springframework.stereotype.Component;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
-@Component
-public class ProfileSetting {
+@Data
+@Configuration
+@PropertySource("classpath:bank_profile.yml")
+@ConfigurationProperties(prefix = "setting")
+public class ProfileConfiguration {
+    private int frequencyPerDay;
+    private boolean combinedServiceIndicator;
 }
