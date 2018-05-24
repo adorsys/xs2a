@@ -38,11 +38,14 @@ public class AisAccount {
 
     @ElementCollection
     @CollectionTable(name="ais_account_currency", joinColumns=@JoinColumn(name="account_id"))
-    private Set<AisAccountCurrency> aisAccountCurrencies = new HashSet<>();
+    @Column(name = "currency", nullable = false)
+    private Set<Currency> currencies = new HashSet<>();
 
-    @ElementCollection
+    @ElementCollection(targetClass = TypeAccess.class)
     @CollectionTable(name="ais_account_access", joinColumns=@JoinColumn(name="account_id"))
-    private Set<AisAccountAccess> aisAccountAccesses = new HashSet<>();
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "type_access", nullable = false)
+    private Set<TypeAccess> accesses = new HashSet<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,7 +63,7 @@ public class AisAccount {
     }
 
     public void addAccess(TypeAccess typeAccess){
-        aisAccountAccesses.add(new AisAccountAccess(typeAccess));
+        accesses.add(typeAccess);
     }
 
     public void addCurrencies(Set<Currency> currencies){
@@ -68,6 +71,6 @@ public class AisAccount {
     }
 
     public void addCurrency(Currency currency){
-        aisAccountCurrencies.add(new AisAccountCurrency(currency));
+        currencies.add(currency);
     }
 }
