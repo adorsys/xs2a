@@ -275,7 +275,6 @@ public class AccountServiceTest {
 
     private AccountDetails getAccountDetails() {
         AccountDetails details = new AccountDetails(ACCOUNT_ID, IBAN, "zz22", null, null, null, CURRENCY, "David Muller", null, null, null, getBalancesList());
-        details.setBalanceAndTransactionLinksByDefault(linkTo(AccountController.class).toUriComponentsBuilder().build().getPath());
         return details;
     }
 
@@ -304,8 +303,7 @@ public class AccountServiceTest {
     }
 
     private AccountReport getAccountReportDummy() {
-        Links lnk = new Links();
-        lnk.setViewAccount("http://localhost/api/v1/accounts/33333-999999999");
-        return new AccountReport(new Transactions[]{}, new Transactions[]{}, lnk);
+        AccountReport report = new AccountReport(new Transactions[]{}, new Transactions[]{});
+        return report;
     }
 }

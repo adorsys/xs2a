@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -31,17 +30,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 @Component
 public class AccountMapper {
     public List<AccountDetails> mapToAccountDetailsList(List<SpiAccountDetails> spiAccountDetailsList) {
-        String urlToAccount = linkTo(AccountController.class).toUriComponentsBuilder().build().getPath();
-
         return Optional.ofNullable(spiAccountDetailsList)
                .map(acl -> acl.stream()
                            .map(this::mapToAccountDetails)
-                           .peek(account -> account.setBalanceAndTransactionLinksByDefault(urlToAccount))
                            .collect(Collectors.toList()))
                .orElse(Collections.emptyList());
     }
@@ -144,7 +138,7 @@ public class AccountMapper {
                                  .map(this::mapToTransaction)
                                  .toArray(Transactions[]::new);
 
-        return Optional.of(new AccountReport(booked, pending, new Links()));
+        return Optional.of(new AccountReport(booked, pending));
     }
 
     private Transactions mapToTransaction(SpiTransaction spiTransaction) {
