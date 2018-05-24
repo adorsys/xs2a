@@ -46,14 +46,14 @@ Run an ASPSP-Mock-Server:
 $ cd aspsp-mock-server
 $ mvn spring-boot:run -Dspring.profiles.active=fongo
 ```
-Open a browser on page [https://localhost:28080/swagger-ui.html]()
+Open a browser on page [http://localhost:28080/swagger-ui.html](http://localhost:28080/swagger-ui.html)
 
 Run a XS2A-Server:
 ```bash
 $ cd xs2a-impl
 $ mvn spring-boot:run 
 ```
-Open a browser on page [https://localhost:8080/swagger-ui.html]()
+Open a browser on page [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 Now you may try to put some data using the mock-server and to access it using the xs2a-interface.
 See [detailed documentation](doc/spec/README.md) for a requests specification.
