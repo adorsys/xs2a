@@ -39,9 +39,9 @@ public class PaymentInitiationController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
 
-    @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
-    @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 400, message = "Bad request")})
     @RequestMapping(method = RequestMethod.POST)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
@@ -58,24 +58,24 @@ public class PaymentInitiationController {
     @ApiImplicitParam(name = "signature", value = "A signature of the request by TPP", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-certificate", value = "The sertificate used for signing the request", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPaymentInitiation(
-    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
-    @PathVariable("payment-product") String paymentProduct,
-    @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
-    @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
-    @RequestBody SinglePayments singlePayment) {
+        @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
+        @PathVariable("payment-product") String paymentProduct,
+        @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+        @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
+        @RequestBody SinglePayments singlePayment) {
         return responseMapper.created(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
     }
 
-    @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "transactions_status Accepted Customer Profile.", response = Map.class),
-    @ApiResponse(code = 404, message = "Not found")})
+        @ApiResponse(code = 404, message = "Not found")})
     @RequestMapping(value = "/{paymentId}/status", method = RequestMethod.GET)
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
-    public ResponseEntity<Map<String, TransactionStatus>> getPaymentInitiationStatusById(
+    public ResponseEntity<TransactionStatus> getPaymentInitiationStatusById(
     @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
     @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")

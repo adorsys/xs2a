@@ -62,6 +62,8 @@ public class PaymentServiceTest {
 
     @MockBean(name = "paymentSpi")
     private PaymentSpi paymentSpi;
+    @MockBean(name = "accountService")
+    private AccountService accountService;
 
     @Before
     public void setUp() throws IOException {
@@ -77,6 +79,8 @@ public class PaymentServiceTest {
             .thenReturn(ACCP);
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(RJCT);
+        when(accountService.isAccountExists(any(AccountReference.class)))
+            .thenReturn(true);
     }
 
     @Test
@@ -86,10 +90,10 @@ public class PaymentServiceTest {
         PaymentProduct paymentProduct = PaymentProduct.SCT;
 
         //When:
-        ResponseObject<Map<String, TransactionStatus>> actualResponse = paymentService.getPaymentStatusById(PAYMENT_ID, paymentProduct);
+        ResponseObject<TransactionStatus> actualResponse = paymentService.getPaymentStatusById(PAYMENT_ID, paymentProduct);
 
         //Then:
-        assertThat(actualResponse.getBody().get("transactionStatus")).isEqualTo(expectedTransactionStatus);
+        assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
     }
 
     @Test
@@ -99,10 +103,10 @@ public class PaymentServiceTest {
         PaymentProduct paymentProduct = PaymentProduct.SCT;
 
         //When:
-        ResponseObject<Map<String, TransactionStatus>> actualResponse = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, paymentProduct);
+        ResponseObject<TransactionStatus> actualResponse = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, paymentProduct);
 
         //Then:
-        assertThat(actualResponse.getBody().get("transactionStatus")).isEqualTo(expectedTransactionStatus);
+        assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
     }
 
     @Test
