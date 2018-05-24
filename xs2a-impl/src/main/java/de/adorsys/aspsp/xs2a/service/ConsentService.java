@@ -45,15 +45,16 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         Optional<String> consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
         return consentId.isPresent()
-                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(TransactionStatus.RCVD, consentId.get(), null, getLinkToConsent(consentId.get()), null)).build()
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId.get(), null, getLinkToConsent(consentId.get()), null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR))).build();
     }
 
-    public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
-        AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return consent != null && consent.getTransactionStatus() != null
-                   ? ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build()
-                   : ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
+    public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
+        return consentMapper.mapToConsentStatus(consentSpi.getAccountConsentStatusById(consentId))
+                                                       .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
+                                                       .orElse(ResponseObject.<ConsentStatus>builder()
+                                                                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+                                                                   .build());
     }
 
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
@@ -81,7 +82,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
         return access.map(accountAccess -> saveAccountConsent(
             new AccountConsent(null, accountAccess, req.isRecurringIndicator(), req.getValidUntil(), req.getFrequencyPerDay(),
-                null, TransactionStatus.ACCP, ConsentStatus.VALID, withBalance, tppRedirectPreferred)));
+                null, ConsentStatus.VALID, withBalance, tppRedirectPreferred)));
     }
 
     private String saveAccountConsent(AccountConsent consent) {

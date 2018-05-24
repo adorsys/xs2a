@@ -22,57 +22,64 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemoteSpiUrls {
     @Value("${mockspi.baseurl:http://localhost:28080}")
-    private String baseUrl;
+    private String spiMockBaseUrl;
+
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1/}")
+    private String consentServiceBaseUrl;
 
     //Consents urls
-    public String getConsentById() {
-        return baseUrl + "/consent/{id}";
-    }
-
     public String deleteConsentById() {
-        return baseUrl + "/consent/{id}";
+        return consentServiceBaseUrl + "/ais/consent/{consentId}/status/revoke";
     }
 
     public String createConsent() {
-        return baseUrl + "/consent/";
+        return consentServiceBaseUrl + "/api/v1/ais/consent/create";
+    }
+
+    public String getAccountConsentStatusById() {
+        return consentServiceBaseUrl + "/ais/consent/{consentId}/status";
+    }
+
+    public String getConsentById() {
+        return consentServiceBaseUrl + "/ais/consent/spi/{consentId}";
     }
 
     public String getConsentByAccess() {
-        return baseUrl + "/consent/byAccess/{access}";
+        return spiMockBaseUrl + "/consent/byAccess/{access}";
     }
 
     //Accounts urls
     public String getAccountDetailsById() {
-        return baseUrl + "/account/{accountId}";
+        return spiMockBaseUrl + "/account/{accountId}";
     }
 
     public String getBalancesByAccountId() {
-        return baseUrl + "/account/{accountId}/balances";
+        return spiMockBaseUrl + "/account/{accountId}/balances";
     }
 
     public String getAccountDetailsByPsuId() {
-        return baseUrl + "/account/psu/{psuId}";
+        return spiMockBaseUrl + "/account/psu/{psuId}";
     }
 
     public String getAccountDetailsByIban() {
-        return baseUrl + "/account/iban/{iban}";
+        return spiMockBaseUrl + "/account/iban/{iban}";
     }
 
     //Payments urls
     public String createPayment() {
-        return baseUrl + "/payments/";
+        return spiMockBaseUrl + "/payments/";
     }
 
     public String getPaymentStatus() {
-        return baseUrl + "/payments/{paymentId}/status/";
+        return spiMockBaseUrl + "/payments/{paymentId}/status/";
     }
 
     public String createBulkPayment() {
-        return baseUrl + "/payments/bulk-payments/";
+        return spiMockBaseUrl + "/payments/bulk-payments/";
     }
 
     public String createPeriodicPayment() {
-        return baseUrl + "/payments/createPeriodicPayment/";
+        return spiMockBaseUrl + "/payments/createPeriodicPayment/";
     }
 
 }

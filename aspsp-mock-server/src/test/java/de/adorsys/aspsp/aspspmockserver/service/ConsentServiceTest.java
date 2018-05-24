@@ -18,7 +18,6 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.ConsentRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.junit.Before;
@@ -136,7 +135,7 @@ public class ConsentServiceTest {
 
     private SpiAccountConsent getConsent(String id) {
         return new SpiAccountConsent(
-            id, new SpiAccountAccess(), false, DATE, 4, null, SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, true
+            id, new SpiAccountAccess(), false, DATE, 4, null, SpiConsentStatus.VALID, true, true
         );
     }
 }

@@ -445,7 +445,7 @@ public class AccountServiceTest {
     private AccountConsent getAccountConsent(String consentId) {
         return new AccountConsent(consentId,
             new AccountAccess(new AccountReference[]{getAccountReference()}, new AccountReference[]{getAccountReference()}, new AccountReference[]{getAccountReference()}, AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS),
-            false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, true, true);
+            false, DATE, 4, null, ConsentStatus.VALID, true, true);
     }
 
     private AccountReference getAccountReference() {

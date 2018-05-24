@@ -96,9 +96,6 @@ public class ConsentMapperTest {
         assertThat(actualAccountConsent.getValidUntil()).isEqualTo("2017-11-01");
         assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(4);
         assertThat(actualAccountConsent.getLastActionDate()).isEqualTo("2017-11-01");
-        assertThat(actualAccountConsent.getTransactionStatus()).isEqualTo(TransactionStatus.ACCP);
         assertThat(actualAccountConsent.getConsentStatus()).isEqualTo(ConsentStatus.VALID);
     }
-
-
 }

@@ -21,7 +21,6 @@ import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
@@ -60,26 +59,26 @@ public class AccountMockServerData {
             new SpiAccountConsent("AllWB",
                 new SpiAccountAccess(
                     getReferencesList(),getReferencesList(),getReferencesList(),SpiAccountAccessType.ALL_ACCOUNTS,SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true,false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true,false)
         );
         consentRepository.save(
             new SpiAccountConsent("AllWOB",
                 new SpiAccountAccess(
                     getReferencesList(),getReferencesList(),getReferencesList(),SpiAccountAccessType.ALL_ACCOUNTS,SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true,false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true,false)
         );
 
         consentRepository.save(
             new SpiAccountConsent("Acc1WB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))),Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))),null,null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true,false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true,false)
         );
         consentRepository.save(
             new SpiAccountConsent("Acc1WOB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))),Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))),null,null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, false,false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false,false)
         );
     }
 
@@ -127,9 +126,9 @@ public class AccountMockServerData {
 
     }
 
-    private SpiAccountBalance getBalance(Currency currency, String ammount){
+    private SpiAccountBalance getBalance(Currency currency, String amount){
         SpiAccountBalance balance = new SpiAccountBalance();
-        balance.setSpiAmount(new SpiAmount(currency,ammount));
+        balance.setSpiAmount(new SpiAmount(currency,amount));
         balance.setDate(new Date());
         balance.setLastActionDateTime(new Date());
         return balance;
