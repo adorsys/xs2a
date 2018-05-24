@@ -48,6 +48,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @SpringBootTest
 public class AccountControllerTest {
     private final String ACCOUNT_ID = "33333-999999999";
+    private final String CONSENT_ID = "12345";
     private final String TRANSACTION_ID = "1234578";
     private final String ACCOUNT_DETAILS_SOURCE = "/json/AccountDetailsList.json";
     private final String ACCOUNT_REPORT_SOURCE = "/json/AccountReportTestData.json";
@@ -63,15 +64,15 @@ public class AccountControllerTest {
     private AccountController accountController;
 
     @MockBean(name = "accountService")
-    private AccountService accountServiceMocked;
+    private AccountService accountService;
 
     @Before
     public void setUp() throws Exception {
-        when(accountServiceMocked.getAccountDetailsList(anyString(), anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
+        when(accountService.getAccountDetailsList(CONSENT_ID, anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
-        when(accountServiceMocked.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
-        when(accountServiceMocked.getAccountReport(any(String.class), any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
-        when(accountServiceMocked.getAccountDetails(any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
+        when(accountService.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
+        when(accountService.getAccountReport(any(String.class), any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
+        when(accountService.getAccountDetails(anyString(), any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }
 
     @Test
@@ -82,7 +83,7 @@ public class AccountControllerTest {
         ResponseObject<AccountDetails> expectedResult = getAccountDetails();
 
         //When
-        AccountDetails result = accountController.readAccountDetails(ACCOUNT_ID, withBalance, psuInvolved).getBody();
+        AccountDetails result = accountController.readAccountDetails(CONSENT_ID, ACCOUNT_ID, withBalance, psuInvolved).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult.getBody());
@@ -186,7 +187,7 @@ public class AccountControllerTest {
         expectedMap.put("accountList", accountDetailsList);
         ResponseEntity<Map<String, List<AccountDetails>>> expectedResult = new ResponseEntity<>(expectedMap, HttpStatus.OK);
 
-        when(accountServiceMocked.getAccountDetailsList("id", withBalance, psuInvolved))
+        when(accountService.getAccountDetailsList("id", withBalance, psuInvolved))
             .thenReturn(mockedResponse);
 
         //When:

@@ -27,7 +27,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.web.AccountController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +41,6 @@ import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_UNKNOWN_403;
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -97,7 +95,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsByAccountId_WB_Success() {
         //When:
-        ResponseObject<AccountDetails> response = accountService.getAccountDetails(ACCOUNT_ID, true, true);
+        ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, ACCOUNT_ID, true, true);
 
         //Then:
         assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);
@@ -106,7 +104,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsByAccountId_WB_Failure() {
         //When:
-        ResponseObject<AccountDetails> response = accountService.getAccountDetails(WRONG_ACCOUNT_ID, true, true);
+        ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, WRONG_ACCOUNT_ID, true, true);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
