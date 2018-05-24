@@ -18,10 +18,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
 import de.adorsys.aspsp.xs2a.util.GsonUtcInstantAdapter;
@@ -37,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.lang.Exception;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.*;
@@ -44,6 +42,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -171,6 +170,11 @@ public class AccountControllerTest {
             "XE3DDD",
             null
         );
+        Links links = new Links();
+        links.setViewBalances(linkTo(AccountController.class).slash(accountDetails.getId()).slash("balances").toString());
+        links.setViewTransactions(linkTo(AccountController.class).slash(accountDetails.getId()).slash("transactions").toString());
+        accountDetails.setLinks(links);
+
         List<AccountDetails> accountDetailsList = new ArrayList<>();
         accountDetailsList.add(accountDetails);
         Map<String, List<AccountDetails>> mockMap = new HashMap<>();

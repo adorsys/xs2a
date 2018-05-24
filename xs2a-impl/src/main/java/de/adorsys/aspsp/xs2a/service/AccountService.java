@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
@@ -25,7 +24,6 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +35,6 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Slf4j
 @Service
@@ -45,11 +42,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @AllArgsConstructor
 public class AccountService {
 
-    private final int maxNumberOfCharInTransactionJson;
     private final AccountSpi accountSpi;
     private final AccountMapper accountMapper;
     private final ValueValidatorService validatorService;
-    private final JsonConverter jsonConverter;
     private final ConsentService consentService;
 
     public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
@@ -113,7 +108,7 @@ public class AccountService {
         } else {
             AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance, bookingStatus);
             return ResponseObject.<AccountReport>builder()
-                       .body(getReportAccordingMaxSize(accountReport, accountId)).build();
+                       .body(accountReport).build();
         }
     }
 
@@ -155,6 +150,20 @@ public class AccountService {
                    : getAccountDetailsWithoutBalances(getAccountDetailsFilteredByReferences(refsFromConsent, ibansFromConsent));
     }
 
+    public boolean isAccountExists(AccountReference reference) {
+        return getAccountDetailsByAccountReference(reference).isPresent();
+    }
+
+    public ResponseObject<AccountDetails> getAccountDetails(String accountId, boolean withBalance, boolean psuInvolved) {
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+
+        return accountDetails != null
+                   ? ResponseObject.<AccountDetails>builder()
+                         .body(accountDetails).build()
+                   : ResponseObject.<AccountDetails>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+    }
+
     private List<AccountDetails> getAccountDetailsFilteredByReferences(List<AccountReference> references, Set<String> ibans) {
         return getAccountDetailsListByIbans(ibans).stream()
                    .filter(aD -> getFilteredDetailsByIbanAndCurrency(aD.getIban(), aD.getCurrency(), references))
@@ -189,41 +198,19 @@ public class AccountService {
         return readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
     }
 
-    private AccountReport getReportAccordingMaxSize(AccountReport accountReport, String accountId) {
-        Optional<String> optionalAccount = jsonConverter.toJson(accountReport);
-        String jsonReport = optionalAccount.orElse("");
-
-        if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
-            return getAccountReportWithDownloadLink(accountId);
-        }
-
-        String urlToAccount = linkTo(AccountController.class).slash(accountId).toString();
-        accountReport.getLinks().setViewAccount(urlToAccount);
-        return accountReport;
-    }
-
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
                                                    Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
         Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, bookingStatus));
 
-        return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}, new Links()));
+        return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
     }
 
     private AccountReport readTransactionsById(String accountId, String transactionId, boolean psuInvolved, boolean withBalance) { //NOPMD TODO to be reviewed upon change to v1.1
         Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsById(transactionId));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{},
-            new Transactions[]{},
-            new Links()
+            new Transactions[]{}
         ));
-    }
-
-    private AccountReport getAccountReportWithDownloadLink(String accountId) {
-        // todo further we should implement real flow for downloading file
-        String urlToDownload = linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString();
-        Links downloadLink = new Links();
-        downloadLink.setDownload(urlToDownload);
-        return new AccountReport(null, null, downloadLink);
     }
 
     // Validation
@@ -252,5 +239,15 @@ public class AccountService {
         return references.stream()
                    .filter(acc -> acc.getIban().equals(iban))
                    .anyMatch(acc -> currency == null || acc.getCurrency() == currency);
+    }
+
+    private Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
+        return Optional.ofNullable(reference)
+                   .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
+                   .map(Collection::stream)
+                   .flatMap(accDets -> accDets
+                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
+                                           .findFirst())
+                   .map(accountMapper::mapToAccountDetails);
     }
 }

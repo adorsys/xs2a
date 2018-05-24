@@ -25,9 +25,8 @@ public class TppSignatureValidator {
 	/**
 	 * signature should not be null signature should be conform with psd2
 	 * addition signature should be verifiable by the entry certificate
-	 * 
+	 *
 	 * @param signature
-	 * @param tppCertificate
 	 * @return true or false
 	 * @throws IOException
 	 * @throws SignatureException

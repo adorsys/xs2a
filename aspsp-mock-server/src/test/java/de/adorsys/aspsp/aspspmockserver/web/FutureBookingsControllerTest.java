@@ -40,8 +40,8 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class FutureBookingsControllerTest {
-    private static final String ACCOUNT_ID = "123456789";
-    private static final String WRONG_ACCOUNT_ID = "0";
+    private static final String IBAN = "123456789";
+    private static final String WRONG_IBAN = "Wrong iban";
     private static final double BALANCE = 2000;
     private static final double AMOUNT_TO_BE_CHARGED = 500;
 
@@ -54,9 +54,9 @@ public class FutureBookingsControllerTest {
 
     @Before
     public void setUp() {
-        when(futureBookingsService.changeBalances(ACCOUNT_ID))
+        when(futureBookingsService.changeBalances(IBAN, "EUR"))
             .thenReturn(getSpiAccountDetails((BALANCE - AMOUNT_TO_BE_CHARGED)));
-        when(futureBookingsService.changeBalances(WRONG_ACCOUNT_ID))
+        when(futureBookingsService.changeBalances(WRONG_IBAN, "EUR"))
             .thenReturn(Optional.empty());
     }
 
@@ -67,7 +67,7 @@ public class FutureBookingsControllerTest {
         double expectedAmount = BALANCE - AMOUNT_TO_BE_CHARGED;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(ACCOUNT_ID);
+        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(IBAN, "EUR");
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
@@ -80,7 +80,7 @@ public class FutureBookingsControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
 
         //When:
-        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(WRONG_ACCOUNT_ID);
+        ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(WRONG_IBAN, "EUR");
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);

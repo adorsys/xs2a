@@ -41,9 +41,9 @@ public class FutureBookingsController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @PostMapping(path = "/{accountId}")
-    public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("accountId") String accountId) throws Exception {
-        return futureBookingsService.changeBalances(accountId)
+    @PostMapping(path = "/{iban}/{currency}")
+    public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) throws Exception {
+        return futureBookingsService.changeBalances(iban, currency)
             .map(saved -> new ResponseEntity<>(saved, OK))
             .orElse(ResponseEntity.notFound().build());
     }
