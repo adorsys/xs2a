@@ -154,23 +154,25 @@ public class AccountMockServerData {
         );
     }
 
-    private List<SpiBalances> getNewBalanceList(Currency currency, String ammount1, String ammount2) {
+    private List<SpiBalances> getNewBalanceList(Currency currency, String amount1, String amount2) {
         SpiBalances spiBalances = new SpiBalances();
-        spiBalances.setOpeningBooked(getBalance(currency, ammount1));
-        spiBalances.setAuthorised(getBalance(currency, ammount2));
+        spiBalances.setOpeningBooked(getBalance(currency, amount1));
+        spiBalances.setAuthorised(getBalance(currency, amount2));
         return Collections.singletonList(spiBalances);
     }
 
-    private SpiAccountBalance getBalance(Currency currency, String ammount) {
+    private SpiAccountBalance getBalance(Currency currency, String amount) {
         SpiAccountBalance balance = new SpiAccountBalance();
-        balance.setSpiAmount(new SpiAmount(currency, ammount));
+        balance.setSpiAmount(new SpiAmount(currency, amount));
         balance.setDate(new Date());
         balance.setLastActionDateTime(new Date());
         return balance;
     }
 
     private List<SpiAccountReference> getReferencesList() {
-        return accountDetails.stream().map(this::mapToReferenceFromDetails).collect(Collectors.toList());
+        return accountDetails.stream()
+                   .map(this::mapToReferenceFromDetails)
+                   .collect(Collectors.toList());
     }
 
     private SpiAccountReference mapToReferenceFromDetails(SpiAccountDetails details) {
