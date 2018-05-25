@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.service;
 
-import lombok.Data;
+import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import java.util.Currency;
+@Service
+@RequiredArgsConstructor
+public class ProfileService {
+    private final ProfileConfiguration profileConfiguration;
 
-@Data
-@Embeddable
-public class AisAccountCurrency {
-    @Column(name = "currency", nullable = false)
-    private Currency currency;
-
-    public AisAccountCurrency(){}
-
-    public AisAccountCurrency(Currency currency) {
-        this.currency = currency;
+    public int getMinFrequencyPerDay(int tppFrequency){
+        return Math.min(tppFrequency, profileConfiguration.getFrequencyPerDay());
     }
 }

@@ -16,14 +16,18 @@
 
 package de.adorsys.aspsp.xs2a;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @SpringBootApplication
 public class ConsentManagementApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ConsentManagementApplication.class, args);
+        new SpringApplicationBuilder(ConsentManagementApplication.class)
+            .properties("spring.config.name=application,bank_profile")
+            .run(args);
     }
 }
 

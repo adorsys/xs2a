@@ -34,8 +34,17 @@ public class AisConsent {
     @Column(name = "external_id", nullable = false)
     private String externalId;
 
-    @Column(name = "recurring_indicator")
+    @Column(name = "recurring_indicator", nullable = false)
     private boolean recurringIndicator;
+
+    @Column(name = "tpp_redirect_preferred", nullable = false)
+    private boolean tppRedirectPreferred;
+
+    @Column(name = "combined_service_indicator", nullable = false)
+    private boolean combinedServiceIndicator;
+
+    @Column(name = "with_balance", nullable = false)
+    private boolean withBalance;
 
     @Column(name = "request_date", nullable = false)
     private LocalDateTime requestDate;
@@ -57,10 +66,13 @@ public class AisConsent {
     @Enumerated(value = EnumType.STRING)
     private ConsentType consentType = ConsentType.AIS;
 
-    @Column(name = "frequency_per_day")
-    private int frequencyPerDay;
+    @Column(name = "expected_frequency_per_day", nullable = false)
+    private int expectedFrequencyPerDay;
 
-    @Column(name = "usage_counter")
+    @Column(name = "tpp_frequency_per_day", nullable = false)
+    private int tppFrequencyPerDay;
+
+    @Column(name = "usage_counter", nullable = false)
     private int usageCounter;
 
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)

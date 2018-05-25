@@ -26,10 +26,6 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
@@ -39,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +44,7 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class AisConsentService {
     private final AccountSpi accountSpi;
+    private final ProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
     private  final ConsentMapper consentMapper;
 
@@ -56,13 +52,18 @@ public class AisConsentService {
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(AisConsentStatus.RECEIVED);
-        consent.setFrequencyPerDay(request.getFrequencyPerDay());
+        consent.setExpectedFrequencyPerDay(profileService.getMinFrequencyPerDay(request.getFrequencyPerDay()));
+        consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(request.getFrequencyPerDay());
         consent.setRequestDate(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
         consent.addAccounts(readAccounts(request));
+        consent.setRecurringIndicator(request.isRecurringIndicator());
+        consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
+        consent.setWithBalance(request.isWithBalance());
+        consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         aisConsentRepository.save(consent);
         return Optional.of(consent.getExternalId());
     }
@@ -99,8 +100,8 @@ public class AisConsentService {
                    : readAccountsByIban(request.getAccess());
     }
 
-    private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId) {
-        if (access.isAllAccountAccess() && StringUtils.isBlank(psuId)) {
+    private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId){
+        if(StringUtils.isBlank(psuId)){
             throw new ConsentException("Psu id must not be empty");
         }
         AccountInfoDetail info = buildAccountInfoDetailByPsu(access, psuId);
