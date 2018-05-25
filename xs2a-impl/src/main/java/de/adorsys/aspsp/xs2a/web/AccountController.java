@@ -69,7 +69,7 @@ public class AccountController {
     @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
-    ResponseEntity<AccountDetails> readAccountDetails(
+    public ResponseEntity<AccountDetails> readAccountDetails(
     @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
     @PathVariable(name = "account-id", required = true) String accountId,
     @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")

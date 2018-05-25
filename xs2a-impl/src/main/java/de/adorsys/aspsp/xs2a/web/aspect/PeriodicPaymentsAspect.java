@@ -31,8 +31,10 @@ public class PeriodicPaymentsAspect extends AbstractPaymentLink<PeriodicPayments
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController.createPeriodicPayment(..)) && args(paymentProduct,..)", returning = "result")
     public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
-        PaymentInitialisationResponse body = result.getBody();
-        body.setLinks(buildPaymentLinks(body, paymentProduct));
-        return new ResponseEntity(body, result.getHeaders(), result.getStatusCode());
+        if (!hasError(result)) {
+            PaymentInitialisationResponse body = result.getBody();
+            body.setLinks(buildPaymentLinks(body, paymentProduct));
+        }
+        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 }

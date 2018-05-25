@@ -46,25 +46,29 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.readAccountDetails(..)) && args(accountId,..)", returning = "result")
     public ResponseEntity<AccountDetails> invokeReadAccountDetailsAspect(ResponseEntity<AccountDetails> result, String accountId) {
-        AccountDetails body = result.getBody();
-        body.setLinks(buildLinksForAccountDetails(body));
-
-        return new ResponseEntity<>(body, result.getHeaders(), result.getStatusCode());
+        if(!hasError(result)){
+            AccountDetails body = result.getBody();
+            body.setLinks(buildLinksForAccountDetails(body));
+        }
+        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getAccounts(..)) && args(..)", returning = "result")
     public ResponseEntity<Map<String, List<AccountDetails>>> invokeGetAccountsAspect(ResponseEntity<Map<String, List<AccountDetails>>> result) {
-        Map<String, List<AccountDetails>> body = result.getBody();
-
-        return new ResponseEntity<>(setLinksToAccountsMap(body), result.getHeaders(), result.getStatusCode());
+        if(!hasError(result)){
+            Map<String, List<AccountDetails>> body = result.getBody();
+            setLinksToAccountsMap(body);
+        }
+        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getTransactions(..)) && args(accountId,..)", returning = "result")
     public ResponseEntity<AccountReport> invokeGetTransactionsAspect(ResponseEntity<AccountReport> result, String accountId) {
-        AccountReport body = result.getBody();
-        body.setLinks(buildLinksForAccountReport(body, accountId));
-
-        return new ResponseEntity<>(body, result.getHeaders(), result.getStatusCode());
+        if(!hasError(result)){
+            AccountReport body = result.getBody();
+            body.setLinks(buildLinksForAccountReport(body, accountId));
+        }
+        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
     private Links buildLinksForAccountDetails(AccountDetails accountDetails) {
@@ -88,7 +92,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             // todo further we should implement real flow for downloading file
-            links.setDownload(linkTo(AccountController.class).slash(accountId).slash("transactions/download").toString());
+            links.setDownload(linkTo(controller).slash(accountId).slash("transactions/download").toString());
         }
         return links;
     }
