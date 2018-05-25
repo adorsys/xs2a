@@ -34,16 +34,17 @@ public class BulkPaymentInitiationAspect extends AbstractPaymentLink<BulkPayment
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController.createBulkPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result")
     public ResponseEntity<List<PaymentInitialisationResponse>> invokeAspect(ResponseEntity<List<PaymentInitialisationResponse>> result, String paymentProduct) {
-        List<PaymentInitialisationResponse> body = result.getBody();
-        List<PaymentInitialisationResponse> newBody = body.stream()
-            .map(paym -> setLinksAndReturnResponse(paym, paymentProduct))
-            .collect(Collectors.toList());
+        if (!hasError(result)) {
+            result.getBody().stream()
+                .map(paym -> setLinksAndReturnResponse(paym, paymentProduct))
+                .collect(Collectors.toList());
+        }
 
-        return new ResponseEntity(newBody, result.getHeaders(), result.getStatusCode());
+        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
-    private PaymentInitialisationResponse setLinksAndReturnResponse(PaymentInitialisationResponse paymentInitialisationResponse, String paymentProduct) {
-        paymentInitialisationResponse.setLinks(buildPaymentLinks(paymentInitialisationResponse, paymentProduct));
-        return paymentInitialisationResponse;
+    private PaymentInitialisationResponse setLinksAndReturnResponse(PaymentInitialisationResponse response, String paymentProduct) {
+        response.setLinks(buildPaymentLinks(response, paymentProduct));
+        return response;
     }
 }

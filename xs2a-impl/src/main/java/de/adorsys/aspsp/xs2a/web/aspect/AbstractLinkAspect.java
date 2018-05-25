@@ -16,10 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Optional;
 
 @Component
 public abstract class AbstractLinkAspect<T> {
@@ -29,11 +32,17 @@ public abstract class AbstractLinkAspect<T> {
     protected Class<T> getController() {
         try {
             String className = ((ParameterizedType) getClass().getGenericSuperclass())
-                .getActualTypeArguments()[0]
-                .getTypeName();
+                                   .getActualTypeArguments()[0]
+                                   .getTypeName();
             return (Class<T>) Class.forName(className);
         } catch (Exception e) {
             throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");
         }
+    }
+
+    protected <B> boolean hasError(ResponseEntity<B> target) {
+        Optional<B> body = Optional.ofNullable(target.getBody());
+        return body.isPresent() && body.get().getClass()
+                                       .isAssignableFrom(MessageError.class);
     }
 }
