@@ -43,10 +43,10 @@ public class ConsentMapper {
             mapToSpiAccountAccess(consent.getAccounts()),
             consent.isRecurringIndicator(),
             convertToDate(consent.getExpireDate()),
-            consent.getFrequencyPerDay(),
+            consent.getTppFrequencyPerDay(),
             convertToDate(consent.getRequestDate()),
             mapToSpiConsentStatus(consent.getConsentStatus()),
-            false, false);
+            consent.isWithBalance(), consent.isTppRedirectPreferred());
     }
 
     private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
