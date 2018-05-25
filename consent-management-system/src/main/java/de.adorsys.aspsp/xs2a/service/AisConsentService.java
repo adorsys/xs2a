@@ -46,7 +46,7 @@ public class AisConsentService {
     private final AccountSpi accountSpi;
     private final ProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
-    private  final ConsentMapper consentMapper;
+    private final ConsentMapper consentMapper;
 
     public Optional<String> createConsent(AisConsentRequest request) {
         AisConsent consent = new AisConsent();
@@ -73,12 +73,13 @@ public class AisConsentService {
                    .map(AisConsent::getConsentStatus);
     }
 
-    public Optional<AisConsent> updateConsentStatusById(String consentId, AisConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, AisConsentStatus status) {
         return getAisConsentById(consentId)
-                   .map(con -> setStatusAndSaveConsent(con, status));
+                   .map(con -> setStatusAndSaveConsent(con, status))
+                   .map(con -> con.getConsentStatus() == status);
     }
 
-    public Optional<AisConsent> getAisConsentById(String consentId) {
+    private Optional<AisConsent> getAisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(aisConsentRepository::findAisConsentByExternalId);
     }
@@ -100,8 +101,8 @@ public class AisConsentService {
                    : readAccountsByIban(request.getAccess());
     }
 
-    private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId){
-        if(StringUtils.isBlank(psuId)){
+    private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId) {
+        if (StringUtils.isBlank(psuId)) {
             throw new ConsentException("Psu id must not be empty");
         }
         AccountInfoDetail info = buildAccountInfoDetailByPsu(access, psuId);

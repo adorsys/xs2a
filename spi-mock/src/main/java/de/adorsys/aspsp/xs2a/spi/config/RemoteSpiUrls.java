@@ -24,16 +24,16 @@ public class RemoteSpiUrls {
     @Value("${mockspi.baseurl:http://localhost:28080}")
     private String spiMockBaseUrl;
 
-    @Value("${consent-service.baseurl:http://localhost:38080/api/v1/}")
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
     //Consents urls
-    public String deleteConsentById() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}/status/revoke";
+    public String updateConsentStatus() {
+        return consentServiceBaseUrl + "/ais/consent/{consentId}/status/{status}";
     }
 
     public String createConsent() {
-        return consentServiceBaseUrl + "/api/v1/ais/consent/create";
+        return consentServiceBaseUrl + "/ais/consent/create";
     }
 
     public String getAccountConsentStatusById() {
@@ -41,7 +41,7 @@ public class RemoteSpiUrls {
     }
 
     public String getConsentById() {
-        return consentServiceBaseUrl + "/ais/consent/spi/{consentId}";
+        return consentServiceBaseUrl + "/ais/consent/{consentId}";
     }
 
     public String getConsentByAccess() {

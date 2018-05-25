@@ -54,7 +54,7 @@ public class ConsentSpiImpl implements ConsentSpi {
 
     @Override
     public void deleteAccountConsentById(String consentId) {
-        restTemplate.postForLocation(remoteSpiUrls.deleteConsentById(), null, consentId);
+        restTemplate.put(remoteSpiUrls.updateConsentStatus(),null,  consentId, SpiConsentStatus.REVOKED_BY_PSU);
     }
 
     @Override
