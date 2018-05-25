@@ -18,11 +18,13 @@ package de.adorsys.aspsp.xs2a.spi.domain.account;
 
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 import java.util.Date;
 
 @Data
 public class SpiTransaction {
+    @Id
     private final String transactionId;
     private final String endToEndId;
     private final String mandateId;

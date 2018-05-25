@@ -73,8 +73,7 @@ public class AccountService {
 
     public List<SpiAccountDetails> getAccountsByPsuId(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId)).map(Psu::getAccountDetailsList)
-                                                         .orElse(Collections.emptyList());
-
+                   .orElse(Collections.emptyList());
     }
 
     public void deleteAccountById(String accountId) {
@@ -87,6 +86,7 @@ public class AccountService {
         Psu filteredPsu = getPsuWithFilteredAccountListById(psu, accountDetails.getId());
         return addAccountToPsuAndSave(filteredPsu, accountDetails);
     }
+
     private Optional<SpiAccountDetails> findAccountInPsuById(Psu psu, String accountId) {
         return psu.getAccountDetailsList().stream()
                    .filter(acc -> acc.getId().equals(accountId))

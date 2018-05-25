@@ -46,5 +46,5 @@ public class AccountReport {
                               "last_page_link (optional)", required = true)
     @NotNull
     @JsonProperty("_links")
-    private final Links links;
+    private Links links;
 }

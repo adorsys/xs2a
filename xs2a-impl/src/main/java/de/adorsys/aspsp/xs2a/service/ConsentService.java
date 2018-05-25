@@ -166,7 +166,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .collect(Collectors.toSet());
     }
 
-    private Set<String> getIbansFromAccountReference(AccountReference[] references) {
+    public Set<String> getIbansFromAccountReference(AccountReference[] references) {
         return Optional.ofNullable(references)
                    .map(ar -> Arrays.stream(ar)
                                   .map(AccountReference::getIban)
