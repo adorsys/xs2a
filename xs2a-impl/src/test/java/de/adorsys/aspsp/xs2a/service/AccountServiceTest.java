@@ -92,6 +92,7 @@ public class AccountServiceTest {
         when(consentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
     }
 
+    //Get Account By AccountId
     @Test
     public void getAccountDetailsByAccountId_WB_Success() {
         //When:
@@ -99,10 +100,22 @@ public class AccountServiceTest {
 
         //Then:
         assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(response.getBody().getBalances()).isEqualTo(getBalancesList());
     }
 
     @Test
-    public void getAccountDetailsByAccountId_WB_Failure() {
+    public void getAccountDetailsByAccountId_WB_partialSuccess() {
+        //When:
+        ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WOB, ACCOUNT_ID, true, true);
+
+        //Then:
+        assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(response.getBody().getBalances()).isEqualTo(null);
+
+    }
+
+    @Test
+    public void getAccountDetailsByAccountId_Failure_wrongAccount() {
         //When:
         ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, WRONG_ACCOUNT_ID, true, true);
 
@@ -113,6 +126,18 @@ public class AccountServiceTest {
     }
 
     @Test
+    public void getAccountDetailsByAccountId_Failure_wrongConsent() {
+        //When:
+        ResponseObject<AccountDetails> response = accountService.getAccountDetails(WRONG_CONSENT_ID, ACCOUNT_ID, true, true);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_UNKNOWN_403);
+    }
+
+    //Get AccountsList By Consent
+    @Test
     public void getAccountDetailsListByConsent_Success() {
         //When:
         ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID, false, false);
@@ -120,6 +145,30 @@ public class AccountServiceTest {
 
         //Then:
         assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(respondedDetails.getBalances()).isEqualTo(null);
+        assertThat(respondedDetails.getLinks()).isEqualTo(new Links());
+    }
+
+    @Test
+    public void getAccountDetailsListByConsent_Success_WB() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true, false);
+        AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
+
+        //Then:
+        assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(respondedDetails.getLinks()).isEqualTo(getAccountDetails().getLinks());
+    }
+
+    @Test
+    public void getAccountDetailsListByConsent_partialSuccess_WB_No_BalancesInConsent() {
+        //When:
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WOB, true, false);
+        AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
+
+        //Then:
+        assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
+        assertThat(respondedDetails.getBalances()).isEqualTo(null);
         assertThat(respondedDetails.getLinks()).isEqualTo(new Links());
     }
 
@@ -134,28 +183,39 @@ public class AccountServiceTest {
         assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_UNKNOWN_403);
     }
 
+    //Get Balances
     @Test
-    public void getAccountDetailsListByConsent_Failure_WB_No_BalancesInConsent() {
+    public void getBalances_Success() {
         //When:
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WOB, true, false);
+        ResponseObject<List<Balances>> responce = accountService.getBalances(CONSENT_ID_WB, ACCOUNT_ID, false);
+
+        //Then:
+        assertThat(responce.getBody()).isEqualTo(getBalancesList());
+    }
+
+    @Test
+    public void getBalances_Failure_Wrong_Consent() {
+        //When:
+        ResponseObject<List<Balances>> response = accountService.getBalances(WRONG_CONSENT_ID, ACCOUNT_ID, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_INVALID);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_UNKNOWN_403);
     }
 
     @Test
-    public void getAccountDetailsListByConsent_Success_WB() {
+    public void getBalances_Failure_Wrong_Account() {
         //When:
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true, false);
-        AccountDetails respondedDetails = response.getBody().get("accountList").get(0);
+        ResponseObject<List<Balances>> responce = accountService.getBalances(CONSENT_ID_WB, WRONG_ACCOUNT_ID, false);
 
         //Then:
-        assertThat(respondedDetails.getId()).isEqualTo(ACCOUNT_ID);
-        assertThat(respondedDetails.getLinks()).isEqualTo(getAccountDetails().getLinks());
+        assertThat(responce.hasError()).isEqualTo(true);
+        assertThat(responce.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(responce.getError().getTppMessage().getCode()).isEqualTo(MessageCode.RESOURCE_UNKNOWN_404);
     }
 
+    //Internal method test
     @Test
     public void getAccountBalancesByAccountReference_referenceIsNull() {
         // Given:
@@ -226,15 +286,7 @@ public class AccountServiceTest {
         assertThat(actualResult).isEmpty();
     }
 
-    @Test
-    public void getBalances() {
-        //When:
-        ResponseObject response = accountService.getBalances(ACCOUNT_ID, false);
-
-        //Then:
-        assertThat(response.getBody()).isEqualTo(getBalancesList());
-    }
-
+    //Get Transaction By TransactionId
     @Test
     public void getAccountReport_ByTransactionId_Success() {
         //When:
@@ -264,6 +316,7 @@ public class AccountServiceTest {
         assertThat(response.getError().getTppMessage().getCode()).isEqualTo(RESOURCE_UNKNOWN_404);
     }
 
+    //Get Transactions By Period
     @Test
     public void getAccountReport_ByPeriod_Success() {
         //When:
@@ -273,10 +326,33 @@ public class AccountServiceTest {
         assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
     }
 
+    @Test
+    public void getAccountReport_ByPeriod_Failure_Wrong_Account() {
+        //When:
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, WRONG_ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.RESOURCE_UNKNOWN_404);
+    }
+
+    @Test
+    public void getAccountReport_ByPeriod_Failure_Wrong_Consent() {
+        //When:
+        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+
+        //Then:
+        assertThat(response.hasError()).isEqualTo(true);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_UNKNOWN_403);
+    }
+
+    //Test Stuff
     private AccountConsent getAccountConsent(String consentId, boolean withBalance, boolean withTransactions) {
         return new AccountConsent(consentId,
             new AccountAccess(
-                consentId.equals(CONSENT_ID_WOB)
+                consentId.equals(WRONG_CONSENT_ID)
                     ? new AccountReference[]{}
                     : new AccountReference[]{getAccountReference()},
                 withBalance

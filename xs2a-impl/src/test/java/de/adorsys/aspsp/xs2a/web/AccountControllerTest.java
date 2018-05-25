@@ -68,9 +68,9 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        when(accountService.getAccountDetailsList(CONSENT_ID, anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
+        when(accountService.getAccountDetailsList(anyString(), anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
-        when(accountService.getBalances(any(String.class), anyBoolean())).thenReturn(balances);
+        when(accountService.getBalances(anyString(),anyString(), anyBoolean())).thenReturn(balances);
         when(accountService.getAccountReport(any(String.class), any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }
@@ -112,7 +112,7 @@ public class AccountControllerTest {
         expectedResult.add(expectedBalances);
 
         //When:
-        List<Balances> result = accountController.getBalances(ACCOUNT_ID, psuInvolved).getBody();
+        List<Balances> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID, psuInvolved).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);

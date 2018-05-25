@@ -92,10 +92,11 @@ public class AccountController {
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<List<Balances>> getBalances(
+        @RequestHeader(name = "consent-id", required = false) String consentId,
         @PathVariable(name = "account-id", required = true) String accountId,
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<List<Balances>> responseObject = accountService.getBalances(accountId, psuInvolved);
+        ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId, psuInvolved);
 
         return responseMapper.ok(responseObject);
     }
