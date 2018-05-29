@@ -16,19 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain;
 
+import lombok.Value;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class ObjectHolder <String, T>{
-    private Map<String, T> values = new HashMap<>();
+@Value
+public class ObjectHolder <K, V>{
+    private Map<K, V> values = new HashMap<>();
 
-    public ObjectHolder<String, T> addValue(String key, T value){
+    public ObjectHolder<K, V> addValue(K key, V value){
         values.put(key, value);
         return this;
     }
-
-    public Map<String, T> getValues(){
-        return values;
-    }
-
 }
