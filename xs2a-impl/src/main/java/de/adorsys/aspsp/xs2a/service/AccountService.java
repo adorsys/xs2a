@@ -87,8 +87,8 @@ public class AccountService {
         }
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
 
-        return accountDetails != null && accountReferenceConstainsAccount(consent.getAccess().getAccounts(), accountDetails)
-                   ? withBalance && accountReferenceConstainsAccount(consent.getAccess().getBalances(), accountDetails)
+        return accountDetails != null && accountReferenceContainsAccount(consent.getAccess().getAccounts(), accountDetails)
+                   ? withBalance && accountReferenceContainsAccount(consent.getAccess().getBalances(), accountDetails)
                          ? ResponseObject.<AccountDetails>builder().body(accountDetails).build()
                          : ResponseObject.<AccountDetails>builder()
                                .body(getAccountDetailsNoBalances(accountDetails)).build()
@@ -110,7 +110,7 @@ public class AccountService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build();
         }
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-        return accountDetails != null && accountReferenceConstainsAccount(consent.getAccess().getBalances(), accountDetails)
+        return accountDetails != null && accountReferenceContainsAccount(consent.getAccess().getBalances(), accountDetails)
                    ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
                    : ResponseObject.<List<Balances>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
@@ -127,7 +127,7 @@ public class AccountService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
         }
         AccountDetails details = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-        if (details == null || !accountReferenceConstainsAccount(consent.getAccess().getTransactions(), details)) {
+        if (details == null || !accountReferenceContainsAccount(consent.getAccess().getTransactions(), details)) {
             return ResponseObject.<AccountReport>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         } else {
@@ -152,7 +152,7 @@ public class AccountService {
         return getAccountDetailsByAccountReference(reference).isPresent();
     }
 
-    private boolean accountReferenceConstainsAccount(AccountReference[] references, AccountDetails details) {
+    private boolean accountReferenceContainsAccount(AccountReference[] references, AccountDetails details) {
         return Optional.ofNullable(references)
                    .map(Arrays::stream)
                    .map(rStream -> rStream.anyMatch(
@@ -163,7 +163,7 @@ public class AccountService {
 
     private List<AccountDetails> getAccountDetailsWithBalanceByReferences(List<AccountDetails> details, AccountReference[] references) {
         return details.stream()
-                   .map(det -> accountReferenceConstainsAccount(references, det)
+                   .map(det -> accountReferenceContainsAccount(references, det)
                                    ? det
                                    : getAccountDetailsNoBalances(det))
                    .collect(Collectors.toList());
@@ -186,8 +186,9 @@ public class AccountService {
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, String bookingStatus) {
+        Date dateToChecked = dateTo == null ? new Date() : dateTo;
         return StringUtils.isBlank(transactionId)
-                   ? getAccountReportByPeriod(accountId, dateFrom, dateTo == null ? new Date() : dateTo, psuInvolved, withBalance, bookingStatus)
+                   ? getAccountReportByPeriod(accountId, dateFrom, dateToChecked, psuInvolved, withBalance, bookingStatus)
                    : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 

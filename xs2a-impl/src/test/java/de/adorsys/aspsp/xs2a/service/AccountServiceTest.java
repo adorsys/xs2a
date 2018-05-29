@@ -297,7 +297,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountReport_ByTransactionId_WrongConsent_Fauilure() {
+    public void getAccountReport_ByTransactionId_WrongConsent_Failure() {
         //When:
         ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
 
@@ -307,7 +307,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountReport_ByTransactionId_AccountMismatch_Fauilure() {
+    public void getAccountReport_ByTransactionId_AccountMismatch_Failure() {
         //When:
         ResponseObject response = accountService.getAccountReport(CONSENT_ID_WOB, WRONG_ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
 
