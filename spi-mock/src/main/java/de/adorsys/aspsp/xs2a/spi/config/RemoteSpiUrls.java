@@ -75,4 +75,17 @@ public class RemoteSpiUrls {
         return baseUrl + "/payments/createPeriodicPayment/";
     }
 
+    //Transactions urls
+    public String readTransactionById() {
+        return baseUrl + "/transaction/{transactionId}";
+    }
+
+    public String readTransactionsByPeriod() {
+        return baseUrl + "/transaction/{iban}/{currency}/";
+    }
+
+    public String createTransaction() {
+        return baseUrl + "/transaction/";
+    }
+
 }
