@@ -17,8 +17,10 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -30,7 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,7 +66,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, String bookingStatus) {
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
         SpiAccountDetails details = readAccountDetails(accountId);
 
         return Optional.ofNullable(details)
@@ -72,22 +74,23 @@ public class AccountSpiImpl implements AccountSpi {
                    .orElse(Collections.emptyList());
     }
 
-    private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, String bookingStatus) {
-        Map<String, String> uriParams = new HashMap<String, String>();
-        uriParams.put("iban", iban);
-        uriParams.put("currency", currency.toString());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
+        Map<String, String> uriParams = new ObjectHolder<String, String>()
+                                            .addValue("iban", iban)
+                                            .addValue("currency", currency.toString())
+                                            .getValues();
+
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                                           .queryParam("dateFrom", format.format(dateFrom))
-                                           .queryParam("dateTo", format.format(dateTo));
+                                           .queryParam("dateFrom", dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                                           .queryParam("dateTo", dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 
         List<SpiTransaction> spiTransactions = restTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
             }).getBody();
 
-        if (bookingStatus.equals("pending")) {
+        if (SpiBookingStatus.PENDING.equals(bookingStatus)) {
             return getFilteredPendingTransactions(spiTransactions);
-        } else if (bookingStatus.equals("booked")) {
+        } else if (SpiBookingStatus.BOOKED.equals(bookingStatus)) {
             return getFilteredBookedTransactions(spiTransactions);
         }
         return spiTransactions;

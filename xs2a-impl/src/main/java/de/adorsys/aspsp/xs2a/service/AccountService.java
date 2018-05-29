@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -118,7 +119,7 @@ public class AccountService {
 
     public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
-                                                          boolean psuInvolved, String bookingStatus, boolean withBalance, boolean deltaList) {
+                                                          boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
                                      .map(ResponseObject::getBody)
                                      .orElse(null);
@@ -185,14 +186,14 @@ public class AccountService {
             details.getAccountType(), details.getCashAccountType(), details.getBic(), null);
     }
 
-    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, String bookingStatus) {
+    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus) {
         Date dateToChecked = dateTo == null ? new Date() : dateTo;
         return StringUtils.isBlank(transactionId)
                    ? getAccountReportByPeriod(accountId, dateFrom, dateToChecked, psuInvolved, withBalance, bookingStatus)
                    : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
     }
 
-    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) {
+    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus) {
         validate_accountId_period(accountId, dateFrom, dateTo);
         return readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance, bookingStatus);
     }
@@ -203,8 +204,8 @@ public class AccountService {
     }
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
-                                                   Date dateTo, boolean psuInvolved, boolean withBalance, String bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
-        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, bookingStatus));
+                                                   Date dateTo, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
+        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, SpiBookingStatus.valueOf(bookingStatus.name())));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
     }

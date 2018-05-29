@@ -75,7 +75,7 @@ public class AccountServiceTest {
             .thenReturn(Collections.singletonList(getSpiAccountDetails()));
         //getAccountsByConsent Success no balances
         when(consentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(ResponseObject.<AccountConsent>builder().body(new AccountConsent(CONSENT_ID, new AccountAccess(new AccountReference[]{getAccountReference()}, null, null, null, null), false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, false, false)/*getAccountConsent(CONSENT_ID, false, false)*/).build());
+            .thenReturn(ResponseObject.<AccountConsent>builder().body(new AccountConsent(CONSENT_ID, new AccountAccess(new AccountReference[]{getAccountReference()}, null, null, null, null), false, DATE, 4, null, TransactionStatus.ACCP, ConsentStatus.VALID, false, false)).build());
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID, false, false).getAccess()))
             .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(IBAN))))
@@ -290,7 +290,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_Success() {
         //When:
-        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
@@ -299,7 +299,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_WrongConsent_Failure() {
         //When:
-        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -309,7 +309,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_AccountMismatch_Failure() {
         //When:
-        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WOB, WRONG_ACCOUNT_ID, null, null, TRANSACTION_ID, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WOB, WRONG_ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -320,7 +320,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Success() {
         //When:
-        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.getBody()).isEqualTo(getAccountReportDummy());
@@ -329,7 +329,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Failure_Wrong_Account() {
         //When:
-        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, WRONG_ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, WRONG_ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -340,7 +340,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Failure_Wrong_Consent() {
         //When:
-        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, DATE, DATE, null, false, "both", false, false);
+        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);

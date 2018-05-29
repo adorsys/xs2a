@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.Balances;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
@@ -129,7 +126,7 @@ public class AccountController {
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
 
         ResponseObject<AccountReport> responseObject =
-            accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, bookingStatus, withBalance, deltaList);
+            accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
         return responseMapper.ok(responseObject);
     }
 }
