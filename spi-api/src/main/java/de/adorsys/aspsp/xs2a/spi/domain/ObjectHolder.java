@@ -16,9 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain;
 
+import lombok.Value;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Value
 public class ObjectHolder <K, V>{
     private Map<K, V> values = new HashMap<>();
 
@@ -26,9 +29,4 @@ public class ObjectHolder <K, V>{
         values.put(key, value);
         return this;
     }
-
-    public Map<K, V> getValues(){
-        return values;
-    }
-
 }
