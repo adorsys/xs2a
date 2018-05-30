@@ -65,7 +65,7 @@ public class AccountService {
 
         List<AccountDetails> accountDetails = getAccountDetailsWithBalanceByReferences(
             getAccountDetailsFromReferences(consent.getAccess().getAccounts()),
-            withBalance ? consent.getAccess().getBalances() : new ArrayList<>());
+            withBalance ? consent.getAccess().getBalances() : Collections.emptyList());
 
         return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
