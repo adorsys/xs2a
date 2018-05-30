@@ -31,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -133,7 +134,7 @@ public class PaymentControllerTest {
 
     private SpiSinglePayments getSpiSinglePayment() {
         SpiSinglePayments payment = new SpiSinglePayments();
-        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), "20");
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(20));
         SpiAccountReference accountReference = new SpiAccountReference("DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(accountReference);

@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,11 +50,11 @@ public class PaymentService {
         return paymentRepository.save(payments);
     }
 
-    public double calculateAmountToBeCharged(String accountId) {
+    public BigDecimal calculateAmountToBeCharged(String accountId) {
         return paymentRepository.findAll().stream()
             .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
-            .mapToDouble(this::getAmountFromPayment)
-            .sum();
+            .map(this::getAmountFromPayment)
+            .reduce(BigDecimal.ZERO,BigDecimal::add);
     }
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
@@ -62,15 +63,15 @@ public class PaymentService {
             .orElse("");
     }
 
-    private double getAmountFromPayment(SpiSinglePayments payment) {
+    private BigDecimal getAmountFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment)
             .map(paym -> getDoubleContentFromAmount(payment.getInstructedAmount()))
-            .orElse(0.0);
+            .orElse(BigDecimal.ZERO);
     }
 
-    private double getDoubleContentFromAmount(SpiAmount amount) {
+    private BigDecimal getDoubleContentFromAmount(SpiAmount amount) {
         return Optional.ofNullable(amount)
-            .map(SpiAmount::getDoubleContent)
-            .orElse(0.0);
+            .map(SpiAmount::getContent)
+            .orElse(BigDecimal.ZERO);
     }
 }
