@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.payment;
+package de.adorsys.aspsp.xs2a.repository;
 
-    import lombok.Data;
+import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import org.springframework.data.repository.CrudRepository;
 
-@Data
-public class SpiRemittance {
-    private String reference;
-    private String referenceType;
-    private String referenceIssuer;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
+    List<PisConsent> findByConsentStatusIn(Set<SpiConsentStatus> statuses);
+
+    Optional<PisConsent> findByExternalId(String externalId);
 }

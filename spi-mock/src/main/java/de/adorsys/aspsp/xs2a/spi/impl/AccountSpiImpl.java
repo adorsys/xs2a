@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -37,8 +38,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
-    private final RemoteSpiUrls remoteSpiUrls;
-    private final RestTemplate restTemplate;
+    private RemoteSpiUrls remoteSpiUrls;
+    private RestTemplate restTemplate;
 
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {

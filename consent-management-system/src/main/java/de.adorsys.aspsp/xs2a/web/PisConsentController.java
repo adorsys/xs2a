@@ -16,10 +16,49 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import de.adorsys.aspsp.xs2a.service.PisConsentService;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.AuthorizationScope;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "api/v1/pis/consent")
 public class PisConsentController {
+    private final PisConsentService pisConsentService;
+
+
+    @PostMapping(path = "/create")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<String> create(@RequestBody PisConsentRequest request) {
+        return pisConsentService.createConsent(request)
+                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @GetMapping(path = "/{consent-id}/status")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<SpiConsentStatus> getConsentsStatusById(@PathVariable("consent-id") String consentId) {
+        return pisConsentService.getConsentStatusById(consentId)
+                   .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @PutMapping(path = "/{consent-id}/status/{status}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<Void> updateConsentStatus(
+        @PathVariable("consent-id") String consentId,
+        @PathVariable("status") String status) {
+        return pisConsentService.updateConsentStatusById(consentId, SpiConsentStatus.valueOf(status))
+                   .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+
 }

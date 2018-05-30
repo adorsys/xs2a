@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.payment;
+package de.adorsys.aspsp.xs2a.domain;
 
-    import lombok.Data;
+import lombok.Value;
 
-@Data
-public class SpiRemittance {
-    private String reference;
-    private String referenceType;
-    private String referenceIssuer;
+import java.util.Currency;
+
+@Value
+public class AccountReference {
+    private String iban;
+    private Currency currency;
 }
