@@ -28,7 +28,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,12 +74,12 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    private AccountReference[] mapToAccountReferenceList(List<SpiAccountReference> references) {
+    private List<AccountReference> mapToAccountReferenceList(List<SpiAccountReference> references) {
         if (references == null) {
             return null;
         }
 
-        return references.stream().map(this::mapToAccountReference).toArray(AccountReference[]::new);
+        return references.stream().map(this::mapToAccountReference).collect(Collectors.toList());
     }
 
     private AccountReference mapToAccountReference(SpiAccountReference reference) {
@@ -122,12 +121,12 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReferenceList(AccountReference[] references) {
+    private List<SpiAccountReference> mapToSpiAccountReferenceList(List<AccountReference> references) {
         if (references == null) {
             return null;
         }
 
-        return Arrays.stream(references).map(this::mapToSpiAccountReference).collect(Collectors.toList());
+        return references.stream().map(this::mapToSpiAccountReference).collect(Collectors.toList());
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
