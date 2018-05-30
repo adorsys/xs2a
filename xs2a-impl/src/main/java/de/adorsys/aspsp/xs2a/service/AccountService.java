@@ -29,6 +29,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
@@ -154,12 +155,10 @@ public class AccountService {
     }
 
     private boolean accountReferenceContainsAccount(List<AccountReference> references, AccountDetails details) {
-        return Optional.ofNullable(references)
-                   .map(refs -> refs.stream()
-                                       .anyMatch(
-                                           ref -> ref.getIban().equals(details.getIban())
-                                                      && ref.getCurrency().equals(details.getCurrency())))
-                   .orElse(false);
+        return !CollectionUtils.isEmpty(references) && references.stream()
+                                                           .anyMatch(
+                                                               ref -> ref.getIban().equals(details.getIban())
+                                                                          && ref.getCurrency().equals(details.getCurrency()));
     }
 
     private List<AccountDetails> getAccountDetailsWithBalanceByReferences(List<AccountDetails> details, List<AccountReference> references) {
@@ -171,13 +170,13 @@ public class AccountService {
     }
 
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
-        return Optional.ofNullable(references)
-                   .map(ref -> ref.stream()
+        return CollectionUtils.isEmpty(references)
+                   ? Collections.emptyList()
+                   : references.stream()
                                    .map(this::getAccountDetailsByAccountReference)
                                    .filter(Optional::isPresent)
                                    .map(Optional::get)
-                                   .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                                   .collect(Collectors.toList());
     }
 
     private AccountDetails getAccountDetailsNoBalances(AccountDetails details) {

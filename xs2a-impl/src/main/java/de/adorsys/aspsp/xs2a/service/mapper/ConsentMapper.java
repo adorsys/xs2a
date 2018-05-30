@@ -27,7 +27,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,34 +66,32 @@ public class ConsentMapper {
     private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
-                       new AccountAccess(
-                           mapToAccountReferenceList(aa.getAccounts()),
-                           mapToAccountReferenceList(aa.getBalances()),
-                           mapToAccountReferenceList(aa.getTransactions()),
-                           mapToAccountAccessType(aa.getAvailableAccounts()),
-                           mapToAccountAccessType(aa.getAllPsd2()))
+                            new AccountAccess(
+                                mapToAccountReferenceList(aa.getAccounts()),
+                                mapToAccountReferenceList(aa.getBalances()),
+                                mapToAccountReferenceList(aa.getTransactions()),
+                                mapToAccountAccessType(aa.getAvailableAccounts()),
+                                mapToAccountAccessType(aa.getAllPsd2()))
                    )
                    .orElse(null);
     }
 
     private List<AccountReference> mapToAccountReferenceList(List<SpiAccountReference> references) {
-        if (references == null) {
-            return null;
-        }
-
-        return references.stream().map(this::mapToAccountReference).collect(Collectors.toList());
+        return CollectionUtils.isEmpty(references)
+                   ? Collections.emptyList()
+                   : references.stream().map(this::mapToAccountReference).collect(Collectors.toList());
     }
 
     private AccountReference mapToAccountReference(SpiAccountReference reference) {
         return Optional.ofNullable(reference)
-               .map(ar -> {
-                   AccountReference accountReference = new AccountReference();
-                   accountReference.setIban(ar.getIban());
-                   accountReference.setBban(ar.getBban());
-                   accountReference.setPan(ar.getPan());
-                   accountReference.setMaskedPan(ar.getMaskedPan());
-                   accountReference.setMsisdn(ar.getMsisdn());
-                   accountReference.setCurrency(ar.getCurrency());
+                   .map(ar -> {
+                       AccountReference accountReference = new AccountReference();
+                       accountReference.setIban(ar.getIban());
+                       accountReference.setBban(ar.getBban());
+                       accountReference.setPan(ar.getPan());
+                       accountReference.setMaskedPan(ar.getMaskedPan());
+                       accountReference.setMsisdn(ar.getMsisdn());
+                       accountReference.setCurrency(ar.getCurrency());
 
                        return accountReference;
                    }).orElse(null);
@@ -131,13 +131,13 @@ public class ConsentMapper {
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
         return Optional.of(reference)
-               .map(ar -> new SpiAccountReference(
-               ar.getIban(),
-               ar.getBban(),
-               ar.getPan(),
-               ar.getMaskedPan(),
-               ar.getMsisdn(),
-               ar.getCurrency())).orElse(null);
+                   .map(ar -> new SpiAccountReference(
+                       ar.getIban(),
+                       ar.getBban(),
+                       ar.getPan(),
+                       ar.getMaskedPan(),
+                       ar.getMsisdn(),
+                       ar.getCurrency())).orElse(null);
     }
 
     private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
@@ -155,7 +155,7 @@ public class ConsentMapper {
     }
 
     private SpiConsentStatus mapToSpiConsentStatus(ConsentStatus consentStatus) {
-    return SpiConsentStatus.valueOf(consentStatus.name());
+        return SpiConsentStatus.valueOf(consentStatus.name());
     }
 
     private SpiTransactionStatus mapToSpiTransactionStatus(TransactionStatus transactionStatus) {

@@ -107,19 +107,19 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                           .collect(Collectors.toSet());
 
         return Optional.of(getNewAccountAccessByReferences(
-            new ArrayList<AccountReference>(accountsRef),
-            new ArrayList<AccountReference>(balancesRef),
-            new ArrayList<AccountReference>(transactionsRef),
+            new ArrayList<>(accountsRef),
+            new ArrayList<>(balancesRef),
+            new ArrayList<>(transactionsRef),
             null,
             null));
     }
 
     private Set<AccountReference> extractReferenceSetFromDetailsList(List<AccountReference> accountReferencesArr, List<AccountDetails> accountDetails) {
-        return Optional.ofNullable(accountReferencesArr)
-                   .map(arr -> arr.stream()
-                                   .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
-                                   .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
+        return CollectionUtils.isEmpty(accountReferencesArr)
+                   ? Collections.emptySet()
+                   : accountReferencesArr.stream()
+                         .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
+                         .collect(Collectors.toSet());
     }
 
     private Stream<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
@@ -133,7 +133,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return Optional.ofNullable(accountMapper.mapToAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
                    .map(this::mapAccountListToArrayOfReference)
                    .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                                   ? getNewAccountAccessByReferences(ref, new ArrayList<>(), new ArrayList<>(), availableAccounts, null)
+                                   ? getNewAccountAccessByReferences(ref, Collections.emptyList(), Collections.emptyList(), availableAccounts, null)
                                    : getNewAccountAccessByReferences(ref, ref, ref, null, allPsd2)
                    );
     }

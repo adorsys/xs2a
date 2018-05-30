@@ -136,7 +136,7 @@ public class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getAicNoDedicatedAccountRequest() {
 
-        AccountAccess accountAccess = new AccountAccess(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), null, null);
+        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
@@ -149,7 +149,7 @@ public class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getAicAvailableAccountsRequest() {
 
-        AccountAccess accountAccess = new AccountAccess(new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), AccountAccessType.ALL_ACCOUNTS, null);
+        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
