@@ -50,11 +50,7 @@ public class AisAccount {
         this.iban = iban;
     }
 
-    public void addAccesses(Set<AccountAccess> typeAccesses){
-        typeAccesses.forEach(t -> addAccess(t));
-    }
-
-    public void addAccess(AccountAccess access){
-        accesses.add(access);
+    public void addAccesses(Set<AccountAccess> accountAccesses){
+        accesses.addAll(accountAccesses);
     }
 }

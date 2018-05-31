@@ -17,17 +17,22 @@
 package de.adorsys.aspsp.xs2a.account;
 
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import lombok.Getter;
 import lombok.Value;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Value
 @Getter
 public class AccountHolder {
     private Map<String, AccessInfo> ibansAccess = new HashMap<>();
+
+    public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
+        info = Optional.ofNullable(info).orElse(Collections.emptyList());
+        info.forEach(a -> addAccountAccess(a.getIban(), Currency.getInstance(a.getCurrency()), typeAccess));
+    }
 
     public void addAccountAccess(String iban, Currency currency, Set<TypeAccess> accesses) {
         buildInfoDetail(iban)
@@ -39,6 +44,7 @@ public class AccountHolder {
             .addAccess(currency, access);
     }
 
+    // TODO: putIfAbsent(iban, value); https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/122
     private AccessInfo buildInfoDetail(String iban) {
         AccessInfo detail = ibansAccess.get(iban);
         if (detail == null) {
@@ -53,21 +59,20 @@ public class AccountHolder {
     public class AccessInfo {
         private Set<AccountAccess> accesses = new HashSet<>();
 
-        public void addAccess(Currency currency, Set<TypeAccess> typeAccesses) {
+        private void addAccess(Currency currency, Set<TypeAccess> typeAccesses) {
             typeAccesses.forEach(t -> addAccess(currency, t));
         }
 
-        public void addAccess(Currency currency, TypeAccess typeAccess) {
+        private void addAccess(Currency currency, TypeAccess typeAccess) {
             accesses.add(new AccountAccess(currency, typeAccess));
             if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
                 accesses.add(new AccountAccess(currency, TypeAccess.ACCOUNT));
             }
         }
 
-        public Set<Currency> getCurrencies() {
-            return accesses.stream()
-                       .map(a -> a.getCurrency())
-                       .collect(Collectors.toSet());
+        public void updateAccess(Set<AccountAccess> newAccesses) {
+            accesses.clear();
+            accesses.addAll(newAccesses);
         }
     }
 }
