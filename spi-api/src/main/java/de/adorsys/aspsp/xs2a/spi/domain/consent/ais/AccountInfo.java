@@ -16,28 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class AisAccountAccessInfo {
-    private List<AccountInfo> accounts;
-    private List<AccountInfo> balances;
-    private List<AccountInfo> transactions;
-    private SpiAccountAccessType availableAccounts;
-    private SpiAccountAccessType allPsd2;
-
-    public boolean isAllAccountAccess(){
-        return isAllPsd2() || isAvailableAccounts();
-    }
-
-    public boolean isAllPsd2(){
-        return SpiAccountAccessType.ALL_ACCOUNTS == allPsd2;
-    }
-
-    public boolean isAvailableAccounts(){
-        return SpiAccountAccessType.ALL_ACCOUNTS == availableAccounts;
-    }
+public class AccountInfo {
+    private String iban;
+    private String currency;
 }

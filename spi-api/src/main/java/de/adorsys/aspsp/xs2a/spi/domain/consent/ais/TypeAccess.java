@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
 public enum TypeAccess {
     ACCOUNT,

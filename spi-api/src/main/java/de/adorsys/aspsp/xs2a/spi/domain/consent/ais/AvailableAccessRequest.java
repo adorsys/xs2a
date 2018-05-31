@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
-public enum AisConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP
+import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+@Data
+public class AvailableAccessRequest {
+    private String consentId;
+    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
 }

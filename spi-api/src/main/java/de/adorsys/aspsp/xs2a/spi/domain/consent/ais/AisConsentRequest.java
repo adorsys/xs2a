@@ -26,7 +26,6 @@ public class AisConsentRequest {
     private String psuId;
     private String tppId;
     private int frequencyPerDay;
-    private boolean withBalance;
     private AisAccountAccessInfo access;
     @JsonFormat(pattern="dd.MM.yyyy HH:mm")
     private LocalDateTime validUntil;

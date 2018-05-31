@@ -16,10 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public class AisAccountInfo {
-    private String iban;
+@AllArgsConstructor
+@NoArgsConstructor
+public class AccessAccountInfo {
     private String currency;
+    private TypeAccess typeAccess;
 }
