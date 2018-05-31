@@ -39,7 +39,7 @@ import java.util.Set;
 public class AisConsentController {
     private final AisConsentService aisConsentService;
 
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<String> create(@RequestBody AisConsentRequest request) {
         return aisConsentService.createConsent(request)
@@ -55,7 +55,7 @@ public class AisConsentController {
 
     @GetMapping(path = "/{consent-id}")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<SpiAccountConsent> getSpiAccountConsentsById(@PathVariable("consent-id") String consentId) {
+    public ResponseEntity<SpiAccountConsent> getConsentById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.getSpiAccountConsentById(consentId)
                    .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -63,7 +63,7 @@ public class AisConsentController {
 
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<SpiConsentStatus> getAccountConsentsStatusById(@PathVariable("consent-id") String consentId) {
+    public ResponseEntity<SpiConsentStatus> getConsentsStatusById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
