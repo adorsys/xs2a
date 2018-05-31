@@ -1,0 +1,47 @@
+{
+  "singlePayment": {
+    "creditorAccount": {
+      "iban": "string",
+      "bban": "string",
+      "pan": "string",
+      "maskedPan": "string",
+      "msisdn": "string",
+      "currency": "string"
+    },
+    "creditorAddress": {
+      "id": "string",
+      "street": "string",
+      "buildingNumber": "string",
+      "city": "string",
+      "postalCode": "string",
+      "country": "string"
+    },
+    "creditorAgent": "string",
+    "creditorName": "string",
+    "debtorAccount": {
+      "iban": "string",
+      "bban": "string",
+      "pan": "string",
+      "maskedPan": "string",
+      "msisdn": "string",
+      "currency": "string"
+    },
+    "endToEndIdentification": "string",
+    "instructedAmount": {
+      "currency": "string",
+      "content": "string"
+    },
+    "paymentId": "string",
+    "purposeCode": "string",
+    "remittanceInformationStructured": {
+      "reference": "string",
+      "referenceIssuer": "string",
+      "referenceType": "string"
+    },
+    "remittanceInformationUnstructured": "string",
+    "requestedExecutionDate": "2018-05-30T14:17:51.945Z",
+    "requestedExecutionTime": "2018-05-30T14:17:51.945Z",
+    "ultimateCreditor": "string",
+    "ultimateDebtor": "string"
+  }
+}

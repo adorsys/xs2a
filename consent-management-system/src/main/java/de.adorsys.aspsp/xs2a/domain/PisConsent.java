@@ -20,6 +20,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.Date;
 
 @Data
@@ -31,12 +33,20 @@ public class PisConsent {
     private Long id;
     @Column(name = "external_id", nullable = false)
     private String externalId;
-    @Column(name = "debtor_account", nullable = false)
-    private AccountReference debtorAccount;
-    @Column(name = "instructed_amount", nullable = false)
-    private Amount instructedAmount;
-    @Column(name = "creditor_account", nullable = false)
-    private AccountReference creditorAccount;
+    @Column(name = "payment_id", nullable = false)
+    private String paymentId;
+    @Column(name = "end_to_end_identification")
+    private String endToEndIdentification;
+    @Column(name = "debtor_iban", nullable = false)
+    private String debtorIban;
+    @Column(name = "ultimate_debtor", nullable = false)
+    private String ultimateDebtor;
+    @Column(name = "currency", nullable = false)
+    private Currency currency;
+    @Column(name = "amount", nullable = false)
+    private BigDecimal amount;
+    @Column(name = "creditor_iban", nullable = false)
+    private String creditorIban;
     @Column(name = "creditor_agent", nullable = false)
     private String creditorAgent;
     @Column(name = "creditor_name", nullable = false)
@@ -51,4 +61,10 @@ public class PisConsent {
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private ConsentType consentType = ConsentType.PIS;
+    @Column(name = "ultimate_creditor")
+    private String ultimateCreditor;
+    @Column(name = "purpose_code")
+    private String purposeCode;
+    @Column(name = "remittance_information_unstructured")
+    private String remittanceInformationUnstructured;
 }

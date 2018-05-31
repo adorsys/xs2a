@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
@@ -33,8 +34,7 @@ import org.springframework.web.bind.annotation.*;
 public class PisConsentController {
     private final PisConsentService pisConsentService;
 
-
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<String> create(@RequestBody PisConsentRequest request) {
         return pisConsentService.createConsent(request)
@@ -44,9 +44,17 @@ public class PisConsentController {
 
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<SpiConsentStatus> getConsentsStatusById(@PathVariable("consent-id") String consentId) {
+    public ResponseEntity<SpiConsentStatus> getConsentStatusById(@PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @GetMapping(path = "/{consent-id}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<PisConsentResponse> getConsentById(@PathVariable("consent-id") String consentId) {
+        return pisConsentService.getConsentById(consentId)
+                   .map(pc -> new ResponseEntity<>(pc, HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
@@ -59,6 +67,4 @@ public class PisConsentController {
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
-
-
 }

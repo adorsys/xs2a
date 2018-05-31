@@ -16,29 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
-import lombok.Data;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import lombok.Value;
 
-import java.util.Date;
-
-@Data
+@Value
 public class PisConsentRequest {
-    private String paymentId;
-    private String endToEndIdentification;
-    private SpiAccountReference debtorAccount;
-    private String ultimateDebtor;
-    private SpiAmount instructedAmount;
-    private SpiAccountReference creditorAccount;
-    private String creditorAgent;
-    private String creditorName;
-    private SpiAddress creditorAddress;
-    private String ultimateCreditor;
-    private String purposeCode;
-    private String remittanceInformationUnstructured;
-    private SpiRemittance remittanceInformationStructured;
-    private Date requestedExecutionDate;
-    private Date requestedExecutionTime;
+    private SpiSinglePayments singlePayment;
 }

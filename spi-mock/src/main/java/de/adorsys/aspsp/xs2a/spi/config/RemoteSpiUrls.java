@@ -33,7 +33,7 @@ public class RemoteSpiUrls {
     }
 
     public String createConsent() {
-        return consentServiceBaseUrl + "/ais/consent/create";
+        return consentServiceBaseUrl + "/ais/consent/";
     }
 
     public String getAccountConsentStatusById() {

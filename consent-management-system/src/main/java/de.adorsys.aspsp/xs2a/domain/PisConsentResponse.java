@@ -16,13 +16,26 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.Value;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Date;
+
 
 @Value
-public class Amount {
+public class PisConsentResponse {
+    private String externalId;
+    private String paymentId;
+    private String debtorIban;
+    private String ultimateDebtor;
     private Currency currency;
-    private BigDecimal content;
+    private BigDecimal amount;
+    private String creditorIban;
+    private String creditorAgent;
+    private String creditorName;
+    private Date requestedExecutionDate;
+    private Date requestedExecutionTime;
+    private SpiConsentStatus consentStatus;
 }
