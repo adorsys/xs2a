@@ -114,10 +114,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             null));
     }
 
-    private Set<AccountReference> extractReferenceSetFromDetailsList(List<AccountReference> accountReferencesArr, List<AccountDetails> accountDetails) {
-        return CollectionUtils.isEmpty(accountReferencesArr)
+    private Set<AccountReference> extractReferenceSetFromDetailsList(List<AccountReference> accountReferencesList, List<AccountDetails> accountDetails) {
+        return CollectionUtils.isEmpty(accountReferencesList)
                    ? Collections.emptySet()
-                   : accountReferencesArr.stream()
+                   : accountReferencesList.stream()
                          .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
                          .collect(Collectors.toSet());
     }
@@ -172,7 +172,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
         return Optional.ofNullable(references)
-                   .map(ar -> ar.stream()
+                   .map(list -> list.stream()
                                   .map(AccountReference::getIban)
                                   .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
