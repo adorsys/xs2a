@@ -65,11 +65,11 @@ public class PaymentService {
 
     private BigDecimal getAmountFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment)
-            .map(paym -> getDoubleContentFromAmount(payment.getInstructedAmount()))
+            .map(paym -> getContentFromAmount(payment.getInstructedAmount()))
             .orElse(BigDecimal.ZERO);
     }
 
-    private BigDecimal getDoubleContentFromAmount(SpiAmount amount) {
+    private BigDecimal getContentFromAmount(SpiAmount amount) {
         return Optional.ofNullable(amount)
             .map(SpiAmount::getContent)
             .orElse(BigDecimal.ZERO);
