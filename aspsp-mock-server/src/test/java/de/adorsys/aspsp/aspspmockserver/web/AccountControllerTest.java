@@ -36,7 +36,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class) //TODO RE WRITE TESTS
+@RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountControllerTest {
     private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";

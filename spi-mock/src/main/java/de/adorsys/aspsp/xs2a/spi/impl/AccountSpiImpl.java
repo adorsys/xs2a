@@ -17,8 +17,10 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -28,7 +30,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,23 +61,44 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
-        List<SpiTransaction> spiTransactions = new ArrayList<>();
-
-        List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
-        List<SpiTransaction> transactionsFilteredByPeriod = filterTransactionsByPeriod(validSpiTransactions, dateFrom, dateTo);
-
-        return Collections.unmodifiableList(transactionsFilteredByPeriod);
+    public String saveTransaction(SpiTransaction transaction) {
+        return restTemplate.postForEntity(remoteSpiUrls.createTransaction(), transaction, String.class).getBody();
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsById(String accountId, String transactionId) {
-        List<SpiTransaction> spiTransactions = new ArrayList<>();
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
+        SpiAccountDetails details = readAccountDetails(accountId);
 
-        List<SpiTransaction> validSpiTransactions = filterValidTransactionsByAccountId(spiTransactions, accountId);
-        List<SpiTransaction> filteredSpiTransactions = filterValidTransactionsByTransactionId(validSpiTransactions, transactionId);
+        return Optional.ofNullable(details)
+                   .map(det -> getTransactionsByPeriod(det.getIban(), det.getCurrency(), dateFrom, dateTo, bookingStatus))
+                   .orElse(Collections.emptyList());
+    }
 
-        return Collections.unmodifiableList(filteredSpiTransactions);
+    private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
+        Map<String, String> uriParams = new ObjectHolder<String, String>()
+                                            .addValue("iban", iban)
+                                            .addValue("currency", currency.toString())
+                                            .getValues();
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
+                                           .queryParam("dateFrom", dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+                                           .queryParam("dateTo", dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+
+        List<SpiTransaction> spiTransactions = restTemplate.exchange(
+            builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
+            }).getBody();
+
+        if (SpiBookingStatus.PENDING.equals(bookingStatus)) {
+            return getFilteredPendingTransactions(spiTransactions);
+        } else if (SpiBookingStatus.BOOKED.equals(bookingStatus)) {
+            return getFilteredBookedTransactions(spiTransactions);
+        }
+        return spiTransactions;
+    }
+
+    @Override
+    public List<SpiTransaction> readTransactionsById(String transactionId) {
+        return Collections.singletonList(restTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId));
     }
 
     @Override
@@ -97,54 +122,20 @@ public class AccountSpiImpl implements AccountSpi {
                    .collect(Collectors.toList());
     }
 
-    private SpiTransaction[] getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+    private List<SpiTransaction> getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) {
         return spiTransactions.parallelStream()
                    .filter(this::isPendingTransaction)
-                   .toArray(SpiTransaction[]::new);
+                   .collect(Collectors.toList());
     }
 
-    private SpiTransaction[] getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/74
+    private List<SpiTransaction> getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) {
         return spiTransactions.parallelStream()
                    .filter(transaction -> !isPendingTransaction(transaction))
-                   .toArray(SpiTransaction[]::new);
+                   .collect(Collectors.toList());
     }
 
     private boolean isPendingTransaction(SpiTransaction spiTransaction) {
         return spiTransaction.getBookingDate() == null;
     }
 
-    private List<SpiTransaction> filterTransactionsByPeriod(List<SpiTransaction> spiTransactions, Date dateFrom, Date dateTo) {
-        return spiTransactions.parallelStream()
-                   .filter(transaction -> isDateInTimeFrame(transaction.getBookingDate(), dateFrom, dateTo))
-                   .collect(Collectors.toList());
-    }
-
-    private static boolean isDateInTimeFrame(Date currentDate, Date dateFrom, Date dateTo) {
-        return currentDate != null && currentDate.after(dateFrom) && currentDate.before(dateTo);
-    }
-
-    private List<SpiTransaction> filterValidTransactionsByAccountId(List<SpiTransaction> spiTransactions, String accountId) {
-        return spiTransactions.parallelStream()
-                   .filter(transaction -> transactionIsValid(transaction, accountId))
-                   .collect(Collectors.toList());
-    }
-
-    private List<SpiTransaction> filterValidTransactionsByTransactionId(List<SpiTransaction> spiTransactions, String transactionId) {
-        return spiTransactions.parallelStream()
-                   .filter(transaction -> transactionId.equals(transaction.getTransactionId()))
-                   .collect(Collectors.toList());
-    }
-
-    private boolean transactionIsValid(SpiTransaction spiTransaction, String accountId) {
-
-        boolean isCreditorAccountValid = Optional.ofNullable(spiTransaction.getCreditorAccount())
-                                             .map(creditorAccount -> creditorAccount.getIban().trim().equals(accountId))
-                                             .orElse(false);
-
-        boolean isDebtorAccountValid = Optional.ofNullable(spiTransaction.getDebtorAccount())
-                                           .map(debtorAccount -> debtorAccount.getIban().trim().equals(accountId))
-                                           .orElse(false);
-
-        return isCreditorAccountValid || isDebtorAccountValid;
-    }
 }
