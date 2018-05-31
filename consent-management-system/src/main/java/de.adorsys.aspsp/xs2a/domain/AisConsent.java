@@ -42,7 +42,7 @@ public class AisConsent {
     private String externalId;
 
     @Column(name = "recurring_indicator", nullable = false)
-    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true)
+    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for single access to the account data", required = true)
     private boolean recurringIndicator;
 
     @Column(name = "tpp_redirect_preferred", nullable = false)
@@ -58,7 +58,7 @@ public class AisConsent {
     private LocalDateTime requestDate;
 
     @Column(name = "expire_date")
-    @ApiModelProperty(value = "Valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-08-28T16:00:49.455")
+    @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-08-28T16:00:49.455")
     private LocalDateTime expireDate;
 
     @Column(name = "psu_id")
@@ -88,7 +88,7 @@ public class AisConsent {
     private int tppFrequencyPerDay;
 
     @Column(name = "usage_counter", nullable = false)
-    @ApiModelProperty(value = "Count the usages of this consent", required = true, example = "7")
+    @ApiModelProperty(value = "Usage counter for the consent", required = true, example = "7")
     private int usageCounter;
 
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)

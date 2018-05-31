@@ -50,7 +50,7 @@ public class AisConsentController {
     }
 
     @PostMapping(path = "/available/access")
-    @ApiOperation(value = "Check which accesses contain in the consent identified by given consent id", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Check if the requested accesses are granted by the consent identified by given consentId", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<Map<String, Set<AccessAccountInfo>>> checkAvailableAccess(@RequestBody AvailableAccessRequest request) {
         return ResponseEntity.ok(aisConsentService.checkAvailable(request));
     }
@@ -87,7 +87,7 @@ public class AisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateConsentStatus(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "5b0faf87a22b1e1606abb607")
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "PSU_001")
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
