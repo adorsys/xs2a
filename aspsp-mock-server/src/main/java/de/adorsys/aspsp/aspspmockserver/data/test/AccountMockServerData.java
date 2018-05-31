@@ -114,10 +114,7 @@ public class AccountMockServerData {
             new SpiAccountConsent("Acc1WOB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false)
-                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.emptyList(), Collections.emptyList(), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, false, false)
-        );
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false));
         consentRepository.save(
             new SpiAccountConsent("Acc2WB",
                 new SpiAccountAccess(
