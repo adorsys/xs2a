@@ -60,7 +60,7 @@ public class AisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiAccountConsent.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<SpiAccountConsent> getSpiConsentById(
+    public ResponseEntity<SpiAccountConsent> getConsentById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "5b0faf87a22b1e1606abb607")
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getSpiAccountConsentById(consentId)
@@ -73,7 +73,7 @@ public class AisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<SpiConsentStatus> getSpiConsentStatusById(
+    public ResponseEntity<SpiConsentStatus> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "5b0faf87a22b1e1606abb607")
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getConsentStatusById(consentId)

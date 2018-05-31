@@ -100,7 +100,7 @@ public class AccountMockServerData {
         consentRepository.save(
             new SpiAccountConsent("AllWOB",
                 new SpiAccountAccess(
-                    references, references, references, SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
+                    references, Collections.emptyList(), Collections.emptyList(), SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
                 false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
 
@@ -114,6 +114,17 @@ public class AccountMockServerData {
             new SpiAccountConsent("Acc1WOB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false));
+        consentRepository.save(
+            new SpiAccountConsent("Acc2WB",
+                new SpiAccountAccess(
+                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), null, null),
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
+        );
+        consentRepository.save(
+            new SpiAccountConsent("Acc2WOB",
+                new SpiAccountAccess(
+                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.emptyList(), Collections.emptyList(), null, null),
                 false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false)
         );
     }

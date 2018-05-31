@@ -82,4 +82,17 @@ public class RemoteSpiUrls {
         return spiMockBaseUrl + "/payments/createPeriodicPayment/";
     }
 
+    //Transactions urls
+    public String readTransactionById() {
+        return spiMockBaseUrl + "/transaction/{transactionId}";
+    }
+
+    public String readTransactionsByPeriod() {
+        return spiMockBaseUrl + "/transaction/{iban}/{currency}/";
+    }
+
+    public String createTransaction() {
+        return spiMockBaseUrl + "/transaction/";
+    }
+
 }
