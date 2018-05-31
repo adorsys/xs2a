@@ -131,14 +131,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
         return Optional.ofNullable(accountMapper.mapToAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
-                   .map(this::mapAccountListToArrayOfReference)
+                   .map(this::mapAccountListToReferenceList)
                    .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
                                    ? getNewAccountAccessByReferences(ref, Collections.emptyList(), Collections.emptyList(), availableAccounts, null)
                                    : getNewAccountAccessByReferences(ref, ref, ref, null, allPsd2)
                    );
     }
 
-    private List<AccountReference> mapAccountListToArrayOfReference(List<AccountDetails> accountDetails) {
+    private List<AccountReference> mapAccountListToReferenceList(List<AccountDetails> accountDetails) {
         return accountDetails.stream()
                    .map(this::mapAccountDetailsToReference)
                    .collect(Collectors.toList());
