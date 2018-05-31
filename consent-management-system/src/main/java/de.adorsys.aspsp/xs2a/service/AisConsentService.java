@@ -83,6 +83,18 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
+    public Map<String, Set<AccessAccountInfo>> checkAvailable(AvailableAccessRequest request) {
+        AisConsent aisConsent = aisConsentRepository.findByExternalId(request.getConsentId())
+                                    .orElseThrow(() -> new ConsentException("Consent id not found"));
+
+        if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
+            throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
+        }
+        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
+        Map<String, Set<AccessAccountInfo>> incomingAccounts = request.getAccountsAccesses();
+        return filterIncomingAccounts(targetAccounts, incomingAccounts);
+    }
+
     private Optional<AisConsent> getAisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(aisConsentRepository::findByExternalId);
@@ -96,7 +108,7 @@ public class AisConsentService {
     private List<AisAccount> readAccounts(AisConsentRequest request) {
         return request.getAccess().isAllAccountAccess()
                    ? readAccountsByPsuId(request.getAccess(), request.getPsuId())
-                   : readAccountsByIban(request.getAccess());
+                   : readAccountsByAccess(request.getAccess());
     }
 
     private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId) {
@@ -120,9 +132,9 @@ public class AisConsentService {
                    : EnumSet.of(TypeAccess.ACCOUNT);
     }
 
-    private List<AisAccount> readAccountsByIban(AisAccountAccessInfo access) {
+    private List<AisAccount> readAccountsByAccess(AisAccountAccessInfo access) {
         Map<String, AccountHolder.AccessInfo> accountsByAccess = buildAccountsHolderByAccess(access);
-        Map<String, Set<Currency>> bankAccounts = getBankAccount(accountsByAccess);
+        Map<String, Set<Currency>> bankAccounts = getBankAccountsMapByIbans(accountsByAccess.keySet());
 
         Map<String, AccountHolder.AccessInfo> filtered = filterAccessAccounts(accountsByAccess, bankAccounts);
         return buildAccounts(filtered);
@@ -135,8 +147,8 @@ public class AisConsentService {
                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<String, Set<Currency>> getBankAccount(Map<String, AccountHolder.AccessInfo> accountsDetailByAccess) {
-        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(accountsDetailByAccess.keySet()))
+    private Map<String, Set<Currency>> getBankAccountsMapByIbans(Set<String> ibans) {
+        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(ibans))
                                                      .orElse(Collections.emptyList());
         return accountDetails.stream()
                    .collect(Collectors.groupingBy(SpiAccountDetails::getIban, Collectors.mapping(SpiAccountDetails::getCurrency, toSet())));
@@ -169,17 +181,6 @@ public class AisConsentService {
         AisAccount account = new AisAccount(iban);
         account.addAccesses(accountsDetail.getAccesses());
         return account;
-    }
-
-    public Map<String, Set<AccessAccountInfo>> checkAvailable(AvailableAccessRequest request) {
-        Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
-        AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
-        if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
-            throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
-        }
-        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
-        Map<String, Set<AccessAccountInfo>> incomingAccounts = request.getAccountsAccesses();
-        return filterIncomingAccounts(targetAccounts, incomingAccounts);
     }
 
     private Map<String, Set<AccessAccountInfo>> filterIncomingAccounts(Map<String, Set<AccessAccountInfo>> targetAccounts, Map<String, Set<AccessAccountInfo>> incomingAccounts) {
