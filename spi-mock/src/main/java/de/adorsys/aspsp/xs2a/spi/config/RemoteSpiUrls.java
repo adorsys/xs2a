@@ -27,21 +27,38 @@ public class RemoteSpiUrls {
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
-    //Consents urls
-    public String updateConsentStatus() {
+    // AIS Consents
+    public String updateAisConsentStatus() {
         return consentServiceBaseUrl + "/ais/consent/{consentId}/status/{status}";
     }
 
-    public String createConsent() {
+    public String createAisConsent() {
         return consentServiceBaseUrl + "/ais/consent/";
     }
 
-    public String getAccountConsentStatusById() {
+    public String getAisConsentStatusById() {
         return consentServiceBaseUrl + "/ais/consent/{consentId}/status";
     }
 
-    public String getConsentById() {
+    public String getAisConsentById() {
         return consentServiceBaseUrl + "/ais/consent/{consentId}";
+    }
+
+    // PIS Consents
+    public String createPisConsent() {
+        return consentServiceBaseUrl + "/pis/consent/";
+    }
+
+    public String updatePisConsentStatus() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
+    }
+
+    public String getPisConsentStatusById() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
+    }
+
+    public String getPisConsentById() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}";
     }
 
     public String getConsentByAccess() {

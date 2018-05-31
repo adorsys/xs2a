@@ -36,25 +36,25 @@ public class ConsentSpiImpl implements ConsentSpi {
 
     @Override
     public String createAccountConsent(SpiAccountConsent consent) {
-        ResponseEntity<String> response = restTemplate.postForEntity(remoteSpiUrls.createConsent(), consent, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(remoteSpiUrls.createAisConsent(), consent, String.class);
         return response.getBody();
     }
 
     @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
-        ResponseEntity<SpiAccountConsent> response = restTemplate.getForEntity(remoteSpiUrls.getConsentById(), SpiAccountConsent.class, consentId);
+        ResponseEntity<SpiAccountConsent> response = restTemplate.getForEntity(remoteSpiUrls.getAisConsentById(), SpiAccountConsent.class, consentId);
         return response.getBody();
     }
 
     @Override
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
-        ResponseEntity<SpiConsentStatus> response = restTemplate.getForEntity(remoteSpiUrls.getAccountConsentStatusById(), SpiConsentStatus.class, consentId);
+        ResponseEntity<SpiConsentStatus> response = restTemplate.getForEntity(remoteSpiUrls.getAisConsentStatusById(), SpiConsentStatus.class, consentId);
         return response.getBody();
     }
 
     @Override
     public void deleteAccountConsentById(String consentId) {
-        restTemplate.put(remoteSpiUrls.updateConsentStatus(),null,  consentId, SpiConsentStatus.REVOKED_BY_PSU);
+        restTemplate.put(remoteSpiUrls.updateAisConsentStatus(),null,  consentId, SpiConsentStatus.REVOKED_BY_PSU);
     }
 
     @Override
