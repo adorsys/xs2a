@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -56,8 +59,8 @@ public class ConsentInformationControllerTest {
     public void setUp() {
         when(consentService.createAccountConsentsWithResponse(any(), anyBoolean(), anyBoolean(), eq(CORRECT_PSU_ID))).thenReturn(createConsentResponse(CONSENT_ID));
         when(consentService.createAccountConsentsWithResponse(any(), anyBoolean(), anyBoolean(), eq(WRONG_PSU_ID))).thenReturn(createConsentResponse(null));
-        when(consentService.getAccountConsentsStatusById(CONSENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RCVD).build());
-        when(consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
+        when(consentService.getAccountConsentsStatusById(CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatus>builder().body(ConsentStatus.RECEIVED).build());
+        when(consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
         when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(getConsent(CONSENT_ID));
         when(consentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(getConsent(WRONG_CONSENT_ID));
         when(consentService.deleteAccountConsentsById(CONSENT_ID)).thenReturn(ResponseObject.<Void>builder().build());
@@ -77,7 +80,7 @@ public class ConsentInformationControllerTest {
 
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
+        assertThat(resp.getConsentStatus()).isEqualTo(ConsentStatus.RECEIVED);
         assertThat(resp.getConsentId()).isEqualTo(CONSENT_ID);
     }
 
@@ -99,7 +102,7 @@ public class ConsentInformationControllerTest {
         ResponseEntity responseEntity = consentInformationController.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isEqualTo(TransactionStatus.RCVD);
+        assertThat(responseEntity.getBody()).isEqualTo(ConsentStatus.RECEIVED);
     }
 
     @Test
@@ -147,13 +150,13 @@ public class ConsentInformationControllerTest {
     private ResponseObject createConsentResponse(String consentId) {
         return isEmpty(consentId)
                ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
-               : ResponseObject.builder().body(new CreateConsentResp(TransactionStatus.RCVD, consentId, null, new Links(), null)).build();
+               : ResponseObject.builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId, null, new Links(), null)).build();
     }
 
     private ResponseObject getConsent(String consentId) {
         AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
                                         ? null
-                                        : new AccountConsent(consentId, new AccountAccess(null,null,null,null,null), false, new Date(), 4, new Date(), TransactionStatus.RCVD, ConsentStatus.VALID, false, false);
+                                        : new AccountConsent(consentId, new AccountAccess(null,null,null,null,null), false, new Date(), 4, new Date(), ConsentStatus.VALID, false, false);
         return isEmpty(accountConsent)
                ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build()
                : ResponseObject.builder().body(accountConsent).build();

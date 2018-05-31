@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
@@ -66,10 +66,10 @@ public class ConsentInformationController {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<TransactionStatus> getAccountConsentsStatusById(
+    public ResponseEntity<ConsentStatus> getAccountConsentsStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject<TransactionStatus> response = consentService.getAccountConsentsStatusById(consentId);
+        ResponseObject<ConsentStatus> response = consentService.getAccountConsentsStatusById(consentId);
         return responseMapper.ok(response);
     }
 
