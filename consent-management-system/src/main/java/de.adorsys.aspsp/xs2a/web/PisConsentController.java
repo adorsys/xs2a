@@ -16,10 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "api/v1/pis/consent")
+@Api(value = "pis/consent", tags = "PIS, Consents", description = "Provides access to consent management system for PIS")
 public class PisConsentController {
 }

@@ -38,7 +38,7 @@ public class PeriodicPaymentsController {
     @ApiResponses(value = {
     @ApiResponse(code = 201, message = "Created"),
     @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ApiImplicitParams({
     @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26 example", required = true, paramType = "header"),
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),

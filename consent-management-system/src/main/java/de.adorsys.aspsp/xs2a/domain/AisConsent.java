@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
@@ -28,54 +30,69 @@ import java.util.List;
 @Data
 @ToString(exclude = "accounts")
 @Entity(name = "ais_consent")
+@ApiModel(description = "Ais consent entity", value = "AisConsent")
 public class AisConsent {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_generator")
-    @SequenceGenerator(name="ais_consent_generator", sequenceName = "ais_consent_id_seq")
+    @SequenceGenerator(name = "ais_consent_generator", sequenceName = "ais_consent_id_seq")
     private Long id;
 
     @Column(name = "external_id", nullable = false)
+    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = false)
     private String externalId;
 
     @Column(name = "recurring_indicator", nullable = false)
+    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true)
     private boolean recurringIndicator;
 
     @Column(name = "tpp_redirect_preferred", nullable = false)
+    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     private boolean tppRedirectPreferred;
 
     @Column(name = "combined_service_indicator", nullable = false)
+    @ApiModelProperty(value = "'true' if aspsp supports combined sessions, otherwise 'false'.", required = true, example = "false")
     private boolean combinedServiceIndicator;
 
     @Column(name = "request_date", nullable = false)
+    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-08-28T16:00:49.455")
     private LocalDateTime requestDate;
 
     @Column(name = "expire_date")
+    @ApiModelProperty(value = "Valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-08-28T16:00:49.455")
     private LocalDateTime expireDate;
 
     @Column(name = "psu_id")
+    @ApiModelProperty(value = "Psu id", required = true, example = "5b0faf87a22b1e1606abb607")
     private String psuId;
 
     @Column(name = "tpp_id", nullable = false)
+    @ApiModelProperty(value = "TPP id", required = true, example = "5c0faf87a22b1e1606htt607")
     private String tppId;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private SpiConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the consent: AIS or PIS.", required = true, example = "AIS")
     private ConsentType consentType = ConsentType.AIS;
 
     @Column(name = "expected_frequency_per_day", nullable = false)
+    @ApiModelProperty(value = "Maximum frequency for an access per day, based on tppFrequencyPerDate and inner calculations. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int expectedFrequencyPerDay;
 
     @Column(name = "tpp_frequency_per_day", nullable = false)
+    @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int tppFrequencyPerDay;
 
     @Column(name = "usage_counter", nullable = false)
+    @ApiModelProperty(value = "Count the usages of this consent", required = true, example = "7")
     private int usageCounter;
 
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @ApiModelProperty(value = "List of accounts related to the consent", required = true)
     private List<AisAccount> accounts = new ArrayList<>();
 
     public void addAccounts(List<AisAccount> accounts) {

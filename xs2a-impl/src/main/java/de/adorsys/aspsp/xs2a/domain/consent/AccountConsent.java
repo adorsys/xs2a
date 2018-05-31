@@ -51,7 +51,7 @@ public class AccountConsent {
     @JsonFormatDateUTC
     private final Date lastActionDate;
 
-    @ApiModelProperty(value = "The following code values are permitted 'empty', 'valid', 'blocked', 'expired', 'deleted'. These values might be extended by ASPSP by more values.", required = true)
+    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private final ConsentStatus consentStatus;
 
     @ApiModelProperty(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
