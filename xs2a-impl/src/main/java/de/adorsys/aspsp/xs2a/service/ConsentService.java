@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
-    private final String consentsLinkRedirectToSource;
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
     private final AccountMapper accountMapper;
@@ -45,7 +44,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         Optional<String> consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
         return consentId.isPresent()
-                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId.get(), null, getLinkToConsent(consentId.get()), null)).build()
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId.get(), null, null, null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR))).build();
     }
 
@@ -198,21 +197,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         reference.setMsisdn(details.getMsisdn());
         reference.setCurrency(details.getCurrency());
         return reference;
-    }
-
-    private Links getLinkToConsent(String consentId) {
-        Links linksToConsent = new Links();
-
-        // Response in case of the OAuth2 approach
-        // todo figure out when we should return  OAuth2 response
-        //String selfLink = linkTo(ConsentInformationController.class).slash(consentId).toString();
-        //linksToConsent.setSelf(selfLink);
-
-        // Response in case of a redirect
-        String redirectLink = consentsLinkRedirectToSource + "/" + consentId;
-        linksToConsent.setRedirect(redirectLink);
-
-        return linksToConsent;
     }
 
     private AccountReference[] setToArray(Set<AccountReference> set) {

@@ -5,8 +5,8 @@ setting:
  - sepa-credit-transfers
  - instant-sepa-credit-transfers
  availablePaymentTypes :
- -bulk
- -periodik
+ - bulk
+ - periodik
  scaApproach: redirect
 
 
