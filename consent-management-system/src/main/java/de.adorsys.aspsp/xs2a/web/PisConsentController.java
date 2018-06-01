@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/pis/consent")
+@RequestMapping(path = "pis/consent")
 public class PisConsentController {
     private final PisConsentService pisConsentService;
 

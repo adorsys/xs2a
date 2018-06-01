@@ -63,7 +63,7 @@ public class AisConsentController {
 
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<SpiConsentStatus> getConsentsStatusById(@PathVariable("consent-id") String consentId) {
+    public ResponseEntity<SpiConsentStatus> getConsentStatusById(@PathVariable("consent-id") String consentId) {
         return aisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
