@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-    import lombok.Data;
+import lombok.Data;
 
 @Data
 public class SpiRemittance {
