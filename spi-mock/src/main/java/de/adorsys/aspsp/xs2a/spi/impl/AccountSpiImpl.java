@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
-    private RemoteSpiUrls remoteSpiUrls;
-    private RestTemplate restTemplate;
+    private final RemoteSpiUrls remoteSpiUrls;
+    private final RestTemplate restTemplate;
 
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
