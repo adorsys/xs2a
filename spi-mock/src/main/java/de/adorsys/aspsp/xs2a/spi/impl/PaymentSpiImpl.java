@@ -24,12 +24,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -44,20 +45,20 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate restTemplate;
     private final RemoteSpiUrls remoteSpiUrls;
 
-    private final boolean redirectMode = true;
+    private final boolean redirectMode = true; // todo remake business logic according task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/100
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
         return redirectMode
-                   ? paymentForRedirectMode(spiSinglePayments)
+                   ? paymentForRedirectMode(spiSinglePayments, tppRedirectPreferred)
                    : paymentForOauthMode(spiSinglePayments, tppRedirectPreferred);
     }
 
-    private SpiPaymentInitialisationResponse paymentForRedirectMode(SpiSinglePayments spiSinglePayments) {
+    private SpiPaymentInitialisationResponse paymentForRedirectMode(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
         String pisConsentId = createPisConsent(spiSinglePayments);
-        return StringUtils.isEmpty(pisConsentId)
-                   ? null
-                   : mapToSpiPaymentResponseByPisConsentId(pisConsentId, true);
+        return !StringUtils.isBlank(pisConsentId)
+                   ? mapToSpiPaymentResponseByPisConsentId(pisConsentId, tppRedirectPreferred)
+                   : null;
     }
 
     private SpiPaymentInitialisationResponse paymentForOauthMode(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
