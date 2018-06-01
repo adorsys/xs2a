@@ -101,11 +101,6 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAllAccounts() {
-        //TODO this is a task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/71
-    }
-
-    @Test
     public void getAccountByIban_Success() {
         //Given
         List<SpiAccountDetails> expectedSpiAccountDetails = getAccounts();

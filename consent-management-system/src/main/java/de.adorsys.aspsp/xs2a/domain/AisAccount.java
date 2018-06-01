@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,15 +36,8 @@ public class AisAccount {
     private String iban;
 
     @ElementCollection
-    @CollectionTable(name="ais_account_currency", joinColumns=@JoinColumn(name="account_id"))
-    @Column(name = "currency", nullable = false)
-    private Set<Currency> currencies = new HashSet<>();
-
-    @ElementCollection(targetClass = TypeAccess.class)
     @CollectionTable(name="ais_account_access", joinColumns=@JoinColumn(name="account_id"))
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "type_access", nullable = false)
-    private Set<TypeAccess> accesses = new HashSet<>();
+    private Set<AccountAccess> accesses = new HashSet<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,19 +50,7 @@ public class AisAccount {
         this.iban = iban;
     }
 
-    public void addAccesses(Set<TypeAccess> typeAccesses){
-        typeAccesses.forEach(t -> addAccess(t));
-    }
-
-    public void addAccess(TypeAccess typeAccess){
-        accesses.add(typeAccess);
-    }
-
-    public void addCurrencies(Set<Currency> currencies){
-        currencies.forEach(c -> addCurrency(c));
-    }
-
-    public void addCurrency(Currency currency){
-        currencies.add(currency);
+    public void addAccesses(Set<AccountAccess> accountAccesses){
+        accesses.addAll(accountAccesses);
     }
 }

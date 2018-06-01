@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.spi.domain;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
-public class AisAccountInfo {
-    private String iban;
-    private String currency;
+import java.util.HashMap;
+import java.util.Map;
+
+@Value
+public class ObjectHolder <K, V>{
+    private Map<K, V> values = new HashMap<>();
+
+    public ObjectHolder<K, V> addValue(K key, V value){
+        values.put(key, value);
+        return this;
+    }
 }

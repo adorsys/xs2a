@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-public enum AisConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP
+public enum SpiBookingStatus {
+    PENDING, BOOKED, BOTH;
 }

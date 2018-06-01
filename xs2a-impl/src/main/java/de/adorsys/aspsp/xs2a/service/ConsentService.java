@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id amd only return data which belongs to certain PSU Task #110
+public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final String consentsLinkRedirectToSource;
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;

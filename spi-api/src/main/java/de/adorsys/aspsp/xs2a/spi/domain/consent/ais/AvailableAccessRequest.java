@@ -16,28 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import lombok.Data;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Data
-public class AisAccountAccessInfo {
-    private List<AccountInfo> accounts;
-    private List<AccountInfo> balances;
-    private List<AccountInfo> transactions;
-    private SpiAccountAccessType availableAccounts;
-    private SpiAccountAccessType allPsd2;
-
-    public boolean isAllAccountAccess(){
-        return isAllPsd2() || isAvailableAccounts();
-    }
-
-    public boolean isAllPsd2(){
-        return SpiAccountAccessType.ALL_ACCOUNTS == allPsd2;
-    }
-
-    public boolean isAvailableAccounts(){
-        return SpiAccountAccessType.ALL_ACCOUNTS == availableAccounts;
-    }
+public class AvailableAccessRequest {
+    private String consentId;
+    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
 }

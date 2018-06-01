@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.xs2a.schedule;
 
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
-import de.adorsys.aspsp.xs2a.domain.AisConsentStatus;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.ProfileService;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -43,7 +43,7 @@ public class ConsentScheduleTask {
     public void checkConsentStatus(){
         log.info("Consent schedule task is run!");
 
-        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(AisConsentStatus.RECEIVED, AisConsentStatus.VALID)))
+        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(SpiConsentStatus.RECEIVED, SpiConsentStatus.VALID)))
             .orElse(Collections.emptyList());
         aisConsentRepository.save(updateConsent(availableConsents));
     }
@@ -60,9 +60,9 @@ public class ConsentScheduleTask {
         return consent;
     }
 
-    private AisConsentStatus updateConsentStatus(AisConsent consent) {
+    private SpiConsentStatus updateConsentStatus(AisConsent consent) {
         return LocalDateTime.now().isAfter(consent.getExpireDate())
-            ? AisConsentStatus.EXPIRED :
+            ? SpiConsentStatus.EXPIRED :
             consent.getConsentStatus();
     }
 }

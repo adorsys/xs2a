@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@ToString(exclude = "accounts")
 @Entity(name = "ais_consent")
 public class AisConsent {
     @Id
@@ -43,9 +46,6 @@ public class AisConsent {
     @Column(name = "combined_service_indicator", nullable = false)
     private boolean combinedServiceIndicator;
 
-    @Column(name = "with_balance", nullable = false)
-    private boolean withBalance;
-
     @Column(name = "request_date", nullable = false)
     private LocalDateTime requestDate;
 
@@ -60,7 +60,7 @@ public class AisConsent {
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private AisConsentStatus consentStatus;
+    private SpiConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -79,10 +79,10 @@ public class AisConsent {
     private List<AisAccount> accounts = new ArrayList<>();
 
     public void addAccounts(List<AisAccount> accounts) {
-        accounts.forEach(a -> addAccount(a));
+        accounts.forEach(this::addAccount);
     }
 
-    public void addAccount(AisAccount account) {
+    private void addAccount(AisAccount account) {
         this.accounts.add(account);
         account.setConsent(this);
     }

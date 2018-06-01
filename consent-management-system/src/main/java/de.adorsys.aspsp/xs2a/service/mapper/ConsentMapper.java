@@ -16,22 +16,20 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
-import de.adorsys.aspsp.xs2a.domain.AisConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -46,45 +44,47 @@ public class ConsentMapper {
             consent.getTppFrequencyPerDay(),
             convertToDate(consent.getRequestDate()),
             mapToSpiConsentStatus(consent.getConsentStatus()),
-            consent.isWithBalance(), consent.isTppRedirectPreferred());
+            false, consent.isTppRedirectPreferred());
+    }
+
+    public Map<String, Set<AccessAccountInfo>> toMap(List<AisAccount> accounts) {
+        return accounts.stream()
+                   .collect(Collectors.toMap(e -> e.getIban(), e -> accessAccountInfos(e.getAccesses())));
     }
 
     private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
-        List<AisAccount> transactions = filterAccountsByTypeAccess(aisAccounts, TypeAccess.TRANSACTION);
-        List<AisAccount> balances = filterAccountsByTypeAccess(aisAccounts, TypeAccess.BALANCE);
-        List<AisAccount> accounts = filterAccountsByTypeAccess(aisAccounts, TypeAccess.ACCOUNT);
-
-        return new SpiAccountAccess(mapToSpiAccountReference(accounts),
-            mapToSpiAccountReference(balances),
-            mapToSpiAccountReference(transactions),
-            SpiAccountAccessType.ALL_ACCOUNTS,
-            SpiAccountAccessType.ALL_ACCOUNTS);
+        return new SpiAccountAccess(mapToSpiAccountReference(aisAccounts, TypeAccess.ACCOUNT),
+            mapToSpiAccountReference(aisAccounts, TypeAccess.BALANCE),
+            mapToSpiAccountReference(aisAccounts, TypeAccess.TRANSACTION),
+            null,
+            null);
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReference(List<AisAccount> aisAccounts) {
+    private List<SpiAccountReference> mapToSpiAccountReference(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
         return aisAccounts.stream()
-                   .map(this::mapToSpiAccountReference)
+                   .map(acc -> mapToSpiAccountReference(acc, typeAccess))
                    .flatMap(Collection::stream)
                    .collect(Collectors.toList());
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReference(AisAccount aisAccount) {
-        return aisAccount.getCurrencies().stream()
-                   .map(cur -> new SpiAccountReference(aisAccount.getIban(), "", "", "", "", cur))
+    private List<SpiAccountReference> mapToSpiAccountReference(AisAccount aisAccount, TypeAccess typeAccess) {
+        return aisAccount.getAccesses().stream()
+                   .filter(ass -> ass.getTypeAccess() == typeAccess)
+                   .map(access -> new SpiAccountReference(aisAccount.getIban(), "", "", "", "", access.getCurrency()))
                    .collect(Collectors.toList());
     }
 
-    private List<AisAccount> filterAccountsByTypeAccess(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
-        return aisAccounts.stream()
-                   .filter(acc -> acc.getAccesses().contains(typeAccess))
-                   .collect(Collectors.toList());
-    }
-
-    private SpiConsentStatus mapToSpiConsentStatus(AisConsentStatus consentStatus) {
+    private SpiConsentStatus mapToSpiConsentStatus(SpiConsentStatus consentStatus) {
         return SpiConsentStatus.valueOf(consentStatus.name());
     }
 
     private Date convertToDate(LocalDateTime dateToConvert) {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    private Set<AccessAccountInfo> accessAccountInfos(Set<AccountAccess> accesses) {
+        return accesses.stream()
+                   .map(a -> new AccessAccountInfo(a.getCurrency().getCurrencyCode(), a.getTypeAccess()))
+                   .collect(Collectors.toSet());
     }
 }
