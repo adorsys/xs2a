@@ -76,7 +76,6 @@ public class PisConsentService {
                    .map(sp -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPaymentId(sp.getPaymentId());
                        consent.setEndToEndIdentification(sp.getEndToEndIdentification());
                        consent.setDebtorIban(sp.getDebtorAccount().getIban());
                        consent.setUltimateDebtor(sp.getUltimateDebtor());
@@ -99,7 +98,6 @@ public class PisConsentService {
         return Optional.ofNullable(pisConsent)
                    .map(pc -> new PisConsentResponse(
                        pc.getExternalId(),
-                       pc.getPaymentId(),
                        pc.getDebtorIban(),
                        pc.getUltimateDebtor(),
                        pc.getCurrency(),

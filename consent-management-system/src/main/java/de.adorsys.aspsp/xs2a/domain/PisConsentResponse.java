@@ -27,7 +27,6 @@ import java.util.Date;
 @Value
 public class PisConsentResponse {
     private String externalId;
-    private String paymentId;
     private String debtorIban;
     private String ultimateDebtor;
     private Currency currency;

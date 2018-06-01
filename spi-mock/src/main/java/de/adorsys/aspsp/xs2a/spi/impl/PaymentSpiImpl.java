@@ -34,7 +34,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -49,8 +48,6 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
-        String paymentId = UUID.randomUUID().toString();
-        spiSinglePayments.setPaymentId(paymentId);
         return redirectMode
                    ? paymentForRedirectMode(spiSinglePayments)
                    : paymentForOauthMode(spiSinglePayments, tppRedirectPreferred);

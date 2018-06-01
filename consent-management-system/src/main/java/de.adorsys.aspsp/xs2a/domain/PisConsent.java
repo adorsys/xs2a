@@ -33,8 +33,6 @@ public class PisConsent {
     private Long id;
     @Column(name = "external_id", nullable = false)
     private String externalId;
-    @Column(name = "payment_id", nullable = false)
-    private String paymentId;
     @Column(name = "end_to_end_identification")
     private String endToEndIdentification;
     @Column(name = "debtor_iban", nullable = false)
