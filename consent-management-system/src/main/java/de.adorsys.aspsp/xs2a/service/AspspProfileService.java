@@ -46,4 +46,8 @@ public class AspspProfileService {
     public String getScaApproach() {
         return profileConfiguration.getScaApproach();
     }
+
+    public int getMinFrequencyPerDay(int tppFrequency){
+        return Math.min(tppFrequency, profileConfiguration.getFrequencyPerDay());
+    }
 }
