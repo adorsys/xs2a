@@ -30,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -158,7 +159,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountsByPsuId(){
+    public void getAccountsByPsuId() {
         //When:
         List<SpiAccountDetails> actualList = accountService.getAccountsByPsuId(PSU_ID);
         //Then:
@@ -168,7 +169,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void getAccountsByPsuId_Failure(){
+    public void getAccountsByPsuId_Failure() {
         //When:
         List<SpiAccountDetails> actualList = accountService.getAccountsByPsuId(WRONG_PSU_ID);
         //Then:
@@ -191,8 +192,8 @@ public class AccountServiceTest {
         Currency euro = Currency.getInstance("EUR");
 
         SpiBalances balance = new SpiBalances();
-        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, "1000")));
-        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, "200")));
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, BigDecimal.valueOf(1000))));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, BigDecimal.valueOf(200))));
 
         return Collections.singletonList(balance);
     }

@@ -35,6 +35,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_UNKNOWN_403;
@@ -414,7 +415,7 @@ public class AccountServiceTest {
     private List<SpiBalances> getSpiBalances() {
         SpiBalances balances = new SpiBalances();
         SpiAccountBalance sb = new SpiAccountBalance();
-        SpiAmount amount = new SpiAmount(CURRENCY, "1000");
+        SpiAmount amount = new SpiAmount(CURRENCY, BigDecimal.valueOf(1000));
         sb.setSpiAmount(amount);
         balances.setOpeningBooked(sb);
         return Collections.singletonList(new SpiBalances());
