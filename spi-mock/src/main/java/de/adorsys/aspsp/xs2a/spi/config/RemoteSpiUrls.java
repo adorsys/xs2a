@@ -51,7 +51,7 @@ public class RemoteSpiUrls {
      * @Method GET
      * @PathVariable String consentId
      */
-    public String getAccountConsentStatusById() {
+    public String getConsentStatusById() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
     }
 

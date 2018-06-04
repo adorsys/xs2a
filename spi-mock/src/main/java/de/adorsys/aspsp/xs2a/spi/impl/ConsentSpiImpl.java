@@ -51,7 +51,7 @@ public class ConsentSpiImpl implements ConsentSpi {
 
     @Override
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
-        return restTemplate.getForEntity(remoteSpiUrls.getAccountConsentStatusById(), SpiConsentStatus.class, consentId).getBody();
+        return restTemplate.getForEntity(remoteSpiUrls.getConsentStatusById(), SpiConsentStatus.class, consentId).getBody();
     }
 
     @Override
