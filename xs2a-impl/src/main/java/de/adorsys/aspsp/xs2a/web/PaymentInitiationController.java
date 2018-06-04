@@ -44,7 +44,7 @@ public class PaymentInitiationController {
     @ApiImplicitParams({
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.8.78 example", required = true, dataType = "String", paramType = "header"),
+    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.8.78", required = true, dataType = "String", paramType = "header"), //NOPMD value is correct according to specification
     @ApiImplicitParam(name = "psu-id", value = "12312324", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-id-type", value = "Type of the PSU-ID", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-corporate-id", value = "Might be mandated in the ASPSP’s documentation", required = false, dataType = "String", paramType = "header"),
