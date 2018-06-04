@@ -53,9 +53,10 @@ public class AisConsentService {
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);
-        consent.setExpectedFrequencyPerDay(profileService.getMinFrequencyPerDay(request.getFrequencyPerDay()));
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
-        consent.setUsageCounter(request.getFrequencyPerDay());
+        consent.setUsageCounter(minFrequencyPerDay);
         consent.setRequestDate(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
@@ -92,6 +93,17 @@ public class AisConsentService {
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
             throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
         }
+        if(aisConsent.getConsentStatus() == RECEIVED){
+            aisConsent.setConsentStatus(VALID);
+        }
+        int usageCounter = aisConsent.getUsageCounter();
+        int newUsageCounter = --usageCounter;
+        if(newUsageCounter < 0){
+            throw new ConsentException("Limit of usage is exceeded");
+        }
+        aisConsent.setUsageCounter(newUsageCounter);
+        aisConsentRepository.save(aisConsent);
+
         Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
         Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
         return filterRequestedAccounts(targetAccounts, requestedAccounts);
@@ -163,7 +175,7 @@ public class AisConsentService {
 
     private AccountHolder.AccessInfo doFilterAccess(AccountHolder.AccessInfo holder, Set<Currency> bankCurrencies) {
         Set<AccountAccess> filtered = holder.getAccesses().stream()
-                                          .filter(a -> bankCurrencies.contains(a.getCurrency()))
+                                          .filter(a -> a.getCurrency() == null || bankCurrencies.contains(a.getCurrency()))
                                           .collect(toSet());
         holder.updateAccess(filtered);
         return holder;
