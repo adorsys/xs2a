@@ -20,6 +20,9 @@ import io.swagger.annotations.ApiModel;
 
 @ApiModel(description = "CashAccountType", value = "Cash Account Type")
 public enum CashAccountType {
-    // todo documentation doesn't have any definition. hhttps://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/45
+    // TODO documentation doesn't have any definition. hhttps://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/45
+	// Berlin Group mentions this should be ExternalCashAccountType1Code from ISO 20022, therefore values from 27-CashAccountType in 
+	// ExternalCodeSets_1Q2018_May2018_v1 or newer (see https://www.iso20022.org/external_code_list.page) looks best.
+	// The enum would either be CURRENT_ACCOUNT, etc. as below or use the ISO codes ("CACC" in this case) directly.
     CURRENT_ACCOUNT
 }
