@@ -70,7 +70,7 @@ public class RemoteSpiUrls {
      * @Body AvailableAccessRequest
      */
     public String checkAccessByConsentId() {
-        return spiMockBaseUrl + "/ais/consent/available/access";
+        return consentServiceBaseUrl + "/ais/consent/available/access";
     }
 
     //Accounts urls
