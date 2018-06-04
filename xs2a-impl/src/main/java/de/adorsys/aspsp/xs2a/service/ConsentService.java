@@ -20,9 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -39,8 +37,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final String consentsLinkRedirectToSource;
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
-    private final AccountMapper accountMapper;
-    private final AccountSpi accountSpi;
 
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         String tppId = "This is a test TppId"; //TODO to clarify where it should get from

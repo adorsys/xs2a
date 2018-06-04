@@ -63,7 +63,7 @@ public class ConsentSpiImpl implements ConsentSpi {
     public Map<String, Set<AccessAccountInfo>> checkValidityByConsent(AvailableAccessRequest request) {
         HttpEntity<AvailableAccessRequest> requestHttpEntity = new HttpEntity<>(request);
         return restTemplate.exchange(
-            remoteSpiUrls.readTransactionsByPeriod(), HttpMethod.POST, requestHttpEntity,
+            remoteSpiUrls.checkAccessByConsentId(), HttpMethod.POST, requestHttpEntity,
             new ParameterizedTypeReference<Map<String, Set<AccessAccountInfo>>>() {
             }).getBody();
     }
