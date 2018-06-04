@@ -92,10 +92,46 @@ public class ConsentServiceTest {
     }
 
     @Test
+    public void createAccountConsentsWithResponse_ByAccInAccAccess_WB_Success() {
+        //Given:
+        boolean withBalance = true;
+        CreateConsentReq req = getCreateCosnentRequest(
+            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
+        );
+
+        //When:
+        ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
+            req, withBalance, false, null);
+        CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_ByAccInAccAccess_NoCurrencySet_WB_Success() {
+        //Given:
+        boolean withBalance = true;
+        CreateConsentReq req = getCreateCosnentRequest(
+            getAccess(getReferenceList(CORRECT_IBAN, null), new ArrayList<>(), new ArrayList<>(), false, false)
+        );
+
+        //When:
+        ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
+            req, withBalance, false, null);
+        CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_ByAccInAccAccess_WoB_Success() {
     public void createAccountConsentsWithResponse_Success() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(getReferencesArr(CORRECT_IBAN), new AccountReference[]{}, new AccountReference[]{}, false, false)
+        boolean withBalance = false;
+        CreateConsentReq req = getCreateCosnentRequest(
+            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -142,7 +178,7 @@ public class ConsentServiceTest {
         ResponseObject response = consentService.getAccountConsentById(CORRECT_PSU_ID);
         AccountConsent consent = (AccountConsent) response.getBody();
         //Than:
-        assertThat(consent.getAccess().getAccounts()[0].getIban()).isEqualTo(CORRECT_IBAN);
+        assertThat(consent.getAccess().getAccounts().get(0).getIban()).isEqualTo(CORRECT_IBAN);
     }
 
     @Test
@@ -206,12 +242,15 @@ public class ConsentServiceTest {
         return req;
     }
 
-    private AccountAccess getAccess(AccountReference[] accounts, AccountReference[] balances, AccountReference[] transactions, boolean allAccounts, boolean allPsd2) {
+    private AccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return new AccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private AccountReference[] getReferencesArr(String iban) {
-        return new AccountReference[]{getReference(iban, CURRENCY)};
+    private List<AccountReference> getReferenceList(String iban, Currency currency) {
+        List<AccountReference> list = new ArrayList<>();
+        list.add(getReference(iban, currency));
+
+        return list;
     }
 
     private AccountReference getReference(String iban, Currency currency) {

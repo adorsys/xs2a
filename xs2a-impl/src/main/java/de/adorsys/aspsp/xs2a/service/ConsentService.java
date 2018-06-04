@@ -23,9 +23,9 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,18 +88,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .collect(Collectors.toSet());
     }
 
-    public Set<String> getIbansFromAccountReference(AccountReference[] references) {
+    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
         return Optional.ofNullable(references)
-                   .map(ar -> Arrays.stream(ar)
+                   .map(list -> list.stream()
                                   .map(AccountReference::getIban)
                                   .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
     }
 
     private boolean isNotEmptyAccountAccess(AccountAccess access) {
-        return !(ArrayUtils.isEmpty(access.getAccounts())
-                     && ArrayUtils.isEmpty(access.getBalances())
-                     && ArrayUtils.isEmpty(access.getTransactions())
+        return !(CollectionUtils.isEmpty(access.getAccounts())
+                     && CollectionUtils.isEmpty(access.getBalances())
+                     && CollectionUtils.isEmpty(access.getTransactions())
                      && access.getAllPsd2() == null
                      && access.getAvailableAccounts() == null);
     }

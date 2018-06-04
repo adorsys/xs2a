@@ -31,7 +31,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -167,6 +171,23 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
+    private List<SpiAccountReference> mapToSpiAccountReferenceList(List<AccountReference> references) {
+        if (references == null) {
+            return null;
+        }
+
+        return references.stream().map(this::mapToSpiAccountReference).collect(Collectors.toList());
+    }
+
+    public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
+        return Optional.of(reference)
+                   .map(ar -> new SpiAccountReference(
+                       ar.getIban(),
+                       ar.getBban(),
+                       ar.getPan(),
+                       ar.getMaskedPan(),
+                       ar.getMsisdn(),
+                       ar.getCurrency())).orElse(null);
     private List<SpiAccountReference> mapToSpiAccountReferenceList(AccountReference[] references) {
         return Optional.ofNullable(references)
                    .map(ref -> Arrays.stream(ref)

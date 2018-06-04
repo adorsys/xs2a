@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,7 +108,7 @@ public class AccountMapper {
         return Optional.ofNullable(spiAmount)
                .map(a -> {
                    Amount amount = new Amount();
-                   amount.setContent(a.getContent());
+                   amount.setContent(a.getContent().toString());
                    amount.setCurrency(a.getCurrency());
                    return amount;
                })
@@ -116,7 +117,7 @@ public class AccountMapper {
 
     public SpiAmount mapToSpiAmount(Amount amount) {
         return Optional.ofNullable(amount)
-                   .map(am -> new SpiAmount(am.getCurrency(), am.getContent()))
+                   .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getContent())))
                    .orElse(null);
     }
 

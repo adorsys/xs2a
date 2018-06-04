@@ -29,6 +29,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
@@ -64,7 +65,7 @@ public class AccountService {
 
         List<AccountDetails> accountDetails = getAccountDetailsWithBalanceByReferences(
             getAccountDetailsFromReferences(consent.getAccess().getAccounts()),
-            withBalance ? consent.getAccess().getBalances() : new AccountReference[]{});
+            withBalance ? consent.getAccess().getBalances() : Collections.emptyList());
 
         return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
@@ -153,16 +154,14 @@ public class AccountService {
         return getAccountDetailsByAccountReference(reference).isPresent();
     }
 
-    private boolean accountReferenceContainsAccount(AccountReference[] references, AccountDetails details) {
-        return Optional.ofNullable(references)
-                   .map(Arrays::stream)
-                   .map(rStream -> rStream.anyMatch(
-                       ref -> ref.getIban().equals(details.getIban())
-                                  && ref.getCurrency().equals(details.getCurrency())))
-                   .orElse(false);
+    private boolean accountReferenceContainsAccount(List<AccountReference> references, AccountDetails details) {
+        return !CollectionUtils.isEmpty(references) && references.stream()
+                                                           .anyMatch(
+                                                               ref -> ref.getIban().equals(details.getIban())
+                                                                          && ref.getCurrency().equals(details.getCurrency()));
     }
 
-    private List<AccountDetails> getAccountDetailsWithBalanceByReferences(List<AccountDetails> details, AccountReference[] references) {
+    private List<AccountDetails> getAccountDetailsWithBalanceByReferences(List<AccountDetails> details, List<AccountReference> references) {
         return details.stream()
                    .map(det -> accountReferenceContainsAccount(references, det)
                                    ? det
@@ -170,14 +169,14 @@ public class AccountService {
                    .collect(Collectors.toList());
     }
 
-    private List<AccountDetails> getAccountDetailsFromReferences(AccountReference[] references) {
-        return Optional.ofNullable(references)
-                   .map(Arrays::stream)
-                   .map(refStream -> refStream.map(this::getAccountDetailsByAccountReference)
-                                         .filter(Optional::isPresent)
-                                         .map(Optional::get)
-                                         .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+    private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
+        return CollectionUtils.isEmpty(references)
+                   ? Collections.emptyList()
+                   : references.stream()
+                                   .map(this::getAccountDetailsByAccountReference)
+                                   .filter(Optional::isPresent)
+                                   .map(Optional::get)
+                                   .collect(Collectors.toList());
     }
 
     private AccountDetails getAccountDetailsNoBalances(AccountDetails details) {
