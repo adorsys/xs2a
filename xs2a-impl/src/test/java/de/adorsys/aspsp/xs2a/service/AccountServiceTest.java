@@ -67,10 +67,14 @@ public class AccountServiceTest {
 
     @Before
     public void setUp() {
-        when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails());
-        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID)).thenReturn(null);
-        when(accountSpi.readBalances(ACCOUNT_ID)).thenReturn(getSpiBalances());
-        when(consentService.getIbansFromAccountReference(new AccountReference[]{getAccountReference()})).thenReturn(new HashSet<>(Collections.singletonList(IBAN)));
+        when(accountSpi.readAccountDetails(ACCOUNT_ID))
+            .thenReturn(getSpiAccountDetails());
+        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID))
+            .thenReturn(null);
+        when(accountSpi.readBalances(ACCOUNT_ID))
+            .thenReturn(getSpiBalances());
+        when(consentService.getIbansFromAccountReference(getAccountReferenceList()))
+            .thenReturn(new HashSet<>(Collections.singletonList(IBAN)));
         when(accountSpi.readAccountDetailsByIban(IBAN))
             .thenReturn(Collections.singletonList(getSpiAccountDetails()));
         //getAccountsByConsent Success no balances
@@ -86,10 +90,13 @@ public class AccountServiceTest {
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID_WB, true, true).getAccess()))
             .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
         //getAccountsByConsent Failure concent without Balances
-        when(consentService.getAccountConsentById(CONSENT_ID_WOB)).thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID_WOB, false, false)).build());
-        when(accountSpi.readAccountDetailsByIbans(Collections.emptyList())).thenReturn(Collections.emptyList());
+        when(consentService.getAccountConsentById(CONSENT_ID_WOB))
+            .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent(CONSENT_ID_WOB, false, false)).build());
+        when(accountSpi.readAccountDetailsByIbans(Collections.emptyList()))
+            .thenReturn(Collections.emptyList());
         //getAccountsByConsent Failure wrong consentId
-        when(consentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
+        when(consentService.getAccountConsentById(WRONG_CONSENT_ID))
+            .thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
     }
 
     //Get Account By AccountId
@@ -353,14 +360,14 @@ public class AccountServiceTest {
         return new AccountConsent(consentId,
             new AccountAccess(
                 consentId.equals(WRONG_CONSENT_ID)
-                    ? new AccountReference[]{}
-                    : new AccountReference[]{getAccountReference()},
+                    ? new ArrayList<AccountReference>()
+                    : getAccountReferenceList(),
                 withBalance
-                    ? new AccountReference[]{getAccountReference()}
-                    : new AccountReference[]{},
+                    ? getAccountReferenceList()
+                    : new ArrayList<AccountReference>(),
                 withTransactions
-                    ? new AccountReference[]{getAccountReference()}
-                    : new AccountReference[]{},
+                    ? getAccountReferenceList()
+                    : new ArrayList<AccountReference>(),
                 null, null),
             false, DATE, 4, null, ConsentStatus.VALID, false, true);
     }
@@ -375,6 +382,13 @@ public class AccountServiceTest {
         rf.setMsisdn(details.getMsisdn());
         rf.setBban(details.getBban());
         return rf;
+    }
+
+    private List<AccountReference> getAccountReferenceList() {
+        List<AccountReference> list = new ArrayList<>();
+        list.add(getAccountReference());
+
+        return list;
     }
 
     private AccountDetails getAccountDetails() {
@@ -426,7 +440,7 @@ public class AccountServiceTest {
 
     private AccountAccess getAccountAccess() {
         return new AccountAccess(
-            new AccountReference[]{getAccountReference()},
+            getAccountReferenceList(),
             null,
             null,
             null,

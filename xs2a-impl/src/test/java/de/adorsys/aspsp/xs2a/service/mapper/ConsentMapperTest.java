@@ -85,12 +85,12 @@ public class ConsentMapperTest {
 
         //Then:
         assertThat(actualAccountConsent.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
-        assertThat(actualAccountConsent.getAccess().getBalances()[0].getIban()).isEqualTo("DE2310010010123456789");
-        assertThat(actualAccountConsent.getAccess().getBalances()[1].getIban()).isEqualTo("DE2310010010123456790");
-        assertThat(actualAccountConsent.getAccess().getBalances()[1].getCurrency().getCurrencyCode()).isEqualTo("USD");
-        assertThat(actualAccountConsent.getAccess().getBalances()[2].getIban()).isEqualTo("DE2310010010123456788");
-        assertThat(actualAccountConsent.getAccess().getTransactions()[0].getIban()).isEqualTo("DE2310010010123456789");
-        assertThat(actualAccountConsent.getAccess().getTransactions()[1].getMaskedPan()).isEqualTo("123456xxxxxx1234");
+        assertThat(actualAccountConsent.getAccess().getBalances().get(0).getIban()).isEqualTo("DE2310010010123456789");
+        assertThat(actualAccountConsent.getAccess().getBalances().get(1).getIban()).isEqualTo("DE2310010010123456790");
+        assertThat(actualAccountConsent.getAccess().getBalances().get(1).getCurrency().getCurrencyCode()).isEqualTo("USD");
+        assertThat(actualAccountConsent.getAccess().getBalances().get(2).getIban()).isEqualTo("DE2310010010123456788");
+        assertThat(actualAccountConsent.getAccess().getTransactions().get(0).getIban()).isEqualTo("DE2310010010123456789");
+        assertThat(actualAccountConsent.getAccess().getTransactions().get(1).getMaskedPan()).isEqualTo("123456xxxxxx1234");
         assertThat(actualAccountConsent.isRecurringIndicator()).isTrue();
         assertThat(actualAccountConsent.getValidUntil()).isEqualTo("2017-11-01");
         assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(4);
