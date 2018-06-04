@@ -96,10 +96,10 @@ public class AisConsent {
     private List<AisAccount> accounts = new ArrayList<>();
 
     public void addAccounts(List<AisAccount> accounts) {
-        accounts.forEach(a -> addAccount(a));
+        accounts.forEach(this::addAccount);
     }
 
-    public void addAccount(AisAccount account) {
+    private void addAccount(AisAccount account) {
         this.accounts.add(account);
         account.setConsent(this);
     }

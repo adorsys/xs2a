@@ -47,6 +47,11 @@ public class ConsentMapper {
             false, consent.isTppRedirectPreferred());
     }
 
+    public Map<String, Set<AccessAccountInfo>> toMap(List<AisAccount> accounts) {
+        return accounts.stream()
+                   .collect(Collectors.toMap(e -> e.getIban(), e -> accessAccountInfos(e.getAccesses())));
+    }
+
     private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
         return new SpiAccountAccess(mapToSpiAccountReference(aisAccounts, TypeAccess.ACCOUNT),
             mapToSpiAccountReference(aisAccounts, TypeAccess.BALANCE),
@@ -75,11 +80,6 @@ public class ConsentMapper {
 
     private Date convertToDate(LocalDateTime dateToConvert) {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public Map<String, Set<AccessAccountInfo>> toMap(List<AisAccount> accounts) {
-        return accounts.stream()
-                   .collect(Collectors.toMap(e -> e.getIban(), e -> accessAccountInfos(e.getAccesses())));
     }
 
     private Set<AccessAccountInfo> accessAccountInfos(Set<AccountAccess> accesses) {

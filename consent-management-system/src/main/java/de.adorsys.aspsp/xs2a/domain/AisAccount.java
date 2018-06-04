@@ -50,18 +50,13 @@ public class AisAccount {
     @ApiModelProperty(value = "Detailed information about consent", required = true)
     private AisConsent consent;
 
-    public AisAccount() {
-    }
+    public AisAccount() {}
 
     public AisAccount(String iban) {
         this.iban = iban;
     }
 
-    public void addAccesses(Set<AccountAccess> typeAccesses) {
-        typeAccesses.forEach(t -> addAccess(t));
-    }
-
-    public void addAccess(AccountAccess access) {
-        accesses.add(access);
+    public void addAccesses(Set<AccountAccess> accountAccesses){
+        accesses.addAll(accountAccesses);
     }
 }

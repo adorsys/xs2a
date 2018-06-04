@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountHolder;
+import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.exception.ConsentException;
@@ -63,8 +64,10 @@ public class AisConsentService {
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
-        aisConsentRepository.save(consent);
-        return Optional.of(consent.getExternalId());
+        AisConsent saved = aisConsentRepository.save(consent);
+        return saved.getId() != null
+                   ? Optional.of(saved.getExternalId())
+                   : Optional.empty();
     }
 
     public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
@@ -83,6 +86,29 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
+    public Map<String, Set<AccessAccountInfo>> checkAvailable(AvailableAccessRequest request) {
+        Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
+        AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
+        if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
+            throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
+        }
+        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
+        Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
+        return filterRequestedAccounts(targetAccounts, requestedAccounts);
+    }
+
+    private Map<String, Set<AccessAccountInfo>> filterRequestedAccounts(Map<String, Set<AccessAccountInfo>> targetAccounts, Map<String, Set<AccessAccountInfo>> requestedAccounts) {
+        return requestedAccounts.entrySet().stream()
+                   .filter(e -> targetAccounts.containsKey(e.getKey()))
+                   .collect(Collectors.toMap(Map.Entry::getKey, e -> filterAccessAccount(e.getValue(), targetAccounts.get(e.getKey()))));
+    }
+
+    private Set<AccessAccountInfo> filterAccessAccount(Set<AccessAccountInfo> incomeAccess, Set<AccessAccountInfo> bankAccess) {
+        Collection<AccessAccountInfo> subtract = CollectionUtils.subtract(incomeAccess, bankAccess);
+        incomeAccess.removeAll(subtract);
+        return incomeAccess;
+    }
+
     private Optional<AisConsent> getAisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(aisConsentRepository::findByExternalId);
@@ -96,66 +122,66 @@ public class AisConsentService {
     private List<AisAccount> readAccounts(AisConsentRequest request) {
         return request.getAccess().isAllAccountAccess()
                    ? readAccountsByPsuId(request.getAccess(), request.getPsuId())
-                   : readAccountsByIban(request.getAccess());
+                   : readAccountsByAccess(request.getAccess());
     }
 
     private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId) {
         if (StringUtils.isBlank(psuId)) {
             throw new ConsentException("Psu id must not be empty");
         }
-        AccountHolder holder = buildAccountByPsu(access, psuId);
+        AccountHolder holder = buildAccountHolderByPsu(access, psuId);
         return buildAccounts(holder.getIbansAccess());
     }
 
-    private AccountHolder buildAccountByPsu(AisAccountAccessInfo access, String psuId) {
+    private AccountHolder buildAccountHolderByPsu(AisAccountAccessInfo access, String psuId) {
         AccountHolder holder = new AccountHolder();
+        Set<TypeAccess> accessTypes = buildAccessTypes(access);
         List<SpiAccountDetails> accountDetails = accountSpi.readAccountsByPsuId(psuId);
-        accountDetails.forEach(a -> holder.addAccountAccess(a.getIban(), a.getCurrency(), buildAccess(access)));
+        accountDetails.forEach(a -> holder.addAccountAccess(a.getIban(), a.getCurrency(), accessTypes));
         return holder;
     }
 
-    private Set<TypeAccess> buildAccess(AisAccountAccessInfo access) {
+    private Set<TypeAccess> buildAccessTypes(AisAccountAccessInfo access) {
         return access.isAllPsd2()
                    ? EnumSet.allOf(TypeAccess.class)
                    : EnumSet.of(TypeAccess.ACCOUNT);
     }
 
-    private List<AisAccount> readAccountsByIban(AisAccountAccessInfo access) {
-        Map<String, AccountHolder.AccessInfo> accountsByAccess = buildAccountsHolderByAccess(access);
-        Map<String, Set<Currency>> bankAccounts = getBankAccount(accountsByAccess);
+    private List<AisAccount> readAccountsByAccess(AisAccountAccessInfo access) {
+        Map<String, AccountHolder.AccessInfo> requestedAccounts = buildAccountHolderByAccess(access);
+        Map<String, Set<Currency>> bankAccounts = getBankAccountsMapByIbans(requestedAccounts.keySet());
 
-        Map<String, AccountHolder.AccessInfo> filtered = filterAccessAccounts(accountsByAccess, bankAccounts);
+        Map<String, AccountHolder.AccessInfo> filtered = filterAccountsAccess(requestedAccounts, bankAccounts);
         return buildAccounts(filtered);
     }
 
-    private Map<String, AccountHolder.AccessInfo> filterAccessAccounts(Map<String, AccountHolder.AccessInfo> holder, Map<String, Set<Currency>> bankAccounts) {
-        return holder.entrySet().stream()
+    private Map<String, AccountHolder.AccessInfo> filterAccountsAccess(Map<String, AccountHolder.AccessInfo> requestedAccounts, Map<String, Set<Currency>> bankAccounts) {
+        return requestedAccounts.entrySet().stream()
                    .filter(e -> bankAccounts.containsKey(e.getKey()))
-                   .filter(e -> bankAccounts.get(e.getKey()).containsAll(e.getValue().getCurrencies()))
-                   .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                   .collect(Collectors.toMap(Map.Entry::getKey, e -> doFilterAccess(e.getValue(), bankAccounts.get(e.getKey()))));
     }
 
-    private Map<String, Set<Currency>> getBankAccount(Map<String, AccountHolder.AccessInfo> accountsDetailByAccess) {
-        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(accountsDetailByAccess.keySet()))
+    private AccountHolder.AccessInfo doFilterAccess(AccountHolder.AccessInfo holder, Set<Currency> bankCurrencies) {
+        Set<AccountAccess> filtered = holder.getAccesses().stream()
+                                          .filter(a -> bankCurrencies.contains(a.getCurrency()))
+                                          .collect(toSet());
+        holder.updateAccess(filtered);
+        return holder;
+    }
+
+    private Map<String, Set<Currency>> getBankAccountsMapByIbans(Set<String> ibans) {
+        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(ibans))
                                                      .orElse(Collections.emptyList());
         return accountDetails.stream()
                    .collect(Collectors.groupingBy(SpiAccountDetails::getIban, Collectors.mapping(SpiAccountDetails::getCurrency, toSet())));
     }
 
-    private Map<String, AccountHolder.AccessInfo> buildAccountsHolderByAccess(AisAccountAccessInfo access) {
-        List<AccountInfo> accounts = Optional.ofNullable(access.getAccounts()).orElse(Collections.emptyList());
-        List<AccountInfo> balances = Optional.ofNullable(access.getBalances()).orElse(Collections.emptyList());
-        List<AccountInfo> transactions = Optional.ofNullable(access.getTransactions()).orElse(Collections.emptyList());
-
-        AccountHolder info = new AccountHolder();
-        fillAccountInfoDetail(accounts, info, TypeAccess.ACCOUNT);
-        fillAccountInfoDetail(balances, info, TypeAccess.BALANCE);
-        fillAccountInfoDetail(transactions, info, TypeAccess.TRANSACTION);
-        return info.getIbansAccess();
-    }
-
-    private void fillAccountInfoDetail(List<AccountInfo> aisAccountsInfo, AccountHolder info, TypeAccess typeAccess) {
-        aisAccountsInfo.forEach(a -> info.addAccountAccess(a.getIban(), Currency.getInstance(a.getCurrency()), typeAccess));
+    private Map<String, AccountHolder.AccessInfo> buildAccountHolderByAccess(AisAccountAccessInfo access) {
+        AccountHolder holder = new AccountHolder();
+        holder.fillAccess(access.getAccounts(), TypeAccess.ACCOUNT);
+        holder.fillAccess(access.getBalances(), TypeAccess.BALANCE);
+        holder.fillAccess(access.getTransactions(), TypeAccess.TRANSACTION);
+        return holder.getIbansAccess();
     }
 
     private List<AisAccount> buildAccounts(Map<String, AccountHolder.AccessInfo> accountsDetail) {
@@ -169,28 +195,5 @@ public class AisConsentService {
         AisAccount account = new AisAccount(iban);
         account.addAccesses(accountsDetail.getAccesses());
         return account;
-    }
-
-    public Map<String, Set<AccessAccountInfo>> checkAvailable(AvailableAccessRequest request) {
-        Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
-        AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
-        if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
-            throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
-        }
-        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
-        Map<String, Set<AccessAccountInfo>> incomingAccounts = request.getAccountsAccesses();
-        return filterIncomingAccounts(targetAccounts, incomingAccounts);
-    }
-
-    private Map<String, Set<AccessAccountInfo>> filterIncomingAccounts(Map<String, Set<AccessAccountInfo>> targetAccounts, Map<String, Set<AccessAccountInfo>> incomingAccounts) {
-        return incomingAccounts.entrySet().stream()
-                   .filter(e -> targetAccounts.containsKey(e.getKey()))
-                   .collect(Collectors.toMap(e -> e.getKey(), e -> filter(e.getValue(), targetAccounts.get(e.getKey()))));
-    }
-
-    private Set<AccessAccountInfo> filter(Set<AccessAccountInfo> incomeAccess, Set<AccessAccountInfo> bankAccess){
-        Collection<AccessAccountInfo> subtract = CollectionUtils.subtract(incomeAccess, bankAccess);
-        incomeAccess.removeAll(subtract);
-        return incomeAccess;
     }
 }
