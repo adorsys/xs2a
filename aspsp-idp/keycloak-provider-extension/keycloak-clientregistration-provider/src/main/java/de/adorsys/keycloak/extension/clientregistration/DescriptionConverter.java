@@ -50,6 +50,7 @@ import org.keycloak.services.clientregistration.ClientRegistrationException;
 import org.keycloak.services.util.CertificateInfoHelper;
 import org.keycloak.util.JWKSUtils;
 
+// TODO why is this replicated from a Keycloak element? Could it potentially extend that class?
 public class DescriptionConverter {
 
     public static ClientRepresentation toInternal(KeycloakSession session, OIDCClientRepresentationExtended clientOIDC)
@@ -63,7 +64,7 @@ public class DescriptionConverter {
 
         // set new attributes in clientModel attributes Map
         Map<String, String> attributes = new HashMap<>();
-        attributes.put("software_statement", clientOIDC.getSoftware_statement());
+        attributes.put("software_statement", clientOIDC.getSoftwareStatement());
         client.setAttributes(attributes);
 
         List<String> oidcResponseTypes = clientOIDC.getResponseTypes();
@@ -163,7 +164,7 @@ public class DescriptionConverter {
         OIDCClientRepresentationExtended response = new OIDCClientRepresentationExtended();
         response.setClientId(client.getClientId());
 
-        response.setSoftware_statement(client.getAttributes().get("software_statement"));
+        response.setSoftwareStatement(client.getAttributes().get("software_statement"));
 
         ClientAuthenticatorFactory clientAuth = (ClientAuthenticatorFactory) session.getKeycloakSessionFactory()
                                                                                  .getProviderFactory(ClientAuthenticator.class, client.getClientAuthenticatorType());

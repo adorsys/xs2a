@@ -8,11 +8,11 @@ public class OIDCClientRepresentationExtended extends OIDCClientRepresentation {
 	// client software as a bundle
 	private String software_statement;
 
-	public String getSoftware_statement() {
+	public String getSoftwareStatement() {
 		return software_statement;
 	}
 
-	public void setSoftware_statement(String software_statement) {
+	public void setSoftwareStatement(String software_statement) {
 		this.software_statement = software_statement;
 	}
 
