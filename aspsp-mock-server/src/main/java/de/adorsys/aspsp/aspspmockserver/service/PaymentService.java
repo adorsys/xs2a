@@ -52,26 +52,26 @@ public class PaymentService {
 
     public BigDecimal calculateAmountToBeCharged(String accountId) {
         return paymentRepository.findAll().stream()
-            .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
-            .map(this::getAmountFromPayment)
-            .reduce(BigDecimal.ZERO,BigDecimal::add);
+                   .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
+                   .map(this::getAmountFromPayment)
+                   .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment.getDebtorAccount())
-            .map(SpiAccountReference::getIban)
-            .orElse("");
+                   .map(SpiAccountReference::getIban)
+                   .orElse("");
     }
 
     private BigDecimal getAmountFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment)
-            .map(paym -> getContentFromAmount(payment.getInstructedAmount()))
-            .orElse(BigDecimal.ZERO);
+                   .map(paym -> getContentFromAmount(payment.getInstructedAmount()))
+                   .orElse(BigDecimal.ZERO);
     }
 
     private BigDecimal getContentFromAmount(SpiAmount amount) {
         return Optional.ofNullable(amount)
-            .map(SpiAmount::getContent)
-            .orElse(BigDecimal.ZERO);
+                   .map(SpiAmount::getContent)
+                   .orElse(BigDecimal.ZERO);
     }
 }

@@ -79,10 +79,14 @@ public class AccountMockServerData {
 
     private SpiTransaction getTransaction(String transactionId, Psu creditor, Psu debtor, BigDecimal amount, Currency currency, String bookingDate, String valueDate) {
         return new SpiTransaction(
-            transactionId, "", "", creditor.getId(), bookingDate == null ? null : getDateFromString(bookingDate), getDateFromString(valueDate),
-            new SpiAmount(currency, amount), creditor.getAccountDetailsList().get(0).getName(), getRef(creditor, currency), creditor.getAccountDetailsList().get(0).getName(),
-            debtor.getAccountDetailsList().get(0).getName(), getRef(debtor, currency), debtor.getAccountDetailsList().get(0).getName(), "",
+            transactionId, "", "", creditor.getId(), getDateFromString(bookingDate), getDateFromString(valueDate),
+            new SpiAmount(currency, amount), getFirstElementName(creditor), getRef(creditor, currency), getFirstElementName(creditor),
+            getFirstElementName(debtor), getRef(debtor, currency), getFirstElementName(debtor), "",
             "", "", "");
+    }
+
+    private String getFirstElementName(Psu creditor) {
+        return creditor.getAccountDetailsList().get(0).getName();
     }
 
     private SpiAccountReference getRef(Psu psu, Currency currency) {
@@ -192,6 +196,7 @@ public class AccountMockServerData {
     }
 
     private Date getDateFromString(String date) {
+        date = Optional.ofNullable(date).orElse("");
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
         try {
