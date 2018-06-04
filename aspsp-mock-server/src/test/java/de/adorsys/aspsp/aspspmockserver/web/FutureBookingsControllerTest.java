@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,8 +43,8 @@ import static org.mockito.Mockito.when;
 public class FutureBookingsControllerTest {
     private static final String IBAN = "123456789";
     private static final String WRONG_IBAN = "Wrong iban";
-    private static final double BALANCE = 2000;
-    private static final double AMOUNT_TO_BE_CHARGED = 500;
+    private static final BigDecimal BALANCE = BigDecimal.valueOf(2000);
+    private static final BigDecimal AMOUNT_TO_BE_CHARGED = BigDecimal.valueOf(500);
 
 
     @Autowired
@@ -55,7 +56,7 @@ public class FutureBookingsControllerTest {
     @Before
     public void setUp() {
         when(futureBookingsService.changeBalances(IBAN, "EUR"))
-            .thenReturn(getSpiAccountDetails((BALANCE - AMOUNT_TO_BE_CHARGED)));
+            .thenReturn(getSpiAccountDetails((BALANCE.subtract(AMOUNT_TO_BE_CHARGED))));
         when(futureBookingsService.changeBalances(WRONG_IBAN, "EUR"))
             .thenReturn(Optional.empty());
     }
@@ -64,7 +65,7 @@ public class FutureBookingsControllerTest {
     public void changeBalances_Success() throws Exception {
         //Given
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        double expectedAmount = BALANCE - AMOUNT_TO_BE_CHARGED;
+        BigDecimal expectedAmount = BALANCE.subtract(AMOUNT_TO_BE_CHARGED);
 
         //When:
         ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(IBAN, "EUR");
@@ -86,17 +87,17 @@ public class FutureBookingsControllerTest {
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
     }
 
-    private Optional<SpiAccountDetails> getSpiAccountDetails(double amount) {
+    private Optional<SpiAccountDetails> getSpiAccountDetails(BigDecimal amount) {
         return Optional.of(new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
             "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
             null, "ACVB222", getNewBalanceList(amount)));
     }
 
-    private ArrayList<SpiBalances> getNewBalanceList(double amount) {
+    private ArrayList<SpiBalances> getNewBalanceList(BigDecimal amount) {
         Currency euro = Currency.getInstance("EUR");
 
         SpiBalances balance = new SpiBalances();
-        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, Double.toString(amount))));
+        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, amount)));
         ArrayList<SpiBalances> balances = new ArrayList<>();
         balances.add(balance);
 

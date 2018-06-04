@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -27,12 +29,15 @@ import java.util.Currency;
 
 @Data
 @Embeddable
+@ApiModel(description = "Account access", value = "AccountAccess")
 public class AccountAccess {
     @Column(name = "currency", nullable = false)
+    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private Currency currency;
 
     @Column(name = "type_access", nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Types of given accesses: account, balance, transaction, payment", required = true, example = "ACCOUNT")
     private TypeAccess typeAccess;
 
     public AccountAccess(){}

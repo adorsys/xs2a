@@ -25,9 +25,9 @@ import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,15 +106,20 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                           .flatMap(Collection::stream)
                           .collect(Collectors.toSet());
 
-        return Optional.of(getNewAccountAccessByReferences(setToArray(accountsRef), setToArray(balancesRef), setToArray(transactionsRef), null, null));
+        return Optional.of(getNewAccountAccessByReferences(
+            new ArrayList<>(accountsRef),
+            new ArrayList<>(balancesRef),
+            new ArrayList<>(transactionsRef),
+            null,
+            null));
     }
 
-    private Set<AccountReference> extractReferenceSetFromDetailsList(AccountReference[] accountReferencesArr, List<AccountDetails> accountDetails) {
-        return Optional.ofNullable(accountReferencesArr)
-                   .map(arr -> Arrays.stream(arr)
-                                   .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
-                                   .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
+    private Set<AccountReference> extractReferenceSetFromDetailsList(List<AccountReference> accountReferencesList, List<AccountDetails> accountDetails) {
+        return CollectionUtils.isEmpty(accountReferencesList)
+                   ? Collections.emptySet()
+                   : accountReferencesList.stream()
+                         .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
+                         .collect(Collectors.toSet());
     }
 
     private Stream<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
@@ -126,22 +131,22 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
         return Optional.ofNullable(accountMapper.mapToAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
-                   .map(this::mapAccountListToArrayOfReference)
+                   .map(this::mapAccountListToReferenceList)
                    .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                                   ? getNewAccountAccessByReferences(ref, new AccountReference[]{}, new AccountReference[]{}, availableAccounts, null)
+                                   ? getNewAccountAccessByReferences(ref, Collections.emptyList(), Collections.emptyList(), availableAccounts, null)
                                    : getNewAccountAccessByReferences(ref, ref, ref, null, allPsd2)
                    );
     }
 
-    private AccountReference[] mapAccountListToArrayOfReference(List<AccountDetails> accountDetails) {
+    private List<AccountReference> mapAccountListToReferenceList(List<AccountDetails> accountDetails) {
         return accountDetails.stream()
                    .map(this::mapAccountDetailsToReference)
-                   .toArray(AccountReference[]::new);
+                   .collect(Collectors.toList());
     }
 
-    private AccountAccess getNewAccountAccessByReferences(AccountReference[] accounts,
-                                                          AccountReference[] balances,
-                                                          AccountReference[] transactions,
+    private AccountAccess getNewAccountAccessByReferences(List<AccountReference> accounts,
+                                                          List<AccountReference> balances,
+                                                          List<AccountReference> transactions,
                                                           AccountAccessType availableAccounts,
                                                           AccountAccessType allPsd2) {
 
@@ -165,18 +170,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .collect(Collectors.toSet());
     }
 
-    public Set<String> getIbansFromAccountReference(AccountReference[] references) {
+    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
         return Optional.ofNullable(references)
-                   .map(ar -> Arrays.stream(ar)
+                   .map(list -> list.stream()
                                   .map(AccountReference::getIban)
                                   .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
     }
 
     private boolean isNotEmptyAccountAccess(AccountAccess access) {
-        return !(ArrayUtils.isEmpty(access.getAccounts())
-                     && ArrayUtils.isEmpty(access.getBalances())
-                     && ArrayUtils.isEmpty(access.getTransactions())
+        return !(CollectionUtils.isEmpty(access.getAccounts())
+                     && CollectionUtils.isEmpty(access.getBalances())
+                     && CollectionUtils.isEmpty(access.getTransactions())
                      && access.getAllPsd2() == null
                      && access.getAvailableAccounts() == null);
     }
@@ -197,9 +202,5 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         reference.setMsisdn(details.getMsisdn());
         reference.setCurrency(details.getCurrency());
         return reference;
-    }
-
-    private AccountReference[] setToArray(Set<AccountReference> set) {
-        return set.stream().toArray(AccountReference[]::new);
     }
 }
