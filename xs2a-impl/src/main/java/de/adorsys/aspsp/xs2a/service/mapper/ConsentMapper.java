@@ -55,10 +55,15 @@ public class ConsentMapper {
                        ac.getId(), mapToAccountAccess(ac.getAccess()),
                        ac.isRecurringIndicator(), ac.getValidUntil(),
                        ac.getFrequencyPerDay(), ac.getLastActionDate(),
-                       TransactionStatus.valueOf(ac.getSpiTransactionStatus().name()),
                        ConsentStatus.valueOf(ac.getSpiConsentStatus().name()),
                        ac.isWithBalance(), ac.isTppRedirectPreferred()))
                    .orElse(null);
+    }
+
+
+    public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus){
+        return Optional.ofNullable(spiConsentStatus)
+            .map(status-> ConsentStatus.valueOf(status.name()));
     }
 
     //Domain
@@ -151,15 +156,11 @@ public class ConsentMapper {
 
     public SpiAccountConsent mapToSpiAccountConsent(AccountConsent consent) {
         return new SpiAccountConsent(consent.getId(), mapToSpiAccountAccess(consent.getAccess()), consent.isRecurringIndicator(),
-            consent.getValidUntil(), consent.getFrequencyPerDay(), consent.getLastActionDate(), mapToSpiTransactionStatus(consent.getTransactionStatus()),
+            consent.getValidUntil(), consent.getFrequencyPerDay(), consent.getLastActionDate(),
             mapToSpiConsentStatus(consent.getConsentStatus()), consent.isWithBalance(), consent.isTppRedirectPreferred());
     }
 
     private SpiConsentStatus mapToSpiConsentStatus(ConsentStatus consentStatus) {
     return SpiConsentStatus.valueOf(consentStatus.name());
-    }
-
-    private SpiTransactionStatus mapToSpiTransactionStatus(TransactionStatus transactionStatus) {
-        return SpiTransactionStatus.valueOf(transactionStatus.name());
     }
 }

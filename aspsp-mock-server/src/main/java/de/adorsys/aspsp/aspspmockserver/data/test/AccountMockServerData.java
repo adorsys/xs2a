@@ -22,7 +22,6 @@ import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
@@ -97,38 +96,37 @@ public class AccountMockServerData {
             new SpiAccountConsent("AllWB",
                 new SpiAccountAccess(
                     references, references, references, SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
         consentRepository.save(
             new SpiAccountConsent("AllWOB",
                 new SpiAccountAccess(
                     references, Collections.emptyList(), Collections.emptyList(), SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, false, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
 
         consentRepository.save(
             new SpiAccountConsent("Acc1WB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
         consentRepository.save(
             new SpiAccountConsent("Acc1WOB",
                 new SpiAccountAccess(
-                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.emptyList(), Collections.emptyList(), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, false, false)
-        );
+                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false));
         consentRepository.save(
             new SpiAccountConsent("Acc2WB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
         consentRepository.save(
             new SpiAccountConsent("Acc2WOB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.emptyList(), Collections.emptyList(), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, false, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false)
         );
     }
 
@@ -184,7 +182,9 @@ public class AccountMockServerData {
     }
 
     private List<SpiAccountReference> getReferencesList() {
-        return accountDetails.stream().map(this::mapToReferenceFromDetails).collect(Collectors.toList());
+        return accountDetails.stream()
+                   .map(this::mapToReferenceFromDetails)
+                   .collect(Collectors.toList());
     }
 
     private SpiAccountReference mapToReferenceFromDetails(SpiAccountDetails details) {
@@ -201,5 +201,4 @@ public class AccountMockServerData {
         }
         return null;
     }
-
 }

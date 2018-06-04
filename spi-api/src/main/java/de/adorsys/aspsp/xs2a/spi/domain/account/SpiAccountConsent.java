@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.AllArgsConstructor;
@@ -37,7 +36,6 @@ public class SpiAccountConsent {
     private Date validUntil;
     private int frequencyPerDay;
     private Date lastActionDate;
-    private SpiTransactionStatus spiTransactionStatus;
     private SpiConsentStatus spiConsentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
