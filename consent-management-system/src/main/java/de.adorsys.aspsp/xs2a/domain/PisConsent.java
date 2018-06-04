@@ -63,6 +63,4 @@ public class PisConsent {
     private String ultimateCreditor;
     @Column(name = "purpose_code")
     private String purposeCode;
-    @Column(name = "remittance_information_unstructured")
-    private String remittanceInformationUnstructured;
 }

@@ -88,7 +88,6 @@ public class PisConsentService {
                        consent.setRequestedExecutionTime(sp.getRequestedExecutionTime());
                        consent.setUltimateCreditor(sp.getUltimateCreditor());
                        consent.setPurposeCode(sp.getPurposeCode());
-                       consent.setRemittanceInformationUnstructured(sp.getRemittanceInformationUnstructured());
                        consent.setConsentStatus(SpiConsentStatus.RECEIVED);
                        return consent;
                    });

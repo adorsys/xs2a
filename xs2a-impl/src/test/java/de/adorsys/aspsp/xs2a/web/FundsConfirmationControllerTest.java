@@ -76,6 +76,8 @@ public class FundsConfirmationControllerTest {
     }
 
     private FundsConfirmationRequest readFundsConfirmationRequest() throws IOException {
+
+
         return new Gson().fromJson(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), FundsConfirmationRequest.class);
     }
 }

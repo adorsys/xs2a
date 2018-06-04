@@ -27,13 +27,12 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         Class controller = getController();
 
         Links links = new Links();
-        links.setRedirect(redirectLinkToSource+body.getPaymentId());
+        links.setRedirect(redirectLinkToSource + body.getPaymentId());
         links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
         links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
         links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
         links.setStatus(linkTo(controller, paymentProduct).slash("status").toString());
         return links;
-
     }
 }
 
