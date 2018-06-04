@@ -136,7 +136,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = true;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferencesList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
+            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -152,7 +152,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = true;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferencesList(CORRECT_IBAN, null), new ArrayList<>(), new ArrayList<>(), false, false)
+            getAccess(getReferenceList(CORRECT_IBAN, null), new ArrayList<>(), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -168,7 +168,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = false;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferencesList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
+            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -184,7 +184,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = true;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferencesList(WRONG_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
+            getAccess(getReferenceList(WRONG_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -199,7 +199,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = false;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferencesList(WRONG_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
+            getAccess(getReferenceList(WRONG_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -262,7 +262,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = true;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(new ArrayList<>(), new ArrayList<>(), getReferencesList(CORRECT_IBAN, CURRENCY), false, false)
+            getAccess(new ArrayList<>(), new ArrayList<>(), getReferenceList(CORRECT_IBAN, CURRENCY), false, false)
         );
 
         //When:
@@ -278,7 +278,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = true;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(new ArrayList<>(), getReferencesList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), false, false)
+            getAccess(new ArrayList<>(), getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), false, false)
         );
 
         //When:
@@ -294,7 +294,7 @@ public class ConsentServiceTest {
         //Given:
         boolean withBalance = true;
         CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(new ArrayList<>(), getReferencesList(CORRECT_IBAN, CURRENCY), getReferencesList(CORRECT_IBAN_1, CURRENCY), false, false)
+            getAccess(new ArrayList<>(), getReferenceList(CORRECT_IBAN, CURRENCY), getReferenceList(CORRECT_IBAN_1, CURRENCY), false, false)
         );
 
         //When:
@@ -395,7 +395,7 @@ public class ConsentServiceTest {
         return new AccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private List<AccountReference> getReferencesList(String iban, Currency currency) {
+    private List<AccountReference> getReferenceList(String iban, Currency currency) {
         List<AccountReference> list = new ArrayList<>();
         list.add(getReference(iban, currency));
 
