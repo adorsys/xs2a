@@ -61,7 +61,7 @@ public class RemoteSpiUrls {
      * @PathVariable String consentId
      */
     public String getConsentById() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}";
     }
 
     /**
@@ -75,15 +75,15 @@ public class RemoteSpiUrls {
 
     //Accounts urls
     public String getAccountDetailsById() {
-        return spiMockBaseUrl + "/account/{accountId}";
+        return spiMockBaseUrl + "/account/{account-id}";
     }
 
     public String getBalancesByAccountId() {
-        return spiMockBaseUrl + "/account/{accountId}/balances";
+        return spiMockBaseUrl + "/account/{account-id}/balances";
     }
 
     public String getAccountDetailsByPsuId() {
-        return spiMockBaseUrl + "/account/psu/{psuId}";
+        return spiMockBaseUrl + "/account/psu/{psu-id}";
     }
 
     public String getAccountDetailsByIban() {
@@ -96,7 +96,7 @@ public class RemoteSpiUrls {
     }
 
     public String getPaymentStatus() {
-        return spiMockBaseUrl + "/payments/{paymentId}/status/";
+        return spiMockBaseUrl + "/payments/{payment-id}/status/";
     }
 
     public String createBulkPayment() {
@@ -109,7 +109,7 @@ public class RemoteSpiUrls {
 
     //Transactions urls
     public String readTransactionById() {
-        return spiMockBaseUrl + "/transaction/{transactionId}";
+        return spiMockBaseUrl + "/transaction/{transaction-id}";
     }
 
     public String readTransactionsByPeriod() {

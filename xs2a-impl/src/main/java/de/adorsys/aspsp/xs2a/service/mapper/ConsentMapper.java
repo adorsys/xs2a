@@ -29,6 +29,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -37,7 +38,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ConsentMapper {
+    private final AccountMapper accountMapper;
+
     public AisConsentRequest mapToAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
         return Optional.ofNullable(req)
                    .map(r -> {
@@ -76,22 +80,18 @@ public class ConsentMapper {
     }
 
     private List<AccountInfo> mapToListAccountInfo(AccountReference[] refs) {
-        return Optional.ofNullable(refs)
-                   .map(rfs -> Arrays.stream(refs)
-                                   .map(this::mapToAccountInfo)
-                                   .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+        return Arrays.stream(refs)
+                   .map(this::mapToAccountInfo)
+                   .collect(Collectors.toList());
     }
 
     private AccountInfo mapToAccountInfo(AccountReference ref) {
-        return Optional.ofNullable(ref).map(r -> {
-            AccountInfo info = new AccountInfo();
-            info.setCurrency(Optional.ofNullable(r.getCurrency())
-                                 .map(Currency::getCurrencyCode)
-                                 .orElse(null));
-            info.setIban(r.getIban());
-            return info;
-        }).orElse(null);
+        AccountInfo info = new AccountInfo();
+        info.setIban(ref.getIban());
+        info.setCurrency(Optional.ofNullable(ref.getCurrency())
+                             .map(Currency::getCurrencyCode)
+                             .orElse(null));
+        return info;
     }
 
     public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
@@ -119,7 +119,6 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-
     public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus) {
         return Optional.ofNullable(spiConsentStatus)
                    .map(status -> ConsentStatus.valueOf(status.name()));
@@ -140,38 +139,20 @@ public class ConsentMapper {
     }
 
     private AccountReference[] mapToAccountReferenceList(List<SpiAccountReference> references) {
-        if (references == null) {
-            return null;
-        }
-
-        return references.stream().map(this::mapToAccountReference).toArray(AccountReference[]::new);
-    }
-
-    private AccountReference mapToAccountReference(SpiAccountReference reference) {
-        return Optional.ofNullable(reference)
-                   .map(ar -> {
-                       AccountReference accountReference = new AccountReference();
-                       accountReference.setIban(ar.getIban());
-                       accountReference.setBban(ar.getBban());
-                       accountReference.setPan(ar.getPan());
-                       accountReference.setMaskedPan(ar.getMaskedPan());
-                       accountReference.setMsisdn(ar.getMsisdn());
-                       accountReference.setCurrency(ar.getCurrency());
-
-                       return accountReference;
-                   }).orElse(null);
+        return Optional.ofNullable(references).map(Collection::stream)
+                   .map(r -> r
+                                 .map(accountMapper::mapToAccountReference)
+                                 .toArray(AccountReference[]::new))
+                   .orElse(new AccountReference[]{});
     }
 
     private AccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
-        if (accessType == null) {
-            return null;
-        } else {
-            return AccountAccessType.valueOf(accessType.name());
-        }
+        return Optional.ofNullable(accessType)
+                   .map(at -> AccountAccessType.valueOf(at.name()))
+                   .orElse(null);
     }
 
     //Spi
-
     public SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa -> {
@@ -187,11 +168,10 @@ public class ConsentMapper {
     }
 
     private List<SpiAccountReference> mapToSpiAccountReferenceList(AccountReference[] references) {
-        if (references == null) {
-            return null;
-        }
-
-        return Arrays.stream(references).map(this::mapToSpiAccountReference).collect(Collectors.toList());
+        return Optional.ofNullable(references)
+                   .map(ref -> Arrays.stream(ref)
+                                   .map(this::mapToSpiAccountReference).collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
@@ -206,17 +186,10 @@ public class ConsentMapper {
     }
 
     private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
-        if (accessType == null) {
-            return null;
-        } else {
-            return SpiAccountAccessType.valueOf(accessType.name());
-        }
-    }
+        return Optional.ofNullable(accessType)
+                   .map(at -> SpiAccountAccessType.valueOf(at.name()))
+                   .orElse(null);
 
-    public SpiAccountConsent mapToSpiAccountConsent(AccountConsent consent) {
-        return new SpiAccountConsent(consent.getId(), mapToSpiAccountAccess(consent.getAccess()), consent.isRecurringIndicator(),
-            consent.getValidUntil(), consent.getFrequencyPerDay(), consent.getLastActionDate(),
-            mapToSpiConsentStatus(consent.getConsentStatus()), consent.isWithBalance(), consent.isTppRedirectPreferred());
     }
 
     private SpiConsentStatus mapToSpiConsentStatus(ConsentStatus consentStatus) {

@@ -167,7 +167,7 @@ public class AccountMapper {
                .orElse(null);
     }
 
-    private AccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
+    public AccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
         return Optional.ofNullable(spiAccountReference)
                .map(ar -> {
                    AccountReference accountReference = new AccountReference();
