@@ -40,9 +40,9 @@ public class BulkPaymentInitiationController {
     @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
     @ApiResponse(code = 400, message = "Bad request")})
-    @PostMapping("/{payment-product}")
+    @PostMapping(path = "/{payment-product}")
     @ApiImplicitParams({
-    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26 example", required = true, paramType = "header"),
+    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"), //NOPMD value is correct according to specification
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<List<PaymentInitialisationResponse>> createBulkPaymentInitiation(
