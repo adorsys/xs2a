@@ -79,20 +79,6 @@ public class AccountServiceTest {
             .thenReturn(Collections.singletonList(getSpiAccountDetails()));
         //getAccountsByConsent Success no balances
         when(consentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(ResponseObject.<AccountConsent>builder().body(new AccountConsent(CONSENT_ID, new AccountAccess(getAccountReferenceList(),
-                null,
-                null,
-                null,
-                null),
-                false,
-                DATE,
-                4,
-                null,
-                TransactionStatus.ACCP,
-                ConsentStatus.VALID,
-                false,
-                false))
-                            .build());
             .thenReturn(ResponseObject.<AccountConsent>builder().body(getAccountConsent()).build());
         when(consentService.getIbanSetFromAccess(getAccountConsent(CONSENT_ID, false, false).getAccess()))
             .thenReturn(new HashSet<>(Collections.singletonList(getAccountDetails().getIban())));
@@ -454,7 +440,7 @@ public class AccountServiceTest {
 
     private AccountAccess getAccountAccess() {
         return new AccountAccess(
-            new AccountReference[]{getAccountReference()},
+            getAccountReferenceList(),
             null,
             null,
             null,
