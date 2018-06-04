@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 
 @Getter
-@ApiModel(description = "ConsentException")
+@ApiModel(description = "Consent exception")
 public class ConsentException extends RuntimeException {
     public ConsentException(String message){
         super(message);

@@ -38,7 +38,7 @@ import java.util.Set;
 public class AisConsentController {
     private final AisConsentService aisConsentService;
 
-    @PostMapping(path = "/create")
+    @PostMapping(path = "/")
     @ApiOperation(value = "Create consent for given psu id and accesses.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = String.class),
