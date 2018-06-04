@@ -28,24 +28,49 @@ public class RemoteSpiUrls {
     private String consentServiceBaseUrl;
 
     //Consents urls
+    /**
+     * @return VOID
+     * @Method PUT
+     * @PathVariables: String consentId, SpiConsentStatus consentStatus
+     */
     public String updateConsentStatus() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}/status/{status}";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
     }
 
+    /**
+     * @return String consentId
+     * @Method POST
+     * @Body AisConsentRequest request
+     */
     public String createConsent() {
-        return consentServiceBaseUrl + "/ais/consent/create";
+        return consentServiceBaseUrl + "/ais/consent/";
     }
 
+    /**
+     * @return SpiConsentStatus status
+     * @Method GET
+     * @PathVariable String consentId
+     */
     public String getAccountConsentStatusById() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}/status";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
     }
 
+    /**
+     * @return SpiAccountConsent consent
+     * @Method GET
+     * @PathVariable String consentId
+     */
     public String getConsentById() {
         return consentServiceBaseUrl + "/ais/consent/{consentId}";
     }
 
-    public String getConsentByAccess() {
-        return spiMockBaseUrl + "/consent/byAccess/{access}";
+    /**
+     * @return Map<String, Set<AccessAccountInfo>> accesses validated
+     * @Method POST
+     * @Body AvailableAccessRequest
+     */
+    public String checkAccessByConsentId() {
+        return spiMockBaseUrl + "/ais/consent/available/access";
     }
 
     //Accounts urls

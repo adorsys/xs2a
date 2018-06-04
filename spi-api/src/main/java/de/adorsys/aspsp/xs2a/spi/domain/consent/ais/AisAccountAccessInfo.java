@@ -16,12 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AisAccountAccessInfo {
     private List<AccountInfo> accounts;
     private List<AccountInfo> balances;
