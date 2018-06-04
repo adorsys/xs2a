@@ -34,8 +34,7 @@ import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
 @Component
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlerInterceptor.class);
-
-    private RequestValidatorService requestValidatorService;
+    private final RequestValidatorService requestValidatorService;
 
     @Autowired
     public HandlerInterceptor(RequestValidatorService requestValidatorService) {
@@ -55,11 +54,11 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         } else {
 
             final List<String> violations = violationsMap.entrySet().stream()
-                                   .map(entry -> entry.getKey() + " : " + entry.getValue()).collect(Collectors.toList());
+                                                .map(entry -> entry.getKey() + " : " + entry.getValue()).collect(Collectors.toList());
 
             LOGGER.debug(violations.toString());
 
-            response.sendError(FORMAT_ERROR.getCode(), FORMAT_ERROR.name()+": "+violations.toString());
+            response.sendError(FORMAT_ERROR.getCode(), FORMAT_ERROR.name() + ": " + violations.toString());
             return false;
         }
     }

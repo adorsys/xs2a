@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.aspsp.xs2a.service.ProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImpl;
@@ -27,32 +29,29 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
 @Log4j
+@Service
 public class RequestValidatorService {
-    private ParametersFactory parametersFactory;
-    private Validator validator;
-
     @Autowired
-    public RequestValidatorService(Validator validator, ParametersFactory parametersFactory) {
-        this.validator = validator;
-        this.parametersFactory = parametersFactory;
-    }
+    private ParametersFactory parametersFactory;
+    @Autowired
+    private Validator validator;
+    @Autowired
+    private ProfileService profileService;
 
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> violationMap = new HashMap<>();
         violationMap.putAll(getRequestHeaderViolationMap(request, handler));
         violationMap.putAll(getRequestParametersViolationMap(request, handler));
+        violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
 
         return violationMap;
     }
@@ -68,9 +67,34 @@ public class RequestValidatorService {
         }
 
         Map<String, String> requestParameterViolationsMap = validator.validate(parameterImpl).stream()
-                                                            .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
+                                                                .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         return requestParameterViolationsMap;
+    }
+
+    public Map getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
+        Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+        String paymentProductStr = pathVariables.get("payment-product");
+
+        if (paymentProductStr == null) {
+            return Collections.emptyMap();
+        }
+
+        return Optional.ofNullable(mapToPaymentProductFromString(paymentProductStr))
+                   .map(paymentProduct -> {
+                       if (isPaymentProductAvailable(paymentProduct)) {
+                           return Collections.emptyMap();
+                       } else {
+                           return Collections.singletonMap("Wrong path variable : ", "Wrong payment product");
+                       }
+                   })
+                   .orElse(Collections.singletonMap("Wrong path variable : ", "Wrong payment product"));
+    }
+
+    boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
+        List<PaymentProduct> paymentProducts = profileService.getAvailablePaymentProducts();
+        return paymentProducts.contains(paymentProduct);
     }
 
     public Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
@@ -84,7 +108,7 @@ public class RequestValidatorService {
         }
 
         Map<String, String> requestHeaderViolationsMap = validator.validate(headerImpl).stream()
-                                                         .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
+                                                             .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         return requestHeaderViolationsMap;
     }
@@ -108,8 +132,17 @@ public class RequestValidatorService {
 
     private Map<String, String> getRequestParametersMap(HttpServletRequest request) {
         return request.getParameterMap().entrySet().stream()
-               .collect(Collectors.toMap(
-               Map.Entry::getKey,
-               e -> String.join(",", e.getValue())));
+                   .collect(Collectors.toMap(
+                       Map.Entry::getKey,
+                       e -> String.join(",", e.getValue())));
+    }
+
+    private PaymentProduct mapToPaymentProductFromString(String paymentProductStr) {
+        try {
+            return PaymentProduct.forValue(paymentProductStr);
+        } catch (IllegalArgumentException ex) {
+            log.warn("Payment product is not correct: " + paymentProductStr);
+            return null;
+        }
     }
 }

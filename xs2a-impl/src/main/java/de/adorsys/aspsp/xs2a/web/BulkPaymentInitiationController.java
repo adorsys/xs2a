@@ -31,7 +31,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "api/v1/bulk-payments")
+@RequestMapping(path = "api/v1/bulk-payments/{payment-product}")
 @Api(value = "api/v1/consents", tags = "PISP, Bulk payment initiation", description = "Payment Initiation for Bulk Payments and Multiple Payments")
 public class BulkPaymentInitiationController {
     private final ResponseMapper responseMapper;
@@ -40,7 +40,7 @@ public class BulkPaymentInitiationController {
     @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
     @ApiResponse(code = 400, message = "Bad request")})
-    @PostMapping(path = "/{payment-product}")
+    @PostMapping()
     @ApiImplicitParams({
     @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"), //NOPMD value is correct according to specification
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),

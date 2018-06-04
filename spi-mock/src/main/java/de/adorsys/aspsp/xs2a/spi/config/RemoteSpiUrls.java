@@ -95,4 +95,9 @@ public class RemoteSpiUrls {
         return spiMockBaseUrl + "/transaction/";
     }
 
+    public String getAvailablePaymentProducts() {
+        return consentServiceBaseUrl + "/aspsp-profile/available-payment-products";
+    }
+
+
 }
