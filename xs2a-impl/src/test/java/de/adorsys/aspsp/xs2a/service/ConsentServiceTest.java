@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
@@ -48,6 +47,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class ConsentServiceTest {
     private final String CORRECT_PSU_ID = "123456789";
+    private final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private final String WRONG_PSU_ID = "WRONG PSU ID";
     private final String CORRECT_IBAN = "DE123456789";
     private final String CORRECT_IBAN_1 = "DE987654321";
@@ -66,6 +66,8 @@ public class ConsentServiceTest {
 
     @Before
     public void setUp() {
+        when(consentSpi.getAccountConsentStatusById(CONSENT_ID))
+            .thenReturn(SpiConsentStatus.RECEIVED);
         //WB Acc Create Case
         when(consentSpi.createAccountConsent(
             getSpiConsent(null, getSpiAccountAccess(
@@ -303,13 +305,12 @@ public class ConsentServiceTest {
         assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
     }
 
-
     @Test
     public void getAccountConsentsStatusById_Success() {
         //When:
-        ResponseObject response = consentService.getAccountConsentsStatusById(CORRECT_PSU_ID);
+        ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
-        assertThat(response.getBody()).isEqualTo(TransactionStatus.ACCP);
+        assertThat(response.getBody()).isEqualTo(ConsentStatus.RECEIVED);
     }
 
     @Test
@@ -354,7 +355,7 @@ public class ConsentServiceTest {
     }
 
     private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, withBalance, false);
+        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false);
     }
 
     private SpiAccountAccess getSpiAccountAccess(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {

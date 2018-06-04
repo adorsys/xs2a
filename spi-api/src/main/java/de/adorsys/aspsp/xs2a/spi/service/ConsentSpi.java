@@ -18,11 +18,14 @@ package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 
 public interface ConsentSpi {
     String createAccountConsent(SpiAccountConsent consent);
 
     SpiAccountConsent getAccountConsentById(String consentId);
+
+    SpiConsentStatus getAccountConsentStatusById(String consentId);
 
     void deleteAccountConsentById(String consentId);
 
