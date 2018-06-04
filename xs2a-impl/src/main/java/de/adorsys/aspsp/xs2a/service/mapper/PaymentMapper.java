@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -26,7 +25,6 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.Remittance;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
@@ -54,10 +52,10 @@ public class PaymentMapper {
                        .map(paymentRe -> {
                            SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
                            spiSinglePayments.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
-                           spiSinglePayments.setDebtorAccount(mapToSpiAccountReference(paymentRe.getDebtorAccount()));
+                           spiSinglePayments.setDebtorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getDebtorAccount()));
                            spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
                            spiSinglePayments.setInstructedAmount(accountMapper.mapToSpiAmount(paymentRe.getInstructedAmount()));
-                           spiSinglePayments.setCreditorAccount(mapToSpiAccountReference(paymentRe.getCreditorAccount()));
+                           spiSinglePayments.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
                            spiSinglePayments.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
                            spiSinglePayments.setCreditorName(paymentRe.getCreditorName());
                            spiSinglePayments.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
@@ -73,27 +71,15 @@ public class PaymentMapper {
                        .orElse(null);
     }
 
-    private SpiAccountReference mapToSpiAccountReference(AccountReference accountReference) {
-        return Optional.ofNullable(accountReference)
-                       .map(ar -> new SpiAccountReference(
-                               ar.getIban(),
-                               ar.getBban(),
-                               ar.getPan(),
-                               ar.getMaskedPan(),
-                               ar.getMsisdn(),
-                               ar.getCurrency()))
-                       .orElse(null);
-    }
-
     public SpiPeriodicPayment mapToSpiPeriodicPayment(PeriodicPayment periodicPayment) {
         return Optional.ofNullable(periodicPayment)
                        .map(pp -> {
                            SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment();
                            spiPeriodicPayment.setEndToEndIdentification(pp.getEndToEndIdentification());
-                           spiPeriodicPayment.setDebtorAccount(consentMapper.mapToSpiAccountReference(pp.getDebtorAccount()));
+                           spiPeriodicPayment.setDebtorAccount(accountMapper.mapToSpiAccountReference(pp.getDebtorAccount()));
                            spiPeriodicPayment.setUltimateDebtor(pp.getUltimateDebtor());
                            spiPeriodicPayment.setInstructedAmount(accountMapper.mapToSpiAmount(pp.getInstructedAmount()));
-                           spiPeriodicPayment.setCreditorAccount(consentMapper.mapToSpiAccountReference(pp.getCreditorAccount()));
+                           spiPeriodicPayment.setCreditorAccount(accountMapper.mapToSpiAccountReference(pp.getCreditorAccount()));
                            spiPeriodicPayment.setCreditorAgent(pp.getCreditorAgent() != null ? pp.getCreditorAgent().getCode() : null);
                            spiPeriodicPayment.setCreditorName(pp.getCreditorName());
                            spiPeriodicPayment.setCreditorAddress(mapToSpiAddress(pp.getCreditorAddress()));

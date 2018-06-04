@@ -170,19 +170,8 @@ public class ConsentMapper {
     private List<SpiAccountReference> mapToSpiAccountReferenceList(AccountReference[] references) {
         return Optional.ofNullable(references)
                    .map(ref -> Arrays.stream(ref)
-                                   .map(this::mapToSpiAccountReference).collect(Collectors.toList()))
+                                   .map(accountMapper::mapToSpiAccountReference).collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
-    }
-
-    public SpiAccountReference mapToSpiAccountReference(AccountReference reference) {
-        return Optional.of(reference)
-                   .map(ar -> new SpiAccountReference(
-                       ar.getIban(),
-                       ar.getBban(),
-                       ar.getPan(),
-                       ar.getMaskedPan(),
-                       ar.getMsisdn(),
-                       ar.getCurrency())).orElse(null);
     }
 
     private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
@@ -190,9 +179,5 @@ public class ConsentMapper {
                    .map(at -> SpiAccountAccessType.valueOf(at.name()))
                    .orElse(null);
 
-    }
-
-    private SpiConsentStatus mapToSpiConsentStatus(ConsentStatus consentStatus) {
-        return SpiConsentStatus.valueOf(consentStatus.name());
     }
 }
