@@ -72,12 +72,12 @@ public class ConsentServiceTest {
         when(consentSpi.getAccountConsentStatusById(CONSENT_ID))
             .thenReturn(SpiConsentStatus.RECEIVED);
         when(consentSpi.createAccountConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(
-            getAccess(getReferencesArr(CORRECT_IBAN), new AccountReference[]{}, new AccountReference[]{}, false, false)
-        ),CORRECT_PSU_ID,TPP_ID)))
+            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)
+        ), CORRECT_PSU_ID, TPP_ID)))
             .thenReturn(CONSENT_ID);
         when(consentSpi.createAccountConsent(mapper.mapToAisConsentRequest(
             getCreateConsentRequest(
-                getAccess(getReferencesArr(WRONG_IBAN), new AccountReference[]{}, new AccountReference[]{}, false, false)),CORRECT_PSU_ID,TPP_ID)))
+                getAccess(getReferenceList(WRONG_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)), CORRECT_PSU_ID, TPP_ID)))
             .thenReturn(null);
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(CORRECT_IBAN)))).thenReturn(getSpiDetailsList("1", CORRECT_IBAN));
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)))).thenReturn(Arrays.asList(getSpiDetails("1", CORRECT_IBAN, CURRENCY), getSpiDetails("2", CORRECT_IBAN_1, CURRENCY)));
@@ -92,46 +92,10 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_ByAccInAccAccess_WB_Success() {
-        //Given:
-        boolean withBalance = true;
-        CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
-        );
-
-        //When:
-        ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
-            req, withBalance, false, null);
-        CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
-        //Then:
-        assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
-    }
-
-    @Test
-    public void createAccountConsentsWithResponse_ByAccInAccAccess_NoCurrencySet_WB_Success() {
-        //Given:
-        boolean withBalance = true;
-        CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferenceList(CORRECT_IBAN, null), new ArrayList<>(), new ArrayList<>(), false, false)
-        );
-
-        //When:
-        ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
-            req, withBalance, false, null);
-        CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
-        //Then:
-        assertThat(response.getConsentId()).isEqualTo(CORRECT_PSU_ID);
-    }
-
-    @Test
-    public void createAccountConsentsWithResponse_ByAccInAccAccess_WoB_Success() {
     public void createAccountConsentsWithResponse_Success() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
-            getAccess(getReferencesArr(CORRECT_IBAN), new AccountReference[]{}, new AccountReference[]{}, false, false)
-        boolean withBalance = false;
-        CreateConsentReq req = getCreateCosnentRequest(
-            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), new ArrayList<>(), new ArrayList<>(), false, false)
+            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)
         );
 
         //When:
@@ -146,7 +110,7 @@ public class ConsentServiceTest {
     public void createAccountConsentsWithResponse_Failure() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
-            getAccess(getReferencesArr(WRONG_IBAN), new AccountReference[]{}, new AccountReference[]{}, false, false)
+            getAccess(getReferenceList(WRONG_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)
         );
 
         //When:

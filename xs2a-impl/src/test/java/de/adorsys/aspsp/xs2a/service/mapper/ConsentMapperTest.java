@@ -39,7 +39,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,14 +92,20 @@ public class ConsentMapperTest {
         return req;
     }
 
-    private List<AccountInfo> getAccInfo(AccountReference[] ref) {
+    private List<AccountInfo> getAccInfo(List<AccountReference> refrences) {
 
-        return Optional.ofNullable(ref).map(rf -> Arrays.stream(rf).map(ar -> {
-            AccountInfo ai = new AccountInfo();
-            ai.setIban(ar.getIban());
-            ai.setCurrency(Optional.ofNullable(ar.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
-            return ai;
-        }).collect(Collectors.toList()))
+        return Optional.ofNullable(refrences)
+                   .map(ref -> ref.stream()
+                                   .map(ar -> {
+                                       AccountInfo ai = new AccountInfo();
+                                       ai.setIban(ar.getIban());
+                                       ai.setCurrency(
+                                           Optional.ofNullable(ar.getCurrency())
+                                               .map(Currency::getCurrencyCode)
+                                               .orElse(null));
+                                       return ai;
+                                   })
+                                   .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
     }
 
