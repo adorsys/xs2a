@@ -82,9 +82,9 @@ public class ConsentMapperTest {
         req.setFrequencyPerDay(consentReq.getFrequencyPerDay());
         AisAccountAccessInfo info = new AisAccountAccessInfo();
 
-        info.setAccounts(getAccInfo(consentReq.getAccess().getAccounts()));
-        info.setBalances(getAccInfo(consentReq.getAccess().getBalances()));
-        info.setTransactions(getAccInfo(consentReq.getAccess().getTransactions()));
+        info.setAccounts(getAccountInfo(consentReq.getAccess().getAccounts()));
+        info.setBalances(getAccountInfo(consentReq.getAccess().getBalances()));
+        info.setTransactions(getAccountInfo(consentReq.getAccess().getTransactions()));
         info.setAvailableAccounts(Optional.ofNullable(req.getAccess()).map(AisAccountAccessInfo::getAvailableAccounts).orElse(null));
         info.setAllPsd2(Optional.ofNullable(req.getAccess()).map(AisAccountAccessInfo::getAllPsd2).orElse(null));
         req.setAccess(info);
@@ -92,17 +92,14 @@ public class ConsentMapperTest {
         return req;
     }
 
-    private List<AccountInfo> getAccInfo(List<AccountReference> refrences) {
+    private List<AccountInfo> getAccountInfo(List<AccountReference> references) {
 
-        return Optional.ofNullable(refrences)
+        return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
                                    .map(ar -> {
                                        AccountInfo ai = new AccountInfo();
                                        ai.setIban(ar.getIban());
-                                       ai.setCurrency(
-                                           Optional.ofNullable(ar.getCurrency())
-                                               .map(Currency::getCurrencyCode)
-                                               .orElse(null));
+                                       ai.setCurrency(getCurrency(ar));
                                        return ai;
                                    })
                                    .collect(Collectors.toList()))
@@ -158,5 +155,11 @@ public class ConsentMapperTest {
         assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(4);
         assertThat(actualAccountConsent.getLastActionDate()).isEqualTo("2017-11-01");
         assertThat(actualAccountConsent.getConsentStatus()).isEqualTo(ConsentStatus.VALID);
+    }
+
+    private String getCurrency(AccountReference reference) {
+        return Optional.ofNullable(reference.getCurrency())
+                   .map(Currency::getCurrencyCode)
+                   .orElse(null);
     }
 }

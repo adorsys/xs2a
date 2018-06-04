@@ -43,7 +43,7 @@ public class RemoteSpiUrls {
      * @Body AisConsentRequest request
      */
     public String createConsent() {
-        return consentServiceBaseUrl + "/ais/consent/";
+        return consentServiceBaseUrl + "/ais/consent";
     }
 
     /**
@@ -92,19 +92,19 @@ public class RemoteSpiUrls {
 
     //Payments urls
     public String createPayment() {
-        return spiMockBaseUrl + "/payments/";
+        return spiMockBaseUrl + "/payments";
     }
 
     public String getPaymentStatus() {
-        return spiMockBaseUrl + "/payments/{payment-id}/status/";
+        return spiMockBaseUrl + "/payments/{payment-id}/status";
     }
 
     public String createBulkPayment() {
-        return spiMockBaseUrl + "/payments/bulk-payments/";
+        return spiMockBaseUrl + "/payments/bulk-payments";
     }
 
     public String createPeriodicPayment() {
-        return spiMockBaseUrl + "/payments/createPeriodicPayment/";
+        return spiMockBaseUrl + "/payments/createPeriodicPayment";
     }
 
     //Transactions urls
@@ -113,11 +113,11 @@ public class RemoteSpiUrls {
     }
 
     public String readTransactionsByPeriod() {
-        return spiMockBaseUrl + "/transaction/{iban}/{currency}/";
+        return spiMockBaseUrl + "/transaction/{iban}/{currency}";
     }
 
     public String createTransaction() {
-        return spiMockBaseUrl + "/transaction/";
+        return spiMockBaseUrl + "/transaction";
     }
 
 }
