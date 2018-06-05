@@ -52,7 +52,7 @@ public class ConsentMapper {
                        request.setTppId(tppId);
                        request.setFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       request.setValidUntil(LocalDateTime.ofInstant(r.getValidUntil().toInstant(), ZoneId.systemDefault()));
+                       request.setValidUntil(r.getValidUntil().toInstant());
                        request.setRecurringIndicator(r.isRecurringIndicator());
                        request.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
 
