@@ -17,24 +17,46 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 
-
 @Value
+@ApiModel(description = "Pis consent response entity", value = "PisConsentResponse")
 public class PisConsentResponse {
+    @ApiModelProperty(value = "Id of the created consent for the given accounts and accesses", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
+
+    @ApiModelProperty(value = "Iban of the debtor", required = true, example = "DE2310010010123")
     private String debtorIban;
+
     private String ultimateDebtor;
+
+    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private Currency currency;
+
+    @ApiModelProperty(value = "Payment amount", required = true, example = "1000")
     private BigDecimal amount;
+
+    @ApiModelProperty(value = "Iban of the creditor", required = true, example = "DE2310010010123")
     private String creditorIban;
+
+    @ApiModelProperty(value = "Creditor agent", required = true, example = "Telekom")
     private String creditorAgent;
+
+    @ApiModelProperty(value = "Name of the creditor", required = true, example = "Telekom")
     private String creditorName;
+
+    @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
     private Date requestedExecutionDate;
+
+    @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035Z")
     private Date requestedExecutionTime;
+
+    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private SpiConsentStatus consentStatus;
 }

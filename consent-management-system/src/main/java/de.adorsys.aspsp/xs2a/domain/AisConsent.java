@@ -38,7 +38,7 @@ public class AisConsent {
     private Long id;
 
     @Column(name = "external_id", nullable = false)
-    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = false, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @ApiModelProperty(value = "Id of the created consent for the given accounts and accesses", required = false, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @Column(name = "recurring_indicator", nullable = false)
