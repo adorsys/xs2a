@@ -33,7 +33,7 @@ public class RemoteSpiUrls {
      * @Method PUT
      * @PathVariables: String consentId, SpiConsentStatus consentStatus
      */
-    public String updateConsentStatus() {
+    public String updateAisConsentStatus() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
     }
 
@@ -42,7 +42,7 @@ public class RemoteSpiUrls {
      * @Method POST
      * @Body AisConsentRequest request
      */
-    public String createConsent() {
+    public String createAisConsent() {
         return consentServiceBaseUrl + "/ais/consent";
     }
 
@@ -51,7 +51,7 @@ public class RemoteSpiUrls {
      * @Method GET
      * @PathVariable String consentId
      */
-    public String getConsentStatusById() {
+    public String getAisConsentStatusById() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
     }
 
@@ -60,8 +60,34 @@ public class RemoteSpiUrls {
      * @Method GET
      * @PathVariable String consentId
      */
-    public String getConsentById() {
+    public String getAisConsentById() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}";
+    }
+
+    // PIS Consents
+    /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentRequest request
+     */
+    public String createPisConsent() {
+        return consentServiceBaseUrl + "/pis/consent/";
+    }
+
+    public String updatePisConsentStatus() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
+    }
+
+    public String getPisConsentStatusById() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
+    }
+
+    public String getPisConsentById() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}";
+    }
+
+    public String getConsentByAccess() {
+        return spiMockBaseUrl + "/consent/byAccess/{access}";
     }
 
     /**

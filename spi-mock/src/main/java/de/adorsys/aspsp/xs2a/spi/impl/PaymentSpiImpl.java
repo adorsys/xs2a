@@ -18,16 +18,19 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -42,9 +45,38 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate restTemplate;
     private final RemoteSpiUrls remoteSpiUrls;
 
+    private final boolean redirectMode = true; // todo remake business logic according task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/100
+
     @Override
-    public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
-        return restTemplate.getForEntity(remoteSpiUrls.getPaymentStatus(), SpiTransactionStatus.class, paymentId).getBody();
+    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
+        return redirectMode
+                   ? paymentForRedirectMode(spiSinglePayments, tppRedirectPreferred)
+                   : paymentForOauthMode(spiSinglePayments, tppRedirectPreferred);
+    }
+
+    private SpiPaymentInitialisationResponse paymentForRedirectMode(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+        String pisConsentId = createPisConsent(spiSinglePayments);
+        return !StringUtils.isBlank(pisConsentId)
+                   ? mapToSpiPaymentResponseByPisConsentId(pisConsentId, tppRedirectPreferred)
+                   : null;
+    }
+
+    private SpiPaymentInitialisationResponse paymentForOauthMode(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.createPayment(), spiSinglePayments, SpiSinglePayments.class);
+        return responseEntity.getStatusCode() == CREATED
+                   ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred)
+                   : null;
+    }
+
+    @Override
+    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        ResponseEntity<List<SpiSinglePayments>> responseEntity = restTemplate.exchange(remoteSpiUrls.createBulkPayment(), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
+        });
+        return (responseEntity.getStatusCode() == CREATED)
+                   ? responseEntity.getBody().stream()
+                         .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
+                         .collect(Collectors.toList())
+                   : Collections.emptyList();
     }
 
     @Override
@@ -54,20 +86,8 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        ResponseEntity<List<SpiSinglePayments>> responseEntity = restTemplate.exchange(remoteSpiUrls.createBulkPayment(), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
-        });
-        return (responseEntity.getStatusCode() == CREATED)
-            ? responseEntity.getBody().stream()
-            .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
-            .collect(Collectors.toList())
-            : Collections.emptyList();
-    }
-
-    @Override
-    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
-        ResponseEntity<SpiSinglePayments> responseEntity = restTemplate.postForEntity(remoteSpiUrls.createPayment(), spiSinglePayments, SpiSinglePayments.class);
-        return responseEntity.getStatusCode() == CREATED ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
+    public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
+        return restTemplate.getForEntity(remoteSpiUrls.getPaymentStatus(), SpiTransactionStatus.class, paymentId).getBody();
     }
 
     private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
@@ -77,5 +97,19 @@ public class PaymentSpiImpl implements PaymentSpi {
         paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
 
         return paymentResponse;
+    }
+
+    private SpiPaymentInitialisationResponse mapToSpiPaymentResponseByPisConsentId(String pisConsentId, boolean tppRedirectPreferred) {
+        SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
+        paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
+        paymentResponse.setPaymentId(pisConsentId);
+        paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
+
+        return paymentResponse;
+    }
+
+    private String createPisConsent(SpiSinglePayments spiSinglePayments) {
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(remoteSpiUrls.createPisConsent(), new PisConsentRequest(spiSinglePayments), String.class);
+        return responseEntity.getBody();
     }
 }
