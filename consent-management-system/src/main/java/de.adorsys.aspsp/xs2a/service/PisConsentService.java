@@ -19,14 +19,12 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.PisConsent;
 import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,7 +46,7 @@ public class PisConsentService {
 
     public Optional<PisConsentResponse> getConsentById(String consentId) {
         return getPisConsentById(consentId)
-            .flatMap(this::mapToPisConsentResponse);
+                   .flatMap(this::mapToPisConsentResponse);
     }
 
     public Optional<Boolean> updateConsentStatusById(String consentId, SpiConsentStatus status) {
@@ -67,10 +65,6 @@ public class PisConsentService {
         return pisConsentRepository.save(consent);
     }
 
-    private BigDecimal mapToAmount(SpiAmount amount) {
-        return new BigDecimal(amount.getContent());
-    }
-
     private Optional<PisConsent> mapToPisConsent(SpiSinglePayments singlePayment) {
         return Optional.ofNullable(singlePayment)
                    .map(sp -> {
@@ -79,7 +73,7 @@ public class PisConsentService {
                        consent.setEndToEndIdentification(sp.getEndToEndIdentification());
                        consent.setDebtorIban(sp.getDebtorAccount().getIban());
                        consent.setUltimateDebtor(sp.getUltimateDebtor());
-                       consent.setAmount(mapToAmount(sp.getInstructedAmount()));
+                       consent.setAmount(sp.getInstructedAmount().getContent());
                        consent.setCurrency(sp.getInstructedAmount().getCurrency());
                        consent.setCreditorIban(sp.getCreditorAccount().getIban());
                        consent.setCreditorAgent(sp.getCreditorAgent());
