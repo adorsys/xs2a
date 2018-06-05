@@ -77,7 +77,7 @@ public class ConsentMapperTest {
         req.setTppId(tppId);
         req.setCombinedServiceIndicator(consentReq.isCombinedServiceIndicator());
         req.setRecurringIndicator(consentReq.isRecurringIndicator());
-        req.setValidUntil(LocalDateTime.ofInstant(consentReq.getValidUntil().toInstant(), ZoneId.systemDefault()));
+        req.setValidUntil(consentReq.getValidUntil().toInstant());
         req.setTppRedirectPreferred(false);
         req.setFrequencyPerDay(consentReq.getFrequencyPerDay());
         AisAccountAccessInfo info = new AisAccountAccessInfo();
