@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
@@ -24,6 +25,9 @@ import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +37,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -43,9 +54,57 @@ public class ConsentMapperTest {
     private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private final String SPI_ACCOUNT_CONSENT_REQ_JSON_PATH = "/json/MapGetAccountConsentTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private final String PSU_ID = "12345";
+    private final String TPP_ID = "This is a test TppId";
 
     @Autowired
     private ConsentMapper consentMapper;
+
+    @Test
+    public void mapToAisConsentRequest() throws IOException {
+        //Given:
+        String aicConRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
+        CreateConsentReq donorRequest = new Gson().fromJson(aicConRequestJson, CreateConsentReq.class);
+        AisConsentRequest expectedResult = getAisConsentReq(donorRequest, PSU_ID, TPP_ID);
+        //When:
+        AisConsentRequest mapedResult = consentMapper.mapToAisConsentRequest(donorRequest, PSU_ID, TPP_ID);
+        assertThat(mapedResult).isEqualTo(expectedResult);
+    }
+
+    private AisConsentRequest getAisConsentReq(CreateConsentReq consentReq, String psuId, String tppId) {
+        AisConsentRequest req = new AisConsentRequest();
+        req.setPsuId(psuId);
+        req.setTppId(tppId);
+        req.setCombinedServiceIndicator(consentReq.isCombinedServiceIndicator());
+        req.setRecurringIndicator(consentReq.isRecurringIndicator());
+        req.setValidUntil(LocalDateTime.ofInstant(consentReq.getValidUntil().toInstant(), ZoneId.systemDefault()));
+        req.setTppRedirectPreferred(false);
+        req.setFrequencyPerDay(consentReq.getFrequencyPerDay());
+        AisAccountAccessInfo info = new AisAccountAccessInfo();
+
+        info.setAccounts(getAccountInfo(consentReq.getAccess().getAccounts()));
+        info.setBalances(getAccountInfo(consentReq.getAccess().getBalances()));
+        info.setTransactions(getAccountInfo(consentReq.getAccess().getTransactions()));
+        info.setAvailableAccounts(Optional.ofNullable(req.getAccess()).map(AisAccountAccessInfo::getAvailableAccounts).orElse(null));
+        info.setAllPsd2(Optional.ofNullable(req.getAccess()).map(AisAccountAccessInfo::getAllPsd2).orElse(null));
+        req.setAccess(info);
+
+        return req;
+    }
+
+    private List<AccountInfo> getAccountInfo(List<AccountReference> references) {
+
+        return Optional.ofNullable(references)
+                   .map(ref -> ref.stream()
+                                   .map(ar -> {
+                                       AccountInfo ai = new AccountInfo();
+                                       ai.setIban(ar.getIban());
+                                       ai.setCurrency(getCurrency(ar));
+                                       return ai;
+                                   })
+                                   .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
+    }
 
     @Test
     public void mapGetAccountConsentStatusById() {
@@ -96,5 +155,11 @@ public class ConsentMapperTest {
         assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(4);
         assertThat(actualAccountConsent.getLastActionDate()).isEqualTo("2017-11-01");
         assertThat(actualAccountConsent.getConsentStatus()).isEqualTo(ConsentStatus.VALID);
+    }
+
+    private String getCurrency(AccountReference reference) {
+        return Optional.ofNullable(reference.getCurrency())
+                   .map(Currency::getCurrencyCode)
+                   .orElse(null);
     }
 }

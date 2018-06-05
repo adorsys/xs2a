@@ -179,9 +179,9 @@ public class SpiAccountConsentModelsTest {
         maskedPan.setMaskedPan("123456xxxxxx1234");
 
         List<AccountReference> balances = Arrays.asList(iban1, iban2, iban3);
-        List<AccountReference> transactions =  Arrays.asList(iban4, maskedPan);
+        List<AccountReference> transactions = Arrays.asList(iban4, maskedPan);
 
-        AccountAccess accountAccess = new AccountAccess(null, balances, transactions, null, null);
+        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), balances, transactions, null, null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
