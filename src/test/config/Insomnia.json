@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2018-06-05T16:27:47.079Z",
+	"__export_date": "2018-06-05T17:06:50.813Z",
 	"__export_source": "insomnia.desktop.app:v5.16.6",
 	"resources": [
 		{
@@ -253,7 +253,7 @@
 			},
 			"body": {
 				"mimeType": "application/json",
-				"text": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"accountId\": \"33333-999999999\",\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"accountId\": \"33333-999999999\",\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"accountId\": \"33333-999999999\",\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ]\n  },\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2018-05-12T16:41:48.991Z\",\n  \"frequencyPerDay\": 0,\n  \"combinedServiceIndicator\": true\n}"
+				"text": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ]\n  },\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2018-05-12T16:41:48.991Z\",\n  \"frequencyPerDay\": 0,\n  \"combinedServiceIndicator\": true\n}"
 			},
 			"created": 1526049172861,
 			"description": "Provides access to the Psu account",
@@ -267,7 +267,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1526046222887.0469,
 			"method": "POST",
-			"modified": 1527871549282,
+			"modified": 1528218388594,
 			"name": "Create Consent",
 			"parameters": [],
 			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
