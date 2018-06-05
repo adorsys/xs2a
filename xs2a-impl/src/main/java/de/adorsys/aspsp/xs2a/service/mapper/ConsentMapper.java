@@ -31,8 +31,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
