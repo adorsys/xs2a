@@ -26,6 +26,6 @@ public class ProfileService {
     private final ProfileConfiguration profileConfiguration;
 
     public int getMinFrequencyPerDay(int tppFrequency){
-        return Math.min(tppFrequency, profileConfiguration.getFrequencyPerDay());
+        return Math.min(Math.abs(tppFrequency), profileConfiguration.getFrequencyPerDay());
     }
 }

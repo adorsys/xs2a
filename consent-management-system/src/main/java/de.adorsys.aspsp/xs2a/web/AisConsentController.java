@@ -51,8 +51,8 @@ public class AisConsentController {
 
     @PostMapping(path = "/available/access")
     @ApiOperation(value = "Check if the requested accesses are granted by the consent identified by given consentId", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Map<String, Set<AccessAccountInfo>>> checkAvailableAccess(@RequestBody AvailableAccessRequest request) {
-        return ResponseEntity.ok(aisConsentService.checkAvailable(request));
+    public ResponseEntity<Map<String, Set<AccessAccountInfo>>> checkAvailableAccessAccount(@RequestBody AvailableAccessRequest request) {
+        return ResponseEntity.ok(aisConsentService.checkAvailableAccessAccount(request));
     }
 
     @GetMapping(path = "/{consent-id}")
