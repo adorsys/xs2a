@@ -39,12 +39,12 @@ public class TppRoleValidationService {
 	@PostConstruct
 	private void init() {
 		patternRoleMap = new HashMap<>();
-		patternRoleMap.put(API_BASE_PATH+"/accounts/**", TppRole.AISP);
-		patternRoleMap.put(API_BASE_PATH+"/consents/**", TppRole.AISP);
-		patternRoleMap.put(API_BASE_PATH+"/funds-confirmations/**", TppRole.PIISP);
-		patternRoleMap.put(API_BASE_PATH+"/bulk-payments/**", TppRole.PISP);
-		patternRoleMap.put(API_BASE_PATH+"/payments/**", TppRole.PISP);
-		patternRoleMap.put(API_BASE_PATH+"/periodic-payments/**", TppRole.PISP);
+		patternRoleMap.put(API_BASE_PATH + "/accounts/**", TppRole.AISP);
+		patternRoleMap.put(API_BASE_PATH + "/consents/**", TppRole.AISP);
+		patternRoleMap.put(API_BASE_PATH + "/funds-confirmations/**", TppRole.PIISP);
+		patternRoleMap.put(API_BASE_PATH + "/bulk-payments/**", TppRole.PISP);
+		patternRoleMap.put(API_BASE_PATH + "/payments/**", TppRole.PISP);
+		patternRoleMap.put(API_BASE_PATH + "/periodic-payments/**", TppRole.PISP);
 
 		regexMatchers(patternRoleMap.keySet().toArray(new String[patternRoleMap.keySet().size()]));
 	}
@@ -61,7 +61,7 @@ public class TppRoleValidationService {
 		for (AntPathRequestMatcher matcher : matchers) {
 			if (matcher.matches(request)) {
 				TppRole tppRole = patternRoleMap.get(matcher.getPattern());
-				if (roles!=null && roles.contains(tppRole)) {
+				if (roles != null && roles.contains(tppRole)) {
 					return true;
 				} else {
 					return false;

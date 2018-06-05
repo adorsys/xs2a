@@ -7,9 +7,9 @@ public class TppCertData {
 
 	private String pspAuthorzationNumber;
 	
-	private String pspRole;
+	private String [] pspRoles;
 	
-	private String pspRoleOID;
+	private String pspName;
 	
 	private String pspAuthorityName;
 	
