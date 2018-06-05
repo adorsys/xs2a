@@ -50,7 +50,7 @@ public class PisConsentController {
         @ApiResponse(code = 200, message = "OK", response = SpiConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<SpiConsentStatus> getConsentStatusById(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
@@ -63,7 +63,7 @@ public class PisConsentController {
         @ApiResponse(code = 200, message = "OK", response = PisConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<PisConsentResponse> getConsentById(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentById(consentId)
                    .map(pc -> new ResponseEntity<>(pc, HttpStatus.OK))
@@ -76,7 +76,7 @@ public class PisConsentController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateConsentStatus(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
