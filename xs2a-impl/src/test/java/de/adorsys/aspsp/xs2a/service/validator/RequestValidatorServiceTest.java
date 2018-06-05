@@ -61,8 +61,8 @@ public class RequestValidatorServiceTest {
     public void setUp() {
         when(aspspProfileService.getAvailablePaymentProducts())
             .thenReturn(Arrays.asList(PaymentProduct.ISCT, PaymentProduct.SCT));
-
     }
+
     @Test
     public void getRequestHeaderViolationMap() throws Exception {
         //Given:

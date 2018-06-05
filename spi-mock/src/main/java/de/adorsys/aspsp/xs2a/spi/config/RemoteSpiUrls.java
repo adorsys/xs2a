@@ -74,14 +74,29 @@ public class RemoteSpiUrls {
         return consentServiceBaseUrl + "/pis/consent/";
     }
 
+    /**
+     * @return Void
+     * @Method GET
+     * @PathVariable String consentId and status
+     */
     public String updatePisConsentStatus() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
     }
 
+    /**
+     * @return SpiConsentStatus
+     * @Method GET
+     * @PathVariable String consentId
+     */
     public String getPisConsentStatusById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
     }
 
+    /**
+     * @return PisConsentResponse
+     * @Method GET
+     * @PathVariable String consentId
+     */
     public String getPisConsentById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}";
     }
@@ -149,6 +164,4 @@ public class RemoteSpiUrls {
     public String getAvailablePaymentProducts() {
         return consentServiceBaseUrl + "/aspsp-profile/available-payment-products";
     }
-
-
 }
