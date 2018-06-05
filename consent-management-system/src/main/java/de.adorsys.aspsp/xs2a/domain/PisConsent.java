@@ -90,7 +90,7 @@ public class PisConsent {
     private ConsentType consentType = ConsentType.PIS;
 
     @Column(name = "ultimate_creditor")
-    @ApiModelProperty(value = "Ultimate creaditor", example = "Telekom")
+    @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")
     private String ultimateCreditor;
 
     @Column(name = "purpose_code")
