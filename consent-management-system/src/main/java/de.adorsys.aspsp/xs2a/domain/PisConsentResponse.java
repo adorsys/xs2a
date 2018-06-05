@@ -28,15 +28,16 @@ import java.util.Date;
 @Value
 @ApiModel(description = "Pis consent response entity", value = "PisConsentResponse")
 public class PisConsentResponse {
-    @ApiModelProperty(value = "Id of the created consent for the given accounts and accesses", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @ApiModelProperty(value = "An external exposed identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @ApiModelProperty(value = "Iban of the debtor", required = true, example = "DE2310010010123")
     private String debtorIban;
 
+    @ApiModelProperty(value = "Name of the debtor", required = true, example = "Mueller")
     private String ultimateDebtor;
 
-    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
+    @ApiModelProperty(value = "Iso currency code", required = true, example = "EUR")
     private Currency currency;
 
     @ApiModelProperty(value = "Payment amount", required = true, example = "1000")

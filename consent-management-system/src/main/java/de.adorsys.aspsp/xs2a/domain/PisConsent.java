@@ -36,11 +36,11 @@ public class PisConsent {
     private Long id;
 
     @Column(name = "external_id", nullable = false)
-    @ApiModelProperty(value = "Id of the created consent for the given accounts and accesses", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @ApiModelProperty(value = "An external exposed identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @Column(name = "end_to_end_identification")
-    @ApiModelProperty(value = "End to end authentication of the psu", example = "RI-123456789")
+    @ApiModelProperty(value = "End to end authentication", example = "RI-123456789")
     private String endToEndIdentification;
 
     @Column(name = "debtor_iban", nullable = false)
@@ -52,7 +52,7 @@ public class PisConsent {
     private String ultimateDebtor;
 
     @Column(name = "currency", nullable = false)
-    @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
+    @ApiModelProperty(value = "Iso currency code", required = true, example = "EUR")
     private Currency currency;
 
     @Column(name = "amount", nullable = false)
@@ -81,7 +81,7 @@ public class PisConsent {
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
+    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private SpiConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
