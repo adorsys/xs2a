@@ -109,10 +109,8 @@ public class RequestValidatorServiceTest {
         HttpServletRequest request = getCorrectRequestForPayment();
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.CBCT.getCode()));
 
-        Object handler = getPaymentInitiationControllerHandler();
-
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -124,10 +122,9 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.SCT.getCode()));
-        Object handler = getPaymentInitiationControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request);
 
         //Then:
         assertThat(actualViolations.isEmpty()).isTrue();

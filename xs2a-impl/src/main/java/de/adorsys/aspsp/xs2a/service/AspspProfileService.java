@@ -17,31 +17,28 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.spi.impl.AspspProfileSpiImpl;
+import de.adorsys.aspsp.xs2a.spi.service.AspspProfileSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Log4j
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {
-    private final AspspProfileSpiImpl aspspProfileSpi;
+    private final AspspProfileSpi aspspProfileSpi;
 
     public List<PaymentProduct> getAvailablePaymentProducts() {
-        List<String> paymentProductsStr = aspspProfileSpi.getAvailablePaymentProducts();
-        if (CollectionUtils.isEmpty(paymentProductsStr)) {
-            return Collections.emptyList();
-        }
-
-        return paymentProductsStr.stream()
-                   .map(this::mapToPaymentProductFromString)
-                   .collect(Collectors.toList());
+        return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentProducts())
+                   .map(list -> list.stream()
+                                    .map(this::mapToPaymentProductFromString)
+                                    .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
     }
 
     private PaymentProduct mapToPaymentProductFromString(String paymentProductStr) {

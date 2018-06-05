@@ -19,6 +19,9 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.service.AspspProfileSpi;
 import lombok.AllArgsConstructor;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +35,8 @@ public class AspspProfileSpiImpl implements AspspProfileSpi {
 
     @Override
     public List<String> getAvailablePaymentProducts() {
-        return restTemplate.getForObject(remoteSpiUrls.getAvailablePaymentProducts(), List.class);
+        return restTemplate.exchange(
+            remoteSpiUrls.getAvailablePaymentProducts(), HttpMethod.GET, new HttpEntity<>(null), new ParameterizedTypeReference<List<String>>() {
+            }).getBody();
     }
 }

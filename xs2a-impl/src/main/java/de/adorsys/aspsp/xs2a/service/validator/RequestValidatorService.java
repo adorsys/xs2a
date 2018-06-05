@@ -49,11 +49,13 @@ public class RequestValidatorService {
     @Autowired
     private AspspProfileService aspspProfileService;
 
+    final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
+
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> violationMap = new HashMap<>();
         violationMap.putAll(getRequestHeaderViolationMap(request, handler));
         violationMap.putAll(getRequestParametersViolationMap(request, handler));
-        violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
+        violationMap.putAll(getRequestPathVariablesViolationMap(request));
 
         return violationMap;
     }
@@ -74,7 +76,7 @@ public class RequestValidatorService {
         return requestParameterViolationsMap;
     }
 
-    public Map getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
+    public Map getRequestPathVariablesViolationMap(HttpServletRequest request) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
         requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
 
@@ -121,28 +123,27 @@ public class RequestValidatorService {
                        e -> String.join(",", e.getValue())));
     }
 
-    private Map checkPaymentProductByRequest(HttpServletRequest request) {
+    private Map<String, String> checkPaymentProductByRequest(HttpServletRequest request) {
         Map<String, String> pathVariableMap = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
         return Optional.ofNullable(pathVariableMap)
-                   .map(mp -> mp.get("payment-product"))
+                   .map(mp -> mp.get(PAYMENT_PRODUCT_PATH_VAR))
                    .map(this::checkPaymentProductSupportAndGetViolationMap)
                    .orElse(Collections.emptyMap());
     }
 
-    private Map checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
+    private Map<String, String> checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
         return Optional.ofNullable(paymentProduct)
                    .map(this::mapToPaymentProductFromString)
-                   .map(prod -> {
-                       if (isPaymentProductAvailable(prod)) {
-                           return Collections.emptyMap();
-                       } else {
-                           return Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + prod.getCode());
-                       }
-                   })
+                   .map(this::getViolationMapForPaymentProduct)
                    .orElse(Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }
 
+    private Map<String, String> getViolationMapForPaymentProduct(PaymentProduct paymentProduct) {
+        return isPaymentProductAvailable(paymentProduct)
+                   ? Collections.emptyMap()
+                   : Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getCode());
+    }
 
     private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
         List<PaymentProduct> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
