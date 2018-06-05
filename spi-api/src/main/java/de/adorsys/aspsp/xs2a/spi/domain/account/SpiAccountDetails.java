@@ -33,7 +33,7 @@ public class SpiAccountDetails {
     @Id
     @Setter
     @NonFinal
-    private String id;
+    private String id; // TODO shouldn't this be resourceId?
     /**
      * International Bank Account Number
      * 2 letters CountryCode + 2 digits checksum + BBAN
