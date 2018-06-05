@@ -31,10 +31,10 @@ public class AccountHolder {
 
     public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
         info = Optional.ofNullable(info).orElse(Collections.emptyList());
-        info.forEach(a -> addAccountAccess(a.getIban(), getCurrency(a.getCurrency()), typeAccess));
+        info.forEach(a -> addAccountAccess(a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess));
     }
 
-    private Currency getCurrency(String currency) {
+    private Currency getCurrencyByString(String currency) {
         return Optional.ofNullable(currency)
                    .map(Currency::getInstance)
                    .orElse(null);

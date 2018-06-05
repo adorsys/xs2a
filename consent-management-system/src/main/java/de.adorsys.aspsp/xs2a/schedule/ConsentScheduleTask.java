@@ -50,11 +50,11 @@ public class ConsentScheduleTask {
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
         return availableConsents.stream()
-                   .map(a -> doUpdate(a))
+                   .map(this::updateConsentParameters)
                    .collect(Collectors.toList());
     }
 
-    private AisConsent doUpdate(AisConsent consent) {
+    private AisConsent updateConsentParameters(AisConsent consent) {
         int minFrequencyPerDay = profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay());
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setUsageCounter(minFrequencyPerDay);

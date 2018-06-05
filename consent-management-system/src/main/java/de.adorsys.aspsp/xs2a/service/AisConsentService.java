@@ -53,10 +53,10 @@ public class AisConsentService {
     private final ConsentMapper consentMapper;
 
     public Optional<String> createConsent(AisConsentRequest request) {
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(minFrequencyPerDay);
@@ -90,12 +90,19 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
-    public Map<String, Set<AccessAccountInfo>> checkAvailable(AvailableAccessRequest request) {
+    public Map<String, Set<AccessAccountInfo>> checkAvailableAccessAccount(AvailableAccessRequest request) {
         Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
         AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
             throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
         }
+        AisConsent updated = updateConsentStatusAndCounter(aisConsent);
+        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(updated.getAccounts());
+        Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
+        return filterRequestedAccounts(targetAccounts, requestedAccounts);
+    }
+
+    private AisConsent updateConsentStatusAndCounter(AisConsent aisConsent) {
         if (aisConsent.getConsentStatus() == RECEIVED) {
             aisConsent.setConsentStatus(VALID);
         }
@@ -105,11 +112,7 @@ public class AisConsentService {
             aisConsent.setConsentStatus(EXPIRED);
         }
         aisConsent.setUsageCounter(newUsageCounter);
-        aisConsentRepository.save(aisConsent);
-
-        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
-        Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
-        return filterRequestedAccounts(targetAccounts, requestedAccounts);
+        return aisConsentRepository.save(aisConsent);
     }
 
     private Map<String, Set<AccessAccountInfo>> filterRequestedAccounts(Map<String, Set<AccessAccountInfo>> targetAccounts, Map<String, Set<AccessAccountInfo>> requestedAccounts) {
@@ -193,8 +196,8 @@ public class AisConsentService {
         return holder;
     }
 
-    private Stream<AccountAccess> updateCurrency(Set<AccountAccess> accountAccessesWithoutCurrency, Currency bc) {
-        accountAccessesWithoutCurrency.forEach(a -> a.setCurrency(bc));
+    private Stream<AccountAccess> updateCurrency(Set<AccountAccess> accountAccessesWithoutCurrency, Currency currency) {
+        accountAccessesWithoutCurrency.forEach(a -> a.setCurrency(currency));
         return accountAccessesWithoutCurrency.stream();
     }
 
