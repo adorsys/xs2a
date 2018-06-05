@@ -17,11 +17,16 @@
 package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
+
+import java.util.Map;
+import java.util.Set;
 
 public interface ConsentSpi {
-    String createAccountConsent(SpiAccountConsent consent);
+    String createAccountConsent(AisConsentRequest consent);
 
     SpiAccountConsent getAccountConsentById(String consentId);
 
@@ -29,5 +34,6 @@ public interface ConsentSpi {
 
     void deleteAccountConsentById(String consentId);
 
-    void expireConsent(SpiAccountAccess access);
+    Map<String, Set<AccessAccountInfo>> checkValidityByConsent(AvailableAccessRequest request);
+
 }

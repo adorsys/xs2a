@@ -27,21 +27,41 @@ public class RemoteSpiUrls {
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
-    // AIS Consents
+    //Consents urls
+    /**
+     * @return VOID
+     * @Method PUT
+     * @PathVariables: String consentId, SpiConsentStatus consentStatus
+     */
     public String updateAisConsentStatus() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}/status/{status}";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
     }
 
+    /**
+     * @return String consentId
+     * @Method POST
+     * @Body AisConsentRequest request
+     */
     public String createAisConsent() {
-        return consentServiceBaseUrl + "/ais/consent/";
+        return consentServiceBaseUrl + "/ais/consent";
     }
 
+    /**
+     * @return SpiConsentStatus status
+     * @Method GET
+     * @PathVariable String consentId
+     */
     public String getAisConsentStatusById() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}/status";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
     }
 
+    /**
+     * @return SpiAccountConsent consent
+     * @Method GET
+     * @PathVariable String consentId
+     */
     public String getAisConsentById() {
-        return consentServiceBaseUrl + "/ais/consent/{consentId}";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}";
     }
 
     // PIS Consents
@@ -65,17 +85,26 @@ public class RemoteSpiUrls {
         return spiMockBaseUrl + "/consent/byAccess/{access}";
     }
 
+    /**
+     * @return Map<String, Set<AccessAccountInfo>> accesses validated
+     * @Method POST
+     * @Body AvailableAccessRequest
+     */
+    public String checkAccessByConsentId() {
+        return consentServiceBaseUrl + "/ais/consent/available/access";
+    }
+
     //Accounts urls
     public String getAccountDetailsById() {
-        return spiMockBaseUrl + "/account/{accountId}";
+        return spiMockBaseUrl + "/account/{account-id}";
     }
 
     public String getBalancesByAccountId() {
-        return spiMockBaseUrl + "/account/{accountId}/balances";
+        return spiMockBaseUrl + "/account/{account-id}/balances";
     }
 
     public String getAccountDetailsByPsuId() {
-        return spiMockBaseUrl + "/account/psu/{psuId}";
+        return spiMockBaseUrl + "/account/psu/{psu-id}";
     }
 
     public String getAccountDetailsByIban() {
@@ -84,32 +113,32 @@ public class RemoteSpiUrls {
 
     //Payments urls
     public String createPayment() {
-        return spiMockBaseUrl + "/payments/";
+        return spiMockBaseUrl + "/payments";
     }
 
     public String getPaymentStatus() {
-        return spiMockBaseUrl + "/payments/{paymentId}/status/";
+        return spiMockBaseUrl + "/payments/{payment-id}/status";
     }
 
     public String createBulkPayment() {
-        return spiMockBaseUrl + "/payments/bulk-payments/";
+        return spiMockBaseUrl + "/payments/bulk-payments";
     }
 
     public String createPeriodicPayment() {
-        return spiMockBaseUrl + "/payments/createPeriodicPayment/";
+        return spiMockBaseUrl + "/payments/createPeriodicPayment";
     }
 
     //Transactions urls
     public String readTransactionById() {
-        return spiMockBaseUrl + "/transaction/{transactionId}";
+        return spiMockBaseUrl + "/transaction/{transaction-id}";
     }
 
     public String readTransactionsByPeriod() {
-        return spiMockBaseUrl + "/transaction/{iban}/{currency}/";
+        return spiMockBaseUrl + "/transaction/{iban}/{currency}";
     }
 
     public String createTransaction() {
-        return spiMockBaseUrl + "/transaction/";
+        return spiMockBaseUrl + "/transaction";
     }
 
 }

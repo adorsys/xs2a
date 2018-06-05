@@ -16,29 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.Currency;
-import java.util.Optional;
 
 @Slf4j
 @Value
 public class SpiAmount {
     private Currency currency;
-    private String content;
-
-    // todo make content with BigDecimal format: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/90
-    @JsonIgnore
-    public double getDoubleContent() {
-        try {
-            return Optional.ofNullable(content)
-                .map(Double::parseDouble)
-                .orElse(0.0d);
-        } catch (NumberFormatException ex) {
-            log.warn("Problem with converting amount content '{}' to double format: {}", content, ex.getMessage());
-            return 0.0d;
-        }
-    }
+    private BigDecimal content;
 }

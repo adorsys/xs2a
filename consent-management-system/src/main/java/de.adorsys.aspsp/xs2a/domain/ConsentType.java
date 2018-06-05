@@ -16,6 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(description = "Type of the consent", value = "ConsentType")
 public enum ConsentType {
     AIS,
     PIS
