@@ -38,7 +38,7 @@ public class AisConsent {
     private Long id;
 
     @Column(name = "external_id", nullable = false)
-    @ApiModelProperty(value = "Id of the created consent for the given accounts and accesses", required = false, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @ApiModelProperty(value = "An external exposed identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @Column(name = "recurring_indicator", nullable = false)
@@ -46,7 +46,7 @@ public class AisConsent {
     private boolean recurringIndicator;
 
     @Column(name = "tpp_redirect_preferred", nullable = false)
-    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", example = "false")
+    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", required = true, example = "false")
     private boolean tppRedirectPreferred;
 
     @Column(name = "combined_service_indicator", nullable = false)
