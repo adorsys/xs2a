@@ -1,7 +1,7 @@
 {
 	"_type": "export",
 	"__export_format": 3,
-	"__export_date": "2018-06-01T16:51:38.082Z",
+	"__export_date": "2018-06-05T16:27:47.079Z",
 	"__export_source": "insomnia.desktop.app:v5.16.6",
 	"resources": [
 		{
@@ -36,9 +36,9 @@
 					],
 					"hostOnly": true,
 					"httpOnly": true,
-					"id": "31975508569403477",
+					"id": "4292772956457376",
 					"key": "KC_RESTART",
-					"lastAccessed": "2018-06-01T16:44:58.915Z",
+					"lastAccessed": "2018-06-01T16:53:42.601Z",
 					"maxAge": 0,
 					"path": "/auth/realms/xs2a"
 				},
@@ -47,7 +47,7 @@
 					"domain": "localhost",
 					"hostOnly": true,
 					"httpOnly": true,
-					"id": "1579732504937661",
+					"id": "48323407657994233",
 					"key": "JSESSIONID",
 					"lastAccessed": "2018-06-01T16:46:19.569Z",
 					"path": "/",
@@ -57,7 +57,7 @@
 					"creation": "2018-05-11T14:09:46.963Z",
 					"domain": "localhost",
 					"hostOnly": true,
-					"id": "8117538654848622",
+					"id": "7989708494528298",
 					"key": "JSESSIONID",
 					"lastAccessed": "2018-05-11T14:09:46.963Z",
 					"path": "/auth",
@@ -65,7 +65,7 @@
 				}
 			],
 			"created": 1525870429339,
-			"modified": 1527871579570,
+			"modified": 1527872022601,
 			"name": "Default Jar",
 			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
 			"_type": "cookie_jar"
@@ -388,7 +388,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1526046083752.625,
 			"method": "GET",
-			"modified": 1526059522162,
+			"modified": 1528215851783,
 			"name": "AISP, Accounts",
 			"parameters": [],
 			"parentId": "fld_c9f2457e42444a629dd72cb3c37fcbbf",
@@ -397,7 +397,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "http://localhost:8081/api/v1/consents/{{ consentId  }}",
+			"url": "http://localhost:8081/api/v1/accounts",
 			"_type": "request"
 		},
 		{
@@ -478,7 +478,7 @@
 			"isPrivate": false,
 			"metaSortKey": -1526003034051.4688,
 			"method": "GET",
-			"modified": 1526059497550,
+			"modified": 1528215861509,
 			"name": "AISP, Consents",
 			"parameters": [],
 			"parentId": "fld_c9f2457e42444a629dd72cb3c37fcbbf",
@@ -487,7 +487,7 @@
 			"settingRebuildPath": true,
 			"settingSendCookies": true,
 			"settingStoreCookies": true,
-			"url": "http://localhost:8081/api/v1/accounts",
+			"url": "http://localhost:8081/api/v1/consents/{{ consentId  }}",
 			"_type": "request"
 		},
 		{
