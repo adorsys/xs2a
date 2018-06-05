@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.service.ProfileService;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImpl;
@@ -47,13 +47,13 @@ public class RequestValidatorService {
     @Autowired
     private Validator validator;
     @Autowired
-    private ProfileService profileService;
+    private AspspProfileService aspspProfileService;
 
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> violationMap = new HashMap<>();
         violationMap.putAll(getRequestHeaderViolationMap(request, handler));
         violationMap.putAll(getRequestParametersViolationMap(request, handler));
-        violationMap.putAll(getRequestPathVariablesViolationMap(request));
+        violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
 
         return violationMap;
     }
@@ -74,24 +74,11 @@ public class RequestValidatorService {
         return requestParameterViolationsMap;
     }
 
-    public Map getRequestPathVariablesViolationMap(HttpServletRequest request) {
-        Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+    public Map getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
+        Map<String, String> requestPathViolationMap = new HashMap<>();
+        requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
 
-        String paymentProductStr = pathVariables.get("payment-product");
-
-        if (paymentProductStr == null) {
-            return Collections.emptyMap();
-        }
-
-        return Optional.ofNullable(mapToPaymentProductFromString(paymentProductStr))
-                   .map(paymentProduct -> {
-                       if (isPaymentProductAvailable(paymentProduct)) {
-                           return Collections.emptyMap();
-                       } else {
-                           return Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProductStr);
-                       }
-                   })
-                   .orElse(Collections.singletonMap("Wrong path variable : ", "Wrong payment product"));
+        return requestPathViolationMap;
     }
 
     public Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
@@ -108,11 +95,6 @@ public class RequestValidatorService {
                                                              .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         return requestHeaderViolationsMap;
-    }
-
-    private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
-        List<PaymentProduct> paymentProducts = profileService.getAvailablePaymentProducts();
-        return paymentProducts.contains(paymentProduct);
     }
 
     private Map<String, String> getRequestHeadersMap(HttpServletRequest request) {
@@ -137,6 +119,34 @@ public class RequestValidatorService {
                    .collect(Collectors.toMap(
                        Map.Entry::getKey,
                        e -> String.join(",", e.getValue())));
+    }
+
+    private Map checkPaymentProductByRequest(HttpServletRequest request) {
+        Map<String, String> pathVariableMap = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+
+        return Optional.ofNullable(pathVariableMap)
+                   .map(mp -> mp.get("payment-product"))
+                   .map(this::checkPaymentProductSupportAndGetViolationMap)
+                   .orElse(Collections.emptyMap());
+    }
+
+    private Map checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
+        return Optional.ofNullable(paymentProduct)
+                   .map(this::mapToPaymentProductFromString)
+                   .map(prod -> {
+                       if (isPaymentProductAvailable(prod)) {
+                           return Collections.emptyMap();
+                       } else {
+                           return Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + prod.getCode());
+                       }
+                   })
+                   .orElse(Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
+    }
+
+
+    private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
+        List<PaymentProduct> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
+        return paymentProducts.contains(paymentProduct);
     }
 
     private PaymentProduct mapToPaymentProductFromString(String paymentProductStr) {

@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.impl.AspspProfileSpiImpl;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,9 +29,9 @@ import java.util.stream.Collectors;
 
 @Log4j
 @Service
-@AllArgsConstructor
-public class ProfileService {
-    private AspspProfileSpiImpl aspspProfileSpi;
+@RequiredArgsConstructor
+public class AspspProfileService {
+    private final AspspProfileSpiImpl aspspProfileSpi;
 
     public List<PaymentProduct> getAvailablePaymentProducts() {
         List<String> paymentProductsStr = aspspProfileSpi.getAvailablePaymentProducts();
