@@ -39,6 +39,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.EXPIRED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
 import static java.util.stream.Collectors.toSet;
@@ -100,8 +101,8 @@ public class AisConsentService {
         }
         int usageCounter = aisConsent.getUsageCounter();
         int newUsageCounter = --usageCounter;
-        if (newUsageCounter < 0) {
-            throw new ConsentException("Limit of usage is exceeded");
+        if (newUsageCounter == 0) {
+            aisConsent.setConsentStatus(EXPIRED);
         }
         aisConsent.setUsageCounter(newUsageCounter);
         aisConsentRepository.save(aisConsent);
