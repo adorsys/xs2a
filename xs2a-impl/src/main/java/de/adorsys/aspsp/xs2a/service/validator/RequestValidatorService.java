@@ -37,6 +37,8 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
+
 @Log4j
 @Service
 public class RequestValidatorService {
@@ -51,7 +53,7 @@ public class RequestValidatorService {
         Map<String, String> violationMap = new HashMap<>();
         violationMap.putAll(getRequestHeaderViolationMap(request, handler));
         violationMap.putAll(getRequestParametersViolationMap(request, handler));
-        violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
+        violationMap.putAll(getRequestPathVariablesViolationMap(request));
 
         return violationMap;
     }
@@ -72,7 +74,7 @@ public class RequestValidatorService {
         return requestParameterViolationsMap;
     }
 
-    public Map getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
+    public Map getRequestPathVariablesViolationMap(HttpServletRequest request) {
         Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
         String paymentProductStr = pathVariables.get("payment-product");
@@ -86,15 +88,10 @@ public class RequestValidatorService {
                        if (isPaymentProductAvailable(paymentProduct)) {
                            return Collections.emptyMap();
                        } else {
-                           return Collections.singletonMap("Wrong path variable : ", "Wrong payment product");
+                           return Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProductStr);
                        }
                    })
                    .orElse(Collections.singletonMap("Wrong path variable : ", "Wrong payment product"));
-    }
-
-    boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
-        List<PaymentProduct> paymentProducts = profileService.getAvailablePaymentProducts();
-        return paymentProducts.contains(paymentProduct);
     }
 
     public Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
@@ -111,6 +108,11 @@ public class RequestValidatorService {
                                                              .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
 
         return requestHeaderViolationsMap;
+    }
+
+    private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
+        List<PaymentProduct> paymentProducts = profileService.getAvailablePaymentProducts();
+        return paymentProducts.contains(paymentProduct);
     }
 
     private Map<String, String> getRequestHeadersMap(HttpServletRequest request) {

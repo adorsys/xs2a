@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,10 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
@@ -52,14 +55,25 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         if (violationsMap.isEmpty()) {
             return true;
         } else {
+            MessageCode errorCode = getActualMessageCode(violationsMap.keySet());
 
-            final List<String> violations = violationsMap.entrySet().stream()
-                                                .map(entry -> entry.getKey() + " : " + entry.getValue()).collect(Collectors.toList());
+            List<String> violations = violationsMap.entrySet().stream()
+                                                .map(entry -> entry.getKey() + " : " + entry.getValue())
+                                                .collect(Collectors.toList());
 
             LOGGER.debug(violations.toString());
-
-            response.sendError(FORMAT_ERROR.getCode(), FORMAT_ERROR.name() + ": " + violations.toString());
+            response.sendError(errorCode.getCode(), errorCode.name() + ": " + violations.toString());
             return false;
         }
+    }
+
+    private MessageCode getActualMessageCode(Set<String> errors) {
+        List<MessageCode> actualMessages = Arrays.stream(MessageCode.values())
+                                               .filter(mess -> errors.contains(mess.getName()))
+                                               .collect(Collectors.toList());
+
+        return actualMessages.isEmpty()
+                   ? FORMAT_ERROR
+                   : actualMessages.get(0); // TODO make prioritize for getting message code;
     }
 }
