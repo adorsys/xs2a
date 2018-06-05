@@ -27,7 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -78,7 +78,7 @@ public class ConsentMapper {
         return SpiConsentStatus.valueOf(consentStatus.name());
     }
 
-    private Date convertToDate(LocalDateTime dateToConvert) {
+    private Date convertToDate(Instant dateToConvert) {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
     }
 

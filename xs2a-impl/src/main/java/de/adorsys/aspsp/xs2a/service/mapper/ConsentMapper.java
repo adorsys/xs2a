@@ -31,8 +31,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
@@ -52,7 +50,7 @@ public class ConsentMapper {
                        request.setTppId(tppId);
                        request.setFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       request.setValidUntil(LocalDateTime.ofInstant(r.getValidUntil().toInstant(), ZoneId.systemDefault()));
+                       request.setValidUntil(r.getValidUntil().toInstant());
                        request.setRecurringIndicator(r.isRecurringIndicator());
                        request.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
 
