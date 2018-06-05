@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -37,18 +36,10 @@ public class AspspProfileService {
     public List<PaymentProduct> getAvailablePaymentProducts() {
         return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentProducts())
                    .map(list -> list.stream()
-                                    .map(this::mapToPaymentProductFromString)
-                                    .filter(Objects::nonNull)
+                                    .map(PaymentProduct::getByCode)
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
                                     .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
-    }
-
-    private PaymentProduct mapToPaymentProductFromString(String paymentProductStr) {
-        try {
-            return PaymentProduct.forValue(paymentProductStr);
-        } catch (IllegalArgumentException ex) {
-            log.warn("Payment product is not correct: " + paymentProductStr);
-            return null;
-        }
     }
 }

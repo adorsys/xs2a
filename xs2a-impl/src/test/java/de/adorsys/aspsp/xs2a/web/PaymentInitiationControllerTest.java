@@ -62,11 +62,11 @@ public class PaymentInitiationControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
-        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
+        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
         Map<String, TransactionStatus> paymentStatusResponseWrongId = new HashMap<>();
         paymentStatusResponseWrongId.put("transactionStatus", TransactionStatus.RJCT);
-        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
+        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build());
         when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
     }

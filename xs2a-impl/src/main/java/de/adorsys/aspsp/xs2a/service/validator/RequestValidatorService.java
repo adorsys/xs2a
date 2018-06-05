@@ -134,7 +134,7 @@ public class RequestValidatorService {
 
     private Map<String, String> checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
         return Optional.ofNullable(paymentProduct)
-                   .map(this::mapToPaymentProductFromString)
+                   .flatMap(PaymentProduct::getByCode)
                    .map(this::getViolationMapForPaymentProduct)
                    .orElse(Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }
@@ -148,14 +148,5 @@ public class RequestValidatorService {
     private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
         List<PaymentProduct> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
         return paymentProducts.contains(paymentProduct);
-    }
-
-    private PaymentProduct mapToPaymentProductFromString(String paymentProductStr) {
-        try {
-            return PaymentProduct.forValue(paymentProductStr);
-        } catch (IllegalArgumentException ex) {
-            log.warn("Payment product is not correct: " + paymentProductStr);
-            return null;
-        }
     }
 }
