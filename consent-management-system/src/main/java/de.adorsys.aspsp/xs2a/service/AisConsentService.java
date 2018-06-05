@@ -30,13 +30,16 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.*;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.EXPIRED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
 import static java.util.stream.Collectors.toSet;
@@ -50,12 +53,13 @@ public class AisConsentService {
     private final ConsentMapper consentMapper;
 
     public Optional<String> createConsent(AisConsentRequest request) {
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);
-        consent.setExpectedFrequencyPerDay(profileService.getMinFrequencyPerDay(request.getFrequencyPerDay()));
+        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
-        consent.setUsageCounter(request.getFrequencyPerDay());
+        consent.setUsageCounter(minFrequencyPerDay);
         consent.setRequestDate(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
@@ -86,15 +90,29 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
-    public Map<String, Set<AccessAccountInfo>> checkAvailable(AvailableAccessRequest request) {
+    public Map<String, Set<AccessAccountInfo>> checkAvailableAccessAccount(AvailableAccessRequest request) {
         Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
         AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
             throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
         }
-        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(aisConsent.getAccounts());
+        AisConsent updated = updateConsentStatusAndCounter(aisConsent);
+        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(updated.getAccounts());
         Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
         return filterRequestedAccounts(targetAccounts, requestedAccounts);
+    }
+
+    private AisConsent updateConsentStatusAndCounter(AisConsent aisConsent) {
+        if (aisConsent.getConsentStatus() == RECEIVED) {
+            aisConsent.setConsentStatus(VALID);
+        }
+        int usageCounter = aisConsent.getUsageCounter();
+        int newUsageCounter = --usageCounter;
+        if (newUsageCounter == 0) {
+            aisConsent.setConsentStatus(EXPIRED);
+        }
+        aisConsent.setUsageCounter(newUsageCounter);
+        return aisConsentRepository.save(aisConsent);
     }
 
     private Map<String, Set<AccessAccountInfo>> filterRequestedAccounts(Map<String, Set<AccessAccountInfo>> targetAccounts, Map<String, Set<AccessAccountInfo>> requestedAccounts) {
@@ -162,11 +180,25 @@ public class AisConsentService {
     }
 
     private AccountHolder.AccessInfo doFilterAccess(AccountHolder.AccessInfo holder, Set<Currency> bankCurrencies) {
-        Set<AccountAccess> filtered = holder.getAccesses().stream()
-                                          .filter(a -> bankCurrencies.contains(a.getCurrency()))
-                                          .collect(toSet());
-        holder.updateAccess(filtered);
+        Set<AccountAccess> accountAccessesWithoutCurrency = holder.getAccesses().stream()
+                                                                .filter(a -> a.getCurrency() == null)
+                                                                .collect(toSet());
+
+        Set<AccountAccess> accountAccessesWithCurrency = holder.getAccesses().stream()
+                                                             .filter(a -> bankCurrencies.contains(a.getCurrency()))
+                                                             .collect(toSet());
+
+        Set<AccountAccess> updatedCurrencyAccountAccess = bankCurrencies.stream()
+                                                     .flatMap(bc -> updateCurrency(accountAccessesWithoutCurrency, bc))
+                                                     .collect(toSet());
+
+        holder.updateAccess(SetUtils.union(accountAccessesWithCurrency, updatedCurrencyAccountAccess));
         return holder;
+    }
+
+    private Stream<AccountAccess> updateCurrency(Set<AccountAccess> accountAccessesWithoutCurrency, Currency currency) {
+        accountAccessesWithoutCurrency.forEach(a -> a.setCurrency(currency));
+        return accountAccessesWithoutCurrency.stream();
     }
 
     private Map<String, Set<Currency>> getBankAccountsMapByIbans(Set<String> ibans) {

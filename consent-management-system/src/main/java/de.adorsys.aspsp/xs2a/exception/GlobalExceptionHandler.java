@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = ConsentException.class)
-    public ResponseEntity<String> restException(ConsentException ex, HandlerMethod handlerMethod) {
+    public ResponseEntity<String> consentException(ConsentException ex, HandlerMethod handlerMethod) {
         log.warn("ConsentException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), INTERNAL_SERVER_ERROR);
     }

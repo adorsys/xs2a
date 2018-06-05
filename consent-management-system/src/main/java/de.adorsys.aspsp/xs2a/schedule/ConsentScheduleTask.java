@@ -40,29 +40,31 @@ public class ConsentScheduleTask {
     private final AspspProfileService profileService;
 
     @Scheduled(cron = "${consent.cron.expression}")
-    public void checkConsentStatus(){
+    public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
 
         List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(SpiConsentStatus.RECEIVED, SpiConsentStatus.VALID)))
-            .orElse(Collections.emptyList());
+                                                 .orElse(Collections.emptyList());
         aisConsentRepository.save(updateConsent(availableConsents));
     }
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
         return availableConsents.stream()
-            .map(a -> doUpdate(a))
-            .collect(Collectors.toList());
+                   .map(this::updateConsentParameters)
+                   .collect(Collectors.toList());
     }
 
-    private AisConsent doUpdate(AisConsent consent) {
-        consent.setExpectedFrequencyPerDay(profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay()));
+    private AisConsent updateConsentParameters(AisConsent consent) {
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay());
+        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
+        consent.setUsageCounter(minFrequencyPerDay);
         consent.setConsentStatus(updateConsentStatus(consent));
         return consent;
     }
 
     private SpiConsentStatus updateConsentStatus(AisConsent consent) {
         return LocalDateTime.now().isAfter(consent.getExpireDate())
-            ? SpiConsentStatus.EXPIRED :
-            consent.getConsentStatus();
+                   ? SpiConsentStatus.EXPIRED
+                   : consent.getConsentStatus();
     }
 }
