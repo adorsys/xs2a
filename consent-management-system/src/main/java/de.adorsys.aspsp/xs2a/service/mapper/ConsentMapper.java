@@ -84,7 +84,13 @@ public class ConsentMapper {
 
     private Set<AccessAccountInfo> accessAccountInfos(Set<AccountAccess> accesses) {
         return accesses.stream()
-                   .map(a -> new AccessAccountInfo(a.getCurrency().getCurrencyCode(), a.getTypeAccess()))
+                   .map(a -> new AccessAccountInfo(getCurrency(a), a.getTypeAccess()))
                    .collect(Collectors.toSet());
+    }
+
+    private String getCurrency(AccountAccess a) {
+        return Optional.ofNullable(a.getCurrency())
+                   .map(c -> a.getCurrency().getCurrencyCode())
+                   .orElse(null);
     }
 }

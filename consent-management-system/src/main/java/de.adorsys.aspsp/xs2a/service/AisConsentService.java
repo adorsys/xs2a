@@ -30,12 +30,14 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.*;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
@@ -93,12 +95,12 @@ public class AisConsentService {
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
             throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
         }
-        if(aisConsent.getConsentStatus() == RECEIVED){
+        if (aisConsent.getConsentStatus() == RECEIVED) {
             aisConsent.setConsentStatus(VALID);
         }
         int usageCounter = aisConsent.getUsageCounter();
         int newUsageCounter = --usageCounter;
-        if(newUsageCounter < 0){
+        if (newUsageCounter < 0) {
             throw new ConsentException("Limit of usage is exceeded");
         }
         aisConsent.setUsageCounter(newUsageCounter);
@@ -174,11 +176,25 @@ public class AisConsentService {
     }
 
     private AccountHolder.AccessInfo doFilterAccess(AccountHolder.AccessInfo holder, Set<Currency> bankCurrencies) {
-        Set<AccountAccess> filtered = holder.getAccesses().stream()
-                                          .filter(a -> a.getCurrency() == null || bankCurrencies.contains(a.getCurrency()))
-                                          .collect(toSet());
-        holder.updateAccess(filtered);
+        Set<AccountAccess> accountAccessesWithoutCurrency = holder.getAccesses().stream()
+                                                                .filter(a -> a.getCurrency() == null)
+                                                                .collect(toSet());
+
+        Set<AccountAccess> accountAccessesWithCurrency = holder.getAccesses().stream()
+                                                             .filter(a -> bankCurrencies.contains(a.getCurrency()))
+                                                             .collect(toSet());
+
+        Set<AccountAccess> updatedCurrencyAccountAccess = bankCurrencies.stream()
+                                                     .flatMap(bc -> updateCurrency(accountAccessesWithoutCurrency, bc))
+                                                     .collect(toSet());
+
+        holder.updateAccess(SetUtils.union(accountAccessesWithCurrency, updatedCurrencyAccountAccess));
         return holder;
+    }
+
+    private Stream<AccountAccess> updateCurrency(Set<AccountAccess> accountAccessesWithoutCurrency, Currency bc) {
+        accountAccessesWithoutCurrency.forEach(a -> a.setCurrency(bc));
+        return accountAccessesWithoutCurrency.stream();
     }
 
     private Map<String, Set<Currency>> getBankAccountsMapByIbans(Set<String> ibans) {
