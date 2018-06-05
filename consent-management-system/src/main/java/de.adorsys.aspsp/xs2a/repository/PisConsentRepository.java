@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.common;
+package de.adorsys.aspsp.xs2a.repository;
 
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
+import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import org.springframework.data.repository.CrudRepository;
 
-import java.math.BigDecimal;
-import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-@Slf4j
-@Value
-public class SpiAmount {
-    private Currency currency;
-    private BigDecimal content;
+public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
+    List<PisConsent> findByConsentStatusIn(Set<SpiConsentStatus> statuses);
+
+    Optional<PisConsent> findByExternalId(String externalId);
 }

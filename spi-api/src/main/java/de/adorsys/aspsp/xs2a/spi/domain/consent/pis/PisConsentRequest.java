@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.common;
+package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
 
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
-import java.util.Currency;
-
-@Slf4j
 @Value
-public class SpiAmount {
-    private Currency currency;
-    private BigDecimal content;
+public class PisConsentRequest {
+    private SpiSinglePayments singlePayment;
 }

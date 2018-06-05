@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,13 +52,13 @@ public class FundsConfirmationService {
     }
 
     private boolean isRequiredAmountEnough(Amount requiredAmount, Amount availableAmount) {
-        return getDoubleContent(availableAmount.getContent()) >= getDoubleContent(requiredAmount.getContent()) &&
+        return convertToBigDecimal(availableAmount.getContent()).compareTo(convertToBigDecimal(requiredAmount.getContent()))  >= 0 &&
                    availableAmount.getCurrency() == requiredAmount.getCurrency();
     }
 
-    private double getDoubleContent(String content) {
+    private BigDecimal convertToBigDecimal(String content) {
         return Optional.of(content)
-                   .map(Double::parseDouble)
-                   .orElse(0.0d);
+                   .map(BigDecimal::new)
+                   .orElse(BigDecimal.ZERO);
     }
 }

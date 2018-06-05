@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.common;
+package de.adorsys.aspsp.xs2a.domain;
 
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Date;
 
-@Slf4j
+
 @Value
-public class SpiAmount {
+public class PisConsentResponse {
+    private String externalId;
+    private String debtorIban;
+    private String ultimateDebtor;
     private Currency currency;
-    private BigDecimal content;
+    private BigDecimal amount;
+    private String creditorIban;
+    private String creditorAgent;
+    private String creditorName;
+    private Date requestedExecutionDate;
+    private Date requestedExecutionTime;
+    private SpiConsentStatus consentStatus;
 }
