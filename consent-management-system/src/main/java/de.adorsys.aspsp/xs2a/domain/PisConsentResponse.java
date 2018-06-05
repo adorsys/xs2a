@@ -28,7 +28,7 @@ import java.util.Date;
 @Value
 @ApiModel(description = "Pis consent response entity", value = "PisConsentResponse")
 public class PisConsentResponse {
-    @ApiModelProperty(value = "An external exposed identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @ApiModelProperty(value = "Iban of the debtor", required = true, example = "DE2310010010123")
