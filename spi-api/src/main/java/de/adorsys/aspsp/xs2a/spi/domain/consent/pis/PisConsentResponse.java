@@ -21,6 +21,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 
+import java.util.List;
+
 @Value
 @ApiModel(description = "Pis consent response entity", value = "PisConsentResponse")
 public class PisConsentResponse {
@@ -32,5 +34,8 @@ public class PisConsentResponse {
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private SpiConsentStatus consentStatus;
+
+    @ApiModelProperty(value = "List of payments which consent is created for", required = true)
+    private List<PisPayment> payments;
 }
 

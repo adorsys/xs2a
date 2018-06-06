@@ -84,6 +84,15 @@ public class RemoteSpiUrls {
     }
 
     /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentPeriodicPaymentRequest request
+     */
+    public String createPisPeriodicPaymentConsent() {
+        return consentServiceBaseUrl + "/pis/consent/periodic";
+    }
+
+    /**
      * @return Void
      * @Method GET
      * @PathVariable String consentId and status

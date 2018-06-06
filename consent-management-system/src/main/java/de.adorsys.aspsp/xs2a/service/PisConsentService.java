@@ -16,13 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.ConsentType;
+import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.domain.PisPaymentData;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentType;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.*;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,6 +50,11 @@ public class PisConsentService {
                    .map(PisConsent::getExternalId);
     }
 
+    public Optional<String> createConsentPeriodicPayment(PisConsentPeriodicPaymentRequest request) {
+        return mapToPeriodicPaymentConsent(request.getPeriodicPayment())
+                   .map(pisConsentRepository::save)
+                   .map(PisConsent::getExternalId);
+    }
 
     public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
@@ -77,7 +82,6 @@ public class PisConsentService {
         return pisConsentRepository.save(consent);
     }
 
-
     private Optional<PisConsent> mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
         List<PisPaymentData> paymentDataList = payments.stream()
                                                    .map(this::mapToPisPaymentData)
@@ -92,6 +96,20 @@ public class PisConsentService {
         consent.setConsentStatus(SpiConsentStatus.RECEIVED);
 
         return Optional.of(consent);
+    }
+
+    private Optional<PisConsent> mapToPeriodicPaymentConsent(SpiPeriodicPayment periodicPayment) {
+        return Optional.ofNullable(periodicPayment)
+                   .flatMap(this::mapToPisPaymentData)
+                   .map(pmt -> {
+                       PisConsent consent = new PisConsent();
+                       consent.setExternalId(UUID.randomUUID().toString());
+                       consent.setPayments(Collections.singletonList(pmt));
+                       consent.setConsentType(ConsentType.PIS);
+                       consent.setPisConsentType(PisConsentType.PERIODIC);
+                       consent.setConsentStatus(SpiConsentStatus.RECEIVED);
+                       return consent;
+                   });
     }
 
     private Optional<PisConsent> mapToPisConsent(SpiSinglePayments singlePayment) {
@@ -128,12 +146,31 @@ public class PisConsentService {
                    });
     }
 
-
     private Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
         return Optional.ofNullable(pisConsent)
                    .map(pc -> new PisConsentResponse(
                        pc.getExternalId(),
                        pc.getPisConsentType(),
-                       pc.getConsentStatus()));
+                       pc.getConsentStatus(),
+                       mapToPisPayment(pc.getPayments()))
+                   );
+    }
+
+    private List<PisPayment> mapToPisPayment(List<PisPaymentData> payments) {
+        return payments.stream()
+                   .map(pmt -> new PisPayment(
+                       pmt.getEndToEndIdentification(),
+                       pmt.getDebtorIban(),
+                       pmt.getUltimateDebtor(),
+                       pmt.getCurrency(),
+                       pmt.getAmount(),
+                       pmt.getCreditorIban(),
+                       pmt.getCreditorAgent(),
+                       pmt.getCreditorName(),
+                       pmt.getRequestedExecutionDate(),
+                       pmt.getRequestedExecutionTime(),
+                       pmt.getUltimateCreditor(),
+                       pmt.getPurposeCode()))
+                   .collect(Collectors.toList());
     }
 }
