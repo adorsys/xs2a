@@ -43,7 +43,7 @@ public class RemoteSpiUrls {
      * @Body AisConsentRequest request
      */
     public String createConsent() {
-        return consentServiceBaseUrl + "/ais/consent";
+        return consentServiceBaseUrl + "/ais/consent/";
     }
 
     /**

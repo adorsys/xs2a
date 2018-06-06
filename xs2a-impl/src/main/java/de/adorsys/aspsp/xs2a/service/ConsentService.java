@@ -21,6 +21,9 @@ import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +33,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
@@ -71,11 +76,49 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
+    public Map<String, Set<AccessAccountInfo>> checkValidityByConsent(String consentId, List<AccountDetails> details, TypeAccess typeAccess, boolean withBalance) {
+        AvailableAccessRequest request = new AvailableAccessRequest();
+        request.setConsentId(consentId);
+
+        Set<String> ibans = details.stream().map(AccountDetails::getIban).collect(toSet());
+        Map<String, Set<AccessAccountInfo>> accesses = ibans.stream()
+                                                           .collect(
+                                                               Collectors.toMap(iban -> iban,
+                                                                   iban -> details.stream().filter(a -> a.getIban().equals(iban))
+                                                                               .flatMap(d -> getAccessAccountInfo(d.getCurrency(), typeAccess, withBalance)
+                                                                                                 .stream())
+                                                                               .collect(Collectors.toSet())));
+        request.setAccountsAccesses(accesses);
+
+        return consentSpi.checkValidityByConsent(request);
+    }
+
+    private Set<AccessAccountInfo> getAccessAccountInfo(Currency currency, TypeAccess typeAccess, boolean withBalance) {
+        Set<AccessAccountInfo> set = new HashSet<>();
+        set.add(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
+        set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.ACCOUNT));
+        if (withBalance) set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.BALANCE));
+        return set;
+    }
+
+    public boolean isValidFor(String iban, Currency currency, TypeAccess typeAccess, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+        return allowedAccountData.containsKey(iban)
+                   && allowedAccountData.get(iban).contains(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
+    }
+
     public Set<String> getIbanSetFromAccess(AccountAccess access) {
         if (isNotEmptyAccountAccess(access)) {
             return getIbansFromAccess(access);
         }
         return Collections.emptySet();
+    }
+
+    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
+        return Optional.ofNullable(references)
+                   .map(list -> list.stream()
+                                    .map(AccountReference::getIban)
+                                    .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 
     private Set<String> getIbansFromAccess(AccountAccess access) {
@@ -86,14 +129,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         )
                    .flatMap(Collection::stream)
                    .collect(Collectors.toSet());
-    }
-
-    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
-        return Optional.ofNullable(references)
-                   .map(list -> list.stream()
-                                  .map(AccountReference::getIban)
-                                  .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
     }
 
     private boolean isNotEmptyAccountAccess(AccountAccess access) {

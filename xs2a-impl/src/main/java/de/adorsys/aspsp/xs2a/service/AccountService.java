@@ -18,15 +18,17 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
-import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -35,7 +37,8 @@ import org.springframework.validation.annotation.Validated;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.*;
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_INVALID;
+import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
@@ -53,19 +56,18 @@ public class AccountService {
         AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
                                      .map(ResponseObject::getBody)
                                      .orElse(null);
-        if (consent == null) {
-            return ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
-        }
 
-        if (psuInvolved && consent.getConsentStatus() != ConsentStatus.VALID) {
-            return ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build();
-        }
+        List<AccountDetails> detailsFromConsent = consent != null
+                                                      ? getAccountDetailsFromReferences(consent.getAccess().getAccounts())
+                                                      : Collections.emptyList();
+        Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, detailsFromConsent, TypeAccess.ACCOUNT, withBalance);
 
-        List<AccountDetails> accountDetails = getAccountDetailsWithBalanceByReferences(
-            getAccountDetailsFromReferences(consent.getAccess().getAccounts()),
-            withBalance ? consent.getAccess().getBalances() : Collections.emptyList());
+        List<AccountDetails> accountDetails = detailsFromConsent.stream().map(ad -> withBalance
+                                                                                        ? consentService.isValidFor(ad.getIban(), ad.getCurrency(), TypeAccess.BALANCE, allowedAccountData)
+                                                                                              ? ad
+                                                                                              : getAccountDetailsNoBalances(ad)
+                                                                                        : getAccountDetailsNoBalances(ad))
+                                                  .collect(Collectors.toList());
 
         return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
@@ -75,68 +77,61 @@ public class AccountService {
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance, boolean psuInvolved) {
-        AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
-                                     .map(ResponseObject::getBody)
-                                     .orElse(null);
-        if (consent == null) {
-            return ResponseObject.<AccountDetails>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
-        }
-
-        if (psuInvolved && consent.getConsentStatus() != ConsentStatus.VALID) {
-            return ResponseObject.<AccountDetails>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build();
-        }
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+        Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.ACCOUNT, withBalance);
 
-        return accountDetails != null && accountReferenceContainsAccount(consent.getAccess().getAccounts(), accountDetails)
-                   ? withBalance && accountReferenceContainsAccount(consent.getAccess().getBalances(), accountDetails)
-                         ? ResponseObject.<AccountDetails>builder().body(accountDetails).build()
-                         : ResponseObject.<AccountDetails>builder()
-                               .body(getAccountDetailsNoBalances(accountDetails)).build()
+        if (accountDetails == null) {
+            return ResponseObject.<AccountDetails>builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+        }
+        AccountDetails details = withBalance
+                                     ? consentService.isValidFor(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.BALANCE, allowedAccountData)
+                                           ? accountDetails
+                                           : consentService.isValidFor(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.ACCOUNT, allowedAccountData)
+                                                 ? getAccountDetailsNoBalances(accountDetails)
+                                                 : null
+                                     : consentService.isValidFor(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.ACCOUNT, allowedAccountData)
+                                           ? getAccountDetailsNoBalances(accountDetails)
+                                           : null;
+        return details == null
+                   ? ResponseObject.<AccountDetails>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                    : ResponseObject.<AccountDetails>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+                         .body(details).build();
     }
 
     public ResponseObject<List<Balances>> getBalances(String consentId, String accountId, boolean psuInvolved) {
-        AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
-                                     .map(ResponseObject::getBody)
-                                     .orElse(null);
-        if (consent == null) {
-            return ResponseObject.<List<Balances>>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
-        }
-
-        if (psuInvolved && consent.getConsentStatus() != ConsentStatus.VALID) {
-            return ResponseObject.<List<Balances>>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_EXPIRED))).build();
-        }
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-        return accountDetails != null && accountReferenceContainsAccount(consent.getAccess().getBalances(), accountDetails)
+        if (accountDetails == null) {
+            return ResponseObject.<List<Balances>>builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+        }
+        Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.BALANCE, false);
+
+        return allowedAccountData != null
+                   && !allowedAccountData.isEmpty()
                    ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
                    : ResponseObject.<List<Balances>>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
     }
 
     public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, Date dateFrom,
                                                           Date dateTo, String transactionId,
                                                           boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
-        AccountConsent consent = Optional.ofNullable(consentService.getAccountConsentById(consentId))
-                                     .map(ResponseObject::getBody)
-                                     .orElse(null);
-        if (consent == null) {
-            return ResponseObject.<AccountReport>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_UNKNOWN_403))).build();
+
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
+        if (accountDetails == null) {
+            return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
-        AccountDetails details = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-        if (details == null || !accountReferenceContainsAccount(consent.getAccess().getTransactions(), details)) {
-            return ResponseObject.<AccountReport>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
-        } else {
-            AccountReport accountReport = getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance, bookingStatus);
-            return ResponseObject.<AccountReport>builder()
-                       .body(accountReport).build();
-        }
+        Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.TRANSACTION, withBalance);
+
+        AccountReport accountReport = allowedAccountData != null && !allowedAccountData.isEmpty()
+                                          ? getAccountReport(accountId, dateFrom, dateTo, transactionId, psuInvolved, withBalance, bookingStatus, allowedAccountData)
+                                          : null;
+        return accountReport != null
+                   ? ResponseObject.<AccountReport>builder()
+                         .body(accountReport).build()
+                   : ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
     }
 
     public List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
@@ -154,29 +149,14 @@ public class AccountService {
         return getAccountDetailsByAccountReference(reference).isPresent();
     }
 
-    private boolean accountReferenceContainsAccount(List<AccountReference> references, AccountDetails details) {
-        return !CollectionUtils.isEmpty(references) && references.stream()
-                                                           .anyMatch(
-                                                               ref -> ref.getIban().equals(details.getIban())
-                                                                          && ref.getCurrency().equals(details.getCurrency()));
-    }
-
-    private List<AccountDetails> getAccountDetailsWithBalanceByReferences(List<AccountDetails> details, List<AccountReference> references) {
-        return details.stream()
-                   .map(det -> accountReferenceContainsAccount(references, det)
-                                   ? det
-                                   : getAccountDetailsNoBalances(det))
-                   .collect(Collectors.toList());
-    }
-
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
         return CollectionUtils.isEmpty(references)
                    ? Collections.emptyList()
                    : references.stream()
-                                   .map(this::getAccountDetailsByAccountReference)
-                                   .filter(Optional::isPresent)
-                                   .map(Optional::get)
-                                   .collect(Collectors.toList());
+                         .map(this::getAccountDetailsByAccountReference)
+                         .filter(Optional::isPresent)
+                         .map(Optional::get)
+                         .collect(Collectors.toList());
     }
 
     private AccountDetails getAccountDetailsNoBalances(AccountDetails details) {
@@ -185,21 +165,42 @@ public class AccountService {
             details.getAccountType(), details.getCashAccountType(), details.getBic(), null);
     }
 
-    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus) {
+    private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
         Date dateToChecked = dateTo == null ? new Date() : dateTo;
         return StringUtils.isBlank(transactionId)
-                   ? getAccountReportByPeriod(accountId, dateFrom, dateToChecked, psuInvolved, withBalance, bookingStatus)
-                   : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance);
+                   ? getAccountReportByPeriod(accountId, dateFrom, dateToChecked, psuInvolved, withBalance, bookingStatus, allowedAccountData)
+                   : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance, allowedAccountData);
     }
 
-    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus) {
+    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus,Map<String, Set<AccessAccountInfo>> allowedAccountData) {
         validate_accountId_period(accountId, dateFrom, dateTo);
-        return readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance, bookingStatus);
+        return getAllowedTransactionsByAccess(readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance, bookingStatus),allowedAccountData);
     }
 
-    private AccountReport getAccountReportByTransaction(String accountId, String transactionId, boolean psuInvolved, boolean withBalance) {
+    private AccountReport getAccountReportByTransaction(String accountId, String transactionId, boolean psuInvolved, boolean withBalance, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
         validate_accountId_transactionId(accountId, transactionId);
-        return readTransactionsById(accountId, transactionId, psuInvolved, withBalance);
+        return getAllowedTransactionsByAccess(readTransactionsById(accountId, transactionId, psuInvolved, withBalance), allowedAccountData);
+    }
+
+    private AccountReport getAllowedTransactionsByAccess(AccountReport accountReport, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+        Transactions[] booked = filterTransactions(accountReport.getBooked(), allowedAccountData);
+        Transactions[] pending = filterTransactions(accountReport.getPending(), allowedAccountData);
+        return ArrayUtils.isEmpty(booked) && ArrayUtils.isEmpty(pending)
+                   ? null
+                   : new AccountReport(booked, pending);
+    }
+
+    private Transactions[] filterTransactions(Transactions[] transactions, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+        return Arrays.stream(transactions)
+                   .filter(t -> isAllowedTransaction(t, allowedAccountData))
+                   .toArray(Transactions[]::new);
+    }
+
+    private boolean isAllowedTransaction(Transactions transaction, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+        return allowedAccountData.containsKey(transaction.getCreditorAccount().getIban())
+                   && allowedAccountData.get(transaction.getCreditorAccount().getIban()).contains(new AccessAccountInfo(transaction.getAmount().getCurrency().getCurrencyCode(), TypeAccess.TRANSACTION))
+                   || allowedAccountData.containsKey(transaction.getDebtorAccount().getIban())
+                          && allowedAccountData.get(transaction.getDebtorAccount().getIban()).contains(new AccessAccountInfo(transaction.getAmount().getCurrency().getCurrencyCode(), TypeAccess.TRANSACTION));
     }
 
     private AccountReport readTransactionsByPeriod(String accountId, Date dateFrom,
