@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;

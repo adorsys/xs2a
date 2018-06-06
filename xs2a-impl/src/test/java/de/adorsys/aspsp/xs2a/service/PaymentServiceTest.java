@@ -90,7 +90,7 @@ public class PaymentServiceTest {
         PaymentProduct paymentProduct = PaymentProduct.SCT;
 
         //When:
-        ResponseObject<TransactionStatus> actualResponse = paymentService.getPaymentStatusById(PAYMENT_ID, paymentProduct);
+        ResponseObject<TransactionStatus> actualResponse = paymentService.getPaymentStatusById(PAYMENT_ID, paymentProduct.getCode());
 
         //Then:
         assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
@@ -103,7 +103,7 @@ public class PaymentServiceTest {
         PaymentProduct paymentProduct = PaymentProduct.SCT;
 
         //When:
-        ResponseObject<TransactionStatus> actualResponse = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, paymentProduct);
+        ResponseObject<TransactionStatus> actualResponse = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, paymentProduct.getCode());
 
         //Then:
         assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
@@ -117,7 +117,7 @@ public class PaymentServiceTest {
         boolean tppRedirectPreferred = false;
 
         //When:
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred);
+        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payments, paymentProduct.getCode(), tppRedirectPreferred);
 
         //Then:
         assertThat(actualResponse.getBody()).isNotNull();
@@ -133,7 +133,7 @@ public class PaymentServiceTest {
         ResponseObject<PaymentInitialisationResponse> expectedResult = readResponseObject();
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct, tppRedirectPreferred);
+        ResponseObject<PaymentInitialisationResponse> result = paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct.getCode(), tppRedirectPreferred);
 
         //Than:
         assertThat(result.getError()).isEqualTo(expectedResult.getError());
@@ -148,7 +148,7 @@ public class PaymentServiceTest {
         boolean tppRedirectPreferred = false;
 
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, paymentProduct, tppRedirectPreferred);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, paymentProduct.getCode(), tppRedirectPreferred);
 
         //Then:
         assertThat(actualResponse.getBody()).isNotNull();

@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.spi.service;
 
-import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class ProfileService {
-    private final ProfileConfiguration profileConfiguration;
+public interface AspspProfileSpi {
 
-    public int getMinFrequencyPerDay(int tppFrequency){
-        return Math.min(Math.abs(tppFrequency), profileConfiguration.getFrequencyPerDay());
-    }
+    List<String> getAvailablePaymentProducts();
+
 }

@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class AisConsentService {
     private final AccountSpi accountSpi;
-    private final ProfileService profileService;
+    private final AspspProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
     private final ConsentMapper consentMapper;
 

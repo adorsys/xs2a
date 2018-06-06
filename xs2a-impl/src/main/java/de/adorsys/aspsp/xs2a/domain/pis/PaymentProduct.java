@@ -20,6 +20,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 @ApiModel(description = "PaymentProduct", value = "Payment products of ASPSP")
 public enum PaymentProduct {
     SCT("sepa-credit-transfers"),
@@ -28,6 +33,13 @@ public enum PaymentProduct {
     CBCT("cross-border-credit-transfers");
 
     private String code;
+
+    private static Map<String, PaymentProduct> container = new HashMap();
+
+    static {
+        Arrays.stream(values())
+            .forEach(product -> container.put(product.getCode(), product));
+    }
 
     @JsonCreator
     PaymentProduct(String code) {
@@ -39,12 +51,7 @@ public enum PaymentProduct {
         return code;
     }
 
-    public static PaymentProduct forValue(String code) {
-        for (PaymentProduct prod : values()) {
-            if (prod.code.equals(code)) {
-                return prod;
-            }
-        }
-        throw new IllegalArgumentException();
+    public static Optional<PaymentProduct> getByCode(String code){
+        return Optional.of(container.get(code));
     }
 }

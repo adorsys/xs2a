@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -61,7 +60,7 @@ public class PaymentInitiationController {
         @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
         @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
         @RequestBody SinglePayments singlePayment) {
-        return responseMapper.created(paymentService.createPaymentInitiation(singlePayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.createPaymentInitiation(singlePayment, paymentProduct, tppRedirectPreferred));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -78,6 +77,6 @@ public class PaymentInitiationController {
     @PathVariable("payment-product") String paymentProduct,
     @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
-        return responseMapper.ok(paymentService.getPaymentStatusById(paymentId, PaymentProduct.forValue(paymentProduct)));
+        return responseMapper.ok(paymentService.getPaymentStatusById(paymentId, paymentProduct));
     }
 }
