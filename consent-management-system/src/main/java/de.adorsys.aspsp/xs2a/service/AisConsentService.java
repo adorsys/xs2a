@@ -34,14 +34,12 @@ import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.EXPIRED;
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.*;
 import static java.util.stream.Collectors.toSet;
 
 @Service
@@ -60,7 +58,7 @@ public class AisConsentService {
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(minFrequencyPerDay);
-        consent.setRequestDate(LocalDateTime.now());
+        consent.setRequestDate(Instant.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
@@ -96,21 +94,28 @@ public class AisConsentService {
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
             throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
         }
+        checkAisConsentCounter(aisConsent.getUsageCounter());
         AisConsent updated = updateConsentStatusAndCounter(aisConsent);
         Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(updated.getAccounts());
         Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
         return filterRequestedAccounts(targetAccounts, requestedAccounts);
     }
 
+    private void checkAisConsentCounter(int usageCounter){
+        if(usageCounter == 0){
+            throw new ConsentException("Limit of usage is exceeded");
+        }
+    }
+
     private AisConsent updateConsentStatusAndCounter(AisConsent aisConsent) {
         if (aisConsent.getConsentStatus() == RECEIVED) {
             aisConsent.setConsentStatus(VALID);
         }
-        int usageCounter = aisConsent.getUsageCounter();
-        int newUsageCounter = --usageCounter;
-        if (newUsageCounter == 0) {
+        if(aisConsent.isExpired()){
             aisConsent.setConsentStatus(EXPIRED);
         }
+        int usageCounter = aisConsent.getUsageCounter();
+        int newUsageCounter = --usageCounter;
         aisConsent.setUsageCounter(newUsageCounter);
         return aisConsentRepository.save(aisConsent);
     }

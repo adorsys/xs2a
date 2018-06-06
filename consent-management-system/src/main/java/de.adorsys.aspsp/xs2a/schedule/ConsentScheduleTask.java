@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -63,7 +62,7 @@ public class ConsentScheduleTask {
     }
 
     private SpiConsentStatus updateConsentStatus(AisConsent consent) {
-        return LocalDateTime.now().isAfter(consent.getExpireDate())
+        return consent.isExpired()
                    ? SpiConsentStatus.EXPIRED
                    : consent.getConsentStatus();
     }

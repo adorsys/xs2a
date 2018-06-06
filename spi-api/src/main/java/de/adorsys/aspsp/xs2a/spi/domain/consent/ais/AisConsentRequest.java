@@ -16,10 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 public class AisConsentRequest {
@@ -27,8 +26,7 @@ public class AisConsentRequest {
     private String tppId;
     private int frequencyPerDay;
     private AisAccountAccessInfo access;
-    @JsonFormat(pattern="dd.MM.yyyy HH:mm")
-    private LocalDateTime validUntil;
+    private Instant validUntil;
     private boolean recurringIndicator;
     private boolean tppRedirectPreferred;
     private boolean combinedServiceIndicator;
