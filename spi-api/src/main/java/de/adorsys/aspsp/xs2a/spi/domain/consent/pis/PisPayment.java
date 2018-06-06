@@ -19,8 +19,8 @@ package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
 import lombok.Value;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Currency;
-import java.util.Date;
 
 @Value
 public class PisPayment {
@@ -32,8 +32,8 @@ public class PisPayment {
     private String creditorIban;
     private String creditorAgent;
     private String creditorName;
-    private Date requestedExecutionDate;
-    private Date requestedExecutionTime;
+    private Instant requestedExecutionDate;
+    private Instant requestedExecutionTime;
     private String ultimateCreditor;
     private String purposeCode;
 }

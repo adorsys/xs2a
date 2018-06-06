@@ -23,8 +23,8 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Currency;
-import java.util.Date;
 
 @Data
 @Embeddable
@@ -65,11 +65,11 @@ public class PisPaymentData {
 
     @Column(name = "requested_execution_date", nullable = false)
     @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
-    private Date requestedExecutionDate;
+    private Instant requestedExecutionDate;
 
     @Column(name = "requested_execution_time", nullable = false)
     @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035Z")
-    private Date requestedExecutionTime;
+    private Instant requestedExecutionTime;
 
     @Column(name = "ultimate_creditor")
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")

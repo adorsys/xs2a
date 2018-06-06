@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
@@ -32,6 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-profile")
+@Api(value = "Aspsp profile", tags = "Aspsp profile", description = "Provides access to aspsp profile")
 public class AspspProfileController {
     private final AspspProfileService aspspProfileService;
 
