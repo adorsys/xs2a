@@ -51,7 +51,7 @@ public class PaymentController {
             .orElse(ResponseEntity.badRequest().build());
     }
 
-    @PostMapping(path = "/bulk-payments/")
+    @PostMapping(path = "/bulk-payments")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) throws Exception {
         List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
@@ -60,7 +60,7 @@ public class PaymentController {
             : new ResponseEntity<>(saved, CREATED);
     }
 
-    @GetMapping(path = "/{paymentId}/status/")
+    @GetMapping(path = "/{paymentId}/status")
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
             ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);

@@ -75,6 +75,24 @@ public class RemoteSpiUrls {
     }
 
     /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentBulkPaymentRequest request
+     */
+    public String createPisBulkPaymentConsent() {
+        return consentServiceBaseUrl + "/pis/consent/bulk";
+    }
+
+    /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentPeriodicPaymentRequest request
+     */
+    public String createPisPeriodicPaymentConsent() {
+        return consentServiceBaseUrl + "/pis/consent/periodic";
+    }
+
+    /**
      * @return Void
      * @Method GET
      * @PathVariable String consentId and status
@@ -133,7 +151,7 @@ public class RemoteSpiUrls {
 
     //Payments urls
     public String createPayment() {
-        return spiMockBaseUrl + "/payments";
+        return spiMockBaseUrl + "/payments/";
     }
 
     public String getPaymentStatus() {
