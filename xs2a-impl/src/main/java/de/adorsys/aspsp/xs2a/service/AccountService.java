@@ -103,6 +103,7 @@ public class AccountService {
         Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.BALANCE, false);
 
         return MapUtils.isNotEmpty(allowedAccountData)
+                   && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.BALANCE, allowedAccountData)
                    ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
                    : ResponseObject.<List<Balances>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
