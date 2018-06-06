@@ -25,6 +25,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity(name = "pis_consent")
@@ -39,61 +40,13 @@ public class PisConsent {
     @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
-    @Column(name = "end_to_end_identification")
-    @ApiModelProperty(value = "End to end authentication", example = "RI-123456789")
-    private String endToEndIdentification;
+    @ElementCollection
+    @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "account_id"))
+    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
+    private List<PisPaymentData> payments;
 
-    @Column(name = "debtor_iban", nullable = false)
-    @ApiModelProperty(value = "Iban of the debtor", required = true, example = "DE2310010010123")
-    private String debtorIban;
 
-    @Column(name = "ultimate_debtor", nullable = false)
-    @ApiModelProperty(value = "Name of the ultimate debtor", required = true, example = "Mueller")
-    private String ultimateDebtor;
 
-    @Column(name = "currency", nullable = false)
-    @ApiModelProperty(value = "Iso currency code", required = true, example = "EUR")
-    private Currency currency;
 
-    @Column(name = "amount", nullable = false)
-    @ApiModelProperty(value = "Payment amount", required = true, example = "1000")
-    private BigDecimal amount;
 
-    @Column(name = "creditor_iban", nullable = false)
-    @ApiModelProperty(value = "Iban of the creditor", required = true, example = "DE2310010010123")
-    private String creditorIban;
-
-    @Column(name = "creditor_agent", nullable = false)
-    @ApiModelProperty(value = "Creditor agent", required = true, example = "Telekom")
-    private String creditorAgent;
-
-    @Column(name = "creditor_name", nullable = false)
-    @ApiModelProperty(value = "Name of the creditor", required = true, example = "Telekom")
-    private String creditorName;
-
-    @Column(name = "requested_execution_date", nullable = false)
-    @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
-    private Date requestedExecutionDate;
-
-    @Column(name = "requested_execution_time", nullable = false)
-    @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035Z")
-    private Date requestedExecutionTime;
-
-    @Column(name = "consent_status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
-    private SpiConsentStatus consentStatus;
-
-    @Column(name = "consent_type", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the consent: AIS or PIS.", required = true, example = "AIS")
-    private ConsentType consentType = ConsentType.PIS;
-
-    @Column(name = "ultimate_creditor")
-    @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")
-    private String ultimateCreditor;
-
-    @Column(name = "purpose_code")
-    @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
-    private String purposeCode;
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.BulkPisConsent;
+import de.adorsys.aspsp.xs2a.domain.PisPaymentData;
 import de.adorsys.aspsp.xs2a.domain.PisConsent;
 import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
@@ -45,7 +45,7 @@ public class PisConsentService {
 
 
     public Optional<String> createConsentBulkPayment(PisConsentBulkPaymentRequest request) {
-        BulkPisConsent bulkPayment = mapToBulkPaymentConsent(request.getPayments());
+        PisPaymentData bulkPayment = mapToBulkPaymentConsent(request.getPayments());
 
         return Optional.of("");
     }
@@ -78,14 +78,14 @@ public class PisConsentService {
     }
 
 
-   private BulkPisConsent mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
+   private PisPaymentData mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
 
         List<PisConsent> consents = payments.stream()
                                         .map(this::mapToPisConsent)
                                         .filter(Optional::isPresent)
                                         .map(Optional::get)
                                         .collect(Collectors.toList());
-        BulkPisConsent newBulk = new BulkPisConsent();
+        PisPaymentData newBulk = new PisPaymentData();
         newBulk.setPayments(consents);
         return newBulk;
     }
