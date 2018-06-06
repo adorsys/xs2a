@@ -49,8 +49,8 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{transactionId}")
-    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transactionId") String transactionId) {
+    @GetMapping(path = "/{transaction-id}")
+    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId) {
         return transactionService.getTransactionById(transactionId)
                    .map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.notFound().build());

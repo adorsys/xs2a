@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -82,28 +79,34 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         AvailableAccessRequest request = new AvailableAccessRequest();
         request.setConsentId(consentId);
 
-        Set<String> ibans = details.stream().map(AccountDetails::getIban).collect(toSet());
+        Set<String> ibans = details.stream()
+                                .map(AccountDetails::getIban)
+                                .collect(toSet());
         Map<String, Set<AccessAccountInfo>> accesses = ibans.stream()
-                                                           .collect(
-                                                               Collectors.toMap(iban -> iban,
-                                                                   iban -> details.stream().filter(a -> a.getIban().equals(iban))
-                                                                               .flatMap(d -> getAccessAccountInfo(d.getCurrency(), typeAccess, withBalance)
-                                                                                                 .stream())
-                                                                               .collect(Collectors.toSet())));
+                                                           .collect(Collectors.toMap(iban -> iban,
+                                                               iban -> getAccessAccountInfoByIban(details, typeAccess, withBalance, iban)));
         request.setAccountsAccesses(accesses);
-
         return consentSpi.checkValidityByConsent(request);
+    }
+
+    private Set<AccessAccountInfo> getAccessAccountInfoByIban(List<AccountDetails> details, TypeAccess typeAccess, boolean withBalance, String iban) {
+        return details.stream().filter(a -> a.getIban().equals(iban))
+                   .flatMap(d -> getAccessAccountInfo(d.getCurrency(), typeAccess, withBalance)
+                                     .stream())
+                   .collect(Collectors.toSet());
     }
 
     private Set<AccessAccountInfo> getAccessAccountInfo(Currency currency, TypeAccess typeAccess, boolean withBalance) {
         Set<AccessAccountInfo> set = new HashSet<>();
         set.add(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
         set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.ACCOUNT));
-        if (withBalance) set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.BALANCE));
+        if (withBalance) {
+            set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.BALANCE));
+        }
         return set;
     }
 
-    public boolean isValidFor(String iban, Currency currency, TypeAccess typeAccess, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+    public boolean isValidAccountByAccess(String iban, Currency currency, TypeAccess typeAccess, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
         return allowedAccountData.containsKey(iban)
                    && allowedAccountData.get(iban).contains(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
     }

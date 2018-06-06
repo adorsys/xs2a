@@ -101,17 +101,17 @@ public class AccountServiceTest {
             .thenReturn(getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.TRANSACTION, false));
 
         // Is valid for
-        when(consentService.isValidFor(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true)))
+        when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true)))
             .thenReturn(true);
-        when(consentService.isValidFor(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, false)))
+        when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, false)))
             .thenReturn(false);
-        when(consentService.isValidFor(IBAN, CURRENCY, TypeAccess.ACCOUNT, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true)))
+        when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.ACCOUNT, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true)))
             .thenReturn(true);
-        when(consentService.isValidFor(IBAN, CURRENCY, TypeAccess.ACCOUNT, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, false)))
+        when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.ACCOUNT, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, false)))
             .thenReturn(true);
-        when(consentService.isValidFor(IBAN_1, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID_1, IBAN_1), TypeAccess.BALANCE, true)))
+        when(consentService.isValidAccountByAccess(IBAN_1, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID_1, IBAN_1), TypeAccess.BALANCE, true)))
             .thenReturn(true);
-        when(consentService.isValidFor(IBAN, CURRENCY, TypeAccess.TRANSACTION, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.TRANSACTION, true)))
+        when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.TRANSACTION, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.TRANSACTION, true)))
             .thenReturn(true);
 
         //getAccountsByConsent Success no balances

@@ -62,12 +62,7 @@ public class AccountService {
                                                       : Collections.emptyList();
         Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, detailsFromConsent, TypeAccess.ACCOUNT, withBalance);
 
-        List<AccountDetails> accountDetails = detailsFromConsent.stream().map(ad -> withBalance
-                                                                                        ? consentService.isValidFor(ad.getIban(), ad.getCurrency(), TypeAccess.BALANCE, allowedAccountData)
-                                                                                              ? ad
-                                                                                              : getAccountDetailsNoBalances(ad)
-                                                                                        : getAccountDetailsNoBalances(ad))
-                                                  .collect(Collectors.toList());
+        List<AccountDetails> accountDetails = getAccountDetailsVerifiedByAccess(withBalance, detailsFromConsent, allowedAccountData);
 
         return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
@@ -78,21 +73,19 @@ public class AccountService {
 
     public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance, boolean psuInvolved) {
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
-        Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.ACCOUNT, withBalance);
-
         if (accountDetails == null) {
             return ResponseObject.<AccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
-        AccountDetails details = withBalance
-                                     ? consentService.isValidFor(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.BALANCE, allowedAccountData)
-                                           ? accountDetails
-                                           : consentService.isValidFor(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.ACCOUNT, allowedAccountData)
-                                                 ? getAccountDetailsNoBalances(accountDetails)
-                                                 : null
-                                     : consentService.isValidFor(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.ACCOUNT, allowedAccountData)
-                                           ? getAccountDetailsNoBalances(accountDetails)
-                                           : null;
+        Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.ACCOUNT, withBalance);
+
+        AccountDetails details = null;
+        if (withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.BALANCE, allowedAccountData)) {
+            details = accountDetails;
+        } else if (consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), TypeAccess.ACCOUNT, allowedAccountData)) {
+            details = getAccountDetailsNoBalances(accountDetails);
+        }
+
         return details == null
                    ? ResponseObject.<AccountDetails>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
@@ -108,8 +101,7 @@ public class AccountService {
         }
         Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.BALANCE, false);
 
-        return allowedAccountData != null
-                   && !allowedAccountData.isEmpty()
+        return !CollectionUtils.isEmpty(allowedAccountData)
                    ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
                    : ResponseObject.<List<Balances>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
@@ -149,14 +141,23 @@ public class AccountService {
         return getAccountDetailsByAccountReference(reference).isPresent();
     }
 
+    private List<AccountDetails> getAccountDetailsVerifiedByAccess(boolean withBalance, List<AccountDetails> detailsFromConsent, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+        return detailsFromConsent.stream().map(ad ->
+                                                   withBalance
+                                                       && consentService.isValidAccountByAccess(ad.getIban(), ad.getCurrency(), TypeAccess.BALANCE, allowedAccountData)
+                                                       ? ad
+                                                       : getAccountDetailsNoBalances(ad)
+        )
+                   .collect(Collectors.toList());
+    }
+
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
         return CollectionUtils.isEmpty(references)
                    ? Collections.emptyList()
                    : references.stream()
                          .map(this::getAccountDetailsByAccountReference)
                          .filter(Optional::isPresent)
-                         .map(Optional::get)
-                         .collect(Collectors.toList());
+                         .collect(Collectors.mapping(Optional::get,Collectors.toList()));
     }
 
     private AccountDetails getAccountDetailsNoBalances(AccountDetails details) {
@@ -166,15 +167,15 @@ public class AccountService {
     }
 
     private AccountReport getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
-        Date dateToChecked = dateTo == null ? new Date() : dateTo;
+        Date dateToChecked = dateTo == null ? new Date() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
         return StringUtils.isBlank(transactionId)
                    ? getAccountReportByPeriod(accountId, dateFrom, dateToChecked, psuInvolved, withBalance, bookingStatus, allowedAccountData)
                    : getAccountReportByTransaction(accountId, transactionId, psuInvolved, withBalance, allowedAccountData);
     }
 
-    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus,Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+    private AccountReport getAccountReportByPeriod(String accountId, Date dateFrom, Date dateTo, boolean psuInvolved, boolean withBalance, BookingStatus bookingStatus, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
         validate_accountId_period(accountId, dateFrom, dateTo);
-        return getAllowedTransactionsByAccess(readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance, bookingStatus),allowedAccountData);
+        return getAllowedTransactionsByAccess(readTransactionsByPeriod(accountId, dateFrom, dateTo, psuInvolved, withBalance, bookingStatus), allowedAccountData);
     }
 
     private AccountReport getAccountReportByTransaction(String accountId, String transactionId, boolean psuInvolved, boolean withBalance, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
