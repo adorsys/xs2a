@@ -21,6 +21,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.List;
+
 @Data
 @Configuration
 @PropertySource("classpath:bank_profile.yml")
@@ -28,4 +30,7 @@ import org.springframework.context.annotation.PropertySource;
 public class ProfileConfiguration {
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;
+    private List<String> availablePaymentProducts;
+    private List<String> availablePaymentTypes;
+    private String scaApproach;
 }
