@@ -54,20 +54,4 @@ public enum PaymentProduct {
     public static Optional<PaymentProduct> getByCode(String code){
         return Optional.of(container.get(code));
     }
-
-    /*
-
-
-
-
-
-
-    public static PaymentProduct forValue(String code) {
-        for (PaymentProduct prod : values()) {
-            if (prod.code.equals(code)) {
-                return prod;
-            }
-        }
-        throw new IllegalArgumentException();
-    }*/
 }
