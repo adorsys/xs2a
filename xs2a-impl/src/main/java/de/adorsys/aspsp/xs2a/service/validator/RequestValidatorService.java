@@ -76,7 +76,7 @@ public class RequestValidatorService {
         return requestParameterViolationsMap;
     }
 
-    public Map getRequestPathVariablesViolationMap(HttpServletRequest request) {
+    public Map<String, String>  getRequestPathVariablesViolationMap(HttpServletRequest request) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
         requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
 
