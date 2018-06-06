@@ -38,19 +38,19 @@ import java.util.stream.Collectors;
 public class PisConsentService {
     private final PisConsentRepository pisConsentRepository;
 
-    public Optional<String> createConsent(PisConsentRequest request) {
+    public Optional<String> createSinglePaymentConsent(PisConsentRequest request) {
         return mapToPisConsent(request.getSinglePayment())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<String> createConsentBulkPayment(PisConsentBulkPaymentRequest request) {
+    public Optional<String> createBulkPaymentConsent(PisConsentBulkPaymentRequest request) {
         return mapToBulkPaymentConsent(request.getPayments())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<String> createConsentPeriodicPayment(PisConsentPeriodicPaymentRequest request) {
+    public Optional<String> createPeriodicPaymentConsent(PisConsentPeriodicPaymentRequest request) {
         return mapToPeriodicPaymentConsent(request.getPeriodicPayment())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
@@ -152,11 +152,11 @@ public class PisConsentService {
                        pc.getExternalId(),
                        pc.getPisConsentType(),
                        pc.getConsentStatus(),
-                       mapToPisPayment(pc.getPayments()))
+                       mapToPisPayments(pc.getPayments()))
                    );
     }
 
-    private List<PisPayment> mapToPisPayment(List<PisPaymentData> payments) {
+    private List<PisPayment> mapToPisPayments(List<PisPaymentData> payments) {
         return payments.stream()
                    .map(pmt -> new PisPayment(
                        pmt.getEndToEndIdentification(),

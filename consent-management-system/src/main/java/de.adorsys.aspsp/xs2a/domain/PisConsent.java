@@ -45,7 +45,7 @@ public class PisConsent {
 
     @Column(name = "pis_consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the pis consent: BULK, SINGLE PERIODIC.", required = true, example = "SINGLE")
+    @ApiModelProperty(value = "Type of the pis consent: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PisConsentType pisConsentType;
 
     @Column(name = "consent_type", nullable = false)

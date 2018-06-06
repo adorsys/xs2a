@@ -40,8 +40,8 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> create(@RequestBody PisConsentRequest request) {
-        return pisConsentService.createConsent(request)
+    public ResponseEntity<String> createSinglePaymentConsent(@RequestBody PisConsentRequest request) {
+        return pisConsentService.createSinglePaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
@@ -51,8 +51,8 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createBulkPayment(@RequestBody PisConsentBulkPaymentRequest request) {
-        return pisConsentService.createConsentBulkPayment(request)
+    public ResponseEntity<String> createBulkPaymentConsent(@RequestBody PisConsentBulkPaymentRequest request) {
+        return pisConsentService.createBulkPaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
@@ -62,8 +62,8 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createPeriodicPayment(@RequestBody PisConsentPeriodicPaymentRequest request) {
-        return pisConsentService.createConsentPeriodicPayment(request)
+    public ResponseEntity<String> createPeriodicPaymentConsent(@RequestBody PisConsentPeriodicPaymentRequest request) {
+        return pisConsentService.createPeriodicPaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
