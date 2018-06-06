@@ -23,7 +23,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class AisConsent {
     private Long id;
 
     @Column(name = "external_id", nullable = false)
-    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = false, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    @ApiModelProperty(value = "An external exposed identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @Column(name = "recurring_indicator", nullable = false)
@@ -46,7 +46,7 @@ public class AisConsent {
     private boolean recurringIndicator;
 
     @Column(name = "tpp_redirect_preferred", nullable = false)
-    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", example = "false")
+    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", required = true, example = "false")
     private boolean tppRedirectPreferred;
 
     @Column(name = "combined_service_indicator", nullable = false)
@@ -54,12 +54,12 @@ public class AisConsent {
     private boolean combinedServiceIndicator;
 
     @Column(name = "request_date", nullable = false)
-    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "23.05.2018 16:52")
-    private LocalDateTime requestDate;
+    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
+    private Instant requestDate;
 
-    @Column(name = "expire_date")
-    @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "23.05.2018 16:52")
-    private LocalDateTime expireDate;
+    @Column(name = "expire_date", nullable = false)
+    @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
+    private Instant expireDate;
 
     @Column(name = "psu_id")
     @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
@@ -102,5 +102,10 @@ public class AisConsent {
     private void addAccount(AisAccount account) {
         this.accounts.add(account);
         account.setConsent(this);
+    }
+
+    public boolean isExpired() {
+        return Instant.now()
+                   .isAfter(expireDate);
     }
 }

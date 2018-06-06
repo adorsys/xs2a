@@ -31,7 +31,7 @@ import java.util.Currency;
 @Embeddable
 @ApiModel(description = "Account access", value = "AccountAccess")
 public class AccountAccess {
-    @Column(name = "currency", nullable = false)
+    @Column(name = "currency")
     @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private Currency currency;
 

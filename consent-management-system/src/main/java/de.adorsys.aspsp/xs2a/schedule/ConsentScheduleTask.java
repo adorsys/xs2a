@@ -18,14 +18,13 @@ package de.adorsys.aspsp.xs2a.schedule;
 
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.ProfileService;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -37,32 +36,34 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConsentScheduleTask {
     private final AisConsentRepository aisConsentRepository;
-    private final ProfileService profileService;
+    private final AspspProfileService profileService;
 
     @Scheduled(cron = "${consent.cron.expression}")
-    public void checkConsentStatus(){
+    public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
 
         List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(SpiConsentStatus.RECEIVED, SpiConsentStatus.VALID)))
-            .orElse(Collections.emptyList());
+                                                 .orElse(Collections.emptyList());
         aisConsentRepository.save(updateConsent(availableConsents));
     }
 
     private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
         return availableConsents.stream()
-            .map(a -> doUpdate(a))
-            .collect(Collectors.toList());
+                   .map(this::updateConsentParameters)
+                   .collect(Collectors.toList());
     }
 
-    private AisConsent doUpdate(AisConsent consent) {
-        consent.setExpectedFrequencyPerDay(profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay()));
+    private AisConsent updateConsentParameters(AisConsent consent) {
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay());
+        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
+        consent.setUsageCounter(minFrequencyPerDay);
         consent.setConsentStatus(updateConsentStatus(consent));
         return consent;
     }
 
     private SpiConsentStatus updateConsentStatus(AisConsent consent) {
-        return LocalDateTime.now().isAfter(consent.getExpireDate())
-            ? SpiConsentStatus.EXPIRED :
-            consent.getConsentStatus();
+        return consent.isExpired()
+                   ? SpiConsentStatus.EXPIRED
+                   : consent.getConsentStatus();
     }
 }

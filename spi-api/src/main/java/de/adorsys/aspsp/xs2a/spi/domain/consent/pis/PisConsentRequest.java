@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
 
-import lombok.Data;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import lombok.Value;
 
-import java.time.Instant;
-
-@Data
-public class AisConsentRequest {
-    private String psuId;
-    private String tppId;
-    private int frequencyPerDay;
-    private AisAccountAccessInfo access;
-    private Instant validUntil;
-    private boolean recurringIndicator;
-    private boolean tppRedirectPreferred;
-    private boolean combinedServiceIndicator;
+@Value
+public class PisConsentRequest {
+    private SpiSinglePayments singlePayment;
 }

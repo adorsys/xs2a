@@ -27,7 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -78,13 +78,19 @@ public class ConsentMapper {
         return SpiConsentStatus.valueOf(consentStatus.name());
     }
 
-    private Date convertToDate(LocalDateTime dateToConvert) {
+    private Date convertToDate(Instant dateToConvert) {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private Set<AccessAccountInfo> accessAccountInfos(Set<AccountAccess> accesses) {
         return accesses.stream()
-                   .map(a -> new AccessAccountInfo(a.getCurrency().getCurrencyCode(), a.getTypeAccess()))
+                   .map(a -> new AccessAccountInfo(getCurrencyCode(a.getCurrency()), a.getTypeAccess()))
                    .collect(Collectors.toSet());
+    }
+
+    private String getCurrencyCode(Currency currency) {
+        return Optional.ofNullable(currency)
+                   .map(Currency::getCurrencyCode)
+                   .orElse(null);
     }
 }

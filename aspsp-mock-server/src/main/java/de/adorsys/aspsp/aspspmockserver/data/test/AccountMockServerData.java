@@ -196,7 +196,7 @@ public class AccountMockServerData {
     }
 
     private Date getDateFromString(String date) {
-        date = Optional.ofNullable(date).orElse("");
+        date = Optional.ofNullable(date).orElse("24/01/2019");
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
         try {

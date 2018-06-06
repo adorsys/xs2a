@@ -97,13 +97,6 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${apache.commons.collections}</version>
-        </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-parameter-names</artifactId>
@@ -141,44 +134,5 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>flyway-standart-workflow</id>
-            <activation>
-                <file>
-                    <exists>${basedir}/flyway.properties</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.flywaydb</groupId>
-                        <artifactId>flyway-maven-plugin</artifactId>
-                        <version>${flywaydb.version}</version>
-                        <configuration>
-                            <configFile>flyway.properties</configFile>
-                            <locations>filesystem:${project.basedir}/src/main/sql</locations>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.postgresql</groupId>
-                                <artifactId>postgresql</artifactId>
-                                <version>${jdbc.postgresql.version}</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>check</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>validate</goal>
-                                    <goal>info</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
 </project>

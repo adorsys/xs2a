@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.aspsp.xs2a.repository;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-@Data
-@Configuration
-@PropertySource("classpath:bank_profile.yml")
-@ConfigurationProperties(prefix = "setting")
-public class ProfileConfiguration {
-    private int frequencyPerDay;
-    private boolean combinedServiceIndicator;
-    private List<String> availablePaymentProducts;
-    private List<String> availablePaymentTypes;
-    private String scaApproach;
+public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
+    List<PisConsent> findByConsentStatusIn(Set<SpiConsentStatus> statuses);
+
+    Optional<PisConsent> findByExternalId(String externalId);
 }
