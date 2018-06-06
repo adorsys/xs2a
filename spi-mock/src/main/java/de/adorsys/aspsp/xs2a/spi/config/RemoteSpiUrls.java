@@ -142,7 +142,7 @@ public class RemoteSpiUrls {
 
     //Payments urls
     public String createPayment() {
-        return spiMockBaseUrl + "/payments";
+        return spiMockBaseUrl + "/payments/";
     }
 
     public String getPaymentStatus() {

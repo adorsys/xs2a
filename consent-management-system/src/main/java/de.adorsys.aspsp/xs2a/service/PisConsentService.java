@@ -21,6 +21,8 @@ import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -86,7 +88,7 @@ public class PisConsentService {
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setPayments(paymentDataList);
         consent.setConsentType(ConsentType.PIS);
-        consent.setPisConsentType(PisConsentType.SINGLE);
+        consent.setPisConsentType(PisConsentType.BULK);
         consent.setConsentStatus(SpiConsentStatus.RECEIVED);
 
         return Optional.of(consent);

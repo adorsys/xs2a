@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

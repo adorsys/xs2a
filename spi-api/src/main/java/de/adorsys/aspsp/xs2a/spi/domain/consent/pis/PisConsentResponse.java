@@ -30,9 +30,6 @@ public class PisConsentResponse {
     @ApiModelProperty(value = "PisConsentType", required = true, example = "BULK")
     private PisConsentType pisConsentType;
 
-    @ApiModelProperty(value = "ConsentType", required = true, example = "PIS")
-    private ConsentType consentType = ConsentType.PIS;
-
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private SpiConsentStatus consentStatus;
 }
