@@ -49,7 +49,7 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{transactionId}")
+    @GetMapping(path = "/{transaction-id}")
     public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transactionId") String transactionId) {
         return transactionService.getTransactionById(transactionId)
                    .map(ResponseEntity::ok)
@@ -65,7 +65,7 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{iban}/{currency}/")
+    @GetMapping(path = "/{iban}/{currency}")
     public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("iban") String iban, @PathVariable("currency") Currency currency,
                                                                          @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                                          @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo) {
