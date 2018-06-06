@@ -22,9 +22,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -41,12 +38,22 @@ public class PisConsent {
     private String externalId;
 
     @ElementCollection
-    @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "account_id"))
-    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
+    @CollectionTable(name = "pis_payments", joinColumns = @JoinColumn(name = "pis_consent_id"))
+    @ApiModelProperty(value = "List of single payments ", required = true)
     private List<PisPaymentData> payments;
 
+    @Column(name = "pis_consent_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the pis consent: BULK, SINGLE PERIODIC.", required = true, example = "SINGLE")
+    private PisConsentType pisConsentType;
 
+    @Column(name = "consent_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the consent: AIS or PIS.", required = true, example = "AIS")
+    private ConsentType consentType = ConsentType.PIS;
 
-
-
+    @Column(name = "consent_status", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
+    private SpiConsentStatus consentStatus;
 }

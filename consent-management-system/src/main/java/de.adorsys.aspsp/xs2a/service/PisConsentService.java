@@ -16,9 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.PisPaymentData;
-import de.adorsys.aspsp.xs2a.domain.PisConsent;
-import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;
@@ -27,6 +25,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,11 +42,10 @@ public class PisConsentService {
                    .map(PisConsent::getExternalId);
     }
 
-
     public Optional<String> createConsentBulkPayment(PisConsentBulkPaymentRequest request) {
-        PisPaymentData bulkPayment = mapToBulkPaymentConsent(request.getPayments());
-
-        return Optional.of("");
+        return mapToBulkPaymentConsent(request.getPayments())
+                   .map(pisConsentRepository::save)
+                   .map(PisConsent::getExternalId);
     }
 
 
@@ -78,53 +76,62 @@ public class PisConsentService {
     }
 
 
-   private PisPaymentData mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
+    private Optional<PisConsent> mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
+        List<PisPaymentData> paymentDataList = payments.stream()
+                                                   .map(this::mapToPisPaymentData)
+                                                   .filter(Optional::isPresent)
+                                                   .map(Optional::get)
+                                                   .collect(Collectors.toList());
+        PisConsent consent = new PisConsent();
+        consent.setExternalId(UUID.randomUUID().toString());
+        consent.setPayments(paymentDataList);
+        consent.setConsentType(ConsentType.PIS);
+        consent.setPisConsentType(PisConsentType.SINGLE);
+        consent.setConsentStatus(SpiConsentStatus.RECEIVED);
 
-        List<PisConsent> consents = payments.stream()
-                                        .map(this::mapToPisConsent)
-                                        .filter(Optional::isPresent)
-                                        .map(Optional::get)
-                                        .collect(Collectors.toList());
-        PisPaymentData newBulk = new PisPaymentData();
-        newBulk.setPayments(consents);
-        return newBulk;
+        return Optional.of(consent);
     }
 
     private Optional<PisConsent> mapToPisConsent(SpiSinglePayments singlePayment) {
         return Optional.ofNullable(singlePayment)
-                   .map(sp -> {
+                   .flatMap(this::mapToPisPaymentData)
+                   .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setEndToEndIdentification(sp.getEndToEndIdentification());
-                       consent.setDebtorIban(sp.getDebtorAccount().getIban());
-                       consent.setUltimateDebtor(sp.getUltimateDebtor());
-                       consent.setAmount(sp.getInstructedAmount().getContent());
-                       consent.setCurrency(sp.getInstructedAmount().getCurrency());
-                       consent.setCreditorIban(sp.getCreditorAccount().getIban());
-                       consent.setCreditorAgent(sp.getCreditorAgent());
-                       consent.setCreditorName(sp.getCreditorName());
-                       consent.setRequestedExecutionDate(sp.getRequestedExecutionDate());
-                       consent.setRequestedExecutionTime(sp.getRequestedExecutionTime());
-                       consent.setUltimateCreditor(sp.getUltimateCreditor());
-                       consent.setPurposeCode(sp.getPurposeCode());
+                       consent.setPayments(Collections.singletonList(pmt));
+                       consent.setConsentType(ConsentType.PIS);
+                       consent.setPisConsentType(PisConsentType.SINGLE);
                        consent.setConsentStatus(SpiConsentStatus.RECEIVED);
                        return consent;
                    });
     }
 
+    private Optional<PisPaymentData> mapToPisPaymentData(SpiSinglePayments singlePayment) {
+        return Optional.ofNullable(singlePayment)
+                   .map(sp -> {
+                       PisPaymentData payment = new PisPaymentData();
+                       payment.setEndToEndIdentification(sp.getEndToEndIdentification());
+                       payment.setDebtorIban(sp.getDebtorAccount().getIban());
+                       payment.setUltimateDebtor(sp.getUltimateDebtor());
+                       payment.setAmount(sp.getInstructedAmount().getContent());
+                       payment.setCurrency(sp.getInstructedAmount().getCurrency());
+                       payment.setCreditorIban(sp.getCreditorAccount().getIban());
+                       payment.setCreditorAgent(sp.getCreditorAgent());
+                       payment.setCreditorName(sp.getCreditorName());
+                       payment.setRequestedExecutionDate(sp.getRequestedExecutionDate());
+                       payment.setRequestedExecutionTime(sp.getRequestedExecutionTime());
+                       payment.setUltimateCreditor(sp.getUltimateCreditor());
+                       payment.setPurposeCode(sp.getPurposeCode());
+                       return payment;
+                   });
+    }
+
+
     private Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
         return Optional.ofNullable(pisConsent)
                    .map(pc -> new PisConsentResponse(
                        pc.getExternalId(),
-                       pc.getDebtorIban(),
-                       pc.getUltimateDebtor(),
-                       pc.getCurrency(),
-                       pc.getAmount(),
-                       pc.getCreditorIban(),
-                       pc.getCreditorAgent(),
-                       pc.getCreditorName(),
-                       pc.getRequestedExecutionDate(),
-                       pc.getRequestedExecutionTime(),
+                       pc.getPisConsentType(),
                        pc.getConsentStatus()));
     }
 }

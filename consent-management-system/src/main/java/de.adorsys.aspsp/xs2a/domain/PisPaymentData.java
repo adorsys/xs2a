@@ -16,15 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
@@ -73,16 +70,6 @@ public class PisPaymentData {
     @Column(name = "requested_execution_time", nullable = false)
     @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035Z")
     private Date requestedExecutionTime;
-
-    @Column(name = "consent_status", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
-    private SpiConsentStatus consentStatus;
-
-    @Column(name = "consent_type", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the consent: AIS or PIS.", required = true, example = "AIS")
-    private ConsentType consentType = ConsentType.PIS;
 
     @Column(name = "ultimate_creditor")
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")
