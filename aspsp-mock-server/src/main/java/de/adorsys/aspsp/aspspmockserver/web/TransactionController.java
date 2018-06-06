@@ -22,9 +22,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Currency;
@@ -50,7 +50,7 @@ public class TransactionController {
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{transaction-id}")
-    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transactionId") String transactionId) {
+    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId) {
         return transactionService.getTransactionById(transactionId)
                    .map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.notFound().build());
