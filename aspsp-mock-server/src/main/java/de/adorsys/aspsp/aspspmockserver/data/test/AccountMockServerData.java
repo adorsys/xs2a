@@ -173,6 +173,7 @@ public class AccountMockServerData {
     private List<SpiBalances> getNewBalanceList(Currency currency, BigDecimal amount1, BigDecimal amount2) {
         SpiBalances spiBalances = new SpiBalances();
         spiBalances.setOpeningBooked(getBalance(currency, amount1));
+        spiBalances.setInterimAvailable(getBalance(currency, amount1));
         spiBalances.setAuthorised(getBalance(currency, amount2));
         return Collections.singletonList(spiBalances);
     }

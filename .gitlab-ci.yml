@@ -4,16 +4,26 @@
 
 variables:
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
+  GITLAB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
+
   OPENSHIFT_REGISTRY: "openshift-registry.adorsys.de:443"
+  OPENSHIFT_NAMESPACE: "multibanking-xs2a"
 
-  GITLAB_IMAGE_NAME_XS2A: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a"
-  OPENSHIFT_IMAGE_NAME_XS2A: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-xs2a"
+  # XS2A Service
+  GITLAB_IMAGE_NAME_XS2A: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}"
+  OPENSHIFT_IMAGE_NAME_XS2A: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-xs2a"
 
-  GITLAB_IMAGE_NAME_MOCKSRV: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/aspsp-mock-server"
-  OPENSHIFT_IMAGE_NAME_MOCKSRV: "openshift-registry.adorsys.de:443/multibanking-xs2a/aspsp-mock-server"
+  # Content management service
+  GITLAB_IMAGE_NAME_CNT_MGMNT: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/cnt-mgmnt"
+  OPENSHIFT_IMAGE_NAME_CNT_MGMNT: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-cnt-mgmnt"
 
-  GITLAB_IMAGE_NAME_KEYCLOAK: "gitlab-registry.adorsys.de/adorsys/xs2a/aspsp-xs2a/keycloak-xs2a"
-  OPENSHIFT_IMAGE_NAME_KEYCLOAK: "openshift-registry.adorsys.de:443/multibanking-xs2a/keycloak-xs2a"
+  # ASPSP Mock Server
+  GITLAB_IMAGE_NAME_MOCKSRV: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/aspsp-mock-server"
+  OPENSHIFT_IMAGE_NAME_MOCKSRV: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/aspsp-mock-server"
+
+  # XS2A IDP Keycloak
+  GITLAB_IMAGE_NAME_KEYCLOAK: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/keycloak-xs2a"
+  OPENSHIFT_IMAGE_NAME_KEYCLOAK: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/keycloak-xs2a"
 
   JAVA_TOOL_OPTIONS: "-Xmx350M"
 
@@ -31,9 +41,9 @@ variables:
 .java_artifacts: &java_artifacts
   paths:
     - "xs2a-impl/target/aspsp-xs2a*jar"
+    - "consent-management-system/target/consent-management*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
-    - "config/*.yml"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
 .build_java: &build_java
@@ -60,6 +70,9 @@ variables:
     - docker build -t "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
     - docker push "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
 
+    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management-system
+    - docker push "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
+
 .deploy_image_script: &deploy_image_script
   tags:
     - aws_shell
@@ -78,6 +91,10 @@ variables:
     - docker pull $GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG
+
+    - docker pull $GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG
 
 # ------------------------------------------------------------------
 # stages
