@@ -28,10 +28,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
@@ -101,7 +102,7 @@ public class AccountService {
         }
         Map<String, Set<AccessAccountInfo>> allowedAccountData = consentService.checkValidityByConsent(consentId, Collections.singletonList(accountDetails), TypeAccess.BALANCE, false);
 
-        return !CollectionUtils.isEmpty(allowedAccountData)
+        return MapUtils.isNotEmpty(allowedAccountData)
                    ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
                    : ResponseObject.<List<Balances>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();

@@ -26,15 +26,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
@@ -81,7 +79,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
         Set<String> ibans = details.stream()
                                 .map(AccountDetails::getIban)
-                                .collect(toSet());
+                                .collect(Collectors.toSet());
         Map<String, Set<AccessAccountInfo>> accesses = ibans.stream()
                                                            .collect(Collectors.toMap(iban -> iban,
                                                                iban -> getAccessAccountInfoByIban(details, typeAccess, withBalance, iban)));
@@ -107,8 +105,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public boolean isValidAccountByAccess(String iban, Currency currency, TypeAccess typeAccess, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
-        return allowedAccountData.containsKey(iban)
-                   && allowedAccountData.get(iban).contains(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
+        Set<AccessAccountInfo> accesses = Optional.ofNullable(allowedAccountData.get(iban))
+                                              .orElse(Collections.emptySet());
+        return accesses.contains(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
     }
 
     public Set<String> getIbanSetFromAccess(AccountAccess access) {
