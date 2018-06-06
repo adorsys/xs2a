@@ -16,17 +16,21 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.domain.BulkPisConsent;
 import de.adorsys.aspsp.xs2a.domain.PisConsent;
 import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +42,14 @@ public class PisConsentService {
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
+
+
+    public Optional<String> createConsentBulkPayment(PisConsentBulkPaymentRequest request) {
+        BulkPisConsent bulkPayment = mapToBulkPaymentConsent(request.getPayments());
+
+        return Optional.of("");
+    }
+
 
     public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
@@ -63,6 +75,19 @@ public class PisConsentService {
     private PisConsent setStatusAndSaveConsent(PisConsent consent, SpiConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
+    }
+
+
+   private BulkPisConsent mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
+
+        List<PisConsent> consents = payments.stream()
+                                        .map(this::mapToPisConsent)
+                                        .filter(Optional::isPresent)
+                                        .map(Optional::get)
+                                        .collect(Collectors.toList());
+        BulkPisConsent newBulk = new BulkPisConsent();
+        newBulk.setPayments(consents);
+        return newBulk;
     }
 
     private Optional<PisConsent> mapToPisConsent(SpiSinglePayments singlePayment) {

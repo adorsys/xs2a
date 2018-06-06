@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,17 @@ public class PisConsentController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<String> create(@RequestBody PisConsentRequest request) {
         return pisConsentService.createConsent(request)
+                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @PostMapping(path = "/bulk")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<String> createBulkPayment(@RequestBody PisConsentBulkPaymentRequest request) {
+        return pisConsentService.createConsentBulkPayment(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }

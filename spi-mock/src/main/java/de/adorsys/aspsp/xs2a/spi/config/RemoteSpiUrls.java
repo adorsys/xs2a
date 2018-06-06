@@ -74,6 +74,15 @@ public class RemoteSpiUrls {
         return consentServiceBaseUrl + "/pis/consent/";
     }
 
+    /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentBulkPaymentRequest request
+     */
+    public String createPisBulkPaymentConsent() {
+        return consentServiceBaseUrl + "/pis/consent/bulk";
+    }
+
     public String updatePisConsentStatus() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
     }
