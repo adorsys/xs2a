@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -50,6 +49,6 @@ public class PeriodicPaymentsController {
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
     @RequestBody PeriodicPayment periodicPayment) {
-        return responseMapper.created(paymentService.initiatePeriodicPayment(periodicPayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct, tppRedirectPreferred));
     }
 }

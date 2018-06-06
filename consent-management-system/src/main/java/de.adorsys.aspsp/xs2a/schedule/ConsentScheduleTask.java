@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.schedule;
 
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.ProfileService;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConsentScheduleTask {
     private final AisConsentRepository aisConsentRepository;
-    private final ProfileService profileService;
+    private final AspspProfileService profileService;
 
     @Scheduled(cron = "${consent.cron.expression}")
     public void checkConsentStatus() {

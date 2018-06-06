@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -34,7 +37,6 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
-    private final String consentsLinkRedirectToSource;
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
 
@@ -43,7 +45,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         String consentId = consentSpi.createAccountConsent(consentMapper.mapToAisConsentRequest(createAccountConsentRequest, psuId, tppId));
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId, null, getLinkToConsent(consentId), null)).build()
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId, null, null, null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR))).build();
     }
 
@@ -91,8 +93,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
         return Optional.ofNullable(references)
                    .map(list -> list.stream()
-                                  .map(AccountReference::getIban)
-                                  .collect(Collectors.toSet()))
+                                    .map(AccountReference::getIban)
+                                    .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
     }
 
@@ -102,20 +104,5 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                      && CollectionUtils.isEmpty(access.getTransactions())
                      && access.getAllPsd2() == null
                      && access.getAvailableAccounts() == null);
-    }
-
-    private Links getLinkToConsent(String consentId) {
-        Links linksToConsent = new Links();
-
-        // Response in case of the OAuth2 approach
-        // todo figure out when we should return  OAuth2 response
-        //String selfLink = linkTo(ConsentInformationController.class).slash(consentId).toString();
-        //linksToConsent.setSelf(selfLink);
-
-        // Response in case of a redirect
-        String redirectLink = consentsLinkRedirectToSource + "/" + consentId;
-        linksToConsent.setRedirect(redirectLink);
-
-        return linksToConsent;
     }
 }
