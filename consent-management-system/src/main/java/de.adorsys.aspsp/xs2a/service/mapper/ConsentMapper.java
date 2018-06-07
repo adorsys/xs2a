@@ -41,7 +41,7 @@ public class ConsentMapper {
             mapToSpiAccountAccess(consent.getAccounts()),
             consent.isRecurringIndicator(),
             convertToDate(consent.getExpireDate()),
-            consent.getTppFrequencyPerDay(),
+            consent.getUsageCounter(),
             convertToDate(consent.getRequestDate()),
             mapToSpiConsentStatus(consent.getConsentStatus()),
             false, consent.isTppRedirectPreferred());
@@ -49,7 +49,7 @@ public class ConsentMapper {
 
     public Map<String, Set<AccessAccountInfo>> toMap(List<AisAccount> accounts) {
         return accounts.stream()
-                   .collect(Collectors.toMap(e -> e.getIban(), e -> accessAccountInfos(e.getAccesses())));
+                   .collect(Collectors.toMap(AisAccount::getIban, e -> accessAccountInfos(e.getAccesses())));
     }
 
     private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
@@ -82,7 +82,7 @@ public class ConsentMapper {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    private Set<AccessAccountInfo> accessAccountInfos(Set<AccountAccess> accesses) {
+    private Set<AccessAccountInfo> accessAccountInfos(List<AccountAccess> accesses) {
         return accesses.stream()
                    .map(a -> new AccessAccountInfo(getCurrencyCode(a.getCurrency()), a.getTypeAccess()))
                    .collect(Collectors.toSet());

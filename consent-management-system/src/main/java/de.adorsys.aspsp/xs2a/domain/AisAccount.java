@@ -23,7 +23,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -42,7 +43,7 @@ public class AisAccount {
     @ElementCollection
     @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "account_id"))
     @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
-    private Set<AccountAccess> accesses = new HashSet<>();
+    private List<AccountAccess> accesses = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
