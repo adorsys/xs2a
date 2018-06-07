@@ -6,14 +6,13 @@ public class OIDCClientRepresentationExtended extends OIDCClientRepresentation {
 
 	// a JSON Web Token (JWT) [RFC7519] that asserts metadata values about the
 	// client software as a bundle
-	private String software_statement;
+	private String softwareStatement;
 
-	public String getSoftware_statement() {
-		return software_statement;
+	public String getSoftwareStatement() {
+		return softwareStatement;
 	}
 
-	public void setSoftware_statement(String software_statement) {
-		this.software_statement = software_statement;
+	public void setSoftwareStatement(String software_statement) {
+		this.softwareStatement = software_statement;
 	}
-
 }

@@ -1,13 +1,8 @@
 package de.adorsys.keycloak.extension.clientregistration;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +36,7 @@ public class OIDCClientRegistrationExtendedProviderTest extends KeycloakTestBase
 		List<String> redirectUris = new ArrayList<>();
 		redirectUris.add("*");
 		client.setRedirectUris(redirectUris);
-		client.setSoftware_statement(
+		client.setSoftwareStatement(
 				"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzb2Z0d2FyZV9pZCI6IjY1ZDFmMjdjLTRhZWEtNDU0OS05YzIxLTYwZTQ5NWE3YTg2ZiIsImlzcyI6IlRTUCIsInNvZnR3YXJlX3JvbGVzIjpbIlBJU1AiLCJBSVNQIl19.GFFFPlKxSHkRzqajLNA3q41A4ExtXcBCv8xhEI5mph0");
 
 		return client;
