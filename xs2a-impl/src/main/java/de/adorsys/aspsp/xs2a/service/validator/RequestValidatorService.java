@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
+import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
@@ -25,6 +26,10 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImp
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +42,6 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
 
 @Log4j
 @Service
@@ -50,12 +54,20 @@ public class RequestValidatorService {
     private AspspProfileService aspspProfileService;
 
     final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
+    static HashMap<Object, PaymentType> classMap;
+
+    static {
+        classMap = new HashMap<>();
+        classMap.put(PaymentInitiationController.class, PaymentType.FUTURE_DATED);
+        classMap.put(BulkPaymentInitiationController.class, PaymentType.BULK);
+        classMap.put(PeriodicPaymentsController.class, PaymentType.PERIODIC);
+    }
 
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> violationMap = new HashMap<>();
         violationMap.putAll(getRequestHeaderViolationMap(request, handler));
         violationMap.putAll(getRequestParametersViolationMap(request, handler));
-        violationMap.putAll(getRequestPathVariablesViolationMap(request));
+        violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
 
         return violationMap;
     }
@@ -76,11 +88,18 @@ public class RequestValidatorService {
         return requestParameterViolationsMap;
     }
 
-    public Map<String, String>  getRequestPathVariablesViolationMap(HttpServletRequest request) {
+    public Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
         requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
+        requestPathViolationMap.putAll(getPaymentTypeViolationMap(handler));
 
         return requestPathViolationMap;
+    }
+
+    public Map<String, String> getPaymentTypeViolationMap(Object handler) {
+        return Optional.ofNullable(classMap.get(((HandlerMethod) handler).getBeanType()))
+                   .map(this::getViolationMapForPaymentType)
+                   .orElse(Collections.emptyMap());
     }
 
     public Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
@@ -136,17 +155,29 @@ public class RequestValidatorService {
         return Optional.ofNullable(paymentProduct)
                    .flatMap(PaymentProduct::getByCode)
                    .map(this::getViolationMapForPaymentProduct)
-                   .orElse(Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
+                   .orElse(Collections.singletonMap(MessageCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }
 
     private Map<String, String> getViolationMapForPaymentProduct(PaymentProduct paymentProduct) {
         return isPaymentProductAvailable(paymentProduct)
                    ? Collections.emptyMap()
-                   : Collections.singletonMap(PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getCode());
+                   : Collections.singletonMap(MessageCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getCode());
+    }
+
+
+    private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {
+        return isPaymentTypeAvailable(paymentType)
+                   ? Collections.emptyMap()
+                   : Collections.singletonMap(MessageCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
     }
 
     private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {
         List<PaymentProduct> paymentProducts = aspspProfileService.getAvailablePaymentProducts();
         return paymentProducts.contains(paymentProduct);
+    }
+
+    private boolean isPaymentTypeAvailable(PaymentType paymentType) {
+        List<PaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
+        return paymentTypes.contains(paymentType);
     }
 }

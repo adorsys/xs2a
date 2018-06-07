@@ -57,7 +57,7 @@ public class FundsConfirmationService {
     }
 
     private BigDecimal convertToBigDecimal(String content) {
-        return Optional.of(content)
+        return Optional.ofNullable(content)
                    .map(BigDecimal::new)
                    .orElse(BigDecimal.ZERO);
     }

@@ -68,7 +68,7 @@ public class AisConsentService {
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
-                   ? Optional.of(saved.getExternalId())
+                   ? Optional.ofNullable(saved.getExternalId())
                    : Optional.empty();
     }
 
