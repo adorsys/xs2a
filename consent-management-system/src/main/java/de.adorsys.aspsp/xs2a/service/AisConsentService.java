@@ -88,6 +88,7 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
+    // TODO: refactor according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/131
     public Map<String, Set<AccessAccountInfo>> checkAvailableAccessAccount(AvailableAccessRequest request) {
         Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
         AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
