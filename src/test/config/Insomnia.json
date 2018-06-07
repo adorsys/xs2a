@@ -1,0 +1,542 @@
+{
+	"_type": "export",
+	"__export_format": 3,
+	"__export_date": "2018-06-05T17:06:50.813Z",
+	"__export_source": "insomnia.desktop.app:v5.16.6",
+	"resources": [
+		{
+			"_id": "wrk_3946d4185bb0463cabd5f8ddf9423977",
+			"created": 1525870429301,
+			"description": "",
+			"modified": 1525870429301,
+			"name": "PSD2",
+			"parentId": null,
+			"_type": "workspace"
+		},
+		{
+			"_id": "env_9dc7ef7364ef4bb6ab79865b423f08e0",
+			"color": null,
+			"created": 1525870429327,
+			"data": {},
+			"isPrivate": false,
+			"modified": 1525870429326,
+			"name": "New Environment",
+			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
+			"_type": "environment"
+		},
+		{
+			"_id": "jar_b4c4501017d3467a8a21a8b7a1c3bbe8",
+			"cookies": [
+				{
+					"creation": "2018-05-09T14:16:04.349Z",
+					"domain": "localhost",
+					"expires": "1970-01-01T00:00:10.000Z",
+					"extensions": [
+						"Version=1"
+					],
+					"hostOnly": true,
+					"httpOnly": true,
+					"id": "4292772956457376",
+					"key": "KC_RESTART",
+					"lastAccessed": "2018-06-01T16:53:42.601Z",
+					"maxAge": 0,
+					"path": "/auth/realms/xs2a"
+				},
+				{
+					"creation": "2018-05-11T14:04:40.735Z",
+					"domain": "localhost",
+					"hostOnly": true,
+					"httpOnly": true,
+					"id": "48323407657994233",
+					"key": "JSESSIONID",
+					"lastAccessed": "2018-06-01T16:46:19.569Z",
+					"path": "/",
+					"value": "4B78091A104794EB2CA5F0C8A6ADE005"
+				},
+				{
+					"creation": "2018-05-11T14:09:46.963Z",
+					"domain": "localhost",
+					"hostOnly": true,
+					"id": "7989708494528298",
+					"key": "JSESSIONID",
+					"lastAccessed": "2018-05-11T14:09:46.963Z",
+					"path": "/auth",
+					"value": "3097C0317133D0353FFF4B569655C723.desktop-6a43gno"
+				}
+			],
+			"created": 1525870429339,
+			"modified": 1527872022601,
+			"name": "Default Jar",
+			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
+			"_type": "cookie_jar"
+		},
+		{
+			"_id": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"created": 1526046045789,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1526046045789,
+			"modified": 1526046068403,
+			"name": "ASPSP",
+			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
+			"_type": "request_group"
+		},
+		{
+			"_id": "fld_c9f2457e42444a629dd72cb3c37fcbbf",
+			"created": 1526046089176,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1525959965368.5,
+			"modified": 1526046924518,
+			"name": "X2A",
+			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
+			"_type": "request_group"
+		},
+		{
+			"_id": "fld_2d1abcdd403548639d6732ff3bf966f5",
+			"created": 1526046946826,
+			"description": "",
+			"environment": {},
+			"metaSortKey": -1526046946826,
+			"modified": 1526046946826,
+			"name": "IDP",
+			"parentId": "wrk_3946d4185bb0463cabd5f8ddf9423977",
+			"_type": "request_group"
+		},
+		{
+			"_id": "env_d7048d06568246ec970a9bb42a0d7fc8",
+			"color": null,
+			"created": 1526057308420,
+			"data": {
+				"clientIdAM": "aspsp-mock",
+				"clientIdX2": "9fee4b6e-6216-4e48-8839-dec2de38ac22",
+				"clientSecretAM": "5dde4d44-ee0a-4178-acc4-cdacf825c797",
+				"clientSecretX2": "30b08c10-b5c8-48b1-be34-2ba32473c8b1",
+				"consentId": "5af5c8c5ddf1fa34449d20e2",
+				"keycloakAuthUrl": "http://localhost:8081/auth"
+			},
+			"isPrivate": false,
+			"modified": 1527871481598,
+			"name": "Test",
+			"parentId": "env_9dc7ef7364ef4bb6ab79865b423f08e0",
+			"_type": "environment"
+		},
+		{
+			"_id": "req_7b8bd04352e14f82abf355c7915e2235",
+			"authentication": {
+				"accessTokenUrl": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdAM  }}",
+				"clientSecret": "{{ clientSecretAM  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n    \"id\": \"33333-999999999\",\n    \"iban\": \"DE371234599997\",\n    \"currency\": \"EUR\",\n    \"name\": \"Schmidt\",\n    \"accountType\": \"SCT\",\n    \"bic\": \"GENODEF1N02\"\n  }"
+			},
+			"created": 1526047207774,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_9a9fca37209547c6ab9a5ff7bab8fc3e",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526047196828,
+			"method": "PUT",
+			"modified": 1527871510507,
+			"name": "Create Account",
+			"parameters": [],
+			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:28080/account/",
+			"_type": "request"
+		},
+		{
+			"_id": "req_52f11112063244938c4ba397ef13ede2",
+			"authentication": {
+				"accessTokenUrl": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdAM  }}",
+				"clientSecret": "{{ clientSecretAM  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": ""
+			},
+			"created": 1526047725163,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_9a9fca37209547c6ab9a5ff7bab8fc3e",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526046640290.3125,
+			"method": "GET",
+			"modified": 1527871577162,
+			"name": "Accounts",
+			"parameters": [
+				{
+					"id": "pair_b759b406abdf4b35ab9c29291d161308",
+					"name": "consent-id",
+					"value": "{{ consentId  }}"
+				}
+			],
+			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:28080/account/",
+			"_type": "request"
+		},
+		{
+			"_id": "req_af51df105358457593f8b52471727cd9",
+			"authentication": {
+				"accessTokenUrl": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdAM  }}",
+				"clientSecret": "{{ clientSecretAM  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": ""
+			},
+			"created": 1526048222919,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_9a9fca37209547c6ab9a5ff7bab8fc3e",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526046362021.4688,
+			"method": "GET",
+			"modified": 1527871591488,
+			"name": "Consents",
+			"parameters": [],
+			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:28080/consent/",
+			"_type": "request"
+		},
+		{
+			"_id": "req_43ef914183be44808d2d17a295d3aed3",
+			"authentication": {
+				"accessTokenUrl": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdAM  }}",
+				"clientSecret": "{{ clientSecretAM  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n        \"iban\": \"DE371234599997\"\n      }\n    ]\n  },\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2018-05-12T16:41:48.991Z\",\n  \"frequencyPerDay\": 0,\n  \"combinedServiceIndicator\": true\n}"
+			},
+			"created": 1526049172861,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_9a9fca37209547c6ab9a5ff7bab8fc3e",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526046222887.0469,
+			"method": "POST",
+			"modified": 1528218388594,
+			"name": "Create Consent",
+			"parameters": [],
+			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:28080/consent/",
+			"_type": "request"
+		},
+		{
+			"_id": "req_8e8a187873004c529d1a70318e8d5f46",
+			"authentication": {
+				"accessTokenUrl": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdAM  }}",
+				"clientSecret": "{{ clientSecretAM  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": ""
+			},
+			"created": 1526055118880,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_9a9fca37209547c6ab9a5ff7bab8fc3e",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526046501155.8906,
+			"method": "GET",
+			"modified": 1527871529762,
+			"name": "Accounts (Schmidt)",
+			"parameters": [],
+			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:28080/account/33333-999999999",
+			"_type": "request"
+		},
+		{
+			"_id": "req_7ac34626981b472684f27637c25617be",
+			"authentication": {
+				"accessTokenUrl": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdAM  }}",
+				"clientSecret": "{{ clientSecretAM  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {
+				"mimeType": "application/json",
+				"text": ""
+			},
+			"created": 1526055578424,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_9a9fca37209547c6ab9a5ff7bab8fc3e",
+					"name": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526046431588.6797,
+			"method": "GET",
+			"modified": 1527871536609,
+			"name": "Accounts (Mueller)",
+			"parameters": [],
+			"parentId": "fld_ae4b2b3d8a774560829bc4e707235c63",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:28080/account/11111-999999999",
+			"_type": "request"
+		},
+		{
+			"_id": "req_eb9ccbf4064f49358f1e323920aeb049",
+			"authentication": {
+				"accessTokenUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdX2  }}",
+				"clientSecret": "{{ clientSecretX2  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {},
+			"created": 1525870493494,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_582747380f364d7d9745e5f1d0f98f75",
+					"name": "tpp-transaction-id",
+					"value": "16d40f49-a110-4344-a949-f99828ae13c9"
+				},
+				{
+					"id": "pair_1baeeacbf7b44fb89c707c85c8c8752f",
+					"name": "tpp-request-id",
+					"value": "21d40f65-a150-8343-b539-b9a822ae98c0"
+				},
+				{
+					"id": "pair_784639b5cf0541f6b514e12097d445a8",
+					"name": "consent-id",
+					"value": "{{ consentId  }}"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526046083752.625,
+			"method": "GET",
+			"modified": 1528215851783,
+			"name": "AISP, Accounts",
+			"parameters": [],
+			"parentId": "fld_c9f2457e42444a629dd72cb3c37fcbbf",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:8081/api/v1/accounts",
+			"_type": "request"
+		},
+		{
+			"_id": "req_f5008a1c96f847678b7c85b88bc9decc",
+			"authentication": {
+				"accessTokenUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdX2  }}",
+				"clientSecret": "{{ clientSecretX2  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {},
+			"created": 1526058048941,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_582747380f364d7d9745e5f1d0f98f75",
+					"name": "tpp-transaction-id",
+					"value": "16d40f49-a110-4344-a949-f99828ae13c9"
+				},
+				{
+					"id": "pair_1baeeacbf7b44fb89c707c85c8c8752f",
+					"name": "tpp-request-id",
+					"value": "21d40f65-a150-8343-b539-b9a822ae98c0"
+				},
+				{
+					"id": "pair_784639b5cf0541f6b514e12097d445a8",
+					"name": "consent-id",
+					"value": "{{ consentId  }}"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526024558902.0469,
+			"method": "GET",
+			"modified": 1526059553385,
+			"name": "AISP, Accounts (Balance C1)",
+			"parameters": [],
+			"parentId": "fld_c9f2457e42444a629dd72cb3c37fcbbf",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:8081/api/v1/accounts/33333-999999999/balances",
+			"_type": "request"
+		},
+		{
+			"_id": "req_e817eaed33ba445e9070a805f4259402",
+			"authentication": {
+				"accessTokenUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"authorizationUrl": "http://localhost:8080/auth/realms/xs2a/protocol/openid-connect/token",
+				"clientId": "{{ clientIdX2  }}",
+				"clientSecret": "{{ clientSecretX2  }}",
+				"grantType": "client_credentials",
+				"type": "oauth2"
+			},
+			"body": {},
+			"created": 1526059486791,
+			"description": "Provides access to the Psu account",
+			"headers": [
+				{
+					"id": "pair_582747380f364d7d9745e5f1d0f98f75",
+					"name": "tpp-transaction-id",
+					"value": "16d40f49-a110-4344-a949-f99828ae13c9"
+				},
+				{
+					"id": "pair_1baeeacbf7b44fb89c707c85c8c8752f",
+					"name": "tpp-request-id",
+					"value": "21d40f65-a150-8343-b539-b9a822ae98c0"
+				},
+				{
+					"id": "pair_784639b5cf0541f6b514e12097d445a8",
+					"name": "consent-id",
+					"value": "{{ consentId  }}"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1526003034051.4688,
+			"method": "GET",
+			"modified": 1528215861509,
+			"name": "AISP, Consents",
+			"parameters": [],
+			"parentId": "fld_c9f2457e42444a629dd72cb3c37fcbbf",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "http://localhost:8081/api/v1/consents/{{ consentId  }}",
+			"_type": "request"
+		},
+		{
+			"_id": "req_33ce3fa5af8940c98d492a6fff050563",
+			"authentication": {},
+			"body": {
+				"mimeType": "application/x-www-form-urlencoded",
+				"params": [
+					{
+						"id": "pair_d3d508745a7242a7b106ead204dbacae",
+						"name": "grant_type",
+						"value": "client_credentials"
+					},
+					{
+						"id": "pair_62249e8efbc34209a34a2cb920cf020c",
+						"name": "client_id",
+						"value": "aspsp-mock"
+					},
+					{
+						"disabled": false,
+						"id": "pair_1573d033aa8d4f0aa4ea662e961c470f",
+						"name": "client_secret",
+						"value": "5dde4d44-ee0a-4178-acc4-cdacf825c797"
+					}
+				]
+			},
+			"created": 1525873884948,
+			"description": "",
+			"headers": [
+				{
+					"id": "pair_4ee5da2465544366a42e02b6cdbfc4ef",
+					"name": "Content-Type",
+					"value": "application/x-www-form-urlencoded"
+				}
+			],
+			"isPrivate": false,
+			"metaSortKey": -1525873884948,
+			"method": "POST",
+			"modified": 1527871497122,
+			"name": "Token",
+			"parameters": [],
+			"parentId": "fld_2d1abcdd403548639d6732ff3bf966f5",
+			"settingDisableRenderRequestBody": false,
+			"settingEncodeUrl": true,
+			"settingRebuildPath": true,
+			"settingSendCookies": true,
+			"settingStoreCookies": true,
+			"url": "{{ keycloakAuthUrl  }}/realms/xs2a/protocol/openid-connect/token",
+			"_type": "request"
+		}
+	]
+}
