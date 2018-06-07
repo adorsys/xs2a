@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.spi.service.AspspProfileSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -37,6 +38,16 @@ public class AspspProfileService {
         return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentProducts())
                    .map(list -> list.stream()
                                     .map(PaymentProduct::getByCode)
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
+                                    .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
+    }
+
+    public List<PaymentType> getAvailablePaymentTypes() {
+        return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentTypes())
+                   .map(list -> list.stream()
+                                    .map(PaymentType::getByValue)
                                     .filter(Optional::isPresent)
                                     .map(Optional::get)
                                     .collect(Collectors.toList()))

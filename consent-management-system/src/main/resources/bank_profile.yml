@@ -7,5 +7,4 @@ setting:
  availablePaymentTypes :
  - bulk
  - periodic
- - delayed
  scaApproach: redirect
