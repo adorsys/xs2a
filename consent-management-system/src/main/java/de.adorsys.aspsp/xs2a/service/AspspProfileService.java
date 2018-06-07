@@ -16,13 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import com.google.common.collect.Sets;
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,7 @@ public class AspspProfileService {
         return profileConfiguration.getFrequencyPerDay();
     }
 
-    public void updateFrequencyPerDay(Integer frequencyPerDay) {
+    public void updateFrequencyPerDay(int frequencyPerDay) {
         profileConfiguration.setFrequencyPerDay(frequencyPerDay);
     }
 
@@ -45,16 +43,16 @@ public class AspspProfileService {
         profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
     }
 
-    public Set<String> getAvailablePaymentProducts() {
-        return Sets.newHashSet(profileConfiguration.getAvailablePaymentProducts());
+    public List<String> getAvailablePaymentProducts() {
+        return profileConfiguration.getAvailablePaymentProducts();
     }
 
     public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
     }
 
-    public Set<String> getAvailablePaymentTypes() {
-        return Sets.newHashSet(profileConfiguration.getAvailablePaymentTypes());
+    public List<String> getAvailablePaymentTypes() {
+        return profileConfiguration.getAvailablePaymentTypes();
     }
 
     public void updateAvailablePaymentTypes(List<String> types) {

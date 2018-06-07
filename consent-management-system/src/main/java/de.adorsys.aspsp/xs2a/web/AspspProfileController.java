@@ -17,17 +17,15 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,67 +35,47 @@ public class AspspProfileController {
     private final AspspProfileService aspspProfileService;
 
     @GetMapping(path = "/frequency-per-day")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads frequency per day", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Integer> getFrequencyPerDay() {
         return new ResponseEntity<>(aspspProfileService.getFrequencyPerDay(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/frequency-per-day")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Void> updateFrequencyPerDay(@RequestBody Integer frequencyPerDay) {
-        aspspProfileService.updateFrequencyPerDay(frequencyPerDay);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping(path = "/combined-service-indicator")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads combined service indicator value", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Boolean> getCombinedServiceIndicator() {
         return new ResponseEntity<>(aspspProfileService.isCombinedServiceIndicator(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/combined-service-indicator")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Void> updateCombinedServiceIndicator(@RequestBody boolean combinedServiceIndicator) {
-        aspspProfileService.updateCombinedServiceIndicator(combinedServiceIndicator);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping(path = "/available-payment-products")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Set<String>> getAvailablePaymentProducts() {
+    @ApiOperation(value = "Reads list of available payment products", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<List<String>> getAvailablePaymentProducts() {
         return new ResponseEntity<>(aspspProfileService.getAvailablePaymentProducts(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/available-payment-products")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Void> updateAvailablePaymentProducts(@RequestBody List<String> availablePaymentProducts) {
-        aspspProfileService.updateAvailablePaymentProducts(availablePaymentProducts);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping(path = "/available-payment-types")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Set<String>> getAvailablePaymentTypes() {
+    @ApiOperation(value = "Reads list of available payment types ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<List<String>> getAvailablePaymentTypes() {
         return new ResponseEntity<>(aspspProfileService.getAvailablePaymentTypes(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/available-payment-types")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Void> updateAvailablePaymentTypes(@RequestBody List<String> types) {
-        aspspProfileService.updateAvailablePaymentTypes(types);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @GetMapping(path = "/sca-approach")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads sca approach value", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<String> getScaApproach() {
         return new ResponseEntity<>(aspspProfileService.getScaApproach(), HttpStatus.OK);
-    }
-
-    @PutMapping(path = "/sca-approach")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Void> updateAvailablePaymentTypes(@RequestBody String scaApproach) {
-        aspspProfileService.updateScaApproach(scaApproach);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

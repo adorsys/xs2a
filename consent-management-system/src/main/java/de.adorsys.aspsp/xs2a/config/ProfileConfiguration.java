@@ -40,6 +40,10 @@ public class ProfileConfiguration {
 
     @PostConstruct
     private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available bu default
-        availablePaymentTypes.add(PaymentType.FUTURE_DATED.getValue());
+        String necessaryType = PaymentType.FUTURE_DATED.getValue();
+
+        if (!availablePaymentTypes.contains(necessaryType)) {
+            availablePaymentTypes.add(PaymentType.FUTURE_DATED.getValue());
+        }
     }
 }
