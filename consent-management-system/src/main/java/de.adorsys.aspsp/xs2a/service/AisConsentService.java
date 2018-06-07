@@ -92,7 +92,12 @@ public class AisConsentService {
         Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
         AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
-            throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
+            throw new ConsentException("Consent status: " + aisConsent.getConsentStatus());
+        }
+        if(aisConsent.isExpired()){
+            aisConsent.setConsentStatus(EXPIRED);
+            aisConsentRepository.save(aisConsent);
+            throw new ConsentException("Consent status: EXPIRED");
         }
         checkAisConsentCounter(aisConsent.getUsageCounter());
         AisConsent updated = updateConsentStatusAndCounter(aisConsent);
@@ -110,9 +115,6 @@ public class AisConsentService {
     private AisConsent updateConsentStatusAndCounter(AisConsent aisConsent) {
         if (aisConsent.getConsentStatus() == RECEIVED) {
             aisConsent.setConsentStatus(VALID);
-        }
-        if(aisConsent.isExpired()){
-            aisConsent.setConsentStatus(EXPIRED);
         }
         int usageCounter = aisConsent.getUsageCounter();
         int newUsageCounter = --usageCounter;
