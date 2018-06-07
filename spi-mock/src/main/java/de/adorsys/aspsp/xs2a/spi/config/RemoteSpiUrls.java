@@ -22,57 +22,164 @@ import org.springframework.stereotype.Component;
 @Component
 public class RemoteSpiUrls {
     @Value("${mockspi.baseurl:http://localhost:28080}")
-    private String baseUrl;
+    private String spiMockBaseUrl;
+
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
 
     //Consents urls
-    public String getConsentById() {
-        return baseUrl + "/consent/{id}";
+    /**
+     * @return VOID
+     * @Method PUT
+     * @PathVariables: String consentId, SpiConsentStatus consentStatus
+     */
+    public String updateAisConsentStatus() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
     }
 
-    public String deleteConsentById() {
-        return baseUrl + "/consent/{id}";
+    /**
+     * @return String consentId
+     * @Method POST
+     * @Body AisConsentRequest request
+     */
+    public String createAisConsent() {
+        return consentServiceBaseUrl + "/ais/consent/";
     }
 
-    public String createConsent() {
-        return baseUrl + "/consent/";
+    /**
+     * @return SpiConsentStatus status
+     * @Method GET
+     * @PathVariable String consentId
+     */
+    public String getAisConsentStatusById() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
+    }
+
+    /**
+     * @return SpiAccountConsent consent
+     * @Method GET
+     * @PathVariable String consentId
+     */
+    public String getAisConsentById() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}";
+    }
+
+    // PIS Consents
+    /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentRequest request
+     */
+    public String createPisConsent() {
+        return consentServiceBaseUrl + "/pis/consent/";
+    }
+
+    /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentBulkPaymentRequest request
+     */
+    public String createPisBulkPaymentConsent() {
+        return consentServiceBaseUrl + "/pis/consent/bulk";
+    }
+
+    /**
+     * @return String pis consentId
+     * @Method POST
+     * @Body PisConsentPeriodicPaymentRequest request
+     */
+    public String createPisPeriodicPaymentConsent() {
+        return consentServiceBaseUrl + "/pis/consent/periodic";
+    }
+
+    /**
+     * @return Void
+     * @Method GET
+     * @PathVariable String consentId and status
+     */
+    public String updatePisConsentStatus() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
+    }
+
+    /**
+     * @return SpiConsentStatus
+     * @Method GET
+     * @PathVariable String consentId
+     */
+    public String getPisConsentStatusById() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
+    }
+
+    /**
+     * @return PisConsentResponse
+     * @Method GET
+     * @PathVariable String consentId
+     */
+    public String getPisConsentById() {
+        return consentServiceBaseUrl + "/pis/consent/{consentId}";
     }
 
     public String getConsentByAccess() {
-        return baseUrl + "/consent/byAccess/{access}";
+        return spiMockBaseUrl + "/consent/byAccess/{access}";
+    }
+
+    /**
+     * @return Map<String, Set<AccessAccountInfo>> accesses validated
+     * @Method POST
+     * @Body AvailableAccessRequest
+     */
+    public String checkAccessByConsentId() {
+        return consentServiceBaseUrl + "/ais/consent/available/access";
     }
 
     //Accounts urls
     public String getAccountDetailsById() {
-        return baseUrl + "/account/{accountId}";
+        return spiMockBaseUrl + "/account/{account-id}";
     }
 
     public String getBalancesByAccountId() {
-        return baseUrl + "/account/{accountId}/balances";
+        return spiMockBaseUrl + "/account/{account-id}/balances";
     }
 
     public String getAccountDetailsByPsuId() {
-        return baseUrl + "/account/psu/{psuId}";
+        return spiMockBaseUrl + "/account/psu/{psu-id}";
     }
 
     public String getAccountDetailsByIban() {
-        return baseUrl + "/account/iban/{iban}";
+        return spiMockBaseUrl + "/account/iban/{iban}";
     }
 
     //Payments urls
     public String createPayment() {
-        return baseUrl + "/payments/";
+        return spiMockBaseUrl + "/payments/";
     }
 
     public String getPaymentStatus() {
-        return baseUrl + "/payments/{paymentId}/status/";
+        return spiMockBaseUrl + "/payments/{payment-id}/status";
     }
 
     public String createBulkPayment() {
-        return baseUrl + "/payments/bulk-payments/";
+        return spiMockBaseUrl + "/payments/bulk-payments";
     }
 
     public String createPeriodicPayment() {
-        return baseUrl + "/payments/createPeriodicPayment/";
+        return spiMockBaseUrl + "/payments/createPeriodicPayment";
     }
 
+    //Transactions urls
+    public String readTransactionById() {
+        return spiMockBaseUrl + "/transaction/{transaction-id}";
+    }
+
+    public String readTransactionsByPeriod() {
+        return spiMockBaseUrl + "/transaction/{iban}/{currency}";
+    }
+
+    public String createTransaction() {
+        return spiMockBaseUrl + "/transaction";
+    }
+
+    public String getAvailablePaymentProducts() {
+        return consentServiceBaseUrl + "/aspsp-profile/available-payment-products";
+    }
 }

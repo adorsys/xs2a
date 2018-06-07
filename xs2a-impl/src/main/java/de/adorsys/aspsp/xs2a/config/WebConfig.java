@@ -105,7 +105,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public RequestValidatorService requestValidatorService() {
-        return new RequestValidatorService(validator(), parametersFactory());
+        return new RequestValidatorService();
     }
 
     @Override

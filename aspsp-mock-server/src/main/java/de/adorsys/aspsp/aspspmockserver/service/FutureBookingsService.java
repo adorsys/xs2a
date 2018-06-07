@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Date;
 import java.util.Optional;
@@ -33,14 +34,16 @@ public class FutureBookingsService {
     private final AccountService accountService;
     private final PaymentService paymentService;
 
-    public Optional<SpiAccountDetails> changeBalances(String accountId) {
-        return accountService.getAccountById(accountId)
-            .flatMap(this::updateAccountBalance);
+    public Optional<SpiAccountDetails> changeBalances(String iban, String currency) {
+        return accountService.getAccountsByIban(iban).stream()
+                   .filter(acc -> areCurrenciesEqual(acc.getCurrency(), currency))
+                   .findFirst()
+                   .flatMap(this::updateAccountBalance);
     }
 
     private Optional<SpiAccountDetails> updateAccountBalance(SpiAccountDetails account) {
         return calculateNewBalance(account)
-            .flatMap(bal -> saveNewBalanceToAccount(account, bal));
+                   .flatMap(bal -> saveNewBalanceToAccount(account, bal));
     }
 
     private Optional<SpiAccountDetails> saveNewBalanceToAccount(SpiAccountDetails account, SpiBalances balance) {
@@ -63,11 +66,17 @@ public class FutureBookingsService {
     }
 
     private SpiAmount getNewAmount(SpiAccountDetails account, SpiBalances b) {
-        return new SpiAmount(Currency.getInstance("EUR"), String.valueOf(getNewBalanceAmount(account, b)));
+        return new SpiAmount(Currency.getInstance("EUR"), getNewBalanceAmount(account, b));
     }
 
-    private double getNewBalanceAmount(SpiAccountDetails account, SpiBalances balance) {
-        double oldBalanceAmount = balance.getInterimAvailable().getSpiAmount().getDoubleContent();
-        return oldBalanceAmount - paymentService.calculateAmountToBeCharged(account.getId());
+    private BigDecimal getNewBalanceAmount(SpiAccountDetails account, SpiBalances balance) {
+        BigDecimal oldBalanceAmount = balance.getInterimAvailable().getSpiAmount().getContent();
+        return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getId()));
+    }
+
+    private boolean areCurrenciesEqual(Currency accountCurrency, String givenCurrency) {
+        return Optional.ofNullable(accountCurrency)
+                   .map(curr -> curr.getCurrencyCode().equals(givenCurrency))
+                   .orElse(false);
     }
 }

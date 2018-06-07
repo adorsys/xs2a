@@ -62,14 +62,12 @@ public class PaymentInitiationControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
-        Map<String, TransactionStatus> paymentStatusResponse = new HashMap<>();
-        paymentStatusResponse.put("transactionStatus", TransactionStatus.ACCP);
-        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT))
-            .thenReturn(ResponseObject.<Map<String, TransactionStatus>>builder().body(paymentStatusResponse).build());
+        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
+            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
         Map<String, TransactionStatus> paymentStatusResponseWrongId = new HashMap<>();
         paymentStatusResponseWrongId.put("transactionStatus", TransactionStatus.RJCT);
-        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT))
-            .thenReturn(ResponseObject.<Map<String, TransactionStatus>>builder().body(paymentStatusResponseWrongId).build());
+        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
+            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build());
         when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
     }
 
@@ -80,12 +78,12 @@ public class PaymentInitiationControllerTest {
         TransactionStatus expectedTransactionStatus = TransactionStatus.ACCP;
 
         //When:
-        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
+        ResponseEntity<TransactionStatus> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
 
         //Then:
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
-        assertThat(actualResponse.getBody().get("transactionStatus")).isEqualTo(expectedTransactionStatus);
+        assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
     }
 
     @Test
@@ -95,12 +93,12 @@ public class PaymentInitiationControllerTest {
         TransactionStatus expectedTransactionStatus = TransactionStatus.RJCT;
 
         //When:
-        ResponseEntity<Map<String, TransactionStatus>> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
+        ResponseEntity<TransactionStatus> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
 
         //Then:
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
         assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
-        assertThat(actualResponse.getBody().get("transactionStatus")).isEqualTo(expectedTransactionStatus);
+        assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
     }
 
     @Test
