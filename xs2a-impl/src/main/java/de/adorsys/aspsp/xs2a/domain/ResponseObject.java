@@ -22,7 +22,7 @@ import lombok.Getter;
 /**
  * Responce Object passing the information about performed operation
  *
- * @see MessageCode
+ * @see MessageErrorCode
  */
 @Getter
 public class ResponseObject<T> {

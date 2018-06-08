@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.service;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
+import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public interface ConsentSpi {
-
-    SpiAccountConsent getAccountConsentById(String consentId);
-
-    SpiConsentStatus getAccountConsentStatusById(String consentId);
-
-    void deleteAccountConsentById(String consentId);
-
-    Map<String, Set<AccessAccountInfo>> checkValidityByConsent(AvailableAccessRequest request);
-
+@Data
+public class AvailableAccessRequest {
+    private String consentId;
+    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
 }

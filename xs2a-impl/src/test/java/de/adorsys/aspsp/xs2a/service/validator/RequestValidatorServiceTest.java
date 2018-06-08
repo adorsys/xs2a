@@ -39,9 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageCode.PARAMETER_NOT_SUPPORTED;
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.PRODUCT_UNKNOWN;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PRODUCT_UNKNOWN;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)

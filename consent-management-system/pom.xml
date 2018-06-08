@@ -37,7 +37,7 @@
     <dependencies>
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>spi-api</artifactId>
+            <artifactId>consent-api</artifactId>
             <version>0.4-SNAPSHOT</version>
         </dependency>
 

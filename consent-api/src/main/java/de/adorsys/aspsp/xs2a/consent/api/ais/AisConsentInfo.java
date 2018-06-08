@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.consent;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-public enum ConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP;
+import lombok.Data;
+
+@Data
+public class AisConsentInfo {
+    /*
+
+    */
 }

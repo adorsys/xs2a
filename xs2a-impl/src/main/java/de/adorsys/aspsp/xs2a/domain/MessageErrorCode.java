@@ -21,8 +21,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "MessageCode", value = "Message error codes and related http response codes.")
-public enum MessageCode {
+@ApiModel(description = "MessageErrorCode", value = "Message error codes and related http response codes.")
+public enum MessageErrorCode {
     CERTIFICATE_INVALID(401),  // "The contents of the signature/corporate seal certificate are not matching PSD2 general PSD2 or attribute requirements
     CERTIFICATE_EXPIRED(401),  //Signature/corporate seal certificate is expired
     CERTIFICATE_BLOCKED(401),  //Signature/corporate seal certificate has been blocked by the ASPSP
@@ -52,7 +52,6 @@ public enum MessageCode {
 
     // AIS specific error code
     //todo task: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/38
-    //CONSENT_INVALID(401, "The consent definition is not complete or invalid. In case of being not complete, the bank is not supporting a completion of the consent towards the PSU. Additional information will be provided."),
     SESSIONS_NOT_SUPPORTED(400),  //The combined service flag may not be used with this ASPSP
     ACCESS_EXCEEDED(429),  //The access on the account has been exceeding the consented multiplicity per day
     REQUESTED_FORMATS_INVALID(401),  //The requested formats in the Accept header entry are not matching the formats offered by the ASPSP.");
@@ -82,7 +81,7 @@ public enum MessageCode {
     private int code;
 
     @JsonCreator
-    MessageCode(int code) {
+    MessageErrorCode(int code) {
         this.code = code;
     }
 

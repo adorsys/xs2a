@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;

@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.consent;
+package de.adorsys.aspsp.xs2a.service.consent.ais;
 
-public enum ConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RemoteAisConsentUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
+
+    /**
+     * @return String consentId
+     * @Method POST
+     * @Body AisConsentRequest request
+     */
+    public String createAisConsent() {
+        return consentServiceBaseUrl + "/ais/consent/";
+    }
 }

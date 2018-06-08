@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import lombok.Data;
 
 import java.util.List;
@@ -28,18 +27,6 @@ public class AisAccountAccessInfo {
     private List<AccountInfo> accounts;
     private List<AccountInfo> balances;
     private List<AccountInfo> transactions;
-    private SpiAccountAccessType availableAccounts;
-    private SpiAccountAccessType allPsd2;
-
-    public boolean isAllAccountAccess(){
-        return isAllPsd2() || isAvailableAccounts();
-    }
-
-    public boolean isAllPsd2(){
-        return SpiAccountAccessType.ALL_ACCOUNTS == allPsd2;
-    }
-
-    public boolean isAvailableAccounts(){
-        return SpiAccountAccessType.ALL_ACCOUNTS == availableAccounts;
-    }
+    private String availableAccounts;
+    private String allPsd2;
 }

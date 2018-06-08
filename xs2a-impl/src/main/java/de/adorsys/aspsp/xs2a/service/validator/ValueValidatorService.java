@@ -26,7 +26,7 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
 @Service
 public class ValueValidatorService {

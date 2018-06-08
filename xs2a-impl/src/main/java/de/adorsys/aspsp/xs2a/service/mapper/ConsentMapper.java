@@ -16,6 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.consent.api.ais.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
@@ -25,9 +28,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -73,8 +73,8 @@ public class ConsentMapper {
                                        .map(this::mapToListAccountInfo)
                                        .orElse(Collections.emptyList()));
 
-        accessInfo.setAvailableAccounts(mapToSpiAccountAccessType(access.getAvailableAccounts()));
-        accessInfo.setAllPsd2(mapToSpiAccountAccessType(access.getAllPsd2()));
+        accessInfo.setAvailableAccounts(access.getAvailableAccounts().name());
+        accessInfo.setAllPsd2(mapToSpiAccountAccessType(access.getAllPsd2()).name());
 
         return accessInfo;
     }

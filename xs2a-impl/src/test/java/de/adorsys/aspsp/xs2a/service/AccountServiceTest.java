@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
@@ -38,8 +39,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.CONSENT_INVALID;
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -133,7 +134,7 @@ public class AccountServiceTest {
             .thenReturn(Collections.emptyList());
         //getAccountsByConsent Failure wrong consentId
         when(consentService.getAccountConsentById(WRONG_CONSENT_ID))
-            .thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build());
+            .thenReturn(ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build());
     }
 
     //Get Account By AccountId
@@ -166,7 +167,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.RESOURCE_UNKNOWN_404);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
     }
 
     @Test
@@ -177,7 +178,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_INVALID);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.CONSENT_INVALID);
     }
 
     //Get AccountsList By Consent
@@ -224,7 +225,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_INVALID);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.CONSENT_INVALID);
     }
 
     //Get Balances
@@ -245,7 +246,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_INVALID);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.CONSENT_INVALID);
     }
 
     @Test
@@ -256,7 +257,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(responce.hasError()).isEqualTo(true);
         assertThat(responce.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(responce.getError().getTppMessage().getCode()).isEqualTo(MessageCode.RESOURCE_UNKNOWN_404);
+        assertThat(responce.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
     }
 
     //Internal method test
@@ -380,7 +381,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.RESOURCE_UNKNOWN_404);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_404);
     }
 
     @Test
@@ -391,7 +392,7 @@ public class AccountServiceTest {
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageCode.CONSENT_INVALID);
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.CONSENT_INVALID);
     }
 
     //Test Stuff

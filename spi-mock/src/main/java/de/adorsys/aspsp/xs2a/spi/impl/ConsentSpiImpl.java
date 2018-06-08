@@ -20,7 +20,6 @@ import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.AllArgsConstructor;
@@ -38,11 +37,6 @@ import java.util.Set;
 public class ConsentSpiImpl implements ConsentSpi {
     private final RestTemplate restTemplate;
     private final RemoteSpiUrls remoteSpiUrls;
-
-    @Override
-    public String createAccountConsent(AisConsentRequest consent) {
-        return restTemplate.postForEntity(remoteSpiUrls.createAisConsent(), consent, String.class).getBody();
-    }
 
     @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
