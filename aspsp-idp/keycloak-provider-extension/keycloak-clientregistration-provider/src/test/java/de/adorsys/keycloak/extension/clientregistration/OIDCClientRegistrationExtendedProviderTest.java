@@ -1,13 +1,8 @@
 package de.adorsys.keycloak.extension.clientregistration;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
 import org.junit.Test;
