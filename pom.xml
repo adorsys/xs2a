@@ -55,6 +55,7 @@
         <tomitribe-http-signatures.version>1.0</tomitribe-http-signatures.version>
         <nimbus-jose-jwt.version>5.8</nimbus-jose-jwt.version>
         <commons-certvalidator.version>2.1.1</commons-certvalidator.version>
+        <bcpkix-jdk15on.version>1.59</bcpkix-jdk15on.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
