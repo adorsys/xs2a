@@ -19,7 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.data.test;
 import de.adorsys.aspsp.aspspmockserver.repository.ConsentRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;

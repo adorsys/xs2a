@@ -1,7 +1,7 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +18,8 @@ public class PsuService {
         this.psuRepository = psuRepository;
     }
 
-    public String createPsuAndReturnId(List<SpiAccountDetails> detailsList) {
-        Psu psu = psuRepository.save(new Psu(null, detailsList));
+    public String createPsuAndReturnId(String email, String password, List<SpiAccountDetails> detailsList) {
+        Psu psu = psuRepository.save(new Psu(null, email, password, detailsList));
 
         return psu.getId();
     }
