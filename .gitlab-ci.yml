@@ -102,7 +102,6 @@ variables:
 
 stages:
   - "build:src"    # build jar and provide as artifact
-  - "sync_repos"   # push sources to github repository
   - "build:image"  # dockerize jar and push to gitlab registry
   - "deploy"       # push to openshift registry (snapshot deployment) or release registry
 
@@ -200,13 +199,3 @@ deploy_image_release:
     DOCKER_TAG: $CI_COMMIT_TAG
   <<: *deploy_image_script
 
-# Push to Github
-
-push_on_github:
-  stage: "sync_repos"
-  image: alpine/git:1.0.4
-  script:
-      - git remote add github https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_REPO}.git
-      - git config push.default simple
-      - git checkout ${CI_COMMIT_REF_NAME}
-      - git push --follow-tags --atomic github
