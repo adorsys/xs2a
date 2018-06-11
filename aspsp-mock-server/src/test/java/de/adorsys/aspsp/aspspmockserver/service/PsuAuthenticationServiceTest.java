@@ -84,15 +84,6 @@ public class PsuAuthenticationServiceTest {
     }
 
     @Test
-    public void isPsuTanNumberValid_Success() {
-        //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID, TAN_NUMBER);
-
-        //Then
-        assertThat(actualResult).isTrue();
-    }
-
-    @Test
     public void isPsuTanNumberValid_Failure() {
         //When
         boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID, WRONG_TAN_NUMBER);
