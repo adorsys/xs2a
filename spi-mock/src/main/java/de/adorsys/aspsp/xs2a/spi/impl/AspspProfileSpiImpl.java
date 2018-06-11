@@ -45,4 +45,10 @@ public class AspspProfileSpiImpl implements AspspProfileSpi {
             aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
+
+    @Override
+    public Integer getFrequencyPerDay() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getFrequencyPerDay(), HttpMethod.GET, null, Integer.class).getBody();
+    }
 }

@@ -53,4 +53,9 @@ public class AspspProfileService {
                                     .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
     }
+
+    public Integer getFrequencyPerDay() {
+        return Optional.ofNullable(aspspProfileSpi.getFrequencyPerDay())
+                   .orElse(0);
+    }
 }

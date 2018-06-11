@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.schedule;
 
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ConsentScheduleTask {
     private final AisConsentRepository aisConsentRepository;
-    private final AspspProfileService profileService;
 
     @Scheduled(cron = "${consent.cron.expression}")
     public void checkConsentStatus() {
@@ -54,7 +52,7 @@ public class ConsentScheduleTask {
     }
 
     private AisConsent updateConsentParameters(AisConsent consent) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay());
+        int minFrequencyPerDay = 0; // TODO we should decide where we will use scheduler
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setUsageCounter(minFrequencyPerDay);
         consent.setConsentStatus(updateConsentStatus(consent));

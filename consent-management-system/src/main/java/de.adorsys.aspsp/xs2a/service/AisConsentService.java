@@ -46,12 +46,11 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class AisConsentService {
     private final AccountSpi accountSpi;
-    private final AspspProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
     private final ConsentMapper consentMapper;
 
     public Optional<String> createConsent(AisConsentRequest request) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        int minFrequencyPerDay = 0;
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);
