@@ -66,21 +66,21 @@ public class PsuAuthenticationServiceTest {
     }
 
     @Test
-    public void generateTanForPsu_Success() {
-        //When
-        String actualResult = psuAuthenticationService.generateAndSendTanForPsu(PSU_ID);
-
-        //Then
-        assertThat(actualResult).isNotNull();
-    }
-
-    @Test
     public void generateTanForPsu_Failure() {
         //When
         String actualResult = psuAuthenticationService.generateAndSendTanForPsu(WRONG_PSU_ID);
 
         //Then
         assertThat(actualResult).isNull();
+    }
+
+    @Test
+    public void isPsuTanNumberValid_Success() {
+        //When
+        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID, TAN_NUMBER);
+
+        //Then
+        assertThat(actualResult).isTrue();
     }
 
     @Test
