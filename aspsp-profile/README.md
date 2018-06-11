@@ -11,7 +11,7 @@ mvn clean install
 mvn spring-boot:run
  
 ```
-For running service with the ability update data, the project must be started in "debug_mode"
+For running service with ability to update data, the project must be started in "debug_mode"
 
 ```
 mvn clean install 
