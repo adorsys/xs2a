@@ -41,11 +41,10 @@ public class AccountHolder {
     }
 
     public void addAccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
-        Set<AccountAccess> accesses = Optional.ofNullable(accountAccesses.putIfAbsent(iban, new HashSet<>()))
-                                          .orElse(new HashSet<>());
-        accesses.add(new AccountAccess(currency, typeAccess));
+        accountAccesses.putIfAbsent(iban, new HashSet<>());
+        accountAccesses.get(iban).add(new AccountAccess(currency, typeAccess));
         if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
-            accesses.add(new AccountAccess(currency, TypeAccess.ACCOUNT));
+            accountAccesses.get(iban).add(new AccountAccess(currency, TypeAccess.ACCOUNT));
         }
     }
 }
