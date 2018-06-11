@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.common.AisCreateConsent;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class ConsentServiceTest {
     private final String TPP_ID = "This is a test TppId";
+    private final String CORRECT_ACCOUNT_ID = "123";
     private final String CORRECT_PSU_ID = "123456789";
     private final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private final String WRONG_PSU_ID = "WRONG PSU ID";
@@ -66,42 +68,116 @@ public class ConsentServiceTest {
     ConsentSpiImpl consentSpi;
     @MockBean(name = "accountSpi")
     AccountSpi accountSpi;
+    @MockBean(name = "createConsent")
+    AisCreateConsent createConsent;
 
     @Before
     public void setUp() {
-        when(consentSpi.getAccountConsentStatusById(CONSENT_ID))
-            .thenReturn(SpiConsentStatus.RECEIVED);
-        when(consentSpi.createAccountConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(
-            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)
-        ), CORRECT_PSU_ID, TPP_ID)))
-            .thenReturn(CONSENT_ID);
-        when(consentSpi.createAccountConsent(mapper.mapToAisConsentRequest(
-            getCreateConsentRequest(
-                getAccess(getReferenceList(WRONG_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)), CORRECT_PSU_ID, TPP_ID)))
-            .thenReturn(null);
-        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(CORRECT_IBAN)))).thenReturn(getSpiDetailsList("1", CORRECT_IBAN));
-        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)))).thenReturn(Arrays.asList(getSpiDetails("1", CORRECT_IBAN, CURRENCY), getSpiDetails("2", CORRECT_IBAN_1, CURRENCY)));
-        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Collections.singletonList(WRONG_IBAN)))).thenReturn(null);
-        when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID)).thenReturn(getSpiDetailsList("1", CORRECT_IBAN));
+        when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID)).thenReturn(getSpiDetailsList());
         when(accountSpi.readAccountsByPsuId(WRONG_PSU_ID)).thenReturn(Collections.emptyList());
+        //ByPSU-ID
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(getReferenceList(), getReferenceList(), getReferenceList(), false, true)), CORRECT_PSU_ID, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+        //ByAccess
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), null, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+        when(createConsent.createConsent(mapper.mapToAisConsentRequest(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID)))
+            .thenReturn(CONSENT_ID);
+
+        when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)))).thenReturn(getSpiDetailsList());
 
         when(consentSpi.getAccountConsentById(CORRECT_PSU_ID)).thenReturn(getSpiConsent(CORRECT_PSU_ID, getSpiAccountAccess(getSpiReferensesList(CORRECT_IBAN), null, null, false, false), false));
         when(consentSpi.getAccountConsentById(WRONG_PSU_ID)).thenReturn(null);
+
+        when(consentSpi.getAccountConsentStatusById(CONSENT_ID))
+            .thenReturn(SpiConsentStatus.RECEIVED);
 
         consentSpi.deleteAccountConsentById(anyString());
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success() {
+    public void createAccountConsentsWithResponse_Success_ByPSU_AllAccounts() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
-            getAccess(getReferenceList(CORRECT_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
         );
 
         //When:
         ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
             req, false, false, CORRECT_PSU_ID);
-        CreateConsentResp response = (CreateConsentResp) responseObj.getBody();
+        CreateConsentResp response = responseObj.getBody();
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Success_ByPSU_AllPSD2() {
+        //Given:
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
+        );
+
+        //When:
+        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+            req, false, false, CORRECT_PSU_ID);
+        CreateConsentResp response = responseObj.getBody();
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Success_ByAccess_Account() {
+        //Given:
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        //When:
+        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+            req, false, false, null);
+        CreateConsentResp response = responseObj.getBody();
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Success_ByAccess_Balances() {
+        //Given:
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)
+        );
+
+        //When:
+        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+            req, false, false, null);
+        CreateConsentResp response = responseObj.getBody();
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Success_ByAccess_Balances_Transactions() {
+        //Given:
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)
+        );
+
+        //When:
+        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+            req, false, false, null);
+        CreateConsentResp response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
@@ -110,7 +186,7 @@ public class ConsentServiceTest {
     public void createAccountConsentsWithResponse_Failure() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
-            getAccess(getReferenceList(WRONG_IBAN, CURRENCY), Collections.emptyList(), Collections.emptyList(), false, false)
+            getAccess(Collections.singletonList(getReference(WRONG_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), false, false)
         );
 
         //When:
@@ -169,31 +245,31 @@ public class ConsentServiceTest {
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
 
-    private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false);
+    /**
+     * Basic test AccountDetails used in all cases
+     */
+    private SpiAccountDetails getSpiDetails(String accId, String iban, Currency currency) {
+        return new SpiAccountDetails(accId, iban, null, null, null, null, currency, null, null, null, null, Collections.emptyList());
     }
 
-    private SpiAccountAccess getSpiAccountAccess(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new SpiAccountAccess(accounts, balances, transactions, allAccounts ? SpiAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? SpiAccountAccessType.ALL_ACCOUNTS : null);
-    }
-
-    private List<SpiAccountReference> getSpiReferensesList(String iban) {
-        return Collections.singletonList(getSpiReference(iban, CURRENCY));
-    }
-
-    private List<SpiAccountDetails> getSpiDetailsList(String accId, String iban) {
-        return Arrays.asList(getSpiDetails(accId, iban, CURRENCY), getSpiDetails("111", iban, CURRENCY_2));
+    private List<SpiAccountDetails> getSpiDetailsList() {
+        return Arrays.asList(getSpiDetails(CORRECT_ACCOUNT_ID, CORRECT_IBAN, CURRENCY), getSpiDetails(CORRECT_ACCOUNT_ID, CORRECT_IBAN_1, CURRENCY_2));
     }
 
     private SpiAccountReference getSpiReference(String iban, Currency currency) {
         return new SpiAccountReference(iban, null, null, null, null, currency);
     }
 
-    /**
-     * Basic test AccountDetails used in all cases
-     */
-    private SpiAccountDetails getSpiDetails(String accId, String iban, Currency currency) {
-        return new SpiAccountDetails(accId, iban, null, null, null, null, currency, null, null, null, null, Collections.emptyList());
+    private List<SpiAccountReference> getSpiReferensesList(String iban) {
+        return Collections.singletonList(getSpiReference(iban, CURRENCY));
+    }
+
+    private SpiAccountAccess getSpiAccountAccess(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+        return new SpiAccountAccess(accounts, balances, transactions, allAccounts ? SpiAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? SpiAccountAccessType.ALL_ACCOUNTS : null);
+    }
+
+    private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
+        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false);
     }
 
     private CreateConsentReq getCreateConsentRequest(AccountAccess access) {
@@ -210,9 +286,10 @@ public class ConsentServiceTest {
         return new AccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private List<AccountReference> getReferenceList(String iban, Currency currency) {
+    private List<AccountReference> getReferenceList() {
         List<AccountReference> list = new ArrayList<>();
-        list.add(getReference(iban, currency));
+        list.add(getReference(CORRECT_IBAN, CURRENCY));
+        list.add(getReference(CORRECT_IBAN_1, CURRENCY_2));
 
         return list;
     }

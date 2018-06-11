@@ -73,8 +73,15 @@ public class ConsentMapper {
                                        .map(this::mapToListAccountInfo)
                                        .orElse(Collections.emptyList()));
 
-        accessInfo.setAvailableAccounts(access.getAvailableAccounts().name());
-        accessInfo.setAllPsd2(mapToSpiAccountAccessType(access.getAllPsd2()).name());
+        accessInfo.setAvailableAccounts(
+            Optional.ofNullable(access.getAvailableAccounts())
+                .map(Enum::name)
+                .orElse(null));
+
+        accessInfo.setAllPsd2(
+            Optional.ofNullable(access.getAllPsd2())
+                .map(Enum::name)
+                .orElse(null));
 
         return accessInfo;
     }

@@ -17,6 +17,9 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
@@ -25,9 +28,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +37,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;

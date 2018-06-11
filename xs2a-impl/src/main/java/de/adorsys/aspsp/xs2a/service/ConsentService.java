@@ -21,10 +21,12 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,6 +43,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
     private final AisCreateConsent createConsent;
+    private final AccountSpi accountSpi;
+    private final AccountMapper accountMapper;
 
 
     /*
@@ -95,114 +99,86 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
     */
 
-
-
-
-
-    /*
-       BuildConsent
-
-
-       private List<AisAccount> readAccounts(AisConsentRequest request) {
-        return request.getAccess().isAllAccountAccess()
-                   ? readAccountsByPsuId(request.getAccess(), request.getPsuId())
-                   : readAccountsByAccess(request.getAccess());
-    }
-
-    private List<AisAccount> readAccountsByPsuId(AisAccountAccessInfo access, String psuId) {
-        if (StringUtils.isBlank(psuId)) {
-            throw new ConsentException("Psu id must not be empty");
-        }
-        AccountHolder holder = buildAccountHolderByPsu(access, psuId);
-        return buildAccounts(holder.getIbansAccess());
-    }
-
-    private AccountHolder buildAccountHolderByPsu(AisAccountAccessInfo access, String psuId) {
-        AccountHolder holder = new AccountHolder();
-        Set<TypeAccess> accessTypes = buildAccessTypes(access);
-        List<SpiAccountDetails> accountDetails = accountSpi.readAccountsByPsuId(psuId);
-        accountDetails.forEach(a -> holder.addAccountAccess(a.getIban(), a.getCurrency(), accessTypes));
-        return holder;
-    }
-
-    private Set<TypeAccess> buildAccessTypes(AisAccountAccessInfo access) {
-        return access.isAllPsd2()
-                   ? EnumSet.allOf(TypeAccess.class)
-                   : EnumSet.of(TypeAccess.ACCOUNT);
-    }
-
-    private List<AisAccount> readAccountsByAccess(AisAccountAccessInfo access) {
-        Map<String, AccountHolder.AccessInfo> requestedAccounts = buildAccountHolderByAccess(access);
-        Map<String, Set<Currency>> bankAccounts = getBankAccountsMapByIbans(requestedAccounts.keySet());
-
-        Map<String, AccountHolder.AccessInfo> filtered = filterAccountsAccess(requestedAccounts, bankAccounts);
-        return buildAccounts(filtered);
-    }
-
-    private Map<String, AccountHolder.AccessInfo> filterAccountsAccess(Map<String, AccountHolder.AccessInfo> requestedAccounts, Map<String, Set<Currency>> bankAccounts) {
-        return requestedAccounts.entrySet().stream()
-                   .filter(e -> bankAccounts.containsKey(e.getKey()))
-                   .collect(Collectors.toMap(Map.Entry::getKey, e -> doFilterAccess(e.getValue(), bankAccounts.get(e.getKey()))));
-    }
-
-    private AccountHolder.AccessInfo doFilterAccess(AccountHolder.AccessInfo holder, Set<Currency> bankCurrencies) {
-        Set<AccountAccess> accountAccessesWithoutCurrency = holder.getAccesses().stream()
-                                                                .filter(a -> a.getCurrency() == null)
-                                                                .collect(toSet());
-
-        Set<AccountAccess> accountAccessesWithCurrency = holder.getAccesses().stream()
-                                                             .filter(a -> bankCurrencies.contains(a.getCurrency()))
-                                                             .collect(toSet());
-
-        Set<AccountAccess> updatedCurrencyAccountAccess = bankCurrencies.stream()
-                                                     .flatMap(bc -> updateCurrency(accountAccessesWithoutCurrency, bc))
-                                                     .collect(toSet());
-
-        holder.updateAccess(SetUtils.union(accountAccessesWithCurrency, updatedCurrencyAccountAccess));
-        return holder;
-    }
-
-    private Stream<AccountAccess> updateCurrency(Set<AccountAccess> accountAccessesWithoutCurrency, Currency currency) {
-        accountAccessesWithoutCurrency.forEach(a -> a.setCurrency(currency));
-        return accountAccessesWithoutCurrency.stream();
-    }
-
-    private Map<String, Set<Currency>> getBankAccountsMapByIbans(Set<String> ibans) {
-        List<SpiAccountDetails> accountDetails = Optional.ofNullable(accountSpi.readAccountDetailsByIbans(ibans))
-                                                     .orElse(Collections.emptyList());
-        return accountDetails.stream()
-                   .collect(Collectors.groupingBy(SpiAccountDetails::getIban, Collectors.mapping(SpiAccountDetails::getCurrency, toSet())));
-    }
-
-    private Map<String, AccountHolder.AccessInfo> buildAccountHolderByAccess(AisAccountAccessInfo access) {
-        AccountHolder holder = new AccountHolder();
-        holder.fillAccess(access.getAccounts(), TypeAccess.ACCOUNT);
-        holder.fillAccess(access.getBalances(), TypeAccess.BALANCE);
-        holder.fillAccess(access.getTransactions(), TypeAccess.TRANSACTION);
-        return holder.getIbansAccess();
-    }
-
-    private List<AisAccount> buildAccounts(Map<String, AccountHolder.AccessInfo> accountsDetail) {
-        return accountsDetail
-                   .entrySet().stream()
-                   .map(e -> buildAccount(e.getKey(), e.getValue()))
-                   .collect(Collectors.toList());
-    }
-
-    private AisAccount buildAccount(String iban, AccountHolder.AccessInfo accountsDetail) {
-        AisAccount account = new AisAccount(iban);
-        account.addAccesses(accountsDetail.getAccesses());
-        return account;
-    }
-    */
-
-    public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
+    public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         String tppId = "This is a test TppId"; //TODO to clarify where it should get from
-        String consentId = createConsent.createConsent(consentMapper.mapToAisConsentRequest(createAccountConsentRequest, psuId, tppId));
+        CreateConsentReq checkedRequest = new CreateConsentReq();
+        if (isNotEmptyAccountAccess(request.getAccess())) {
+            if (isAllAccountsRequest(request) && psuId != null) {
+                checkedRequest.setAccess(getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS.equals(request.getAccess().getAllPsd2()), psuId));
+            } else {
+                checkedRequest.setAccess(getAccessByRequestedAccess(request.getAccess()));
+            }
+            checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
+            checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
+            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
+            checkedRequest.setValidUntil(request.getValidUntil());
+
+        }
+        String consentId = isNotEmptyAccountAccess(checkedRequest.getAccess())
+                               ? createConsent.createConsent(consentMapper.mapToAisConsentRequest(checkedRequest, psuId, tppId))
+                               : null;
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
                    ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId, null, null, null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build();
+    }
+
+    private AccountAccess getAccessByRequestedAccess(AccountAccess requestedAccess) {
+        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountDetailsByIbans(getIbansFromAccess(requestedAccess)));
+        if (refs.isEmpty()) {
+            return null;
+        }
+        List<AccountReference> balances = getAccountReference(requestedAccess.getBalances(), refs);
+        List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), refs);
+        List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), refs);
+
+        return new AccountAccess(getAccountsForAccess(balances, transaction, accounts), balances, transaction, null, null);
+    }
+
+    private List<AccountReference> getAccountReference(List<AccountReference> requestedReferences, List<AccountReference> refs) {
+        return Optional.ofNullable(requestedReferences)
+                                              .map(reqRefs -> getRequestedReferences(reqRefs, refs))
+                                              .orElse(Collections.emptyList());
+    }
+
+    private List<AccountReference> getAccountsForAccess(List<AccountReference> balances, List<AccountReference> transactions, List<AccountReference> accounts) {
+        accounts.removeAll(balances);
+        accounts.addAll(balances);
+        accounts.removeAll(transactions);
+        accounts.addAll(transactions);
+        return accounts;
+    }
+
+    private List<AccountReference> getRequestedReferences(List<AccountReference> requestedRefs, List<AccountReference> refs) {
+        return Optional.ofNullable(requestedRefs).map(rr->rr.stream()
+                   .filter(r -> isContainedRefinRefsList(r, refs))
+                   .collect(Collectors.toList())).orElse(Collections.emptyList());
+    }
+
+    private boolean isContainedRefinRefsList(AccountReference referenceMatched, List<AccountReference> references) {
+        return references.stream()
+                   .anyMatch(r -> referenceMatches(r, referenceMatched));
+    }
+
+    private boolean referenceMatches(AccountReference referenceMatcher, AccountReference referenceMatched) {
+        return referenceMatched.getCurrency() == null
+                   ? referenceMatcher.getIban().equals(referenceMatched.getIban())
+                   : referenceMatcher.getIban().equals(referenceMatched.getIban())
+                         && referenceMatcher.getCurrency().equals(referenceMatched.getCurrency());
+    }
+
+    private AccountAccess getAccessByPsuId(boolean isAllPSD2, String psuId) {
+        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountsByPsuId(psuId));
+
+        return isAllPSD2
+                   ? new AccountAccess(refs, refs, refs, null, AccountAccessType.ALL_ACCOUNTS)
+                   : new AccountAccess(refs, Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
+    }
+
+    private boolean isAllAccountsRequest(CreateConsentReq request) {
+        return Optional.ofNullable(request.getAccess())
+                   .filter(a -> AccountAccessType.ALL_ACCOUNTS.equals(a.getAllPsd2())
+                                    || AccountAccessType.ALL_ACCOUNTS.equals(a.getAvailableAccounts())).isPresent();
     }
 
     public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
@@ -293,10 +269,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private boolean isNotEmptyAccountAccess(AccountAccess access) {
-        return !(CollectionUtils.isEmpty(access.getAccounts())
-                     && CollectionUtils.isEmpty(access.getBalances())
-                     && CollectionUtils.isEmpty(access.getTransactions())
-                     && access.getAllPsd2() == null
-                     && access.getAvailableAccounts() == null);
+        return Optional.ofNullable(access).filter(a->!(CollectionUtils.isEmpty(a.getAccounts())
+                     && CollectionUtils.isEmpty(a.getBalances())
+                     && CollectionUtils.isEmpty(a.getTransactions())
+                     && a.getAllPsd2() == null
+                     && a.getAvailableAccounts() == null)).isPresent();
     }
 }
