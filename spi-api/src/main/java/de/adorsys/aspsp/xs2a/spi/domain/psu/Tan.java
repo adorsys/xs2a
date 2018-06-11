@@ -19,11 +19,18 @@ package de.adorsys.aspsp.xs2a.spi.domain.psu;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Value;
+import lombok.experimental.NonFinal;
+import org.springframework.data.annotation.Id;
 
 @Data
+@Value
 @AllArgsConstructor
 public class Tan {
 
-    private final int tan;
+    @Id
+    private String id;
+    private String psuId;
+    private int tanNumber;
+    @NonFinal
     private TanStatus tanStatus;
 }

@@ -207,7 +207,7 @@ public class AccountServiceTest {
     }
 
     private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", getAccounts());
+        return new Psu("12345678910", "test@gmail.com", getAccounts());
     }
 
     private List<SpiAccountDetails> getAccounts() {

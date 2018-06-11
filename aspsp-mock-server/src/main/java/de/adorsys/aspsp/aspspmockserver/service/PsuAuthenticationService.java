@@ -18,39 +18,66 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.EmailTanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.PsuLogin;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.RandomUtils;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PsuAuthenticationService {
-    private EmailTanRepository emailTanRepository;
-    private PsuRepository psuRepository;
+    private final EmailTanRepository emailTanRepository;
+    private final PsuRepository psuRepository;
+    private final JavaMailSender emailSender;
 
-    @Autowired
-    public PsuAuthenticationService(EmailTanRepository emailTanRepository) {
-        this.emailTanRepository = emailTanRepository;
+    public String generateAndSendTanForPsu(String psuId) {
+        return Optional.ofNullable(psuRepository.findOne(psuId))
+                   .map(psu -> createAndSendTan(psu.getId(), psu.getEmail()))
+                   .orElse(null);
     }
 
-    public boolean isPsuEmailAndPasswordValid(PsuLogin psuLogin) {
-        return Optional.ofNullable(psuLogin.getEmail())
-                   .flatMap(email -> psuRepository.findPsuByEmailIn(email)
-                                         .map(p -> isPasswordCorrect(p.getPassword(), psuLogin.getPassword())))
+    public boolean isPsuTanNumberValid(String psuId, int tanNumber) {
+        return emailTanRepository.findTansByPsuIdIn(psuId)
+                   .stream()
+                   .filter(t -> t.getTanStatus().equals(TanStatus.UNUSED))
+                   .findFirst()
+                   .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
     }
 
-    public boolean isPsuEmailTanValid(String psuId, int tan) {
-        return false;
+    private String createAndSendTan(String psuId, String email) {
+        Tan tan = new Tan(null, psuId, generateTanNumber(), TanStatus.UNUSED);
+        emailTanRepository.save(tan);
+        sendTanNumberOnEmail(email, tan.getTanNumber());
+        return tan.getPsuId();
     }
 
-    private int generateEmailTanForPsu(String psuId) {
-        return 0;
+    private boolean validateTanAndUpdateTanStatus(Tan originalTan, int givenTanNumber) {
+        boolean isValid = originalTan.getTanNumber() == givenTanNumber;
+        if (isValid) {
+            originalTan.setTanStatus(TanStatus.VALID);
+        } else {
+            originalTan.setTanStatus(TanStatus.INVALID);
+        }
+        emailTanRepository.save(originalTan);
+
+        return isValid;
     }
 
-    private boolean isPasswordCorrect(String originalPassword, String enteredPassword) {
-        return StringUtils.isNotBlank(originalPassword) && StringUtils.isNotBlank(enteredPassword) && originalPassword.equals(enteredPassword);
+    private int generateTanNumber() {
+        return RandomUtils.nextInt(100000, 1000000);
+    }
+
+    private void sendTanNumberOnEmail(String email, int tanNumber) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setSubject("TAN for authentication to confirm your payment");
+        mail.setTo(email);
+        mail.setText("Your TAN number is " + tanNumber);
+        emailSender.send(mail);
     }
 }

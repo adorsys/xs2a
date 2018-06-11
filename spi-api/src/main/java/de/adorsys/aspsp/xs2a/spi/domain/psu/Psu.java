@@ -29,6 +29,5 @@ public class Psu {
     @Id
     private String id;
     private String email;
-    private String password;
     private List<SpiAccountDetails> accountDetailsList;
 }

@@ -15,6 +15,4 @@ public interface PsuRepository extends MongoRepository<Psu, String> {
     List<Psu> findPsuByAccountDetailsList_Iban(String iban);
 
     Optional<Psu> findPsuByAccountDetailsList_Id(String accountId);
-
-    Optional<Psu> findPsuByEmailIn(String email);
 }

@@ -17,14 +17,17 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuAuthenticationService;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.PsuLogin;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RequiredArgsConstructor
@@ -33,24 +36,33 @@ import java.net.URI;
 public class PsuAuthenticationController {
     private final PsuAuthenticationService psuAuthenticationService;
 
-
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/login")
-    public ResponseEntity validatePsuEmailAndPassword(@RequestBody PsuLogin psuLogin) throws Exception {
-        String uriString = "TO DO define how to create this url";
-        return psuAuthenticationService.isPsuEmailAndPasswordValid(psuLogin)
-                   ? ResponseEntity.created(new URI(uriString)).build()
+    @PostMapping(path = "/{psu-id}/")
+    public ResponseEntity generateAndSendTan(HttpServletRequest request,
+                                           @PathVariable("psu-id") String psuId) throws Exception {
+        //TODO change to correct url when tan validation page will be created according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/99
+        String uriString = getUriString(request);
+
+        return StringUtils.isNotBlank(psuAuthenticationService.generateAndSendTanForPsu(psuId))
+                   ? ResponseEntity.created(new URI(uriString + "/tan-confirmation")).build()
                    : ResponseEntity.badRequest().build();
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{id}/{tan}")
-    public ResponseEntity validatePsuEmailTan(@PathVariable("psuId") String psuId,
-                                              @PathVariable("tan") int tan) throws Exception {
-        String uriString = "TO DO define how to create this url";
-        return psuAuthenticationService.isPsuEmailTanValid(psuId, tan)
-                   ? ResponseEntity.created(new URI(uriString)).build()
+    @GetMapping(path = "/{psu-id}/{tan}")
+    public ResponseEntity validatePsuTan(HttpServletRequest request,
+                                              @PathVariable("psu-id") String psuId,
+                                              @PathVariable("tan") int tanNumber) throws Exception {
+        //TODO change to correct url when consent validation page will be created according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/99
+        String uriString = getUriString(request);
+
+        return psuAuthenticationService.isPsuTanNumberValid(psuId, tanNumber)
+                   ? ResponseEntity.ok(new URI(uriString))
                    : ResponseEntity.badRequest().build();
+    }
+
+    private String getUriString(HttpServletRequest request) {
+        return UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request)).build().toUriString();
     }
 
 }

@@ -16,14 +16,16 @@
 
 package de.adorsys.aspsp.aspspmockserver.repository;
 
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @Profile({"mongo", "fongo"})
-public interface EmailTanRepository extends MongoRepository<Psu, String> {
+public interface EmailTanRepository extends MongoRepository<Tan, String> {
 
-
+    List<Tan> findTansByPsuIdIn(String psuId);
 }

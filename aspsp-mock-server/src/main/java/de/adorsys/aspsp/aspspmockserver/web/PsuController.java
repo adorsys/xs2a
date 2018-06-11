@@ -2,12 +2,10 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Email;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
@@ -40,12 +38,9 @@ public class PsuController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/")
     public ResponseEntity createPsu(HttpServletRequest request,
-                                    @RequestParam("email")
-                                    @Email String email,
-                                    @RequestParam("password") String password,
-                                    @RequestBody List<SpiAccountDetails> accountDetailsList) throws Exception {
+                                    @RequestBody Psu psu) throws Exception {
         String uriString = getUriString(request);
-        String saved = psuService.createPsuAndReturnId(email, password, accountDetailsList);
+        String saved = psuService.createPsuAndReturnId(psu);
         return ResponseEntity.created(new URI(uriString + saved)).build();
     }
 
