@@ -16,11 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Data
@@ -28,9 +30,20 @@ import java.util.List;
 @PropertySource("classpath:bank_profile.yml")
 @ConfigurationProperties(prefix = "setting")
 public class ProfileConfiguration {
+    private final boolean isDelayedPaymentTypeAllowedAlways = true;
+
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;
     private List<String> availablePaymentProducts;
     private List<String> availablePaymentTypes;
     private String scaApproach;
+
+    @PostConstruct
+    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available bu default
+        String necessaryType = PaymentType.FUTURE_DATED.getValue();
+
+        if (!availablePaymentTypes.contains(necessaryType)) {
+            availablePaymentTypes.add(PaymentType.FUTURE_DATED.getValue());
+        }
+    }
 }

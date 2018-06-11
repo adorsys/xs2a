@@ -41,7 +41,7 @@ public class AccountController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
-        return Optional.of(accountService.getAllAccounts())
+        return Optional.ofNullable(accountService.getAllAccounts())
                    .map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.notFound().build());
     }

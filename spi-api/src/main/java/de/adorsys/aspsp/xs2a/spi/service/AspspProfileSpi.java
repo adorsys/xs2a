@@ -22,4 +22,5 @@ public interface AspspProfileSpi {
 
     List<String> getAvailablePaymentProducts();
 
+    List<String> getAvailablePaymentTypes();
 }

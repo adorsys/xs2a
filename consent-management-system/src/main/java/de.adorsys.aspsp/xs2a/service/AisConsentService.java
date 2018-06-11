@@ -68,7 +68,7 @@ public class AisConsentService {
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
-                   ? Optional.of(saved.getExternalId())
+                   ? Optional.ofNullable(saved.getExternalId())
                    : Optional.empty();
     }
 
@@ -88,11 +88,17 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
+    // TODO: refactor according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/131
     public Map<String, Set<AccessAccountInfo>> checkAvailableAccessAccount(AvailableAccessRequest request) {
         Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
         AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
         if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
-            throw new ConsentException("Consent status is: " + aisConsent.getConsentStatus());
+            throw new ConsentException("Consent status: " + aisConsent.getConsentStatus());
+        }
+        if(aisConsent.isExpired()){
+            aisConsent.setConsentStatus(EXPIRED);
+            aisConsentRepository.save(aisConsent);
+            throw new ConsentException("Consent status: EXPIRED");
         }
         checkAisConsentCounter(aisConsent.getUsageCounter());
         AisConsent updated = updateConsentStatusAndCounter(aisConsent);
@@ -110,9 +116,6 @@ public class AisConsentService {
     private AisConsent updateConsentStatusAndCounter(AisConsent aisConsent) {
         if (aisConsent.getConsentStatus() == RECEIVED) {
             aisConsent.setConsentStatus(VALID);
-        }
-        if(aisConsent.isExpired()){
-            aisConsent.setConsentStatus(EXPIRED);
         }
         int usageCounter = aisConsent.getUsageCounter();
         int newUsageCounter = --usageCounter;

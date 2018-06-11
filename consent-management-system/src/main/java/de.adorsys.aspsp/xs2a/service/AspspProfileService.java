@@ -31,23 +31,43 @@ public class AspspProfileService {
         return profileConfiguration.getFrequencyPerDay();
     }
 
+    public void updateFrequencyPerDay(int frequencyPerDay) {
+        profileConfiguration.setFrequencyPerDay(frequencyPerDay);
+    }
+
     public boolean isCombinedServiceIndicator() {
         return profileConfiguration.isCombinedServiceIndicator();
+    }
+
+    public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
+        profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
     }
 
     public List<String> getAvailablePaymentProducts() {
         return profileConfiguration.getAvailablePaymentProducts();
     }
 
+    public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
+        profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
+    }
+
     public List<String> getAvailablePaymentTypes() {
         return profileConfiguration.getAvailablePaymentTypes();
+    }
+
+    public void updateAvailablePaymentTypes(List<String> types) {
+        profileConfiguration.setAvailablePaymentTypes(types);
     }
 
     public String getScaApproach() {
         return profileConfiguration.getScaApproach();
     }
 
-    public int getMinFrequencyPerDay(int tppFrequency){
+    public void updateScaApproach(String scaApproach) {
+        profileConfiguration.setScaApproach(scaApproach);
+    }
+
+    public int getMinFrequencyPerDay(int tppFrequency) {
         return Math.min(Math.abs(tppFrequency), profileConfiguration.getFrequencyPerDay());
     }
 }

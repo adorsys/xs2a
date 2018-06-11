@@ -79,9 +79,7 @@ public class SpiAccountDetails {
 
     @JsonIgnore
     public Optional<SpiBalances> getFirstBalance() {
-        return balances.isEmpty()
-                   ? Optional.empty()
-                   : Optional.of(balances.get(0));
+        return Optional.ofNullable(balances.get(0));
     }
 
     public void updateFirstBalance(SpiBalances balance) {
