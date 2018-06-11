@@ -66,7 +66,7 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 
 			//set some attribute of the client(... like role) with ssa attributes
 
-			ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
+			ClientRepresentation client = DescriptionConverterExt.toInternal(session, clientOIDC);
 			OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this,
 					clientOIDC);
 			client = create(oidcContext);
@@ -77,7 +77,7 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 			updateClientRepWithProtocolMappers(clientModel, client);
 
 			URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
-			clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
+			clientOIDC = DescriptionConverterExt.toExternalResponse(session, client, uri);
 			clientOIDC.setClientIdIssuedAt(Time.currentTime());
 			return Response.created(uri).entity(clientOIDC).build();
 		} catch (ClientRegistrationException cre) {
@@ -92,7 +92,7 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOIDC(@PathParam("clientId") String clientId) {
         ClientRepresentation client = get(clientId);
-        OIDCClientRepresentation clientOIDC = DescriptionConverter.toExternalResponse(session, client, session.getContext().getUri().getRequestUri());
+        OIDCClientRepresentation clientOIDC = DescriptionConverterExt.toExternalResponse(session, client, session.getContext().getUri().getRequestUri());
         return Response.ok(clientOIDC).build();
     }
 
@@ -102,7 +102,7 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateOIDC(@PathParam("clientId") String clientId, OIDCClientRepresentationExtended clientOIDC) {
         try {
-            ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
+            ClientRepresentation client = DescriptionConverterExt.toInternal(session, clientOIDC);
             OIDCClientRegistrationContext oidcContext = new OIDCClientRegistrationContext(session, client, this, clientOIDC);
             client = update(clientId, oidcContext);
 
@@ -111,7 +111,7 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
             updateClientRepWithProtocolMappers(clientModel, client);
 
             URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
-            clientOIDC = DescriptionConverter.toExternalResponse(session, client, uri);
+            clientOIDC = DescriptionConverterExt.toExternalResponse(session, client, uri);
             return Response.ok(clientOIDC).build();
         } catch (ClientRegistrationException cre) {
             ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
