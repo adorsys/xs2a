@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
+import de.adorsys.aspsp.xs2a.spi.config.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.service.AspspProfileSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
@@ -29,20 +29,20 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class AspspProfileSpiImpl implements AspspProfileSpi {
-    private final RestTemplate restTemplate;
-    private final RemoteSpiUrls remoteSpiUrls;
+    private final RestTemplate aspspProfileRestTemplate;
+    private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
     @Override
     public List<String> getAvailablePaymentProducts() {
-        return restTemplate.exchange(
-            remoteSpiUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
 
     @Override
     public List<String> getAvailablePaymentTypes() {
-        return restTemplate.exchange(
-            remoteSpiUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
 }
