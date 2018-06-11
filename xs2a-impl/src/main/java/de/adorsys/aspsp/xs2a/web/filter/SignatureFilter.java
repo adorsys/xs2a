@@ -23,8 +23,8 @@ import org.springframework.stereotype.Component;
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 
-@Component
-@Order(3)
+//@Component
+//@Order(3)
 public class SignatureFilter implements Filter {
 
 	@Autowired
