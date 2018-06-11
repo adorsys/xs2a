@@ -16,20 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,10 +45,12 @@ public class AisConsentController {
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @PostMapping(path = "/available/access")
-    @ApiOperation(value = "Check if the requested accesses are granted by the consent identified by given consentId", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Map<String, Set<AccessAccountInfo>>> checkAvailableAccessAccount(@RequestBody AvailableAccessRequest request) {
-        return ResponseEntity.ok(aisConsentService.checkAvailableAccessAccount(request));
+    @PostMapping(path = "/action")
+    @ApiOperation(value = "Save information about uses of consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<Long> consentActionLog(@RequestBody ConsentActionRequest request) {
+        return aisConsentService.consentActionLog(request)
+                   .map(ResponseEntity::ok)
+                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping(path = "/{consent-id}")

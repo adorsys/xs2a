@@ -16,7 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.account.AccountHolder;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
@@ -24,24 +28,26 @@ import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.EXPIRED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
 
 @Service
 @RequiredArgsConstructor
 public class AisConsentService {
-    private final AccountSpi accountSpi;
     private final AspspProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
     private final ConsentMapper consentMapper;
 
+    @Transactional
     public Optional<String> createConsent(AisConsentRequest request) {
         int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
@@ -54,7 +60,7 @@ public class AisConsentService {
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
-        consent.addAccounts(readAccounts(request));
+        consent.addAccounts(readAccounts(request.getAccess()));
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
@@ -62,6 +68,21 @@ public class AisConsentService {
         return saved.getId() != null
                    ? Optional.ofNullable(saved.getExternalId())
                    : Optional.empty();
+    }
+
+    private List<AisAccount> readAccounts(AisAccountAccessInfo access) {
+        AccountHolder holder = new AccountHolder();
+        holder.fillAccess(access.getAccounts(), TypeAccess.ACCOUNT);
+        holder.fillAccess(access.getBalances(), TypeAccess.BALANCE);
+        holder.fillAccess(access.getTransactions(), TypeAccess.TRANSACTION);
+        return buildAccounts(holder.getAccountAccesses());
+    }
+
+    private List<AisAccount> buildAccounts(Map<String, Set<AccountAccess>> accountAccesses) {
+        return accountAccesses
+                   .entrySet().stream()
+                   .map(e -> new AisAccount(e.getKey(), e.getValue()))
+                   .collect(Collectors.toList());
     }
 
     public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
@@ -80,7 +101,9 @@ public class AisConsentService {
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
-    public Map<String, Set<AccessAccountInfo>> checkAvailableAccessAccount(AvailableAccessRequest request) {
+    @Transactional
+    public Optional<Long> consentActionLog(ConsentActionRequest request) {
+        // TODO
         return null;
     }
 
@@ -92,10 +115,5 @@ public class AisConsentService {
     private AisConsent setStatusAndSaveConsent(AisConsent consent, SpiConsentStatus status) {
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
-    }
-
-
-    private List<AisAccount> readAccounts(AisConsentRequest request) {
-        return null;
     }
 }

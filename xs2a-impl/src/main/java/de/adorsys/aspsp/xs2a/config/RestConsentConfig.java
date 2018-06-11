@@ -27,13 +27,13 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class RestConsentConfig {
-    @Value("${http-client.read-timeout.ms:10000}")
+    @Value("${rest-consent-config.read-timeout.ms:10000}")
     private int readTimeout;
-    @Value("${http-client.connection-timeout.ms:10000}")
+    @Value("${rest-consent-config.connection-timeout.ms:10000}")
     private int connectionTimeout;
 
-    @Bean(name = "restConsent")
-    public RestTemplate restTemplate(){
+    @Bean(name = "consentRestTemplate")
+    public RestTemplate consentRestTemplate(){
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());

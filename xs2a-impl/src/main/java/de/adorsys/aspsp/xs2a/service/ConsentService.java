@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.common.AisCreateConsent;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;

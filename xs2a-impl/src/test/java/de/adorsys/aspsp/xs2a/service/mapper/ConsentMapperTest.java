@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.google.gson.Gson;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;

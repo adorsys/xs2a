@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PRODUCT_UNKNOWN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -152,7 +153,7 @@ public class RequestValidatorServiceTest {
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
-        //assertThat(actualViolations.get(PARAMETER_NOT_SUPPORTED.getName())).contains("Wrong payment type: periodic");
+        assertThat(actualViolations.get(PARAMETER_NOT_SUPPORTED.getName())).contains("Wrong payment type: periodic");
     }
 
     private HttpServletRequest getWrongRequestNoTppRequestId() {

@@ -53,11 +53,8 @@ public class AisAccount {
 
     public AisAccount() {}
 
-    public AisAccount(String iban) {
+    public AisAccount(String iban, Set<AccountAccess> accountAccesses) {
         this.iban = iban;
-    }
-
-    public void addAccesses(Set<AccountAccess> accountAccesses){
-        accesses.addAll(accountAccesses);
+        this.accesses.addAll(accountAccesses);
     }
 }

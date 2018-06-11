@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.common;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import lombok.Data;
 
-public interface AisCreateConsent {
-    String createConsent(AisConsentRequest request);
+@Data
+public class AccountInfo {
+    private String iban;
+    private String currency;
 }
