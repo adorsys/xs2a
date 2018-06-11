@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -91,7 +92,7 @@ public class PaymentServiceTest {
 
     private SpiSinglePayments getSpiSinglePayment() {
         SpiSinglePayments payment = new SpiSinglePayments();
-        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), "20");
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(20));
         SpiAccountReference accountReference = new SpiAccountReference("DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(accountReference);

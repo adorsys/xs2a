@@ -17,5 +17,9 @@
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
 public enum SpiAccountType {
+	// TODO a more representative list
+	// Berlin Group mentions this should be ExternalCashAccountType1Code from ISO 20022, therefore values from 27-CashAccountType in 
+	// ExternalCodeSets_1Q2018_May2018_v1 or newer (see https://www.iso20022.org/external_code_list.page) looks best.
+	// The enum would either be CURRENT_ACCOUNT, etc. as below or use the ISO codes ("CACC" in this case) directly.
     CURRENT_ACCOUNT
 }

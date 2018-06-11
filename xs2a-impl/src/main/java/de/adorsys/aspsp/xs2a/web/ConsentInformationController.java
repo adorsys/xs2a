@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
@@ -30,7 +30,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -43,7 +42,7 @@ public class ConsentInformationController {
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
     @ApiResponses(value = {@ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class), @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
@@ -60,23 +59,23 @@ public class ConsentInformationController {
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Map.class),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(value = "/{consent-id}/status", method = RequestMethod.GET)
+    @GetMapping(path = "/{consent-id}/status")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
-    public ResponseEntity<TransactionStatus> getAccountConsentsStatusById(
+    public ResponseEntity<ConsentStatus> getAccountConsentsStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject<TransactionStatus> response = consentService.getAccountConsentsStatusById(consentId);
+        ResponseObject<ConsentStatus> response = consentService.getAccountConsentsStatusById(consentId);
         return responseMapper.ok(response);
     }
 
     @ApiOperation(value = "Returns the content of an account information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(value = "/{consent-id}", method = RequestMethod.GET)
+    @GetMapping(path = "/{consent-id}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
@@ -90,7 +89,7 @@ public class ConsentInformationController {
     @ApiOperation(value = " Delete information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
-    @RequestMapping(value = "/{consent-id}", method = RequestMethod.DELETE)
+    @DeleteMapping(path = "/{consent-id}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})

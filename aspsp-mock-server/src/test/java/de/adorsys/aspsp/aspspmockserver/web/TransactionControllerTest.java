@@ -30,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
@@ -104,7 +105,7 @@ public class TransactionControllerTest {
     }
 
     private SpiTransaction getTransaction() {
-        return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", DATE, DATE, new SpiAmount(EUR, "1000"), "Creditor",
+        return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), "Creditor",
             new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
             new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode");
     }

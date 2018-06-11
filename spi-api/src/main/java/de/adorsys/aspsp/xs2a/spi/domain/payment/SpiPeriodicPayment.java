@@ -26,6 +26,6 @@ public class SpiPeriodicPayment extends SpiSinglePayments {
     private Date startDate;
     private Date endDate;
     private String executionRule;
-    private String frequency;
+    private String frequency; // TODO consider using an enum similar to FrequencyCode based on the the "EventFrequency7Code" of ISO 20022
     private int dayOfExecution; //Day here max 31
 }

@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -38,9 +37,9 @@ public class PeriodicPaymentsController {
     @ApiResponses(value = {
     @ApiResponse(code = 201, message = "Created"),
     @ApiResponse(code = 400, message = "Bad request")})
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ApiImplicitParams({
-    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26 example", required = true, paramType = "header"),
+    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"), //NOPMD value is correct according to specification
     @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
     @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPeriodicPayment(
@@ -50,6 +49,6 @@ public class PeriodicPaymentsController {
     @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
     @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
     @RequestBody PeriodicPayment periodicPayment) {
-        return responseMapper.created(paymentService.initiatePeriodicPayment(periodicPayment, PaymentProduct.forValue(paymentProduct), tppRedirectPreferred));
+        return responseMapper.created(paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct, tppRedirectPreferred));
     }
 }

@@ -76,7 +76,7 @@ public class BulkPaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<List<PaymentInitialisationResponse>> actualResult = bulkPaymentInitiationController
-                                                                       .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), tppRedirectPreferred, payments);
+                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), tppRedirectPreferred, payments);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -85,14 +85,14 @@ public class BulkPaymentInitiationControllerTest {
 
     private ResponseObject<List<PaymentInitialisationResponse>> readResponseObject() throws IOException {
         return ResponseObject.<List<PaymentInitialisationResponse>>builder()
-               .body(readPaymentInitialisationResponse()).build();
+                   .body(readPaymentInitialisationResponse()).build();
     }
 
     private List<PaymentInitialisationResponse> readPaymentInitialisationResponse() throws IOException {
         PaymentInitialisationResponse response = new Gson().fromJson(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class);
         List<PaymentInitialisationResponse> responseList = new ArrayList<>();
         Links links = new Links();
-        links.setRedirect(redirectLinkToSource);
+        links.setRedirect(redirectLinkToSource + response.getPaymentId());
         links.setSelf(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
         links.setUpdatePsuIdentification(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
         links.setUpdatePsuAuthentication(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());

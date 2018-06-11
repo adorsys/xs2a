@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.domain.consent;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,7 +29,7 @@ import lombok.Data;
 public class CreateConsentResp {
 
     @ApiModelProperty(value = "Authentication status of the consent", required = true)
-    private final TransactionStatus transactionStatus;
+    private final ConsentStatus consentStatus;
 
     @ApiModelProperty(value = "Identification of the consent resource as it is used in the API structure", required = false)
     private final String consentId;

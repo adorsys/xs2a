@@ -33,7 +33,7 @@ public class SpiAccountDetails {
     @Id
     @Setter
     @NonFinal
-    private String id;
+    private String id; // TODO shouldn't this be resourceId?
     /**
      * International Bank Account Number
      * 2 letters CountryCode + 2 digits checksum + BBAN
@@ -79,9 +79,7 @@ public class SpiAccountDetails {
 
     @JsonIgnore
     public Optional<SpiBalances> getFirstBalance() {
-        return balances.isEmpty()
-                   ? Optional.empty()
-                   : Optional.of(balances.get(0));
+        return Optional.ofNullable(balances.get(0));
     }
 
     public void updateFirstBalance(SpiBalances balance) {
