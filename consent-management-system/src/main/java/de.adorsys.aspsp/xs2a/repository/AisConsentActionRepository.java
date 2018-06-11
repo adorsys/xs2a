@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.ais;
+package de.adorsys.aspsp.xs2a.repository;
 
-public enum TypeAccess {
-    ACCOUNT,
-    BALANCE,
-    TRANSACTION,
-    PAYMENT
+import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
+import org.springframework.data.repository.CrudRepository;
+
+public interface AisConsentActionRepository extends CrudRepository<AisConsentAction, Long> {
 }

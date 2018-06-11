@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.consent.ais;
 
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.common.AisCreateConsent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -25,13 +24,12 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class AisCreateConsentImpl implements AisCreateConsent {
-    @Qualifier("restConsent")
-    private final RestTemplate restTemplate;
-    private final RemoteAisConsentUrls remoteSpiUrls;
+public class AisConsentService {
+    @Qualifier("consentRestTemplate")
+    private final RestTemplate consentRestTemplate;
+    private final RemoteAisConsentUrls remoteAisConsentUrls;
 
-    @Override
     public String createConsent(AisConsentRequest request) {
-        return restTemplate.postForEntity(remoteSpiUrls.createAisConsent(), request, String.class).getBody();
+        return consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), request, String.class).getBody();
     }
 }

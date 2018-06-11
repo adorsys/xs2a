@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.ais;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import lombok.Data;
-
-@Data
-public class AccountInfo {
-    private String iban;
-    private String currency;
+public enum TypeAccess {
+    ACCOUNT,
+    BALANCE,
+    TRANSACTION,
+    PAYMENT
 }

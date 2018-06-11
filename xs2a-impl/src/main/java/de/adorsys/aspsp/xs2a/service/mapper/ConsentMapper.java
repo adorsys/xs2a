@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.ais.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountReference;
@@ -73,8 +73,12 @@ public class ConsentMapper {
                                        .map(this::mapToListAccountInfo)
                                        .orElse(Collections.emptyList()));
 
-        accessInfo.setAvailableAccounts(access.getAvailableAccounts().name());
-        accessInfo.setAllPsd2(mapToSpiAccountAccessType(access.getAllPsd2()).name());
+        accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
+                                            .map(AccountAccessType::name)
+                                            .orElse(null));
+        accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
+                                  .map(AccountAccessType::name)
+                                  .orElse(null));
 
         return accessInfo;
     }
