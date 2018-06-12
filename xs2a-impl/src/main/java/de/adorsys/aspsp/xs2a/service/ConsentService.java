@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
@@ -41,7 +42,7 @@ import java.util.stream.Stream;
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
-    private final AisCreateConsent createConsent;
+    private final AisConsentService aisConsentService;
     private final AccountSpi accountSpi;
     private final AccountMapper accountMapper;
 
@@ -109,12 +110,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             }
             checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
             checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
-            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
+            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay()); //TODO Check This with special microservice byRoman
             checkedRequest.setValidUntil(request.getValidUntil());
 
         }
         String consentId = isNotEmptyAccountAccess(checkedRequest.getAccess())
-                               ? createConsent.createConsent(consentMapper.mapToAisConsentRequest(checkedRequest, psuId, tppId))
+                               ? aisConsentService.createConsent(consentMapper.mapToAisConsentRequest(checkedRequest, psuId, tppId))
                                : null;
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
