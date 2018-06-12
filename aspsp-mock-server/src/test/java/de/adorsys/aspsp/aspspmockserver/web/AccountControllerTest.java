@@ -31,12 +31,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class) //TODO RE WRITE TESTS
+@RunWith(SpringRunner.class)
 @SpringBootTest
 public class AccountControllerTest {
     private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";
@@ -249,8 +250,8 @@ public class AccountControllerTest {
 
     private List<SpiBalances> getNewBalanceList() {
         SpiBalances balance = new SpiBalances();
-        balance.setAuthorised(getNewSingleBalances(new SpiAmount(CURRENCY, "1000")));
-        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(CURRENCY, "200")));
+        balance.setAuthorised(getNewSingleBalances(new SpiAmount(CURRENCY, BigDecimal.valueOf(1000))));
+        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(CURRENCY, BigDecimal.valueOf(200))));
 
         return Collections.singletonList(balance);
     }

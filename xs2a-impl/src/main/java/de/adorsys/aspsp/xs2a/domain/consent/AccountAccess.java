@@ -21,18 +21,20 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 
+import java.util.List;
+
 @Value
 @ApiModel(description = "Account access", value = "AccountAccess")
-public class AccountAccess { //TODO To be refactored. Arrays should be replaced by Lists. Task #116
+public class AccountAccess {
 
     @ApiModelProperty(value = "detailed account information", required = false)
-    private AccountReference[] accounts;
+    private List<AccountReference> accounts;
 
     @ApiModelProperty(value = "balances of the addressed accounts", required = false)
-    private AccountReference[] balances;
+    private List<AccountReference> balances;
 
     @ApiModelProperty(value = "transactions of the addressed accounts", required = false)
-    private AccountReference[] transactions;
+    private List<AccountReference> transactions;
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
     private AccountAccessType availableAccounts;

@@ -147,7 +147,7 @@ public class AccountMapperTest {
         assertThat(actualAccountReport.getBooked()[0].getUltimateCreditor()).isEqualTo(expectedBooked[0].getUltimateCreditor());
         assertThat(actualAccountReport.getBooked()[0].getValueDate()).isEqualTo(expectedBooked[0].getValueDate());
         assertThat(actualAccountReport.getBooked()[0].getAmount().getContent()).isEqualTo(expectedBooked[0].getSpiAmount()
-        .getContent());
+        .getContent().toString());
         assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount()
         .getCurrency());
         assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode()

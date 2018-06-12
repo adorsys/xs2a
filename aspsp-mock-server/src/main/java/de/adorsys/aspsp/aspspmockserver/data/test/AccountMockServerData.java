@@ -22,13 +22,13 @@ import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,23 +66,27 @@ public class AccountMockServerData {
     }
 
     private void fillTransactions() {
-        transactionRepository.save(getTransaction("0001", psus.get(0), psus.get(1), "200", EUR, "02/01/2018", "02/01/2018"));
-        transactionRepository.save(getTransaction("0002", psus.get(0), psus.get(1), "150", USD, null, "02/01/2018"));
-        transactionRepository.save(getTransaction("0003", psus.get(1), psus.get(0), "250", EUR, "02/02/2018", "02/02/2018"));
-        transactionRepository.save(getTransaction("0004", psus.get(1), psus.get(0), "20", USD, null, "02/02/2018"));
-        transactionRepository.save(getTransaction("0005", psus.get(2), psus.get(0), "40", EUR, "02/03/2018", "02/03/2018"));
-        transactionRepository.save(getTransaction("0006", psus.get(2), psus.get(1), "50", USD, null, "02/01/2018"));
-        transactionRepository.save(getTransaction("0007", psus.get(2), psus.get(1), "120", EUR, "02/01/2018", "02/01/2018"));
-        transactionRepository.save(getTransaction("0008", psus.get(1), psus.get(2), "30", USD, null, "02/01/2018"));
-        transactionRepository.save(getTransaction("0009", psus.get(1), psus.get(2), "80", EUR, "02/02/2018", "02/02/2018"));
+        transactionRepository.save(getTransaction("0001", psus.get(0), psus.get(1), BigDecimal.valueOf(200), EUR, "02/01/2018", "02/01/2018"));
+        transactionRepository.save(getTransaction("0002", psus.get(0), psus.get(1), BigDecimal.valueOf(150), USD, null, "02/01/2018"));
+        transactionRepository.save(getTransaction("0003", psus.get(1), psus.get(0), BigDecimal.valueOf(250), EUR, "02/02/2018", "02/02/2018"));
+        transactionRepository.save(getTransaction("0004", psus.get(1), psus.get(0), BigDecimal.valueOf(20), USD, null, "02/02/2018"));
+        transactionRepository.save(getTransaction("0005", psus.get(2), psus.get(0), BigDecimal.valueOf(40), EUR, "02/03/2018", "02/03/2018"));
+        transactionRepository.save(getTransaction("0006", psus.get(2), psus.get(1), BigDecimal.valueOf(50), USD, null, "02/01/2018"));
+        transactionRepository.save(getTransaction("0007", psus.get(2), psus.get(1), BigDecimal.valueOf(120), EUR, "02/01/2018", "02/01/2018"));
+        transactionRepository.save(getTransaction("0008", psus.get(1), psus.get(2), BigDecimal.valueOf(30), USD, null, "02/01/2018"));
+        transactionRepository.save(getTransaction("0009", psus.get(1), psus.get(2), BigDecimal.valueOf(80), EUR, "02/02/2018", "02/02/2018"));
     }
 
-    private SpiTransaction getTransaction(String transactionId, Psu creditor, Psu debtor, String amount, Currency currency, String bookingDate, String valueDate) {
+    private SpiTransaction getTransaction(String transactionId, Psu creditor, Psu debtor, BigDecimal amount, Currency currency, String bookingDate, String valueDate) {
         return new SpiTransaction(
-            transactionId, "", "", creditor.getId(), bookingDate == null ? null : getDateFromString(bookingDate), getDateFromString(valueDate),
-            new SpiAmount(currency, amount), creditor.getAccountDetailsList().get(0).getName(), getRef(creditor, currency), creditor.getAccountDetailsList().get(0).getName(),
-            debtor.getAccountDetailsList().get(0).getName(), getRef(debtor, currency), debtor.getAccountDetailsList().get(0).getName(), "",
+            transactionId, "", "", creditor.getId(), getDateFromString(bookingDate), getDateFromString(valueDate),
+            new SpiAmount(currency, amount), getFirstElementName(creditor), getRef(creditor, currency), getFirstElementName(creditor),
+            getFirstElementName(debtor), getRef(debtor, currency), getFirstElementName(debtor), "",
             "", "", "");
+    }
+
+    private String getFirstElementName(Psu creditor) {
+        return creditor.getAccountDetailsList().get(0).getName();
     }
 
     private SpiAccountReference getRef(Psu psu, Currency currency) {
@@ -96,26 +100,37 @@ public class AccountMockServerData {
             new SpiAccountConsent("AllWB",
                 new SpiAccountAccess(
                     references, references, references, SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
         consentRepository.save(
             new SpiAccountConsent("AllWOB",
                 new SpiAccountAccess(
-                    references, references, references, SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, false)
+                    references, Collections.emptyList(), Collections.emptyList(), SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
 
         consentRepository.save(
             new SpiAccountConsent("Acc1WB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, true, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
         );
         consentRepository.save(
             new SpiAccountConsent("Acc1WOB",
                 new SpiAccountAccess(
                     Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
-                false, new Date(), 100, new Date(), SpiTransactionStatus.ACCP, SpiConsentStatus.VALID, false, false)
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false));
+        consentRepository.save(
+            new SpiAccountConsent("Acc2WB",
+                new SpiAccountAccess(
+                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), null, null),
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
+        );
+        consentRepository.save(
+            new SpiAccountConsent("Acc2WOB",
+                new SpiAccountAccess(
+                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.emptyList(), Collections.emptyList(), null, null),
+                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false)
         );
     }
 
@@ -129,13 +144,13 @@ public class AccountMockServerData {
     private List<SpiAccountDetails> fillAccounts() {
 
         return Arrays.asList(
-            getNewAccount("11111-999999999", getNewBalanceList(EUR, "1000", "200"), "DE89370400440532013000", "AEYPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("77777-999999999", getNewBalanceList(USD, "350", "100"), "DE89370400440532013000", "FFGHPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("22222-999999999", getNewBalanceList(USD, "2500", "300"), "DE89370400440532013001", "QWEPM6427U", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("33333-999999999", getNewBalanceList(EUR, "3000", "400"), "DE89370400440532013002", "EWQPS8534R", "DEUTDE8EXXX", "Schmidt", "SCT"),
-            getNewAccount("44444-999999999", getNewBalanceList(USD, "3500", "500"), "DE89370400440532013003", "ASDPS9547Z", "DEUTDE8EXXX", "Schmidt", "SCT"),
-            getNewAccount("55555-999999999", getNewBalanceList(EUR, "4000", "600"), "DE89370400440532013004", "DSACC1876N", "DEUTDE8EXXX", "Company AG", "SCT"),
-            getNewAccount("66666-999999999", getNewBalanceList(USD, "1400", "700"), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"));
+            getNewAccount("11111-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(1000), BigDecimal.valueOf(200)), "DE89370400440532013000", "AEYPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
+            getNewAccount("77777-999999999", getNewBalanceList(USD, BigDecimal.valueOf(350), BigDecimal.valueOf(100)), "DE89370400440532013000", "FFGHPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
+            getNewAccount("22222-999999999", getNewBalanceList(USD, BigDecimal.valueOf(2500), BigDecimal.valueOf(300)), "DE89370400440532013001", "QWEPM6427U", "DEUTDE8EXXX", "Müller", "SCT"),
+            getNewAccount("33333-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(3000), BigDecimal.valueOf(400)), "DE89370400440532013002", "EWQPS8534R", "DEUTDE8EXXX", "Schmidt", "SCT"),
+            getNewAccount("44444-999999999", getNewBalanceList(USD, BigDecimal.valueOf(3500), BigDecimal.valueOf(500)), "DE89370400440532013003", "ASDPS9547Z", "DEUTDE8EXXX", "Schmidt", "SCT"),
+            getNewAccount("55555-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(4000), BigDecimal.valueOf(600)), "DE89370400440532013004", "DSACC1876N", "DEUTDE8EXXX", "Company AG", "SCT"),
+            getNewAccount("66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400), BigDecimal.valueOf(700)), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"));
     }
 
     private SpiAccountDetails getNewAccount(String id, List<SpiBalances> balance, String iban, String pan, String bic, String name, String accountType) {
@@ -155,23 +170,26 @@ public class AccountMockServerData {
         );
     }
 
-    private List<SpiBalances> getNewBalanceList(Currency currency, String ammount1, String ammount2) {
+    private List<SpiBalances> getNewBalanceList(Currency currency, BigDecimal amount1, BigDecimal amount2) {
         SpiBalances spiBalances = new SpiBalances();
-        spiBalances.setOpeningBooked(getBalance(currency, ammount1));
-        spiBalances.setAuthorised(getBalance(currency, ammount2));
+        spiBalances.setOpeningBooked(getBalance(currency, amount1));
+        spiBalances.setInterimAvailable(getBalance(currency, amount1));
+        spiBalances.setAuthorised(getBalance(currency, amount2));
         return Collections.singletonList(spiBalances);
     }
 
-    private SpiAccountBalance getBalance(Currency currency, String ammount) {
+    private SpiAccountBalance getBalance(Currency currency, BigDecimal amount) {
         SpiAccountBalance balance = new SpiAccountBalance();
-        balance.setSpiAmount(new SpiAmount(currency, ammount));
+        balance.setSpiAmount(new SpiAmount(currency, amount));
         balance.setDate(new Date());
         balance.setLastActionDateTime(new Date());
         return balance;
     }
 
     private List<SpiAccountReference> getReferencesList() {
-        return accountDetails.stream().map(this::mapToReferenceFromDetails).collect(Collectors.toList());
+        return accountDetails.stream()
+                   .map(this::mapToReferenceFromDetails)
+                   .collect(Collectors.toList());
     }
 
     private SpiAccountReference mapToReferenceFromDetails(SpiAccountDetails details) {
@@ -179,6 +197,7 @@ public class AccountMockServerData {
     }
 
     private Date getDateFromString(String date) {
+        date = Optional.ofNullable(date).orElse("24/01/2019");
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
         try {
@@ -188,5 +207,4 @@ public class AccountMockServerData {
         }
         return null;
     }
-
 }

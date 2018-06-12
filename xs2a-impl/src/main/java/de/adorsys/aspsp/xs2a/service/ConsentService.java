@@ -20,12 +20,13 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -35,25 +36,25 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id amd only return data which belongs to certain PSU Task #110
-    private final String consentsLinkRedirectToSource;
+public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
-    private final AccountMapper accountMapper;
-    private final AccountSpi accountSpi;
 
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq createAccountConsentRequest, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
-        Optional<String> consentId = createAccountConsentsAndReturnId(createAccountConsentRequest, withBalance, tppRedirectPreferred, psuId);
-        return consentId.isPresent()
-                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(TransactionStatus.RCVD, consentId.get(), null, getLinkToConsent(consentId.get()), null)).build()
+        String tppId = "This is a test TppId"; //TODO to clarify where it should get from
+        String consentId = consentSpi.createAccountConsent(consentMapper.mapToAisConsentRequest(createAccountConsentRequest, psuId, tppId));
+        //TODO v1.1 Add balances support
+        return !StringUtils.isBlank(consentId)
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId, null, null, null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.FORMAT_ERROR))).build();
     }
 
-    public ResponseObject<TransactionStatus> getAccountConsentsStatusById(String consentId) {
-        AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return consent != null && consent.getTransactionStatus() != null
-                   ? ResponseObject.<TransactionStatus>builder().body(consent.getTransactionStatus()).build()
-                   : ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404))).build();
+    public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
+        return consentMapper.mapToConsentStatus(consentSpi.getAccountConsentStatusById(consentId))
+                   .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
+                   .orElse(ResponseObject.<ConsentStatus>builder()
+                               .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageCode.RESOURCE_UNKNOWN_404)))
+                               .build());
     }
 
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
@@ -72,80 +73,41 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    private Optional<String> createAccountConsentsAndReturnId(CreateConsentReq req, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
+    public Map<String, Set<AccessAccountInfo>> checkValidityByConsent(String consentId, List<AccountDetails> details, TypeAccess typeAccess, boolean withBalance) {
+        AvailableAccessRequest request = new AvailableAccessRequest();
+        request.setConsentId(consentId);
 
-        Optional<AccountAccess> access = Optional.ofNullable(req.getAccess())
-                                             .flatMap(acs -> createAccountAccess(acs, psuId));
-        if (req.isRecurringIndicator() && access.isPresent()) {
-            consentSpi.expireConsent(consentMapper.mapToSpiAccountAccess(access.get()));
+        Set<String> ibans = details.stream()
+                                .map(AccountDetails::getIban)
+                                .collect(Collectors.toSet());
+        Map<String, Set<AccessAccountInfo>> accesses = ibans.stream()
+                                                           .collect(Collectors.toMap(iban -> iban,
+                                                               iban -> getAccessAccountInfoByIban(details, typeAccess, withBalance, iban)));
+        request.setAccountsAccesses(accesses);
+        return consentSpi.checkValidityByConsent(request);
+    }
+
+    private Set<AccessAccountInfo> getAccessAccountInfoByIban(List<AccountDetails> details, TypeAccess typeAccess, boolean withBalance, String iban) {
+        return details.stream().filter(a -> a.getIban().equals(iban))
+                   .flatMap(d -> getAccessAccountInfo(d.getCurrency(), typeAccess, withBalance)
+                                     .stream())
+                   .collect(Collectors.toSet());
+    }
+
+    private Set<AccessAccountInfo> getAccessAccountInfo(Currency currency, TypeAccess typeAccess, boolean withBalance) {
+        Set<AccessAccountInfo> set = new HashSet<>();
+        set.add(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
+        set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.ACCOUNT));
+        if (withBalance) {
+            set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.BALANCE));
         }
-        return access.map(accountAccess -> saveAccountConsent(
-            new AccountConsent(null, accountAccess, req.isRecurringIndicator(), req.getValidUntil(), req.getFrequencyPerDay(),
-                null, TransactionStatus.ACCP, ConsentStatus.VALID, withBalance, tppRedirectPreferred)));
+        return set;
     }
 
-    private String saveAccountConsent(AccountConsent consent) {
-        return consentSpi.createAccountConsent(consentMapper.mapToSpiAccountConsent(consent));
-    }
-
-    private Optional<AccountAccess> createAccountAccess(AccountAccess access, String psuId) {
-        return isAllAccountsOrAllPsd2(access.getAvailableAccounts(), access.getAllPsd2(), psuId)
-                   ? getNewAccessByPsuId(access.getAvailableAccounts(), access.getAllPsd2(), psuId)
-                   : getNewAccessByIbans(access);
-    }
-
-    private Optional<AccountAccess> getNewAccessByIbans(AccountAccess access) {
-        Set<String> ibans = getIbanSetFromAccess(access);
-        List<AccountDetails> accountDetails = accountMapper.mapToAccountDetailsList(accountSpi.readAccountDetailsByIbans(ibans));
-
-        Set<AccountReference> accountsRef = extractReferenceSetFromDetailsList(access.getAccounts(), accountDetails);
-        Set<AccountReference> balancesRef = extractReferenceSetFromDetailsList(access.getBalances(), accountDetails);
-        Set<AccountReference> transactionsRef = extractReferenceSetFromDetailsList(access.getTransactions(), accountDetails);
-
-        accountsRef = Stream.of(accountsRef, balancesRef, transactionsRef)
-                          .flatMap(Collection::stream)
-                          .collect(Collectors.toSet());
-
-        return Optional.of(getNewAccountAccessByReferences(setToArray(accountsRef), setToArray(balancesRef), setToArray(transactionsRef), null, null));
-    }
-
-    private Set<AccountReference> extractReferenceSetFromDetailsList(AccountReference[] accountReferencesArr, List<AccountDetails> accountDetails) {
-        return Optional.ofNullable(accountReferencesArr)
-                   .map(arr -> Arrays.stream(arr)
-                                   .flatMap(ref -> getReferenceFromDetailsByIban(ref.getIban(), ref.getCurrency(), accountDetails))
-                                   .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
-    }
-
-    private Stream<AccountReference> getReferenceFromDetailsByIban(String iban, Currency currency, List<AccountDetails> accountDetails) {
-        return accountDetails.stream()
-                   .filter(acc -> acc.getIban().equals(iban))
-                   .filter(acc -> currency == null || acc.getCurrency() == currency)
-                   .map(this::mapAccountDetailsToReference);
-    }
-
-    private Optional<AccountAccess> getNewAccessByPsuId(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
-        return Optional.ofNullable(accountMapper.mapToAccountDetailsList(accountSpi.readAccountsByPsuId(psuId)))
-                   .map(this::mapAccountListToArrayOfReference)
-                   .map(ref -> availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                                   ? getNewAccountAccessByReferences(ref, new AccountReference[]{}, new AccountReference[]{}, availableAccounts, null)
-                                   : getNewAccountAccessByReferences(ref, ref, ref, null, allPsd2)
-                   );
-    }
-
-    private AccountReference[] mapAccountListToArrayOfReference(List<AccountDetails> accountDetails) {
-        return accountDetails.stream()
-                   .map(this::mapAccountDetailsToReference)
-                   .toArray(AccountReference[]::new);
-    }
-
-    private AccountAccess getNewAccountAccessByReferences(AccountReference[] accounts,
-                                                          AccountReference[] balances,
-                                                          AccountReference[] transactions,
-                                                          AccountAccessType availableAccounts,
-                                                          AccountAccessType allPsd2) {
-
-        return new AccountAccess(accounts, balances, transactions, availableAccounts, allPsd2);
+    public boolean isValidAccountByAccess(String iban, Currency currency, TypeAccess typeAccess, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
+        Set<AccessAccountInfo> accesses = Optional.ofNullable(allowedAccountData.get(iban))
+                                              .orElse(Collections.emptySet());
+        return accesses.contains(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
     }
 
     public Set<String> getIbanSetFromAccess(AccountAccess access) {
@@ -153,6 +115,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             return getIbansFromAccess(access);
         }
         return Collections.emptySet();
+    }
+
+    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
+        return Optional.ofNullable(references)
+                   .map(list -> list.stream()
+                                    .map(AccountReference::getIban)
+                                    .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 
     private Set<String> getIbansFromAccess(AccountAccess access) {
@@ -165,56 +135,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .collect(Collectors.toSet());
     }
 
-    public Set<String> getIbansFromAccountReference(AccountReference[] references) {
-        return Optional.ofNullable(references)
-                   .map(ar -> Arrays.stream(ar)
-                                  .map(AccountReference::getIban)
-                                  .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
-    }
-
     private boolean isNotEmptyAccountAccess(AccountAccess access) {
-        return !(ArrayUtils.isEmpty(access.getAccounts())
-                     && ArrayUtils.isEmpty(access.getBalances())
-                     && ArrayUtils.isEmpty(access.getTransactions())
+        return !(CollectionUtils.isEmpty(access.getAccounts())
+                     && CollectionUtils.isEmpty(access.getBalances())
+                     && CollectionUtils.isEmpty(access.getTransactions())
                      && access.getAllPsd2() == null
                      && access.getAvailableAccounts() == null);
-    }
-
-    private boolean isAllAccountsOrAllPsd2(AccountAccessType availableAccounts, AccountAccessType allPsd2, String psuId) {
-        return !StringUtils.isBlank(psuId)
-                   && (availableAccounts == AccountAccessType.ALL_ACCOUNTS
-                           || allPsd2 == AccountAccessType.ALL_ACCOUNTS);
-
-    }
-
-    private AccountReference mapAccountDetailsToReference(AccountDetails details) {
-        AccountReference reference = new AccountReference();
-        reference.setIban(details.getIban());
-        reference.setBban(details.getBban());
-        reference.setPan(details.getPan());
-        reference.setMaskedPan(details.getMaskedPan());
-        reference.setMsisdn(details.getMsisdn());
-        reference.setCurrency(details.getCurrency());
-        return reference;
-    }
-
-    private Links getLinkToConsent(String consentId) {
-        Links linksToConsent = new Links();
-
-        // Response in case of the OAuth2 approach
-        // todo figure out when we should return  OAuth2 response
-        //String selfLink = linkTo(ConsentInformationController.class).slash(consentId).toString();
-        //linksToConsent.setSelf(selfLink);
-
-        // Response in case of a redirect
-        String redirectLink = consentsLinkRedirectToSource + "/" + consentId;
-        linksToConsent.setRedirect(redirectLink);
-
-        return linksToConsent;
-    }
-
-    private AccountReference[] setToArray(Set<AccountReference> set) {
-        return set.stream().toArray(AccountReference[]::new);
     }
 }

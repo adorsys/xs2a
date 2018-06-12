@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Links;
@@ -41,12 +40,9 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @AllArgsConstructor
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
-    private final int maxNumberOfCharInTransactionJson;
-    private final JsonConverter jsonConverter;
-
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.readAccountDetails(..)) && args(accountId,..)", returning = "result")
     public ResponseEntity<AccountDetails> invokeReadAccountDetailsAspect(ResponseEntity<AccountDetails> result, String accountId) {
-        if(!hasError(result)){
+        if (!hasError(result)) {
             AccountDetails body = result.getBody();
             body.setLinks(buildLinksForAccountDetails(body));
         }
@@ -55,7 +51,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getAccounts(..)) && args(..)", returning = "result")
     public ResponseEntity<Map<String, List<AccountDetails>>> invokeGetAccountsAspect(ResponseEntity<Map<String, List<AccountDetails>>> result) {
-        if(!hasError(result)){
+        if (!hasError(result)) {
             Map<String, List<AccountDetails>> body = result.getBody();
             setLinksToAccountsMap(body);
         }
@@ -64,7 +60,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getTransactions(..)) && args(accountId,..)", returning = "result")
     public ResponseEntity<AccountReport> invokeGetTransactionsAspect(ResponseEntity<AccountReport> result, String accountId) {
-        if(!hasError(result)){
+        if (!hasError(result)) {
             AccountReport body = result.getBody();
             body.setLinks(buildLinksForAccountReport(body, accountId));
         }
