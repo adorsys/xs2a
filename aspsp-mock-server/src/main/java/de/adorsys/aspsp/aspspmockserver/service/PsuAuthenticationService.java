@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import lombok.AllArgsConstructor;
@@ -35,26 +35,26 @@ public class PsuAuthenticationService {
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
 
-    public String generateAndSendTanForPsu(String psuId) {
+    public boolean generateAndSendTanForPsu(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(psu -> createAndSendTan(psu.getId(), psu.getEmail()))
-                   .orElse(null);
+                   .orElse(false);
     }
 
     public boolean isPsuTanNumberValid(String psuId, int tanNumber) {
-        return tanRepository.findTansByPsuIdIn(psuId)
-                   .stream()
-                   .filter(t -> TanStatus.UNUSED.equals(t.getTanStatus()))
+        return tanRepository.findTansByPsuIdIn(psuId).stream()
+                   .filter(t -> TanStatus.UNUSED == t.getTanStatus())
                    .findFirst()
                    .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
     }
 
-    private String createAndSendTan(String psuId, String email) {
+    private boolean createAndSendTan(String psuId, String email) {
         Tan tan = new Tan(psuId, generateTanNumber());
-        tanRepository.save(tan);
-        sendTanNumberOnEmail(email, tan.getTanNumber());
-        return tan.getPsuId();
+
+        return Optional.ofNullable(tanRepository.save(tan))
+                   .map(t -> sendTanNumberOnEmail(email, t.getTanNumber()))
+                   .orElse(false);
     }
 
     private boolean validateTanAndUpdateTanStatus(Tan originalTan, int givenTanNumber) {
@@ -73,11 +73,12 @@ public class PsuAuthenticationService {
         return RandomUtils.nextInt(100000, 1000000);
     }
 
-    private void sendTanNumberOnEmail(String email, int tanNumber) {
+    private boolean sendTanNumberOnEmail(String email, int tanNumber) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setSubject("TAN for authentication to confirm your payment");
         mail.setTo(email);
         mail.setText("Your TAN number is " + tanNumber);
         emailSender.send(mail);
+        return true;
     }
 }

@@ -29,7 +29,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -38,7 +40,8 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PsuAuthenticationServiceTest {
-    private static final String PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
+    private static final String PSU_ID_1 = "ec818c89-4346-4f16-b5c8-d781b040200c";
+    private static final String PSU_ID_2 = "ad918c89-4346-4f16-b5c8-d781b040200c";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String TAN_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
     private static final int TAN_NUMBER = 123456;
@@ -54,30 +57,37 @@ public class PsuAuthenticationServiceTest {
 
     @Before
     public void setUp() {
-        when(psuRepository.findOne(PSU_ID))
-            .thenReturn(getPsu());
+        List<Tan> tanListForPsu1 = new ArrayList<>();
+        tanListForPsu1.add(getUnusedTan());
+        tanListForPsu1.add(getTanWithStatusInvalid());
+
+        when(psuRepository.findOne(PSU_ID_1))
+            .thenReturn(getPsu1());
+        when(psuRepository.findOne(PSU_ID_2))
+            .thenReturn(getPsu2());
         when(psuRepository.findOne(WRONG_PSU_ID))
             .thenReturn(null);
         when(tanRepository.save(any(Tan.class)))
             .thenReturn(getUnusedTan());
-        when(tanRepository.findTansByPsuIdIn(PSU_ID))
-            .thenReturn(Collections.singletonList(getUnusedTan()));
-
+        when(tanRepository.findTansByPsuIdIn(PSU_ID_1))
+            .thenReturn(tanListForPsu1);
+        when(tanRepository.findTansByPsuIdIn(PSU_ID_2))
+            .thenReturn(Collections.singletonList(getTanWithStatusValid()));
     }
 
     @Test
     public void generateTanForPsu_Failure() {
         //When
-        String actualResult = psuAuthenticationService.generateAndSendTanForPsu(WRONG_PSU_ID);
+        boolean actualResult = psuAuthenticationService.generateAndSendTanForPsu(WRONG_PSU_ID);
 
         //Then
-        assertThat(actualResult).isNull();
+        assertThat(actualResult).isFalse();
     }
 
     @Test
     public void isPsuTanNumberValid_Success() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID, TAN_NUMBER);
+        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER);
 
         //Then
         assertThat(actualResult).isTrue();
@@ -86,17 +96,47 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_Failure() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID, WRONG_TAN_NUMBER);
+        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
 
         //Then
         assertThat(actualResult).isFalse();
     }
 
-    private Psu getPsu() {
-        return new Psu(PSU_ID, "test@gmail.com", null);
+    @Test
+    public void isPsuTanNumberValid_TanStatusValid() {
+        //When
+        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER);
+
+        //Then
+        assertThat(actualResult).isFalse();
+    }
+
+    @Test
+    public void isPsuTanNumberValid_TanStatusInvalid() {
+        //When
+        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+
+        //Then
+        assertThat(actualResult).isFalse();
+    }
+
+    private Psu getPsu1() {
+        return new Psu(PSU_ID_1, "test1@gmail.com", null);
+    }
+
+    private Psu getPsu2() {
+        return new Psu(PSU_ID_2, "test2@gmail.com", null);
     }
 
     private Tan getUnusedTan() {
-        return new Tan(TAN_ID, PSU_ID, TAN_NUMBER, TanStatus.UNUSED);
+        return new Tan(TAN_ID, PSU_ID_1, TAN_NUMBER, TanStatus.UNUSED);
+    }
+
+    private Tan getTanWithStatusValid() {
+        return new Tan(TAN_ID, PSU_ID_2, TAN_NUMBER, TanStatus.VALID);
+    }
+
+    private Tan getTanWithStatusInvalid() {
+        return new Tan(TAN_ID, PSU_ID_1, WRONG_TAN_NUMBER, TanStatus.INVALID);
     }
 }

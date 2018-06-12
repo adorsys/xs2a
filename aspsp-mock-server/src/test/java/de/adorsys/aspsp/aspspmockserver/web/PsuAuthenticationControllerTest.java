@@ -51,9 +51,9 @@ public class PsuAuthenticationControllerTest {
     @Before
     public void setUp() {
         when(psuAuthenticationService.generateAndSendTanForPsu(PSU_ID))
-            .thenReturn(PSU_ID);
+            .thenReturn(true);
         when(psuAuthenticationService.generateAndSendTanForPsu(WRONG_PSU_ID))
-            .thenReturn(null);
+            .thenReturn(false);
         when(psuAuthenticationService.isPsuTanNumberValid(PSU_ID, TAN_NUMBER))
             .thenReturn(true);
         when(psuAuthenticationService.isPsuTanNumberValid(PSU_ID, WRONG_TAN_NUMBER))

@@ -43,7 +43,7 @@ public class PsuAuthenticationController {
         //TODO change to correct url when tan validation page will be created according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/99
         String uriString = getUriString(request);
 
-        return StringUtils.isNotBlank(psuAuthenticationService.generateAndSendTanForPsu(psuId))
+        return psuAuthenticationService.generateAndSendTanForPsu(psuId)
                    ? ResponseEntity.created(new URI(uriString + "/tan-confirmation")).build()
                    : ResponseEntity.badRequest().build();
     }
@@ -51,8 +51,8 @@ public class PsuAuthenticationController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{psu-id}/{tan}")
     public ResponseEntity<String> validatePsuTan(HttpServletRequest request,
-                                         @PathVariable("psu-id") String psuId,
-                                         @PathVariable("tan") int tanNumber) throws Exception {
+                                                 @PathVariable("psu-id") String psuId,
+                                                 @PathVariable("tan") int tanNumber) throws Exception {
         //TODO change to correct url when consent validation page will be created according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/99
         String uriString = getUriString(request);
 
