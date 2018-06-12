@@ -178,12 +178,4 @@ public class RemoteSpiUrls {
     public String createTransaction() {
         return spiMockBaseUrl + "/transaction";
     }
-
-    public String getAvailablePaymentProducts() {
-        return consentServiceBaseUrl + "/aspsp-profile/available-payment-products";
-    }
-
-    public String getAvailablePaymentTypes() {
-        return consentServiceBaseUrl + "/aspsp-profile/available-payment-types";
-    }
 }

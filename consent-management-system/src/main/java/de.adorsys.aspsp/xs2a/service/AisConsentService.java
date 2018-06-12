@@ -46,12 +46,11 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 public class AisConsentService {
     private final AccountSpi accountSpi;
-    private final AspspProfileService profileService;
     private final AisConsentRepository aisConsentRepository;
     private final ConsentMapper consentMapper;
 
     public Optional<String> createConsent(AisConsentRequest request) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        int minFrequencyPerDay = 0; // TODO  minFrequencyPerDay will get in task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/134
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);

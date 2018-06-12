@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver;
+package de.adorsys.aspsp.xs2a.spi.rest.exception;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@Profile("fongo")
-public class AspspMockServerApplicationTests {
+import java.io.IOException;
 
-	@Test
-	public void contextLoads() {
-	}
+public class AspspProfileRestTemplateErrorHandler extends DefaultResponseErrorHandler {
 
+    @Override
+    public void handleError(ClientHttpResponse response) throws IOException {
+        HttpStatus statusCode = response.getStatusCode();
+        throw new RestException(statusCode, statusCode.getReasonPhrase());
+    }
 }
