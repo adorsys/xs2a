@@ -23,7 +23,6 @@ import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 
 @Data
-@Value
 @AllArgsConstructor
 public class Tan {
 
@@ -31,11 +30,9 @@ public class Tan {
     private String id;
     private String psuId;
     private int tanNumber;
-    @NonFinal
     private TanStatus tanStatus;
 
     public Tan(String psuId, int tanNumber) {
-        this.id = null;
         this.psuId = psuId;
         this.tanNumber = tanNumber;
         this.tanStatus = TanStatus.UNUSED;
