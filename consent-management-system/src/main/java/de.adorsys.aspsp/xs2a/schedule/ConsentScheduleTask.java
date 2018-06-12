@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class ConsentScheduleTask {
     public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
 
-        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(SpiConsentStatus.RECEIVED, SpiConsentStatus.VALID)))
+        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
                                                  .orElse(Collections.emptyList());
         aisConsentRepository.save(updateConsent(availableConsents));
     }
@@ -62,7 +65,7 @@ public class ConsentScheduleTask {
     }
 
     private SpiConsentStatus updateConsentStatus(AisConsent consent) {
-        return consent.isExpired()
+        return consent.isExpiredByDate()
                    ? SpiConsentStatus.EXPIRED
                    : consent.getConsentStatus();
     }
