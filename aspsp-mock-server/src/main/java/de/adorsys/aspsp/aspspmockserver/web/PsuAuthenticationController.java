@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
