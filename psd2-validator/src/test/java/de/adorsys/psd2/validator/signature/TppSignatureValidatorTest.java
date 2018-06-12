@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.tomitribe.auth.signatures.MissingRequiredHeaderException;
 
-import de.adorsys.psd2.validator.certificate.CertificateUtils;
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 
 
 public class TppSignatureValidatorTest {
