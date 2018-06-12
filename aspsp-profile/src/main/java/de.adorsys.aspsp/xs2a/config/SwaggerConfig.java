@@ -54,7 +54,7 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo() {
         return new ApiInfoBuilder()
-                   .title("Consent management rest API")
+                   .title("ASPSP Profile rest API")
                    .contact(new Contact("pru, adorsys GmbH & Co. KG", "http://www.adorsys.de", "pru@adorsys.com.ua"))
                    .version("1.0")
                    .license("Apache License 2.0")
