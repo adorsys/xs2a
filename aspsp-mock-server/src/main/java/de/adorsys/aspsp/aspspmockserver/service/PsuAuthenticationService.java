@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.repository.EmailTanRepository;
+import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
@@ -31,7 +31,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class PsuAuthenticationService {
-    private final EmailTanRepository emailTanRepository;
+    private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
 
@@ -42,17 +42,17 @@ public class PsuAuthenticationService {
     }
 
     public boolean isPsuTanNumberValid(String psuId, int tanNumber) {
-        return emailTanRepository.findTansByPsuIdIn(psuId)
+        return tanRepository.findTansByPsuIdIn(psuId)
                    .stream()
-                   .filter(t -> t.getTanStatus().equals(TanStatus.UNUSED))
+                   .filter(t -> TanStatus.UNUSED.equals(t.getTanStatus()))
                    .findFirst()
                    .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
     }
 
     private String createAndSendTan(String psuId, String email) {
-        Tan tan = new Tan(null, psuId, generateTanNumber(), TanStatus.UNUSED);
-        emailTanRepository.save(tan);
+        Tan tan = new Tan(psuId, generateTanNumber());
+        tanRepository.save(tan);
         sendTanNumberOnEmail(email, tan.getTanNumber());
         return tan.getPsuId();
     }
@@ -64,7 +64,7 @@ public class PsuAuthenticationService {
         } else {
             originalTan.setTanStatus(TanStatus.INVALID);
         }
-        emailTanRepository.save(originalTan);
+        tanRepository.save(originalTan);
 
         return isValid;
     }

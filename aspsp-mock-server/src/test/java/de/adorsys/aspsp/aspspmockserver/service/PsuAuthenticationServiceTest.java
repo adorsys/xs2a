@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.repository.EmailTanRepository;
+import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
@@ -48,7 +48,7 @@ public class PsuAuthenticationServiceTest {
     PsuAuthenticationService psuAuthenticationService;
 
     @MockBean
-    private EmailTanRepository emailTanRepository;
+    private TanRepository tanRepository;
     @MockBean
     private PsuRepository psuRepository;
 
@@ -58,9 +58,9 @@ public class PsuAuthenticationServiceTest {
             .thenReturn(getPsu());
         when(psuRepository.findOne(WRONG_PSU_ID))
             .thenReturn(null);
-        when(emailTanRepository.save(any(Tan.class)))
+        when(tanRepository.save(any(Tan.class)))
             .thenReturn(getUnusedTan());
-        when(emailTanRepository.findTansByPsuIdIn(PSU_ID))
+        when(tanRepository.findTansByPsuIdIn(PSU_ID))
             .thenReturn(Collections.singletonList(getUnusedTan()));
 
     }

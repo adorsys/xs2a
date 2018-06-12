@@ -23,9 +23,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 @Profile({"mongo", "fongo"})
-public interface EmailTanRepository extends MongoRepository<Tan, String> {
+public interface TanRepository extends MongoRepository<Tan, String> {
 
     List<Tan> findTansByPsuIdIn(String psuId);
 }

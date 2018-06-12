@@ -33,4 +33,11 @@ public class Tan {
     private int tanNumber;
     @NonFinal
     private TanStatus tanStatus;
+
+    public Tan(String psuId, int tanNumber) {
+        this.id = null;
+        this.psuId = psuId;
+        this.tanNumber = tanNumber;
+        this.tanStatus = TanStatus.UNUSED;
+    }
 }
