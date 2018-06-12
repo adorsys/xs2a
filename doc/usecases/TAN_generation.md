@@ -2,7 +2,7 @@
 
 As a PSU I want to receive e-mail tan (transaction authentication number).
 
-The E-mail tan is necessary to demonstrate payment confirmation with redirect approach.
+The E-mail tan is necessary to demonstrate payment confirmation.
 On the stage of SCA (after the login page) the system sends the email to the user with transaction authentication number.
 On the next step, the user should confirm the payment and fill the correct TAN.
 
