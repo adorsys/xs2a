@@ -62,7 +62,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Get List of available payment products
+     * Read List of available payment products
      * @return List<String>
      */
     public List<String> getAvailablePaymentProducts() {
@@ -79,7 +79,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Get List of available payment types
+     * Read List of available payment types
      * @return List<String>
      */
     public List<String> getAvailablePaymentTypes() {

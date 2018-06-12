@@ -33,10 +33,29 @@ import java.util.List;
 public class ProfileConfiguration {
     private final boolean isDelayedPaymentTypeAllowedAlways = true;
 
+    /**
+     * This field indicates the requested maximum frequency for an access per day
+     */
     private int frequencyPerDay;
+
+    /**
+     * If "true" indicates that a payment initiation service will be addressed in the same "session"
+     */
     private boolean combinedServiceIndicator;
+
+    /**
+     * List of payment products supported by ASPSP
+     */
     private List<String> availablePaymentProducts;
+
+    /**
+     * List of payment types supported by ASPSP
+     */
     private List<String> availablePaymentTypes;
+
+    /**
+     * SCA Approach supported by ASPSP
+     */
     private String scaApproach;
 
     @PostConstruct
