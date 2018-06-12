@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -57,10 +58,6 @@ public class PsuAuthenticationServiceTest {
 
     @Before
     public void setUp() {
-        List<Tan> tanListForPsu1 = new ArrayList<>();
-        tanListForPsu1.add(getUnusedTan());
-        tanListForPsu1.add(getTanWithStatusInvalid());
-
         when(psuRepository.findOne(PSU_ID_1))
             .thenReturn(getPsu1());
         when(psuRepository.findOne(PSU_ID_2))
@@ -69,10 +66,10 @@ public class PsuAuthenticationServiceTest {
             .thenReturn(null);
         when(tanRepository.save(any(Tan.class)))
             .thenReturn(getUnusedTan());
-        when(tanRepository.findTansByPsuIdIn(PSU_ID_1))
-            .thenReturn(tanListForPsu1);
-        when(tanRepository.findTansByPsuIdIn(PSU_ID_2))
-            .thenReturn(Collections.singletonList(getTanWithStatusValid()));
+        when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_1, TanStatus.UNUSED))
+            .thenReturn(Optional.of(getUnusedTan()));
+        when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_2, TanStatus.UNUSED))
+            .thenReturn(Optional.empty());
     }
 
     @Test
@@ -130,13 +127,5 @@ public class PsuAuthenticationServiceTest {
 
     private Tan getUnusedTan() {
         return new Tan(TAN_ID, PSU_ID_1, TAN_NUMBER, TanStatus.UNUSED);
-    }
-
-    private Tan getTanWithStatusValid() {
-        return new Tan(TAN_ID, PSU_ID_2, TAN_NUMBER, TanStatus.VALID);
-    }
-
-    private Tan getTanWithStatusInvalid() {
-        return new Tan(TAN_ID, PSU_ID_1, WRONG_TAN_NUMBER, TanStatus.INVALID);
     }
 }

@@ -42,9 +42,7 @@ public class PsuAuthenticationService {
     }
 
     public boolean isPsuTanNumberValid(String psuId, int tanNumber) {
-        return tanRepository.findTansByPsuIdIn(psuId).stream()
-                   .filter(t -> TanStatus.UNUSED == t.getTanStatus())
-                   .findFirst()
+        return tanRepository.findByPsuIdAndTanStatus(psuId, TanStatus.UNUSED)
                    .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
     }

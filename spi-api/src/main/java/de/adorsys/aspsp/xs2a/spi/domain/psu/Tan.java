@@ -30,6 +30,8 @@ public class Tan {
     private int tanNumber;
     private TanStatus tanStatus;
 
+    public Tan(){}
+
     public Tan(String psuId, int tanNumber) {
         this.psuId = psuId;
         this.tanNumber = tanNumber;
