@@ -16,20 +16,20 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,14 +42,9 @@ public class ConsentMapper {
             consent.isRecurringIndicator(),
             convertToDate(consent.getExpireDate()),
             consent.getUsageCounter(),
-            convertToDate(consent.getRequestDate()),
+            convertToDate(consent.getLastActionDate()),
             mapToSpiConsentStatus(consent.getConsentStatus()),
             false, consent.isTppRedirectPreferred());
-    }
-
-    public Map<String, Set<AccessAccountInfo>> toMap(List<AisAccount> accounts) {
-        return accounts.stream()
-                   .collect(Collectors.toMap(AisAccount::getIban, e -> accessAccountInfos(e.getAccesses())));
     }
 
     private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
@@ -80,17 +75,5 @@ public class ConsentMapper {
 
     private Date convertToDate(Instant dateToConvert) {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    private Set<AccessAccountInfo> accessAccountInfos(List<AccountAccess> accesses) {
-        return accesses.stream()
-                   .map(a -> new AccessAccountInfo(getCurrencyCode(a.getCurrency()), a.getTypeAccess()))
-                   .collect(Collectors.toSet());
-    }
-
-    private String getCurrencyCode(Currency currency) {
-        return Optional.ofNullable(currency)
-                   .map(Currency::getCurrencyCode)
-                   .orElse(null);
     }
 }

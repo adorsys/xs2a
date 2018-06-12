@@ -40,7 +40,7 @@ public class AccountHolder {
                    .orElse(null);
     }
 
-    public void addAccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
+    private void addAccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
         accountAccesses.putIfAbsent(iban, new HashSet<>());
         accountAccesses.get(iban).add(new AccountAccess(currency, typeAccess));
         if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {

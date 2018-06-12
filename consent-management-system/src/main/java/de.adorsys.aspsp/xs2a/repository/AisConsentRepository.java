@@ -28,4 +28,6 @@ public interface AisConsentRepository extends CrudRepository<AisConsent, Long> {
     List<AisConsent> findByConsentStatusIn(Set<SpiConsentStatus> statuses);
 
     Optional<AisConsent> findByExternalId(String externalId);
+
+    Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<SpiConsentStatus> statuses);
 }
