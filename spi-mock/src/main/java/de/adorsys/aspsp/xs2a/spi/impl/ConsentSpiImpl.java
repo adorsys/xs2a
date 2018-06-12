@@ -17,28 +17,18 @@
 package de.adorsys.aspsp.xs2a.spi.impl;
 
 import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.AllArgsConstructor;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
-import java.util.Set;
 
 @Component
 @AllArgsConstructor
 public class ConsentSpiImpl implements ConsentSpi {
     private final RestTemplate restTemplate;
     private final RemoteSpiUrls remoteSpiUrls;
-
-    @Override
+//TODO Subject to removal upon team agreement
+/*    @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
         return restTemplate.getForEntity(remoteSpiUrls.getAisConsentById(), SpiAccountConsent.class, consentId).getBody();
     }
@@ -60,5 +50,5 @@ public class ConsentSpiImpl implements ConsentSpi {
             remoteSpiUrls.checkAccessByConsentId(), HttpMethod.POST, requestHttpEntity,
             new ParameterizedTypeReference<Map<String, Set<AccessAccountInfo>>>() {
             }).getBody();
-    }
+    }*/
 }

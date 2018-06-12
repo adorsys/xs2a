@@ -32,4 +32,40 @@ public class RemoteAisConsentUrls {
     public String createAisConsent() {
         return consentServiceBaseUrl + "/ais/consent/";
     }
+
+    /**
+     * @return SpiAccountConsent consent
+     * @Method GET
+     * @PathVariable String consentId
+     */
+    public String getAisConsentById() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}";
+    }
+
+    /**
+     * @return SpiConsentStatus status
+     * @Method GET
+     * @PathVariable String consentId
+     */
+    public String getAisConsentStatusById() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
+    }
+
+    /**
+     * @return VOID
+     * @Method PUT
+     * @PathVariables: String consentId, SpiConsentStatus consentStatus
+     */
+    public String updateAisConsentStatus() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
+    }
+
+    /**
+     * @return VOID
+     * @Method POST
+     * @PathVariables: ConsentActionRequest consentActionRequest
+     */
+    public String consentActionLog() {
+        return consentServiceBaseUrl + "/ais/consent//action";
+    }
 }

@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
@@ -84,25 +83,25 @@ public class AccountServiceTest {
         when(accountSpi.readAccountDetailsByIban(IBAN))
             .thenReturn(Collections.singletonList(getSpiAccountDetails(ACCOUNT_ID, IBAN)));
         when(accountSpi.readTransactionsById(TRANSACTION_ID)).thenReturn(Collections.singletonList(getSpiTransaction()));
-        when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID,DATE,DATE,SpiBookingStatus.BOTH))
+        when(accountSpi.readTransactionsByPeriod(IBAN, CURRENCY, DATE, DATE, SpiBookingStatus.BOTH))
             .thenReturn(Collections.singletonList(getSpiTransaction()));
 
         //Check with consent
-        when(consentService.checkValidityByConsent(CONSENT_ID_WB, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.ACCOUNT, true))
-            .thenReturn(getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true));
-        when(consentService.checkValidityByConsent(CONSENT_ID_WOB, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.ACCOUNT, true))
+        /*when(consentService.getValidatedConsent(CONSENT_ID_WB))
+            .thenReturn(ResponseObject.<AccountAccess>builder().body(getAccountAccess()).build());
+        when(consentService.getValidatedConsent(CONSENT_ID_WOB, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.ACCOUNT, true))
             .thenReturn(getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, false));
-        when(consentService.checkValidityByConsent(CONSENT_ID_WOB, Collections.singletonList(null), TypeAccess.ACCOUNT, true))
+        when(consentService.getValidatedConsent(CONSENT_ID_WOB, Collections.singletonList(null), TypeAccess.ACCOUNT, true))
             .thenReturn(null);
-        when(consentService.checkValidityByConsent(WRONG_CONSENT_ID, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.ACCOUNT, true))
+        when(consentService.getValidatedConsent(WRONG_CONSENT_ID, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.ACCOUNT, true))
             .thenReturn(null);
-        when(consentService.checkValidityByConsent(CONSENT_ID_WB, Collections.singletonList(getAccountDetails(ACCOUNT_ID_1, IBAN_1)), TypeAccess.BALANCE, false))
+        when(consentService.getValidatedConsent(CONSENT_ID_WB, Collections.singletonList(getAccountDetails(ACCOUNT_ID_1, IBAN_1)), TypeAccess.BALANCE, false))
             .thenReturn(getAccessMap(getAccountDetails(ACCOUNT_ID_1, IBAN_1), TypeAccess.BALANCE, true));
-        when(consentService.checkValidityByConsent(CONSENT_ID_WB, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.TRANSACTION, false))
-            .thenReturn(getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.TRANSACTION, false));
+        when(consentService.getValidatedConsent(CONSENT_ID_WB, Collections.singletonList(getAccountDetails(ACCOUNT_ID, IBAN)), TypeAccess.TRANSACTION, false))
+            .thenReturn(getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.TRANSACTION, false));*/
 
         // Is valid for
-        when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true)))
+        /*consentServicewhen(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, true)))
             .thenReturn(true);
         when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.ACCOUNT, false)))
             .thenReturn(false);
@@ -113,7 +112,7 @@ public class AccountServiceTest {
         when(consentService.isValidAccountByAccess(IBAN_1, CURRENCY, TypeAccess.BALANCE, getAccessMap(getAccountDetails(ACCOUNT_ID_1, IBAN_1), TypeAccess.BALANCE, true)))
             .thenReturn(true);
         when(consentService.isValidAccountByAccess(IBAN, CURRENCY, TypeAccess.TRANSACTION, getAccessMap(getAccountDetails(ACCOUNT_ID, IBAN), TypeAccess.TRANSACTION, true)))
-            .thenReturn(true);
+            .thenReturn(true);*/
 
         //getAccountsByConsent Success no balances
         when(consentService.getAccountConsentById(CONSENT_ID))
@@ -499,7 +498,7 @@ public class AccountServiceTest {
     }
 
     private SpiAccountReference mapToSpiAccountRef(AccountReference reference) {
-        return Optional.ofNullable(reference).map(r->new SpiAccountReference(r.getIban(), r.getBban(), r.getPan(),
+        return Optional.ofNullable(reference).map(r -> new SpiAccountReference(r.getIban(), r.getBban(), r.getPan(),
             r.getMaskedPan(), r.getMsisdn(), r.getCurrency())).orElse(null);
     }
 

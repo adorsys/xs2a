@@ -16,7 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service.consent.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -28,8 +32,25 @@ public class AisConsentService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final RemoteAisConsentUrls remoteAisConsentUrls;
+    private final ConsentMapper consentMapper;
 
-    public String createConsent(AisConsentRequest request) {
-        return consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), request, String.class).getBody();
+    public String createConsent(CreateConsentReq request, String psuId, String tppId) {
+        return consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToAisConsentRequest(request, psuId, tppId), String.class).getBody();
+    }
+
+    public SpiAccountConsent getAccountConsentById(String consentId) {
+        return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), SpiAccountConsent.class, consentId).getBody();
+    }
+
+    public SpiConsentStatus getAccountConsentStatusById(String consentId) {
+        return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), SpiConsentStatus.class, consentId).getBody();
+    }
+
+    public void revokeConsent(String consentId) {
+        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, SpiConsentStatus.REVOKED_BY_PSU);
+    }
+
+    public void consentActionLog(ConsentActionRequest request) {
+        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(),request,void.class);
     }
 }

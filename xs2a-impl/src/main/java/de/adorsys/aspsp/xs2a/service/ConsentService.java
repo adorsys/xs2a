@@ -16,18 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,67 +36,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
+
 @Service
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
-    private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
     private final AisConsentService aisConsentService;
     private final AccountSpi accountSpi;
     private final AccountMapper accountMapper;
-
-
-    /*
-       Validation
-
-
-       // TODO: refactor according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/131
-    public Map<String, Set<AccessAccountInfo>> checkAvailableAccessAccount(AvailableAccessRequest request) {
-        Optional<AisConsent> consent = aisConsentRepository.findByExternalId(request.getConsentId());
-        AisConsent aisConsent = consent.orElseThrow(() -> new ConsentException("Consent id not found"));
-        if (!EnumSet.of(VALID, RECEIVED).contains(aisConsent.getConsentStatus())) {
-            throw new ConsentException("Consent status: " + aisConsent.getConsentStatus());
-        }
-        if(aisConsent.isExpired()){
-            aisConsent.setConsentStatus(EXPIRED);
-            aisConsentRepository.save(aisConsent);
-            throw new ConsentException("Consent status: EXPIRED");
-        }
-        checkAisConsentCounter(aisConsent.getUsageCounter());
-        AisConsent updated = updateConsentStatusAndCounter(aisConsent);
-        Map<String, Set<AccessAccountInfo>> targetAccounts = consentMapper.toMap(updated.getAccounts());
-        Map<String, Set<AccessAccountInfo>> requestedAccounts = request.getAccountsAccesses();
-        return filterRequestedAccounts(targetAccounts, requestedAccounts);
-    }
-
-    private void checkAisConsentCounter(int usageCounter){
-        if(usageCounter == 0){
-            throw new ConsentException("Limit of usage is exceeded");
-        }
-    }
-
-    private AisConsent updateConsentStatusAndCounter(AisConsent aisConsent) {
-        if (aisConsent.getConsentStatus() == RECEIVED) {
-            aisConsent.setConsentStatus(VALID);
-        }
-        int usageCounter = aisConsent.getUsageCounter();
-        int newUsageCounter = --usageCounter;
-        aisConsent.setUsageCounter(newUsageCounter);
-        return aisConsentRepository.save(aisConsent);
-    }
-
-    private Map<String, Set<AccessAccountInfo>> filterRequestedAccounts(Map<String, Set<AccessAccountInfo>> targetAccounts, Map<String, Set<AccessAccountInfo>> requestedAccounts) {
-        return requestedAccounts.entrySet().stream()
-                   .filter(e -> targetAccounts.containsKey(e.getKey()))
-                   .collect(Collectors.toMap(Map.Entry::getKey, e -> filterAccessAccount(e.getValue(), targetAccounts.get(e.getKey()))));
-    }
-
-    private Set<AccessAccountInfo> filterAccessAccount(Set<AccessAccountInfo> incomeAccess, Set<AccessAccountInfo> bankAccess) {
-        Collection<AccessAccountInfo> subtract = CollectionUtils.subtract(incomeAccess, bankAccess);
-        incomeAccess.removeAll(subtract);
-        return incomeAccess;
-    }
-    */
 
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         String tppId = "This is a test TppId"; //TODO to clarify where it should get from
@@ -115,12 +63,76 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
         }
         String consentId = isNotEmptyAccountAccess(checkedRequest.getAccess())
-                               ? aisConsentService.createConsent(consentMapper.mapToAisConsentRequest(checkedRequest, psuId, tppId))
+                               ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
                                : null;
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(ConsentStatus.RECEIVED, consentId, null, null, null)).build()
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(RECEIVED, consentId, null, null, null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build();
+    }
+
+    public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
+        return consentMapper.mapToConsentStatus(aisConsentService.getAccountConsentStatusById(consentId))
+                   .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
+                   .orElse(ResponseObject.<ConsentStatus>builder()
+                               .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
+                               .build());
+    }
+
+    public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
+        if (aisConsentService.getAccountConsentById(consentId) != null) {
+            aisConsentService.revokeConsent(consentId);
+            return ResponseObject.<Void>builder().build();
+        }
+
+        return ResponseObject.<Void>builder()
+                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build();
+    }
+
+    public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
+        AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
+        return consent == null
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+                   : ResponseObject.<AccountConsent>builder().body(consent).build();
+    }
+
+    public ResponseObject<AccountAccess> getValidatedConsent(String consentId) {
+        AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
+        if (consent == null) {
+            return ResponseObject.<AccountAccess>builder()
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build();
+        }
+        if (!EnumSet.of(VALID, RECEIVED).contains(consent.getConsentStatus())
+                || consent.getFrequencyPerDay() < 1
+                || consent.getValidUntil().compareTo(new Date()) >= 0) {
+            return ResponseObject.<AccountAccess>builder()
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
+        }
+        return ResponseObject.<AccountAccess>builder().body(consent.getAccess()).build();
+    }
+
+    public boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
+
+        return Optional.ofNullable(allowedAccountData)
+                   .map(allowed -> allowed.stream()
+                                       .anyMatch(a -> a.getIban().equals(iban)
+                                                          && a.getCurrency().equals(currency)))
+                   .orElse(false);
+    }
+
+    public Set<String> getIbanSetFromAccess(AccountAccess access) {
+        if (isNotEmptyAccountAccess(access)) {
+            return getIbansFromAccess(access);
+        }
+        return Collections.emptySet();
+    }
+
+    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
+        return Optional.ofNullable(references)
+                   .map(list -> list.stream()
+                                    .map(AccountReference::getIban)
+                                    .collect(Collectors.toSet()))
+                   .orElse(Collections.emptySet());
     }
 
     private AccountAccess getAccessByRequestedAccess(AccountAccess requestedAccess) {
@@ -137,8 +149,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private List<AccountReference> getAccountReference(List<AccountReference> requestedReferences, List<AccountReference> refs) {
         return Optional.ofNullable(requestedReferences)
-                                              .map(reqRefs -> getRequestedReferences(reqRefs, refs))
-                                              .orElse(Collections.emptyList());
+                   .map(reqRefs -> getRequestedReferences(reqRefs, refs))
+                   .orElse(Collections.emptyList());
     }
 
     private List<AccountReference> getAccountsForAccess(List<AccountReference> balances, List<AccountReference> transactions, List<AccountReference> accounts) {
@@ -150,9 +162,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private List<AccountReference> getRequestedReferences(List<AccountReference> requestedRefs, List<AccountReference> refs) {
-        return Optional.ofNullable(requestedRefs).map(rr->rr.stream()
-                   .filter(r -> isContainedRefinRefsList(r, refs))
-                   .collect(Collectors.toList())).orElse(Collections.emptyList());
+        return Optional.ofNullable(requestedRefs).map(rr -> rr.stream()
+                                                                .filter(r -> isContainedRefinRefsList(r, refs))
+                                                                .collect(Collectors.toList())).orElse(Collections.emptyList());
     }
 
     private boolean isContainedRefinRefsList(AccountReference referenceMatched, List<AccountReference> references) {
@@ -181,83 +193,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                     || AccountAccessType.ALL_ACCOUNTS.equals(a.getAvailableAccounts())).isPresent();
     }
 
-    public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
-        return consentMapper.mapToConsentStatus(consentSpi.getAccountConsentStatusById(consentId))
-                   .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
-                   .orElse(ResponseObject.<ConsentStatus>builder()
-                               .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
-                               .build());
-    }
-
-    public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        if (consentSpi.getAccountConsentById(consentId) != null) {
-            consentSpi.deleteAccountConsentById(consentId);
-            return ResponseObject.<Void>builder().build();
-        }
-
-        return ResponseObject.<Void>builder()
-                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build();
-    }
-
-    public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
-        AccountConsent consent = consentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
-        return consent == null
-                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.<AccountConsent>builder().body(consent).build();
-    }
-
-    public Map<String, Set<AccessAccountInfo>> checkValidityByConsent(String consentId, List<AccountDetails> details, TypeAccess typeAccess, boolean withBalance) {
-        AvailableAccessRequest request = new AvailableAccessRequest();
-        request.setConsentId(consentId);
-
-        Set<String> ibans = details.stream()
-                                .map(AccountDetails::getIban)
-                                .collect(Collectors.toSet());
-        Map<String, Set<AccessAccountInfo>> accesses = ibans.stream()
-                                                           .collect(Collectors.toMap(iban -> iban,
-                                                               iban -> getAccessAccountInfoByIban(details, typeAccess, withBalance, iban)));
-        request.setAccountsAccesses(accesses);
-        return consentSpi.checkValidityByConsent(request);
-    }
-
-    private Set<AccessAccountInfo> getAccessAccountInfoByIban(List<AccountDetails> details, TypeAccess typeAccess, boolean withBalance, String iban) {
-        return details.stream().filter(a -> a.getIban().equals(iban))
-                   .flatMap(d -> getAccessAccountInfo(d.getCurrency(), typeAccess, withBalance)
-                                     .stream())
-                   .collect(Collectors.toSet());
-    }
-
-    private Set<AccessAccountInfo> getAccessAccountInfo(Currency currency, TypeAccess typeAccess, boolean withBalance) {
-        Set<AccessAccountInfo> set = new HashSet<>();
-        set.add(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
-        set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.ACCOUNT));
-        if (withBalance) {
-            set.add(new AccessAccountInfo(currency.getCurrencyCode(), TypeAccess.BALANCE));
-        }
-        return set;
-    }
-
-    public boolean isValidAccountByAccess(String iban, Currency currency, TypeAccess typeAccess, Map<String, Set<AccessAccountInfo>> allowedAccountData) {
-        Set<AccessAccountInfo> accesses = Optional.ofNullable(allowedAccountData.get(iban))
-                                              .orElse(Collections.emptySet());
-        return accesses.contains(new AccessAccountInfo(currency.getCurrencyCode(), typeAccess));
-    }
-
-    public Set<String> getIbanSetFromAccess(AccountAccess access) {
-        if (isNotEmptyAccountAccess(access)) {
-            return getIbansFromAccess(access);
-        }
-        return Collections.emptySet();
-    }
-
-    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
-        return Optional.ofNullable(references)
-                   .map(list -> list.stream()
-                                    .map(AccountReference::getIban)
-                                    .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
-    }
-
     private Set<String> getIbansFromAccess(AccountAccess access) {
         return Stream.of(
             getIbansFromAccountReference(access.getAccounts()),
@@ -269,10 +204,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private boolean isNotEmptyAccountAccess(AccountAccess access) {
-        return Optional.ofNullable(access).filter(a->!(CollectionUtils.isEmpty(a.getAccounts())
-                     && CollectionUtils.isEmpty(a.getBalances())
-                     && CollectionUtils.isEmpty(a.getTransactions())
-                     && a.getAllPsd2() == null
-                     && a.getAvailableAccounts() == null)).isPresent();
+        return Optional.ofNullable(access).filter(a -> !(CollectionUtils.isEmpty(a.getAccounts())
+                                                             && CollectionUtils.isEmpty(a.getBalances())
+                                                             && CollectionUtils.isEmpty(a.getTransactions())
+                                                             && a.getAllPsd2() == null
+                                                             && a.getAvailableAccounts() == null)).isPresent();
     }
 }

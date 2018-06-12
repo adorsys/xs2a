@@ -16,22 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
-
-import java.util.Map;
-import java.util.Set;
-
 public interface ConsentSpi {
-
-    SpiAccountConsent getAccountConsentById(String consentId);
+//TODO Subject to removal upon team agreement
+    /*SpiAccountConsent getAccountConsentById(String consentId);
 
     SpiConsentStatus getAccountConsentStatusById(String consentId);
 
     void deleteAccountConsentById(String consentId);
 
-    Map<String, Set<AccessAccountInfo>> checkValidityByConsent(AvailableAccessRequest request);
+    Map<String, Set<AccessAccountInfo>> checkValidityByConsent(AvailableAccessRequest request);*/
 
 }

@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import lombok.Getter;
 
 /**
- * Responce Object passing the information about performed operation
+ * Response Object passing the information about performed operation
  *
  * @see MessageError
  */
