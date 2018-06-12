@@ -40,7 +40,7 @@ public class ProfileConfiguration {
     private String scaApproach;
 
     @PostConstruct
-    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available bu default
+    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default
         String necessaryType = PaymentType.FUTURE_DATED.getValue();
 
         if (!availablePaymentTypes.contains(necessaryType)) {
