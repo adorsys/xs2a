@@ -52,7 +52,7 @@ public class ConsentScheduleTask {
     }
 
     private AisConsent updateConsentParameters(AisConsent consent) {
-        int minFrequencyPerDay = 0; // TODO we should decide where we will use scheduler
+        int minFrequencyPerDay = 0; // TODO  scheduler will get minFrequencyPerDay in task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/134
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setUsageCounter(minFrequencyPerDay);
         consent.setConsentStatus(updateConsentStatus(consent));
