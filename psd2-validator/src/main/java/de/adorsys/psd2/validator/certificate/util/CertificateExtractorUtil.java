@@ -39,7 +39,7 @@ public class CertificateExtractorUtil {
 			for (GeneralName name : names) {
 			    if (name.getTagNo() == GeneralName.otherName) {
 			        ASN1Sequence seq = ASN1Sequence.getInstance(name.getName());
-			        ASN1ObjectIdentifier oid = ((ASN1ObjectIdentifier)seq.getObjectAt(0));
+			        ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)seq.getObjectAt(0);
 			        if ("1.2.3.1".equals(oid.getId())) {
 			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 			            int number = value.getValue().intValue();
