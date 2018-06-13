@@ -31,7 +31,7 @@
     <packaging>jar</packaging>
 
     <name>aspsp-profile</name>
-    <description>Aspsp profile for XS2A Library</description>
+    <description>Aspsp profile service for XS2A and ASPSP </description>
 
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
