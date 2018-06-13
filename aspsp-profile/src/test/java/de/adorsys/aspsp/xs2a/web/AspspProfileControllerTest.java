@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,9 @@ public class AspspProfileControllerTest {
 
     @MockBean
     private AspspProfileService aspspProfileService;
+
+    @MockBean
+    private ProfileConfiguration profileConfiguration;
 
     @Before
     public void setUpAccountServiceMock() {
