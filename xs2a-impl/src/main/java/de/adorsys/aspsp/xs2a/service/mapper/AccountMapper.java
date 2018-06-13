@@ -17,6 +17,9 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;

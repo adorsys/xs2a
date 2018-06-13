@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;

@@ -30,7 +30,6 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +38,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.*;
 
 @Service
@@ -74,9 +74,9 @@ public class AisConsentService {
 
     private List<AisAccount> readAccounts(AisAccountAccessInfo access) {
         AccountHolder holder = new AccountHolder();
-        holder.fillAccess(access.getAccounts(), TypeAccess.ACCOUNT);
-        holder.fillAccess(access.getBalances(), TypeAccess.BALANCE);
-        holder.fillAccess(access.getTransactions(), TypeAccess.TRANSACTION);
+        holder.fillAccess(access.getAccounts(), ACCOUNT);
+        holder.fillAccess(access.getBalances(), BALANCE);
+        holder.fillAccess(access.getTransactions(), TRANSACTION);
         return buildAccounts(holder.getAccountAccesses());
     }
 

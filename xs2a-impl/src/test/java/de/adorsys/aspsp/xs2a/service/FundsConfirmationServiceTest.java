@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;

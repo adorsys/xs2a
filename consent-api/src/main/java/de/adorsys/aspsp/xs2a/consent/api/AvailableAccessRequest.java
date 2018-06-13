@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class AccessAccountInfo {
-    private String currency;
-    private TypeAccess typeAccess;
+public class AvailableAccessRequest {
+    private String consentId;
+    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
 }

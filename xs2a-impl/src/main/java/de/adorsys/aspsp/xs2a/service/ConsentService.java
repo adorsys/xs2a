@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
@@ -118,13 +118,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                        .anyMatch(a -> a.getIban().equals(iban)
                                                           && a.getCurrency().equals(currency)))
                    .orElse(false);
-    }
-
-    public Set<String> getIbanSetFromAccess(AccountAccess access) {
-        if (isNotEmptyAccountAccess(access)) {
-            return getIbansFromAccess(access);
-        }
-        return Collections.emptySet();
     }
 
     public Set<String> getIbansFromAccountReference(List<AccountReference> references) {

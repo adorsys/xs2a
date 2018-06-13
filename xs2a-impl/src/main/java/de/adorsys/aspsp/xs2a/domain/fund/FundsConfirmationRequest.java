@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.fund;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

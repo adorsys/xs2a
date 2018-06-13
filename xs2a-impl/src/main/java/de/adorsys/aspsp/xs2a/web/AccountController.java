@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;

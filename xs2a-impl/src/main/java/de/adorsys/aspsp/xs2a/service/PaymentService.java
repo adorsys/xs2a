@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;

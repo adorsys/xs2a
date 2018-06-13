@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;

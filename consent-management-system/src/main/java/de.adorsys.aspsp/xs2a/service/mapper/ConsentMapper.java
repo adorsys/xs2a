@@ -16,13 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

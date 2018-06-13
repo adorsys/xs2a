@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
