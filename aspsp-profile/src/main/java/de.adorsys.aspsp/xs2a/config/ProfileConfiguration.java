@@ -16,7 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
+
+import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

@@ -2,6 +2,7 @@ package de.adorsys.aspsp.xs2a.spi.config;
 
 import de.adorsys.aspsp.xs2a.spi.domain.security.BearerToken;
 import de.adorsys.aspsp.xs2a.spi.rest.BearerTokenInterceptor;
+import de.adorsys.aspsp.xs2a.spi.rest.exception.AspspProfileRestTemplateErrorHandler;
 import de.adorsys.aspsp.xs2a.spi.rest.exception.RestTemplateErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,16 @@ public class RestClientConfig {
         rest.getMessageConverters().add(new StringHttpMessageConverter());
         rest.getInterceptors().add(new BearerTokenInterceptor(bearerToken.getToken()));
         rest.setErrorHandler(new RestTemplateErrorHandler());
+        return rest;
+    }
+
+    @Bean
+    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public RestTemplate aspspProfileRestTemplate(){
+        RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
+        rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rest.getMessageConverters().add(new StringHttpMessageConverter());
+        rest.setErrorHandler(new AspspProfileRestTemplateErrorHandler());
         return rest;
     }
 

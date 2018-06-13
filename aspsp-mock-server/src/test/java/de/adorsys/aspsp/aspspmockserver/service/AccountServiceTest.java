@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
@@ -207,7 +207,7 @@ public class AccountServiceTest {
     }
 
     private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", getAccounts());
+        return new Psu("12345678910", "test@gmail.com", getAccounts());
     }
 
     private List<SpiAccountDetails> getAccounts() {

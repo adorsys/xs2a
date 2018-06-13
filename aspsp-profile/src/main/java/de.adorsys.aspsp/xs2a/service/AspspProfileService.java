@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

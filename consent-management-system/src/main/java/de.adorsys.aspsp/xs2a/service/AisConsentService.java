@@ -51,7 +51,7 @@ public class AisConsentService {
 
     @Transactional
     public Optional<String> createConsent(AisConsentRequest request) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        int minFrequencyPerDay = 0; // TODO  minFrequencyPerDay will get in task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/134
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);

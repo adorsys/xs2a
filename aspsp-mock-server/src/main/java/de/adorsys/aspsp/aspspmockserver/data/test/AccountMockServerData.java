@@ -19,7 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.data.test;
 import de.adorsys.aspsp.aspspmockserver.repository.ConsentRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
@@ -136,9 +136,9 @@ public class AccountMockServerData {
 
     private List<Psu> fillPsu() {
         return Arrays.asList(
-            psuRepository.save(new Psu("PSU_001", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)))),
-            psuRepository.save(new Psu("PSU_002", Arrays.asList(accountDetails.get(3), accountDetails.get(4)))),
-            psuRepository.save(new Psu("PSU_003", Arrays.asList(accountDetails.get(5), accountDetails.get(6)))));
+            psuRepository.save(new Psu("PSU_001", "test1@gmail.com", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)))),
+            psuRepository.save(new Psu("PSU_002", "test2@gmail.com",  Arrays.asList(accountDetails.get(3), accountDetails.get(4)))),
+            psuRepository.save(new Psu("PSU_003", "test3@gmail.com",  Arrays.asList(accountDetails.get(5), accountDetails.get(6)))));
     }
 
     private List<SpiAccountDetails> fillAccounts() {
