@@ -37,7 +37,7 @@ public class TppRoleValidationService {
 	private final static String API_BASE_PATH = "/api/v1";
 
 	@PostConstruct
-	private void init() {
+	 void init() {
 		patternRoleMap = new HashMap<>();
 		patternRoleMap.put(API_BASE_PATH + "/accounts/**", TppRole.AISP);
 		patternRoleMap.put(API_BASE_PATH + "/consents/**", TppRole.AISP);
