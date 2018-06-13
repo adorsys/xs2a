@@ -40,21 +40,21 @@ public class CertificateExtractorUtil {
 			    if (name.getTagNo() == GeneralName.otherName) {
 			        ASN1Sequence seq = ASN1Sequence.getInstance(name.getName());
 			        ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)seq.getObjectAt(0);
-			        if ("1.2.3.1".equals(oid.getId())) {
+			        if ("1.2.3.1".equals(oid.getId())) { //NOPMD this is an OID of psd2 attribute
 			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 			            int number = value.getValue().intValue();
 			            if(number == 1) {
 			            	roles = ArrayUtils.add(roles, "AISP");
 			            }
 			        }
-			        if ("1.2.3.2".equals(oid.getId())) {
+			        if ("1.2.3.2".equals(oid.getId())) {//NOPMD this is an OID of psd2 attribute
 			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 			            int number = value.getValue().intValue();
 			            if(number == 1) {
 			            	roles = ArrayUtils.add(roles, "PISP");
 			            }
 			        }
-			        if ("1.2.3.3".equals(oid.getId())) {
+			        if ("1.2.3.3".equals(oid.getId())) {//NOPMD this is an OID of psd2 attribute
 			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 			            int number = value.getValue().intValue();
 			            if(number == 1) {
