@@ -18,6 +18,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
@@ -25,14 +26,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <artifactId>aspsp-profile</artifactId>
+    <version>1.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>aspsp-profile</name>
+    <description>Aspsp profile service for XS2A and ASPSP </description>
+
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
-
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>aspsp-profile</artifactId>
-
 
     <dependencies>
         <dependency>

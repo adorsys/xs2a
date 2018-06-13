@@ -31,6 +31,7 @@
         <module>psd2-validator</module>
         <module>consent-management-system</module>
         <module>consent-api</module>
+        <module>aspsp-profile</module>
     </modules>
     <packaging>pom</packaging>
 
