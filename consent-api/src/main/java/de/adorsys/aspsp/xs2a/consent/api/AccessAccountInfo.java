@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.consent.api;
 
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

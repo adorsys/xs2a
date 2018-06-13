@@ -29,7 +29,7 @@
     <artifactId>consent-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>spi-api</name>
+    <name>consent-api</name>
     <description>Consent API</description>
 
     <properties>
