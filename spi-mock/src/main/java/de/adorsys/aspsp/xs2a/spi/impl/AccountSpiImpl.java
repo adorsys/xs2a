@@ -69,7 +69,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public List<SpiTransaction> readTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
         List<SpiTransaction> transactionsByPeriod = getTransactionsByPeriod(iban, currency, dateFrom, dateTo, bookingStatus);
-        return !CollectionUtils.isNotEmpty(transactionsByPeriod)
+        return CollectionUtils.isNotEmpty(transactionsByPeriod)
                    ? transactionsByPeriod
                    : Collections.emptyList();
     }

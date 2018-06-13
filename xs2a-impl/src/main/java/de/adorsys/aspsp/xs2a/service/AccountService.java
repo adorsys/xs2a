@@ -27,7 +27,6 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -57,15 +56,23 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
 
-        List<AccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance
-                                                                                  ? allowedAccountData.getBody().getAccounts()
-                                                                                  : allowedAccountData.getBody().getAccounts());
+        List<AccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
 
         return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                    : ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .body(Collections.singletonMap("accountList", accountDetails)).build();
+    }
+
+    private List<AccountDetails> getAccountDetailsFromReferences(boolean withBalance, AccountAccess accountAccess) {
+        List<AccountReference> references = withBalance
+                                                ? accountAccess.getBalances()
+                                                : accountAccess.getAccounts();
+        List<AccountDetails> details = getAccountDetailsFromReferences(references);
+        return withBalance
+                   ? details
+                   : getAccountDetailsNoBalances(details);
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance, boolean psuInvolved) {
@@ -83,7 +90,7 @@ public class AccountService {
         if (withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
             details = accountDetails;
         } else if (consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts())) {
-            details = getAccountDetailsNoBalances(accountDetails);
+            details = getAccountDetailNoBalances(accountDetails);
         }
 
         return details == null
@@ -125,8 +132,8 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
         AccountReport accountReport = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions())
-                                                          ? getAccountReport(accountDetails, dateFrom, dateTo, transactionId, bookingStatus, allowedAccountData.getBody().getTransactions())
-                                                          : null;
+                                          ? getAccountReport(accountDetails, dateFrom, dateTo, transactionId, bookingStatus, allowedAccountData.getBody().getTransactions())
+                                          : null;
 
         return accountReport == null
                    ? ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
@@ -157,17 +164,23 @@ public class AccountService {
                          .collect(Collectors.mapping(Optional::get, Collectors.toList()));
     }
 
-    private AccountDetails getAccountDetailsNoBalances(AccountDetails details) {
-        return new AccountDetails(details.getId(), details.getIban(), details.getBban(), details.getPan(),
-            details.getMaskedPan(), details.getMsisdn(), details.getCurrency(), details.getName(),
-            details.getAccountType(), details.getCashAccountType(), details.getBic(), null);
+    private List<AccountDetails> getAccountDetailsNoBalances(List<AccountDetails> details) {
+        return details.stream()
+                   .map(this::getAccountDetailNoBalances)
+                   .collect(Collectors.toList());
+    }
+
+    private AccountDetails getAccountDetailNoBalances(AccountDetails detail) {
+        return new AccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
+            detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
+            detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
 
     private AccountReport getAccountReport(AccountDetails details, Date dateFrom, Date dateTo, String transactionId, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
         Date dateToChecked = dateTo == null ? new Date() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
         return StringUtils.isBlank(transactionId)
-                                          ? getAccountReportByPeriod(details, dateFrom, dateToChecked, bookingStatus, allowedAccountData)
-                                          : getAccountReportByTransaction(details, transactionId, allowedAccountData);
+                   ? getAccountReportByPeriod(details, dateFrom, dateToChecked, bookingStatus, allowedAccountData)
+                   : getAccountReportByTransaction(details, transactionId, allowedAccountData);
     }
 
     private AccountReport getAccountReportByPeriod(AccountDetails details, Date dateFrom, Date dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
@@ -183,9 +196,7 @@ public class AccountService {
     private AccountReport getAllowedTransactionsByAccess(AccountReport accountReport, List<AccountReference> allowedAccountData) {
         Transactions[] booked = filterTransactions(accountReport.getBooked(), allowedAccountData);
         Transactions[] pending = filterTransactions(accountReport.getPending(), allowedAccountData);
-        return ArrayUtils.isEmpty(booked) && ArrayUtils.isEmpty(pending)
-                   ? null
-                   : new AccountReport(booked, pending);
+        return new AccountReport(booked, pending);
     }
 
     private Transactions[] filterTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {

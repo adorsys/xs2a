@@ -104,7 +104,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
         if (!EnumSet.of(VALID, RECEIVED).contains(consent.getConsentStatus())
                 || consent.getFrequencyPerDay() < 1
-                || consent.getValidUntil().compareTo(new Date()) >= 0) {
+                || consent.getValidUntil().compareTo(new Date()) <= 0) {
             return ResponseObject.<AccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }

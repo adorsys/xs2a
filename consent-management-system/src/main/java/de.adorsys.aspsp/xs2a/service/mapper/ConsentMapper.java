@@ -30,6 +30,7 @@ import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -74,6 +75,8 @@ public class ConsentMapper {
     }
 
     private Date convertToDate(Instant dateToConvert) {
-        return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
+        return Optional.ofNullable(dateToConvert)
+                   .map(d -> Date.from(d.atZone(ZoneId.systemDefault()).toInstant()))
+                   .orElse(null);
     }
 }
