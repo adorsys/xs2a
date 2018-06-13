@@ -13,6 +13,8 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import de.adorsys.psd2.validator.certificate.CertificateValidatorFactory;
@@ -25,6 +27,8 @@ import no.difi.certvalidator.util.SimpleCertificateBucket;
 @Order(1)
 @WebFilter(urlPatterns ="/api/v1/*")
 public class CertificateFilter implements Filter {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(CertificateFilter.class);
 
 	private SimpleCertificateBucket blockedCertBucket;
 	private SimpleCertificateBucket rootCertBucket;
@@ -55,7 +59,7 @@ public class CertificateFilter implements Filter {
 
 			chain.doFilter(request, response);
 		} catch (CertificateException | CertificateValidationException e) {
-			e.printStackTrace();
+			LOGGER.debug(e.getMessage());
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		}
 	}
