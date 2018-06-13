@@ -35,6 +35,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -88,10 +89,11 @@ public class AccountSpiImpl implements AccountSpi {
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
             }).getBody();
 
-        if (SpiBookingStatus.PENDING.equals(bookingStatus)) {
-            return getFilteredPendingTransactions(spiTransactions);
-        } else if (SpiBookingStatus.BOOKED.equals(bookingStatus)) {
-            return getFilteredBookedTransactions(spiTransactions);
+        Predicate<SpiTransaction> pendingTransactionPredicate = SpiTransaction::isPendingTransaction;
+        if (SpiBookingStatus.PENDING == bookingStatus) {
+            return getFilteredTransactions(spiTransactions, pendingTransactionPredicate);
+        } else if (SpiBookingStatus.BOOKED == bookingStatus) {
+            return getFilteredTransactions(spiTransactions, pendingTransactionPredicate.negate());
         }
         return spiTransactions;
     }
@@ -122,20 +124,9 @@ public class AccountSpiImpl implements AccountSpi {
                    .collect(Collectors.toList());
     }
 
-    private List<SpiTransaction> getFilteredPendingTransactions(List<SpiTransaction> spiTransactions) {
+    private List<SpiTransaction> getFilteredTransactions(List<SpiTransaction> spiTransactions, Predicate<SpiTransaction> predicate) {
         return spiTransactions.parallelStream()
-                   .filter(this::isPendingTransaction)
+                   .filter(predicate)
                    .collect(Collectors.toList());
     }
-
-    private List<SpiTransaction> getFilteredBookedTransactions(List<SpiTransaction> spiTransactions) {
-        return spiTransactions.parallelStream()
-                   .filter(transaction -> !isPendingTransaction(transaction))
-                   .collect(Collectors.toList());
-    }
-
-    private boolean isPendingTransaction(SpiTransaction spiTransaction) {
-        return spiTransaction.getBookingDate() == null;
-    }
-
 }
