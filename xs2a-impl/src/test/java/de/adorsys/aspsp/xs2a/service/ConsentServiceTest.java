@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
@@ -106,7 +107,7 @@ public class ConsentServiceTest {
         doNothing().when(createConsent).revokeConsent(anyString());
     }
 
-    /*@Test//TODO Tests should be completely refactored
+    @Test
     public void createAccountConsentsWithResponse_Success_ByPSU_AllAccounts() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
@@ -120,7 +121,7 @@ public class ConsentServiceTest {
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
-
+/*
     @Test
     public void createAccountConsentsWithResponse_Success_ByPSU_AllPSD2() {
         //Given:

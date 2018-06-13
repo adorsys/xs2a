@@ -89,7 +89,7 @@ public class AccountService {
         AccountDetails details = null;
         if (withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
             details = accountDetails;
-        } else if (consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts())) {
+        } else if (!withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts())) {
             details = getAccountDetailNoBalances(accountDetails);
         }
 
