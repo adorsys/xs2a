@@ -111,4 +111,21 @@ public class AspspProfileService {
     public void updateScaApproach(String scaApproach) {
         profileConfiguration.setScaApproach(scaApproach);
     }
+
+    /**
+     * Read if tpp signature is required or not
+     * @return String
+     */
+    public boolean isTppSignatureRequired() {
+        return profileConfiguration.isTppSignatureRequired();
+    }
+
+    /**
+     * Update if tpp signature is required or not
+     * @param tppSignatureRequired the new value of tppSignatureRequired
+     * @return void
+     */
+    public void updateTppSignatureRequired(boolean tppSignatureRequired) {
+        profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
+    }
 }

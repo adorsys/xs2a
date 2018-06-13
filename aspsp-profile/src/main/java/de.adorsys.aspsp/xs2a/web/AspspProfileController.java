@@ -78,4 +78,13 @@ public class AspspProfileController {
     public ResponseEntity<String> getScaApproach() {
         return new ResponseEntity<>(aspspProfileService.getScaApproach(), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/tpp-signature-required")
+    @ApiOperation(value = "Reads signature of the request by the TPP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Boolean> getTppSignatureRequired() {
+        return new ResponseEntity<>(aspspProfileService.isTppSignatureRequired(), HttpStatus.OK);
+    }
 }

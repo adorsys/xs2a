@@ -9,3 +9,4 @@ setting:
  - periodic
  - delayed
  scaApproach: redirect
+ tppSignatureRequired: false
