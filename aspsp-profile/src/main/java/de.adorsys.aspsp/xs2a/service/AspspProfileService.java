@@ -27,47 +27,88 @@ import java.util.List;
 public class AspspProfileService {
     private final ProfileConfiguration profileConfiguration;
 
+    /**
+     * Read frequency per day
+     * @return int
+     */
     public int getFrequencyPerDay() {
         return profileConfiguration.getFrequencyPerDay();
     }
 
+    /**
+     * Update frequency per day
+     * @param frequencyPerDay the new value of frequencyPerDay
+     * @return void
+     */
     public void updateFrequencyPerDay(int frequencyPerDay) {
         profileConfiguration.setFrequencyPerDay(frequencyPerDay);
     }
 
+    /**
+     * Read combined service indicator
+     * @return boolean
+     */
     public boolean isCombinedServiceIndicator() {
         return profileConfiguration.isCombinedServiceIndicator();
     }
 
+    /**
+     * Update combined service indicator
+     * @param combinedServiceIndicator the new value of combinedServiceIndicator
+     * @return void
+     */
     public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
         profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
     }
 
+    /**
+     * Read List of available payment products
+     * @return List<String>
+     */
     public List<String> getAvailablePaymentProducts() {
         return profileConfiguration.getAvailablePaymentProducts();
     }
 
+    /**
+     * Update available payment types
+     * @param availablePaymentProducts List of payment product values
+     * @return void
+     */
     public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
     }
 
+    /**
+     * Read List of available payment types
+     * @return List<String>
+     */
     public List<String> getAvailablePaymentTypes() {
         return profileConfiguration.getAvailablePaymentTypes();
     }
 
-    public void updateAvailablePaymentTypes(List<String> types) {
-        profileConfiguration.setAvailablePaymentTypes(types);
+    /**
+     * Update available payment availablePaymentTypes
+     * @param availablePaymentTypes List of payment type values
+     * @return void
+     */
+    public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
+        profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
     }
 
+    /**
+     * Read sca approach method
+     * @return String
+     */
     public String getScaApproach() {
         return profileConfiguration.getScaApproach();
     }
 
+    /**
+     * Update sca approach
+     * @param scaApproach the new value of scaApproach
+     * @return void
+     */
     public void updateScaApproach(String scaApproach) {
         profileConfiguration.setScaApproach(scaApproach);
-    }
-
-    public int getMinFrequencyPerDay(int tppFrequency) {
-        return Math.min(Math.abs(tppFrequency), profileConfiguration.getFrequencyPerDay());
     }
 }

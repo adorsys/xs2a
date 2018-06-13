@@ -16,7 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
+
+import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -32,14 +33,33 @@ import java.util.List;
 public class ProfileConfiguration {
     private final boolean isDelayedPaymentTypeAllowedAlways = true;
 
+    /**
+     * This field indicates the requested maximum frequency for an access per day
+     */
     private int frequencyPerDay;
+
+    /**
+     * If "true" indicates that a payment initiation service will be addressed in the same "session"
+     */
     private boolean combinedServiceIndicator;
+
+    /**
+     * List of payment products supported by ASPSP
+     */
     private List<String> availablePaymentProducts;
+
+    /**
+     * List of payment types supported by ASPSP
+     */
     private List<String> availablePaymentTypes;
+
+    /**
+     * SCA Approach supported by ASPSP
+     */
     private String scaApproach;
 
     @PostConstruct
-    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available bu default
+    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default
         String necessaryType = PaymentType.FUTURE_DATED.getValue();
 
         if (!availablePaymentTypes.contains(necessaryType)) {
