@@ -2,8 +2,9 @@ package de.adorsys.psd2.validator.certificate.util;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -16,59 +17,57 @@ import com.nimbusds.jose.util.X509CertUtils;
 
 public class CertificateExtractorUtil {
 
-	
-	public static TppCertData extract(String encodedCert) {
+	public static TppCertData extract(String encodedCert) throws IOException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
-		
-		//NPMD TODO: extract PSD2 attributes inside certificate by their OIDs
-		
-		String [] roles = {};
-		
+
+		List<TppRole> roles = new ArrayList<>();
+
 		TppCertData tppCertData = new TppCertData();
 		tppCertData.setPspName(cert.getSubjectDN().getName());
-		tppCertData.setPspAuthorityCountry("Germany");
-		tppCertData.setPspAuthorityName("ALam");
-		tppCertData.setPspAuthorzationNumber("AUTnum1223");
-		
-		byte[] v = cert.getExtensionValue(Extension.subjectAlternativeName.getId());
+
+		// NPMD TODO: extract PSD2 attributes inside certificate by their correct OIDs
+		//https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/139
+		/*
+		 * tppCertData.setPspAuthorityCountry("Germany");
+		 * tppCertData.setPspAuthorityName("ALam");
+		 * tppCertData.setPspAuthorzationNumber("AUTnum1223");
+		 */
+
+		byte[] extValues = cert.getExtensionValue(Extension.subjectAlternativeName.getId());
 		GeneralNames gn;
-		try {
-			gn = GeneralNames.getInstance(X509ExtensionUtil.fromExtensionValue(v));
-			GeneralName[] names = gn.getNames();
-			for (GeneralName name : names) {
-			    if (name.getTagNo() == GeneralName.otherName) {
-			        ASN1Sequence seq = ASN1Sequence.getInstance(name.getName());
-			        ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)seq.getObjectAt(0);
-			        if ("1.2.3.1".equals(oid.getId())) { //NOPMD this is an OID of psd2 attribute
-			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
-			            int number = value.getValue().intValue();
-			            if(number == 1) {
-			            	roles = ArrayUtils.add(roles, "AISP");
-			            }
-			        }
-			        if ("1.2.3.2".equals(oid.getId())) {//NOPMD this is an OID of psd2 attribute
-			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
-			            int number = value.getValue().intValue();
-			            if(number == 1) {
-			            	roles = ArrayUtils.add(roles, "PISP");
-			            }
-			        }
-			        if ("1.2.3.3".equals(oid.getId())) {//NOPMD this is an OID of psd2 attribute
-			            ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
-			            int number = value.getValue().intValue();
-			            if(number == 1) {
-			            	roles = ArrayUtils.add(roles, "PIISP");
-			            }
-			        }
-			    }
+		gn = GeneralNames.getInstance(X509ExtensionUtil.fromExtensionValue(extValues));
+		GeneralName[] names = gn.getNames();
+		for (GeneralName name : names) {
+			if (name.getTagNo() == GeneralName.otherName) {
+				ASN1Sequence seq = ASN1Sequence.getInstance(name.getName());
+				ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) seq.getObjectAt(0);
+				if (TppCertOID.PSP_ROLE_AISP_OID.equals(oid.getId())) {
+					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
+					int number = value.getValue().intValue();
+					if (number == 1) {
+						roles.add(TppRole.AISP);
+					}
+				}
+				if (TppCertOID.PSP_ROLE_PISP_OID.equals(oid.getId())) {
+					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
+					int number = value.getValue().intValue();
+					if (number == 1) {
+						roles.add(TppRole.PISP);
+					}
+				}
+				if (TppCertOID.PSP_ROLE_PIISP_OID.equals(oid.getId())) {
+					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
+					int number = value.getValue().intValue();
+					if (number == 1) {
+						roles.add(TppRole.PIISP);
+					}
+				}
 			}
-			tppCertData.setPspRoles(roles);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		
+
+		tppCertData.setPspRoles(roles);
+
 		return tppCertData;
 
 	}

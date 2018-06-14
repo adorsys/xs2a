@@ -1,5 +1,7 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import de.adorsys.aspsp.xs2a.domain.TppRole;
+import de.adorsys.psd2.validator.certificate.util.TppRole;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

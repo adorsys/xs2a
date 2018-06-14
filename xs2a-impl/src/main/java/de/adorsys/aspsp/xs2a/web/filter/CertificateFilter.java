@@ -13,22 +13,20 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import de.adorsys.psd2.validator.certificate.CertificateValidatorFactory;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import de.adorsys.psd2.validator.certificate.util.TppCertData;
+import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
 
+@Slf4j
 @Order(1)
-@WebFilter(urlPatterns ="/api/v1/*")
+@WebFilter(urlPatterns = "/api/v1/*")
 public class CertificateFilter implements Filter {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CertificateFilter.class);
 
 	private SimpleCertificateBucket blockedCertBucket;
 	private SimpleCertificateBucket rootCertBucket;
@@ -46,6 +44,10 @@ public class CertificateFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
+		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+		}
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String encodedTppCert = httpRequest.getHeader("tpp-certificate");
 
@@ -59,7 +61,7 @@ public class CertificateFilter implements Filter {
 
 			chain.doFilter(request, response);
 		} catch (CertificateException | CertificateValidationException e) {
-			LOGGER.debug(e.getMessage());
+			log.debug(e.getMessage());
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		}
 	}

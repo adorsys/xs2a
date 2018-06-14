@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
-
+import lombok.extern.slf4j.Slf4j;
+//NOPMD TODO implement http signature filter, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/141
 //@WebFilter(urlPatterns ="/api/v1/*")
 //@Order(3)
+@Slf4j
 public class SignatureFilter implements Filter {
 
 	@Autowired
@@ -35,6 +37,10 @@ public class SignatureFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+
+		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+		}
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
@@ -56,7 +62,7 @@ public class SignatureFilter implements Filter {
 			chain.doFilter(request, response);
 
 		} catch (NoSuchAlgorithmException | SignatureException e) {
-			e.printStackTrace();
+			log.debug(e.getMessage());
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		}
 

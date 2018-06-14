@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -27,17 +29,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Service;
 
-import de.adorsys.aspsp.xs2a.domain.TppRole;
+import de.adorsys.psd2.validator.certificate.util.TppRole;
 
 @Service
 public class TppRoleValidationService {
 
 	private Map<String, TppRole> patternRoleMap;
 	private List<AntPathRequestMatcher> matchers;
+	// NOPMD TODO API_BASE_PATH should not be define here,
+	// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/140
 	private final static String API_BASE_PATH = "/api/v1";
 
 	@PostConstruct
-	 void init() {
+	void initCertificatePathMatchers() {
 		patternRoleMap = new HashMap<>();
 		patternRoleMap.put(API_BASE_PATH + "/accounts/**", TppRole.AISP);
 		patternRoleMap.put(API_BASE_PATH + "/consents/**", TppRole.AISP);
@@ -46,26 +50,29 @@ public class TppRoleValidationService {
 		patternRoleMap.put(API_BASE_PATH + "/payments/**", TppRole.PISP);
 		patternRoleMap.put(API_BASE_PATH + "/periodic-payments/**", TppRole.PISP);
 
-		regexMatchers(patternRoleMap.keySet().toArray(new String[patternRoleMap.keySet().size()]));
+		regexMatchers(patternRoleMap.keySet());
 	}
 
-	private void regexMatchers(String... regexPatterns) {
+	private void regexMatchers(Set<String> regexPatterns) {
 		matchers = new ArrayList<AntPathRequestMatcher>();
 		for (String pattern : regexPatterns) {
 			matchers.add(new AntPathRequestMatcher(pattern));
 		}
 	}
 
+	/**
+	 * Check and validate if a request with tpp roles is allow to pass
+	 * 
+	 * @param request
+	 * @param roles
+	 * @return true or false
+	 */
 	public boolean validate(HttpServletRequest request, List<TppRole> roles) {
 
 		for (AntPathRequestMatcher matcher : matchers) {
 			if (matcher.matches(request)) {
 				TppRole tppRole = patternRoleMap.get(matcher.getPattern());
-				if (roles != null && roles.contains(tppRole)) {
-					return true;
-				} else {
-					return false;
-				}
+				return Optional.ofNullable(roles).map(r -> r.contains(tppRole)).orElse(false);
 			}
 		}
 		return true;

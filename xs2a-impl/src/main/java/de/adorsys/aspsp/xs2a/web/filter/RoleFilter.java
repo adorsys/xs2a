@@ -1,8 +1,6 @@
 package de.adorsys.aspsp.xs2a.web.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,11 +15,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
-import de.adorsys.aspsp.xs2a.domain.TppRole;
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
 import de.adorsys.psd2.validator.certificate.util.TppCertData;
+import lombok.extern.slf4j.Slf4j;
 
-@WebFilter(urlPatterns ="/api/v1/*")
+@Slf4j
+@WebFilter(urlPatterns = "/api/v1/*")
 @Order(2)
 public class RoleFilter implements Filter {
 
@@ -36,20 +35,19 @@ public class RoleFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
+		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+		}
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
 		TppCertData tppCertData = (TppCertData) request.getAttribute("tppCertData");
 
-		String[] pspRoles = tppCertData.getPspRoles();
-		List<TppRole> roles = new ArrayList<>();
-
-		for (String role : pspRoles) {
-			roles.add(TppRole.valueOf(role));
-		}
-
-		if (tppRoleValidationService.validate(httpRequest, roles)) {
+		if (tppRoleValidationService.validate(httpRequest, tppCertData.getPspRoles())) {
 			chain.doFilter(request, response);
 		} else {
+			//NOPMD TODO define conform error msg, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
+			log.debug("TPP doesn't have conform role to access this service");
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"TPP doesn't have conform role to access this service");
 		}
