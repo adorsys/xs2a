@@ -17,11 +17,15 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.aspsp.xs2a.config.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.spi.service.AspspProfileSpi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,10 +36,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {
-    private final AspspProfileSpi aspspProfileSpi;
+    @Qualifier("aspspProfileRestTemplate")
+    private final RestTemplate aspspProfileRestTemplate;
+    private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
     public List<PaymentProduct> getAvailablePaymentProducts() {
-        return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentProducts())
+        return Optional.ofNullable(readAvailablePaymentProducts())
                    .map(list -> list.stream()
                                     .map(PaymentProduct::getByCode)
                                     .filter(Optional::isPresent)
@@ -45,7 +51,7 @@ public class AspspProfileService {
     }
 
     public List<PaymentType> getAvailablePaymentTypes() {
-        return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentTypes())
+        return Optional.ofNullable(readAvailablePaymentTypes())
                    .map(list -> list.stream()
                                     .map(PaymentType::getByValue)
                                     .filter(Optional::isPresent)
@@ -54,8 +60,17 @@ public class AspspProfileService {
                    .orElse(Collections.emptyList());
     }
 
-    public Integer getFrequencyPerDay() {
-        return Optional.ofNullable(aspspProfileSpi.getFrequencyPerDay())
-                   .orElse(0);
+    private List<String> readAvailablePaymentProducts() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+            }).getBody();
     }
+
+
+    private List<String> readAvailablePaymentTypes() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+            }).getBody();
+    }
+
 }

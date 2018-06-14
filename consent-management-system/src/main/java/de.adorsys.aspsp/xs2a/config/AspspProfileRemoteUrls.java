@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.service;
+package de.adorsys.aspsp.xs2a.config;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-public interface AspspProfileSpi {
+@Component
+public class AspspProfileRemoteUrls {
 
-    List<String> getAvailablePaymentProducts();
+    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    private String aspspProfileBaseUrl;
 
-    List<String> getAvailablePaymentTypes();
-
-    Integer getFrequencyPerDay();
+    /**
+     * @return Integer
+     * @Method GET
+     * @PathVariable non
+     */
+    public String getFrequencyPerDay() {
+        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
+    }
 }
