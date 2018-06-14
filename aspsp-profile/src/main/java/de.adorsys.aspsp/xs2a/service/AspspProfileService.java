@@ -38,7 +38,6 @@ public class AspspProfileService {
     /**
      * Update frequency per day
      * @param frequencyPerDay the new value of frequencyPerDay
-     * @return void
      */
     public void updateFrequencyPerDay(int frequencyPerDay) {
         profileConfiguration.setFrequencyPerDay(frequencyPerDay);
@@ -55,7 +54,6 @@ public class AspspProfileService {
     /**
      * Update combined service indicator
      * @param combinedServiceIndicator the new value of combinedServiceIndicator
-     * @return void
      */
     public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
         profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
@@ -72,7 +70,6 @@ public class AspspProfileService {
     /**
      * Update available payment types
      * @param availablePaymentProducts List of payment product values
-     * @return void
      */
     public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
@@ -89,7 +86,6 @@ public class AspspProfileService {
     /**
      * Update available payment availablePaymentTypes
      * @param availablePaymentTypes List of payment type values
-     * @return void
      */
     public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
         profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
@@ -106,9 +102,24 @@ public class AspspProfileService {
     /**
      * Update sca approach
      * @param scaApproach the new value of scaApproach
-     * @return void
      */
     public void updateScaApproach(String scaApproach) {
         profileConfiguration.setScaApproach(scaApproach);
+    }
+
+    /**
+     * Read if tpp signature is required or not
+     * @return boolean
+     */
+    public boolean isTppSignatureRequired() {
+        return profileConfiguration.isTppSignatureRequired();
+    }
+
+    /**
+     * Update if tpp signature is required or not
+     * @param tppSignatureRequired the new value of tppSignatureRequired
+     */
+    public void updateTppSignatureRequired(boolean tppSignatureRequired) {
+        profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
     }
 }
