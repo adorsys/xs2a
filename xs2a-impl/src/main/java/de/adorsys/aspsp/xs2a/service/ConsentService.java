@@ -58,7 +58,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             }
             checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
             checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
-            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay()); //TODO Check This with special microservice byRoman
+            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
             checkedRequest.setValidUntil(request.getValidUntil());
 
         }
