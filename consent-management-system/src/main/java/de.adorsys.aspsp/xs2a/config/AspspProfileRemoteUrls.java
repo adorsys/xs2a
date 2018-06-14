@@ -26,9 +26,9 @@ public class AspspProfileRemoteUrls {
     private String aspspProfileBaseUrl;
 
     /**
-     * @return Integer
-     * @Method GET
-     * @PathVariable non
+     * Returns URL-string in order to get frequency per day
+     *
+     * @return String
      */
     public String getFrequencyPerDay() {
         return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
