@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.account;
 
+import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.TypeAccess;
 import lombok.Getter;
 import lombok.Value;
 
@@ -27,7 +27,7 @@ import java.util.*;
 @Value
 @Getter
 public class AccountHolder {
-    private Map<String, AccessInfo> ibansAccess = new HashMap<>();
+    private Map<String, Set<AccountAccess>> accountAccesses = new HashMap<>();
 
     public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
         info = Optional.ofNullable(info).orElse(Collections.emptyList());
@@ -40,45 +40,11 @@ public class AccountHolder {
                    .orElse(null);
     }
 
-    public void addAccountAccess(String iban, Currency currency, Set<TypeAccess> accesses) {
-        buildInfoDetail(iban)
-            .addAccess(currency, accesses);
-    }
-
-    public void addAccountAccess(String iban, Currency currency, TypeAccess access) {
-        buildInfoDetail(iban)
-            .addAccess(currency, access);
-    }
-
-    // TODO: putIfAbsent(iban, value); https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/122
-    private AccessInfo buildInfoDetail(String iban) {
-        AccessInfo detail = ibansAccess.get(iban);
-        if (detail == null) {
-            detail = new AccessInfo();
-            ibansAccess.put(iban, detail);
-        }
-        return detail;
-    }
-
-    @Value
-    @Getter
-    public class AccessInfo {
-        private Set<AccountAccess> accesses = new HashSet<>();
-
-        private void addAccess(Currency currency, Set<TypeAccess> typeAccesses) {
-            typeAccesses.forEach(t -> addAccess(currency, t));
-        }
-
-        private void addAccess(Currency currency, TypeAccess typeAccess) {
-            accesses.add(new AccountAccess(currency, typeAccess));
-            if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
-                accesses.add(new AccountAccess(currency, TypeAccess.ACCOUNT));
-            }
-        }
-
-        public void updateAccess(Set<AccountAccess> newAccesses) {
-            accesses.clear();
-            accesses.addAll(newAccesses);
+    private void addAccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
+        accountAccesses.putIfAbsent(iban, new HashSet<>());
+        accountAccesses.get(iban).add(new AccountAccess(currency, typeAccess));
+        if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
+            accountAccesses.get(iban).add(new AccountAccess(currency, TypeAccess.ACCOUNT));
         }
     }
 }

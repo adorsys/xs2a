@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
@@ -26,6 +25,7 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImp
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
@@ -41,7 +41,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Log4j
 @Service
@@ -155,20 +154,20 @@ public class RequestValidatorService {
         return Optional.ofNullable(paymentProduct)
                    .flatMap(PaymentProduct::getByCode)
                    .map(this::getViolationMapForPaymentProduct)
-                   .orElse(Collections.singletonMap(MessageCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
+                   .orElse(Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }
 
     private Map<String, String> getViolationMapForPaymentProduct(PaymentProduct paymentProduct) {
         return isPaymentProductAvailable(paymentProduct)
                    ? Collections.emptyMap()
-                   : Collections.singletonMap(MessageCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getCode());
+                   : Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct.getCode());
     }
 
 
     private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {
         return isPaymentTypeAvailable(paymentType)
                    ? Collections.emptyMap()
-                   : Collections.singletonMap(MessageCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
+                   : Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
     }
 
     private boolean isPaymentProductAvailable(PaymentProduct paymentProduct) {

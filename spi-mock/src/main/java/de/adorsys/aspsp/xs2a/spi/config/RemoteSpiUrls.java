@@ -27,106 +27,65 @@ public class RemoteSpiUrls {
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
-    //Consents urls
-    /**
-     * @return VOID
-     * @Method PUT
-     * @PathVariables: String consentId, SpiConsentStatus consentStatus
-     */
-    public String updateAisConsentStatus() {
-        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
-    }
-
-    /**
-     * @return String consentId
-     * @Method POST
-     * @Body AisConsentRequest request
-     */
-    public String createAisConsent() {
-        return consentServiceBaseUrl + "/ais/consent/";
-    }
-
-    /**
-     * @return SpiConsentStatus status
-     * @Method GET
-     * @PathVariable String consentId
-     */
-    public String getAisConsentStatusById() {
-        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
-    }
-
-    /**
-     * @return SpiAccountConsent consent
-     * @Method GET
-     * @PathVariable String consentId
-     */
-    public String getAisConsentById() {
-        return consentServiceBaseUrl + "/ais/consent/{consent-id}";
-    }
-
     // PIS Consents
     /**
-     * @return String pis consentId
-     * @Method POST
-     * @Body PisConsentRequest request
+     * Returns URL-string to CMS endpoint that creates pis consent
+     *
+     * @return String
      */
     public String createPisConsent() {
         return consentServiceBaseUrl + "/pis/consent/";
     }
 
     /**
-     * @return String pis consentId
-     * @Method POST
-     * @Body PisConsentBulkPaymentRequest request
+     * Returns URL-string to CMS endpoint that creates pis consent for bulk payment
+     *
+     * @return String
      */
     public String createPisBulkPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/bulk";
     }
 
     /**
-     * @return String pis consentId
-     * @Method POST
-     * @Body PisConsentPeriodicPaymentRequest request
+     * Returns URL-string to CMS endpoint that creates pis consent for periodic payment
+     *
+     * @return String
      */
     public String createPisPeriodicPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/periodic";
     }
 
     /**
-     * @return Void
-     * @Method GET
-     * @PathVariable String consentId and status
+     * Returns URL-string to CMS endpoint that updates pis consent status
+     *
+     * @return String
      */
     public String updatePisConsentStatus() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
     }
 
     /**
-     * @return SpiConsentStatus
-     * @Method GET
-     * @PathVariable String consentId
+     * Returns URL-string to CMS endpoint that gets pis consent status by ID
+     *
+     * @return String
      */
     public String getPisConsentStatusById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
     }
 
     /**
-     * @return PisConsentResponse
-     * @Method GET
-     * @PathVariable String consentId
+     * Returns URL-string to CMS endpoint that gets pis consent by ID
+     *
+     * @return String
      */
     public String getPisConsentById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}";
     }
 
-    public String getConsentByAccess() {
-        return spiMockBaseUrl + "/consent/byAccess/{access}";
-    }
-
     /**
-     * @return Map<String, Set<AccessAccountInfo>> accesses validated
-     * @Method POST
-     * @Body AvailableAccessRequest
+     * Returns URL-string to CMS endpoint that checks access by consent Id
+     *
+     * @return String
      */
     public String checkAccessByConsentId() {
         return consentServiceBaseUrl + "/ais/consent/available/access";

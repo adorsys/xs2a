@@ -43,4 +43,7 @@ public class SpiTransaction {
     private final String purposeCode;
     private final String bankTransactionCodeCode;
 
+    public boolean isPendingTransaction() {
+        return bookingDate == null;
+    }
 }

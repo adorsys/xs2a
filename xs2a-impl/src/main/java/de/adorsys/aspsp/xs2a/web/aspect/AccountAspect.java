@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;

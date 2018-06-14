@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class AccessAccountInfo {
-    private String currency;
-    private TypeAccess typeAccess;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class AisAccountAccessInfo {
+    private List<AccountInfo> accounts;
+    private List<AccountInfo> balances;
+    private List<AccountInfo> transactions;
+    private String availableAccounts;
+    private String allPsd2;
 }

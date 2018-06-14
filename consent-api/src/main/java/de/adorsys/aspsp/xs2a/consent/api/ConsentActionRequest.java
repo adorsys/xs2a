@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.service;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public interface AspspProfileSpi {
+import java.util.Set;
 
-    List<String> getAvailablePaymentProducts();
-
-    List<String> getAvailablePaymentTypes();
-
-    Integer getFrequencyPerDay();
+@Data
+@AllArgsConstructor
+public class ConsentActionRequest {
+    private String accountId;
+    private String tppId;
+    private String consentId;
+    private ActionStatus actionStatus;
+    private Set<TypeAccess> typeAccess;
 }

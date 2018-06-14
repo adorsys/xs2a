@@ -16,10 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
@@ -41,4 +43,13 @@ public class AccountAccess {
 
     @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
     private AccountAccessType allPsd2;
+
+    @JsonIgnore
+    public boolean isNotEmpty(){
+       return  !(CollectionUtils.isEmpty(accounts)
+              && CollectionUtils.isEmpty(balances)
+              && CollectionUtils.isEmpty(transactions)
+              && allPsd2 == null
+              && availableAccounts == null);
+    }
 }

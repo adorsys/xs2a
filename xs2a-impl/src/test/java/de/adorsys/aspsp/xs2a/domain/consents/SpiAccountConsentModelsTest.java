@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.consents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;

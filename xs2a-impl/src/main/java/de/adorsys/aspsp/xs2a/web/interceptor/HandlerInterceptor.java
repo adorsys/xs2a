@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
 @Component
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
@@ -55,7 +55,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         if (violationsMap.isEmpty()) {
             return true;
         } else {
-            MessageCode errorCode = getActualMessageCode(violationsMap.keySet());
+            MessageErrorCode errorCode = getActualMessageCode(violationsMap.keySet());
 
             List<String> violations = violationsMap.entrySet().stream()
                                                 .map(entry -> entry.getKey() + " : " + entry.getValue())
@@ -67,8 +67,8 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private MessageCode getActualMessageCode(Set<String> errors) {
-        List<MessageCode> actualMessages = Arrays.stream(MessageCode.values())
+    private MessageErrorCode getActualMessageCode(Set<String> errors) {
+        List<MessageErrorCode> actualMessages = Arrays.stream(MessageErrorCode.values())
                                                .filter(mess -> errors.contains(mess.getName()))
                                                .collect(Collectors.toList());
 

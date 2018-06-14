@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.CashAccountType;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

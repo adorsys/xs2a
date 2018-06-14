@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-public enum  ConsentStatus {
+public enum ConsentStatus {
     RECEIVED,
     REJECTED,
     VALID,

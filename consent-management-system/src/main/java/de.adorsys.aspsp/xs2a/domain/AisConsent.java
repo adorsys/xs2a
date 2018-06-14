@@ -27,6 +27,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.EXPIRED;
+
 @Data
 @ToString(exclude = "accounts")
 @Entity(name = "ais_consent")
@@ -56,6 +58,10 @@ public class AisConsent {
     @Column(name = "request_date", nullable = false)
     @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
     private Instant requestDate;
+
+    @Column(name = "last_action_date")
+    @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
+    private Instant lastActionDate;
 
     @Column(name = "expire_date", nullable = false)
     @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
@@ -99,13 +105,21 @@ public class AisConsent {
         accounts.forEach(this::addAccount);
     }
 
+    public boolean isExpiredByDate() {
+        return Instant.now()
+                   .isAfter(expireDate);
+    }
+
+    public boolean isStatusNotExpired(){
+        return consentStatus != EXPIRED;
+    }
+
+    public boolean isHasAvailableUseges(){
+        return usageCounter > 0;
+    }
+
     private void addAccount(AisAccount account) {
         this.accounts.add(account);
         account.setConsent(this);
-    }
-
-    public boolean isExpired() {
-        return Instant.now()
-                   .isAfter(expireDate);
     }
 }
