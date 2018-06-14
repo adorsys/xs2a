@@ -15,11 +15,10 @@
  */
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.spi.rest.exception.AspspProfileRestTemplateErrorHandler;
+import de.adorsys.aspsp.xs2a.exception.AspspProfileRestTemplateErrorHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;

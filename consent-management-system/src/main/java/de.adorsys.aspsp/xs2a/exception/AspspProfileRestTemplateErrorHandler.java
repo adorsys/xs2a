@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.rest.exception;
+package de.adorsys.aspsp.xs2a.exception;
 
+import de.adorsys.aspsp.xs2a.spi.rest.exception.RestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
