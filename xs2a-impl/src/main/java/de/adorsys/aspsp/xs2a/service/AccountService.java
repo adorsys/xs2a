@@ -188,12 +188,12 @@ public class AccountService {
     }
 
     private AccountReport getAccountReportByPeriod(AccountDetails details, Date dateFrom, Date dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
-        validate_accountId_period(details.getIban(), dateFrom, dateTo);
+        validateAccountIdPeriod(details.getIban(), dateFrom, dateTo);
         return getAllowedTransactionsByAccess(readTransactionsByPeriod(details, dateFrom, dateTo, bookingStatus), allowedAccountData);
     }
 
     private AccountReport getAccountReportByTransaction(AccountDetails details, String transactionId, List<AccountReference> allowedAccountData) {
-        validate_accountId_transactionId(details.getIban(), transactionId);
+        validateAccountIdTransactionId(details.getIban(), transactionId);
         return readTransactionsById(transactionId, allowedAccountData);
     }
 
@@ -201,17 +201,17 @@ public class AccountService {
         if (accountReport == null) {
             return null;
         }
-        Transactions[] booked = filterTransactions(accountReport.getBooked(), allowedAccountData)
+        Transactions[] booked = isAllowedTransactions(accountReport.getBooked(), allowedAccountData)
                                     ? accountReport.getBooked()
                                     : new Transactions[]{};
 
-        Transactions[] pending = filterTransactions(accountReport.getPending(), allowedAccountData)
+        Transactions[] pending = isAllowedTransactions(accountReport.getPending(), allowedAccountData)
                                      ? accountReport.getPending()
                                      : new Transactions[]{};
         return new AccountReport(booked, pending);
     }
 
-    private boolean filterTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
+    private boolean isAllowedTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
         return Arrays.stream(transactions)
                    .allMatch(t -> isAllowedTransaction(t, allowedAccountData));
     }
@@ -241,24 +241,6 @@ public class AccountService {
                    .isPresent();
     }
 
-    // Validation
-    private void validate_accountId_period(String accountId, Date dateFrom, Date dateTo) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setDateFrom(dateFrom);
-        fieldValidator.setDateTo(dateTo);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
-    }
-
-    private void validate_accountId_transactionId(String accountId, String transactionId) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setTransactionId(transactionId);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
-    }
-
     private Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
@@ -267,5 +249,23 @@ public class AccountService {
                                            .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
                                            .findFirst())
                    .map(accountMapper::mapToAccountDetails);
+    }
+
+    // Validation
+    private void validateAccountIdPeriod(String accountId, Date dateFrom, Date dateTo) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setDateFrom(dateFrom);
+        fieldValidator.setDateTo(dateTo);
+
+        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
+    }
+
+    private void validateAccountIdTransactionId(String accountId, String transactionId) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setTransactionId(transactionId);
+
+        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
     }
 }
