@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,16 +67,6 @@ public class AccountService {
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                    : ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .body(Collections.singletonMap("accountList", accountDetails)).build();
-    }
-
-    private List<AccountDetails> getAccountDetailsFromReferences(boolean withBalance, AccountAccess accountAccess) {
-        List<AccountReference> references = withBalance
-                                                ? accountAccess.getBalances()
-                                                : accountAccess.getAccounts();
-        List<AccountDetails> details = getAccountDetailsFromReferences(references);
-        return withBalance
-                   ? details
-                   : getAccountDetailsNoBalances(details);
     }
 
     public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance, boolean psuInvolved) {
@@ -158,6 +149,16 @@ public class AccountService {
         return getAccountDetailsByAccountReference(reference).isPresent();
     }
 
+    private List<AccountDetails> getAccountDetailsFromReferences(boolean withBalance, AccountAccess accountAccess) {
+        List<AccountReference> references = withBalance
+                                                ? accountAccess.getBalances()
+                                                : accountAccess.getAccounts();
+        List<AccountDetails> details = getAccountDetailsFromReferences(references);
+        return withBalance
+                   ? details
+                   : getAccountDetailsNoBalances(details);
+    }
+
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
         return CollectionUtils.isEmpty(references)
                    ? Collections.emptyList()
@@ -187,27 +188,28 @@ public class AccountService {
     }
 
     private AccountReport getAccountReportByPeriod(AccountDetails details, Date dateFrom, Date dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
-        validate_accountId_period(details.getIban(), dateFrom, dateTo);
+        validateAccountIdPeriod(details.getIban(), dateFrom, dateTo);
         return getAllowedTransactionsByAccess(readTransactionsByPeriod(details, dateFrom, dateTo, bookingStatus), allowedAccountData);
     }
 
     private AccountReport getAccountReportByTransaction(AccountDetails details, String transactionId, List<AccountReference> allowedAccountData) {
-        validate_accountId_transactionId(details.getIban(), transactionId);
-        return getAllowedTransactionsByAccess(readTransactionsById(transactionId), allowedAccountData);
+        validateAccountIdTransactionId(details.getIban(), transactionId);
+        return readTransactionsById(transactionId, allowedAccountData);
     }
 
     private AccountReport getAllowedTransactionsByAccess(AccountReport accountReport, List<AccountReference> allowedAccountData) {
-        Transactions[] booked = filterTransactions(accountReport.getBooked(), allowedAccountData);
-        Transactions[] pending = filterTransactions(accountReport.getPending(), allowedAccountData);
+        if (accountReport == null) {
+            return null;
+        }
+        Transactions[] booked = getAllowedTransactions(accountReport.getBooked(), allowedAccountData);
+        Transactions[] pending = getAllowedTransactions(accountReport.getPending(), allowedAccountData);
         return new AccountReport(booked, pending);
     }
 
-    private Transactions[] filterTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
-        return Optional.ofNullable(transactions)
-                   .map(tr -> Arrays.stream(tr)
-                                  .filter(t -> isAllowedTransaction(t, allowedAccountData))
-                                  .toArray(Transactions[]::new))
-                   .orElse(new Transactions[]{});
+    private Transactions[] getAllowedTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
+        return Arrays.stream(transactions).allMatch(t -> isAllowedTransaction(t, allowedAccountData))
+                   ? transactions
+                   : new Transactions[]{};
     }
 
     private boolean isAllowedTransaction(Transactions transaction, List<AccountReference> allowedAccountData) {
@@ -222,30 +224,17 @@ public class AccountService {
         return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
     }
 
-    private AccountReport readTransactionsById(String transactionId) { //NOPMD TODO to be reviewed upon change to v1.1
-        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsById(transactionId));
-
-        return result.orElseGet(() -> new AccountReport(new Transactions[]{},
-            new Transactions[]{}
-        ));
+    private AccountReport readTransactionsById(String transactionId, List<AccountReference> allowedAccountData) {
+        SpiTransaction spiTransaction = accountSpi.readTransactionsById(transactionId);
+        return isAllowedSpiTransaction(spiTransaction, allowedAccountData)
+                   ? accountMapper.mapToAccountReport(Collections.singletonList(spiTransaction)).orElseGet(() -> null)
+                   : null;
     }
 
-    // Validation
-    private void validate_accountId_period(String accountId, Date dateFrom, Date dateTo) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setDateFrom(dateFrom);
-        fieldValidator.setDateTo(dateTo);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
-    }
-
-    private void validate_accountId_transactionId(String accountId, String transactionId) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setTransactionId(transactionId);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
+    private boolean isAllowedSpiTransaction(SpiTransaction spiTransaction, List<AccountReference> allowedAccountData) {
+        return Optional.ofNullable(spiTransaction)
+                   .filter(t -> isAllowedTransaction(accountMapper.mapToTransaction(t), allowedAccountData))
+                   .isPresent();
     }
 
     private Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
@@ -256,5 +245,23 @@ public class AccountService {
                                            .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
                                            .findFirst())
                    .map(accountMapper::mapToAccountDetails);
+    }
+
+    // Validation
+    private void validateAccountIdPeriod(String accountId, Date dateFrom, Date dateTo) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setDateFrom(dateFrom);
+        fieldValidator.setDateTo(dateTo);
+
+        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
+    }
+
+    private void validateAccountIdTransactionId(String accountId, String transactionId) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setTransactionId(transactionId);
+
+        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
     }
 }

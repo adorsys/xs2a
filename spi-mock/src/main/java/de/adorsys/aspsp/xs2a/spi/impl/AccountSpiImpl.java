@@ -95,8 +95,8 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsById(String transactionId) {
-        return Collections.singletonList(restTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId));
+    public SpiTransaction readTransactionsById(String transactionId) {
+        return restTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId);
     }
 
     @Override

@@ -32,7 +32,7 @@ public interface AccountSpi {
 
     List<SpiTransaction> readTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus);
 
-    List<SpiTransaction> readTransactionsById(String transactionId);
+    SpiTransaction readTransactionsById(String transactionId);
 
     String saveTransaction(SpiTransaction transaction);
 

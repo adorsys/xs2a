@@ -137,7 +137,7 @@ public class AccountMapper {
         return Optional.of(new AccountReport(booked, pending));
     }
 
-    private Transactions mapToTransaction(SpiTransaction spiTransaction) {
+    public Transactions mapToTransaction(SpiTransaction spiTransaction) {
         return Optional.ofNullable(spiTransaction)
                    .map(t -> {
                        Transactions transactions = new Transactions();
