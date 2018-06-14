@@ -36,54 +36,42 @@ public class AspspProfileController {
 
     @GetMapping(path = "/frequency-per-day")
     @ApiOperation(value = "Reads frequency per day", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<Integer> getFrequencyPerDay() {
         return new ResponseEntity<>(aspspProfileService.getFrequencyPerDay(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/combined-service-indicator")
     @ApiOperation(value = "Reads combined service indicator value", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<Boolean> getCombinedServiceIndicator() {
         return new ResponseEntity<>(aspspProfileService.isCombinedServiceIndicator(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/available-payment-products")
     @ApiOperation(value = "Reads list of available payment products", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<List<String>> getAvailablePaymentProducts() {
         return new ResponseEntity<>(aspspProfileService.getAvailablePaymentProducts(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/available-payment-types")
     @ApiOperation(value = "Reads list of available payment types ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<List<String>> getAvailablePaymentTypes() {
         return new ResponseEntity<>(aspspProfileService.getAvailablePaymentTypes(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/sca-approach")
     @ApiOperation(value = "Reads sca approach value", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<String> getScaApproach() {
         return new ResponseEntity<>(aspspProfileService.getScaApproach(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/tpp-signature-required")
     @ApiOperation(value = "Reads signature of the request by the TPP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<Boolean> getTppSignatureRequired() {
         return new ResponseEntity<>(aspspProfileService.isTppSignatureRequired(), HttpStatus.OK);
     }

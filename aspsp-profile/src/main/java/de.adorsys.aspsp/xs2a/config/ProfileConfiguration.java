@@ -57,6 +57,7 @@ public class ProfileConfiguration {
      * SCA Approach supported by ASPSP
      */
     private String scaApproach;
+
     /*
      * A signature of the request by the TPP on application level.
      * If the value is `true`, the signature is mandated by ASPSP.
