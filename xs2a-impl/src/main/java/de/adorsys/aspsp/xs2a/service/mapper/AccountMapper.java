@@ -207,28 +207,28 @@ public class AccountMapper {
                    .orElse(Collections.emptyList());
     }
 
-    public List<AccountReference> mapToAccountReferencesFromDetails(List<SpiAccountDetails> details){
+    public List<AccountReference> mapToAccountReferencesFromDetails(List<SpiAccountDetails> details) {
         return Optional.ofNullable(details)
-            .map(det-> det.stream()
-        .map(this::mapToAccountDetails)
-                .map(this::mapToAccountReference)
-                .collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
+                   .map(det -> det.stream()
+                                   .map(this::mapToAccountDetails)
+                                   .map(this::mapToAccountReference)
+                                   .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
     }
 
     private AccountReference mapToAccountReference(AccountDetails details) {
-    return Optional.ofNullable(details)
-        .map(d-> {
-            AccountReference reference = new AccountReference();
-            reference.setIban(d.getIban());
-            reference.setBban(d.getBban());
-            reference.setPan(d.getPan());
-            reference.setMaskedPan(d.getMaskedPan());
-            reference.setMsisdn(d.getMsisdn());
-            reference.setCurrency(d.getCurrency());
-            return reference;
-        })
-        .orElse(null);
+        return Optional.ofNullable(details)
+                   .map(d -> {
+                       AccountReference reference = new AccountReference();
+                       reference.setIban(d.getIban());
+                       reference.setBban(d.getBban());
+                       reference.setPan(d.getPan());
+                       reference.setMaskedPan(d.getMaskedPan());
+                       reference.setMsisdn(d.getMsisdn());
+                       reference.setCurrency(d.getCurrency());
+                       return reference;
+                   })
+                   .orElse(null);
 
     }
 }

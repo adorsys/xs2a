@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -28,7 +28,6 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
@@ -50,19 +48,19 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         String tppId = "This is a test TppId"; //TODO to clarify where it should get from
         CreateConsentReq checkedRequest = new CreateConsentReq();
-        if (isNotEmptyAccountAccess(request.getAccess())) {
+        if (isNotEmptyAccess(request.getAccess())) {
             if (isAllAccountsRequest(request) && psuId != null) {
-                checkedRequest.setAccess(getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS.equals(request.getAccess().getAllPsd2()), psuId));
+                checkedRequest.setAccess(getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS == request.getAccess().getAllPsd2(), psuId));
             } else {
                 checkedRequest.setAccess(getAccessByRequestedAccess(request.getAccess()));
             }
             checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
             checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
-            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay()); //TODO Check This with special microservice byRoman
+            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
             checkedRequest.setValidUntil(request.getValidUntil());
 
         }
-        String consentId = isNotEmptyAccountAccess(checkedRequest.getAccess())
+        String consentId = isNotEmptyAccess(checkedRequest.getAccess())
                                ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
                                : null;
         //TODO v1.1 Add balances support
@@ -100,11 +98,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
         if (consent == null) {
             return ResponseObject.<AccountAccess>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build();
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
         }
-        if (!EnumSet.of(VALID, RECEIVED).contains(consent.getConsentStatus())
-                || consent.getFrequencyPerDay() < 1
-                || consent.getValidUntil().compareTo(new Date()) <= 0) {
+        if (!consent.isValidStatus()) {
+            return ResponseObject.<AccountAccess>builder()
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
+        }
+        if (!consent.isValidFrequency()) {
             return ResponseObject.<AccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
@@ -116,7 +116,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return Optional.ofNullable(allowedAccountData)
                    .map(allowed -> allowed.stream()
                                        .anyMatch(a -> a.getIban().equals(iban)
-                                                          && a.getCurrency().equals(currency)))
+                                                          && a.getCurrency() == currency))
                    .orElse(false);
     }
 
@@ -126,6 +126,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                     .map(AccountReference::getIban)
                                     .collect(Collectors.toSet()))
                    .orElse(Collections.emptySet());
+    }
+
+    private Boolean isNotEmptyAccess(AccountAccess access) {
+        return Optional.ofNullable(access)
+                   .map(AccountAccess::isNotEmpty)
+                   .orElse(false);
     }
 
     private AccountAccess getAccessByRequestedAccess(AccountAccess requestedAccess) {
@@ -169,7 +175,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return referenceMatched.getCurrency() == null
                    ? referenceMatcher.getIban().equals(referenceMatched.getIban())
                    : referenceMatcher.getIban().equals(referenceMatched.getIban())
-                         && referenceMatcher.getCurrency().equals(referenceMatched.getCurrency());
+                         && referenceMatcher.getCurrency() == referenceMatched.getCurrency();
     }
 
     private AccountAccess getAccessByPsuId(boolean isAllPSD2, String psuId) {
@@ -182,8 +188,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private boolean isAllAccountsRequest(CreateConsentReq request) {
         return Optional.ofNullable(request.getAccess())
-                   .filter(a -> AccountAccessType.ALL_ACCOUNTS.equals(a.getAllPsd2())
-                                    || AccountAccessType.ALL_ACCOUNTS.equals(a.getAvailableAccounts())).isPresent();
+                   .filter(a -> AccountAccessType.ALL_ACCOUNTS == a.getAllPsd2()
+                                    || AccountAccessType.ALL_ACCOUNTS == a.getAvailableAccounts()).isPresent();
     }
 
     private Set<String> getIbansFromAccess(AccountAccess access) {
@@ -194,13 +200,5 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         )
                    .flatMap(Collection::stream)
                    .collect(Collectors.toSet());
-    }
-
-    private boolean isNotEmptyAccountAccess(AccountAccess access) {
-        return Optional.ofNullable(access).filter(a -> !(CollectionUtils.isEmpty(a.getAccounts())
-                                                             && CollectionUtils.isEmpty(a.getBalances())
-                                                             && CollectionUtils.isEmpty(a.getTransactions())
-                                                             && a.getAllPsd2() == null
-                                                             && a.getAvailableAccounts() == null)).isPresent();
     }
 }

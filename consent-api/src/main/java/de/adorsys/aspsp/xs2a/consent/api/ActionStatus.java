@@ -17,10 +17,13 @@
 package de.adorsys.aspsp.xs2a.consent.api;
 
 public enum ActionStatus {
-    SUCCESS,
-    BAD_PAYLOAD,
-    FAILURE_ACCOUNT,
-    FAILURE_BALANCE,
-    FAILURE_TRANSACTION,
-    FAILURE_PAYMENT
+    SUCCESS,                //Operation successful
+    BAD_PAYLOAD,            //Some of the requested data is malformed or missing
+    FAILURE_ACCOUNT,        //The requested account access to the Account Information is not found in Consent AccountAccess section
+    FAILURE_BALANCE,        //The requested account access to the Balances Information is not found in Consent BalancesAccess section
+    FAILURE_TRANSACTION,    //The requested account access to the Transaction Information is not found in Consent TransactionsAccess section
+    FAILURE_PAYMENT,        //The corresponding access is not granted by the Consent
+    CONSENT_NOT_FOUND,      //Consent Not Found
+    CONSENT_INVALID_STATUS, //Consent Status is invalid
+    CONSENT_LIMIT_EXCEEDED  //The daily access limit is exceeded
 }

@@ -26,8 +26,8 @@ public class RemoteAisConsentUrls {
 
     /**
      * @return String consentId
-     * @Method POST
-     * @Body AisConsentRequest request
+     * Method: POST
+     * Body: AisConsentRequest request
      */
     public String createAisConsent() {
         return consentServiceBaseUrl + "/ais/consent/";
@@ -35,8 +35,8 @@ public class RemoteAisConsentUrls {
 
     /**
      * @return SpiAccountConsent consent
-     * @Method GET
-     * @PathVariable String consentId
+     * Method: GET
+     * PathVariable: String consentId
      */
     public String getAisConsentById() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}";
@@ -44,8 +44,8 @@ public class RemoteAisConsentUrls {
 
     /**
      * @return SpiConsentStatus status
-     * @Method GET
-     * @PathVariable String consentId
+     * Method: GET
+     * PathVariable: String consentId
      */
     public String getAisConsentStatusById() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/status";
@@ -53,8 +53,8 @@ public class RemoteAisConsentUrls {
 
     /**
      * @return VOID
-     * @Method PUT
-     * @PathVariables: String consentId, SpiConsentStatus consentStatus
+     * Method: PUT
+     * PathVariables: String consentId, SpiConsentStatus consentStatus
      */
     public String updateAisConsentStatus() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
@@ -62,10 +62,10 @@ public class RemoteAisConsentUrls {
 
     /**
      * @return VOID
-     * @Method POST
-     * @PathVariables: ConsentActionRequest consentActionRequest
+     * Method: POST
+     * PathVariables: ConsentActionRequest consentActionRequest
      */
     public String consentActionLog() {
-        return consentServiceBaseUrl + "/ais/consent//action";
+        return consentServiceBaseUrl + "/ais/consent/action";
     }
 }

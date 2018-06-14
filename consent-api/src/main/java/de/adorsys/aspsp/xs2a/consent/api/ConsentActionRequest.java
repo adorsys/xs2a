@@ -16,11 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.consent.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
 public class ConsentActionRequest {
     private String accountId;
     private String tppId;
