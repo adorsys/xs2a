@@ -57,8 +57,7 @@ variables:
   tags:
     - aws_docker
   script:
-    - mvn clean install
-    - mvn pmd:check
+    - mvn -DskipTests clean install
 
 .build_image_script: &build_image_script
   tags:
@@ -114,6 +113,7 @@ variables:
 
 stages:
   - "build:src"    # build jar and provide as artifact
+  - "build:qa"     # run tests and code quality checks
   - "build:image"  # dockerize jar and push to gitlab registry
   - "deploy"       # push to openshift registry (snapshot deployment) or release registry
 
@@ -128,7 +128,7 @@ build_package:
     <<: *java_artifacts
     expire_in: "1 day"
 
-check_pmd:
+pmd_report:
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
   tags:
@@ -141,8 +141,45 @@ check_pmd:
     - "qa/pmd/pmd-ruleset.xml"
     - "**/**/*/pmd.html"
     - "**/*/pmd.xml"
-    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
+    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
+
+check_pmd:
+  stage: "build:qa"
+  image: "adorsys/openjdk-build-base:8"
+  tags:
+    - aws_docker
+  script:
+    - mvn -DskipTests clean install
+    - mvn pmd:check
+
+check_javadoc:
+  stage: "build:qa"
+  image: "adorsys/openjdk-build-base:8"
+  tags:
+    - aws_docker
+  script:
+    - mvn -DskipTests clean install
+    - mvn javadoc:javadoc site
+  artifacts:
+    paths:
+    - "**/target/site/*"
+    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-javadoc"
+    expire_in: "10 day"
+
+unit_tests:
+  stage: "build:qa"
+  image: "adorsys/openjdk-build-base:8"
+  tags:
+    - aws_docker
+  script:
+    - mvn --fail-at-end clean install
+  artifacts:
+    paths:
+    - "**/target/surefire-reports/*"
+    name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}-*"
+    expire_in: "10 day"
+
 
 # Develop
 
