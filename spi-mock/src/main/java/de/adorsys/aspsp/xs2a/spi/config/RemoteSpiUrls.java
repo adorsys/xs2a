@@ -29,7 +29,7 @@ public class RemoteSpiUrls {
 
     // PIS Consents
     /**
-     * Returns URL-string of POST request in order to create pis consent
+     * Returns URL-string to CMS endpoint that creates pis consent
      *
      * @return String
      */
@@ -38,7 +38,7 @@ public class RemoteSpiUrls {
     }
 
     /**
-     * Returns URL-string of POST request in order to create pis consent for bulk payment
+     * Returns URL-string to CMS endpoint that creates pis consent for bulk payment
      *
      * @return String
      */
@@ -47,7 +47,7 @@ public class RemoteSpiUrls {
     }
 
     /**
-     * Returns URL-string of POST request in order to create pis consent for periodic payment
+     * Returns URL-string to CMS endpoint that creates pis consent for periodic payment
      *
      * @return String
      */
@@ -56,7 +56,7 @@ public class RemoteSpiUrls {
     }
 
     /**
-     * Returns URL-string of PUT request in order to update pis consent status
+     * Returns URL-string to CMS endpoint that updates pis consent status
      *
      * @return String
      */
@@ -65,7 +65,7 @@ public class RemoteSpiUrls {
     }
 
     /**
-     * Returns URL-string of GET request in order to get pis consent status by ID
+     * Returns URL-string to CMS endpoint that gets pis consent status by ID
      *
      * @return String
      */
@@ -74,7 +74,7 @@ public class RemoteSpiUrls {
     }
 
     /**
-     * Returns URL-string of GET request in order to get pis consent by ID
+     * Returns URL-string to CMS endpoint that gets pis consent by ID
      *
      * @return String
      */
@@ -83,16 +83,7 @@ public class RemoteSpiUrls {
     }
 
     /**
-     * Returns URL-string of GET request in order to get consent by access
-     *
-     * @return String
-     */
-    public String getConsentByAccess() {
-        return spiMockBaseUrl + "/consent/byAccess/{access}";
-    }
-
-    /**
-     * Returns URL-string of GET request in order to check access by consent Id
+     * Returns URL-string to CMS endpoint that checks access by consent Id
      *
      * @return String
      */

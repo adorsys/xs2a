@@ -105,11 +105,6 @@ public class AisConsent {
         accounts.forEach(this::addAccount);
     }
 
-    private void addAccount(AisAccount account) {
-        this.accounts.add(account);
-        account.setConsent(this);
-    }
-
     public boolean isExpiredByDate() {
         return Instant.now()
                    .isAfter(expireDate);
@@ -119,7 +114,12 @@ public class AisConsent {
         return consentStatus != EXPIRED;
     }
 
-    public boolean isUsageCounterGreaterThanZero(){
+    public boolean isHasAvailableUseges(){
         return usageCounter > 0;
+    }
+
+    private void addAccount(AisAccount account) {
+        this.accounts.add(account);
+        account.setConsent(this);
     }
 }

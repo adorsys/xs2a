@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,7 +26,6 @@ import java.util.Currency;
 @Data
 @ApiModel(description = "Account Reference", value = "AccountReference")
 public class AccountReference {
-//TODO Move to Immutable. Task#110
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = false, example = "DE371234599999")
     private String iban;
 
@@ -43,4 +43,12 @@ public class AccountReference {
 
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
+
+    @JsonIgnore
+    public boolean matches(AccountReference otherReference){
+        return otherReference.getCurrency() == null
+                   ? iban.equals(otherReference.getIban())
+                   : iban.equals(otherReference.getIban())
+                         && currency == otherReference.getCurrency();
+    }
 }

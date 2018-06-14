@@ -109,7 +109,7 @@ public class AisConsentService {
     public void saveConsentActionLog(ConsentActionRequest request) {
         getAisConsentById(request.getConsentId())
             .map(this::checkAndUpdateOnExpiration)
-            .filter(AisConsent::isUsageCounterGreaterThanZero)
+            .filter(AisConsent::isHasAvailableUseges)
             .map(this::updateAisConsentCounter);
 
         logConsentAction(request.getConsentId(), request.getActionStatus(), request.getTppId());

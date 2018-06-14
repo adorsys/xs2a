@@ -24,7 +24,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -69,10 +68,7 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public List<SpiTransaction> readTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
-        List<SpiTransaction> transactionsByPeriod = getTransactionsByPeriod(iban, currency, dateFrom, dateTo, bookingStatus);
-        return CollectionUtils.isNotEmpty(transactionsByPeriod)
-                   ? transactionsByPeriod
-                   : Collections.emptyList();
+        return getTransactionsByPeriod(iban, currency, dateFrom, dateTo, bookingStatus);
     }
 
     private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
@@ -125,8 +121,10 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     private List<SpiTransaction> getFilteredTransactions(List<SpiTransaction> spiTransactions, Predicate<SpiTransaction> predicate) {
-        return spiTransactions.parallelStream()
+        return Optional.ofNullable(spiTransactions)
+                   .map(t->t.stream()
                    .filter(predicate)
-                   .collect(Collectors.toList());
+                   .collect(Collectors.toList()))
+            .orElse(Collections.emptyList());
     }
 }

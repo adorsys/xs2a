@@ -22,11 +22,9 @@ import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -44,7 +42,7 @@ public class ConsentMapper {
             convertToDate(consent.getExpireDate()),
             consent.getUsageCounter(),
             convertToDate(consent.getLastActionDate()),
-            mapToSpiConsentStatus(consent.getConsentStatus()),
+            consent.getConsentStatus(),
             false, consent.isTppRedirectPreferred());
     }
 
@@ -70,13 +68,9 @@ public class ConsentMapper {
                    .collect(Collectors.toList());
     }
 
-    private SpiConsentStatus mapToSpiConsentStatus(SpiConsentStatus consentStatus) {
-        return SpiConsentStatus.valueOf(consentStatus.name());
-    }
-
     private Date convertToDate(Instant dateToConvert) {
         return Optional.ofNullable(dateToConvert)
-                   .map(d -> Date.from(d.atZone(ZoneId.systemDefault()).toInstant()))
+                   .map(Date::from)
                    .orElse(null);
     }
 }

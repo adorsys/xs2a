@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -112,12 +113,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
-
-        return Optional.ofNullable(allowedAccountData)
-                   .map(allowed -> allowed.stream()
-                                       .anyMatch(a -> a.getIban().equals(iban)
-                                                          && a.getCurrency() == currency))
-                   .orElse(false);
+        return CollectionUtils.isNotEmpty(allowedAccountData)
+                   && allowedAccountData.stream()
+                          .anyMatch(a -> a.getIban().equals(iban)
+                                             && a.getCurrency() == currency);
     }
 
     public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
@@ -135,18 +134,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private AccountAccess getAccessByRequestedAccess(AccountAccess requestedAccess) {
-        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountDetailsByIbans(getIbansFromAccess(requestedAccess)));
-        if (refs.isEmpty()) {
+        List<AccountReference> aspspReferences = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountDetailsByIbans(getIbansFromAccess(requestedAccess)));
+        if (aspspReferences.isEmpty()) {
             return null;
         }
-        List<AccountReference> balances = getAccountReference(requestedAccess.getBalances(), refs);
-        List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), refs);
-        List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), refs);
+        List<AccountReference> balances = getFilteredReferencesByAccessReferences(requestedAccess.getBalances(), aspspReferences);
+        List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), aspspReferences);
+        List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), aspspReferences);
 
         return new AccountAccess(getAccountsForAccess(balances, transaction, accounts), balances, transaction, null, null);
     }
 
-    private List<AccountReference> getAccountReference(List<AccountReference> requestedReferences, List<AccountReference> refs) {
+    private List<AccountReference> getFilteredReferencesByAccessReferences(List<AccountReference> requestedReferences, List<AccountReference> refs) {
         return Optional.ofNullable(requestedReferences)
                    .map(reqRefs -> getRequestedReferences(reqRefs, refs))
                    .orElse(Collections.emptyList());
@@ -162,20 +161,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private List<AccountReference> getRequestedReferences(List<AccountReference> requestedRefs, List<AccountReference> refs) {
         return Optional.ofNullable(requestedRefs).map(rr -> rr.stream()
-                                                                .filter(r -> isContainedRefinRefsList(r, refs))
-                                                                .collect(Collectors.toList())).orElse(Collections.emptyList());
+                                                                .filter(r -> isContainedRefInRefsList(r, refs))
+                                                                .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
     }
 
-    private boolean isContainedRefinRefsList(AccountReference referenceMatched, List<AccountReference> references) {
+    private boolean isContainedRefInRefsList(AccountReference referenceMatched, List<AccountReference> references) {
         return references.stream()
-                   .anyMatch(r -> referenceMatches(r, referenceMatched));
-    }
-
-    private boolean referenceMatches(AccountReference referenceMatcher, AccountReference referenceMatched) {
-        return referenceMatched.getCurrency() == null
-                   ? referenceMatcher.getIban().equals(referenceMatched.getIban())
-                   : referenceMatcher.getIban().equals(referenceMatched.getIban())
-                         && referenceMatcher.getCurrency() == referenceMatched.getCurrency();
+                   .anyMatch(r -> r.matches(referenceMatched));
     }
 
     private AccountAccess getAccessByPsuId(boolean isAllPSD2, String psuId) {
