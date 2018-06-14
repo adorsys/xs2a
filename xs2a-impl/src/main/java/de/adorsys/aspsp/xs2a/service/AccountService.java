@@ -201,19 +201,15 @@ public class AccountService {
         if (accountReport == null) {
             return null;
         }
-        Transactions[] booked = isAllowedTransactions(accountReport.getBooked(), allowedAccountData)
-                                    ? accountReport.getBooked()
-                                    : new Transactions[]{};
-
-        Transactions[] pending = isAllowedTransactions(accountReport.getPending(), allowedAccountData)
-                                     ? accountReport.getPending()
-                                     : new Transactions[]{};
+        Transactions[] booked = getAllowedTransactions(accountReport.getBooked(), allowedAccountData);
+        Transactions[] pending = getAllowedTransactions(accountReport.getPending(), allowedAccountData);
         return new AccountReport(booked, pending);
     }
 
-    private boolean isAllowedTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
-        return Arrays.stream(transactions)
-                   .allMatch(t -> isAllowedTransaction(t, allowedAccountData));
+    private Transactions[] getAllowedTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
+        return Arrays.stream(transactions).allMatch(t -> isAllowedTransaction(t, allowedAccountData))
+                   ? transactions
+                   : new Transactions[]{};
     }
 
     private boolean isAllowedTransaction(Transactions transaction, List<AccountReference> allowedAccountData) {
