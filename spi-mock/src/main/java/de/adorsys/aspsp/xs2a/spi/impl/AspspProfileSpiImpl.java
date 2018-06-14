@@ -51,4 +51,10 @@ public class AspspProfileSpiImpl implements AspspProfileSpi {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getFrequencyPerDay(), HttpMethod.GET, null, Integer.class).getBody();
     }
+
+	@Override
+	public Boolean getTppSignatureRequired() {
+		return aspspProfileRestTemplate.exchange(
+	            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+	}
 }

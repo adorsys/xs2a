@@ -25,4 +25,6 @@ public interface AspspProfileSpi {
     List<String> getAvailablePaymentTypes();
 
     Integer getFrequencyPerDay();
+    
+    Boolean getTppSignatureRequired();
 }

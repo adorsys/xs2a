@@ -26,8 +26,9 @@ public class CertificateExtractorUtil {
 		TppCertificateData tppCertData = new TppCertificateData();
 		tppCertData.setPspName(cert.getSubjectDN().getName());
 
-		// NPMD TODO: extract PSD2 attributes inside certificate by their correct OIDs
-		//https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/139
+		// NPMD TODO: extract PSD2 attributes inside certificate by their
+		// correct OIDs
+		// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/139
 		/*
 		 * tppCertData.setPspAuthorityCountry("Germany");
 		 * tppCertData.setPspAuthorityName("ALam");
@@ -41,25 +42,17 @@ public class CertificateExtractorUtil {
 		for (GeneralName name : names) {
 			if (name.getTagNo() == GeneralName.otherName) {
 				ASN1Sequence seq = ASN1Sequence.getInstance(name.getName());
-				ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) seq.getObjectAt(0);
-				if (TppCertificateOID.PSP_ROLE_AISP_OID.equals(oid.getId())) {
-					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
-					int number = value.getValue().intValue();
-					if (number == 1) {
+				String roleObjectIdentifier = ((ASN1ObjectIdentifier) seq.getObjectAt(0)).getId();
+				int valueObjectIdentifier = ((ASN1Integer) seq.getObjectAt(1)).getValue().intValue();
+
+				if (valueObjectIdentifier == 1) {
+					if (TppCertificateOID.PSP_ROLE_AISP_OID.equals(roleObjectIdentifier)) {
 						roles.add(TppRole.AISP);
 					}
-				}
-				if (TppCertificateOID.PSP_ROLE_PISP_OID.equals(oid.getId())) {
-					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
-					int number = value.getValue().intValue();
-					if (number == 1) {
+					if (TppCertificateOID.PSP_ROLE_PISP_OID.equals(roleObjectIdentifier)) {
 						roles.add(TppRole.PISP);
 					}
-				}
-				if (TppCertificateOID.PSP_ROLE_PIISP_OID.equals(oid.getId())) {
-					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
-					int number = value.getValue().intValue();
-					if (number == 1) {
+					if (TppCertificateOID.PSP_ROLE_PIISP_OID.equals(roleObjectIdentifier)) {
 						roles.add(TppRole.PIISP);
 					}
 				}

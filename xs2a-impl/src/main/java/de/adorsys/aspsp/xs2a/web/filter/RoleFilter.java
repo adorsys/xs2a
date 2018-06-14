@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class RoleFilter implements Filter {
 
 	@Autowired
 	TppRoleValidationService tppRoleValidationService;
+	@Autowired
+	private AspspProfileService aspspProfileService;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,25 +38,26 @@ public class RoleFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+		if (aspspProfileService.getTppSignatureRequired()) {
+			if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+				throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+			}
+
+			HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+			TppCertificateData tppCertData = (TppCertificateData) request.getAttribute("tppCertData");
+
+			if (tppRoleValidationService.validate(httpRequest, tppCertData.getPspRoles())) {
+				chain.doFilter(request, response);
+			} else {
+				// NOPMD TODO define conform error msg,
+				// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
+				log.debug(
+						"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+						"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
+			}
 		}
-
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-		TppCertificateData tppCertData = (TppCertificateData) request.getAttribute("tppCertData");
-
-		if (tppRoleValidationService.validate(httpRequest, tppCertData.getPspRoles())) {
-			chain.doFilter(request, response);
-		} else {
-			// NOPMD TODO define conform error msg,
-			// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
-			log.debug(
-					"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-					"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
-		}
-
 	}
 
 	@Override

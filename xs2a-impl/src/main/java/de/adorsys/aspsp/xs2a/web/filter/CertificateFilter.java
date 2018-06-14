@@ -13,8 +13,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.psd2.validator.certificate.CertificateValidatorFactory;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
@@ -32,6 +34,9 @@ public class CertificateFilter implements Filter {
 	private SimpleCertificateBucket rootCertBucket;
 	private SimpleCertificateBucket intermediateCertBucket;
 
+	@Autowired
+	private AspspProfileService aspspProfileService;
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -44,25 +49,29 @@ public class CertificateFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
-		}
+		if (aspspProfileService.getTppSignatureRequired()) {
+			if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+				throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+			}
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		String encodedTppCert = httpRequest.getHeader("tpp-certificate");
+			HttpServletRequest httpRequest = (HttpServletRequest) request;
+			String encodedTppCert = httpRequest.getHeader("tpp-certificate");
 
-		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
-				rootCertBucket, intermediateCertBucket);
-		try {
-			validatorFactory.validate(encodedTppCert);
+			CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
+					rootCertBucket, intermediateCertBucket);
+			try {
+				validatorFactory.validate(encodedTppCert);
 
-			TppCertificateData tppCertData = CertificateExtractorUtil.extract(encodedTppCert);
-			request.setAttribute("tppCertData", tppCertData);
+				TppCertificateData tppCertData = CertificateExtractorUtil.extract(encodedTppCert);
+				request.setAttribute("tppCertData", tppCertData);
 
+				chain.doFilter(request, response);
+			} catch (CertificateException | CertificateValidationException e) {
+				log.debug(e.getMessage());
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+			}
+		} else {
 			chain.doFilter(request, response);
-		} catch (CertificateException | CertificateValidationException e) {
-			log.debug(e.getMessage());
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 		}
 	}
 

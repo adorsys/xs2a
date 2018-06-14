@@ -69,5 +69,14 @@ public class AspspProfileRemoteUrls {
     public String getScaApproach() {
         return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
     }
+    
+    /**
+     * @return Boolean
+     * @Method GET
+     * @PathVariable non
+     */
+    public String getTppSignatureRequired() {
+        return aspspProfileBaseUrl + "/tpp-signature-required";
+    }
 
 }

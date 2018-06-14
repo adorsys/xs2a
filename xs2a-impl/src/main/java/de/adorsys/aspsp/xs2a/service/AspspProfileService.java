@@ -58,4 +58,9 @@ public class AspspProfileService {
         return Optional.ofNullable(aspspProfileSpi.getFrequencyPerDay())
                    .orElse(0);
     }
+    
+    public Boolean getTppSignatureRequired() {
+        return Optional.ofNullable(aspspProfileSpi.getTppSignatureRequired())
+                   .orElse(false);
+    }
 }
