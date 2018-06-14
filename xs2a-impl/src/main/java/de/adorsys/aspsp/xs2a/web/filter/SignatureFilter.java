@@ -3,9 +3,12 @@ package de.adorsys.aspsp.xs2a.web.filter;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import lombok.extern.slf4j.Slf4j;
+
 //NOPMD TODO implement http signature filter, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/141
 //@WebFilter(urlPatterns ="/api/v1/*")
 //@Order(3)
@@ -46,14 +50,8 @@ public class SignatureFilter implements Filter {
 
 		String encodedTppCert = httpRequest.getHeader("tpp-certificate");
 		String signature = httpRequest.getHeader("signature");
-		Map<String, String> headers = new HashMap<>();
 
-		Enumeration<String> headerNames = httpRequest.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String key = headerNames.nextElement();
-			String value = httpRequest.getHeader(key);
-			headers.put(key, value);
-		}
+		Map<String, String> headers = obtainRequestHeaders(httpRequest);
 
 		TppSignatureValidator tppSignatureValidator = new TppSignatureValidator();
 		try {
@@ -70,6 +68,11 @@ public class SignatureFilter implements Filter {
 
 	@Override
 	public void destroy() {
+	}
+
+	private Map<String, String> obtainRequestHeaders(HttpServletRequest request) {
+		return Collections.list(request.getHeaderNames()).stream()
+				.collect(Collectors.toMap(Function.identity(), e -> request.getHeader(e)));
 	}
 
 }

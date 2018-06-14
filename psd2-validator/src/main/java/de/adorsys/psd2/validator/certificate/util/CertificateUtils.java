@@ -29,8 +29,9 @@ public class CertificateUtils {
 
 	public static X509Certificate getCertificate(String filePath) {
 
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
-			byte[] bytes = IOUtils.resourceToByteArray(filePath);
+			byte[] bytes = IOUtils.resourceToByteArray(filePath, loader);
 			X509Certificate cert = X509CertUtils.parse(bytes);
 			return cert;
 		} catch (IOException e) {
@@ -41,8 +42,9 @@ public class CertificateUtils {
 
 	public static String getCertificateByName(String filename) {
 
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		try {
-			byte[] bytes = IOUtils.resourceToByteArray("certificates/" + filename);
+			byte[] bytes = IOUtils.resourceToByteArray("certificates/" + filename, loader);
 			X509Certificate cert = X509CertUtils.parse(bytes);
 			String encodeCert = X509CertUtils.toPEMString(cert);
 			return encodeCert;
