@@ -74,6 +74,7 @@ public class PsuAuthenticationService {
     private boolean sendTanNumberOnEmail(String email, int tanNumber) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setSubject("TAN for authentication to confirm your payment");
+        mail.setFrom(email);
         mail.setTo(email);
         mail.setText("Your TAN number is " + tanNumber);
         emailSender.send(mail);
