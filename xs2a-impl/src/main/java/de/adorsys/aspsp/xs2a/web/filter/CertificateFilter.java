@@ -18,7 +18,7 @@ import org.springframework.core.annotation.Order;
 import de.adorsys.psd2.validator.certificate.CertificateValidatorFactory;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
-import de.adorsys.psd2.validator.certificate.util.TppCertData;
+import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
@@ -56,13 +56,13 @@ public class CertificateFilter implements Filter {
 		try {
 			validatorFactory.validate(encodedTppCert);
 
-			TppCertData tppCertData = CertificateExtractorUtil.extract(encodedTppCert);
+			TppCertificateData tppCertData = CertificateExtractorUtil.extract(encodedTppCert);
 			request.setAttribute("tppCertData", tppCertData);
 
 			chain.doFilter(request, response);
 		} catch (CertificateException | CertificateValidationException e) {
 			log.debug(e.getMessage());
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 		}
 	}
 

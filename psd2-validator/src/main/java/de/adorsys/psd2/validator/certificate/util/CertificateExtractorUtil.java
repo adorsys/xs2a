@@ -17,13 +17,13 @@ import com.nimbusds.jose.util.X509CertUtils;
 
 public class CertificateExtractorUtil {
 
-	public static TppCertData extract(String encodedCert) throws IOException {
+	public static TppCertificateData extract(String encodedCert) throws IOException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
 
 		List<TppRole> roles = new ArrayList<>();
 
-		TppCertData tppCertData = new TppCertData();
+		TppCertificateData tppCertData = new TppCertificateData();
 		tppCertData.setPspName(cert.getSubjectDN().getName());
 
 		// NPMD TODO: extract PSD2 attributes inside certificate by their correct OIDs
@@ -42,21 +42,21 @@ public class CertificateExtractorUtil {
 			if (name.getTagNo() == GeneralName.otherName) {
 				ASN1Sequence seq = ASN1Sequence.getInstance(name.getName());
 				ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) seq.getObjectAt(0);
-				if (TppCertOID.PSP_ROLE_AISP_OID.equals(oid.getId())) {
+				if (TppCertificateOID.PSP_ROLE_AISP_OID.equals(oid.getId())) {
 					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 					int number = value.getValue().intValue();
 					if (number == 1) {
 						roles.add(TppRole.AISP);
 					}
 				}
-				if (TppCertOID.PSP_ROLE_PISP_OID.equals(oid.getId())) {
+				if (TppCertificateOID.PSP_ROLE_PISP_OID.equals(oid.getId())) {
 					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 					int number = value.getValue().intValue();
 					if (number == 1) {
 						roles.add(TppRole.PISP);
 					}
 				}
-				if (TppCertOID.PSP_ROLE_PIISP_OID.equals(oid.getId())) {
+				if (TppCertificateOID.PSP_ROLE_PIISP_OID.equals(oid.getId())) {
 					ASN1Integer value = (ASN1Integer) seq.getObjectAt(1);
 					int number = value.getValue().intValue();
 					if (number == 1) {

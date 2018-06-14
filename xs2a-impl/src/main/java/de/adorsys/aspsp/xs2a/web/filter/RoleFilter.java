@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
-import de.adorsys.psd2.validator.certificate.util.TppCertData;
+import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -41,15 +41,17 @@ public class RoleFilter implements Filter {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-		TppCertData tppCertData = (TppCertData) request.getAttribute("tppCertData");
+		TppCertificateData tppCertData = (TppCertificateData) request.getAttribute("tppCertData");
 
 		if (tppRoleValidationService.validate(httpRequest, tppCertData.getPspRoles())) {
 			chain.doFilter(request, response);
 		} else {
-			//NOPMD TODO define conform error msg, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
-			log.debug("TPP doesn't have conform role to access this service");
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"TPP doesn't have conform role to access this service");
+			// NOPMD TODO define conform error msg,
+			// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
+			log.debug(
+					"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
+			((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
+					"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
 		}
 
 	}

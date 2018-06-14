@@ -61,7 +61,7 @@ public class SignatureFilter implements Filter {
 
 		} catch (NoSuchAlgorithmException | SignatureException e) {
 			log.debug(e.getMessage());
-			((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 		}
 
 	}
