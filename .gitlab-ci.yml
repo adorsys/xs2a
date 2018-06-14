@@ -160,7 +160,7 @@ check_javadoc:
     - aws_docker
   script:
     - mvn -DskipTests clean install
-    - mvn javadoc:javadoc site
+    - mvn javadoc:javadoc
   artifacts:
     paths:
     - "**/target/site/*"
