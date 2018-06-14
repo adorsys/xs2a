@@ -27,7 +27,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@Profile("mockspi")
 public class RestAspspProfileConfig {
     @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
