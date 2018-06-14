@@ -32,7 +32,7 @@ public abstract class AbstractLinkAspect<T> {
     @Autowired
     protected String redirectLinkToSource;
     @Autowired
-    protected  JsonConverter jsonConverter;
+    protected JsonConverter jsonConverter;
 
     protected Class<T> getController() {
         try {

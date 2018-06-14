@@ -58,6 +58,13 @@ public class ProfileConfiguration {
      */
     private String scaApproach;
 
+    /*
+     * A signature of the request by the TPP on application level.
+     * If the value is `true`, the signature is mandated by ASPSP.
+     * If the value is `false`, the signature can be omitted.
+     */
+    private boolean tppSignatureRequired;
+
     @PostConstruct
     private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default
         String necessaryType = PaymentType.FUTURE_DATED.getValue();
