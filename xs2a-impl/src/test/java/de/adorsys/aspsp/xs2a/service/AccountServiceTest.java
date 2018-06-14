@@ -89,7 +89,7 @@ public class AccountServiceTest {
 
         //getAccountReport_ByTransactionId_Success
         when(consentService.getValidatedConsent(CONSENT_ID_WT)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, getReferences(IBAN, IBAN_1), false, false));
-        when(accountSpi.readTransactionsById(TRANSACTION_ID)).thenReturn(Collections.singletonList(getSpiTransaction()));
+        when(accountSpi.readTransactionsById(TRANSACTION_ID)).thenReturn(getSpiTransaction());
 
         when(accountSpi.readTransactionsByPeriod(IBAN, CURRENCY, DATE, DATE, SpiBookingStatus.BOTH)).thenReturn(Collections.singletonList(getSpiTransaction()));
     }
