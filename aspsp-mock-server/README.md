@@ -58,3 +58,25 @@ standalone.bat (for Windows users, *.sh for Linux)
 - Create role 'user' and map it to 'aspsp' user 
 ```
 
+#Email TAN confirmation
+
+In order to work properly with email TAN confirmation and send letters from your email, you need to change these properties in application.properties file:
+
+```
+# your smtp server, for example `smtp.gmail.com` (stmp server for gmail)
+spring.mail.host=
+
+# port of the server, for example `587` (port for gmail)
+spring.mail.port=
+
+# password to your mail
+spring.mail.password=
+
+# email address
+spring.mail.username=
+
+# properties for authorization, for example `true` and `false`
+spring.mail.properties.mail.smtp.auth=
+spring.mail.properties.mail.smtp.starttls.enable=
+
+```
