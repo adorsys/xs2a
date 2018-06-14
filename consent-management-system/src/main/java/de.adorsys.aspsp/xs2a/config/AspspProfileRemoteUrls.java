@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.rest.exception;
+package de.adorsys.aspsp.xs2a.config;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+@Component
+public class AspspProfileRemoteUrls {
 
-public class AspspProfileRestTemplateErrorHandler extends DefaultResponseErrorHandler {
+    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    private String aspspProfileBaseUrl;
 
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        HttpStatus statusCode = response.getStatusCode();
-        throw new RestException(statusCode, statusCode.getReasonPhrase());
+    /**
+     * Returns URL-string in order to get frequency per day
+     *
+     * @return String
+     */
+    public String getFrequencyPerDay() {
+        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
     }
 }

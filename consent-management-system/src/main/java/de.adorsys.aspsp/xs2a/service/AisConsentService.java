@@ -44,14 +44,14 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.*;
 @Service
 @RequiredArgsConstructor
 public class AisConsentService {
-    //private final AspspProfileService profileService; //TODO Restore getMinimal f-qncy pd
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
     private final ConsentMapper consentMapper;
+    private final AspspProfileService profileService;
 
     @Transactional
     public Optional<String> createConsent(AisConsentRequest request) {
-        int minFrequencyPerDay = 10; // TODO  minFrequencyPerDay will get in task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/134
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(RECEIVED);

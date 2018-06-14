@@ -29,67 +29,72 @@ public class RemoteSpiUrls {
 
     // PIS Consents
     /**
-     * @return String pis consentId
-     * @Method POST
-     * @Body PisConsentRequest request
+     * Returns URL-string of POST request in order to create pis consent
+     *
+     * @return String
      */
     public String createPisConsent() {
         return consentServiceBaseUrl + "/pis/consent/";
     }
 
     /**
-     * @return String pis consentId
-     * @Method POST
-     * @Body PisConsentBulkPaymentRequest request
+     * Returns URL-string of POST request in order to create pis consent for bulk payment
+     *
+     * @return String
      */
     public String createPisBulkPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/bulk";
     }
 
     /**
-     * @return String pis consentId
-     * @Method POST
-     * @Body PisConsentPeriodicPaymentRequest request
+     * Returns URL-string of POST request in order to create pis consent for periodic payment
+     *
+     * @return String
      */
     public String createPisPeriodicPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/periodic";
     }
 
     /**
-     * @return Void
-     * @Method GET
-     * @PathVariable String consentId and status
+     * Returns URL-string of PUT request in order to update pis consent status
+     *
+     * @return String
      */
     public String updatePisConsentStatus() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
     }
 
     /**
-     * @return SpiConsentStatus
-     * @Method GET
-     * @PathVariable String consentId
+     * Returns URL-string of GET request in order to get pis consent status by ID
+     *
+     * @return String
      */
     public String getPisConsentStatusById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
     }
 
     /**
-     * @return PisConsentResponse
-     * @Method GET
-     * @PathVariable String consentId
+     * Returns URL-string of GET request in order to get pis consent by ID
+     *
+     * @return String
      */
     public String getPisConsentById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}";
     }
 
+    /**
+     * Returns URL-string of GET request in order to get consent by access
+     *
+     * @return String
+     */
     public String getConsentByAccess() {
         return spiMockBaseUrl + "/consent/byAccess/{access}";
     }
 
     /**
-     * @return Map<String, Set<AccessAccountInfo>> accesses validated
-     * @Method POST
-     * @Body AvailableAccessRequest
+     * Returns URL-string of GET request in order to check access by consent Id
+     *
+     * @return String
      */
     public String checkAccessByConsentId() {
         return consentServiceBaseUrl + "/ais/consent/available/access";
