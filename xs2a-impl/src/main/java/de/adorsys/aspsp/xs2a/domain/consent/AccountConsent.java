@@ -25,6 +25,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.EnumSet;
+
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
 
 @Data
 @ApiModel(description = "Response for the get account information consent request by consent Id")
@@ -61,4 +65,14 @@ public class AccountConsent {
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     @JsonIgnore
     private final boolean tppRedirectPreferred;
+
+    @JsonIgnore
+    public boolean isValidStatus() {
+        return EnumSet.of(VALID, RECEIVED).contains(consentStatus);
+    }
+
+    @JsonIgnore
+    public boolean isValidFrequency() {
+        return frequencyPerDay > 0;
+    }
 }

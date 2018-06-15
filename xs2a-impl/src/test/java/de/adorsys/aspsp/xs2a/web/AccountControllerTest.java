@@ -19,6 +19,8 @@ package de.adorsys.aspsp.xs2a.web;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
 import de.adorsys.aspsp.xs2a.util.GsonUtcInstantAdapter;

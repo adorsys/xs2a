@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.repository;
 
-import lombok.Data;
+import org.springframework.data.repository.CrudRepository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
 
-@Data
-public class AvailableAccessRequest {
-    private String consentId;
-    private Map<String, Set<AccessAccountInfo>> accountsAccesses = new HashMap<>();
+
+public interface AisConsentActionRepository extends CrudRepository<AisConsentAction, Long> {
 }

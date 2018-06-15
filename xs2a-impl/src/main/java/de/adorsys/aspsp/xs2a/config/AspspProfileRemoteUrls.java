@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.config;
+package de.adorsys.aspsp.xs2a.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -26,45 +26,45 @@ public class AspspProfileRemoteUrls {
     private String aspspProfileBaseUrl;
 
     /**
-     * @return List<String> list of payment product names
-     * @Method GET
-     * @PathVariable non
+     * Returns URL-string in order to get list of available payment products
+     *
+     * @return String
      */
     public String getAvailablePaymentProducts() {
         return aspspProfileBaseUrl + "/aspsp-profile/available-payment-products";
     }
 
     /**
-     * @return List<String> list of payment product types
-     * @Method GET
-     * @PathVariable non
+     * Returns URL-string in order to get list of available payment types
+     *
+     * @return String
      */
     public String getAvailablePaymentTypes() {
         return aspspProfileBaseUrl + "/aspsp-profile/available-payment-types";
     }
 
     /**
-     * @return Integer
-     * @Method GET
-     * @PathVariable non
+     * Returns URL-string in order to get frequency per day
+     *
+     * @return String
      */
     public String getFrequencyPerDay() {
         return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
     }
 
     /**
-     * @return Boolean
-     * @Method GET
-     * @PathVariable non
+     * Returns URL-string in order to get combined service indicator
+     *
+     * @return String
      */
     public String getCombinedServiceIndicator() {
         return aspspProfileBaseUrl + "/aspsp-profile/combined-service-indicator";
     }
 
     /**
+     * Returns URL-string in order to get sca approach
+     *
      * @return String
-     * @Method GET
-     * @PathVariable non
      */
     public String getScaApproach() {
         return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
@@ -76,7 +76,7 @@ public class AspspProfileRemoteUrls {
      * @PathVariable non
      */
     public String getTppSignatureRequired() {
-        return aspspProfileBaseUrl + "/tpp-signature-required";
+        return aspspProfileBaseUrl + "/aspsp-profile/tpp-signature-required";
     }
 
 }

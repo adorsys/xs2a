@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.schedule;
 
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +31,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ConsentScheduleTask {
     private final AisConsentRepository aisConsentRepository;
+    private final AspspProfileService profileService;
 
     @Scheduled(cron = "${consent.cron.expression}")
     public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
 
-        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(SpiConsentStatus.RECEIVED, SpiConsentStatus.VALID)))
+        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
                                                  .orElse(Collections.emptyList());
         aisConsentRepository.save(updateConsent(availableConsents));
     }
@@ -52,7 +57,7 @@ public class ConsentScheduleTask {
     }
 
     private AisConsent updateConsentParameters(AisConsent consent) {
-        int minFrequencyPerDay = 0; // TODO  scheduler will get minFrequencyPerDay in task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/134
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(consent.getTppFrequencyPerDay());
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setUsageCounter(minFrequencyPerDay);
         consent.setConsentStatus(updateConsentStatus(consent));
@@ -60,7 +65,7 @@ public class ConsentScheduleTask {
     }
 
     private SpiConsentStatus updateConsentStatus(AisConsent consent) {
-        return consent.isExpired()
+        return consent.isExpiredByDate()
                    ? SpiConsentStatus.EXPIRED
                    : consent.getConsentStatus();
     }

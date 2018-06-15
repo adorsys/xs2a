@@ -53,9 +53,9 @@ public class RoleFilter implements Filter {
 				// NOPMD TODO define conform error msg,
 				// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
 				log.debug(
-						"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
+						"Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
-						"Description. Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
+						"Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
 			}
 		}
 	}

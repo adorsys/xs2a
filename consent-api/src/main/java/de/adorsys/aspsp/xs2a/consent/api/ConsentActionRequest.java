@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.ais;
+package de.adorsys.aspsp.xs2a.consent.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
-public class AccountInfo {
-    private String iban;
-    private String currency;
+@AllArgsConstructor
+public class ConsentActionRequest {
+    private String accountId;
+    private String tppId;
+    private String consentId;
+    private ActionStatus actionStatus;
+    private Set<TypeAccess> typeAccess;
 }

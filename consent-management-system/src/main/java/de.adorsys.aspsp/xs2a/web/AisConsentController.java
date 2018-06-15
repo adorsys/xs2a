@@ -16,20 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccessAccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AvailableAccessRequest;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,10 +45,11 @@ public class AisConsentController {
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @PostMapping(path = "/available/access")
-    @ApiOperation(value = "Check if the requested accesses are granted by the consent identified by given consentId", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    public ResponseEntity<Map<String, Set<AccessAccountInfo>>> checkAvailableAccessAccount(@RequestBody AvailableAccessRequest request) {
-        return ResponseEntity.ok(aisConsentService.checkAvailableAccessAccount(request));
+    @PostMapping(path = "/action")
+    @ApiOperation(value = "Save information about uses of consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<Void> saveConsentActionLog(@RequestBody ConsentActionRequest request) {
+        aisConsentService.saveConsentActionLog(request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(path = "/{consent-id}")
@@ -65,7 +62,7 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getSpiAccountConsentById(consentId)
                    .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/{consent-id}/status")
@@ -78,7 +75,7 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/{consent-id}/status/{status}")
@@ -89,10 +86,10 @@ public class AisConsentController {
     public ResponseEntity<Void> updateConsentStatus(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", example = "VALID")
+        @ApiParam(value = "The following code values are permitted 'valid', 'rejected', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
         return aisConsentService.updateConsentStatusById(consentId, SpiConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

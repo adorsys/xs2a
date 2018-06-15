@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.rest.exception;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import lombok.Data;
 
-import java.io.IOException;
-
-public class AspspProfileRestTemplateErrorHandler extends DefaultResponseErrorHandler {
-
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        HttpStatus statusCode = response.getStatusCode();
-        throw new RestException(statusCode, statusCode.getReasonPhrase());
-    }
+@Data
+public class AccountInfo {
+    private String iban;
+    private String currency;
 }
