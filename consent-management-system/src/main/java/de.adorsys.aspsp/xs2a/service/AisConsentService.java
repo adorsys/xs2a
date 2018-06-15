@@ -113,10 +113,13 @@ public class AisConsentService {
     }
 
     private void checkAndUpdateConsentParameter(Optional<AisConsent> consent) {
-        consent
-            .map(this::checkAndUpdateOnExpiration)
-            .filter(AisConsent::isHasAvailableUseges)
-            .map(this::updateAisConsentCounter);
+        if (consent.isPresent()) {
+            AisConsent aisConsent = consent.get();
+            checkAndUpdateOnExpiration(aisConsent);
+            if (aisConsent.isHasAvailableUseges()) {
+                updateAisConsentCounter(aisConsent);
+            }
+        }
     }
 
     private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, Optional<AisConsent> consent) {
