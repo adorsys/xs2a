@@ -61,6 +61,6 @@ public class AspspProfileService {
     
     public Boolean getTppSignatureRequired() {
         return Optional.ofNullable(aspspProfileSpi.getTppSignatureRequired())
-                   .orElse(false);
+                   .orElse(true);
     }
 }
