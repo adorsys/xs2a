@@ -19,19 +19,19 @@ package de.adorsys.aspsp.xs2a.account;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
-import lombok.Getter;
 import lombok.Value;
 
 import java.util.*;
 
 @Value
-@Getter
 public class AccountHolder {
-    private Map<String, Set<AccountAccess>> accountAccesses = new HashMap<>();
+    private final Map<String, Set<AccountAccess>> accountAccesses = new HashMap<>();
 
     public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
         info = Optional.ofNullable(info).orElse(Collections.emptyList());
-        info.forEach(a -> addAccountAccess(a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess));
+        for (AccountInfo a : info) {
+            addAccountAccess(a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess);
+        }
     }
 
     private Currency getCurrencyByString(String currency) {
