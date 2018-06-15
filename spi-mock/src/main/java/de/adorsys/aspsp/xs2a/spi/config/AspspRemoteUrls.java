@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RemoteSpiUrls {
+public class AspspRemoteUrls {
+    // TODO remove consent url: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/147
     @Value("${mockspi.baseurl:http://localhost:28080}")
     private String spiMockBaseUrl;
 

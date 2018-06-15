@@ -16,17 +16,23 @@
 
 package de.adorsys.aspsp.xs2a.exception;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
 
-import java.io.IOException;
+@Getter
+public class RestException extends RuntimeException {
+    private HttpStatus httpStatus;
+    private String message;
+    private MessageErrorCode messageErrorCode = MessageErrorCode.INTERNAL_SERVER_ERROR;
 
-public class AspspProfileRestTemplateErrorHandler extends DefaultResponseErrorHandler {
+    public RestException(HttpStatus httpStatus, String message) {
+        this.httpStatus = httpStatus;
+        this.message = message;
+    }
 
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        HttpStatus statusCode = response.getStatusCode();
-        throw new AspspProfileRestException(statusCode, statusCode.getReasonPhrase());
+    public RestException(MessageErrorCode messageErrorCode) {
+        this.messageErrorCode = messageErrorCode;
+        this.httpStatus = HttpStatus.valueOf(messageErrorCode.getCode());
     }
 }

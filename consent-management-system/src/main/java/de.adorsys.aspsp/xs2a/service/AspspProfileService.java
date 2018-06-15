@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 
-import de.adorsys.aspsp.xs2a.config.AspspProfileRemoteUrls;
+import de.adorsys.aspsp.xs2a.config.rest.AspspProfileRemoteUrls;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Qualifier;

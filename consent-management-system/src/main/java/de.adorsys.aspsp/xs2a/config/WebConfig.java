@@ -23,18 +23,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import de.adorsys.aspsp.xs2a.spi.domain.security.BearerToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -58,11 +50,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
         objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
         return objectMapper;
-    }
-
-    @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public BearerToken getBearerToken(HttpServletRequest request) {
-        return new BearerToken(request.getHeader(AUTHORIZATION_HEADER));
     }
 }

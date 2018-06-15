@@ -13,31 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.aspsp.xs2a.config.rest.aspsp;
 
-import de.adorsys.aspsp.xs2a.exception.AspspProfileRestTemplateErrorHandler;
+import de.adorsys.aspsp.xs2a.config.rest.BearerTokenInterceptor;
+import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.WebApplicationContext;
 
 @Configuration
-public class RestAspspProfileConfig {
+@Profile("mockspi")
+public class AspspRestConfig {
     @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
     @Value("${http-client.connection-timeout.ms:10000}")
     private int connectionTimeout;
 
-    @Bean(name = "aspspProfileRestTemplate")
-    public RestTemplate aspspProfileRestTemplate() {
+    @Autowired
+    private BearerToken bearerToken;
+
+    @Bean(name = "aspspRestTemplate")
+    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public RestTemplate restTemplate(){
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
-        rest.setErrorHandler(new AspspProfileRestTemplateErrorHandler());
+        rest.getInterceptors().add(new BearerTokenInterceptor(bearerToken.getToken()));
+        rest.setErrorHandler(new AspspRestErrorHandler());
         return rest;
     }
 

@@ -75,7 +75,8 @@ public enum MessageErrorCode {
     RESOURCE_EXPIRED_400(400), // 400 if payload
     PARAMETER_NOT_SUPPORTED(400),
     BEARER_TOKEN_EMPTY(400),
-    INTERNAL_SERVER_ERROR(500);
+    INTERNAL_SERVER_ERROR(500),
+    UNAUTHORIZED(401);
 
     @ApiModelProperty(value = "code", example = "400")
     private int code;

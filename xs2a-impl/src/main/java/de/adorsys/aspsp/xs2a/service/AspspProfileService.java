@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.config.AspspProfileRemoteUrls;
+import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
