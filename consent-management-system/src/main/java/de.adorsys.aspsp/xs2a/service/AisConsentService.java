@@ -116,7 +116,7 @@ public class AisConsentService {
         if (consent.isPresent()) {
             AisConsent aisConsent = consent.get();
             checkAndUpdateOnExpiration(aisConsent);
-            if (aisConsent.isHasAvailableUseges()) {
+            if (aisConsent.hasUsagesAvailable()) {
                 updateAisConsentCounter(aisConsent);
             }
         }
