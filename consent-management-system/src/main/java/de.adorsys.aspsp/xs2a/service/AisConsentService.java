@@ -106,13 +106,23 @@ public class AisConsentService {
     }
 
     @Transactional
-    public void saveConsentActionLog(ConsentActionRequest request) {
-        getAisConsentById(request.getConsentId())
+    public void checkConsentAndSaveActionLog(ConsentActionRequest request) {
+        Optional<AisConsent> consent = getAisConsentById(request.getConsentId());
+        checkAndUpdateConsentParameter(consent);
+        logConsentAction(request.getConsentId(), resolveConsentActionStatus(request, consent), request.getTppId());
+    }
+
+    private void checkAndUpdateConsentParameter(Optional<AisConsent> consent) {
+        consent
             .map(this::checkAndUpdateOnExpiration)
             .filter(AisConsent::isHasAvailableUseges)
             .map(this::updateAisConsentCounter);
+    }
 
-        logConsentAction(request.getConsentId(), request.getActionStatus(), request.getTppId());
+    private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, Optional<AisConsent> consent) {
+        return consent.isPresent()
+                   ? request.getActionStatus()
+                   : ActionStatus.BAD_PAYLOAD;
     }
 
     private AisConsent updateAisConsentCounter(AisConsent consent) {
