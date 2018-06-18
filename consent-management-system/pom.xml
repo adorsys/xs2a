@@ -27,6 +27,7 @@
 
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
+        <h2.version>1.4.197</h2.version>
     </properties>
 
     <modelVersion>4.0.0</modelVersion>
@@ -108,6 +109,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
