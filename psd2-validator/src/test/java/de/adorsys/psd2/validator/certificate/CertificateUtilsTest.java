@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
+
 
 
 public class CertificateUtilsTest {
@@ -13,7 +15,7 @@ public class CertificateUtilsTest {
 	@Test
 	public void test_getRootCertificate() {
 		
-		X509Certificate[] rootCertList = CertificateUtils.getCertificates("rootcert");
+		X509Certificate[] rootCertList = CertificateUtils.getCertificates("rootcert","TCA3.crt");
 		Assert.assertTrue(rootCertList.length >= 1);
 	}
 	

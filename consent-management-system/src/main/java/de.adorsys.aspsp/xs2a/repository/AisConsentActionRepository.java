@@ -16,8 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.repository;
 
-import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
 import org.springframework.data.repository.CrudRepository;
+
+import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
+
 
 public interface AisConsentActionRepository extends CrudRepository<AisConsentAction, Long> {
 }
