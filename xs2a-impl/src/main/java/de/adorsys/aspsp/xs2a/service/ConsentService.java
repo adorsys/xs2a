@@ -89,7 +89,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return consentMapper.mapToConsentStatus(aisConsentService.getAccountConsentStatusById(consentId))
                    .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
                    .orElse(ResponseObject.<ConsentStatus>builder()
-                               .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404)))
+                               .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
                                .build());
     }
 
@@ -105,7 +105,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
 
         return ResponseObject.<Void>builder()
-                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build();
+                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
     }
 
     /**
@@ -115,7 +115,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
         AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
         return consent == null
-                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 

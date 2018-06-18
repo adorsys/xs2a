@@ -39,6 +39,7 @@ public class ValueValidatorService {
         this.validator = validator;
     }
 
+    //TODO Method unused subject to removal
     public void validate(Object objectForValidate) {
         final List<String> violations = validator.validate(objectForValidate).stream()
                                         .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
