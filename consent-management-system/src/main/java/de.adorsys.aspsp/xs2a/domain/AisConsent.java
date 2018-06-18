@@ -115,7 +115,7 @@ public class AisConsent {
         return consentStatus != EXPIRED;
     }
 
-    public boolean isHasAvailableUsages(){
+    public boolean hasUsagesAvailable(){
         return usageCounter > 0;
     }
 

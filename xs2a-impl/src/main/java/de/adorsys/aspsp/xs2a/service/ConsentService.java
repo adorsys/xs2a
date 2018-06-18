@@ -46,8 +46,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final AccountSpi accountSpi;
     private final AccountMapper accountMapper;
 
+    /**
+     * @param request              body of create consent request carrying such parameters as AccountAccess, validity terms etc.
+     * @param withBalance          boolean representing if the response should include balances (Not applicable since v1.1)
+     * @param tppRedirectPreferred boolean indication that TPP prefers to use Redirect approach
+     * @param psuId                String representing PSU identification at ASPSP
+     * @return CreateConsentResp representing the complete response to create consent request
+     * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
+     * account details or by getting account details from ASPSP by psuId and filling the appropriate fields in
+     * AccountAccess determined by availableAccounts or allPsd2 variables
+     */
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
-        String tppId = "This is a test TppId"; //TODO to clarify where it should get from
+        String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         CreateConsentReq checkedRequest = new CreateConsentReq();
         if (isNotEmptyAccess(request.getAccess())) {
             if (isAllAccountsRequest(request) && psuId != null) {
@@ -70,6 +80,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build();
     }
 
+    /**
+     * @param consentId String representation of AccountConsent identification
+     * @return ConsentStatus
+     * Returns status of requested consent
+     */
     public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
         return consentMapper.mapToConsentStatus(aisConsentService.getAccountConsentStatusById(consentId))
                    .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
@@ -78,6 +93,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                .build());
     }
 
+    /**
+     * @param consentId String representation of AccountConsent identification
+     * @return VOID
+     * Revokes account consent on PSU request
+     */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
         if (aisConsentService.getAccountConsentById(consentId) != null) {
             aisConsentService.revokeConsent(consentId);
@@ -88,6 +108,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build();
     }
 
+    /**
+     * @param consentId String representation of AccountConsent identification
+     * @return AccountConsent requested by consentId
+     */
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
         AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
         return consent == null
@@ -95,7 +119,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    public ResponseObject<AccountAccess> getValidatedConsent(String consentId) {
+    ResponseObject<AccountAccess> getValidatedConsent(String consentId) {
         AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
         if (consent == null) {
             return ResponseObject.<AccountAccess>builder()
@@ -112,14 +136,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return ResponseObject.<AccountAccess>builder().body(consent.getAccess()).build();
     }
 
-    public boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
+    boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getIban().equals(iban)
                                              && a.getCurrency() == currency);
     }
 
-    public Set<String> getIbansFromAccountReference(List<AccountReference> references) {
+    private Set<String> getIbansFromAccountReference(List<AccountReference> references) {
         return Optional.ofNullable(references)
                    .map(list -> list.stream()
                                     .map(AccountReference::getIban)
