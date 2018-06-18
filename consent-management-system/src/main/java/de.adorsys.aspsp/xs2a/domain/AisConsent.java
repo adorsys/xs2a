@@ -23,7 +23,6 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class AisConsent {
 
     @Column(name = "request_date", nullable = false)
     @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
-    private Instant requestDate;
+    private LocalDate requestDate;
 
     @Column(name = "last_action_date")
     @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")

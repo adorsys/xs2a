@@ -59,7 +59,7 @@ public class AisConsentService {
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(minFrequencyPerDay);
-        consent.setRequestDate(Instant.now());
+        consent.setRequestDate(LocalDate.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
