@@ -40,7 +40,7 @@ public class ConsentInformationController {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;
 
-    @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class), @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping
     @ApiImplicitParams({

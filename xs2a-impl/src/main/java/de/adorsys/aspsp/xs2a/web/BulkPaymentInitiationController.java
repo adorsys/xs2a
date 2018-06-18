@@ -36,22 +36,22 @@ public class BulkPaymentInitiationController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
 
-    @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
-    @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping()
     @ApiImplicitParams({
-    @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"), //NOPMD value is correct according to specification
-    @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-    @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"), //NOPMD value is correct according to specification
+        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<List<PaymentInitialisationResponse>> createBulkPaymentInitiation(
-    @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
-    @PathVariable("payment-product") String paymentProduct,
-    @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
-    @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
-    @RequestBody List<SinglePayments> payments) {
+        @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
+        @PathVariable("payment-product") String paymentProduct,
+        @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+        @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
+        @RequestBody List<SinglePayments> payments) {
         return responseMapper.created(paymentService.createBulkPayments(payments, paymentProduct, tppRedirectPreferred));
     }
 }

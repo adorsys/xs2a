@@ -46,5 +46,4 @@ public class CertificateValidatorFactoryTest {
 
 		validatorFactory.validate(encodedCert);
 	}
-
 }

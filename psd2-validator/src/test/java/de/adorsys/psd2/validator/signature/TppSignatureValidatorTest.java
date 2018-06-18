@@ -13,7 +13,6 @@ import org.tomitribe.auth.signatures.MissingRequiredHeaderException;
 
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 
-
 public class TppSignatureValidatorTest {
 
 	private String signature;
