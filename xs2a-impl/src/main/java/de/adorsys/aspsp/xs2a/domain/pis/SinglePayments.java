@@ -78,6 +78,7 @@ public class SinglePayments {
     private LocalDate requestedExecutionDate;
 
     @ApiModelProperty(value = "requested execution time", required = false, example = "2017-10-25T15:30:35.035")
+    // TODO add support of all types of DateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/148
     private LocalDateTime requestedExecutionTime;
 
 }
