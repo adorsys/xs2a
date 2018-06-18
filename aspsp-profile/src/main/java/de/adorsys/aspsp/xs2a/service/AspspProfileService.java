@@ -29,7 +29,6 @@ public class AspspProfileService {
 
     /**
      * Read frequency per day
-     * @return int
      */
     public int getFrequencyPerDay() {
         return profileConfiguration.getFrequencyPerDay();
@@ -45,7 +44,6 @@ public class AspspProfileService {
 
     /**
      * Read combined service indicator
-     * @return boolean
      */
     public boolean isCombinedServiceIndicator() {
         return profileConfiguration.isCombinedServiceIndicator();
@@ -61,7 +59,6 @@ public class AspspProfileService {
 
     /**
      * Read List of available payment products
-     * @return List<String>
      */
     public List<String> getAvailablePaymentProducts() {
         return profileConfiguration.getAvailablePaymentProducts();
@@ -77,7 +74,6 @@ public class AspspProfileService {
 
     /**
      * Read List of available payment types
-     * @return List<String>
      */
     public List<String> getAvailablePaymentTypes() {
         return profileConfiguration.getAvailablePaymentTypes();
@@ -93,7 +89,6 @@ public class AspspProfileService {
 
     /**
      * Read sca approach method
-     * @return String
      */
     public String getScaApproach() {
         return profileConfiguration.getScaApproach();
@@ -109,7 +104,6 @@ public class AspspProfileService {
 
     /**
      * Read if tpp signature is required or not
-     * @return boolean
      */
     public boolean isTppSignatureRequired() {
         return profileConfiguration.isTppSignatureRequired();
