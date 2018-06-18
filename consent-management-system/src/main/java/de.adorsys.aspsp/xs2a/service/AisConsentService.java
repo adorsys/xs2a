@@ -49,6 +49,12 @@ public class AisConsentService {
     private final ConsentMapper consentMapper;
     private final AspspProfileService profileService;
 
+    /**
+     * Method for creating AIS consent
+     *
+     * @param request needed parameters for creating AIS consent
+     * @return String consent id
+     */
     @Transactional
     public Optional<String> createConsent(AisConsentRequest request) {
         int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
@@ -87,24 +93,48 @@ public class AisConsentService {
                    .collect(Collectors.toList());
     }
 
+    /**
+     * Get consent status by id
+     *
+     * @param consentId
+     * @return SpiConsentStatus
+     */
     public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
         return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
     }
 
+    /**
+     * Update consent status by id
+     *
+     * @param consentId
+     * @param status new consent status
+     * @return SpiConsentStatus
+     */
     public Optional<Boolean> updateConsentStatusById(String consentId, SpiConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
     }
 
+    /**
+     * Get full information about consent by id
+     *
+     * @param consentId
+     * @return SpiAccountConsent
+     */
     public Optional<SpiAccountConsent> getSpiAccountConsentById(String consentId) {
         return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(consentMapper::mapToSpiAccountConsent);
     }
 
+    /**
+     * Save information about uses of consent
+     *
+     * @param request needed parameters for logging usage AIS consent
+     */
     @Transactional
     public void checkConsentAndSaveActionLog(ConsentActionRequest request) {
         Optional<AisConsent> consent = getAisConsentById(request.getConsentId());
@@ -128,12 +158,12 @@ public class AisConsentService {
                    : ActionStatus.BAD_PAYLOAD;
     }
 
-    private AisConsent updateAisConsentCounter(AisConsent consent) {
+    private void updateAisConsentCounter(AisConsent consent) {
         int usageCounter = consent.getUsageCounter();
         int newUsageCounter = --usageCounter;
         consent.setUsageCounter(newUsageCounter);
         consent.setLastActionDate(Instant.now());
-        return aisConsentRepository.save(consent);
+        aisConsentRepository.save(consent);
     }
 
     private void logConsentAction(String requestedConsentId, ActionStatus actionStatus, String tppId) {

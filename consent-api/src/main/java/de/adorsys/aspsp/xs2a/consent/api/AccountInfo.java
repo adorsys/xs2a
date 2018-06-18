@@ -17,9 +17,16 @@
 package de.adorsys.aspsp.xs2a.consent.api;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class AccountInfo {
     private String iban;
     private String currency;
+
+    public AccountInfo(String iban, String currency) {
+        this.iban = iban;
+        this.currency = currency;
+    }
 }
