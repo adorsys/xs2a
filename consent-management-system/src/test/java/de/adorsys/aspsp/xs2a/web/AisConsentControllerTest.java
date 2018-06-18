@@ -19,10 +19,13 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -32,12 +35,22 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class AisConsentControllerTest {
     @Autowired
     private AisConsentController aisConsentController;
+    @MockBean
+    private AspspProfileService aspspProfileService;
+
+    @Before
+    public void setUp() {
+        when(aspspProfileService.getMinFrequencyPerDay(1))
+            .thenReturn(anyInt());
+    }
 
     @Test
     public void createAisConsentShouldReturn201() {
