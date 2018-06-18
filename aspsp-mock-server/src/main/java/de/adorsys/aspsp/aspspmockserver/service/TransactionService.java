@@ -17,11 +17,12 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Currency;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +31,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
+    private final AccountService accountService;
 
     public List<SpiTransaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
 
-    public Optional<SpiTransaction> getTransactionById(String transactionId) {
-        return Optional.ofNullable(transactionRepository.findOne(transactionId));
+    public Optional<SpiTransaction> getTransactionById(String transactionId, String accountId) {
+        Optional<SpiAccountDetails> details = accountService.getAccountById(accountId);
+        return details.map(det -> transactionRepository.findOneByTransactionIdAndAccount(det.getIban(), det.getCurrency(), transactionId));
     }
 
     public Optional<String> saveTransaction(SpiTransaction transaction) {
@@ -44,8 +47,10 @@ public class TransactionService {
                    .map(SpiTransaction::getTransactionId);
     }
 
-    public List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo) {
-        return transactionRepository.findAllByDates(iban, currency, dateFrom, dateTo);
+    public List<SpiTransaction> getTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
+        Optional<SpiAccountDetails> details = accountService.getAccountById(accountId);
+        return details.map(det -> transactionRepository.findAllByDates(det.getIban(), det.getCurrency(), dateFrom, dateTo))
+                   .orElse(Collections.emptyList());
     }
 
 }

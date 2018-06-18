@@ -20,7 +20,6 @@ import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.ZoneId;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -45,6 +43,11 @@ public class AccountSpiImpl implements AccountSpi {
     private final RemoteSpiUrls remoteSpiUrls;
     private final RestTemplate restTemplate;
 
+    /**
+     * @param iban String representation of Account IBAN
+     * @return List<SpiAccountDetails>
+     * Queries ASPSP to (GET) List of AccountDetails by IBAN
+     */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
         return Optional.ofNullable(restTemplate.exchange(
@@ -53,6 +56,11 @@ public class AccountSpiImpl implements AccountSpi {
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * @param accountId String representation of ASPSP account identifier
+     * @return List<SpiBalances>
+     * Queries ASPSP to (GET) a list of balances of a sertain account by its primary id
+     */
     @Override
     public List<SpiBalances> readBalances(String accountId) {
         return Optional.ofNullable(restTemplate.exchange(
@@ -61,49 +69,64 @@ public class AccountSpiImpl implements AccountSpi {
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * @param transaction Prepared at xs2a transaction object
+     * @return String transactionId
+     * Queries (POST) ASPSP to save a new Transaction, as a response receives a string representing the ASPSP primary identifier of saved transaction
+     */
     @Override
     public String saveTransaction(SpiTransaction transaction) {
         return restTemplate.postForEntity(remoteSpiUrls.createTransaction(), transaction, String.class).getBody();
     }
 
+    /**
+     * @param accountId String representation of ASPSP account primary identifier
+     * @param dateFrom  Date representing the beginning of the search period
+     * @param dateTo    Date representing the ending of the search period
+     * @return List<SpiTransaction>
+     * Queries ASPSP to get List of transactions dependant on period and accountId
+     */
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
-        return getTransactionsByPeriod(iban, currency, dateFrom, dateTo, bookingStatus);
-    }
-
-    private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
         Map<String, String> uriParams = new ObjectHolder<String, String>()
-                                            .addValue("iban", iban)
-                                            .addValue("currency", currency.toString())
+                                            .addValue("account-id", accountId)
                                             .getValues();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
                                            .queryParam("dateFrom", dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
                                            .queryParam("dateTo", dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 
-        List<SpiTransaction> spiTransactions = restTemplate.exchange(
+        return restTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
             }).getBody();
-
-        Predicate<SpiTransaction> pendingTransactionPredicate = SpiTransaction::isPendingTransaction;
-        if (SpiBookingStatus.PENDING == bookingStatus) {
-            return getFilteredTransactions(spiTransactions, pendingTransactionPredicate);
-        } else if (SpiBookingStatus.BOOKED == bookingStatus) {
-            return getFilteredTransactions(spiTransactions, pendingTransactionPredicate.negate());
-        }
-        return spiTransactions;
     }
 
+    /**
+     * @param transactionId String representation of ASPSP primary identifier of transaction
+     * @param accountId     String representation of ASPSP account primary identifier
+     * @return SpiTransaction
+     * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
+     */
     @Override
-    public SpiTransaction readTransactionsById(String transactionId) {
-        return restTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId);
+    public Optional<SpiTransaction> readTransactionsById(String transactionId, String accountId) {
+        return Optional.ofNullable(restTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
     }
 
+    /**
+     * @param accountId String representation of ASPSP account primary identifier
+     * @return SpiAccountDetails
+     * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
+     */
     @Override
     public SpiAccountDetails readAccountDetails(String accountId) {
         return restTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
     }
 
+    /**
+     * @param psuId String representing ASPSP`s primary identifier of PSU
+     * @return List<SpiAccountDetails>
+     * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
+     */
     @Override
     public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
         return Optional.ofNullable(restTemplate.exchange(
@@ -112,19 +135,16 @@ public class AccountSpiImpl implements AccountSpi {
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * @param ibans a collection of Strings representing account IBANS
+     * @return List<SpiAccountDetails>
+     * Queries ASPSP to (GET) list of account details with certain account IBANS
+     */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
         return ibans.stream()
                    .map(this::readAccountDetailsByIban)
                    .flatMap(Collection::stream)
                    .collect(Collectors.toList());
-    }
-
-    private List<SpiTransaction> getFilteredTransactions(List<SpiTransaction> spiTransactions, Predicate<SpiTransaction> predicate) {
-        return Optional.ofNullable(spiTransactions)
-                   .map(t->t.stream()
-                   .filter(predicate)
-                   .collect(Collectors.toList()))
-            .orElse(Collections.emptyList());
     }
 }

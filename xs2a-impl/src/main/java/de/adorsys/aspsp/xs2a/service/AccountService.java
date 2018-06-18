@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -52,6 +51,7 @@ public class AccountService {
     private final AccountMapper accountMapper;
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
+    private final String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
 
     /**
      * @param consentId   String representing an AccountConsent identification
@@ -67,9 +67,7 @@ public class AccountService {
             return ResponseObject.<Map<String, List<AccountDetails>>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
         List<AccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
-
         return accountDetails.isEmpty()
                    ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
@@ -92,25 +90,22 @@ public class AccountService {
             return ResponseObject.<AccountDetails>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
         if (accountDetails == null) {
             return ResponseObject.<AccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
+        boolean isValid = withBalance
+                              ? consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
+                              : consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts());
 
-        AccountDetails details = null;
-        if (withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
-            details = accountDetails;
-        } else if (!withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts())) {
-            details = getAccountDetailNoBalances(accountDetails);
+        if (isValid) {
+            return withBalance
+                       ? ResponseObject.<AccountDetails>builder().body(accountDetails).build()
+                       : ResponseObject.<AccountDetails>builder().body(getAccountDetailNoBalances(accountDetails)).build();
         }
-
-        return details == null
-                   ? ResponseObject.<AccountDetails>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                   : ResponseObject.<AccountDetails>builder()
-                         .body(details).build();
+        return ResponseObject.<AccountDetails>builder()
+                   .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
     }
 
     /**
@@ -126,17 +121,17 @@ public class AccountService {
             return ResponseObject.<List<Balances>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
         if (accountDetails == null) {
             return ResponseObject.<List<Balances>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
-
-        return consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
-                   ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
-                   : ResponseObject.<List<Balances>>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
+        if (isValid) {
+            return ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build();
+        }
+        return ResponseObject.<List<Balances>>builder()
+                   .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
     }
 
     /**
@@ -155,7 +150,8 @@ public class AccountService {
      * Checks if all transactions are related to accounts set in AccountConsent Transactions section
      */
     public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, Date dateFrom,
-                                                          Date dateTo, String transactionId,
+                                                          Date
+                                                              dateTo, String transactionId,
                                                           boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
@@ -168,13 +164,15 @@ public class AccountService {
             return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
 
-        AccountReport accountReport = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions())
-                                          ? getAccountReport(accountDetails, dateFrom, dateTo, transactionId, bookingStatus, allowedAccountData.getBody().getTransactions())
-                                          : null;
+        boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
+        Optional<AccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus);
 
-        return accountReport == null
-                   ? ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                   : ResponseObject.<AccountReport>builder().body(accountReport).build();
+        if (isValid && report.isPresent()) {
+            return ResponseObject.<AccountReport>builder()
+                       .body(report.get())
+                       .build();
+        }
+        return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
     }
 
     List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
@@ -221,70 +219,51 @@ public class AccountService {
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
 
-    private AccountReport getAccountReport(AccountDetails details, Date dateFrom, Date dateTo, String transactionId, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
+    private Optional<AccountReport> getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId,
+                                                     BookingStatus bookingStatus) {
         Date dateToChecked = dateTo == null ? new Date() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
-        return StringUtils.isBlank(transactionId)
-                   ? getAccountReportByPeriod(details, dateFrom, dateToChecked, bookingStatus, allowedAccountData)
-                   : getAccountReportByTransaction(details, transactionId, allowedAccountData);
-    }
 
-    private AccountReport getAccountReportByPeriod(AccountDetails details, Date dateFrom, Date dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
-        validateAccountIdPeriod(details.getIban(), dateFrom, dateTo);
-        return getAllowedTransactionsByAccess(readTransactionsByPeriod(details, dateFrom, dateTo, bookingStatus), allowedAccountData);
-    }
-
-    private AccountReport getAccountReportByTransaction(AccountDetails details, String transactionId, List<AccountReference> allowedAccountData) {
-        validateAccountIdTransactionId(details.getIban(), transactionId);
-        return readTransactionsById(transactionId, allowedAccountData);
-    }
-
-    private AccountReport getAllowedTransactionsByAccess(AccountReport accountReport, List<AccountReference> allowedAccountData) {
-        if (accountReport == null) {
-            return null;
+        Optional<AccountReport> report;
+        if (StringUtils.isBlank(transactionId)) {
+            report = getAccountReportByPeriod(accountId, dateFrom, dateToChecked)
+                         .map(r -> filterByBookingStatus(r, bookingStatus));
+        } else {
+            report = getAccountReportByTransaction(transactionId, accountId);
         }
-        Transactions[] booked = getAllowedTransactions(accountReport.getBooked(), allowedAccountData);
-        Transactions[] pending = getAllowedTransactions(accountReport.getPending(), allowedAccountData);
-        return new AccountReport(booked, pending);
+
+        return report;
     }
 
-    private Transactions[] getAllowedTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
-        return Arrays.stream(transactions).allMatch(t -> isAllowedTransaction(t, allowedAccountData))
-                   ? transactions
-                   : new Transactions[]{};
+    private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+        return new AccountReport(
+            bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
+                ? report.getBooked() : new Transactions[]{},
+            bookingStatus == BookingStatus.PENDING || bookingStatus == BookingStatus.BOTH
+                ? report.getPending() : new Transactions[]{});
     }
 
-    private boolean isAllowedTransaction(Transactions transaction, List<AccountReference> allowedAccountData) {
-        return consentService.isValidAccountByAccess(transaction.getCreditorAccount().getIban(), transaction.getCreditorAccount().getCurrency(), allowedAccountData)
-                   || consentService.isValidAccountByAccess(transaction.getDebtorAccount().getIban(), transaction.getDebtorAccount().getCurrency(), allowedAccountData);
+    private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
+        validateAccountIdTransactionId(accountId, transactionId);
+
+        Optional<SpiTransaction> transaction = accountSpi.readTransactionsById(transactionId, accountId);
+        return accountMapper.mapToAccountReport(transaction
+                                                    .map(Collections::singletonList)
+                                                    .orElse(Collections.emptyList()));
     }
 
-    private AccountReport readTransactionsByPeriod(AccountDetails details, Date dateFrom,
-                                                   Date dateTo, BookingStatus bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
-        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(details.getIban(), details.getCurrency(), dateFrom, dateTo, SpiBookingStatus.valueOf(bookingStatus.name())));
-
-        return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
-    }
-
-    private AccountReport readTransactionsById(String transactionId, List<AccountReference> allowedAccountData) {
-        SpiTransaction spiTransaction = accountSpi.readTransactionsById(transactionId);
-        return isAllowedSpiTransaction(spiTransaction, allowedAccountData)
-                   ? accountMapper.mapToAccountReport(Collections.singletonList(spiTransaction)).orElseGet(() -> null)
-                   : null;
-    }
-
-    private boolean isAllowedSpiTransaction(SpiTransaction spiTransaction, List<AccountReference> allowedAccountData) {
-        return Optional.ofNullable(spiTransaction)
-                   .filter(t -> isAllowedTransaction(accountMapper.mapToTransaction(t), allowedAccountData))
-                   .isPresent();
+    private Optional<AccountReport> getAccountReportByPeriod(String accountId, Date dateFrom,
+                                                             Date dateTo) { //TODO to be reviewed upon change to v1.1
+        validateAccountIdPeriod(accountId, dateFrom, dateTo);
+        return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }
 
     private Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
                    .map(Collection::stream)
-                   .flatMap(accDets -> accDets
-                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
-                                           .findFirst())
+                   .flatMap(accDts -> accDts
+                                          .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
+                                          .findFirst())
                    .map(accountMapper::mapToAccountDetails);
     }
 

@@ -28,6 +28,7 @@ public class RemoteSpiUrls {
     private String consentServiceBaseUrl;
 
     // PIS Consents
+
     /**
      * Returns URL-string to CMS endpoint that creates pis consent
      *
@@ -92,18 +93,39 @@ public class RemoteSpiUrls {
     }
 
     //Accounts urls
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by accountId
+     *
+     * @return String
+     */
     public String getAccountDetailsById() {
         return spiMockBaseUrl + "/account/{account-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs Balances of an account by accountId
+     *
+     * @return String
+     */
     public String getBalancesByAccountId() {
         return spiMockBaseUrl + "/account/{account-id}/balances";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by PsuId
+     *
+     * @return String
+     */
     public String getAccountDetailsByPsuId() {
         return spiMockBaseUrl + "/account/psu/{psu-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by IBAN
+     *
+     * @return String
+     */
     public String getAccountDetailsByIban() {
         return spiMockBaseUrl + "/account/iban/{iban}";
     }
@@ -126,14 +148,30 @@ public class RemoteSpiUrls {
     }
 
     //Transactions urls
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs Transaction by transactionId and accountId
+     *
+     * @return String
+     */
     public String readTransactionById() {
-        return spiMockBaseUrl + "/transaction/{transaction-id}";
+        return spiMockBaseUrl + "/transaction/{transaction-id}/{account-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs Transactions list by accountId and period set by dates from/to
+     *
+     * @return String
+     */
     public String readTransactionsByPeriod() {
-        return spiMockBaseUrl + "/transaction/{iban}/{currency}";
+        return spiMockBaseUrl + "/transaction/{account-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body SpiTransaction
+     *
+     * @return String
+     */
     public String createTransaction() {
         return spiMockBaseUrl + "/transaction";
     }

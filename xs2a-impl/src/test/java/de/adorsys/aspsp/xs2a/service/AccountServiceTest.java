@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -58,6 +59,7 @@ public class AccountServiceTest {
     private final String WRONG_CONSENT_ID = "Wromg consent id";
     private final String TRANSACTION_ID = "0001";
     private final Date DATE = new Date(123456789L);
+    private final String TPP_ID = "This is a test TppId";
 
     @Autowired
     private AccountService accountService;
@@ -66,9 +68,13 @@ public class AccountServiceTest {
     private AccountSpi accountSpi;
     @MockBean
     private ConsentService consentService;
+    @MockBean
+    private AisConsentService aisConsentService;
 
     @Before
     public void setUp() {
+        //AisReporting
+        // doNothing().when(aisConsentService).consentActionLog(any());
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails(ACCOUNT_ID, IBAN));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
@@ -89,9 +95,9 @@ public class AccountServiceTest {
 
         //getAccountReport_ByTransactionId_Success
         when(consentService.getValidatedConsent(CONSENT_ID_WT)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, getReferences(IBAN, IBAN_1), false, false));
-        when(accountSpi.readTransactionsById(TRANSACTION_ID)).thenReturn(getSpiTransaction());
+        when(accountSpi.readTransactionsById(TRANSACTION_ID, ACCOUNT_ID)).thenReturn(Optional.of(getSpiTransaction()));
 
-        when(accountSpi.readTransactionsByPeriod(IBAN, CURRENCY, DATE, DATE, SpiBookingStatus.BOTH)).thenReturn(Collections.singletonList(getSpiTransaction()));
+        when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE)).thenReturn(Collections.singletonList(getSpiTransaction()));
     }
 
     //Get Account By AccountId

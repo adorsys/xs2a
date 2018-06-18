@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.consent.ais;
 
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
@@ -50,7 +53,11 @@ public class AisConsentService {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, SpiConsentStatus.REVOKED_BY_PSU);
     }
 
-    public void consentActionLog(ConsentActionRequest request) {
-        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(),request,void.class);
+    public void consentActionLog(String tppId, String consentId, boolean withBalance, TypeAccess access, ResponseObject object) {
+        ActionStatus status = object.hasError()
+                                  ? consentMapper.mapActionStatusError(object.getError(), withBalance, access)
+                                  : ActionStatus.SUCCESS;
+
+        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, status), Void.class);
     }
 }

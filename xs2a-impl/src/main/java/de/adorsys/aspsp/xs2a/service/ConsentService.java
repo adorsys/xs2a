@@ -131,7 +131,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
         if (!consent.isValidFrequency()) {
             return ResponseObject.<AccountAccess>builder()
-                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
         }
         return ResponseObject.<AccountAccess>builder().body(consent.getAccess()).build();
     }

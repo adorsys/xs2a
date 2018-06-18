@@ -27,7 +27,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 
@@ -49,11 +48,11 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{transaction-id}")
-    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId) {
-        return transactionService.getTransactionById(transactionId)
+    @GetMapping(path = "/{transaction-id}/{account-id}")
+    public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId, @PathVariable("account-id") String accountId) {
+        return transactionService.getTransactionById(transactionId, accountId)
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -65,13 +64,13 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @GetMapping(path = "/{iban}/{currency}")
-    public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("iban") String iban, @PathVariable("currency") Currency currency,
+    @GetMapping(path = "/{account-id}")
+    public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("account-id") String accountId,
                                                                          @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
                                                                          @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo) {
-        List<SpiTransaction> response = transactionService.getTransactionsByPeriod(iban, currency, dateFrom, dateTo);
+        List<SpiTransaction> response = transactionService.getTransactionsByPeriod(accountId, dateFrom, dateTo);
         return CollectionUtils.isEmpty(response)
-                   ? ResponseEntity.notFound().build()
+                   ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);
     }
 }

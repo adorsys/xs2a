@@ -45,7 +45,7 @@ public class AccountReference {
     private Currency currency;
 
     @JsonIgnore
-    public boolean matches(AccountReference otherReference){
+    public boolean matches(AccountReference otherReference) {
         return otherReference.getCurrency() == null
                    ? iban.equals(otherReference.getIban())
                    : iban.equals(otherReference.getIban())
