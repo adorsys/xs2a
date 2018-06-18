@@ -20,7 +20,6 @@ import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,18 +45,14 @@ public class AisConsentControllerTest {
     @MockBean
     private AspspProfileService aspspProfileService;
 
-    @Before
-    public void setUp() {
-        when(aspspProfileService.getMinFrequencyPerDay(1))
-            .thenReturn(anyInt());
-    }
-
     @Test
     public void createAisConsentShouldReturn201() {
         //Given:
         HttpStatus expectedHttpStatusCode = HttpStatus.CREATED;
 
         //When:
+        when(aspspProfileService.getMinFrequencyPerDay(1))
+            .thenReturn(anyInt());
         ResponseEntity<String> response = aisConsentController.createConsent(buildCreateAisConsentRequest());
 
         //Then:
