@@ -24,8 +24,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Currency;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -59,8 +60,8 @@ public class FutureBookingsService {
     private SpiBalances getNewBalance(SpiAccountDetails account, SpiBalances balance) {
         SpiAccountBalance newAccountBalance = new SpiAccountBalance();
         newAccountBalance.setSpiAmount(getNewAmount(account, balance));
-        newAccountBalance.setLastActionDateTime(new Date());
-        newAccountBalance.setDate(new Date());
+        newAccountBalance.setLastActionDateTime(LocalDateTime.now());
+        newAccountBalance.setDate(LocalDate.now());
         balance.setInterimAvailable(newAccountBalance);
         return balance;
     }

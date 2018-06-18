@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -51,6 +51,8 @@ public class PeriodicPaymentsControllerTest {
 
     @Autowired
     private PeriodicPaymentsController periodicPaymentsController;
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @MockBean(name = "paymentService")
     private PaymentService paymentService;
@@ -83,7 +85,7 @@ public class PeriodicPaymentsControllerTest {
     }
 
     private PeriodicPayment readPeriodicPayment() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(PERIODIC_PAYMENT_DATA, UTF_8), PeriodicPayment.class);
+        return jsonConverter.toObject(IOUtils.resourceToString(PERIODIC_PAYMENT_DATA, UTF_8), PeriodicPayment.class).get();
     }
 
     private PaymentInitialisationResponse getPaymentInitializationResponse() {

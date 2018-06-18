@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.consent.api.ais;
 
 import lombok.Data;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 public class AisConsentRequest {
@@ -26,7 +26,7 @@ public class AisConsentRequest {
     private String tppId;
     private int frequencyPerDay;
     private AisAccountAccessInfo access;
-    private Instant validUntil;
+    private LocalDate validUntil;
     private boolean recurringIndicator;
     private boolean tppRedirectPreferred;
     private boolean combinedServiceIndicator;

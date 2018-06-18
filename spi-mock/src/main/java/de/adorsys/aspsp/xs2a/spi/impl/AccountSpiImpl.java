@@ -32,11 +32,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.ZoneId;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
 
 @Component
 @AllArgsConstructor
@@ -67,19 +66,19 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
+    public List<SpiTransaction> readTransactionsByPeriod(String iban, Currency currency, LocalDate dateFrom, LocalDate dateTo, SpiBookingStatus bookingStatus) {
         return getTransactionsByPeriod(iban, currency, dateFrom, dateTo, bookingStatus);
     }
 
-    private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, Date dateFrom, Date dateTo, SpiBookingStatus bookingStatus) {
+    private List<SpiTransaction> getTransactionsByPeriod(String iban, Currency currency, LocalDate dateFrom, LocalDate dateTo, SpiBookingStatus bookingStatus) {
         Map<String, String> uriParams = new ObjectHolder<String, String>()
                                             .addValue("iban", iban)
                                             .addValue("currency", currency.toString())
                                             .getValues();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                                           .queryParam("dateFrom", dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
-                                           .queryParam("dateTo", dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                                           .queryParam("dateFrom", dateFrom)
+                                           .queryParam("dateTo", dateTo);
 
         List<SpiTransaction> spiTransactions = restTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {

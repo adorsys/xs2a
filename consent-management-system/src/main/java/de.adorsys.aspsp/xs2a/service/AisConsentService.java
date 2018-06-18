@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,7 +110,7 @@ public class AisConsentService {
     public void saveConsentActionLog(ConsentActionRequest request) {
         getAisConsentById(request.getConsentId())
             .map(this::checkAndUpdateOnExpiration)
-            .filter(AisConsent::isHasAvailableUseges)
+            .filter(AisConsent::isHasAvailableUsages)
             .map(this::updateAisConsentCounter);
 
         logConsentAction(request.getConsentId(), request.getActionStatus(), request.getTppId());
@@ -119,7 +120,7 @@ public class AisConsentService {
         int usageCounter = consent.getUsageCounter();
         int newUsageCounter = --usageCounter;
         consent.setUsageCounter(newUsageCounter);
-        consent.setLastActionDate(Instant.now());
+        consent.setLastActionDate(LocalDate.now());
         return aisConsentRepository.save(consent);
     }
 
@@ -145,15 +146,15 @@ public class AisConsentService {
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
         if (consent.isExpiredByDate() && consent.isStatusNotExpired()) {
             consent.setConsentStatus(EXPIRED);
-            consent.setExpireDate(Instant.now());
-            consent.setLastActionDate(Instant.now());
+            consent.setExpireDate(LocalDate.now());
+            consent.setLastActionDate(LocalDate.now());
             aisConsentRepository.save(consent);
         }
         return consent;
     }
 
     private AisConsent setStatusAndSaveConsent(AisConsent consent, SpiConsentStatus status) {
-        consent.setLastActionDate(Instant.now());
+        consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
     }

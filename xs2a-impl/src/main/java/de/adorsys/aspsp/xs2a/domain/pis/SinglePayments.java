@@ -21,14 +21,13 @@ import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
-import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateTimeUTC;
-import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateUTC;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
@@ -76,11 +75,9 @@ public class SinglePayments {
     private Remittance remittanceInformationStructured;
 
     @ApiModelProperty(value = "requested execution date", required = false, example = "2017-01-01")
-    @JsonFormatDateUTC
-    private Date requestedExecutionDate;
+    private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "requested execution time", required = false, example = "2017-10-25T15:30:35.035Z")
-    @JsonFormatDateTimeUTC
-    private Date requestedExecutionTime;
+    @ApiModelProperty(value = "requested execution time", required = false, example = "2017-10-25T15:30:35.035")
+    private LocalDateTime requestedExecutionTime;
 
 }

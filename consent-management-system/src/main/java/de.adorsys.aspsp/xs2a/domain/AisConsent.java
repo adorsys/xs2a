@@ -24,6 +24,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,16 +57,16 @@ public class AisConsent {
     private boolean combinedServiceIndicator;
 
     @Column(name = "request_date", nullable = false)
-    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
+    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
     private Instant requestDate;
 
     @Column(name = "last_action_date")
-    @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
-    private Instant lastActionDate;
+    @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
+    private LocalDate lastActionDate;
 
     @Column(name = "expire_date", nullable = false)
-    @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
-    private Instant expireDate;
+    @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
+    private LocalDate expireDate;
 
     @Column(name = "psu_id")
     @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
@@ -106,7 +107,7 @@ public class AisConsent {
     }
 
     public boolean isExpiredByDate() {
-        return Instant.now()
+        return LocalDate.now()
                    .isAfter(expireDate);
     }
 
@@ -114,7 +115,7 @@ public class AisConsent {
         return consentStatus != EXPIRED;
     }
 
-    public boolean isHasAvailableUseges(){
+    public boolean isHasAvailableUsages(){
         return usageCounter > 0;
     }
 

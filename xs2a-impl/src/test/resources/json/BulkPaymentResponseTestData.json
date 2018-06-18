@@ -1,5 +1,5 @@
 {
-  "transactionStatus": "AcceptedCustomerProfile",
+  "transactionStatus": "ACCP",
   "paymentId": "932f8184-59dc-4fdb-848e-58b887b3ba02",
   "transactionFeeIndicator": false,
   "scaMethods": [],

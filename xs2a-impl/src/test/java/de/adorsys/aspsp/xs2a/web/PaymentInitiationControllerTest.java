@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
@@ -57,6 +57,8 @@ public class PaymentInitiationControllerTest {
 
     @Autowired
     private PaymentInitiationController paymentInitiationController;
+    @Autowired
+    private JsonConverter jsonConverter;
     @MockBean
     private PaymentService paymentService;
 
@@ -123,11 +125,11 @@ public class PaymentInitiationControllerTest {
     }
 
     private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class);
+        return jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
     }
 
     private SinglePayments readSinglePayments() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8), SinglePayments.class);
+        return jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8), SinglePayments.class).get();
     }
 
 }
