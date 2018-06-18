@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -106,15 +107,14 @@ public class AisConsent {
     }
 
     public boolean isExpiredByDate() {
-        return LocalDate.now()
-                   .isAfter(expireDate);
+        return LocalDate.now().isAfter(expireDate) || LocalDate.now().isEqual(expireDate);
     }
 
-    public boolean isStatusNotExpired(){
+    public boolean isStatusNotExpired() {
         return consentStatus != EXPIRED;
     }
 
-    public boolean hasUsagesAvailable(){
+    public boolean hasUsagesAvailable() {
         return usageCounter > 0;
     }
 
