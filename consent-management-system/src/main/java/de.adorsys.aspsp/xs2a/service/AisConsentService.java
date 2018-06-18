@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,7 @@ public class AisConsentService {
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(minFrequencyPerDay);
-        consent.setRequestDate(LocalDate.now());
+        consent.setRequestDateTime(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());

@@ -21,10 +21,10 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
-import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +56,9 @@ public class AisConsent {
     @ApiModelProperty(value = "'true' if aspsp supports combined sessions, otherwise 'false'.", required = true, example = "false")
     private boolean combinedServiceIndicator;
 
-    @Column(name = "request_date", nullable = false)
-    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
-    private LocalDate requestDate;
+    @Column(name = "request_date_time", nullable = false)
+    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-10-25T15:30:35.035")
+    private LocalDateTime requestDateTime;
 
     @Column(name = "last_action_date")
     @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
