@@ -16,15 +16,11 @@
 
 package de.adorsys.aspsp.aspspmockserver.data.test;
 
-import de.adorsys.aspsp.aspspmockserver.repository.ConsentRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +29,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * AccountMockServerData is used to create test data in DB.
@@ -46,22 +41,17 @@ import java.util.stream.Collectors;
 @Profile("data_test")
 public class AccountMockServerData {
     private PsuRepository psuRepository;
-    private ConsentRepository consentRepository;
     private TransactionRepository transactionRepository;
     private List<SpiAccountDetails> accountDetails;
-    private List<SpiAccountReference> references;
     private List<Psu> psus;
     private final Currency EUR = Currency.getInstance("EUR");
     private final Currency USD = Currency.getInstance("USD");
 
-    public AccountMockServerData(PsuRepository psuRepository, ConsentRepository consentRepository, TransactionRepository transactionRepository) {
+    public AccountMockServerData(PsuRepository psuRepository, TransactionRepository transactionRepository) {
         this.psuRepository = psuRepository;
-        this.consentRepository = consentRepository;
         this.transactionRepository = transactionRepository;
         this.accountDetails = fillAccounts();
-        this.references = getReferencesList();
         this.psus = fillPsu();
-        fillConsent();
         fillTransactions();
     }
 
@@ -95,50 +85,11 @@ public class AccountMockServerData {
                    .map(this::mapToReferenceFromDetails).findFirst().get();
     }
 
-    private void fillConsent() {
-        consentRepository.save(
-            new SpiAccountConsent("AllWB",
-                new SpiAccountAccess(
-                    references, references, references, SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
-        );
-        consentRepository.save(
-            new SpiAccountConsent("AllWOB",
-                new SpiAccountAccess(
-                    references, Collections.emptyList(), Collections.emptyList(), SpiAccountAccessType.ALL_ACCOUNTS, SpiAccountAccessType.ALL_ACCOUNTS),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
-        );
-
-        consentRepository.save(
-            new SpiAccountConsent("Acc1WB",
-                new SpiAccountAccess(
-                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
-        );
-        consentRepository.save(
-            new SpiAccountConsent("Acc1WOB",
-                new SpiAccountAccess(
-                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(0))), null, null),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false));
-        consentRepository.save(
-            new SpiAccountConsent("Acc2WB",
-                new SpiAccountAccess(
-                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), null, null),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, true, false)
-        );
-        consentRepository.save(
-            new SpiAccountConsent("Acc2WOB",
-                new SpiAccountAccess(
-                    Collections.singletonList(mapToReferenceFromDetails(accountDetails.get(1))), Collections.emptyList(), Collections.emptyList(), null, null),
-                false, new Date(), 100, new Date(), SpiConsentStatus.VALID, false, false)
-        );
-    }
-
     private List<Psu> fillPsu() {
         return Arrays.asList(
             psuRepository.save(new Psu("PSU_001", "test1@gmail.com", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)))),
-            psuRepository.save(new Psu("PSU_002", "test2@gmail.com",  Arrays.asList(accountDetails.get(3), accountDetails.get(4)))),
-            psuRepository.save(new Psu("PSU_003", "test3@gmail.com",  Arrays.asList(accountDetails.get(5), accountDetails.get(6)))));
+            psuRepository.save(new Psu("PSU_002", "test2@gmail.com", Arrays.asList(accountDetails.get(3), accountDetails.get(4)))),
+            psuRepository.save(new Psu("PSU_003", "test3@gmail.com", Arrays.asList(accountDetails.get(5), accountDetails.get(6)))));
     }
 
     private List<SpiAccountDetails> fillAccounts() {
@@ -184,12 +135,6 @@ public class AccountMockServerData {
         balance.setDate(new Date());
         balance.setLastActionDateTime(new Date());
         return balance;
-    }
-
-    private List<SpiAccountReference> getReferencesList() {
-        return accountDetails.stream()
-                   .map(this::mapToReferenceFromDetails)
-                   .collect(Collectors.toList());
     }
 
     private SpiAccountReference mapToReferenceFromDetails(SpiAccountDetails details) {

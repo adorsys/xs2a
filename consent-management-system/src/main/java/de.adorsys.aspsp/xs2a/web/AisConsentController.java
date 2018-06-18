@@ -48,7 +48,7 @@ public class AisConsentController {
     @PostMapping(path = "/action")
     @ApiOperation(value = "Save information about uses of consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<Void> saveConsentActionLog(@RequestBody ConsentActionRequest request) {
-        aisConsentService.saveConsentActionLog(request);
+        aisConsentService.checkConsentAndSaveActionLog(request);
         return ResponseEntity.ok().build();
     }
 
