@@ -65,6 +65,12 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
+    
+   
+	public Boolean getTppSignatureRequired() {
+		return aspspProfileRestTemplate.exchange(
+	            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+	}
 
 
     private List<String> readAvailablePaymentTypes() {
@@ -72,5 +78,4 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
-
 }

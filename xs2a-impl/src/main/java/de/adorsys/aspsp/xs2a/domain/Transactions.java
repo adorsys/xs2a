@@ -20,13 +20,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
-import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateUTC;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @ApiModel(description = "TransactionsCreditorResponse information", value = "TransactionsCreditorResponse")
@@ -50,12 +49,10 @@ public class Transactions {
     private String creditorId;
 
     @ApiModelProperty(value = "Booking Date", example = "2017-01-01")
-    @JsonFormatDateUTC
-    private Date bookingDate;
+    private LocalDate bookingDate;
 
     @ApiModelProperty(value = "Value Date", example = "2017-01-01")
-    @JsonFormatDateUTC
-    private Date valueDate;
+    private LocalDate valueDate;
 
     @ApiModelProperty(value = "Amount", required = true)
     private Amount amount;

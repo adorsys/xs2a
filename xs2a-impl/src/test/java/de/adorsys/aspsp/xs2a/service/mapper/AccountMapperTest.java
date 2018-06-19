@@ -16,15 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,14 +32,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,19 +47,16 @@ public class AccountMapperTest {
     private static final String SPI_TRANSACTION_JSON_PATH = "/json/AccountReportDataTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    // By default Gson parses date to your local time zone. Therefore adapter for it is needed.
-    private final Gson gson = new GsonBuilder()
-                              .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
-                              .create();
-
     @Autowired
     private AccountMapper accountMapper;
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @Test
     public void mapSpiAccountDetailsToXs2aAccountDetails() throws IOException {
         //Given:
         String spiAccountDetailsJson = IOUtils.resourceToString(SPI_ACCOUNT_DETAILS_JSON_PATH, UTF_8);
-        SpiAccountDetails donorAccountDetails = gson.fromJson(spiAccountDetailsJson, SpiAccountDetails.class);
+        SpiAccountDetails donorAccountDetails = jsonConverter.toObject(spiAccountDetailsJson, SpiAccountDetails.class).get();
 
         //When:
         assertNotNull(donorAccountDetails);
@@ -83,15 +72,15 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
         SingleBalance closingBooked = actualAccountDetails.getBalances().get(0).getClosingBooked();
         assertThat(closingBooked.getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(closingBooked.getLastActionDateTime()).isEqualTo(getDateTime("2017-10-25T15:30:35.035Z"));
-        assertThat(closingBooked.getDate()).isEqualTo(getDate("2007-01-01"));
+        assertThat(closingBooked.getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
+        assertThat(closingBooked.getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
     }
 
     @Test
     public void mapSpiBalances() throws IOException {
         //Given:
         String spiBalancesJson = IOUtils.resourceToString(SPI_BALANCES_JSON_PATH, UTF_8);
-        SpiBalances donorBalances = gson.fromJson(spiBalancesJson, SpiBalances.class);
+        SpiBalances donorBalances = jsonConverter.toObject(spiBalancesJson, SpiBalances.class).get();
         List<SpiBalances> donorBalancesList = new ArrayList<>();
         donorBalancesList.add(donorBalances);
 
@@ -101,27 +90,27 @@ public class AccountMapperTest {
 
         //Then:
         assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(getDateTime("2017-10-25T15:30:35.035Z"));
-        assertThat(actualBalances.get(0).getClosingBooked().getDate()).isEqualTo(getDate("2007-01-01"));
+        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
+        assertThat(actualBalances.get(0).getClosingBooked().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
         assertThat(actualBalances.get(0).getAuthorised().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo(getDateTime("2017-10-25T15:30:35.035Z"));
-        assertThat(actualBalances.get(0).getAuthorised().getDate()).isEqualTo(getDate("2007-01-01"));
+        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
+        assertThat(actualBalances.get(0).getAuthorised().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
         assertThat(actualBalances.get(0).getExpected().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo(getDateTime("2017-10-25T15:30:35.035Z"));
-        assertThat(actualBalances.get(0).getExpected().getDate()).isEqualTo(getDate("2007-01-01"));
+        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
+        assertThat(actualBalances.get(0).getExpected().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
         assertThat(actualBalances.get(0).getInterimAvailable().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo(getDateTime("2017-10-25T15:30:35.035Z"));
-        assertThat(actualBalances.get(0).getInterimAvailable().getDate()).isEqualTo(getDate("2007-01-01"));
+        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
+        assertThat(actualBalances.get(0).getInterimAvailable().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
         assertThat(actualBalances.get(0).getOpeningBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo(getDateTime("2017-10-25T15:30:35.035Z"));
-        assertThat(actualBalances.get(0).getOpeningBooked().getDate()).isEqualTo(getDate("2007-01-01"));
+        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
+        assertThat(actualBalances.get(0).getOpeningBooked().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
     }
 
     @Test
     public void mapAccountReport() throws IOException {
         //Given:
         String spiTransactionJson = IOUtils.resourceToString(SPI_TRANSACTION_JSON_PATH, UTF_8);
-        SpiTransaction donorSpiTransaction = gson.fromJson(spiTransactionJson, SpiTransaction.class);
+        SpiTransaction donorSpiTransaction = jsonConverter.toObject(spiTransactionJson, SpiTransaction.class).get();
         List<SpiTransaction> donorSpiTransactions = new ArrayList<>();
         donorSpiTransactions.add(donorSpiTransaction);
         SpiTransaction[] expectedBooked = donorSpiTransactions.stream()
@@ -155,25 +144,5 @@ public class AccountMapperTest {
         assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode()
         .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
         assertThat(actualAccountReport.getBooked()[0].getPurposeCode().getCode()).isEqualTo(expectedBooked[0].getPurposeCode());
-    }
-
-    private static Instant getDateTime(String date) {
-        try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            df.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return df.parse(date).toInstant();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static Instant getDate(String date) {
-        DateTimeFormatter FMT = new DateTimeFormatterBuilder()
-                                .appendPattern("yyyy-MM-dd")
-                                .parseDefaulting(ChronoField.NANO_OF_DAY, 0)
-                                .toFormatter()
-                                .withZone(ZoneId.of("UTC"));
-        return FMT.parse(date, Instant::from);
     }
 }

@@ -31,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +96,7 @@ public class AisConsentServiceTest {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
         aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
-        aisConsent.setExpireDate(Instant.now());
+        aisConsent.setExpireDate(LocalDate.now());
         return aisConsent;
     }
 
@@ -107,7 +108,7 @@ public class AisConsentServiceTest {
         request.setPsuId("psu-id-1");
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
-        request.setValidUntil(Instant.now());
+        request.setValidUntil(LocalDate.now());
         request.setTppRedirectPreferred(true);
         return request;
     }

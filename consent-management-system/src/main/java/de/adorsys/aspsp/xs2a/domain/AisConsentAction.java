@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @Entity(name = "ais_consent_action")
@@ -35,7 +35,7 @@ public class AisConsentAction {
 
     @Column(name = "request_date", nullable = false)
     @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
-    private Instant requestDate;
+    private LocalDate requestDate;
 
     @Column(name = "tpp_id", nullable = false)
     @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")

@@ -36,6 +36,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
@@ -57,7 +58,7 @@ public class AccountServiceTest {
     private final String CONSENT_ID_WT = "777999777";
     private final String WRONG_CONSENT_ID = "Wromg consent id";
     private final String TRANSACTION_ID = "0001";
-    private final Date DATE = new Date(123456789L);
+    private final LocalDate DATE = LocalDate.parse("2019-03-03");
 
     @Autowired
     private AccountService accountService;

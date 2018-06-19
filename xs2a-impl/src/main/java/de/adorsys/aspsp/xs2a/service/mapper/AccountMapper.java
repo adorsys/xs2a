@@ -92,8 +92,8 @@ public class AccountMapper {
                    .map(b -> {
                        SingleBalance singleBalance = new SingleBalance();
                        singleBalance.setAmount(mapToAmount(b.getSpiAmount()));
-                       singleBalance.setDate(b.getDate().toInstant());
-                       singleBalance.setLastActionDateTime(b.getLastActionDateTime().toInstant());
+                       singleBalance.setDate(b.getDate());
+                       singleBalance.setLastActionDateTime(b.getLastActionDateTime());
                        return singleBalance;
                    })
                    .orElse(null);

@@ -34,7 +34,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,7 +65,7 @@ public class AisConsentService {
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
         consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
         consent.setUsageCounter(minFrequencyPerDay);
-        consent.setRequestDate(Instant.now());
+        consent.setRequestDateTime(LocalDateTime.now());
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
@@ -157,11 +158,11 @@ public class AisConsentService {
     }
 
     private void updateAisConsentCounter(AisConsent consent) {
-        if (consent.hasUsagesAvailable()) {
+        if(consent.hasUsagesAvailable()){
             int usageCounter = consent.getUsageCounter();
             int newUsageCounter = --usageCounter;
             consent.setUsageCounter(newUsageCounter);
-            consent.setLastActionDate(Instant.now());
+            consent.setLastActionDate(LocalDate.now());
             aisConsentRepository.save(consent);
         }
     }
@@ -171,7 +172,7 @@ public class AisConsentService {
         action.setActionStatus(actionStatus);
         action.setRequestedConsentId(requestedConsentId);
         action.setTppId(tppId);
-        action.setRequestDate(Instant.now());
+        action.setRequestDate(LocalDate.now());
         aisConsentActionRepository.save(action);
     }
 
@@ -188,15 +189,15 @@ public class AisConsentService {
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
         if (consent.isExpiredByDate() && consent.isStatusNotExpired()) {
             consent.setConsentStatus(EXPIRED);
-            consent.setExpireDate(Instant.now());
-            consent.setLastActionDate(Instant.now());
+            consent.setExpireDate(LocalDate.now());
+            consent.setLastActionDate(LocalDate.now());
             aisConsentRepository.save(consent);
         }
         return consent;
     }
 
     private AisConsent setStatusAndSaveConsent(AisConsent consent, SpiConsentStatus status) {
-        consent.setLastActionDate(Instant.now());
+        consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
     }
