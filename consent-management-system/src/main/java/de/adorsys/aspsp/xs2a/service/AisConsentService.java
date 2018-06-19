@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -143,7 +142,7 @@ public class AisConsentService {
         action.setActionStatus(actionStatus);
         action.setRequestedConsentId(requestedConsentId);
         action.setTppId(tppId);
-        action.setRequestDate(Instant.now());
+        action.setRequestDate(LocalDate.now());
         aisConsentActionRepository.save(action);
     }
 
