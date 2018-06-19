@@ -18,10 +18,14 @@ package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
 import de.adorsys.aspsp.xs2a.util.GsonUtcInstantAdapter;
 import org.apache.commons.io.IOUtils;
@@ -36,13 +40,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.lang.Exception;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
@@ -67,6 +71,8 @@ public class AccountControllerTest {
 
     @MockBean(name = "accountService")
     private AccountService accountService;
+    @MockBean
+    private AisConsentService aisConsentService;
 
     @Before
     public void setUp() throws Exception {
@@ -75,6 +81,7 @@ public class AccountControllerTest {
         when(accountService.getBalances(anyString(),anyString(), anyBoolean())).thenReturn(balances);
         when(accountService.getAccountReport(any(String.class), any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
+        doNothing().when(aisConsentService).consentActionLog(anyString(),anyString(),anyBoolean(),any(TypeAccess.class),any(ResponseObject.class));
     }
 
     @Test
