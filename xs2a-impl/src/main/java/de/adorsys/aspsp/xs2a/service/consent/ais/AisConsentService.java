@@ -89,7 +89,7 @@ public class AisConsentService {
      */
     public void consentActionLog(String tppId, String consentId, boolean withBalance, TypeAccess access, ResponseObject response) {
         ActionStatus status = response.hasError()
-                                  ? consentMapper.mapActionStatusError(response.getError(), withBalance, access)
+                                  ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getCode(), withBalance, access)
                                   : ActionStatus.SUCCESS;
 
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, status), Void.class);
