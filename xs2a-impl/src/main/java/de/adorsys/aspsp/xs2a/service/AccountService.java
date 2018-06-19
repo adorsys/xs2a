@@ -236,7 +236,7 @@ public class AccountService {
 
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
-        LocalDate dateToChecked = Optional.of(dateTo)
+        LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElse(LocalDate.now());
 
         Optional<AccountReport> report;
