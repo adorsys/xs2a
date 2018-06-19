@@ -69,10 +69,10 @@ public class AspspProfileRemoteUrls {
     public String getScaApproach() {
         return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
     }
-    
+
     /**
      * Returns URL-string in order to get if tpp signature is required
-     * 
+     *
      * @return String
      */
     public String getTppSignatureRequired() {

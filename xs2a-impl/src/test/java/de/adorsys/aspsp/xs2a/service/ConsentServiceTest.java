@@ -36,6 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,7 +57,7 @@ public class ConsentServiceTest {
     private final String WRONG_IBAN = "WRONG IBAN";
     private final Currency CURRENCY = Currency.getInstance("EUR");
     private final Currency CURRENCY_2 = Currency.getInstance("USD");
-    private final Date DATE = new Date(321554477);
+    private final LocalDate DATE = LocalDate.parse("2019-03-03");
 
     @Autowired
     private ConsentService consentService;

@@ -21,7 +21,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 public class SpiSinglePayments {
@@ -40,7 +41,7 @@ public class SpiSinglePayments {
     private String purposeCode;
     private String remittanceInformationUnstructured;
     private SpiRemittance remittanceInformationStructured;
-    private Date requestedExecutionDate;
-    private Date requestedExecutionTime;
+    private LocalDate requestedExecutionDate;
+    private LocalDateTime requestedExecutionTime;
 
 }

@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -154,8 +155,8 @@ public class AccountService {
      * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
      * Checks if all transactions are related to accounts set in AccountConsent Transactions section
      */
-    public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, Date dateFrom,
-                                                          Date dateTo, String transactionId,
+    public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
+                                                          LocalDate dateTo, String transactionId,
                                                           boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
@@ -221,14 +222,14 @@ public class AccountService {
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
 
-    private AccountReport getAccountReport(AccountDetails details, Date dateFrom, Date dateTo, String transactionId, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
-        Date dateToChecked = dateTo == null ? new Date() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
+    private AccountReport getAccountReport(AccountDetails details, LocalDate dateFrom, LocalDate dateTo, String transactionId, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
+        LocalDate dateToChecked = dateTo == null ? LocalDate.now() : dateTo;
         return StringUtils.isBlank(transactionId)
                    ? getAccountReportByPeriod(details, dateFrom, dateToChecked, bookingStatus, allowedAccountData)
                    : getAccountReportByTransaction(details, transactionId, allowedAccountData);
     }
 
-    private AccountReport getAccountReportByPeriod(AccountDetails details, Date dateFrom, Date dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
+    private AccountReport getAccountReportByPeriod(AccountDetails details, LocalDate dateFrom, LocalDate dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
         validateAccountIdPeriod(details.getIban(), dateFrom, dateTo);
         return getAllowedTransactionsByAccess(readTransactionsByPeriod(details, dateFrom, dateTo, bookingStatus), allowedAccountData);
     }
@@ -258,8 +259,8 @@ public class AccountService {
                    || consentService.isValidAccountByAccess(transaction.getDebtorAccount().getIban(), transaction.getDebtorAccount().getCurrency(), allowedAccountData);
     }
 
-    private AccountReport readTransactionsByPeriod(AccountDetails details, Date dateFrom,
-                                                   Date dateTo, BookingStatus bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
+    private AccountReport readTransactionsByPeriod(AccountDetails details, LocalDate dateFrom,
+                                                   LocalDate dateTo, BookingStatus bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
         Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(details.getIban(), details.getCurrency(), dateFrom, dateTo, SpiBookingStatus.valueOf(bookingStatus.name())));
 
         return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
@@ -289,7 +290,7 @@ public class AccountService {
     }
 
     // Validation
-    private void validateAccountIdPeriod(String accountId, Date dateFrom, Date dateTo) {
+    private void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
         ValidationGroup fieldValidator = new ValidationGroup();
         fieldValidator.setAccountId(accountId);
         fieldValidator.setDateFrom(dateFrom);

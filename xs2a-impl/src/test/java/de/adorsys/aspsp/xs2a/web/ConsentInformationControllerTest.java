@@ -34,6 +34,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,7 +157,7 @@ public class ConsentInformationControllerTest {
     private ResponseObject getConsent(String consentId) {
         AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
                                         ? null
-                                        : new AccountConsent(consentId, new AccountAccess(null,null,null,null,null), false, new Date(), 4, new Date(), ConsentStatus.VALID, false, false);
+                                        : new AccountConsent(consentId, new AccountAccess(null,null,null,null,null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false);
         return isEmpty(accountConsent)
                ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
                : ResponseObject.builder().body(accountConsent).build();

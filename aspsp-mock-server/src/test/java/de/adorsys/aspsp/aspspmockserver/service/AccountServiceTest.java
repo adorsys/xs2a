@@ -31,6 +31,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -200,9 +202,9 @@ public class AccountServiceTest {
 
     private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
         SpiAccountBalance sb = new SpiAccountBalance();
-        sb.setDate(new Date(1523951451537L));
+        sb.setDate(LocalDate.parse("2019-03-03"));
         sb.setSpiAmount(spiAmount);
-        sb.setLastActionDateTime(new Date(1523951451537L));
+        sb.setLastActionDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
         return sb;
     }
 

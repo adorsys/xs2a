@@ -138,8 +138,8 @@ public class PisConsentService {
                        payment.setCreditorIban(sp.getCreditorAccount().getIban());
                        payment.setCreditorAgent(sp.getCreditorAgent());
                        payment.setCreditorName(sp.getCreditorName());
-                       payment.setRequestedExecutionDate(sp.getRequestedExecutionDate().toInstant());
-                       payment.setRequestedExecutionTime(sp.getRequestedExecutionTime().toInstant());
+                       payment.setRequestedExecutionDate(sp.getRequestedExecutionDate());
+                       payment.setRequestedExecutionTime(sp.getRequestedExecutionTime());
                        payment.setUltimateCreditor(sp.getUltimateCreditor());
                        payment.setPurposeCode(sp.getPurposeCode());
                        return payment;

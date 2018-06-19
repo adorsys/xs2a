@@ -32,11 +32,9 @@ public class CertificateValidatorFactory {
 		}
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
-		
+
 		validator.validate(cert);
 
 		return true;
-
 	}
-
 }

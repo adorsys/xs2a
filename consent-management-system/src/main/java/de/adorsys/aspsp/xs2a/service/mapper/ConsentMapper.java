@@ -24,11 +24,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,9 +36,9 @@ public class ConsentMapper {
             consent.getId().toString(),
             mapToSpiAccountAccess(consent.getAccounts()),
             consent.isRecurringIndicator(),
-            convertToDate(consent.getExpireDate()),
+            consent.getExpireDate(),
             consent.getUsageCounter(),
-            convertToDate(consent.getLastActionDate()),
+            consent.getLastActionDate(),
             consent.getConsentStatus(),
             false, consent.isTppRedirectPreferred());
     }
@@ -66,11 +63,5 @@ public class ConsentMapper {
                    .filter(ass -> ass.getTypeAccess() == typeAccess)
                    .map(access -> new SpiAccountReference(aisAccount.getIban(), "", "", "", "", access.getCurrency()))
                    .collect(Collectors.toList());
-    }
-
-    private Date convertToDate(Instant dateToConvert) {
-        return Optional.ofNullable(dateToConvert)
-                   .map(Date::from)
-                   .orElse(null);
     }
 }
