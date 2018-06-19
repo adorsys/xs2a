@@ -236,7 +236,8 @@ public class AccountService {
 
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
-        LocalDate dateToChecked = dateTo == null ? LocalDate.now() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
+        LocalDate dateToChecked = Optional.of(dateTo)
+                                      .orElse(LocalDate.now());
 
         Optional<AccountReport> report;
         if (StringUtils.isBlank(transactionId)) {
@@ -266,8 +267,7 @@ public class AccountService {
                                                     .orElse(Collections.emptyList()));
     }
 
-    private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom,
-                                                             LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
+    private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
         validateAccountIdPeriod(accountId, dateFrom, dateTo);
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }

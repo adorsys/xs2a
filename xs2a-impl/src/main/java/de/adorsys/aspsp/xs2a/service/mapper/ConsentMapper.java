@@ -185,10 +185,10 @@ public class ConsentMapper {
             actionStatus = ActionStatus.CONSENT_NOT_FOUND;
         }
         if (error == MessageErrorCode.CONSENT_INVALID) {
-            if (TypeAccess.TRANSACTION == access) {
+            if (access == TypeAccess.TRANSACTION) {
                 actionStatus = ActionStatus.FAILURE_TRANSACTION;
             }
-            if (TypeAccess.BALANCE == access || withBalance) {
+            if (access == TypeAccess.BALANCE || withBalance) {
                 actionStatus = ActionStatus.FAILURE_BALANCE;
             }
         }
