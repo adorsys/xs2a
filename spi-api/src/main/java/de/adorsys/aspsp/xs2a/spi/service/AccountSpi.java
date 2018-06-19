@@ -20,8 +20,10 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +31,7 @@ public interface AccountSpi {
 
     List<SpiBalances> readBalances(String accountId);
 
-    List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo);
+    List<SpiTransaction> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo);
 
     Optional<SpiTransaction> readTransactionsById(String transactionId, String accountId);
 

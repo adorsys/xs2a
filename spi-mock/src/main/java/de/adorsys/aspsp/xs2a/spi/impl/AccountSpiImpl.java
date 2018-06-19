@@ -31,10 +31,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.time.ZoneId;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 @Component
 @AllArgsConstructor
@@ -87,14 +86,14 @@ public class AccountSpiImpl implements AccountSpi {
      * @return List<SpiTransaction>
      */
     @Override
-    public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
+    public List<SpiTransaction> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
         Map<String, String> uriParams = new ObjectHolder<String, String>()
                                             .addValue("account-id", accountId)
                                             .getValues();
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(remoteSpiUrls.readTransactionsByPeriod())
-                                           .queryParam("dateFrom", dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
-                                           .queryParam("dateTo", dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                                           .queryParam("dateFrom", dateFrom)
+                                           .queryParam("dateTo", dateTo);
 
         return restTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {

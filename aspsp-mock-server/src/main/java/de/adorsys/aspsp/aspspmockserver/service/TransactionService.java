@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Date;
+import java.time.LocalDate;
+import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +49,7 @@ public class TransactionService {
                    .map(SpiTransaction::getTransactionId);
     }
 
-    public List<SpiTransaction> getTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
+    public List<SpiTransaction> getTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
         Optional<SpiAccountDetails> details = accountService.getAccountById(accountId);
         return details.map(det -> transactionRepository.findAllByDates(det.getIban(), det.getCurrency(), dateFrom, dateTo))
                    .orElse(Collections.emptyList());

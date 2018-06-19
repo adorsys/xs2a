@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -162,8 +163,8 @@ public class AccountService {
      * @param deltaList     boolean  indicating that the AISP is in favour to get all transactions after the last report access for this PSU on the addressed account
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, Date dateFrom,
-                                                          Date
+    public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
+                                                          LocalDate
                                                               dateTo, String transactionId,
                                                           boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
@@ -283,7 +284,7 @@ public class AccountService {
     }
 
     // Validation
-    private void validateAccountIdPeriod(String accountId, Date dateFrom, Date dateTo) {
+    private void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
         ValidationGroup fieldValidator = new ValidationGroup();
         fieldValidator.setAccountId(accountId);
         fieldValidator.setDateFrom(dateFrom);

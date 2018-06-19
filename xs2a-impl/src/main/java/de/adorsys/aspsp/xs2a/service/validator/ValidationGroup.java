@@ -20,16 +20,16 @@ import lombok.Data;
 
 import javax.validation.GroupSequence;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class ValidationGroup {
     @NotNull(groups = AccountIdGroup.class)
     private String accountId;
     @NotNull(groups = PeriodGroup.class)
-    private Date dateFrom;
+    private LocalDate dateFrom;
     @NotNull(groups = PeriodGroup.class)
-    private Date dateTo;
+    private LocalDate dateTo;
     @NotNull(groups = TransactionIdGroup.class)
     private String transactionId;
 

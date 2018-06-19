@@ -36,7 +36,5 @@ public class CertificateValidatorFactory {
 		validator.validate(cert);
 
 		return true;
-
 	}
-
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
@@ -58,6 +58,8 @@ public class BulkPaymentInitiationControllerTest {
     protected String redirectLinkToSource;
     @Autowired
     private BulkPaymentInitiationController bulkPaymentInitiationController;
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @MockBean(name = "paymentService")
     private PaymentService paymentService;
@@ -89,7 +91,7 @@ public class BulkPaymentInitiationControllerTest {
     }
 
     private List<PaymentInitialisationResponse> readPaymentInitialisationResponse() throws IOException {
-        PaymentInitialisationResponse response = new Gson().fromJson(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class);
+        PaymentInitialisationResponse response = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class).get();
         List<PaymentInitialisationResponse> responseList = new ArrayList<>();
         Links links = new Links();
         links.setRedirect(redirectLinkToSource + response.getPaymentId());
@@ -104,7 +106,7 @@ public class BulkPaymentInitiationControllerTest {
     }
 
     private List<SinglePayments> readBulkPayments() throws IOException {
-        SinglePayments[] payments = new Gson().fromJson(IOUtils.resourceToString(BULK_PAYMENT_DATA, UTF_8), SinglePayments[].class);
+        SinglePayments[] payments = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_DATA, UTF_8), SinglePayments[].class).get();
         return Arrays.asList(payments);
     }
 }

@@ -28,6 +28,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.time.LocalDate;
+import java.util.Currency;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -66,8 +68,8 @@ public class TransactionController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{account-id}")
     public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("account-id") String accountId,
-                                                                         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateFrom,
-                                                                         @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date dateTo) {
+                                                                         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+                                                                         @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
         List<SpiTransaction> response = transactionService.getTransactionsByPeriod(accountId, dateFrom, dateTo);
         return CollectionUtils.isEmpty(response)
                    ? ResponseEntity.noContent().build()

@@ -16,34 +16,38 @@
 
 package de.adorsys.aspsp.xs2a.domain.consents;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.web.util.ApiDateConstants;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class SpiAccountConsentModelsTest {
     private static final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
-    private static final String ALL_ACCOUNTS_AVAILABLE_REQ_PATH = "/json/CreateConsentsAllAccountsAvailableReqTest.json";
     private static final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
     private final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
-    private ObjectMapper mapper = new ObjectMapper();
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @Test
     public void createConsentReq_jsonTest() throws IOException {
@@ -52,7 +56,7 @@ public class SpiAccountConsentModelsTest {
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
 
         //When:
-        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);
@@ -63,7 +67,7 @@ public class SpiAccountConsentModelsTest {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_WRONG_JSON_PATH, UTF_8);
 
-        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
 
         //When:
         Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
@@ -99,7 +103,7 @@ public class SpiAccountConsentModelsTest {
     public void createConsentReqValidation() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
-        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
 
         //When:
         Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
@@ -109,26 +113,13 @@ public class SpiAccountConsentModelsTest {
     }
 
     @Test
-    public void createConsentAllAccountsAvailableReq_jsonTest() throws IOException {
-        //Given:
-        String requestStringJson = IOUtils.resourceToString(ALL_ACCOUNTS_AVAILABLE_REQ_PATH, UTF_8);
-        CreateConsentReq expectedRequest = getAicAvailableAccountsRequest();
-
-        //When:
-        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
-
-        //Then:
-//        assertThat(actualRequest).isEqualTo(expectedRequest);
-    }
-
-    @Test
     public void createConsentNoDedicateAccountReq_jsonTest() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(NO_DEDICATE_REQ_PATH, UTF_8);
         CreateConsentReq expectedRequest = getAicNoDedicatedAccountRequest();
 
         //When:
-        CreateConsentReq actualRequest = mapper.readValue(requestStringJson, CreateConsentReq.class);
+        CreateConsentReq actualRequest = jsonConverter.toObject(requestStringJson, CreateConsentReq.class).get();
 
         //Then:
         assertThat(actualRequest).isEqualTo(expectedRequest);
@@ -141,21 +132,8 @@ public class SpiAccountConsentModelsTest {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(getDateFromDateString("2017-11-01"));
+        aicRequestObj.setValidUntil(LocalDate.parse("2017-11-01"));
         aicRequestObj.setFrequencyPerDay(4);
-
-        return aicRequestObj;
-    }
-
-    private CreateConsentReq getAicAvailableAccountsRequest() {
-
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
-
-        CreateConsentReq aicRequestObj = new CreateConsentReq();
-        aicRequestObj.setAccess(accountAccess);
-        aicRequestObj.setRecurringIndicator(false);
-        aicRequestObj.setValidUntil(getDateFromDateString("2017-08-06"));
-        aicRequestObj.setFrequencyPerDay(1);
 
         return aicRequestObj;
     }
@@ -186,19 +164,9 @@ public class SpiAccountConsentModelsTest {
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
         aicRequestObj.setRecurringIndicator(true);
-        aicRequestObj.setValidUntil(getDateFromDateString("2017-11-01"));
+        aicRequestObj.setValidUntil(LocalDate.parse("2017-11-01"));
         aicRequestObj.setFrequencyPerDay(4);
 
         return aicRequestObj;
-    }
-
-    private static Date getDateFromDateString(String dateString) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat(ApiDateConstants.DATE_PATTERN);
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            return null;
-        }
     }
 }

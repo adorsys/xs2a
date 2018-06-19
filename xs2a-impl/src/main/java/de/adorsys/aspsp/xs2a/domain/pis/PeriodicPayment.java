@@ -23,20 +23,24 @@ import lombok.Data;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @ApiModel(description = "Periodic Payment Initialisation Request", value = "Periodic Payment")
 public class PeriodicPayment extends SinglePayments {
 
     @ApiModelProperty(name = "startDate", required = true, example = "2017-03-03")
-    private Date startDate;
+    private LocalDate startDate;
+
     @ApiModelProperty(name = "executionRule", required = false, example = "preceeding")
     private String executionRule;
+
     @ApiModelProperty(name = "endDate", required = false, example = "2018-03-03")
-    private Date endDate;
+    private LocalDate endDate;
+
     @ApiModelProperty(name = "frequency", required = true, example = "ANNUAL")
     private FrequencyCode frequency;
+
     @ApiModelProperty(name = "dayOfExecution", required = false, example = "14")
     @Max(31)
     @Min(1)

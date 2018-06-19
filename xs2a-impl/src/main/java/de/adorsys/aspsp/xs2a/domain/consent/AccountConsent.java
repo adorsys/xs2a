@@ -16,15 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.adorsys.aspsp.xs2a.web.util.JsonFormatDateUTC;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.EnumSet;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
@@ -45,15 +43,13 @@ public class AccountConsent {
     private final boolean recurringIndicator;
 
     @ApiModelProperty(value = "valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2017-10-30")
-    @JsonFormatDateUTC
-    private final Date validUntil;
+    private final LocalDate validUntil;
 
     @ApiModelProperty(value = "requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private final int frequencyPerDay;
 
     @ApiModelProperty(value = "This date is containing the date of the last action on the consent object either through the XS2A interface or the PSU/ASPSP interface having an impact on the status.", required = true, example = "2017-10-30")
-    @JsonFormatDateUTC
-    private final Date lastActionDate;
+    private final LocalDate lastActionDate;
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private final ConsentStatus consentStatus;

@@ -21,11 +21,11 @@ import com.google.gson.GsonBuilder;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
-import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
-import de.adorsys.aspsp.xs2a.util.GsonUtcInstantAdapter;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,13 +58,10 @@ public class AccountControllerTest {
     private final String BALANCES_SOURCE = "/json/BalancesTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
-    private static final Gson GSON = new GsonBuilder()
-                                         .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
-                                         .registerTypeAdapter(Instant.class, new GsonUtcInstantAdapter())
-                                         .create();
-
     @Autowired
     private AccountController accountController;
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @MockBean(name = "accountService")
     private AccountService accountService;
@@ -73,8 +70,8 @@ public class AccountControllerTest {
     public void setUp() throws Exception {
         when(accountService.getAccountDetailsList(anyString(), anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
-        when(accountService.getBalances(anyString(),anyString(), anyBoolean())).thenReturn(balances);
-        when(accountService.getAccountReport(any(String.class), any(String.class), any(Date.class), any(Date.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
+        when(accountService.getBalances(anyString(), anyString(), anyBoolean())).thenReturn(balances);
+        when(accountService.getAccountReport(any(String.class), any(String.class), any(LocalDate.class), any(LocalDate.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
     }
 
@@ -110,7 +107,7 @@ public class AccountControllerTest {
     public void getBalances_ResultTest() throws IOException {
         //Given:
         boolean psuInvolved = true;
-        Balances expectedBalances = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
+        Balances expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
         List<Balances> expectedResult = new ArrayList<>();
         expectedResult.add(expectedBalances);
 
@@ -125,7 +122,7 @@ public class AccountControllerTest {
     public void getTransactions_ResultTest() throws IOException {
         //Given:
         boolean psuInvolved = true;
-        AccountReport expectedResult = GSON.fromJson(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), AccountReport.class);
+        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), AccountReport.class).get();
 
         //When
         AccountReport result = accountController.getTransactions(ACCOUNT_ID, "123", null, null, TRANSACTION_ID, psuInvolved, "both", false, false).getBody();
@@ -201,7 +198,7 @@ public class AccountControllerTest {
     }
 
     private ResponseObject<Map<String, List<AccountDetails>>> createAccountDetailsList(String path) throws IOException {
-        AccountDetails[] array = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class);
+        AccountDetails[] array = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class).get();
         Map<String, List<AccountDetails>> result = new HashMap<>();
         result.put("accountList", Arrays.asList(array));
         return ResponseObject.<Map<String, List<AccountDetails>>>builder()
@@ -215,14 +212,14 @@ public class AccountControllerTest {
     }
 
     private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
-        AccountReport accountReport = GSON.fromJson(IOUtils.resourceToString(path, UTF_8), AccountReport.class);
+        AccountReport accountReport = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8), AccountReport.class).get();
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
     }
 
     private ResponseObject<List<Balances>> readBalances() throws IOException {
-        Balances read = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
+        Balances read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
         List<Balances> res = new ArrayList<>();
         res.add(read);
         return ResponseObject.<List<Balances>>builder()
