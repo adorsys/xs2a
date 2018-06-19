@@ -16,14 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
-import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
@@ -42,8 +40,6 @@ import java.util.Map;
 public class AccountController {
     private final AccountService accountService;
     private final ResponseMapper responseMapper;
-    private final AisConsentService consentService;
-    private final String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
 
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
@@ -61,7 +57,6 @@ public class AccountController {
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance, psuInvolved);
-        consentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, responseObject);
         return responseMapper.ok(responseObject);
     }
 
@@ -83,7 +78,6 @@ public class AccountController {
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance, psuInvolved);
-        consentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, responseObject);
         return responseMapper.ok(responseObject);
     }
 
@@ -102,7 +96,6 @@ public class AccountController {
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId, psuInvolved);
-        consentService.consentActionLog(tppId, consentId, false, TypeAccess.BALANCE, responseObject);
         return responseMapper.ok(responseObject);
     }
 
@@ -132,10 +125,8 @@ public class AccountController {
                                                          @RequestParam(name = "withBalance", required = false) boolean withBalance,
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
-
         ResponseObject<AccountReport> responseObject =
             accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
-        consentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.TRANSACTION, responseObject);
         return responseMapper.ok(responseObject);
     }
 }

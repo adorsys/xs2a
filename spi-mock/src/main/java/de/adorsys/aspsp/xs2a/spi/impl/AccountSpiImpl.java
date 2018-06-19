@@ -44,9 +44,9 @@ public class AccountSpiImpl implements AccountSpi {
     private final RestTemplate restTemplate;
 
     /**
+     * Queries ASPSP to (GET) List of AccountDetails by IBAN
      * @param iban String representation of Account IBAN
      * @return List<SpiAccountDetails>
-     * Queries ASPSP to (GET) List of AccountDetails by IBAN
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
@@ -57,9 +57,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries ASPSP to (GET) a list of balances of a sertain account by its primary id
      * @param accountId String representation of ASPSP account identifier
      * @return List<SpiBalances>
-     * Queries ASPSP to (GET) a list of balances of a sertain account by its primary id
      */
     @Override
     public List<SpiBalances> readBalances(String accountId) {
@@ -70,9 +70,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries (POST) ASPSP to save a new Transaction, as a response receives a string representing the ASPSP primary identifier of saved transaction
      * @param transaction Prepared at xs2a transaction object
      * @return String transactionId
-     * Queries (POST) ASPSP to save a new Transaction, as a response receives a string representing the ASPSP primary identifier of saved transaction
      */
     @Override
     public String saveTransaction(SpiTransaction transaction) {
@@ -80,11 +80,11 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries ASPSP to get List of transactions dependant on period and accountId
      * @param accountId String representation of ASPSP account primary identifier
      * @param dateFrom  Date representing the beginning of the search period
      * @param dateTo    Date representing the ending of the search period
      * @return List<SpiTransaction>
-     * Queries ASPSP to get List of transactions dependant on period and accountId
      */
     @Override
     public List<SpiTransaction> readTransactionsByPeriod(String accountId, Date dateFrom, Date dateTo) {
@@ -102,10 +102,10 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
      * @param transactionId String representation of ASPSP primary identifier of transaction
      * @param accountId     String representation of ASPSP account primary identifier
      * @return SpiTransaction
-     * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
      */
     @Override
     public Optional<SpiTransaction> readTransactionsById(String transactionId, String accountId) {
@@ -113,9 +113,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
      * @param accountId String representation of ASPSP account primary identifier
      * @return SpiAccountDetails
-     * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
      */
     @Override
     public SpiAccountDetails readAccountDetails(String accountId) {
@@ -123,9 +123,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
      * @param psuId String representing ASPSP`s primary identifier of PSU
      * @return List<SpiAccountDetails>
-     * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
      */
     @Override
     public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
@@ -136,9 +136,9 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
+     * Queries ASPSP to (GET) list of account details with certain account IBANS
      * @param ibans a collection of Strings representing account IBANS
      * @return List<SpiAccountDetails>
-     * Queries ASPSP to (GET) list of account details with certain account IBANS
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {

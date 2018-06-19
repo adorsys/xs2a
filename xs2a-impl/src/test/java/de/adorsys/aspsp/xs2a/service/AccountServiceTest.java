@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -41,6 +42,8 @@ import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -74,6 +77,7 @@ public class AccountServiceTest {
     @Before
     public void setUp() {
         //AisReporting
+        doNothing().when(aisConsentService).consentActionLog(anyString(),anyString(),anyBoolean(),any(TypeAccess.class),any(ResponseObject.class));
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails(ACCOUNT_ID, IBAN));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));

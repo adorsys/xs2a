@@ -32,7 +32,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that creates pis consent
      *
-     * @return String
+     * @return URL
      */
     public String createPisConsent() {
         return consentServiceBaseUrl + "/pis/consent/";
@@ -41,7 +41,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that creates pis consent for bulk payment
      *
-     * @return String
+     * @return URL
      */
     public String createPisBulkPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/bulk";
@@ -50,7 +50,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that creates pis consent for periodic payment
      *
-     * @return String
+     * @return URL
      */
     public String createPisPeriodicPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/periodic";
@@ -59,7 +59,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that updates pis consent status
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String updatePisConsentStatus() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
@@ -68,7 +68,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that gets pis consent status by ID
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getPisConsentStatusById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
@@ -77,7 +77,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that gets pis consent by ID
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getPisConsentById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}";
@@ -86,7 +86,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to CMS endpoint that checks access by consent Id
      *
-     * @return String
+     * @return URL
      */
     public String checkAccessByConsentId() {
         return consentServiceBaseUrl + "/ais/consent/available/access";
@@ -97,7 +97,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by accountId
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getAccountDetailsById() {
         return spiMockBaseUrl + "/account/{account-id}";
@@ -106,7 +106,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that GETs Balances of an account by accountId
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getBalancesByAccountId() {
         return spiMockBaseUrl + "/account/{account-id}/balances";
@@ -115,7 +115,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by PsuId
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getAccountDetailsByPsuId() {
         return spiMockBaseUrl + "/account/psu/{psu-id}";
@@ -124,7 +124,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by IBAN
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getAccountDetailsByIban() {
         return spiMockBaseUrl + "/account/iban/{iban}";
@@ -152,7 +152,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that GETs Transaction by transactionId and accountId
      *
-     * @return String
+     * @return URL with path parameters
      */
     public String readTransactionById() {
         return spiMockBaseUrl + "/transaction/{transaction-id}/{account-id}";
@@ -161,7 +161,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that GETs Transactions list by accountId and period set by dates from/to
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String readTransactionsByPeriod() {
         return spiMockBaseUrl + "/transaction/{account-id}";
@@ -170,7 +170,7 @@ public class RemoteSpiUrls {
     /**
      * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body SpiTransaction
      *
-     * @return String
+     * @return URL
      */
     public String createTransaction() {
         return spiMockBaseUrl + "/transaction";
