@@ -50,14 +50,13 @@ public class RoleFilter implements Filter {
 			if (tppRoleValidationService.validate(httpRequest, tppCertData.getPspRoles())) {
 				chain.doFilter(request, response);
 			} else {
-				// NOPMD TODO define conform error msg,
-				// https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/142
 				log.debug(
 						"Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 						"Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
 			}
 		}
+		chain.doFilter(request, response);
 	}
 
 	@Override
