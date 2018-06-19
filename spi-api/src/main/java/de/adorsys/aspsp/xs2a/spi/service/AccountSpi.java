@@ -22,8 +22,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 

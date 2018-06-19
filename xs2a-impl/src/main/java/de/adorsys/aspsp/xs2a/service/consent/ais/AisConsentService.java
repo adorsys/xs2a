@@ -37,25 +37,59 @@ public class AisConsentService {
     private final RemoteAisConsentUrls remoteAisConsentUrls;
     private final ConsentMapper consentMapper;
 
+    /**
+     * Sends a POST request to CMS to store created AISconsent
+     *
+     * @param request Request body storing main consent details
+     * @param psuId   String representation of PSU`s identifier at ASPSP
+     * @param tppId   String representation of TPP`s identifier from TPP Certificate
+     * @return String representation of identifier of stored consent
+     */
     public String createConsent(CreateConsentReq request, String psuId, String tppId) {
         return consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToAisConsentRequest(request, psuId, tppId), String.class).getBody();
     }
 
+    /**
+     * Requests CMS to retrieve AIS consent by its identifier
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return Response containing AIS Consent
+     */
     public SpiAccountConsent getAccountConsentById(String consentId) {
         return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), SpiAccountConsent.class, consentId).getBody();
     }
 
+    /**
+     * Requests CMS to retrieve AIS consent status by its identifier
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return Response containing AIS Consent Status
+     */
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
         return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), SpiConsentStatus.class, consentId).getBody();
     }
 
+    /**
+     * Requests CMS to update consent status to "Revoked by PSU" state
+     *
+     * @param consentId String representation of identifier of stored consent
+     */
     public void revokeConsent(String consentId) {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, SpiConsentStatus.REVOKED_BY_PSU);
     }
 
-    public void consentActionLog(String tppId, String consentId, boolean withBalance, TypeAccess access, ResponseObject object) {
-        ActionStatus status = object.hasError()
-                                  ? consentMapper.mapActionStatusError(object.getError(), withBalance, access)
+    /**
+     * Sends a POST request to CMS to perform decrement of consent usages and report status of the operation held with certain AIS consent
+     *
+     * @param tppId       String representation of TPP`s identifier from TPP Certificate
+     * @param consentId   String representation of identifier of stored consent
+     * @param withBalance Boolean representation of request to include Balances
+     * @param access      Type of access initially requested(Access to Accounts/Balances/Transactions)
+     * @param response    AIS Service response
+     */
+    public void consentActionLog(String tppId, String consentId, boolean withBalance, TypeAccess access, ResponseObject response) {
+        ActionStatus status = response.hasError()
+                                  ? consentMapper.mapActionStatusError(response.getError(), withBalance, access)
                                   : ActionStatus.SUCCESS;
 
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, status), Void.class);

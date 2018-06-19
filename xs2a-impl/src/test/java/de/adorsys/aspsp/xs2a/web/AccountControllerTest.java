@@ -16,13 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;

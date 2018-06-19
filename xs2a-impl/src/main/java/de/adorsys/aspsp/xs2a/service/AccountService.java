@@ -164,9 +164,8 @@ public class AccountService {
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
     public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
-                                                          LocalDate
-                                                              dateTo, String transactionId,
-                                                          boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
+                                                          LocalDate dateTo, String transactionId, boolean psuInvolved,
+                                                          BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<AccountReport>builder()
@@ -235,9 +234,9 @@ public class AccountService {
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
 
-    private Optional<AccountReport> getAccountReport(String accountId, Date dateFrom, Date dateTo, String transactionId,
+    private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
-        Date dateToChecked = dateTo == null ? new Date() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
+        LocalDate dateToChecked = dateTo == null ? LocalDate.now() : dateTo; //TODO Migrate Date to Instant. Task #126 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/126
 
         Optional<AccountReport> report;
         if (StringUtils.isBlank(transactionId)) {
@@ -267,8 +266,8 @@ public class AccountService {
                                                     .orElse(Collections.emptyList()));
     }
 
-    private Optional<AccountReport> getAccountReportByPeriod(String accountId, Date dateFrom,
-                                                             Date dateTo) { //TODO to be reviewed upon change to v1.1
+    private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom,
+                                                             LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
         validateAccountIdPeriod(accountId, dateFrom, dateTo);
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }
