@@ -15,7 +15,7 @@
  */
 package de.adorsys.aspsp.xs2a.config.rest;
 
-import de.adorsys.aspsp.xs2a.exception.AspspProfileRestTemplateErrorHandler;
+import de.adorsys.aspsp.xs2a.exception.AspspProfileRestErrorHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ public class RestAspspProfileConfig {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
-        rest.setErrorHandler(new AspspProfileRestTemplateErrorHandler());
+        rest.setErrorHandler(new AspspProfileRestErrorHandler());
         return rest;
     }
 

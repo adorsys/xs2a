@@ -22,7 +22,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 
 import java.io.IOException;
 
-public class AspspProfileRestTemplateErrorHandler extends DefaultResponseErrorHandler {
+public class AspspProfileRestErrorHandler extends DefaultResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {

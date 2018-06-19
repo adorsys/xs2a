@@ -50,7 +50,7 @@ public class AisConsentService {
     private final AspspProfileService profileService;
 
     /**
-     * Method for creating AIS consent
+     * Create AIS consent
      *
      * @param request needed parameters for creating AIS consent
      * @return String consent id
@@ -94,7 +94,7 @@ public class AisConsentService {
     }
 
     /**
-     * Get consent status by id
+     * Read status of consent by id
      *
      * @param consentId
      * @return SpiConsentStatus
@@ -119,7 +119,7 @@ public class AisConsentService {
     }
 
     /**
-     * Get full information about consent by id
+     * Read full information of consent by id
      *
      * @param consentId
      * @return SpiAccountConsent
@@ -146,9 +146,7 @@ public class AisConsentService {
         if (consent.isPresent()) {
             AisConsent aisConsent = consent.get();
             checkAndUpdateOnExpiration(aisConsent);
-            if (aisConsent.hasUsagesAvailable()) {
-                updateAisConsentCounter(aisConsent);
-            }
+            updateAisConsentCounter(aisConsent);
         }
     }
 
@@ -159,11 +157,13 @@ public class AisConsentService {
     }
 
     private void updateAisConsentCounter(AisConsent consent) {
-        int usageCounter = consent.getUsageCounter();
-        int newUsageCounter = --usageCounter;
-        consent.setUsageCounter(newUsageCounter);
-        consent.setLastActionDate(Instant.now());
-        aisConsentRepository.save(consent);
+        if (consent.hasUsagesAvailable()) {
+            int usageCounter = consent.getUsageCounter();
+            int newUsageCounter = --usageCounter;
+            consent.setUsageCounter(newUsageCounter);
+            consent.setLastActionDate(Instant.now());
+            aisConsentRepository.save(consent);
+        }
     }
 
     private void logConsentAction(String requestedConsentId, ActionStatus actionStatus, String tppId) {

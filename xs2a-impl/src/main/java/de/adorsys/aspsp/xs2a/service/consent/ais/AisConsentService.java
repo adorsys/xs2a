@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.consent.ais;
 
+import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
@@ -31,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 public class AisConsentService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
-    private final RemoteAisConsentUrls remoteAisConsentUrls;
+    private final AisConsentRemoteUrls remoteAisConsentUrls;
     private final ConsentMapper consentMapper;
 
     public String createConsent(CreateConsentReq request, String psuId, String tppId) {
