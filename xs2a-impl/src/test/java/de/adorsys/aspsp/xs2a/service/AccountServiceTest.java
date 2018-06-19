@@ -74,7 +74,6 @@ public class AccountServiceTest {
     @Before
     public void setUp() {
         //AisReporting
-        // doNothing().when(aisConsentService).consentActionLog(any());
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails(ACCOUNT_ID, IBAN));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
