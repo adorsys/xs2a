@@ -63,6 +63,7 @@ public class SignatureFilter implements Filter {
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			}
 		}
+		chain.doFilter(request, response);
 	}
 
 	@Override
