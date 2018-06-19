@@ -107,7 +107,7 @@ public class AisConsent {
     }
 
     public boolean isExpiredByDate() {
-        return LocalDate.now().isAfter(expireDate) || LocalDate.now().isEqual(expireDate);
+        return LocalDate.now().compareTo(expireDate) >= 0;
     }
 
     public boolean isStatusNotExpired() {
