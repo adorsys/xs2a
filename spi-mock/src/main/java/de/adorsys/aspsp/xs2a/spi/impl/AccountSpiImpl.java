@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,7 +35,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -151,15 +151,15 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
-        List<List<SpiAccountDetails>> accountDetailsList = ibans.stream()
-                                                               .map(this::readAccountDetailsByIban)
-                                                               .collect(Collectors.toList());
-        boolean containsEmptyList = accountDetailsList.contains(Collections.<SpiAccountDetails>emptyList());
+        List<SpiAccountDetails> accountDetails = new ArrayList<>();
+        for (String iban : ibans) {
+            List<SpiAccountDetails> det = readAccountDetailsByIban(iban);
+            if (CollectionUtils.isEmpty(det)) {
+                return Collections.emptyList();
+            }
+            accountDetails.addAll(det);
+        }
 
-        return containsEmptyList
-                   ? Collections.emptyList()
-                   : accountDetailsList.stream()
-                         .flatMap(Collection::stream)
-                         .collect(Collectors.toList());
+        return accountDetails;
     }
 }

@@ -60,7 +60,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         CreateConsentReq checkedRequest = new CreateConsentReq();
-        if (isNotEmptyAccess(request.getAccess())&&request.getValidUntil().isAfter(LocalDate.now())) {
+        if (isNotEmptyAccess(request.getAccess()) && request.getValidUntil().isAfter(LocalDate.now())) {
             if (isAllAccountsRequest(request) && psuId != null) {
                 checkedRequest.setAccess(getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS == request.getAccess().getAllPsd2(), psuId));
             } else {
@@ -159,9 +159,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private AccountAccess getAccessByRequestedAccess(AccountAccess requestedAccess) {
         List<AccountReference> aspspReferences = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountDetailsByIbans(getIbansFromAccess(requestedAccess)));
-            List<AccountReference> balances = getFilteredReferencesByAccessReferences(requestedAccess.getBalances(), aspspReferences);
-            List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), aspspReferences);
-            List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), aspspReferences);
+        List<AccountReference> balances = getFilteredReferencesByAccessReferences(requestedAccess.getBalances(), aspspReferences);
+        List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), aspspReferences);
+        List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), aspspReferences);
         return new AccountAccess(getAccountsForAccess(balances, transaction, accounts), balances, transaction, null, null);
     }
 
