@@ -151,11 +151,13 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
-        List<List<SpiAccountDetails>> list = ibans.stream()
-                                                 .map(this::readAccountDetailsByIban).collect(Collectors.toList());
-        return (list.contains(Collections.emptyList()))
+        List<List<SpiAccountDetails>> accountDetailsList = ibans.stream()
+                                                               .map(this::readAccountDetailsByIban).collect(Collectors.toList());
+        boolean containsEmptyList = accountDetailsList.contains(Collections.emptyList());
+
+        return containsEmptyList
                    ? Collections.emptyList()
-                   : list.stream()
+                   : accountDetailsList.stream()
                          .flatMap(Collection::stream)
                          .collect(Collectors.toList());
     }
