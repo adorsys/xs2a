@@ -16,13 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.spi.config.RemoteSpiUrls;
+import de.adorsys.aspsp.xs2a.spi.config.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -39,8 +40,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
-    private final RemoteSpiUrls remoteSpiUrls;
-    private final RestTemplate restTemplate;
+    private final AspspRemoteUrls remoteSpiUrls;
+    @Qualifier("aspspRestTemplate")
+    private final RestTemplate aspspRestTemplate;
 
     /**
      * Queries ASPSP to (GET) List of AccountDetails by IBAN
@@ -50,7 +52,7 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
-        return Optional.ofNullable(restTemplate.exchange(
+        return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByIban(), HttpMethod.GET, new HttpEntity<>(null), new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             }, iban).getBody())
                    .orElse(Collections.emptyList());
@@ -64,7 +66,7 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public List<SpiBalances> readBalances(String accountId) {
-        return Optional.ofNullable(restTemplate.exchange(
+        return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getBalancesByAccountId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiBalances>>() {
             }, accountId).getBody())
                    .orElse(Collections.emptyList());
@@ -78,7 +80,7 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public String saveTransaction(SpiTransaction transaction) {
-        return restTemplate.postForEntity(remoteSpiUrls.createTransaction(), transaction, String.class).getBody();
+        return aspspRestTemplate.postForEntity(remoteSpiUrls.createTransaction(), transaction, String.class).getBody();
     }
 
     /**
@@ -99,7 +101,7 @@ public class AccountSpiImpl implements AccountSpi {
                                            .queryParam("dateFrom", dateFrom)
                                            .queryParam("dateTo", dateTo);
 
-        return restTemplate.exchange(
+        return aspspRestTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
             }).getBody();
     }
@@ -113,7 +115,7 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public Optional<SpiTransaction> readTransactionsById(String transactionId, String accountId) {
-        return Optional.ofNullable(restTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
+        return Optional.ofNullable(aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
     }
 
     /**
@@ -124,7 +126,7 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public SpiAccountDetails readAccountDetails(String accountId) {
-        return restTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
+        return aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
     }
 
     /**
@@ -135,7 +137,7 @@ public class AccountSpiImpl implements AccountSpi {
      */
     @Override
     public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
-        return Optional.ofNullable(restTemplate.exchange(
+        return Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             }, psuId).getBody())
                    .orElse(Collections.emptyList());
