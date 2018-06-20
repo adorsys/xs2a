@@ -154,7 +154,7 @@ public class AccountSpiImpl implements AccountSpi {
         List<List<SpiAccountDetails>> accountDetailsList = ibans.stream()
                                                                .map(this::readAccountDetailsByIban)
                                                                .collect(Collectors.toList());
-        boolean containsEmptyList = accountDetailsList.contains(Collections.emptyList());
+        boolean containsEmptyList = accountDetailsList.contains(Collections.<SpiAccountDetails>emptyList());
 
         return containsEmptyList
                    ? Collections.emptyList()
