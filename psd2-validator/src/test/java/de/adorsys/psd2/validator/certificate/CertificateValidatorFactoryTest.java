@@ -24,7 +24,7 @@ public class CertificateValidatorFactoryTest {
 		intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
 	}
 
-	@Test
+    @Test(expected = CertificateValidationException.class)
 	public void when_ValidCertificate_Expected_True() throws CertificateException, CertificateValidationException {
 
 		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
@@ -32,8 +32,7 @@ public class CertificateValidatorFactoryTest {
 		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
 				rootCertBucket, intermediateCertBucket);
 
-		// TODO should fix this test
-		// Assert.assertTrue(validatorFactory.validate(encodedCert));
+	    Assert.assertTrue(validatorFactory.validate(encodedCert));
 	}
 
 	@Test(expected = CertificateValidationException.class)
