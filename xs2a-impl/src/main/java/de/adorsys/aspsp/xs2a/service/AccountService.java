@@ -107,15 +107,17 @@ public class AccountService {
                               ? consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
                               : consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts());
 
+        ResponseObject.ResponseBuilder<AccountDetails> builder = ResponseObject.builder();
         if (isValid) {
-            return withBalance
-                       ? ResponseObject.<AccountDetails>builder().body(accountDetails).build()
-                       : ResponseObject.<AccountDetails>builder().body(getAccountDetailNoBalances(accountDetails)).build();
+            builder = withBalance
+                           ? builder.body(accountDetails)
+                           : builder.body(getAccountDetailNoBalances(accountDetails));
+        } else {
+            builder = builder
+                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
-        ResponseObject<AccountDetails> response = ResponseObject.<AccountDetails>builder()
-                                                      .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
-        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, response);
-        return response;
+        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
+        return builder.build();
     }
 
     /**
@@ -138,11 +140,11 @@ public class AccountService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
-        if (isValid) {
-            return ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build();
-        }
-        ResponseObject<List<Balances>> response = ResponseObject.<List<Balances>>builder()
-                                                      .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<List<Balances>> response = isValid
+                                                      ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
+                                                      : ResponseObject.<List<Balances>>builder()
+                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+
         aisConsentService.consentActionLog(tppId, consentId, false, TypeAccess.BALANCE, response);
         return response;
     }
@@ -180,13 +182,11 @@ public class AccountService {
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
         Optional<AccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus);
 
-        if (isValid && report.isPresent()) {
-            return ResponseObject.<AccountReport>builder()
-                       .body(report.get())
-                       .build();
-        }
-        ResponseObject<AccountReport> response = ResponseObject.<AccountReport>builder()
-                                                     .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<AccountReport> response = isValid && report.isPresent()
+                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
+                                                     : ResponseObject.<AccountReport>builder()
+                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+
         aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.TRANSACTION, response);
         return response;
     }
