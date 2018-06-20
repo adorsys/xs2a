@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.exception;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.spi.rest.exception.RestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +63,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
-        return new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR)
+        return new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, ex.getMessageErrorCode())
                                                        .text(ex.getMessage())), ex.getHttpStatus());
     }
 }

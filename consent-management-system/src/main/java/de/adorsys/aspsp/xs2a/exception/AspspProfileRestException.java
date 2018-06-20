@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.aspsp.xs2a.exception;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import lombok.Value;
+import org.springframework.http.HttpStatus;
 
-@Component
-public class AspspProfileRemoteUrls {
-
-    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
-    private String aspspProfileBaseUrl;
-
-    /**
-     * Returns URL-string in order to get frequency per day
-     *
-     * @return String
-     */
-    public String getFrequencyPerDay() {
-        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
-    }
+@Value
+public class AspspProfileRestException extends RuntimeException {
+    private HttpStatus httpStatus;
+    private String message;
 }

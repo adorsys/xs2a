@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.exception;
+package de.adorsys.aspsp.xs2a.config.rest.consent;
 
-import io.swagger.annotations.ApiModel;
-import lombok.Getter;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.exception.RestException;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 
-@Getter
-@ApiModel(description = "Consent exception")
-public class ConsentException extends RuntimeException {
-    public ConsentException(String message){
-        super(message);
+public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
+    @Override
+    public void handleError(ClientHttpResponse response) {
+        throw new RestException(MessageErrorCode.CONSENT_UNKNOWN_400);
     }
 }
