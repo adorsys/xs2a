@@ -107,17 +107,17 @@ public class AccountService {
                               ? consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
                               : consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts());
 
-        ResponseObject<AccountDetails> response;
+        ResponseObject.ResponseBuilder<AccountDetails> builder = ResponseObject.builder();
         if (isValid) {
-            response = withBalance
-                           ? ResponseObject.<AccountDetails>builder().body(accountDetails).build()
-                           : ResponseObject.<AccountDetails>builder().body(getAccountDetailNoBalances(accountDetails)).build();
+            builder = withBalance
+                           ? builder.body(accountDetails)
+                           : builder.body(getAccountDetailNoBalances(accountDetails));
         } else {
-            response = ResponseObject.<AccountDetails>builder()
-                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+            builder = builder
+                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
-        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, response);
-        return response;
+        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
+        return builder.build();
     }
 
     /**
