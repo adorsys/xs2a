@@ -32,6 +32,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -59,7 +60,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         CreateConsentReq checkedRequest = new CreateConsentReq();
-        if (isNotEmptyAccess(request.getAccess())) {
+        if (isNotEmptyAccess(request.getAccess())&&request.getValidUntil().isAfter(LocalDate.now())) {
             if (isAllAccountsRequest(request) && psuId != null) {
                 checkedRequest.setAccess(getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS == request.getAccess().getAllPsd2(), psuId));
             } else {
@@ -69,7 +70,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
             checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
             checkedRequest.setValidUntil(request.getValidUntil());
-
         }
         String consentId = isNotEmptyAccess(checkedRequest.getAccess())
                                ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
