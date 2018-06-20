@@ -114,7 +114,7 @@ public class AccountSpiImpl implements AccountSpi {
      * @return Transaction
      */
     @Override
-    public Optional<SpiTransaction> readTransactionsById(String transactionId, String accountId) {
+    public Optional<SpiTransaction> readTransactionById(String transactionId, String accountId) {
         return Optional.ofNullable(aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
     }
 

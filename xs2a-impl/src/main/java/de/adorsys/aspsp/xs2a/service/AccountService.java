@@ -185,7 +185,8 @@ public class AccountService {
                        .body(report.get())
                        .build();
         }
-        ResponseObject<AccountReport> response = ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<AccountReport> response = ResponseObject.<AccountReport>builder()
+                                                     .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
         aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.TRANSACTION, response);
         return response;
     }
@@ -261,7 +262,7 @@ public class AccountService {
     private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
         validateAccountIdTransactionId(accountId, transactionId);
 
-        Optional<SpiTransaction> transaction = accountSpi.readTransactionsById(transactionId, accountId);
+        Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId);
         return accountMapper.mapToAccountReport(transaction
                                                     .map(Collections::singletonList)
                                                     .orElse(Collections.emptyList()));

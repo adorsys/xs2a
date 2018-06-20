@@ -31,7 +31,7 @@ public interface AccountSpi {
 
     List<SpiTransaction> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo);
 
-    Optional<SpiTransaction> readTransactionsById(String transactionId, String accountId);
+    Optional<SpiTransaction> readTransactionById(String transactionId, String accountId);
 
     String saveTransaction(SpiTransaction transaction);
 
