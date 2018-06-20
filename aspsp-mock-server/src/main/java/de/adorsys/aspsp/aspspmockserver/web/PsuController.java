@@ -32,7 +32,7 @@ public class PsuController {
     public ResponseEntity<Psu> readPsuById(@PathVariable("id") String id) {
         return psuService.getPsuById(id)
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
