@@ -77,7 +77,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
                    ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(RECEIVED, consentId, null, null, null)).build()
-                   : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build();
+                   : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
     }
 
     /**
@@ -159,13 +159,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private AccountAccess getAccessByRequestedAccess(AccountAccess requestedAccess) {
         List<AccountReference> aspspReferences = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountDetailsByIbans(getIbansFromAccess(requestedAccess)));
-        if (aspspReferences.isEmpty()) {
-            return null;
-        }
-        List<AccountReference> balances = getFilteredReferencesByAccessReferences(requestedAccess.getBalances(), aspspReferences);
-        List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), aspspReferences);
-        List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), aspspReferences);
-
+            List<AccountReference> balances = getFilteredReferencesByAccessReferences(requestedAccess.getBalances(), aspspReferences);
+            List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), aspspReferences);
+            List<AccountReference> accounts = getRequestedReferences(requestedAccess.getAccounts(), aspspReferences);
         return new AccountAccess(getAccountsForAccess(balances, transaction, accounts), balances, transaction, null, null);
     }
 
@@ -197,10 +193,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private AccountAccess getAccessByPsuId(boolean isAllPSD2, String psuId) {
         List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountsByPsuId(psuId));
-
-        return isAllPSD2
-                   ? new AccountAccess(refs, refs, refs, null, AccountAccessType.ALL_ACCOUNTS)
-                   : new AccountAccess(refs, Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
+        if (CollectionUtils.isNotEmpty(refs)) {
+            return isAllPSD2
+                       ? new AccountAccess(refs, refs, refs, null, AccountAccessType.ALL_ACCOUNTS)
+                       : new AccountAccess(refs, Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null);
+        } else {
+            return new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
+        }
     }
 
     private boolean isAllAccountsRequest(CreateConsentReq request) {
