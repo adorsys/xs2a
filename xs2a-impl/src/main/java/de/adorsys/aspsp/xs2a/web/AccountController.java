@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
@@ -57,7 +59,6 @@ public class AccountController {
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance, psuInvolved);
-
         return responseMapper.ok(responseObject);
     }
 
@@ -75,13 +76,12 @@ public class AccountController {
     public ResponseEntity<AccountDetails> readAccountDetails(
         @RequestHeader(name = "consent-id", required = false) String consentId,
         @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
-        @PathVariable(name = "account-id", required = true) String accountId,
+        @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
         @RequestParam(name = "with-balance", required = false) boolean withBalance,
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance, psuInvolved);
-
         return responseMapper.ok(responseObject);
     }
 
@@ -98,11 +98,10 @@ public class AccountController {
         @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<List<Balances>> getBalances(
         @RequestHeader(name = "consent-id", required = false) String consentId,
-        @PathVariable(name = "account-id", required = true) String accountId,
+        @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId, psuInvolved);
-
         return responseMapper.ok(responseObject);
     }
 
@@ -134,7 +133,6 @@ public class AccountController {
                                                          @RequestParam(name = "withBalance", required = false) boolean withBalance,
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
-
         ResponseObject<AccountReport> responseObject =
             accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
         return responseMapper.ok(responseObject);

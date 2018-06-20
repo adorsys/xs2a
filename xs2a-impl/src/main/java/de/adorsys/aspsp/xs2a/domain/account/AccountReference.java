@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Currency;
+import java.util.Optional;
 
 @Data
 @ApiModel(description = "Account Reference", value = "AccountReference")
@@ -45,10 +46,9 @@ public class AccountReference {
     private Currency currency;
 
     @JsonIgnore
-    public boolean matches(AccountReference otherReference){
-        return otherReference.getCurrency() == null
-                   ? iban.equals(otherReference.getIban())
-                   : iban.equals(otherReference.getIban())
-                         && currency == otherReference.getCurrency();
+    public boolean matches(AccountReference otherReference) {
+        return Optional.ofNullable(otherReference.getCurrency())
+                   .map(cur -> iban.equals(otherReference.getIban()) && currency == cur)
+                   .orElse(iban.equals(otherReference.getIban()));
     }
 }

@@ -115,7 +115,7 @@ public class AccountControllerTest {
     @Test
     public void readAccountById_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountById(WRONG_ACCOUNT_ID);
@@ -147,7 +147,7 @@ public class AccountControllerTest {
     @Test
     public void readAccountByIban_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAccountsByIban(WRONG_IBAN);
@@ -205,7 +205,7 @@ public class AccountControllerTest {
     @Test
     public void readBalancesById_wrongID() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity actualResponse = accountController.readBalancesById(WRONG_ACCOUNT_ID);
@@ -217,7 +217,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void readAccountsByPsuId(){
+    public void readAccountsByPsuId() {
         //Given:
         HttpStatus expectedStatus = HttpStatus.OK;
         //When:
@@ -228,9 +228,9 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void readAccountsByPsuId_Failure(){
+    public void readAccountsByPsuId_Failure() {
         //Given:
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatus = HttpStatus.NO_CONTENT;
         //When:
         ResponseEntity<List<SpiAccountDetails>> response = accountController.readAccountsByPsuId(WRONG_PSU_ID);
         //Then:

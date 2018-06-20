@@ -29,10 +29,11 @@ public class AspspRemoteUrls {
     private String consentServiceBaseUrl;
 
     // PIS Consents
+
     /**
      * Returns URL-string to CMS endpoint that creates pis consent
      *
-     * @return String
+     * @return URL
      */
     public String createPisConsent() {
         return consentServiceBaseUrl + "/pis/consent/";
@@ -41,7 +42,7 @@ public class AspspRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that creates pis consent for bulk payment
      *
-     * @return String
+     * @return URL
      */
     public String createPisBulkPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/bulk";
@@ -50,7 +51,7 @@ public class AspspRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that creates pis consent for periodic payment
      *
-     * @return String
+     * @return URL
      */
     public String createPisPeriodicPaymentConsent() {
         return consentServiceBaseUrl + "/pis/consent/periodic";
@@ -59,7 +60,7 @@ public class AspspRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that updates pis consent status
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String updatePisConsentStatus() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
@@ -68,7 +69,7 @@ public class AspspRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that gets pis consent status by ID
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getPisConsentStatusById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
@@ -77,7 +78,7 @@ public class AspspRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that gets pis consent by ID
      *
-     * @return String
+     * @return URL with path parameter
      */
     public String getPisConsentById() {
         return consentServiceBaseUrl + "/pis/consent/{consentId}";
@@ -86,25 +87,46 @@ public class AspspRemoteUrls {
     /**
      * Returns URL-string to CMS endpoint that checks access by consent Id
      *
-     * @return String
+     * @return URL
      */
     public String checkAccessByConsentId() {
         return consentServiceBaseUrl + "/ais/consent/available/access";
     }
 
     //Accounts urls
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by accountId
+     *
+     * @return URL with path parameter
+     */
     public String getAccountDetailsById() {
         return spiMockBaseUrl + "/account/{account-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs Balances of an account by accountId
+     *
+     * @return URL with path parameter
+     */
     public String getBalancesByAccountId() {
         return spiMockBaseUrl + "/account/{account-id}/balances";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by PsuId
+     *
+     * @return URL with path parameter
+     */
     public String getAccountDetailsByPsuId() {
         return spiMockBaseUrl + "/account/psu/{psu-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs AccountDetails by IBAN
+     *
+     * @return URL with path parameter
+     */
     public String getAccountDetailsByIban() {
         return spiMockBaseUrl + "/account/iban/{iban}";
     }
@@ -127,14 +149,30 @@ public class AspspRemoteUrls {
     }
 
     //Transactions urls
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs Transaction by transactionId and accountId
+     *
+     * @return URL with path parameters
+     */
     public String readTransactionById() {
-        return spiMockBaseUrl + "/transaction/{transaction-id}";
+        return spiMockBaseUrl + "/transaction/{transaction-id}/{account-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs Transactions list by accountId and period set by dates from/to
+     *
+     * @return URL with path parameter
+     */
     public String readTransactionsByPeriod() {
-        return spiMockBaseUrl + "/transaction/{iban}/{currency}";
+        return spiMockBaseUrl + "/transaction/{account-id}";
     }
 
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that Creates a new Transaction with body SpiTransaction
+     *
+     * @return URL
+     */
     public String createTransaction() {
         return spiMockBaseUrl + "/transaction";
     }

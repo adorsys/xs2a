@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
@@ -41,6 +42,8 @@ public class TransactionServiceTest {
     private static LocalDate DATE = LocalDate.parse("2019-03-03");
     private static final String TRANSACTION_ID = "00001";
     private static final String WRONG_TRANSACTION_ID = "00002";
+    private final String ACCOUNT_ID = "123456789";
+    private final String WRONG_ACCOUNT_ID = "WRONG_ACC_ID";
     private static final String IBAN = "DE12345";
     private static final String IBAN_2 = "DE54321";
     private static final Currency EUR = Currency.getInstance("EUR");
@@ -49,32 +52,47 @@ public class TransactionServiceTest {
     private TransactionService transactionService;
     @MockBean
     TransactionRepository transactionRepository;
+    @MockBean
+    AccountService accountService;
 
     @Before
     public void setUp() {
-        when(transactionRepository.findOne(TRANSACTION_ID))
+        when(transactionRepository.findOneByTransactionIdAndAccount(IBAN, EUR, TRANSACTION_ID))
             .thenReturn(getTransaction());
-        when(transactionRepository.findOne(WRONG_TRANSACTION_ID))
+        when(transactionRepository.findOneByTransactionIdAndAccount(IBAN, EUR, WRONG_TRANSACTION_ID))
             .thenReturn(null);
         when(transactionRepository.save(getTransaction()))
             .thenReturn(getTransaction());
         when(transactionRepository.findAllByDates(IBAN, EUR, DATE, DATE))
             .thenReturn(Collections.singletonList(getTransaction()));
+        when(accountService.getAccountById(ACCOUNT_ID))
+            .thenReturn(Optional.of(getDetails()));
+        when(accountService.getAccountById(WRONG_ACCOUNT_ID))
+            .thenReturn(Optional.empty());
     }
 
     @Test
     public void getTransactionById_Success() {
         //When
-        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID);
+        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID, ACCOUNT_ID);
 
         //Then
         assertThat(respondedTransaction.get()).isEqualTo(getTransaction());
     }
 
     @Test
-    public void getTransactionById_Failure() {
+    public void getTransactionById_Failure_Wrong_TrId() {
         //When
-        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(WRONG_TRANSACTION_ID);
+        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(WRONG_TRANSACTION_ID, ACCOUNT_ID);
+
+        //Then
+        assertThat(respondedTransaction).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void getTransactionById_Failure_Wrong_AccId() {
+        //When
+        Optional<SpiTransaction> respondedTransaction = transactionService.getTransactionById(TRANSACTION_ID, WRONG_ACCOUNT_ID);
 
         //Then
         assertThat(respondedTransaction).isEqualTo(Optional.empty());
@@ -90,18 +108,31 @@ public class TransactionServiceTest {
     }
 
     @Test
-    public void getTransactionsByAccountId() {
+    public void getTransactionsByPeriod() {
         //When
-        List<SpiTransaction> transactionList = transactionService.getTransactionsByPeriod(IBAN, EUR, DATE, DATE);
+        List<SpiTransaction> transactionList = transactionService.getTransactionsByPeriod(ACCOUNT_ID, DATE, DATE);
 
         //Then
         assertThat(transactionList).isNotEmpty();
+    }
+
+    @Test
+    public void getTransactionByPeriod_Failure_Wrong_AccId() {
+        //When
+        List<SpiTransaction> respondedTransaction = transactionService.getTransactionsByPeriod(WRONG_ACCOUNT_ID, DATE, DATE);
+
+        //Then
+        assertThat(respondedTransaction).isEmpty();
     }
 
     private SpiTransaction getTransaction() {
         return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), "Creditor",
             new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
             new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode");
+    }
+
+    private SpiAccountDetails getDetails() {
+        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null);
     }
 
 }
