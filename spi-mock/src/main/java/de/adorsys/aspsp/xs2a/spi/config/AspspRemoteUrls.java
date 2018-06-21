@@ -21,76 +21,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AspspRemoteUrls {
-    // TODO remove consent url: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/147
     @Value("${mockspi.baseurl:http://localhost:28080}")
     private String spiMockBaseUrl;
-
-    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
-    private String consentServiceBaseUrl;
-
-    // PIS Consents
-    /**
-     * Returns URL-string to CMS endpoint that creates pis consent
-     *
-     * @return String
-     */
-    public String createPisConsent() {
-        return consentServiceBaseUrl + "/pis/consent/";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that creates pis consent for bulk payment
-     *
-     * @return String
-     */
-    public String createPisBulkPaymentConsent() {
-        return consentServiceBaseUrl + "/pis/consent/bulk";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that creates pis consent for periodic payment
-     *
-     * @return String
-     */
-    public String createPisPeriodicPaymentConsent() {
-        return consentServiceBaseUrl + "/pis/consent/periodic";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that updates pis consent status
-     *
-     * @return String
-     */
-    public String updatePisConsentStatus() {
-        return consentServiceBaseUrl + "/pis/consent/{consentId}/status/{status}";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that gets pis consent status by ID
-     *
-     * @return String
-     */
-    public String getPisConsentStatusById() {
-        return consentServiceBaseUrl + "/pis/consent/{consentId}/status";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that gets pis consent by ID
-     *
-     * @return String
-     */
-    public String getPisConsentById() {
-        return consentServiceBaseUrl + "/pis/consent/{consentId}";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that checks access by consent Id
-     *
-     * @return String
-     */
-    public String checkAccessByConsentId() {
-        return consentServiceBaseUrl + "/ais/consent/available/access";
-    }
 
     //Accounts urls
     public String getAccountDetailsById() {

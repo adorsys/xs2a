@@ -16,21 +16,24 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -40,12 +43,15 @@ import java.util.stream.Collectors;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
+
 @Service
 @AllArgsConstructor
 public class PaymentService {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
     private final AccountService accountService;
+    private final PisConsentService pisConsentService;
+    private final AspspProfileService aspspProfileService;
 
     public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct) {
         TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct));
@@ -60,8 +66,9 @@ public class PaymentService {
         if (periodicPayment != null
                 && areAccountsExist(periodicPayment.getDebtorAccount(), periodicPayment.getCreditorAccount())) {
 
-            SpiPaymentInitialisationResponse spiPeriodicPayment = paymentSpi.initiatePeriodicPayment(paymentMapper.mapToSpiPeriodicPayment(periodicPayment), paymentProduct, tppRedirectPreferred);
-            paymentInitiation = paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPayment);
+            paymentInitiation = aspspProfileService.isRedirectMode()
+                                    ? getPeriodicPaymentResponseWhenRedirectMode(periodicPayment, paymentProduct, tppRedirectPreferred)
+                                    : getPeriodicPaymentResponseWhenOAuthMode(periodicPayment, paymentProduct, tppRedirectPreferred);
         }
 
         return Optional.ofNullable(paymentInitiation)
@@ -72,16 +79,11 @@ public class PaymentService {
     }
 
     public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        List<SinglePayments> validatedPayments = payments.stream()
-                                                     .filter(Objects::nonNull)
-                                                     .filter(pmt -> areAccountsExist(pmt.getDebtorAccount(), pmt.getCreditorAccount()))
-                                                     .collect(Collectors.toList());
+        List<PaymentInitialisationResponse> paymentResponses = aspspProfileService.isRedirectMode()
+                                                                   ? getBulkPaymentResponseWhenRedirectMode(payments, paymentProduct, tppRedirectPreferred)
+                                                                   : getBulkPaymentResponseWhenOAuthMode(payments, paymentProduct, tppRedirectPreferred);
 
-        List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(validatedPayments);
-        List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments, paymentProduct, tppRedirectPreferred);
-        List<PaymentInitialisationResponse> paymentResponses = spiPaymentInitiations.stream()
-                                                                   .map(paymentMapper::mapToPaymentInitializationResponse)
-                                                                   .collect(Collectors.toList());
+
         return CollectionUtils.isEmpty(paymentResponses)
                    ? ResponseObject.<List<PaymentInitialisationResponse>>builder()
                          .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build()
@@ -94,9 +96,10 @@ public class PaymentService {
 
         if (singlePayment != null
                 && areAccountsExist(singlePayment.getDebtorAccount(), singlePayment.getCreditorAccount())) {
-            SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
-            SpiPaymentInitialisationResponse spiPaymentInitiation = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct, tppRedirectPreferred);
-            paymentInitialisationResponse = paymentMapper.mapToPaymentInitializationResponse(spiPaymentInitiation);
+
+            paymentInitialisationResponse = aspspProfileService.isRedirectMode()
+                                                ? getSinglePaymentResponseWhenRedirectMode(singlePayment, paymentProduct, tppRedirectPreferred)
+                                                : getSinglePaymentResponseWhenOAuthMode(singlePayment, paymentProduct, tppRedirectPreferred);
         }
 
         return Optional.ofNullable(paymentInitialisationResponse)
@@ -109,5 +112,61 @@ public class PaymentService {
     private boolean areAccountsExist(AccountReference debtorAccount, AccountReference creditorAccount) {
         return accountService.isAccountExists(debtorAccount)
                    && accountService.isAccountExists(creditorAccount);
+    }
+
+    private PaymentInitialisationResponse getPeriodicPaymentResponseWhenRedirectMode(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+        return StringUtils.isBlank(pisConsentService.createPisConsentForPeriodicPaymentAndGetId(periodicPayment))
+                   ? null
+                   : createPeriodicPaymentAndGetResponse(periodicPayment, paymentProduct, tppRedirectPreferred);
+    }
+
+    private PaymentInitialisationResponse getPeriodicPaymentResponseWhenOAuthMode(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+        return createPeriodicPaymentAndGetResponse(periodicPayment, paymentProduct, tppRedirectPreferred);
+    }
+
+    private PaymentInitialisationResponse createPeriodicPaymentAndGetResponse(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+        SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(periodicPayment);
+        SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, paymentProduct, tppRedirectPreferred);
+        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
+    }
+
+    private List<PaymentInitialisationResponse> getBulkPaymentResponseWhenRedirectMode(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        return StringUtils.isBlank(pisConsentService.createPisConsentForBulkPaymentAndGetId(payments))
+                   ? null
+                   : createBulkPaymentAndGetResponse(payments, paymentProduct, tppRedirectPreferred);
+    }
+
+    private List<PaymentInitialisationResponse> getBulkPaymentResponseWhenOAuthMode(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        return createBulkPaymentAndGetResponse(payments, paymentProduct, tppRedirectPreferred);
+    }
+
+    private List<PaymentInitialisationResponse> createBulkPaymentAndGetResponse(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+        List<SinglePayments> validatedPayments = payments.stream()
+                                                     .filter(Objects::nonNull)
+                                                     .filter(pmt -> areAccountsExist(pmt.getDebtorAccount(), pmt.getCreditorAccount()))
+                                                     .collect(Collectors.toList());
+
+        List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(validatedPayments);
+        List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments, paymentProduct, tppRedirectPreferred);
+
+        return spiPaymentInitiations.stream()
+                   .map(paymentMapper::mapToPaymentInitializationResponse)
+                   .collect(Collectors.toList());
+    }
+
+    private PaymentInitialisationResponse getSinglePaymentResponseWhenRedirectMode(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+        return StringUtils.isBlank(pisConsentService.createPisConsentForSinglePaymentAndGetId(singlePayment))
+                   ? null
+                   : createSinglePaymentAndGetResponse(singlePayment, paymentProduct, tppRedirectPreferred);
+    }
+
+    private PaymentInitialisationResponse getSinglePaymentResponseWhenOAuthMode(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+        return createSinglePaymentAndGetResponse(singlePayment, paymentProduct, tppRedirectPreferred);
+    }
+
+    private PaymentInitialisationResponse createSinglePaymentAndGetResponse(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+        SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
+        SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct, tppRedirectPreferred);
+        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
     }
 }

@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +39,7 @@ public class AspspProfileService {
     @Qualifier("aspspProfileRestTemplate")
     private final RestTemplate aspspProfileRestTemplate;
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
+    private final String SCA_APPROACH_REDIRECT = "redirect";
 
     public List<PaymentProduct> getAvailablePaymentProducts() {
         return Optional.ofNullable(readAvailablePaymentProducts())
@@ -50,14 +51,25 @@ public class AspspProfileService {
                    .orElse(Collections.emptyList());
     }
 
-    public List<PaymentType> getAvailablePaymentTypes() {
+    public List<PisPaymentType> getAvailablePaymentTypes() {
         return Optional.ofNullable(readAvailablePaymentTypes())
                    .map(list -> list.stream()
-                                    .map(PaymentType::getByValue)
+                                    .map(PisPaymentType::getByValue)
                                     .filter(Optional::isPresent)
                                     .map(Optional::get)
                                     .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
+    }
+
+    public boolean isRedirectMode(){
+        return Optional.ofNullable(readScaApproach())
+            .map(scAp -> scAp.equals(SCA_APPROACH_REDIRECT))
+            .orElse(false);
+    }
+
+    private String readScaApproach() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody();
     }
 
     private List<String> readAvailablePaymentProducts() {
@@ -65,13 +77,11 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
-    
-   
-	public Boolean getTppSignatureRequired() {
-		return aspspProfileRestTemplate.exchange(
-	            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
-	}
 
+    public Boolean getTppSignatureRequired() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+    }
 
     private List<String> readAvailablePaymentTypes() {
         return aspspProfileRestTemplate.exchange(

@@ -16,6 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisAddress;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisRemittance;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -166,5 +170,75 @@ public class PaymentMapper {
     public List<SpiSinglePayments> mapToSpiSinglePaymentList(List<SinglePayments> payments) {
         return payments.stream().map(this::mapToSpiSinglePayments)
                    .collect(Collectors.toList());
+    }
+
+    public PisSinglePayment mapToPisSinglePayment(SinglePayments paymentInitiationRequest) {
+        return Optional.ofNullable(paymentInitiationRequest)
+                   .map(paymentRe -> {
+                       PisSinglePayment pisSinglePayment = new PisSinglePayment();
+                       pisSinglePayment.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
+                       pisSinglePayment.setDebtorAccount(accountMapper.mapToPisAccountReference(paymentRe.getDebtorAccount()));
+                       pisSinglePayment.setUltimateDebtor(paymentRe.getUltimateDebtor());
+                       pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(paymentRe.getInstructedAmount()));
+                       pisSinglePayment.setCreditorAccount(accountMapper.mapToPisAccountReference(paymentRe.getCreditorAccount()));
+                       pisSinglePayment.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
+                       pisSinglePayment.setCreditorName(paymentRe.getCreditorName());
+                       pisSinglePayment.setCreditorAddress(mapToPisAddress(paymentRe.getCreditorAddress()));
+                       pisSinglePayment.setUltimateCreditor(paymentRe.getUltimateCreditor());
+                       pisSinglePayment.setPurposeCode(paymentRe.getPurposeCode().getCode());
+                       pisSinglePayment.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
+                       pisSinglePayment.setRemittanceInformationStructured(mapToPisRemittance(paymentRe.getRemittanceInformationStructured()));
+                       pisSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
+                       pisSinglePayment.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
+
+                       return pisSinglePayment;
+                   })
+                   .orElse(null);
+    }
+
+    public List<PisSinglePayment> mapToPisSinglePaymentList(List<SinglePayments> singlePayments) {
+        return singlePayments.stream().map(this::mapToPisSinglePayment)
+                   .collect(Collectors.toList());
+    }
+
+    public PisPeriodicPayment mapToPisPeriodicPayment(PeriodicPayment periodicPayment) {
+        return Optional.ofNullable(periodicPayment)
+                   .map(pp -> {
+                       PisPeriodicPayment pisPeriodicPayment = new PisPeriodicPayment();
+                       pisPeriodicPayment.setEndToEndIdentification(pp.getEndToEndIdentification());
+                       pisPeriodicPayment.setDebtorAccount(accountMapper.mapToPisAccountReference(pp.getDebtorAccount()));
+                       pisPeriodicPayment.setUltimateDebtor(pp.getUltimateDebtor());
+                       pisPeriodicPayment.setInstructedAmount(accountMapper.mapToPisAmount(pp.getInstructedAmount()));
+                       pisPeriodicPayment.setCreditorAccount(accountMapper.mapToPisAccountReference(pp.getCreditorAccount()));
+                       pisPeriodicPayment.setCreditorAgent(getCreditorAgentCode(pp));
+                       pisPeriodicPayment.setCreditorName(pp.getCreditorName());
+                       pisPeriodicPayment.setCreditorAddress(mapToPisAddress(pp.getCreditorAddress()));
+                       pisPeriodicPayment.setUltimateCreditor(pp.getUltimateCreditor());
+                       pisPeriodicPayment.setPurposeCode(getPurposeCode(pp));
+                       pisPeriodicPayment.setRemittanceInformationUnstructured(pp.getRemittanceInformationUnstructured());
+                       pisPeriodicPayment.setRemittanceInformationStructured(mapToPisRemittance(pp.getRemittanceInformationStructured()));
+                       pisPeriodicPayment.setRequestedExecutionDate(pp.getRequestedExecutionDate());
+                       pisPeriodicPayment.setRequestedExecutionTime(pp.getRequestedExecutionTime());
+                       pisPeriodicPayment.setStartDate(pp.getStartDate());
+                       pisPeriodicPayment.setExecutionRule(pp.getExecutionRule());
+                       pisPeriodicPayment.setEndDate(pp.getEndDate());
+                       pisPeriodicPayment.setFrequency(getFrequency(pp));
+                       pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
+
+                       return pisPeriodicPayment;
+
+                   }).orElse(null);
+    }
+
+    private PisAddress mapToPisAddress(Address address) {
+        return Optional.ofNullable(address)
+                   .map(a -> new PisAddress(a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()))
+                   .orElse(null);
+    }
+
+    private PisRemittance mapToPisRemittance(Remittance remittance) {
+        return Optional.ofNullable(remittance)
+                   .map(r -> new PisRemittance(r.getReference(), r.getReferenceType(), r.getReferenceIssuer()))
+                   .orElse(null);
     }
 }
