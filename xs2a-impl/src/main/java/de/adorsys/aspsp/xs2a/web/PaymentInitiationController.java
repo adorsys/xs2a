@@ -52,8 +52,10 @@ public class PaymentInitiationController {
     @ApiImplicitParam(name = "psu-agent", value = "The forwarded Agent header field of the http request between PSU and TPP.", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "psu-geo-location", value = "GEO:52.506931,13.1445588", required = false, dataType = "Geo Location", paramType = "header"),
     @ApiImplicitParam(name = "tpp-redirect-uri", value = "Uri of TPP", required = false, dataType = "String", paramType = "header"),
+    @ApiImplicitParam(name = "timestamp", value = "date of the request", required = true, dataType = "String", paramType = "header"),
+    @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
     @ApiImplicitParam(name = "signature", value = "A signature of the request by TPP", required = false, dataType = "String", paramType = "header"),
-    @ApiImplicitParam(name = "tpp-certificate", value = "The sertificate used for signing the request", required = false, dataType = "String", paramType = "header")})
+    @ApiImplicitParam(name = "tpp-certificate", value = "The certificate used for signing the request", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPaymentInitiation(
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
         @PathVariable("payment-product") String paymentProduct,

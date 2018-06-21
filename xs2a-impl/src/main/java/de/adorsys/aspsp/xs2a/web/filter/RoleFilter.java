@@ -55,8 +55,10 @@ public class RoleFilter implements Filter {
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN,
 						"Returned if the resource that was referenced in the path exists but cannot be accessed by the TPP or the PSU");
 			}
+			
+		} else {
+			chain.doFilter(request, response);
 		}
-		chain.doFilter(request, response);
 	}
 
 	@Override

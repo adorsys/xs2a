@@ -14,18 +14,20 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import lombok.extern.slf4j.Slf4j;
 
 //NOPMD TODO implement http signature filter, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/141
-//@WebFilter(urlPatterns ="/api/v1/*")
-//@Order(3)
+@WebFilter(urlPatterns ="/api/v1/*")
+@Order(3)
 @Slf4j
 public class SignatureFilter implements Filter {
 
@@ -62,8 +64,10 @@ public class SignatureFilter implements Filter {
 				log.debug(e.getMessage());
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			}
+		} else {
+
+			chain.doFilter(request, response);
 		}
-		chain.doFilter(request, response);
 	}
 
 	@Override

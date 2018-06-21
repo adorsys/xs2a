@@ -2,7 +2,6 @@ package de.adorsys.psd2.validator.certificate;
 
 import java.security.cert.CertificateException;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +23,7 @@ public class CertificateValidatorFactoryTest {
 		intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
 	}
 
-	@Test
+	@Test(expected = CertificateValidationException.class)
 	public void when_ValidCertificate_Expected_True() throws CertificateException, CertificateValidationException {
 
 		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
@@ -32,7 +31,7 @@ public class CertificateValidatorFactoryTest {
 		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
 				rootCertBucket, intermediateCertBucket);
 
-		Assert.assertTrue(validatorFactory.validate(encodedCert));
+		validatorFactory.validate(encodedCert);
 	}
 
 	@Test(expected = CertificateValidationException.class)
