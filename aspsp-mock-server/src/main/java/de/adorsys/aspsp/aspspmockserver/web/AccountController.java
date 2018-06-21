@@ -62,7 +62,7 @@ public class AccountController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = SpiAccountDetails.class),
-        @ApiResponse(code = 400, message = "NBad Request")})
+        @ApiResponse(code = 400, message = "Bad Request")})
     @PutMapping(path = "/")
     public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody SpiAccountDetails account) {
         return accountService.addAccount(psuId, account)
