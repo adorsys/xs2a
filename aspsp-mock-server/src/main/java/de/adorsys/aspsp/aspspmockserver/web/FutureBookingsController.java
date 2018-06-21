@@ -18,9 +18,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,10 +39,13 @@ public class FutureBookingsController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = SpiAccountDetails.class),
+        @ApiResponse(code = 404, message = "Not Found")})
     @PostMapping(path = "/{iban}/{currency}")
     public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) throws Exception {
         return futureBookingsService.changeBalances(iban, currency)
-            .map(saved -> new ResponseEntity<>(saved, OK))
-            .orElse(ResponseEntity.notFound().build());
+                   .map(saved -> new ResponseEntity<>(saved, OK))
+                   .orElse(ResponseEntity.notFound().build());
     }
 }

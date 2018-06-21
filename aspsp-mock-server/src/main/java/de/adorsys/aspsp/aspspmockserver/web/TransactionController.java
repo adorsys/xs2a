@@ -18,9 +18,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.TransactionService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,6 +37,9 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = List.class),
+        @ApiResponse(code = 404, message = "Not Found")})
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiTransaction>> readAllTransactions() {
         List<SpiTransaction> transactions = transactionService.getAllTransactions();
@@ -48,6 +49,9 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = SpiTransaction.class),
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{transaction-id}/{account-id}")
     public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId, @PathVariable("account-id") String accountId) {
         return transactionService.getTransactionById(transactionId, accountId)
@@ -56,6 +60,9 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = String.class),
+        @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/")
     public ResponseEntity createTransaction(@RequestBody SpiTransaction transaction) {
         return transactionService.saveTransaction(transaction)
@@ -64,6 +71,9 @@ public class TransactionController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{account-id}")
     public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("account-id") String accountId,
                                                                          @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,

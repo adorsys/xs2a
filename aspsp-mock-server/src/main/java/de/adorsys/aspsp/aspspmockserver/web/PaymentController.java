@@ -17,11 +17,10 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,32 +43,43 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = SpiSinglePayments.class),
+        @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/")
     public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) {
         return paymentService.addPayment(payment)
-            .map(saved -> new ResponseEntity<>(saved, CREATED))
-            .orElse(ResponseEntity.badRequest().build());
+                   .map(saved -> new ResponseEntity<>(saved, CREATED))
+                   .orElse(ResponseEntity.badRequest().build());
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = List.class),
+        @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/bulk-payments")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) throws Exception {
         List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
         return isEmpty(saved)
-            ? ResponseEntity.badRequest().build()
-            : new ResponseEntity<>(saved, CREATED);
+                   ? ResponseEntity.badRequest().build()
+                   : new ResponseEntity<>(saved, CREATED);
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class)})
     @GetMapping(path = "/{paymentId}/status")
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
-            ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
+                   ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = SpiPeriodicPayment.class),
+        @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/createPeriodicPayment")
     public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
-            .map(saved -> new ResponseEntity<>(saved, CREATED))
-            .orElse(ResponseEntity.badRequest().build());
+                   .map(saved -> new ResponseEntity<>(saved, CREATED))
+                   .orElse(ResponseEntity.badRequest().build());
     }
 }

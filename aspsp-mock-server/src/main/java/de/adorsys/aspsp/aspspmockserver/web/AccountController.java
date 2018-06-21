@@ -19,9 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +37,10 @@ public class AccountController {
     private final AccountService accountService;
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 204, message = "No Content")
+    })
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
         return Optional.ofNullable(accountService.getAllAccounts())
@@ -47,6 +49,9 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = SpiAccountDetails.class),
+        @ApiResponse(code = 204, message = "Not Content")})
     @GetMapping(path = "/{accountId}")
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccountById(accountId)
@@ -55,6 +60,9 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = SpiAccountDetails.class),
+        @ApiResponse(code = 400, message = "NBad Request")})
     @PutMapping(path = "/")
     public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody SpiAccountDetails account) {
         return accountService.addAccount(psuId, account)
@@ -63,6 +71,8 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "Not Content")})
     @DeleteMapping(path = "/{accountId}")
     public ResponseEntity deleteAccount(@PathVariable("accountId") String accountId) {
         accountService.deleteAccountById(accountId);
@@ -70,6 +80,9 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{accountId}/balances")
     public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
         List<SpiBalances> response = accountService.getAccountBalancesById(accountId);
@@ -79,6 +92,9 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/psu/{psuId}")
     public ResponseEntity<List<SpiAccountDetails>> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
         List<SpiAccountDetails> response = accountService.getAccountsByPsuId(psuId);
@@ -88,6 +104,9 @@ public class AccountController {
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/iban/{iban}")
     public ResponseEntity<List<SpiAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
         List<SpiAccountDetails> response = accountService.getAccountsByIban(iban);
