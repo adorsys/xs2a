@@ -33,6 +33,7 @@
     <description>Consent API</description>
 
     <properties>
+        <swagger.annotations.version>1.5.19</swagger.annotations.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
@@ -40,6 +41,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.annotations.version}</version>
         </dependency>
     </dependencies>
 

@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.consent.api;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +25,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(description = "Access account information", value = "AccessAccountInfo")
 public class AccessAccountInfo {
+
+    @ApiModelProperty(value = "ISO 4217 currency code", example = "EUR")
     private String currency;
+
+    @ApiModelProperty(value = "Types of access: ACCOUNT, BALANCE, TRANSACTION, PAYMENT", example = "ACCOUNT")
     private TypeAccess typeAccess;
 }
