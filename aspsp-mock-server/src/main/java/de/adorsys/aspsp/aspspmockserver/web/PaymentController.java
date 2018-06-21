@@ -35,7 +35,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RestController
 @RequestMapping(path = "/payments")
-@ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
 public class PaymentController {
     private PaymentService paymentService;
 
@@ -45,6 +44,7 @@ public class PaymentController {
     }
 
     @PostMapping(path = "/")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) {
         return paymentService.addPayment(payment)
             .map(saved -> new ResponseEntity<>(saved, CREATED))
@@ -52,6 +52,7 @@ public class PaymentController {
     }
 
     @PostMapping(path = "/bulk-payments")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) throws Exception {
         List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
@@ -61,12 +62,14 @@ public class PaymentController {
     }
 
     @GetMapping(path = "/{paymentId}/status")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
             ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
     }
 
     @PostMapping(path = "/createPeriodicPayment")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
             .map(saved -> new ResponseEntity<>(saved, CREATED))
