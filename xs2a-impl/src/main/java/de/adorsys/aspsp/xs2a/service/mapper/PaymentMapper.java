@@ -191,8 +191,7 @@ public class PaymentMapper {
                        pisSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
                        pisSinglePayment.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
 
-                       return pisSinglePayment;
-                   })
+                       return pisSinglePayment;})
                    .orElse(null);
     }
 
@@ -225,9 +224,8 @@ public class PaymentMapper {
                        pisPeriodicPayment.setFrequency(getFrequency(pp));
                        pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
 
-                       return pisPeriodicPayment;
-
-                   }).orElse(null);
+                       return pisPeriodicPayment;})
+                   .orElse(null);
     }
 
     private PisAddress mapToPisAddress(Address address) {
