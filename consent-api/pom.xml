@@ -33,6 +33,7 @@
     <description>Consent API</description>
 
     <properties>
+        <swagger.annotations.version>1.5.19</swagger.annotations.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
@@ -44,7 +45,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.5.19</version>
+            <version>${swagger.annotations.version}</version>
         </dependency>
     </dependencies>
 
