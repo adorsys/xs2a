@@ -32,6 +32,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -113,7 +115,7 @@ public class AccountControllerTest {
     @Test
     public void readAccountById_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity<SpiAccountDetails> actualResponse = accountController.readAccountById(WRONG_ACCOUNT_ID);
@@ -145,7 +147,7 @@ public class AccountControllerTest {
     @Test
     public void readAccountByIban_wrongId() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity<List<SpiAccountDetails>> actualResponse = accountController.readAccountsByIban(WRONG_IBAN);
@@ -203,7 +205,7 @@ public class AccountControllerTest {
     @Test
     public void readBalancesById_wrongID() {
         //Given:
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity actualResponse = accountController.readBalancesById(WRONG_ACCOUNT_ID);
@@ -215,7 +217,7 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void readAccountsByPsuId(){
+    public void readAccountsByPsuId() {
         //Given:
         HttpStatus expectedStatus = HttpStatus.OK;
         //When:
@@ -226,9 +228,9 @@ public class AccountControllerTest {
     }
 
     @Test
-    public void readAccountsByPsuId_Failure(){
+    public void readAccountsByPsuId_Failure() {
         //Given:
-        HttpStatus expectedStatus = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatus = HttpStatus.NO_CONTENT;
         //When:
         ResponseEntity<List<SpiAccountDetails>> response = accountController.readAccountsByPsuId(WRONG_PSU_ID);
         //Then:
@@ -258,9 +260,10 @@ public class AccountControllerTest {
 
     private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
         SpiAccountBalance sb = new SpiAccountBalance();
-        sb.setDate(new Date(1523951451537L));
+
+        sb.setDate(LocalDate.parse("2019-03-03"));
         sb.setSpiAmount(spiAmount);
-        sb.setLastActionDateTime(new Date(1523951451537L));
+        sb.setLastActionDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
         return sb;
     }
 }

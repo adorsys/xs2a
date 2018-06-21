@@ -44,7 +44,7 @@ $ mvn clean install
 Run an ASPSP-Mock-Server:
 ```bash
 $ cd aspsp-mock-server
-$ mvn spring-boot:run -Dspring.profiles.active=fongo
+$ mvn spring-boot:run -Drun.profiles=fongo
 ```
 Open a browser on page [http://localhost:28080/swagger-ui.html](http://localhost:28080/swagger-ui.html)
 

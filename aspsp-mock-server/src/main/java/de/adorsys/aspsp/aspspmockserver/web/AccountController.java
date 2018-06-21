@@ -41,9 +41,9 @@ public class AccountController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
-        return Optional.of(accountService.getAllAccounts())
+        return Optional.ofNullable(accountService.getAllAccounts())
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -51,7 +51,7 @@ public class AccountController {
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccountById(accountId)
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -74,7 +74,7 @@ public class AccountController {
     public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
         List<SpiBalances> response = accountService.getAccountBalancesById(accountId);
         return isEmpty(response)
-                   ? ResponseEntity.notFound().build()
+                   ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);
     }
 
@@ -83,7 +83,7 @@ public class AccountController {
     public ResponseEntity<List<SpiAccountDetails>> readAccountsByPsuId(@PathVariable("psuId") String psuId) {
         List<SpiAccountDetails> response = accountService.getAccountsByPsuId(psuId);
         return isEmpty(response)
-                   ? ResponseEntity.notFound().build()
+                   ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);
     }
 
@@ -92,7 +92,7 @@ public class AccountController {
     public ResponseEntity<List<SpiAccountDetails>> readAccountsByIban(@PathVariable("iban") String iban) {
         List<SpiAccountDetails> response = accountService.getAccountsByIban(iban);
         return isEmpty(response)
-                   ? ResponseEntity.notFound().build()
+                   ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);
     }
 }

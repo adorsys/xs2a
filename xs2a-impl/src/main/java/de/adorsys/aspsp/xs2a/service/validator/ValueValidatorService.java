@@ -26,7 +26,7 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageCode.FORMAT_ERROR;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
 @Service
 public class ValueValidatorService {
@@ -37,17 +37,6 @@ public class ValueValidatorService {
     @Autowired
     public ValueValidatorService(Validator validator) {
         this.validator = validator;
-    }
-
-    public void validate(Object objectForValidate) {
-        final List<String> violations = validator.validate(objectForValidate).stream()
-                                        .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
-                                        .collect(Collectors.toList());
-
-        if (violations.size() > 0) {
-            LOGGER.debug(violations.toString());
-            throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
-        }
     }
 
     public void validate(Object obj, Class<?>... groups) {

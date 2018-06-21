@@ -1,8 +1,7 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
-import de.adorsys.aspsp.xs2a.spi.domain.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
@@ -22,30 +21,30 @@ import java.util.List;
 public class PsuController {
     private final PsuService psuService;
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/")
     public ResponseEntity<List<Psu>> readAllPsuList() {
         return ResponseEntity.ok(psuService.getAllPsuList());
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @GetMapping(path = "/{id}")
     public ResponseEntity<Psu> readPsuById(@PathVariable("id") String id) {
         return psuService.getPsuById(id)
-               .map(ResponseEntity::ok)
-               .orElseGet(() -> ResponseEntity.notFound().build());
+                   .map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @PostMapping(path = "/")
     public ResponseEntity createPsu(HttpServletRequest request,
-                                    @RequestBody List<SpiAccountDetails> accountDetailsList) throws Exception {
+                                    @RequestBody Psu psu) throws Exception {
         String uriString = getUriString(request);
-        String saved = psuService.createPsuAndReturnId(accountDetailsList);
+        String saved = psuService.createPsuAndReturnId(psu);
         return ResponseEntity.created(new URI(uriString + saved)).build();
     }
 
-    @ApiOperation(value = "", authorizations = { @Authorization(value="oauth2", scopes = { @AuthorizationScope(scope = "read", description = "Access read API") }) })
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @DeleteMapping(path = "/{id}")
     public ResponseEntity deletePsu(@PathVariable("id") String id) {
         if (psuService.deletePsuById(id)) {
@@ -57,4 +56,5 @@ public class PsuController {
     private String getUriString(HttpServletRequest request) {
         return UriComponentsBuilder.fromHttpRequest(new ServletServerHttpRequest(request)).build().toUriString();
     }
+
 }

@@ -16,9 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.exception;
 
-import de.adorsys.aspsp.xs2a.domain.MessageCode;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.spi.rest.exception.RestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +39,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
         log.warn("ValidationException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
-        return new ResponseEntity(new MessageError(new TppMessageInformation(ERROR, MessageCode.FORMAT_ERROR)
+        return new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, MessageErrorCode.FORMAT_ERROR)
                                                        .text(ex.getMessage())), HttpStatus.BAD_REQUEST);
     }
 
@@ -49,7 +48,7 @@ public class GlobalExceptionHandlerController {
         log.warn("HttpMessageNotReadableException handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        return new ResponseEntity(status.getReasonPhrase(), status);
+        return new ResponseEntity<>(status.getReasonPhrase(), status);
     }
 
     @ExceptionHandler(value = {Exception.class})
@@ -57,14 +56,14 @@ public class GlobalExceptionHandlerController {
         log.warn("Uncatched exception handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
 
         HttpStatus status = INTERNAL_SERVER_ERROR;
-        return new ResponseEntity(status.getReasonPhrase(), status);
+        return new ResponseEntity<>(status.getReasonPhrase(), status);
     }
 
     @ExceptionHandler(value = {RestException.class})
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
-        return new ResponseEntity(new MessageError(new TppMessageInformation(ERROR, MessageCode.INTERNAL_SERVER_ERROR)
+        return new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, ex.getMessageErrorCode())
                                                        .text(ex.getMessage())), ex.getHttpStatus());
     }
 }

@@ -16,16 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.aspsp.xs2a.util.GsonUtcDateAdapter;
-import de.adorsys.aspsp.xs2a.util.GsonUtcInstantAdapter;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +34,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.Instant;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,13 +50,10 @@ public class FundsConfirmationServiceTest {
     private final Currency EUR = Currency.getInstance("EUR");
     private final String AMOUNT_1600 = "1600.00";
 
-    private static final Gson GSON = new GsonBuilder()
-                                         .registerTypeAdapter(Date.class, new GsonUtcDateAdapter())
-                                         .registerTypeAdapter(Instant.class, new GsonUtcInstantAdapter())
-                                         .create();
-
     @Autowired
     private FundsConfirmationService fundsConfirmationService;
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @MockBean(name = "accountService")
     private AccountService accountService;
@@ -109,7 +102,7 @@ public class FundsConfirmationServiceTest {
     }
 
     private FundsConfirmationRequest readFundsConfirmationRequest() throws IOException {
-        return new Gson().fromJson(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), FundsConfirmationRequest.class);
+        return jsonConverter.toObject(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), FundsConfirmationRequest.class).get();
     }
 
     private Amount getAmount1600() {
@@ -120,7 +113,7 @@ public class FundsConfirmationServiceTest {
     }
 
     private List<Balances> getBalances() throws IOException {
-        Balances balances = GSON.fromJson(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class);
+        Balances balances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
         return Collections.singletonList(balances);
     }
 }

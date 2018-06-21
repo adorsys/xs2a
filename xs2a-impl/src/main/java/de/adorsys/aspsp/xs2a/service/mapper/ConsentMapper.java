@@ -16,8 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.AccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -25,9 +31,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AccountInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.ais.AisConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +53,7 @@ public class ConsentMapper {
                        request.setTppId(tppId);
                        request.setFrequencyPerDay(r.getFrequencyPerDay());
                        request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       request.setValidUntil(r.getValidUntil().toInstant());
+                       request.setValidUntil(r.getValidUntil());
                        request.setRecurringIndicator(r.isRecurringIndicator());
                        request.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
 
@@ -73,8 +76,12 @@ public class ConsentMapper {
                                        .map(this::mapToListAccountInfo)
                                        .orElse(Collections.emptyList()));
 
-        accessInfo.setAvailableAccounts(mapToSpiAccountAccessType(access.getAvailableAccounts()));
-        accessInfo.setAllPsd2(mapToSpiAccountAccessType(access.getAllPsd2()));
+        accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
+                                            .map(AccountAccessType::name)
+                                            .orElse(null));
+        accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
+                                  .map(AccountAccessType::name)
+                                  .orElse(null));
 
         return accessInfo;
     }
@@ -164,5 +171,27 @@ public class ConsentMapper {
                    .map(at -> SpiAccountAccessType.valueOf(at.name()))
                    .orElse(null);
 
+    }
+
+    public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
+        ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
+        if (error == MessageErrorCode.ACCESS_EXCEEDED) {
+            actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
+        }
+        if (error == MessageErrorCode.CONSENT_EXPIRED) {
+            actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
+        }
+        if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
+            actionStatus = ActionStatus.CONSENT_NOT_FOUND;
+        }
+        if (error == MessageErrorCode.CONSENT_INVALID) {
+            if (access == TypeAccess.TRANSACTION) {
+                actionStatus = ActionStatus.FAILURE_TRANSACTION;
+            }
+            if (access == TypeAccess.BALANCE || withBalance) {
+                actionStatus = ActionStatus.FAILURE_BALANCE;
+            }
+        }
+        return actionStatus;
     }
 }

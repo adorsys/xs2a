@@ -17,10 +17,15 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.spi.service.AspspProfileSpi;
+import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,15 +36,46 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {
-    private final AspspProfileSpi aspspProfileSpi;
+    @Qualifier("aspspProfileRestTemplate")
+    private final RestTemplate aspspProfileRestTemplate;
+    private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
     public List<PaymentProduct> getAvailablePaymentProducts() {
-        return Optional.ofNullable(aspspProfileSpi.getAvailablePaymentProducts())
+        return Optional.ofNullable(readAvailablePaymentProducts())
                    .map(list -> list.stream()
                                     .map(PaymentProduct::getByCode)
                                     .filter(Optional::isPresent)
                                     .map(Optional::get)
                                     .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
+    }
+
+    public List<PaymentType> getAvailablePaymentTypes() {
+        return Optional.ofNullable(readAvailablePaymentTypes())
+                   .map(list -> list.stream()
+                                    .map(PaymentType::getByValue)
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
+                                    .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
+    }
+
+    private List<String> readAvailablePaymentProducts() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+            }).getBody();
+    }
+    
+   
+	public Boolean getTppSignatureRequired() {
+		return aspspProfileRestTemplate.exchange(
+	            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+	}
+
+
+    private List<String> readAvailablePaymentTypes() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+            }).getBody();
     }
 }

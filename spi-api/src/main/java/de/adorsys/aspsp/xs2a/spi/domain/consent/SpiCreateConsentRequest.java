@@ -20,15 +20,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
+import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SpiCreateConsentRequest {
     private SpiAccountAccess access;
     private boolean recurringIndicator;
-    private Date validUntil;
+    private LocalDate validUntil;
     private int frequencyPerDay;
     private boolean combinedServiceIndicator;
 }

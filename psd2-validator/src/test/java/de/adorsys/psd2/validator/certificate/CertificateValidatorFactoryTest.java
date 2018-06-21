@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
 
@@ -19,11 +20,11 @@ public class CertificateValidatorFactoryTest {
 	public void init() {
 
 		blockedCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("blockedcert"));
-		rootCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("rootcert"));
+		rootCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("rootcert", "TCA3.crt"));
 		intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
 	}
 
-	@Test
+    @Test(expected = CertificateValidationException.class)
 	public void when_ValidCertificate_Expected_True() throws CertificateException, CertificateValidationException {
 
 		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
@@ -31,7 +32,7 @@ public class CertificateValidatorFactoryTest {
 		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
 				rootCertBucket, intermediateCertBucket);
 
-		Assert.assertTrue(validatorFactory.validate(encodedCert));
+	    Assert.assertTrue(validatorFactory.validate(encodedCert));
 	}
 
 	@Test(expected = CertificateValidationException.class)
@@ -45,5 +46,4 @@ public class CertificateValidatorFactoryTest {
 
 		validatorFactory.validate(encodedCert);
 	}
-
 }

@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import lombok.AllArgsConstructor;
@@ -57,7 +58,7 @@ public class FundsConfirmationService {
     }
 
     private BigDecimal convertToBigDecimal(String content) {
-        return Optional.of(content)
+        return Optional.ofNullable(content)
                    .map(BigDecimal::new)
                    .orElse(BigDecimal.ZERO);
     }

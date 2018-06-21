@@ -23,7 +23,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,9 +33,9 @@ public class SpiAccountConsent {
     private String id;
     private SpiAccountAccess access;
     private boolean recurringIndicator;
-    private Date validUntil;
+    private LocalDate validUntil;
     private int frequencyPerDay;
-    private Date lastActionDate;
+    private LocalDate lastActionDate;
     private SpiConsentStatus spiConsentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;

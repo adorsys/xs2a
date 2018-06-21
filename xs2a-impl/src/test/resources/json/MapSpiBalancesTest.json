@@ -5,7 +5,7 @@
         "currency": "EUR",
         "content": "1000.0"
       },
-      "lastActionDateTime":"2017-10-25T15:30:35.035Z",
+      "lastActionDateTime":"2017-10-25T15:30:35.035",
       "date":"2007-01-01"
     },
   "expected":
@@ -15,7 +15,7 @@
       "currency": "EUR",
       "content": "1000.0"
     },
-    "lastActionDateTime":"2017-10-25T15:30:35.035Z",
+    "lastActionDateTime":"2017-10-25T15:30:35.035",
     "date":"2007-01-01"
   },
   "authorised":
@@ -25,7 +25,7 @@
       "currency": "EUR",
       "content": "1000.0"
     },
-    "lastActionDateTime":"2017-10-25T15:30:35.035Z",
+    "lastActionDateTime":"2017-10-25T15:30:35.035",
     "date":"2007-01-01"
   },
   "openingBooked":
@@ -35,7 +35,7 @@
       "currency": "EUR",
       "content": "1000.0"
     },
-    "lastActionDateTime":"2017-10-25T15:30:35.035Z",
+    "lastActionDateTime":"2017-10-25T15:30:35.035",
     "date":"2007-01-01"
   },
   "interimAvailable":
@@ -45,7 +45,7 @@
       "currency": "EUR",
       "content": "1000.0"
     },
-    "lastActionDateTime":"2017-10-25T15:30:35.035Z",
+    "lastActionDateTime":"2017-10-25T15:30:35.035",
     "date":"2007-01-01"
   }
 }

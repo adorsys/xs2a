@@ -20,8 +20,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
-import java.util.Date;
-
+import java.time.LocalDate;
 @Data
 public class SpiTransaction {
     @Id
@@ -29,8 +28,8 @@ public class SpiTransaction {
     private final String endToEndId;
     private final String mandateId;
     private final String creditorId;
-    private final Date bookingDate;
-    private final Date valueDate;
+    private final LocalDate bookingDate;
+    private final LocalDate valueDate;
     private final SpiAmount spiAmount;
     private final String creditorName;
     private final SpiAccountReference creditorAccount;
@@ -43,4 +42,7 @@ public class SpiTransaction {
     private final String purposeCode;
     private final String bankTransactionCodeCode;
 
+    public boolean isPendingTransaction() {
+        return bookingDate == null;
+    }
 }
