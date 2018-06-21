@@ -58,7 +58,7 @@ public class TppSignatureValidator {
 		X509Certificate cert = X509CertUtils.parse(tppEncodedCert);
 
 		PublicKey key = cert.getPublicKey();
-
+		
 		Signature signatureData = Signature.fromString(signature);
 
 		if (!signatureData.getHeaders().containsAll(MANDATORY_HEADERS_PSD2)) {

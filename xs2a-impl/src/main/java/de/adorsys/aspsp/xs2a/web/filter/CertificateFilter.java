@@ -9,12 +9,12 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.psd2.validator.certificate.CertificateValidatorFactory;
@@ -26,8 +26,8 @@ import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
 
 @Slf4j
+@Component
 @Order(1)
-@WebFilter(urlPatterns = "/api/v1/*")
 public class CertificateFilter implements Filter {
 
 	private SimpleCertificateBucket blockedCertBucket;

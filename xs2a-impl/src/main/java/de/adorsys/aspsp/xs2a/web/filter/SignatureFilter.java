@@ -14,21 +14,22 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import lombok.extern.slf4j.Slf4j;
 
-//NOPMD TODO implement http signature filter, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/141
-@WebFilter(urlPatterns ="/api/v1/*")
-@Order(3)
 @Slf4j
+@Component
+@Order(3)
 public class SignatureFilter implements Filter {
 
 	@Autowired
@@ -52,17 +53,31 @@ public class SignatureFilter implements Filter {
 			String encodedTppCert = httpRequest.getHeader("tpp-certificate");
 			String signature = httpRequest.getHeader("signature");
 
+			if (StringUtils.isBlank(signature)) {
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
+						CertificateErrorMsgCode.SIGNATURE_MISSING.toString());
+				return;
+			}
+
 			Map<String, String> headers = obtainRequestHeaders(httpRequest);
 
 			TppSignatureValidator tppSignatureValidator = new TppSignatureValidator();
 			try {
 
-				tppSignatureValidator.verifySignature(signature, encodedTppCert, headers);
-				chain.doFilter(request, response);
+				if (tppSignatureValidator.verifySignature(signature, encodedTppCert, headers)) {
+					chain.doFilter(request, response);
+				} else {
+
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
+							CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
+					return;
+				}
 
 			} catch (NoSuchAlgorithmException | SignatureException e) {
 				log.debug(e.getMessage());
-				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
+						CertificateErrorMsgCode.SIGNATURE_INVALID.toString());
+				return;
 			}
 		} else {
 
