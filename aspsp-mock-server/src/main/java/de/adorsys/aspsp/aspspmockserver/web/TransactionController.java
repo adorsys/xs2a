@@ -33,10 +33,11 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "/transaction")
+@Api(tags = "Transactions", description = "Provides access to transactions")
 public class TransactionController {
     private final TransactionService transactionService;
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Returns a list of all transactions available at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = List.class),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -48,7 +49,7 @@ public class TransactionController {
                    : ResponseEntity.ok(transactions);
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Returns a transaction by its ASPSP identifier and account identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiTransaction.class),
         @ApiResponse(code = 204, message = "No Content")})
@@ -59,7 +60,7 @@ public class TransactionController {
                    .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Creates a transaction at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 400, message = "Bad Request")})
@@ -70,7 +71,7 @@ public class TransactionController {
                    .orElse(ResponseEntity.badRequest().build());
     }
 
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Returns a list of transactions for account by its ASPSP identifier for a certain period of time bounded by dates from/to", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
