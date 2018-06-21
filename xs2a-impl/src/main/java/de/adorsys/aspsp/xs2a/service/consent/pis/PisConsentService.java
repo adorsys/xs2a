@@ -41,18 +41,36 @@ public class PisConsentService {
     private final PisConsentRemoteUrls remotePisConsentUrls;
     private final PaymentMapper paymentMapper;
 
+    /**
+     * Sends a POST request to CMS to store created PIS consent for single payment
+     *
+     * @param singlePayment Payment data which will be stored in Pis consent
+     * @return String Id of new pis consent for single payment
+     */
     public String createPisConsentForSinglePaymentAndGetId(SinglePayments singlePayment) {
         PisSinglePayment pisSinglePayment = paymentMapper.mapToPisSinglePayment(singlePayment);
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), new PisConsentRequest(pisSinglePayment), String.class);
         return responseEntity.getBody();
     }
 
+    /**
+     * Sends a POST request to CMS to store created PIS consent for bulk payment
+     *
+     * @param payments List of payments data which will be stored in Pis consent
+     * @return String Id of new pis consent for bulk payment
+     */
     public String createPisConsentForBulkPaymentAndGetId(List<SinglePayments> payments) {
         List<PisSinglePayment> pisPayments = paymentMapper.mapToPisSinglePaymentList(payments);
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisBulkPaymentConsent(), new PisConsentBulkPaymentRequest(pisPayments), String.class);
         return responseEntity.getBody();
     }
 
+    /**
+     * Sends a POST request to CMS to store created PIS consent for periodic payment
+     *
+     * @param periodicPayment Periodic payment data which will be stored in Pis consent
+     * @return String Id of new pis consent for periodic payment
+     */
     public String createPisConsentForPeriodicPaymentAndGetId(PeriodicPayment periodicPayment) {
         PisPeriodicPayment pisPeriodicPayment = paymentMapper.mapToPisPeriodicPayment(periodicPayment);
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisPeriodicPaymentConsent(), new PisConsentPeriodicPaymentRequest(pisPeriodicPayment), String.class);

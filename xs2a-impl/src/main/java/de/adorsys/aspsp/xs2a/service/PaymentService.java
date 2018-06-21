@@ -53,6 +53,13 @@ public class PaymentService {
     private final PisConsentService pisConsentService;
     private final AspspProfileService aspspProfileService;
 
+    /**
+     * Get information about the status of a payment
+     *
+     * @param paymentId      Id for a required payment
+     * @param paymentProduct The addressed payment product
+     * @return Information about the status of a payment
+     */
     public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct) {
         TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct));
 
@@ -60,6 +67,14 @@ public class PaymentService {
                    .body(transactionStatus).build();
     }
 
+    /**
+     * Initialises a new periodic payment
+     *
+     * @param periodicPayment      Information in order to create new periodic payment
+     * @param paymentProduct       The addressed payment product endpoint for periodic payments
+     * @param tppRedirectPreferred If it equals “true”, the TPP prefers a redirect over an embedded SCA approach
+     * @return Response included information about created periodic payment
+     */
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
         PaymentInitialisationResponse paymentInitiation = null;
 
@@ -78,6 +93,14 @@ public class PaymentService {
                                .build());
     }
 
+    /**
+     * Initialises a bulk payment
+     *
+     * @param payments             List of payments in order to create bulk payments
+     * @param paymentProduct       The addressed payment product endpoint for bulk payments
+     * @param tppRedirectPreferred If it equals “true”, the TPP prefers a redirect over an embedded SCA approach
+     * @return List of responses which are included information about created payments
+     */
     public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
         List<PaymentInitialisationResponse> paymentResponses = aspspProfileService.isRedirectMode()
                                                                    ? getBulkPaymentResponseWhenRedirectMode(payments, paymentProduct, tppRedirectPreferred)
@@ -91,6 +114,14 @@ public class PaymentService {
                          .body(paymentResponses).build();
     }
 
+    /**
+     * Initialises a single payment
+     *
+     * @param singlePayment        Payment in order to create single payments
+     * @param paymentProduct       The addressed payment product endpoint for single payments
+     * @param tppRedirectPreferred If it equals “true”, the TPP prefers a redirect over an embedded SCA approach
+     * @return Response included information about created single payment
+     */
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
         PaymentInitialisationResponse paymentInitialisationResponse = null;
 

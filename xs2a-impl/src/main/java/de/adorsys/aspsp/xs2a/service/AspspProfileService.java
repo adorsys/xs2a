@@ -41,6 +41,11 @@ public class AspspProfileService {
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
     private final String SCA_APPROACH_REDIRECT = "redirect";
 
+    /**
+     * Reads List of available payment products from ASPSP profile service
+     *
+     * @return List of payment products
+     */
     public List<PaymentProduct> getAvailablePaymentProducts() {
         return Optional.ofNullable(readAvailablePaymentProducts())
                    .map(list -> list.stream()
@@ -51,6 +56,11 @@ public class AspspProfileService {
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * Reads List of available payment types from ASPSP profile service
+     *
+     * @return List of payment types
+     */
     public List<PisPaymentType> getAvailablePaymentTypes() {
         return Optional.ofNullable(readAvailablePaymentTypes())
                    .map(list -> list.stream()
@@ -61,10 +71,25 @@ public class AspspProfileService {
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * Reads current sca approach mode from ASPSP profile service
+     *
+     * @return 'true' if current sca approach mode equals 'redirect', 'false' if is not
+     */
     public boolean isRedirectMode(){
         return Optional.ofNullable(readScaApproach())
             .map(scAp -> scAp.equals(SCA_APPROACH_REDIRECT))
             .orElse(false);
+    }
+
+    /**
+     * Reads requirement of tpp signature from ASPSP profile service
+     *
+     * @return 'true' if tpp signature is required, 'false' if is not
+     */
+    public Boolean getTppSignatureRequired() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
     }
 
     private String readScaApproach() {
@@ -76,11 +101,6 @@ public class AspspProfileService {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
-    }
-
-    public Boolean getTppSignatureRequired() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
     }
 
     private List<String> readAvailablePaymentTypes() {

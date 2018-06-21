@@ -32,6 +32,12 @@ import java.util.Optional;
 public class FundsConfirmationService {
     private final AccountService accountService;
 
+    /**
+     * Finds out whether funds in account are sufficient
+     *
+     * @param  request Contains the requested amount in order to comparing with available amount on account
+     * @return Response with result 'true' if enough funds on the account, 'false' if are not enough
+     */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         Boolean fundsAvailable = Optional.ofNullable(request)
                                      .map(req -> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))
