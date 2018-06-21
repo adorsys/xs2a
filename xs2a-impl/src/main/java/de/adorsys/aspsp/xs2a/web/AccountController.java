@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
@@ -42,7 +44,9 @@ public class AccountController {
     @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Map.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 401, message = "Consent invalid or expired"),
+        @ApiResponse(code = 429, message = "Access exceeded")})
     @GetMapping
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
@@ -57,14 +61,16 @@ public class AccountController {
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance, psuInvolved);
-
         return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 200, message = "OK", response = AccountDetails.class),
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 401, message = "Consent invalid or expired"),
+        @ApiResponse(code = 404, message = "Account not found"),
+        @ApiResponse(code = 429, message = "Access exceeded")})
     @GetMapping(path = "/{account-id}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
@@ -75,20 +81,22 @@ public class AccountController {
     public ResponseEntity<AccountDetails> readAccountDetails(
         @RequestHeader(name = "consent-id", required = false) String consentId,
         @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
-        @PathVariable(name = "account-id", required = true) String accountId,
+        @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
         @RequestParam(name = "with-balance", required = false) boolean withBalance,
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance, psuInvolved);
-
         return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Read a list of the balances for the given account", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Balances.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 401, message = "Consent invalid or expired"),
+        @ApiResponse(code = 404, message = "Account not found"),
+        @ApiResponse(code = 429, message = "Access exceeded")})
     @GetMapping(path = "/{account-id}/balances")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
@@ -98,18 +106,19 @@ public class AccountController {
         @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<List<Balances>> getBalances(
         @RequestHeader(name = "consent-id", required = false) String consentId,
-        @PathVariable(name = "account-id", required = true) String accountId,
+        @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
         ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId, psuInvolved);
-
         return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AccountReport.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 400, message = "Bad request"),
+        @ApiResponse(code = 401, message = "Consent invalid or expired"),
+        @ApiResponse(code = 429, message = "Access exceeded")})
     @GetMapping(path = "/{account-id}/transactions")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
@@ -134,7 +143,6 @@ public class AccountController {
                                                          @RequestParam(name = "withBalance", required = false) boolean withBalance,
                                                          @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
                                                          @RequestParam(name = "deltaList", required = false) boolean deltaList) {
-
         ResponseObject<AccountReport> responseObject =
             accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
         return responseMapper.ok(responseObject);

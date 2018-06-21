@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.aspsp.xs2a.config.rest.consent;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestConsentConfig {
+public class ConsentRestConfig {
     @Value("${rest-consent-config.read-timeout.ms:10000}")
     private int readTimeout;
     @Value("${rest-consent-config.connection-timeout.ms:10000}")
@@ -37,6 +37,7 @@ public class RestConsentConfig {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
+        rest.setErrorHandler(new ConsentRestErrorHandler());
         return rest;
     }
 

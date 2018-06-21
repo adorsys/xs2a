@@ -39,17 +39,6 @@ public class ValueValidatorService {
         this.validator = validator;
     }
 
-    public void validate(Object objectForValidate) {
-        final List<String> violations = validator.validate(objectForValidate).stream()
-                                        .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
-                                        .collect(Collectors.toList());
-
-        if (violations.size() > 0) {
-            LOGGER.debug(violations.toString());
-            throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
-        }
-    }
-
     public void validate(Object obj, Class<?>... groups) {
         final List<String> violations = validator.validate(obj, groups).stream()
                                         .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())

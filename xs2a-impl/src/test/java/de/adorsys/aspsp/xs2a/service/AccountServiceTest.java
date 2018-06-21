@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -24,6 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -41,6 +43,8 @@ import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -59,6 +63,7 @@ public class AccountServiceTest {
     private final String WRONG_CONSENT_ID = "Wromg consent id";
     private final String TRANSACTION_ID = "0001";
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
+    private final String TPP_ID = "This is a test TppId";
 
     @Autowired
     private AccountService accountService;
@@ -67,9 +72,13 @@ public class AccountServiceTest {
     private AccountSpi accountSpi;
     @MockBean
     private ConsentService consentService;
+    @MockBean
+    private AisConsentService aisConsentService;
 
     @Before
     public void setUp() {
+        //AisReporting
+        doNothing().when(aisConsentService).consentActionLog(anyString(),anyString(),anyBoolean(),any(TypeAccess.class),any(ResponseObject.class));
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails(ACCOUNT_ID, IBAN));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
@@ -90,9 +99,9 @@ public class AccountServiceTest {
 
         //getAccountReport_ByTransactionId_Success
         when(consentService.getValidatedConsent(CONSENT_ID_WT)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, getReferences(IBAN, IBAN_1), false, false));
-        when(accountSpi.readTransactionsById(TRANSACTION_ID)).thenReturn(getSpiTransaction());
+        when(accountSpi.readTransactionById(TRANSACTION_ID, ACCOUNT_ID)).thenReturn(Optional.of(getSpiTransaction()));
 
-        when(accountSpi.readTransactionsByPeriod(IBAN, CURRENCY, DATE, DATE, SpiBookingStatus.BOTH)).thenReturn(Collections.singletonList(getSpiTransaction()));
+        when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE)).thenReturn(Collections.singletonList(getSpiTransaction()));
     }
 
     //Get Account By AccountId

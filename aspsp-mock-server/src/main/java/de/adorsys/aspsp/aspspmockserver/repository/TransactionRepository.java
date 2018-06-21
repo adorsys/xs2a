@@ -31,4 +31,7 @@ import java.util.List;
 public interface TransactionRepository extends MongoRepository<SpiTransaction, String> {
     @Query("{$or:[{$and:[{'creditorAccount.iban':?0},{'creditorAccount.currency':?1}]},{$and:[{'debtorAccount.iban':?0},{'debtorAccount.currency':?1}]}],'valueDate':{$gte:?2,$lte:?3}}")
     List<SpiTransaction> findAllByDates(String iban, Currency currency, LocalDate dateFrom, LocalDate dateTo);
+
+    @Query("{$or:[{$and:[{'creditorAccount.iban':?0},{'creditorAccount.currency':?1}]},{$and:[{'debtorAccount.iban':?0},{'debtorAccount.currency':?1}]}],'transactionId':?2}")
+    SpiTransaction findOneByTransactionIdAndAccount(String iban, Currency currency, String transactionId);
 }

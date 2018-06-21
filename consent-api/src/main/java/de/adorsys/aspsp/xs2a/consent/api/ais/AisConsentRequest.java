@@ -16,18 +16,40 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.ais;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
+@ApiModel(description = "Ais consent request", value = "AisConsentRequest")
 public class AisConsentRequest {
+
+    @ApiModelProperty(value = "ID of the corresponding PSU", required = true, example = "32aad578-58a6-4d5d-8b0c-45546dd88f07")
+    @JsonIgnore
     private String psuId;
+
+    @ApiModelProperty(value = "ID of the corresponding TPP.", required = true, example = "testTPP")
+    @JsonIgnore
     private String tppId;
+
+    @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")
     private int frequencyPerDay;
+
+    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
     private AisAccountAccessInfo access;
+
+    @ApiModelProperty(value = "Consent`s expiration date. The content is the local ASPSP date in ISODate Format", required = true, example = "2020-10-10")
     private LocalDate validUntil;
+
+    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true, example = "false")
     private boolean recurringIndicator;
+
+    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.", example = "true")
     private boolean tppRedirectPreferred;
+
+    @ApiModelProperty(value = "If 'true' indicates that a payment initiation service will be addressed in the same 'session'", required = true, example = "false")
     private boolean combinedServiceIndicator;
 }

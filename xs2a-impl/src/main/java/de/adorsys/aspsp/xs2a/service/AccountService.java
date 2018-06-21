@@ -16,16 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBookingStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -53,14 +54,17 @@ public class AccountService {
     private final AccountMapper accountMapper;
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
+    private final AisConsentService aisConsentService;
+    private final String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
+     * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
+     * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
+     *
      * @param consentId   String representing an AccountConsent identification
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @param psuInvolved Not applicable since v1.1
      * @return List of AccountDetails with Balances if requested and granted by consent
-     * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
-     * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
      */
     public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
@@ -68,24 +72,25 @@ public class AccountService {
             return ResponseObject.<Map<String, List<AccountDetails>>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
         List<AccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
-
-        return accountDetails.isEmpty()
-                   ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                   : ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                         .body(Collections.singletonMap("accountList", accountDetails)).build();
+        ResponseObject<Map<String, List<AccountDetails>>> response = accountDetails.isEmpty()
+                                                                         ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
+                                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
+                                                                         : ResponseObject.<Map<String, List<AccountDetails>>>builder()
+                                                                               .body(Collections.singletonMap("accountList", accountDetails)).build();
+        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, response);
+        return response;
     }
 
     /**
+     * Gets AccountDetails based on accountId, details get checked with provided AIS-consent, depending on withBalance variable and
+     * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
+     *
      * @param consentId   String representing an AccountConsent identification
      * @param accountId   String representing a PSU`s Account at ASPSP
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @param psuInvolved Not applicable since v1.1
      * @return AccountDetails based on accountId with Balances if requested and granted by consent
-     * Gets AccountDetails based on accountId, details get checked with provided AIS-consent, depending on withBalance variable and
-     * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
      */
     public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance, boolean psuInvolved) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
@@ -93,33 +98,35 @@ public class AccountService {
             return ResponseObject.<AccountDetails>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
         if (accountDetails == null) {
             return ResponseObject.<AccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
+        boolean isValid = withBalance
+                              ? consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
+                              : consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts());
 
-        AccountDetails details = null;
-        if (withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
-            details = accountDetails;
-        } else if (!withBalance && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts())) {
-            details = getAccountDetailNoBalances(accountDetails);
+        ResponseObject.ResponseBuilder<AccountDetails> builder = ResponseObject.builder();
+        if (isValid) {
+            builder = withBalance
+                           ? builder.body(accountDetails)
+                           : builder.body(getAccountDetailNoBalances(accountDetails));
+        } else {
+            builder = builder
+                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
-
-        return details == null
-                   ? ResponseObject.<AccountDetails>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                   : ResponseObject.<AccountDetails>builder()
-                         .body(details).build();
+        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
+        return builder.build();
     }
 
     /**
+     * Gets AccountDetails based on accountId, details get checked with provided AIS-consent Balances section
+     *
      * @param consentId   String representing an AccountConsent identification
      * @param accountId   String representing a PSU`s Account at ASPSP
      * @param psuInvolved Not applicable since v1.1
      * @return List of AccountBalances based on accountId if granted by consent
-     * Gets AccountDetails based on accountId, details get checked with provided AIS-consent Balances section
      */
     public ResponseObject<List<Balances>> getBalances(String consentId, String accountId, boolean psuInvolved) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
@@ -127,20 +134,26 @@ public class AccountService {
             return ResponseObject.<List<Balances>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
         if (accountDetails == null) {
             return ResponseObject.<List<Balances>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
+        boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
+        ResponseObject<List<Balances>> response = isValid
+                                                      ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
+                                                      : ResponseObject.<List<Balances>>builder()
+                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        return consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
-                   ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
-                   : ResponseObject.<List<Balances>>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        aisConsentService.consentActionLog(tppId, consentId, false, TypeAccess.BALANCE, response);
+        return response;
     }
 
     /**
+     * Gets AccountReport with Booked/Pending or both transactions dependent on request.
+     * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
+     * Checks if all transactions are related to accounts set in AccountConsent Transactions section
+     *
      * @param consentId     String representing an AccountConsent identification
      * @param accountId     String representing a PSU`s Account at ASPSP
      * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
@@ -151,13 +164,10 @@ public class AccountService {
      * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
      * @param deltaList     boolean  indicating that the AISP is in favour to get all transactions after the last report access for this PSU on the addressed account
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
-     * Gets AccountReport with Booked/Pending or both transactions dependent on request.
-     * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
-     * Checks if all transactions are related to accounts set in AccountConsent Transactions section
      */
     public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
-                                                          LocalDate dateTo, String transactionId,
-                                                          boolean psuInvolved, BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
+                                                          LocalDate dateTo, String transactionId, boolean psuInvolved,
+                                                          BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<AccountReport>builder()
@@ -169,13 +179,16 @@ public class AccountService {
             return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
 
-        AccountReport accountReport = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions())
-                                          ? getAccountReport(accountDetails, dateFrom, dateTo, transactionId, bookingStatus, allowedAccountData.getBody().getTransactions())
-                                          : null;
+        boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
+        Optional<AccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus);
 
-        return accountReport == null
-                   ? ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                   : ResponseObject.<AccountReport>builder().body(accountReport).build();
+        ResponseObject<AccountReport> response = isValid && report.isPresent()
+                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
+                                                     : ResponseObject.<AccountReport>builder()
+                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+
+        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.TRANSACTION, response);
+        return response;
     }
 
     List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
@@ -222,70 +235,51 @@ public class AccountService {
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
 
-    private AccountReport getAccountReport(AccountDetails details, LocalDate dateFrom, LocalDate dateTo, String transactionId, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
-        LocalDate dateToChecked = dateTo == null ? LocalDate.now() : dateTo;
-        return StringUtils.isBlank(transactionId)
-                   ? getAccountReportByPeriod(details, dateFrom, dateToChecked, bookingStatus, allowedAccountData)
-                   : getAccountReportByTransaction(details, transactionId, allowedAccountData);
-    }
+    private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
+                                                     BookingStatus bookingStatus) {
+        LocalDate dateToChecked = Optional.ofNullable(dateTo)
+                                      .orElse(LocalDate.now());
 
-    private AccountReport getAccountReportByPeriod(AccountDetails details, LocalDate dateFrom, LocalDate dateTo, BookingStatus bookingStatus, List<AccountReference> allowedAccountData) {
-        validateAccountIdPeriod(details.getIban(), dateFrom, dateTo);
-        return getAllowedTransactionsByAccess(readTransactionsByPeriod(details, dateFrom, dateTo, bookingStatus), allowedAccountData);
-    }
-
-    private AccountReport getAccountReportByTransaction(AccountDetails details, String transactionId, List<AccountReference> allowedAccountData) {
-        validateAccountIdTransactionId(details.getIban(), transactionId);
-        return readTransactionsById(transactionId, allowedAccountData);
-    }
-
-    private AccountReport getAllowedTransactionsByAccess(AccountReport accountReport, List<AccountReference> allowedAccountData) {
-        if (accountReport == null) {
-            return null;
+        Optional<AccountReport> report;
+        if (StringUtils.isBlank(transactionId)) {
+            report = getAccountReportByPeriod(accountId, dateFrom, dateToChecked)
+                         .map(r -> filterByBookingStatus(r, bookingStatus));
+        } else {
+            report = getAccountReportByTransaction(transactionId, accountId);
         }
-        Transactions[] booked = getAllowedTransactions(accountReport.getBooked(), allowedAccountData);
-        Transactions[] pending = getAllowedTransactions(accountReport.getPending(), allowedAccountData);
-        return new AccountReport(booked, pending);
+
+        return report;
     }
 
-    private Transactions[] getAllowedTransactions(Transactions[] transactions, List<AccountReference> allowedAccountData) {
-        return Arrays.stream(transactions).allMatch(t -> isAllowedTransaction(t, allowedAccountData))
-                   ? transactions
-                   : new Transactions[]{};
+    private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+        return new AccountReport(
+            bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
+                ? report.getBooked() : new Transactions[]{},
+            bookingStatus == BookingStatus.PENDING || bookingStatus == BookingStatus.BOTH
+                ? report.getPending() : new Transactions[]{});
     }
 
-    private boolean isAllowedTransaction(Transactions transaction, List<AccountReference> allowedAccountData) {
-        return consentService.isValidAccountByAccess(transaction.getCreditorAccount().getIban(), transaction.getCreditorAccount().getCurrency(), allowedAccountData)
-                   || consentService.isValidAccountByAccess(transaction.getDebtorAccount().getIban(), transaction.getDebtorAccount().getCurrency(), allowedAccountData);
+    private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
+        validateAccountIdTransactionId(accountId, transactionId);
+
+        Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId);
+        return accountMapper.mapToAccountReport(transaction
+                                                    .map(Collections::singletonList)
+                                                    .orElse(Collections.emptyList()));
     }
 
-    private AccountReport readTransactionsByPeriod(AccountDetails details, LocalDate dateFrom,
-                                                   LocalDate dateTo, BookingStatus bookingStatus) { //NOPMD TODO to be reviewed upon change to v1.1
-        Optional<AccountReport> result = accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(details.getIban(), details.getCurrency(), dateFrom, dateTo, SpiBookingStatus.valueOf(bookingStatus.name())));
-
-        return result.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
-    }
-
-    private AccountReport readTransactionsById(String transactionId, List<AccountReference> allowedAccountData) {
-        SpiTransaction spiTransaction = accountSpi.readTransactionsById(transactionId);
-        return isAllowedSpiTransaction(spiTransaction, allowedAccountData)
-                   ? accountMapper.mapToAccountReport(Collections.singletonList(spiTransaction)).orElseGet(() -> null)
-                   : null;
-    }
-
-    private boolean isAllowedSpiTransaction(SpiTransaction spiTransaction, List<AccountReference> allowedAccountData) {
-        return Optional.ofNullable(spiTransaction)
-                   .filter(t -> isAllowedTransaction(accountMapper.mapToTransaction(t), allowedAccountData))
-                   .isPresent();
+    private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
+        validateAccountIdPeriod(accountId, dateFrom, dateTo);
+        return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }
 
     private Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
                    .map(Collection::stream)
-                   .flatMap(accDets -> accDets
-                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
-                                           .findFirst())
+                   .flatMap(accDts -> accDts
+                                          .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
+                                          .findFirst())
                    .map(accountMapper::mapToAccountDetails);
     }
 

@@ -80,7 +80,6 @@ public class SignatureFilter implements Filter {
 				return;
 			}
 		} else {
-
 			chain.doFilter(request, response);
 		}
 	}

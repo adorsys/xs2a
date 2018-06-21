@@ -18,16 +18,29 @@ package de.adorsys.aspsp.xs2a.consent.api.ais;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ApiModel(description = "Ais account access information", value = "AisAccountAccessInfo")
 public class AisAccountAccessInfo {
+
+    @ApiModelProperty(value = "Access to accounts")
     private List<AccountInfo> accounts;
+
+    @ApiModelProperty(value = "Access to balances")
     private List<AccountInfo> balances;
+
+    @ApiModelProperty(value = "Access to transactions")
     private List<AccountInfo> transactions;
+
+    @ApiModelProperty(value = "Consent on all available accounts of psu", example = "all-accounts")
     private String availableAccounts;
+
+    @ApiModelProperty(value = "Consent on all accounts, balances and transactions of psu", example = "all-accounts")
     private String allPsd2;
 }

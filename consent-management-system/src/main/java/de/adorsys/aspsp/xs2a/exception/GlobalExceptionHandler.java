@@ -36,8 +36,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(status.getReasonPhrase(), status);
     }
 
-    @ExceptionHandler(value = ConsentException.class)
-    public ResponseEntity<String> consentException(ConsentException ex, HandlerMethod handlerMethod) {
+    @ExceptionHandler(value = AspspProfileRestException.class)
+    public ResponseEntity<String> consentException(AspspProfileRestException ex, HandlerMethod handlerMethod) {
         log.warn("ConsentException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), INTERNAL_SERVER_ERROR);
     }
