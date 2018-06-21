@@ -35,7 +35,9 @@ public class Psu {
     private List<SpiAccountDetails> accountDetailsList;
 
     @JsonIgnore
-    public boolean isValidPsu() {
-        return StringUtils.isNotBlank(this.email) && CollectionUtils.isNotEmpty(this.accountDetailsList);
+    public boolean isValid() {
+        return StringUtils.isNotBlank(this.email) && this.email.contains("@")
+                   && CollectionUtils.isNotEmpty(this.accountDetailsList)
+                   && StringUtils.isNotBlank(this.accountDetailsList.get(0).getIban());
     }
 }

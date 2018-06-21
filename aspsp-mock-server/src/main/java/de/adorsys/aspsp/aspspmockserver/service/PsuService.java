@@ -18,11 +18,9 @@ public class PsuService {
     }
 
     public String createPsuAndReturnId(Psu psu) {
-        return Optional.ofNullable(psu)
-                   .filter(Psu::isValidPsu)
-                   .map(p -> psuRepository.save(p))
-                   .map(Psu::getId)
-                   .orElse(null);
+        return psu.isValid()
+                   ? psuRepository.save(psu).getId()
+                   : null;
     }
 
     public Optional<Psu> getPsuById(String id) {
