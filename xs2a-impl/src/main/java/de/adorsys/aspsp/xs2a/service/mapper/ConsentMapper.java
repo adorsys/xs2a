@@ -17,10 +17,13 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -168,5 +171,27 @@ public class ConsentMapper {
                    .map(at -> SpiAccountAccessType.valueOf(at.name()))
                    .orElse(null);
 
+    }
+
+    public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
+        ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
+        if (error == MessageErrorCode.ACCESS_EXCEEDED) {
+            actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
+        }
+        if (error == MessageErrorCode.CONSENT_EXPIRED) {
+            actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
+        }
+        if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
+            actionStatus = ActionStatus.CONSENT_NOT_FOUND;
+        }
+        if (error == MessageErrorCode.CONSENT_INVALID) {
+            if (access == TypeAccess.TRANSACTION) {
+                actionStatus = ActionStatus.FAILURE_TRANSACTION;
+            }
+            if (access == TypeAccess.BALANCE || withBalance) {
+                actionStatus = ActionStatus.FAILURE_BALANCE;
+            }
+        }
+        return actionStatus;
     }
 }

@@ -45,6 +45,8 @@ public class TransactionControllerTest {
     private static LocalDate DATE =  LocalDate.parse("2019-03-03");
     private static final String TRANSACTION_ID = "00001";
     private static final String WRONG_TRANSACTION_ID = "00002";
+    private final String ACCOUNT_ID = "123456789";
+    private final String WRONG_ACCOUNT_ID = "WRONG_ACC_ID";
     private static final String IBAN = "DE12345";
     private static final String IBAN_2 = "DE54321";
     private static final Currency EUR = Currency.getInstance("EUR");
@@ -58,16 +60,17 @@ public class TransactionControllerTest {
     @Before
     public void setUp() {
         when(transactionService.getAllTransactions()).thenReturn(Collections.singletonList(getTransaction()));
-        when(transactionService.getTransactionById(TRANSACTION_ID)).thenReturn(Optional.of(getTransaction()));
-        when(transactionService.getTransactionById(WRONG_TRANSACTION_ID)).thenReturn(Optional.empty());
+        when(transactionService.getTransactionById(TRANSACTION_ID, ACCOUNT_ID)).thenReturn(Optional.of(getTransaction()));
+        when(transactionService.getTransactionById(WRONG_TRANSACTION_ID, ACCOUNT_ID)).thenReturn(Optional.empty());
         when(transactionService.saveTransaction(getTransaction())).thenReturn(Optional.of(TRANSACTION_ID));
-        when(transactionService.getTransactionsByPeriod(IBAN, EUR, DATE, DATE)).thenReturn(Collections.singletonList(getTransaction()));
+        when(transactionService.getTransactionsByPeriod(ACCOUNT_ID, DATE, DATE)).thenReturn(Collections.singletonList(getTransaction()));
+        when(transactionService.getTransactionsByPeriod(WRONG_ACCOUNT_ID, DATE, DATE)).thenReturn(Collections.emptyList());
     }
 
     @Test
     public void readTransactionByIdTest_Success() {
         //When:
-        ResponseEntity expectedResponse = transactionController.readTransactionById(TRANSACTION_ID);
+        ResponseEntity expectedResponse = transactionController.readTransactionById(TRANSACTION_ID, ACCOUNT_ID);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -77,10 +80,10 @@ public class TransactionControllerTest {
     @Test
     public void readTransactionByIdTest_Failure() {
         //When:
-        ResponseEntity expectedResponse = transactionController.readTransactionById(WRONG_TRANSACTION_ID);
+        ResponseEntity expectedResponse = transactionController.readTransactionById(WRONG_TRANSACTION_ID, ACCOUNT_ID);
 
         //Then:
-        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(expectedResponse.getBody()).isEqualTo(null);
     }
 
@@ -97,11 +100,20 @@ public class TransactionControllerTest {
     @Test
     public void readTransactionsByDates() {
         //When:
-        ResponseEntity expectedResponse = transactionController.readTransactionsByPeriod(IBAN, EUR, DATE, DATE);
+        ResponseEntity expectedResponse = transactionController.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE);
 
         //Then:
         assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(expectedResponse.getBody()).isEqualTo(Collections.singletonList(getTransaction()));
+    }
+
+    @Test
+    public void readTransactionsByDates_Failure_AccId() {
+        //When:
+        ResponseEntity expectedResponse = transactionController.readTransactionsByPeriod(WRONG_ACCOUNT_ID, DATE, DATE);
+
+        //Then:
+        assertThat(expectedResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     private SpiTransaction getTransaction() {
