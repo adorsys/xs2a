@@ -26,10 +26,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
@@ -56,7 +53,7 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         } else {
 
             Map.Entry<String, String> firstError = violationsMap.entrySet().iterator().next();
-            MessageErrorCode messageCode = getActualMessageCode(firstError.getKey());
+            MessageErrorCode messageCode = getActualMessageErrorCode(firstError.getKey());
 
             LOGGER.debug(messageCode.name() + ": " + firstError.getValue());
             response.sendError(messageCode.getCode(), messageCode.name() + ": " + firstError.getValue());
@@ -64,10 +61,12 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private MessageErrorCode getActualMessageCode(String error) {
-        return Arrays.stream(MessageErrorCode.values())
-                   .filter(mess -> mess.getName().equals(error))
-                   .findFirst()
-                   .orElse(FORMAT_ERROR);
+    private MessageErrorCode getActualMessageErrorCode(String error) {
+        for (MessageErrorCode message : MessageErrorCode.values()) {
+            if (message.getName().equals(error)) {
+                return message;
+            }
+        }
+        return FORMAT_ERROR;
     }
 }

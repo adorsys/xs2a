@@ -42,8 +42,6 @@ import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-
 @Log4j
 @Service
 public class RequestValidatorService {
@@ -83,7 +81,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong parameters : ", ((ErrorMessageParameterImpl) parameterImpl).getErrorMessage());
         }
 
-        return getViolationMessageMapViolationSet(validator.validate(parameterImpl));
+        return getMessageMapFromViolations(validator.validate(parameterImpl));
     }
 
     public Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
@@ -110,7 +108,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());
         }
 
-        return getViolationMessageMapViolationSet(validator.validate(headerImpl));
+        return getMessageMapFromViolations(validator.validate(headerImpl));
     }
 
     private Map<String, String> getRequestHeadersMap(HttpServletRequest request) {
@@ -176,7 +174,7 @@ public class RequestValidatorService {
         return paymentTypes.contains(paymentType);
     }
 
-    private <T> Map<String, String> getViolationMessageMapViolationSet(Set<ConstraintViolation<T>> collection) {
+    private <T> Map<String, String> getMessageMapFromViolations(Set<ConstraintViolation<T>> collection) {
         return collection.stream()
                    .collect(Collectors.toMap(
                        violation -> violation.getPropertyPath().toString(),
