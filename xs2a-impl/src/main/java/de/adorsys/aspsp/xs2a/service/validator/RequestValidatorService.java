@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
@@ -26,7 +27,6 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImp
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
@@ -41,6 +41,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
 @Log4j
 @Service
@@ -81,10 +83,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong parameters : ", ((ErrorMessageParameterImpl) parameterImpl).getErrorMessage());
         }
 
-        Map<String, String> requestParameterViolationsMap = validator.validate(parameterImpl).stream()
-                                                                .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
-
-        return requestParameterViolationsMap;
+        return getViolationMessageMapViolationSet(validator.validate(parameterImpl));
     }
 
     public Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
@@ -111,10 +110,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());
         }
 
-        Map<String, String> requestHeaderViolationsMap = validator.validate(headerImpl).stream()
-                                                             .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
-
-        return requestHeaderViolationsMap;
+        return getViolationMessageMapViolationSet(validator.validate(headerImpl));
     }
 
     private Map<String, String> getRequestHeadersMap(HttpServletRequest request) {
@@ -178,5 +174,12 @@ public class RequestValidatorService {
     private boolean isPaymentTypeAvailable(PisPaymentType paymentType) {
         List<PisPaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
         return paymentTypes.contains(paymentType);
+    }
+
+    private <T> Map<String, String> getViolationMessageMapViolationSet(Set<ConstraintViolation<T>> collection) {
+        return collection.stream()
+                   .collect(Collectors.toMap(
+                       violation -> violation.getPropertyPath().toString(),
+                       violation -> "'" + violation.getPropertyPath().toString() + "' " + violation.getMessage()));
     }
 }

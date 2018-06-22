@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
@@ -55,25 +54,20 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         if (violationsMap.isEmpty()) {
             return true;
         } else {
-            MessageErrorCode errorCode = getActualMessageCode(violationsMap.keySet());
 
-            List<String> violations = violationsMap.entrySet().stream()
-                                                .map(entry -> entry.getKey() + " : " + entry.getValue())
-                                                .collect(Collectors.toList());
+            Map.Entry<String, String> firstError = violationsMap.entrySet().iterator().next();
+            MessageErrorCode messageCode = getActualMessageCode(firstError.getKey());
 
-            LOGGER.debug(violations.toString());
-            response.sendError(errorCode.getCode(), errorCode.name() + ": " + violations.toString());
+            LOGGER.debug(messageCode.name() + ": " + firstError.getValue());
+            response.sendError(messageCode.getCode(), messageCode.name() + ": " + firstError.getValue());
             return false;
         }
     }
 
-    private MessageErrorCode getActualMessageCode(Set<String> errors) {
-        List<MessageErrorCode> actualMessages = Arrays.stream(MessageErrorCode.values())
-                                               .filter(mess -> errors.contains(mess.getName()))
-                                               .collect(Collectors.toList());
-
-        return actualMessages.isEmpty()
-                   ? FORMAT_ERROR
-                   : actualMessages.get(0); // TODO make prioritize for getting message code;
+    private MessageErrorCode getActualMessageCode(String error) {
+        return Arrays.stream(MessageErrorCode.values())
+                   .filter(mess -> mess.getName().equals(error))
+                   .findFirst()
+                   .orElse(FORMAT_ERROR);
     }
 }
