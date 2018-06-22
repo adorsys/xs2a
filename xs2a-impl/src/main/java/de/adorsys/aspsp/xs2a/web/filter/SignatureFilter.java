@@ -24,7 +24,7 @@ import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import lombok.extern.slf4j.Slf4j;
 
 //NOPMD TODO implement http signature filter, https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/141
-//@WebFilter(urlPatterns ="/api/v1/*")
+//@Component
 //@Order(3)
 @Slf4j
 public class SignatureFilter implements Filter {
@@ -62,8 +62,9 @@ public class SignatureFilter implements Filter {
 				log.debug(e.getMessage());
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			}
+		} else {
+			chain.doFilter(request, response);
 		}
-		chain.doFilter(request, response);
 	}
 
 	@Override

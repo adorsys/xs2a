@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a;
+package de.adorsys.aspsp.xs2a.consent.api.pis;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.Value;
 
-@SpringBootApplication
-public class ASPSPXs2aApplication {
+import java.util.Currency;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ASPSPXs2aApplication.class, args);
-    }
+@Value
+public class PisAccountReference {
+    private String iban;
+    private String bban;
+    private String pan;
+    private String maskedPan;
+    private String msisdn;
+    private Currency currency;
 }

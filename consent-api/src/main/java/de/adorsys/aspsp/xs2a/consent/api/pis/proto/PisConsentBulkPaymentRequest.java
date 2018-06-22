@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
+import lombok.Value;
 
-@SpringBootApplication
-public class ASPSPXs2aApplication {
+import java.util.List;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ASPSPXs2aApplication.class, args);
-    }
+@Value
+public class PisConsentBulkPaymentRequest {
+    private List<PisSinglePayment> payments;
 }

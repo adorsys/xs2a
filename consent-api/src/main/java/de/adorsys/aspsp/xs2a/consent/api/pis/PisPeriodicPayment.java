@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api;
+package de.adorsys.aspsp.xs2a.consent.api.pis;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ApiModel(description = "Access account information", value = "AccessAccountInfo")
-public class AccessAccountInfo {
+public class PisPeriodicPayment extends PisSinglePayment {
 
-    @ApiModelProperty(value = "ISO 4217 currency code", example = "EUR")
-    private String currency;
-
-    @ApiModelProperty(value = "Types of access: ACCOUNT, BALANCE, TRANSACTION, PAYMENT", example = "ACCOUNT")
-    private TypeAccess typeAccess;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String executionRule;
+    private String frequency;
+    private int dayOfExecution; //Day here max 31
 }
