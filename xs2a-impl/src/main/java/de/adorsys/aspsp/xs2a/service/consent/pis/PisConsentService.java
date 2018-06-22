@@ -45,7 +45,7 @@ public class PisConsentService {
      * Sends a POST request to CMS to store created PIS consent for single payment
      *
      * @param singlePayment Payment data which will be stored in Pis consent
-     * @return String Id of new pis consent for single payment
+     * @return String identifier of created PIS consent for single payment
      */
     public String createPisConsentForSinglePaymentAndGetId(SinglePayments singlePayment) {
         PisSinglePayment pisSinglePayment = paymentMapper.mapToPisSinglePayment(singlePayment);
@@ -57,7 +57,7 @@ public class PisConsentService {
      * Sends a POST request to CMS to store created PIS consent for bulk payment
      *
      * @param payments List of payments data which will be stored in Pis consent
-     * @return String Id of new pis consent for bulk payment
+     * @return String identifier of created PIS consent for bulk payment
      */
     public String createPisConsentForBulkPaymentAndGetId(List<SinglePayments> payments) {
         List<PisSinglePayment> pisPayments = paymentMapper.mapToPisSinglePaymentList(payments);
@@ -69,7 +69,7 @@ public class PisConsentService {
      * Sends a POST request to CMS to store created PIS consent for periodic payment
      *
      * @param periodicPayment Periodic payment data which will be stored in Pis consent
-     * @return String Id of new pis consent for periodic payment
+     * @return String identifier of created PIS consent periodic payment
      */
     public String createPisConsentForPeriodicPaymentAndGetId(PeriodicPayment periodicPayment) {
         PisPeriodicPayment pisPeriodicPayment = paymentMapper.mapToPisPeriodicPayment(periodicPayment);

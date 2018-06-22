@@ -168,35 +168,37 @@ public class PaymentMapper {
     }
 
     public List<SpiSinglePayments> mapToSpiSinglePaymentList(List<SinglePayments> payments) {
-        return payments.stream().map(this::mapToSpiSinglePayments)
+        return payments.stream()
+                   .map(this::mapToSpiSinglePayments)
                    .collect(Collectors.toList());
     }
 
     public PisSinglePayment mapToPisSinglePayment(SinglePayments paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
-                   .map(paymentRe -> {
+                   .map(payReq -> {
                        PisSinglePayment pisSinglePayment = new PisSinglePayment();
-                       pisSinglePayment.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
-                       pisSinglePayment.setDebtorAccount(accountMapper.mapToPisAccountReference(paymentRe.getDebtorAccount()));
-                       pisSinglePayment.setUltimateDebtor(paymentRe.getUltimateDebtor());
-                       pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(paymentRe.getInstructedAmount()));
-                       pisSinglePayment.setCreditorAccount(accountMapper.mapToPisAccountReference(paymentRe.getCreditorAccount()));
-                       pisSinglePayment.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
-                       pisSinglePayment.setCreditorName(paymentRe.getCreditorName());
-                       pisSinglePayment.setCreditorAddress(mapToPisAddress(paymentRe.getCreditorAddress()));
-                       pisSinglePayment.setUltimateCreditor(paymentRe.getUltimateCreditor());
-                       pisSinglePayment.setPurposeCode(paymentRe.getPurposeCode().getCode());
-                       pisSinglePayment.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
-                       pisSinglePayment.setRemittanceInformationStructured(mapToPisRemittance(paymentRe.getRemittanceInformationStructured()));
-                       pisSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
-                       pisSinglePayment.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
+                       pisSinglePayment.setEndToEndIdentification(payReq.getEndToEndIdentification());
+                       pisSinglePayment.setDebtorAccount(accountMapper.mapToPisAccountReference(payReq.getDebtorAccount()));
+                       pisSinglePayment.setUltimateDebtor(payReq.getUltimateDebtor());
+                       pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(payReq.getInstructedAmount()));
+                       pisSinglePayment.setCreditorAccount(accountMapper.mapToPisAccountReference(payReq.getCreditorAccount()));
+                       pisSinglePayment.setCreditorAgent(payReq.getCreditorAgent().getCode());
+                       pisSinglePayment.setCreditorName(payReq.getCreditorName());
+                       pisSinglePayment.setCreditorAddress(mapToPisAddress(payReq.getCreditorAddress()));
+                       pisSinglePayment.setUltimateCreditor(payReq.getUltimateCreditor());
+                       pisSinglePayment.setPurposeCode(payReq.getPurposeCode().getCode());
+                       pisSinglePayment.setRemittanceInformationUnstructured(payReq.getRemittanceInformationUnstructured());
+                       pisSinglePayment.setRemittanceInformationStructured(mapToPisRemittance(payReq.getRemittanceInformationStructured()));
+                       pisSinglePayment.setRequestedExecutionDate(payReq.getRequestedExecutionDate());
+                       pisSinglePayment.setRequestedExecutionTime(payReq.getRequestedExecutionTime());
 
                        return pisSinglePayment;})
                    .orElse(null);
     }
 
     public List<PisSinglePayment> mapToPisSinglePaymentList(List<SinglePayments> singlePayments) {
-        return singlePayments.stream().map(this::mapToPisSinglePayment)
+        return singlePayments.stream()
+                   .map(this::mapToPisSinglePayment)
                    .collect(Collectors.toList());
     }
 

@@ -33,10 +33,10 @@ public class FundsConfirmationService {
     private final AccountService accountService;
 
     /**
-     * Finds out whether funds in account are sufficient
+     * Checks if the account balance is sufficient for requested operation
      *
      * @param  request Contains the requested amount in order to comparing with available amount on account
-     * @return Response with result 'true' if enough funds on the account, 'false' if are not enough
+     * @return Response with result 'true' if enough funds on the account, 'false' if not
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         Boolean fundsAvailable = Optional.ofNullable(request)

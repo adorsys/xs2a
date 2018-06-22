@@ -74,7 +74,7 @@ public class AspspProfileService {
     /**
      * Reads current sca approach mode from ASPSP profile service
      *
-     * @return 'true' if current sca approach mode equals 'redirect', 'false' if is not
+     * @return 'true' if current sca approach mode equals 'redirect', 'false' if not
      */
     public boolean isRedirectMode(){
         return Optional.ofNullable(readScaApproach())
@@ -85,7 +85,7 @@ public class AspspProfileService {
     /**
      * Reads requirement of tpp signature from ASPSP profile service
      *
-     * @return 'true' if tpp signature is required, 'false' if is not
+     * @return 'true' if tpp signature is required, 'false' if not
      */
     public Boolean getTppSignatureRequired() {
         return aspspProfileRestTemplate.exchange(
