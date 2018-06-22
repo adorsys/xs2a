@@ -31,7 +31,7 @@ import java.util.List;
 @PropertySource("classpath:bank_profile.yml")
 @ConfigurationProperties(prefix = "setting")
 public class ProfileConfiguration {
-    private final boolean isDelayedPaymentTypeAllowedAlways = true;
+    private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
     /**
      * This field indicates the requested maximum frequency for an access per day

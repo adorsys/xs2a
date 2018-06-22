@@ -35,8 +35,8 @@ public class SwaggerConfig {
     @Value("${license.url}")
     private String licenseUrl;
 
-    @Bean
-    public Docket api() {
+    @Bean(name = "api")
+    public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
                    .apiInfo(getApiInfo())
                    .select()

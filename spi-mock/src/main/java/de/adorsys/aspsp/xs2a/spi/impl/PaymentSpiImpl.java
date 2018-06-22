@@ -48,25 +48,25 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
 
-    private final boolean redirectMode = true; // todo remake business logic according task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/100
+    private final static boolean REDIRECT_MODE = true; // todo remake business logic according task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/100
 
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
-        return redirectMode
+        return REDIRECT_MODE
                    ? singlePaymentForRedirectMode(spiSinglePayments, tppRedirectPreferred)
                    : singlePaymentForOauthMode(spiSinglePayments, tppRedirectPreferred);
     }
 
     @Override
     public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        return redirectMode
+        return REDIRECT_MODE
                    ? bulkPaymentForRedirectMode(payments, paymentProduct, tppRedirectPreferred)
                    : bulkPaymentForOauthMode(payments, paymentProduct, tppRedirectPreferred);
     }
 
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
-        return redirectMode
+        return REDIRECT_MODE
                    ? periodicPaymentForRedirectMode(periodicPayment, paymentProduct, tppRedirectPreferred)
                    : periodicPaymentForOauthMode(periodicPayment, paymentProduct, tppRedirectPreferred);
     }

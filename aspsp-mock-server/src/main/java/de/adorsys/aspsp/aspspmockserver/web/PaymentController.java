@@ -53,7 +53,7 @@ public class PaymentController {
 
     @PostMapping(path = "/bulk-payments")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
-        @RequestBody List<SpiSinglePayments> payments) throws Exception {
+        @RequestBody List<SpiSinglePayments> payments) {
         List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
         return isEmpty(saved)
             ? ResponseEntity.badRequest().build()
