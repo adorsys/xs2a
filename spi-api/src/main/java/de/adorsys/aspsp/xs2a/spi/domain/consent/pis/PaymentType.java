@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,23 +25,26 @@ public enum PaymentType {
     PERIODIC("periodic"),
     FUTURE_DATED("delayed");
 
+    private static final Map<String, PaymentType> container = new HashMap<>();
+
+    static {
+        for (PaymentType type : values()) {
+            container.put(type.getValue(), type);
+        }
+    }
+
     private String value;
+
 
     PaymentType(String value) {
         this.value = value;
     }
 
-    private static Map<String, PaymentType> container = new HashMap();
-
-    static {
-        Arrays.stream(values()).forEach(type -> container.put(type.getValue(), type));
-    }
-
-    public String getValue(){
-        return value;
-    }
-
-    public static Optional<PaymentType> getByValue(String value){
+    public static Optional<PaymentType> getByValue(String value) {
         return Optional.ofNullable(container.get(value));
+    }
+
+    public String getValue() {
+        return value;
     }
 }

@@ -39,6 +39,7 @@ public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
         this.bearerToken = bearerToken;
     }
 
+    @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         request.getHeaders().add(AUTHORIZATION_HEADER, BEARER_TOKEN_PREFIX + this.bearerToken);
         return execution.execute(request, body);
