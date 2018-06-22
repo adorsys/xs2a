@@ -18,9 +18,9 @@ public class PsuService {
     }
 
     public String createPsuAndReturnId(Psu psu) {
-        Psu createdPsu = psuRepository.save(psu);
-
-        return createdPsu.getId();
+        return psu.isValid()
+                   ? psuRepository.save(psu).getId()
+                   : null;
     }
 
     public Optional<Psu> getPsuById(String id) {
