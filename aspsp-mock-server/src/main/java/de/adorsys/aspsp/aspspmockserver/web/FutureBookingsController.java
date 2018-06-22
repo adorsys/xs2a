@@ -18,10 +18,8 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.*;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,20 +29,20 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping(path = "/future-bookings")
+@Api(tags = "Future payments", description = "Provides access to future payment execution")
 public class FutureBookingsController {
     private final FutureBookingsService futureBookingsService;
 
-    @Autowired
-    public FutureBookingsController(FutureBookingsService futureBookingsService) {
-        this.futureBookingsService = futureBookingsService;
-    }
-
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Executes future payments for account specified by IBAN and Currency, with update on corresponding account balances", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = SpiAccountDetails.class),
+        @ApiResponse(code = 404, message = "Not Found")})
     @PostMapping(path = "/{iban}/{currency}")
     public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
         return futureBookingsService.changeBalances(iban, currency)
-            .map(saved -> new ResponseEntity<>(saved, OK))
-            .orElse(ResponseEntity.notFound().build());
+                   .map(saved -> new ResponseEntity<>(saved, OK))
+                   .orElse(ResponseEntity.notFound().build());
     }
 }
