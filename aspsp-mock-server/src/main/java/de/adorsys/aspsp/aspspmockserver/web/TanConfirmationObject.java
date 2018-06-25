@@ -24,8 +24,10 @@ import lombok.NoArgsConstructor;
 public class TanConfirmationObject {
     private int tanNumber;
     private String psuId;
+    private String paymentId;
 
-    public TanConfirmationObject(String psuId) {
+    public TanConfirmationObject(String psuId, String paymentId) {
         this.psuId = psuId;
+        this.paymentId = paymentId;
     }
 }

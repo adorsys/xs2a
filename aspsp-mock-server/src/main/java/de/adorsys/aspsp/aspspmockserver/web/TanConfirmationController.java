@@ -31,10 +31,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class TanConfirmationController {
     private final PsuAuthenticationService psuAuthenticationService;
 
-    @GetMapping(path = "/{psu-id}")
+    @GetMapping(path = "/{psu-id}/{payment-id}")
     @ApiOperation(value = "Displays content of email TAN confirmation page")
-    public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId) {
-        return new ModelAndView("confirmationPage", "tanConfirmationObject", new TanConfirmationObject(psuId));
+    public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId,
+                                             @PathVariable("payment-id") String paymentId) {
+        return new ModelAndView("confirmationPage", "tanConfirmationObject", new TanConfirmationObject(psuId, paymentId));
     }
 
     @PostMapping(path = "/")
