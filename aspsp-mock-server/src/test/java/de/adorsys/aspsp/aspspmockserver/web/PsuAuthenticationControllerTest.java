@@ -86,28 +86,4 @@ public class PsuAuthenticationControllerTest {
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(expecteStatus);
     }
-
-    @Test
-    public void validatePsuTan_Success() throws Exception {
-        //Given
-        HttpStatus expecteStatus = OK;
-
-        //When
-        ResponseEntity actualResult = psuAuthenticationController.validatePsuTan(MOCK_SERVLET, PSU_ID, TAN_NUMBER);
-
-        //Then
-        assertThat(actualResult.getStatusCode()).isEqualTo(expecteStatus);
-    }
-
-    @Test
-    public void validatePsuTan_Failure() throws Exception {
-        //Given
-        HttpStatus expecteStatus = BAD_REQUEST;
-
-        //When
-        ResponseEntity actualResult = psuAuthenticationController.validatePsuTan(MOCK_SERVLET, PSU_ID, WRONG_TAN_NUMBER);
-
-        //Then
-        assertThat(actualResult.getStatusCode()).isEqualTo(expecteStatus);
-    }
 }
