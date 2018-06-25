@@ -20,9 +20,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<form action="#" th:object="${tanConfirmationObject}" th:action="@{/confirm/{psu-id}/validate(psu-id=*{psuId})}" method="post" modelAttribute="confirmation">
+<form th:object="${tanConfirmationObject}" th:action="@{/confirm/}" method="post">
     <label>Enter your TAN number: </label>
     <input type="number" th:field="*{tanNumber}"/>
+    <input type="hidden" th:field="*{psuId}" th:value="*{psuId}"/>
     <button>Validate</button>
 </form>
 </body>

@@ -17,9 +17,15 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class TanConfirmationObject {
-    int tanNumber;
-    String psuId;
+    private int tanNumber;
+    private String psuId;
+
+    public TanConfirmationObject(String psuId) {
+        this.psuId = psuId;
+    }
 }
