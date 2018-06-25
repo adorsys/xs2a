@@ -81,7 +81,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong parameters : ", ((ErrorMessageParameterImpl) parameterImpl).getErrorMessage());
         }
 
-        return getMessageMapFromViolations(validator.validate(parameterImpl));
+        return getViolationMessagesMap(validator.validate(parameterImpl));
     }
 
     public Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
@@ -108,7 +108,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());
         }
 
-        return getMessageMapFromViolations(validator.validate(headerImpl));
+        return getViolationMessagesMap(validator.validate(headerImpl));
     }
 
     private Map<String, String> getRequestHeadersMap(HttpServletRequest request) {
@@ -174,7 +174,7 @@ public class RequestValidatorService {
         return paymentTypes.contains(paymentType);
     }
 
-    private <T> Map<String, String> getMessageMapFromViolations(Set<ConstraintViolation<T>> collection) {
+    private <T> Map<String, String> getViolationMessagesMap(Set<ConstraintViolation<T>> collection) {
         return collection.stream()
                    .collect(Collectors.toMap(
                        violation -> violation.getPropertyPath().toString(),

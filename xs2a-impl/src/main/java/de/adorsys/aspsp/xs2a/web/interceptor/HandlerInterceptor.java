@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.web.interceptor;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-
+@Slf4j
 @Component
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HandlerInterceptor.class);
     private final RequestValidatorService requestValidatorService;
 
     @Autowired
@@ -55,18 +54,14 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
             Map.Entry<String, String> firstError = violationsMap.entrySet().iterator().next();
             MessageErrorCode messageCode = getActualMessageErrorCode(firstError.getKey());
 
-            LOGGER.debug(messageCode.name() + ": " + firstError.getValue());
+            log.debug("Handled error {}", messageCode.name() + ": " + firstError.getValue());
             response.sendError(messageCode.getCode(), messageCode.name() + ": " + firstError.getValue());
             return false;
         }
     }
 
     private MessageErrorCode getActualMessageErrorCode(String error) {
-        for (MessageErrorCode message : MessageErrorCode.values()) {
-            if (message.getName().equals(error)) {
-                return message;
-            }
-        }
-        return FORMAT_ERROR;
+        return MessageErrorCode.getByName(error)
+                   .orElse(MessageErrorCode.FORMAT_ERROR);
     }
 }
