@@ -26,15 +26,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping(path = "/confirm")
+@RequestMapping(path = "/confirmation")
 @Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class TanConfirmationController {
     private final PsuAuthenticationService psuAuthenticationService;
 
-    @GetMapping(path = "/{psu-id}/")
+    @GetMapping(path = "/{psu-id}")
     @ApiOperation(value = "Displays content of email TAN confirmation page")
     public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId) {
-        return new ModelAndView("confirmation", "tanConfirmationObject", new TanConfirmationObject(psuId));
+        return new ModelAndView("confirmationPage", "tanConfirmationObject", new TanConfirmationObject(psuId));
     }
 
     @PostMapping(path = "/")

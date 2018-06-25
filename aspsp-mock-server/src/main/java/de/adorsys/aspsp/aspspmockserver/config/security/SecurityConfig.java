@@ -36,7 +36,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     private final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/api-docs/**", "/v2/api-docs/**",
-    "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**", "/", "/confirm", "/confirm/**"};
+    "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**", "/", "/confirmation", "/confirmation/**"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
