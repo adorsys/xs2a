@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuAuthenticationService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +27,12 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 @Controller
 @RequestMapping(path = "/confirm")
+@Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class TanConfirmationController {
     private final PsuAuthenticationService psuAuthenticationService;
 
     @GetMapping(path = "/{psu-id}/")
+    @ApiOperation(value = "Displays content of email TAN confirmation page")
     public ModelAndView showConfirmationPage(TanConfirmationObject tanConfirmationObject,
                                              @PathVariable("psu-id") String psuId) {
         tanConfirmationObject.setPsuId(psuId);
@@ -36,6 +40,7 @@ public class TanConfirmationController {
     }
 
     @PostMapping(path = "/{psu-id}/validate")
+    @ApiOperation(value = "Validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView confirmTan(
         @ModelAttribute("tanConfirmationObject") TanConfirmationObject tanConfirmationObject,
         @PathVariable("psu-id") String psuId) {
