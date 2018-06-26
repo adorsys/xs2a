@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -38,7 +39,6 @@ public class AspspProfileService {
     @Qualifier("aspspProfileRestTemplate")
     private final RestTemplate aspspProfileRestTemplate;
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
-    private final String SCA_APPROACH_REDIRECT = "redirect";
 
     /**
      * Reads List of available payment products from ASPSP profile service
@@ -76,9 +76,9 @@ public class AspspProfileService {
      * @return 'true' if current sca approach mode equals 'redirect', 'false' if not
      */
     public boolean isRedirectMode(){
-        return Optional.ofNullable(readScaApproach())
-            .map(scAp -> scAp.equals(SCA_APPROACH_REDIRECT))
-            .orElse(false);
+        ScaApproach scaApproach = readScaApproach();
+        return scaApproach == ScaApproach.REDIRECT
+               || scaApproach == ScaApproach.DECOUPLED;
     }
 
     /**
@@ -91,9 +91,9 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
     }
 
-    public String readScaApproach() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody();
+    private ScaApproach readScaApproach() {
+        return ScaApproach.valueOf(aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody());
     }
 
     private List<String> readAvailablePaymentProducts() {

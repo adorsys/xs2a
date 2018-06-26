@@ -43,8 +43,6 @@ public class JsonConverter {
     public <T> Optional<T> toObject(final String json, final Class<T> target){
         try {
             return Optional.ofNullable(objectMapper.readValue(json, target));
-        } catch (JsonProcessingException e) {
-            log.error("Can't convert json to object: {}", e);
         } catch (IOException e) {
             log.error("Can't convert json to object: {}", e);
         }
