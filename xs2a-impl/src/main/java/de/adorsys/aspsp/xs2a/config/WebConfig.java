@@ -23,10 +23,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.KeycloackInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +51,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.ScaApproach.OAUTH;
+import static de.adorsys.aspsp.xs2a.domain.ScaApproach.REDIRECT;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
@@ -57,6 +63,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("${application.link.redirect-to}")
     private String redirectLinkToSource;
+    @Autowired
+    private AspspProfileService aspspProfileService;
+    @Autowired
+    private KeycloackInvokerService keycloackInvokerService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -131,6 +141,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public BearerToken getBearerToken(HttpServletRequest request) {
-        return new BearerToken(request.getHeader(AUTHORIZATION_HEADER));
+        return new BearerToken(getAccessToken(request));
+    }
+
+    private String getAccessToken(HttpServletRequest request) {
+        String scaApproach = aspspProfileService.readScaApproach();
+        if (OAUTH == ScaApproach.valueOf(scaApproach)) {
+            return request.getHeader(AUTHORIZATION_HEADER);
+        } else if (REDIRECT == ScaApproach.valueOf(scaApproach)) {
+            return keycloackInvokerService.obtainAccessToken();
+        }
+        return "";
     }
 }

@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config;
+package de.adorsys.aspsp.aspspmockserver.web.view;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
-@Data
-@Component
-@ConfigurationProperties(prefix = "keycloak")
-public class KeycloakConfigProperties {
-    private String resource;
-    private Credentials credentials;
-    private String realm;
-    private String authServerUrl;
+@Controller
+@RequestMapping(path = "/view/payment/confirmation/{payment-id}")
+public class TestController {
 
-    @Data
-    public static class Credentials {
-        private String secret;
-    }
-
-    public String getRootPath() {
-        return authServerUrl + "/realms/" + realm;
+    @GetMapping
+    public ModelAndView test(@PathVariable("payment-id") String paymentId) {
+        return new ModelAndView("confirmation");
     }
 }

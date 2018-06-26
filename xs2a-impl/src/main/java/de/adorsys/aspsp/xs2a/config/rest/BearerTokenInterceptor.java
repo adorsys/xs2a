@@ -33,7 +33,7 @@ public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
     private String bearerToken;
 
     public BearerTokenInterceptor(String bearerToken) {
-        if(isEmpty(bearerToken)){
+        if (isEmpty(bearerToken)) {
             throw new RestException(MessageErrorCode.UNAUTHORIZED);
         }
         this.bearerToken = bearerToken;

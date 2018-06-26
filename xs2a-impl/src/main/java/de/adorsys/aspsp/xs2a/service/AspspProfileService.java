@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Log4j
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {
@@ -92,7 +91,7 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
     }
 
-    private String readScaApproach() {
+    public String readScaApproach() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody();
     }
