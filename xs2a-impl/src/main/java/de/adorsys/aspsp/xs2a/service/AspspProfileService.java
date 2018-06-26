@@ -36,10 +36,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {
+    private static final String SCA_APPROACH_REDIRECT = "redirect";
+
     @Qualifier("aspspProfileRestTemplate")
     private final RestTemplate aspspProfileRestTemplate;
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
-    private final String SCA_APPROACH_REDIRECT = "redirect";
 
     /**
      * Reads List of available payment products from ASPSP profile service

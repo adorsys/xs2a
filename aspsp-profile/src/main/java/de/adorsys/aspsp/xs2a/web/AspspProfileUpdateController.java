@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +34,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-profile/for-debug")
-@Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!", description = "Provides access to update aspsp profile")
+@Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
+     description = "Provides access to update aspsp profile",
+     authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
 public class AspspProfileUpdateController {
     private final AspspProfileService aspspProfileService;
 
     @PutMapping(path = "/frequency-per-day")
-    @ApiOperation(value = "Updates frequency per day. Only for DEBUG!", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Updates frequency per day. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -48,7 +51,7 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/combined-service-indicator")
-    @ApiOperation(value = "Updates combined service indicator. Only for DEBUG!", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Updates combined service indicator. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -58,7 +61,7 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/available-payment-products")
-    @ApiOperation(value = "Updates available payment products. Only for DEBUG!", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Updates available payment products. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -68,7 +71,7 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/available-payment-types")
-    @ApiOperation(value = "Updates available payment types. Only for DEBUG!", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Updates available payment types. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -78,17 +81,17 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/sca-approach")
-    @ApiOperation(value = "Updates sca approach. Only for DEBUG!", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Updates sca approach. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateScaApproach(@RequestBody String scaApproach) {
-        aspspProfileService.updateScaApproach(scaApproach);
+        aspspProfileService.updateScaApproach(ScaApproach.valueOf(scaApproach.trim().toUpperCase()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(path = "/tpp-signature-required")
-    @ApiOperation(value = "Updates signature of the request by the TPP. Only for DEBUG!", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Updates signature of the request by the TPP. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
