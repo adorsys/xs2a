@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import io.swagger.annotations.ApiModel;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
+import lombok.Value;
 
-@ApiModel(description = "Type of the pis consent", value = "PisConsentType")
-public enum PisConsentType {
-    BULK,
-    SINGLE,
-    PERIODIC
+@Value
+public class PisConsentRequest {
+    private PisSinglePayment pisSinglePayment;
 }

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import lombok.Value;
-
-@Value
-public class PisConsentRequest {
-    private SpiSinglePayments singlePayment;
+public enum PisConsentStatus {
+    RECEIVED,
+    REJECTED,
+    VALID,
+    REVOKED_BY_PSU,
+    EXPIRED,
+    TERMINATED_BY_TPP
 }

@@ -16,12 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentPeriodicPaymentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PisConsentRequest;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -71,9 +71,9 @@ public class PisConsentController {
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiConsentStatus.class),
+        @ApiResponse(code = 200, message = "OK", response = PisConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<SpiConsentStatus> getConsentStatusById(
+    public ResponseEntity<PisConsentStatus> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentStatusById(consentId)
@@ -104,7 +104,7 @@ public class PisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
-        return pisConsentService.updateConsentStatusById(consentId, SpiConsentStatus.valueOf(status))
+        return pisConsentService.updateConsentStatusById(consentId, PisConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
