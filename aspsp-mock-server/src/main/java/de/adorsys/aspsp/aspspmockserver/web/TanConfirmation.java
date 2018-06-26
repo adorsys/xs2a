@@ -21,13 +21,13 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class TanConfirmationObject {
+public class TanConfirmation {
     private int tanNumber;
-    private String psuId;
-    private String paymentId;
+    private PaymentConfirmation paymentConfirmation;
 
-    public TanConfirmationObject(String psuId, String paymentId) {
-        this.psuId = psuId;
-        this.paymentId = paymentId;
+    public TanConfirmation(String psuId, String paymentId) {
+        paymentConfirmation = new PaymentConfirmation();
+        this.paymentConfirmation.setPsuId(psuId);
+        this.paymentConfirmation.setConsentId(paymentId);
     }
 }

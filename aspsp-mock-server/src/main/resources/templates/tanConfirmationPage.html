@@ -16,11 +16,16 @@
   -->
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <!--TODO create needed pages for payment consent & successful payment according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/92 -->
-    <title>Success page</title>
+    <title>Email TAN confirmation</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p> Success. You now may proceed to your payment. </p>
+<form th:object="${tanConfirmation}" th:action="@{/view/payment/confirmation/}" method="post">
+    <label>Enter your TAN number: </label>
+    <input type="number" th:field="*{tanNumber}"/>
+    <input type="hidden" th:field="*{paymentConfirmation.psuId}" th:value="*{paymentConfirmation.getPsuId()}"/>
+    <input type="hidden" th:field="*{paymentConfirmation.consentId}" th:value="*{paymentConfirmation.getConsentId()}"/>
+    <button>Validate</button>
+</form>
 </body>
 </html>
