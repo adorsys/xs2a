@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -90,7 +91,7 @@ public class AspspProfileService {
     /**
      * Read sca approach method
      */
-    public String getScaApproach() {
+    public ScaApproach getScaApproach() {
         return profileConfiguration.getScaApproach();
     }
 
@@ -98,7 +99,7 @@ public class AspspProfileService {
      * Update sca approach
      * @param scaApproach the new value of scaApproach
      */
-    public void updateScaApproach(String scaApproach) {
+    public void updateScaApproach(ScaApproach scaApproach) {
         profileConfiguration.setScaApproach(scaApproach);
     }
 
