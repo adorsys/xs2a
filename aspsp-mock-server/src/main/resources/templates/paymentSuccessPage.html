@@ -16,11 +16,13 @@
   -->
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <!--TODO create needed pages for payment consent & successful payment according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/92 -->
-    <title>Success page</title>
+    <title>Сonsent confirmation page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<p> Success. You now may proceed to your payment. </p>
+<div th:object="${paymentDetails}">
+    <label>Your payment is successful!Payment id is:</label>
+    <p th:utext="*{paymentId}"></p>
+</div>
 </body>
 </html>

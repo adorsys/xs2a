@@ -26,24 +26,24 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping(path = "/confirmation")
+@RequestMapping(path = "/view/payment/confirmation")
 @Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class TanConfirmationController {
     private final PsuAuthenticationService psuAuthenticationService;
 
-    @GetMapping(path = "/{psu-id}/{payment-id}")
+    @GetMapping(path = "/{psu-id}/{consent-id}")
     @ApiOperation(value = "Displays content of email TAN confirmation page")
     public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId,
-                                             @PathVariable("payment-id") String paymentId) {
-        return new ModelAndView("confirmationPage", "tanConfirmationObject", new TanConfirmationObject(psuId, paymentId));
+                                             @PathVariable("consent-id") String consentId) {
+        return new ModelAndView("tanConfirmationPage", "tanConfirmation", new TanConfirmation(psuId, consentId));
     }
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView confirmTan(
-        @ModelAttribute("tanConfirmationObject") TanConfirmationObject tanConfirmationObject) {
-        return psuAuthenticationService.isPsuTanNumberValid(tanConfirmationObject.getPsuId(), tanConfirmationObject.getTanNumber())
-                   ? new ModelAndView("confirmationSuccess")
-                   : new ModelAndView("confirmationError");
+        @ModelAttribute("tanConfirmation") TanConfirmation tanConfirmation) {
+        return psuAuthenticationService.isPsuTanNumberValid(tanConfirmation.getPaymentConfirmation().getPsuId(), tanConfirmation.getTanNumber())
+                   ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", tanConfirmation.getPaymentConfirmation())
+                   : new ModelAndView("tanConfirmationError");
     }
 }

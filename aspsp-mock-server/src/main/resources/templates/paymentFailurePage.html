@@ -16,16 +16,10 @@
   -->
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Email TAN confirmation</title>
+    <title>Сonsent confirmation page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<form th:object="${tanConfirmationObject}" th:action="@{/confirmation/}" method="post">
-    <label>Enter your TAN number: </label>
-    <input type="number" th:field="*{tanNumber}"/>
-    <input type="hidden" th:field="*{psuId}" th:value="*{psuId}"/>
-    <input type="hidden" th:field="*{paymentId}" th:value="*{paymentId}"/>
-    <button>Validate</button>
-</form>
+    <label>Something went wrong. Your payment has failed.</label>
 </body>
 </html>

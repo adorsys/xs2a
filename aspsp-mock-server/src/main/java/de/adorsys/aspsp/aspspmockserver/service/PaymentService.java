@@ -16,23 +16,39 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.config.rest.consent.PisConsentRemoteUrls;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
+import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus.RECEIVED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @AllArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    @Qualifier("consentRestTemplate")
+    private final RestTemplate consentRestTemplate;
+    private final PisConsentRemoteUrls remotePisConsentUrls;
+    private final PaymentMapper paymentMapper;
 
     public Optional<SpiSinglePayments> addPayment(@NotNull SpiSinglePayments payment) {
         return Optional.ofNullable(paymentRepository.save(payment));
@@ -56,6 +72,42 @@ public class PaymentService {
                    .map(this::getAmountFromPayment)
                    .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public Optional<SpiSinglePayments> addPaymentWithRedirectApproach(@NotNull String consentId) {
+        return Optional.ofNullable(getFirstSpiSinglePayment(getPaymentsFromPisConsent(consentId)))
+                   .map(paym -> proceedPayment(paym, consentId))
+                   .orElse(Optional.empty());
+    }
+
+    private List<SpiSinglePayments> getPaymentsFromPisConsent(String consentId) {
+        ResponseEntity<PisConsentResponse> responseEntity = consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId);
+
+        if (responseEntity.getStatusCode() == OK && responseEntity.getBody().getPisConsentStatus() == RECEIVED) {
+            return responseEntity.getBody().getPayments().stream()
+                       .map(pis -> paymentMapper.mapToSpiSinglePayments(pis))
+                       .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    private SpiSinglePayments getFirstSpiSinglePayment(List<SpiSinglePayments> payments) {
+        return CollectionUtils.isNotEmpty(payments)
+                   ? payments.get(0)
+                   : null;
+    }
+
+    private Optional<SpiSinglePayments> proceedPayment(SpiSinglePayments spiSinglePayments, String consentId) {
+        SpiSinglePayments savedPayment = paymentRepository.save(spiSinglePayments);
+        if (savedPayment != null) {
+            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, "VALID");
+        } else {
+            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, "REJECTED");
+        }
+
+        return Optional.ofNullable(savedPayment);
+    }
+
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment.getDebtorAccount())
