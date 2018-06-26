@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.SingleBalance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -32,6 +35,12 @@ import java.util.Optional;
 public class FundsConfirmationService {
     private final AccountService accountService;
 
+    /**
+     * Checks if the account balance is sufficient for requested operation
+     *
+     * @param  request Contains the requested amount in order to comparing with available amount on account
+     * @return Response with result 'true' if there are enough funds on the account, 'false' if not
+     */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
         Boolean fundsAvailable = Optional.ofNullable(request)
                                      .map(req -> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))

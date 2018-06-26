@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import lombok.Value;
 
 import java.util.List;
 
 @Value
-public class PisConsentBulkPaymentRequest {
-    private List<SpiSinglePayments> payments;
+public class PisConsentResponse {
+    private String externalId;
+    private PisConsentType pisConsentType;
+    private PisConsentStatus pisConsentStatus;
+    private List<PisPayment> payments;
 }
+

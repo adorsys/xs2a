@@ -17,7 +17,10 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
@@ -25,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -39,11 +43,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RCVD;
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -56,6 +61,7 @@ public class PaymentServiceTest {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private static final String PAYMENT_ID = "12345";
+    private static final String PAYMENT_CONSENT_ID = "12345678";
     private static final String WRONG_PAYMENT_ID = "0";
 
     @Autowired
@@ -67,6 +73,12 @@ public class PaymentServiceTest {
     private PaymentSpi paymentSpi;
     @MockBean(name = "accountService")
     private AccountService accountService;
+
+    @MockBean(name = "pisConsentService")
+    private PisConsentService pisConsentService;
+
+    @MockBean(name = "aspspProfileService")
+    private AspspProfileService aspspProfileService;
 
     @Before
     public void setUp() throws IOException {
@@ -83,6 +95,14 @@ public class PaymentServiceTest {
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(RJCT);
         when(accountService.isAccountExists(any(AccountReference.class)))
+            .thenReturn(true);
+        when(pisConsentService.createPisConsentForSinglePaymentAndGetId(any()))
+            .thenReturn(PAYMENT_CONSENT_ID);
+        when(pisConsentService.createPisConsentForBulkPaymentAndGetId(any()))
+            .thenReturn(PAYMENT_CONSENT_ID);
+        when(pisConsentService.createPisConsentForPeriodicPaymentAndGetId(any()))
+            .thenReturn(PAYMENT_CONSENT_ID);
+        when(aspspProfileService.isRedirectMode())
             .thenReturn(true);
     }
 
@@ -190,7 +210,7 @@ public class PaymentServiceTest {
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
         return ResponseObject.<PaymentInitialisationResponse>builder()
-            .body(getPaymentInitializationResponse()).build();
+                   .body(getPaymentInitializationResponse()).build();
     }
 
     private PeriodicPayment readPeriodicPayment() throws IOException {

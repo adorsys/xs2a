@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum PaymentType {
+public enum PisPaymentType {
     BULK("bulk"),
     PERIODIC("periodic"),
     FUTURE_DATED("delayed");
 
-    private static final Map<String, PaymentType> container = new HashMap<>();
+    private static final Map<String, PisPaymentType> container = new HashMap<>();
 
     static {
-        for (PaymentType type : values()) {
+        for (PisPaymentType type : values()) {
             container.put(type.getValue(), type);
         }
     }
 
     private String value;
 
-
-    PaymentType(String value) {
+    PisPaymentType(String value) {
         this.value = value;
-    }
-
-    public static Optional<PaymentType> getByValue(String value) {
-        return Optional.ofNullable(container.get(value));
     }
 
     public String getValue() {
         return value;
     }
+
+    public static Optional<PisPaymentType> getByValue(String value){
+        return Optional.ofNullable(container.get(value));
+    }
+
 }

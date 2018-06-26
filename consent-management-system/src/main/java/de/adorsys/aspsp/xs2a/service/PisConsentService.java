@@ -16,14 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.*;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
 import de.adorsys.aspsp.xs2a.domain.PisConsent;
 import de.adorsys.aspsp.xs2a.domain.PisPaymentData;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.*;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class PisConsentService {
     private final PisConsentRepository pisConsentRepository;
 
     public Optional<String> createSinglePaymentConsent(PisConsentRequest request) {
-        return mapToPisConsent(request.getSinglePayment())
+        return mapToPisConsent(request.getPisSinglePayment())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
@@ -51,12 +52,12 @@ public class PisConsentService {
     }
 
     public Optional<String> createPeriodicPaymentConsent(PisConsentPeriodicPaymentRequest request) {
-        return mapToPeriodicPaymentConsent(request.getPeriodicPayment())
+        return mapToPeriodicPaymentConsent(request.getPisPeriodicPayment())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<PisConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
@@ -66,7 +67,7 @@ public class PisConsentService {
                    .flatMap(this::mapToPisConsentResponse);
     }
 
-    public Optional<Boolean> updateConsentStatusById(String consentId, SpiConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, PisConsentStatus status) {
         return getPisConsentById(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -77,12 +78,12 @@ public class PisConsentService {
                    .flatMap(pisConsentRepository::findByExternalId);
     }
 
-    private PisConsent setStatusAndSaveConsent(PisConsent consent, SpiConsentStatus status) {
+    private PisConsent setStatusAndSaveConsent(PisConsent consent, PisConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
     }
 
-    private Optional<PisConsent> mapToBulkPaymentConsent(List<SpiSinglePayments> payments) {
+    private Optional<PisConsent> mapToBulkPaymentConsent(List<PisSinglePayment> payments) {
         List<PisPaymentData> paymentDataList = payments.stream()
                                                    .map(this::mapToPisPaymentData)
                                                    .filter(Optional::isPresent)
@@ -93,12 +94,12 @@ public class PisConsentService {
         consent.setPayments(paymentDataList);
         consent.setConsentType(ConsentType.PIS);
         consent.setPisConsentType(PisConsentType.BULK);
-        consent.setConsentStatus(SpiConsentStatus.RECEIVED);
+        consent.setConsentStatus(PisConsentStatus.RECEIVED);
 
         return Optional.of(consent);
     }
 
-    private Optional<PisConsent> mapToPeriodicPaymentConsent(SpiPeriodicPayment periodicPayment) {
+    private Optional<PisConsent> mapToPeriodicPaymentConsent(PisPeriodicPayment periodicPayment) {
         return Optional.ofNullable(periodicPayment)
                    .flatMap(this::mapToPisPaymentData)
                    .map(pmt -> {
@@ -107,12 +108,12 @@ public class PisConsentService {
                        consent.setPayments(Collections.singletonList(pmt));
                        consent.setConsentType(ConsentType.PIS);
                        consent.setPisConsentType(PisConsentType.PERIODIC);
-                       consent.setConsentStatus(SpiConsentStatus.RECEIVED);
+                       consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
                    });
     }
 
-    private Optional<PisConsent> mapToPisConsent(SpiSinglePayments singlePayment) {
+    private Optional<PisConsent> mapToPisConsent(PisSinglePayment singlePayment) {
         return Optional.ofNullable(singlePayment)
                    .flatMap(this::mapToPisPaymentData)
                    .map(pmt -> {
@@ -121,12 +122,12 @@ public class PisConsentService {
                        consent.setPayments(Collections.singletonList(pmt));
                        consent.setConsentType(ConsentType.PIS);
                        consent.setPisConsentType(PisConsentType.SINGLE);
-                       consent.setConsentStatus(SpiConsentStatus.RECEIVED);
+                       consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
                    });
     }
 
-    private Optional<PisPaymentData> mapToPisPaymentData(SpiSinglePayments singlePayment) {
+    private Optional<PisPaymentData> mapToPisPaymentData(PisSinglePayment singlePayment) {
         return Optional.ofNullable(singlePayment)
                    .map(sp -> {
                        PisPaymentData payment = new PisPaymentData();

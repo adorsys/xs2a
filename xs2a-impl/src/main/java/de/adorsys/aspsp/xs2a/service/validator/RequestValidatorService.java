@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
@@ -26,7 +27,6 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImp
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
@@ -53,12 +53,12 @@ public class RequestValidatorService {
     private AspspProfileService aspspProfileService;
 
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    private final static Map<Object, PaymentType> classMap = new HashMap<>();
+    private final static Map<Object, PisPaymentType> classMap = new HashMap<>();
 
     static {
-        classMap.put(PaymentInitiationController.class, PaymentType.FUTURE_DATED);
-        classMap.put(BulkPaymentInitiationController.class, PaymentType.BULK);
-        classMap.put(PeriodicPaymentsController.class, PaymentType.PERIODIC);
+        classMap.put(PaymentInitiationController.class, PisPaymentType.FUTURE_DATED);
+        classMap.put(BulkPaymentInitiationController.class, PisPaymentType.BULK);
+        classMap.put(PeriodicPaymentsController.class, PisPaymentType.PERIODIC);
     }
 
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
@@ -80,8 +80,7 @@ public class RequestValidatorService {
             return Collections.singletonMap("Wrong parameters : ", ((ErrorMessageParameterImpl) parameterImpl).getErrorMessage());
         }
 
-        return validator.validate(parameterImpl).stream()
-            .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
+        return getViolationMessagesMap(validator.validate(parameterImpl));
     }
 
     Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
@@ -112,10 +111,7 @@ public class RequestValidatorService {
                                            );
         }
 
-        return validator.validate(headerImpl).stream()
-                   .collect(Collectors.toMap(violation -> violation.getPropertyPath().toString(),
-                                             ConstraintViolation::getMessage
-                                            ));
+        return getViolationMessagesMap(validator.validate(headerImpl));
     }
 
     private Map<String, String> getRequestHeadersMap(HttpServletRequest request) {
@@ -166,7 +162,7 @@ public class RequestValidatorService {
     }
 
 
-    private Map<String, String> getViolationMapForPaymentType(PaymentType paymentType) {
+    private Map<String, String> getViolationMapForPaymentType(PisPaymentType paymentType) {
         return isPaymentTypeAvailable(paymentType)
                    ? Collections.emptyMap()
                    : Collections.singletonMap(MessageErrorCode.PARAMETER_NOT_SUPPORTED.getName(), "Wrong payment type: " + paymentType.getValue());
@@ -177,8 +173,15 @@ public class RequestValidatorService {
         return paymentProducts.contains(paymentProduct);
     }
 
-    private boolean isPaymentTypeAvailable(PaymentType paymentType) {
-        List<PaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
+    private boolean isPaymentTypeAvailable(PisPaymentType paymentType) {
+        List<PisPaymentType> paymentTypes = aspspProfileService.getAvailablePaymentTypes();
         return paymentTypes.contains(paymentType);
+    }
+
+    private <T> Map<String, String> getViolationMessagesMap(Set<ConstraintViolation<T>> collection) {
+        return collection.stream()
+                   .collect(Collectors.toMap(
+                       violation -> violation.getPropertyPath().toString(),
+                       violation -> "'" + violation.getPropertyPath().toString() + "' " + violation.getMessage()));
     }
 }
