@@ -91,7 +91,7 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
     }
 
-    private ScaApproach readScaApproach() {
+    public ScaApproach readScaApproach() {
         return ScaApproach.valueOf(aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody());
     }

@@ -145,10 +145,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     private String getAccessToken(HttpServletRequest request) {
-        String scaApproach = aspspProfileService.readScaApproach();
-        if (OAUTH == ScaApproach.valueOf(scaApproach)) {
+        ScaApproach scaApproach = aspspProfileService.readScaApproach();
+        if (OAUTH == scaApproach) {
             return request.getHeader(AUTHORIZATION_HEADER);
-        } else if (REDIRECT == ScaApproach.valueOf(scaApproach)) {
+        } else if (REDIRECT == scaApproach) {
             return keycloackInvokerService.obtainAccessToken();
         }
         return "";
