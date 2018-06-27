@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -75,10 +74,10 @@ public class AspspProfileService {
      *
      * @return 'true' if current sca approach mode equals 'redirect', 'false' if not
      */
-    public boolean isRedirectMode(){
+    public boolean isRedirectMode() {
         ScaApproach scaApproach = readScaApproach();
         return scaApproach == ScaApproach.REDIRECT
-               || scaApproach == ScaApproach.DECOUPLED;
+                   || scaApproach == ScaApproach.DECOUPLED;
     }
 
     /**
