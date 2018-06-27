@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.config;
 
 import com.google.common.base.Predicates;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,20 +30,20 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static springfox.documentation.swagger.web.SecurityConfigurationBuilder.builder;
 
 @Configuration
 @EnableSwagger2
+@RequiredArgsConstructor
 public class SwaggerConfig {
     @Value("${license.url}")
     private String licenseUrl;
-    @Autowired
-    private KeycloakConfigProperties keycloakConfig;
 
-    @Bean
-    public Docket api() {
+    private final KeycloakConfigProperties keycloakConfig;
+
+    @Bean(name = "api")
+    public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
             .apiInfo(getApiInfo())
             .select()
@@ -72,13 +72,13 @@ public class SwaggerConfig {
             .build();
         return new OAuthBuilder()
             .name("oauth2")
-            .grantTypes(asList(grantType))
+            .grantTypes(singletonList(grantType))
             .scopes(scopes())
             .build();
     }
 
     private List<AuthorizationScope> scopes() {
-        return asList(new AuthorizationScope("read", "Access read API"));
+        return singletonList(new AuthorizationScope("read", "Access read API"));
     }
 
     @Bean

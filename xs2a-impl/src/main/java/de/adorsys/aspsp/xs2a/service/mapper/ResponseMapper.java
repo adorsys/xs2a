@@ -29,11 +29,11 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public class ResponseMapper {
 
-    public ResponseEntity ok() {
+    public ResponseEntity ok() {  //NOPMD short method name ok corresponds to status code
         return ResponseEntity.ok().build();
     }
 
-    public <T> ResponseEntity<T> ok(ResponseObject<T> response) {
+    public <T> ResponseEntity<T> ok(ResponseObject<T> response) { //NOPMD short method name ok corresponds to status code
         return getEntity(response, OK);
     }
 

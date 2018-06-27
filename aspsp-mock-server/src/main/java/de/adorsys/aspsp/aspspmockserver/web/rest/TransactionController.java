@@ -77,8 +77,8 @@ public class TransactionController {
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{account-id}")
     public ResponseEntity<List<SpiTransaction>> readTransactionsByPeriod(@PathVariable("account-id") String accountId,
-                                                                         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                                                                         @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
+                                                                         @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+                                                                         @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
         List<SpiTransaction> response = transactionService.getTransactionsByPeriod(accountId, dateFrom, dateTo);
         return CollectionUtils.isEmpty(response)
                    ? ResponseEntity.noContent().build()

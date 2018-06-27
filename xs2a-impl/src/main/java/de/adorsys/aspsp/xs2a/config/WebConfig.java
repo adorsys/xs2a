@@ -110,8 +110,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ParametersFactory parametersFactory() {
-        return new ParametersFactory(objectMapper());
+    public ParametersFactory parametersFactory(ObjectMapper objectMapper) {
+        return new ParametersFactory(objectMapper);
     }
 
     @Bean
