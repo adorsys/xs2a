@@ -27,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -58,7 +59,8 @@ public class PsuController {
         @ApiResponse(code = 200, message = "OK", response = URI.class),
         @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/")
-    public ResponseEntity createPsu(HttpServletRequest request, @RequestBody Psu psu) throws Exception {
+    public ResponseEntity createPsu(HttpServletRequest request,
+                                    @RequestBody Psu psu) throws URISyntaxException {
         String uriString = getUriString(request);
         String saved = psuService.createPsuAndReturnId(psu);
         return saved == null

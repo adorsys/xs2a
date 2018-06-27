@@ -30,7 +30,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static springfox.documentation.swagger.web.SecurityConfigurationBuilder.builder;
 
@@ -40,11 +39,11 @@ import static springfox.documentation.swagger.web.SecurityConfigurationBuilder.b
 public class SwaggerConfig {
     @Value("${license.url}")
     private final String licenseUrl;
+
     private final KeycloakConfigProperties keycloakConfig;
 
-
-    @Bean
-    public Docket api() {
+    @Bean(name = "api")
+    public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
                .apiInfo(getApiInfo())
                .select()
@@ -73,7 +72,7 @@ public class SwaggerConfig {
             .build();
         return new OAuthBuilder()
             .name("oauth2")
-            .grantTypes(asList(grantType))
+            .grantTypes(singletonList(grantType))
             .scopes(scopes())
             .build();
     }
@@ -83,7 +82,7 @@ public class SwaggerConfig {
     }
 
     private List<AuthorizationScope> scopes() {
-        return asList(new AuthorizationScope("read", "Access read API"));
+        return singletonList(new AuthorizationScope("read", "Access read API"));
     }
 
     @Bean
