@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.config.KeycloakConfigProperties;
 import de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -32,12 +33,17 @@ import java.util.HashMap;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
 
 @Service
-public class KeycloackInvokerService {
+public class KeycloakInvokerService {
     @Autowired
     private KeycloakConfigProperties keycloakConfig;
     @Autowired
     @Qualifier("keycloackRestTemplate")
     private RestTemplate keycloackRestTemplate;
+
+    @Value("${keycloak-username}")
+    private String keycloakUsername;
+    @Value("${keycloak-password}")
+    private String keycloakPassword;
 
     public String obtainAccessToken() {
         HttpHeaders headers = new HttpHeaders();
@@ -45,8 +51,8 @@ public class KeycloackInvokerService {
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "password");
-        map.add("username", "aspsp");
-        map.add("password", "zzz");
+        map.add("username", keycloakUsername);
+        map.add("password", keycloakPassword);
         map.add("client_id", keycloakConfig.getResource());
         map.add("client_secret", keycloakConfig.getCredentials().getSecret());
 

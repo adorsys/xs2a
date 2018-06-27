@@ -72,7 +72,7 @@ public class AspspProfileService {
     /**
      * Reads current sca approach mode from ASPSP profile service
      *
-     * @return 'true' if current sca approach mode equals 'redirect', 'false' if not
+     * @return 'true' if current sca approach requires 'redirect', 'false' if not
      */
     public boolean isRedirectMode() {
         ScaApproach scaApproach = readScaApproach();
@@ -90,9 +90,14 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
     }
 
+    /**
+     * Read sca approach from ASPSP profile service
+     *
+     * @return Available SCA approach for tpp
+     */
     public ScaApproach readScaApproach() {
-        return ScaApproach.valueOf(aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody());
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
     }
 
     private List<String> readAvailablePaymentProducts() {
