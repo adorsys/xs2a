@@ -16,6 +16,11 @@ keycloak.cors=false
 ```
 Some of these parameters you can obtain after install and run keycloak server (see 'Keycloak run and setting instruction' section below)
 
+Credentials necessary for secure communication between xs2a and aspsp-mock services (Oauth2 password flow):
+   
+keycloak-username=aspsp
+keycloak-password=zzz
+
 To run XS2A-Server app from command line
 
 ```

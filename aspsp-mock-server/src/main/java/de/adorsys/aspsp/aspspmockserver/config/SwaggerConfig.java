@@ -69,23 +69,14 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
 
     private OAuth securitySchema() {
         GrantType grantType = new AuthorizationCodeGrantBuilder()
-                                  .tokenEndpoint(new TokenEndpoint(getRootTokenPath() + "/protocol/openid-connect/token",
-                                                                   "oauthtoken"
-                                  ))
-                                  .tokenRequestEndpoint(new TokenRequestEndpoint(getRootTokenPath() + "/protocol/openid-connect/auth",
-                                                                                 keycloakConfig.getResource(),
-                                                                                 keycloakConfig.getCredentials().getSecret()
-                                  ))
+                                  .tokenEndpoint(new TokenEndpoint(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", "oauthtoken"))
+                                  .tokenRequestEndpoint(new TokenRequestEndpoint(keycloakConfig.getRootPath() + "/protocol/openid-connect/auth", keycloakConfig.getResource(), keycloakConfig.getCredentials().getSecret()))
                                   .build();
         return new OAuthBuilder()
                    .name("oauth2")
                    .grantTypes(singletonList(grantType))
                    .scopes(scopes())
                    .build();
-    }
-
-    private String getRootTokenPath() {
-        return keycloakConfig.getAuthServerUrl() + "/realms/" + keycloakConfig.getRealm();
     }
 
     private List<AuthorizationScope> scopes() {

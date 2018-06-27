@@ -16,8 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.config.rest;
 
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.exception.RestException;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -27,15 +25,11 @@ import java.io.IOException;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
-import static org.springframework.util.StringUtils.isEmpty;
 
 public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
     private String bearerToken;
 
     public BearerTokenInterceptor(String bearerToken) {
-        if(isEmpty(bearerToken)){
-            throw new RestException(MessageErrorCode.UNAUTHORIZED);
-        }
         this.bearerToken = bearerToken;
     }
 

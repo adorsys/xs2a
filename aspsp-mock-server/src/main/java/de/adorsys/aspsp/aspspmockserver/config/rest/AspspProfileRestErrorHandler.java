@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config;
+package de.adorsys.aspsp.aspspmockserver.config.rest;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 
-@Data
-@Component
-@ConfigurationProperties(prefix = "keycloak")
-public class KeycloakConfigProperties {
-    private String resource;
-    private Credentials credentials;
-    private String realm;
-    private String authServerUrl;
+import java.io.IOException;
 
-    @Data
-    public static class Credentials {
-        private String secret;
-    }
+@Slf4j
+public class AspspProfileRestErrorHandler extends DefaultResponseErrorHandler {
 
-    public String getRootPath() {
-        return authServerUrl + "/realms/" + realm;
+    @Override
+    public void handleError(ClientHttpResponse response) throws IOException {
+        log.info("Aspsp profile exception, status: {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
     }
 }

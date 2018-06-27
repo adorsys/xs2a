@@ -33,4 +33,8 @@ public class KeycloakConfigProperties {
     public static class Credentials {
         private String secret;
     }
+
+    public String getRootPath() {
+        return authServerUrl + "/realms/" + realm;
+    }
 }
