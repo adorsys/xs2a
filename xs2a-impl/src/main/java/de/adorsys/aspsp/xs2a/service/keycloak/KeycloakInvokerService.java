@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.keycloak;
 
 import de.adorsys.aspsp.xs2a.config.KeycloakConfigProperties;
 import de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant;

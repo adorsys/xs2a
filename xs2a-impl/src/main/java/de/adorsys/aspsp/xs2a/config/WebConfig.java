@@ -25,7 +25,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
