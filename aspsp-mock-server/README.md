@@ -80,3 +80,9 @@ spring.mail.properties.mail.smtp.auth=
 spring.mail.properties.mail.smtp.starttls.enable=
 
 ```
+## ASPSP-profile configuration
+
+ASPSP-profile is a module where ASPSP stores information about certain paramethers for TPP, e.g. SCA-approach, supported payment products and payment types etc.
+To specify the ASPSP-profile url, change `aspsp-profile.baseurl` property in `application.properties` file to your ASPSP-profile base url. The example given below is default url for xs2a project:
+
+```aspsp-profile.baseurl=http://localhost:48080/api/v1```

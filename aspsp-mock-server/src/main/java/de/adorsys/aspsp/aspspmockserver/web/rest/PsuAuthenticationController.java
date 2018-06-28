@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web;
+package de.adorsys.aspsp.aspspmockserver.web.rest;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuAuthenticationService;
 import io.swagger.annotations.*;
@@ -26,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,7 +41,7 @@ public class PsuAuthenticationController {
         @ApiResponse(code = 400, message = "Bad Request")})
     @PostMapping(path = "/{psu-id}")
     public ResponseEntity<String> generateAndSendTan(HttpServletRequest request,
-                                                     @PathVariable("psu-id") String psuId) throws Exception {
+                                                     @PathVariable("psu-id") String psuId) throws URISyntaxException {
         //TODO change to correct url when tan validation page will be created according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/99
         String uriString = getUriString(request);
 
@@ -56,7 +57,7 @@ public class PsuAuthenticationController {
     @GetMapping(path = "/{psu-id}/{tan}")
     public ResponseEntity<String> validatePsuTan(HttpServletRequest request,
                                                  @PathVariable("psu-id") String psuId,
-                                                 @PathVariable("tan") int tanNumber) throws Exception {
+                                                 @PathVariable("tan") int tanNumber) throws URISyntaxException {
         //TODO change to correct url when consent validation page will be created according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/99
         String uriString = getUriString(request);
 

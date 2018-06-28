@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,11 +38,10 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class AspspProfileControllerTest {
-    private final int FREQUENCY_PER_DAY = 5;
-    private final boolean COMBINED_SERVICE_INDICATOR = false;
-    private final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
-    private final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
-    private final String SCA_APPROACH = "redirect";
+    private static final int FREQUENCY_PER_DAY = 5;
+    private static final boolean COMBINED_SERVICE_INDICATOR = false;
+    private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
+    private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -63,7 +63,7 @@ public class AspspProfileControllerTest {
         when(aspspProfileService.getAvailablePaymentTypes())
             .thenReturn(AVAILABLE_PAYMENT_TYPES);
         when(aspspProfileService.getScaApproach())
-            .thenReturn(SCA_APPROACH);
+            .thenReturn(ScaApproach.REDIRECT);
     }
 
     @Test
@@ -124,11 +124,11 @@ public class AspspProfileControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<String> actualResponse = aspspProfileController.getScaApproach();
+        ResponseEntity<ScaApproach> actualResponse = aspspProfileController.getScaApproach();
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(SCA_APPROACH);
+        assertThat(actualResponse.getBody()).isEqualTo(ScaApproach.REDIRECT);
     }
 
     private static List<String> getPaymentProducts() {

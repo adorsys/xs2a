@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -30,47 +31,48 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-profile")
-@Api(value = "Aspsp profile", tags = "Aspsp profile", description = "Provides access to aspsp profile")
+@Api(value = "Aspsp profile", tags = "Aspsp profile", description = "Provides access to aspsp profile",
+     authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API") })})
 public class AspspProfileController {
     private final AspspProfileService aspspProfileService;
 
     @GetMapping(path = "/frequency-per-day")
-    @ApiOperation(value = "Reads frequency per day", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads frequency per day")
     @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<Integer> getFrequencyPerDay() {
         return new ResponseEntity<>(aspspProfileService.getFrequencyPerDay(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/combined-service-indicator")
-    @ApiOperation(value = "Reads combined service indicator value", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads combined service indicator value")
     @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<Boolean> getCombinedServiceIndicator() {
         return new ResponseEntity<>(aspspProfileService.isCombinedServiceIndicator(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/available-payment-products")
-    @ApiOperation(value = "Reads list of available payment products", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads list of available payment products")
     @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<List<String>> getAvailablePaymentProducts() {
         return new ResponseEntity<>(aspspProfileService.getAvailablePaymentProducts(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/available-payment-types")
-    @ApiOperation(value = "Reads list of available payment types ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads list of available payment types ")
     @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<List<String>> getAvailablePaymentTypes() {
         return new ResponseEntity<>(aspspProfileService.getAvailablePaymentTypes(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/sca-approach")
-    @ApiOperation(value = "Reads sca approach value", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponse(code = 200, message = "Ok", response = String.class)
-    public ResponseEntity<String> getScaApproach() {
+    @ApiOperation(value = "Reads sca approach value")
+    @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
+    public ResponseEntity<ScaApproach> getScaApproach() {
         return new ResponseEntity<>(aspspProfileService.getScaApproach(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/tpp-signature-required")
-    @ApiOperation(value = "Reads signature of the request by the TPP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Reads signature of the request by the TPP")
     @ApiResponse(code = 200, message = "Ok", response = String.class)
     public ResponseEntity<Boolean> getTppSignatureRequired() {
         return new ResponseEntity<>(aspspProfileService.isTppSignatureRequired(), HttpStatus.OK);

@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.config;
 
 
 import de.adorsys.aspsp.xs2a.domain.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +32,7 @@ import java.util.List;
 @PropertySource("classpath:bank_profile.yml")
 @ConfigurationProperties(prefix = "setting")
 public class ProfileConfiguration {
-    private final boolean isDelayedPaymentTypeAllowedAlways = true;
+    private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
     /**
      * This field indicates the requested maximum frequency for an access per day
@@ -56,7 +57,7 @@ public class ProfileConfiguration {
     /**
      * SCA Approach supported by ASPSP
      */
-    private String scaApproach;
+    private ScaApproach scaApproach;
 
     /*
      * A signature of the request by the TPP on application level.

@@ -17,9 +17,15 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @ApiModel(description = "MessageErrorCode", value = "Message error codes and related http response codes.")
 public enum MessageErrorCode {
@@ -78,6 +84,13 @@ public enum MessageErrorCode {
     INTERNAL_SERVER_ERROR(500),
     UNAUTHORIZED(401);
 
+    private static Map<String, MessageErrorCode> container = new HashMap();
+
+    static {
+        Arrays.stream(values())
+            .forEach(errorCode -> container.put(errorCode.getName(), errorCode));
+    }
+
     @ApiModelProperty(value = "code", example = "400")
     private int code;
 
@@ -93,5 +106,10 @@ public enum MessageErrorCode {
     @JsonValue
     public String getName() {
         return this.name();
+    }
+
+    @JsonIgnore
+    public static Optional<MessageErrorCode> getByName(String name){
+        return Optional.ofNullable(container.get(name));
     }
 }

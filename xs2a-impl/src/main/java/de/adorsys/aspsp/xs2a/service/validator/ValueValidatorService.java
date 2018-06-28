@@ -44,7 +44,7 @@ public class ValueValidatorService {
                                         .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
                                         .collect(Collectors.toList());
 
-        if (violations.size() > 0) {
+        if (!violations.isEmpty()) {
             LOGGER.debug(violations.toString());
             throw new ValidationException(FORMAT_ERROR.name() + ": " + violations);
         }

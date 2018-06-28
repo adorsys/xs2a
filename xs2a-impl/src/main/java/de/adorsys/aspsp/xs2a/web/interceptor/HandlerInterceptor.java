@@ -18,25 +18,19 @@ package de.adorsys.aspsp.xs2a.web.interceptor;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-
+@Slf4j
 @Component
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HandlerInterceptor.class);
     private final RequestValidatorService requestValidatorService;
 
     @Autowired
@@ -45,35 +39,28 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         return isRequestValidAndSendRespIfError(request, response, handler);
     }
 
-    private boolean isRequestValidAndSendRespIfError(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    private boolean isRequestValidAndSendRespIfError(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         Map<String, String> violationsMap = requestValidatorService.getRequestViolationMap(request, handler);
 
         if (violationsMap.isEmpty()) {
             return true;
         } else {
-            MessageErrorCode errorCode = getActualMessageCode(violationsMap.keySet());
 
-            List<String> violations = violationsMap.entrySet().stream()
-                                                .map(entry -> entry.getKey() + " : " + entry.getValue())
-                                                .collect(Collectors.toList());
+            Map.Entry<String, String> firstError = violationsMap.entrySet().iterator().next();
+            MessageErrorCode messageCode = getActualMessageErrorCode(firstError.getKey());
 
-            LOGGER.debug(violations.toString());
-            response.sendError(errorCode.getCode(), errorCode.name() + ": " + violations.toString());
+            log.debug("Handled error {}", messageCode.name() + ": " + firstError.getValue());
+            response.sendError(messageCode.getCode(), messageCode.name() + ": " + firstError.getValue());
             return false;
         }
     }
 
-    private MessageErrorCode getActualMessageCode(Set<String> errors) {
-        List<MessageErrorCode> actualMessages = Arrays.stream(MessageErrorCode.values())
-                                               .filter(mess -> errors.contains(mess.getName()))
-                                               .collect(Collectors.toList());
-
-        return actualMessages.isEmpty()
-                   ? FORMAT_ERROR
-                   : actualMessages.get(0); // TODO make prioritize for getting message code;
+    private MessageErrorCode getActualMessageErrorCode(String error) {
+        return MessageErrorCode.getByName(error)
+                   .orElse(MessageErrorCode.FORMAT_ERROR);
     }
 }
