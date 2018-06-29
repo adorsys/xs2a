@@ -62,11 +62,14 @@ public class PaymentMapper {
                        spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
                        spiSinglePayments.setInstructedAmount(accountMapper.mapToSpiAmount(paymentRe.getInstructedAmount()));
                        spiSinglePayments.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
-                       spiSinglePayments.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
+
+                       spiSinglePayments.setCreditorAgent(Optional.ofNullable(paymentRe.getCreditorAgent())
+                                                              .map(BICFI::getCode).orElse(""));
                        spiSinglePayments.setCreditorName(paymentRe.getCreditorName());
                        spiSinglePayments.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
                        spiSinglePayments.setUltimateCreditor(paymentRe.getUltimateCreditor());
-                       spiSinglePayments.setPurposeCode(paymentRe.getPurposeCode().getCode());
+                       spiSinglePayments.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
+                                                              .map(PurposeCode::getCode).orElse(""));
                        spiSinglePayments.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
                        spiSinglePayments.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayments.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
@@ -182,11 +185,13 @@ public class PaymentMapper {
                        pisSinglePayment.setUltimateDebtor(payReq.getUltimateDebtor());
                        pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(payReq.getInstructedAmount()));
                        pisSinglePayment.setCreditorAccount(accountMapper.mapToPisAccountReference(payReq.getCreditorAccount()));
-                       pisSinglePayment.setCreditorAgent(payReq.getCreditorAgent().getCode());
+                       pisSinglePayment.setCreditorAgent(Optional.ofNullable(payReq.getCreditorAgent())
+                                                             .map(BICFI::getCode).orElse(""));
                        pisSinglePayment.setCreditorName(payReq.getCreditorName());
                        pisSinglePayment.setCreditorAddress(mapToPisAddress(payReq.getCreditorAddress()));
                        pisSinglePayment.setUltimateCreditor(payReq.getUltimateCreditor());
-                       pisSinglePayment.setPurposeCode(payReq.getPurposeCode().getCode());
+                       pisSinglePayment.setPurposeCode(Optional.ofNullable(payReq.getPurposeCode())
+                                                           .map(PurposeCode::getCode).orElse(""));
                        pisSinglePayment.setRemittanceInformationUnstructured(payReq.getRemittanceInformationUnstructured());
                        pisSinglePayment.setRemittanceInformationStructured(mapToPisRemittance(payReq.getRemittanceInformationStructured()));
                        pisSinglePayment.setRequestedExecutionDate(payReq.getRequestedExecutionDate());

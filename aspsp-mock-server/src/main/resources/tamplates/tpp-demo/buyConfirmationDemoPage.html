@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright 2018-2018 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- TODO delete after creation original 'Tpp Demo app' https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/156 -->
+<html lang="en">
+<head>
+    <title>Buy Confirmation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="libs/jquery-3.3.1.js" type="text/javascript"></script>
+
+    <script src="js/paymentInitiation.js" type="text/javascript"></script>
+    <script src="js/requestService.js" type="text/javascript"></script>
+
+</head>
+<body>
+<div>
+    <label>Do you want buy now: </label><br><br>
+
+    <p>ProductName</p>
+    <input type="text" name="productName" id="productName" value="Stuff">
+    <p>Amount</p>
+    <input type="number" name="amount" id="amount" value="201.4">
+    <p>Currency</p>
+    <input type="text" name="currency" id="currency" value="EUR">
+
+    <p>===============INFO==============</p>
+    <p> debtorName</p>
+    <input type="text" name="debtorName" id="debtorName" value="Mueller">
+    <p> debtorIban</p>
+    <input type="text" name="debtorIban" id="debtorIban" value="DE89370400440532013002">
+    <p>debtorCurrency</p>
+    <input type="text" name="debtorCurrency" id="debtorCurrency" value="EUR">
+    <p>creditorName</p>
+    <input type="text" name="creditorName" id="creditorName" value="stuff.com">
+    <p>creditorIban</p>
+    <input type="text" name="creditorIban" id="creditorIban" value="DE89370400440532013000">
+    <p>creditorCurrency</p>
+    <input type="text" name="creditorCurrency" id="creditorCurrency" value="EUR">
+
+    <br><br>
+    <button onclick="getPaymentRedirectLink();">BUY NOW</button>
+</div>
+
+</body>
+</html>
