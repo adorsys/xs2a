@@ -29,6 +29,5 @@ function getPaymentRedirectLink() {
 }
 
 function redirectToPage(url) {
-    url = "https://www.google.com.ua/";
     window.location = url;
 }
