@@ -20,7 +20,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class PaymentConfirmation {
     private String psuId;
     private String consentId;
