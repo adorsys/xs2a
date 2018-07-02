@@ -34,10 +34,23 @@ public class TanConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
+    private final AccountService accountService;
+
+    public boolean generateAndSendTanForPsuByIban(String iban) {
+        return accountService.getPsuIdByIban(iban)
+                   .map(this::generateAndSendTanForPsu)
+                   .orElse(false);
+    }
 
     public boolean generateAndSendTanForPsu(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(psu -> createAndSendTan(psu.getId(), psu.getEmail()))
+                   .orElse(false);
+    }
+
+    public boolean isTanNumberValidByIban(String iban, String tanNumber) {
+        return accountService.getPsuIdByIban(iban)
+                   .map(psuId-> isPsuTanNumberValid(psuId, tanNumber))
                    .orElse(false);
     }
 

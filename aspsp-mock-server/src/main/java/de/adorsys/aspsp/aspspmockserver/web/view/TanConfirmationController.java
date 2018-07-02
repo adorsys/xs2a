@@ -31,21 +31,23 @@ import org.springframework.web.servlet.ModelAndView;
 public class TanConfirmationController {
     private final TanConfirmationService tanConfirmationService;
 
-    @GetMapping(path = "/{psu-id}/{consent-id}")
+
+    @GetMapping(path = "/{iban}/{consent-id}")
     @ApiOperation(value = "Displays content of email TAN confirmation page")
-    public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId,
+    public ModelAndView showConfirmationPage(@PathVariable("iban") String iban,
                                              @PathVariable("consent-id") String consentId) {
-        return new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(psuId, consentId));
+
+        return tanConfirmationService.generateAndSendTanForPsuByIban(iban)
+                   ? new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(iban, consentId))
+                   : new ModelAndView("tanConfirmationError");
     }
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView confirmTan(
         @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
-        String psuId = paymentConfirmation.getPsuId();
-        tanConfirmationService.generateAndSendTanForPsu(psuId);
 
-        return tanConfirmationService.isPsuTanNumberValid(psuId, paymentConfirmation.getTanNumber())
+        return tanConfirmationService.isTanNumberValidByIban(paymentConfirmation.getIban(), paymentConfirmation.getTanNumber())
                    ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", paymentConfirmation)
                    : new ModelAndView("tanConfirmationError");
     }
