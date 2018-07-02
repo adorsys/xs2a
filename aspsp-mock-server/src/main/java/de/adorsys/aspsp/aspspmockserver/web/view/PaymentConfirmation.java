@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.aspspmockserver.web.view;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class PaymentConfirmation {
