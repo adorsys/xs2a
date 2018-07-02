@@ -1,4 +1,4 @@
-# A reference implementation of Identity provider using [Keycloak](https://www.keycloack.org)
+# A reference implementation of Identity provider using [Keycloak](https://www.keycloak.org)
 
 This module extends Keycloak with several features required by PSD2 and XS2A specifications:
 * openid-connect dynamic client registration
