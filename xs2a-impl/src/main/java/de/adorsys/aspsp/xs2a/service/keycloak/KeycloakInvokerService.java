@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.keycloak;
 
 import de.adorsys.aspsp.xs2a.config.KeycloakConfigProperties;
 import de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant;
@@ -37,8 +37,8 @@ public class KeycloakInvokerService {
     @Autowired
     private KeycloakConfigProperties keycloakConfig;
     @Autowired
-    @Qualifier("keycloackRestTemplate")
-    private RestTemplate keycloackRestTemplate;
+    @Qualifier("keycloakRestTemplate")
+    private RestTemplate keycloakRestTemplate;
 
     @Value("${keycloak-username}")
     private String keycloakUsername;
@@ -56,7 +56,7 @@ public class KeycloakInvokerService {
         map.add("client_id", keycloakConfig.getResource());
         map.add("client_secret", keycloakConfig.getCredentials().getSecret());
 
-        ResponseEntity<HashMap<String, String>> response = keycloackRestTemplate.exchange(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", HttpMethod.POST, new HttpEntity<>(map, headers),
+        ResponseEntity<HashMap<String, String>> response = keycloakRestTemplate.exchange(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", HttpMethod.POST, new HttpEntity<>(map, headers),
             new ParameterizedTypeReference<HashMap<String, String>>() {
             });
 
