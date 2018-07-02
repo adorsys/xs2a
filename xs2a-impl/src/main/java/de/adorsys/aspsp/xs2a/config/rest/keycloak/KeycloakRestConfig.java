@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.config.rest.keycloak;
 
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -58,6 +59,7 @@ public class KeycloakRestConfig {
         SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
         CloseableHttpClient httpClient = HttpClients.custom()
                                              .setSSLSocketFactory(csf)
+                                             .setSSLHostnameVerifier(new NoopHostnameVerifier())
                                              .build();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setHttpClient(httpClient);
