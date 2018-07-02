@@ -1,57 +1,77 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.keycloak.extension.clientregistration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.representations.idm.ClientRepresentation;
+import org.keycloak.representations.oidc.OIDCClientRepresentation;
+import org.keycloak.services.ServicesLogger;
+import org.keycloak.services.clientregistration.ClientRegistrationException;
+import org.keycloak.services.clientregistration.oidc.DescriptionConverter;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.representations.idm.ClientRepresentation;
-import org.keycloak.representations.oidc.OIDCClientRepresentation;
-import org.keycloak.services.clientregistration.ClientRegistrationException;
-import org.keycloak.services.clientregistration.oidc.DescriptionConverter;
+class DescriptionConverterExt {
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+    static ClientRepresentation toInternal(KeycloakSession session,
+                                           OIDCClientRepresentationExtended clientOIDCext
+                                          ) throws ClientRegistrationException {
 
-public class DescriptionConverterExt {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("software_statement", clientOIDCext.getSoftwareStatement());
 
-	public static ClientRepresentation toInternal(KeycloakSession session,
-			OIDCClientRepresentationExtended clientOIDCext) throws ClientRegistrationException {
+        ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDCext);
+        client.setAttributes(attributes);
 
-		Map<String, String> attributes = new HashMap<>();
-		attributes.put("software_statement", clientOIDCext.getSoftwareStatement());
+        return client;
 
-		OIDCClientRepresentation clientOIDC = (OIDCClientRepresentation) clientOIDCext;
+    }
 
-		ClientRepresentation client = DescriptionConverter.toInternal(session, clientOIDC);
-		client.setAttributes(attributes);
+    static OIDCClientRepresentationExtended toExternalResponse(KeycloakSession session,
+                                                               ClientRepresentation client, URI uri
+                                                              ) {
 
-		return client;
+        String softStatement = client.getAttributes().get("software_statement");
+        OIDCClientRepresentation clientRep = DescriptionConverter.toExternalResponse(session, client, uri);
 
-	}
+        OIDCClientRepresentationExtended response = new OIDCClientRepresentationExtended();
 
-	public static OIDCClientRepresentationExtended toExternalResponse(KeycloakSession session,
-			ClientRepresentation client, URI uri) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
 
-		String softStatement = client.getAttributes().get("software_statement");
-		OIDCClientRepresentation clientRep = DescriptionConverter.toExternalResponse(session, client, uri);
+            String clientRepStr = mapper.writeValueAsString(clientRep);
+            response = mapper.readValue(clientRepStr, OIDCClientRepresentationExtended.class);
 
-		OIDCClientRepresentationExtended response = new OIDCClientRepresentationExtended();
+            response.setSoftwareStatement(softStatement);
 
-		ObjectMapper mapper = new ObjectMapper();
-		try {
+            return response;
 
-			String clientRepStr = mapper.writeValueAsString(clientRep);
-			response = mapper.readValue(clientRepStr, OIDCClientRepresentationExtended.class);
-
-			response.setSoftwareStatement(softStatement);
-
-			return response;
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return response;
-	}
+        } catch (IOException e) {
+            ServicesLogger.LOGGER.warn(
+                "Failed to convert ClientRepresentation to OIDCClientRepresentationExtended. Exception: {}",
+                e.getMessage(),
+                e
+                                      );
+        }
+        return response;
+    }
 
 }

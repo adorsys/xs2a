@@ -52,11 +52,10 @@ public class RequestValidatorService {
     @Autowired
     private AspspProfileService aspspProfileService;
 
-    final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
-    static HashMap<Object, PisPaymentType> classMap;
+    private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
+    private final static Map<Object, PisPaymentType> classMap = new HashMap<>();
 
     static {
-        classMap = new HashMap<>();
         classMap.put(PaymentInitiationController.class, PisPaymentType.FUTURE_DATED);
         classMap.put(BulkPaymentInitiationController.class, PisPaymentType.BULK);
         classMap.put(PeriodicPaymentsController.class, PisPaymentType.PERIODIC);
@@ -71,7 +70,7 @@ public class RequestValidatorService {
         return violationMap;
     }
 
-    public Map<String, String> getRequestParametersViolationMap(HttpServletRequest request, Object handler) {
+    private Map<String, String> getRequestParametersViolationMap(HttpServletRequest request, Object handler) {
 
         Map<String, String> requestParameterMap = getRequestParametersMap(request);
 
@@ -84,7 +83,7 @@ public class RequestValidatorService {
         return getViolationMessagesMap(validator.validate(parameterImpl));
     }
 
-    public Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
+    Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
         requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
         requestPathViolationMap.putAll(getPaymentTypeViolationMap(handler));
@@ -92,20 +91,24 @@ public class RequestValidatorService {
         return requestPathViolationMap;
     }
 
-    public Map<String, String> getPaymentTypeViolationMap(Object handler) {
+    Map<String, String> getPaymentTypeViolationMap(Object handler) {
         return Optional.ofNullable(classMap.get(((HandlerMethod) handler).getBeanType()))
                    .map(this::getViolationMapForPaymentType)
                    .orElse(Collections.emptyMap());
     }
 
-    public Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
+    Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
 
         Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
 
-        RequestHeader headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap, ((HandlerMethod) handler).getBeanType());
+        RequestHeader headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap,
+                                                                 ((HandlerMethod) handler).getBeanType()
+                                                                );
 
         if (headerImpl instanceof ErrorMessageHeaderImpl) {
-            return Collections.singletonMap("Wrong header arguments: ", ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage());
+            return Collections.singletonMap("Wrong header arguments: ",
+                                            ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
+                                           );
         }
 
         return getViolationMessagesMap(validator.validate(headerImpl));
@@ -136,6 +139,7 @@ public class RequestValidatorService {
     }
 
     private Map<String, String> checkPaymentProductByRequest(HttpServletRequest request) {
+        //noinspection unchecked
         Map<String, String> pathVariableMap = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 
         return Optional.ofNullable(pathVariableMap)

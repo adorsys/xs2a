@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import lombok.Value;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 
@@ -28,9 +29,10 @@ public class AccountHolder {
     private final Map<String, Set<AccountAccess>> accountAccesses = new HashMap<>();
 
     public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
-        info = Optional.ofNullable(info).orElse(Collections.emptyList());
-        for (AccountInfo a : info) {
-            addAccountAccess(a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess);
+        if (CollectionUtils.isNotEmpty(info)) {
+            for (AccountInfo a : info) {
+                addAccountAccess(a.getIban(), getCurrencyByString(a.getCurrency()), typeAccess);
+            }
         }
     }
 

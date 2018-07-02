@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuAuthenticationService;
+import de.adorsys.aspsp.aspspmockserver.web.rest.PsuAuthenticationController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

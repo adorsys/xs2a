@@ -55,7 +55,7 @@ public class AccountService {
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final AisConsentService aisConsentService;
-    private final String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
+    private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -78,7 +78,7 @@ public class AccountService {
                                                                                .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
                                                                          : ResponseObject.<Map<String, List<AccountDetails>>>builder()
                                                                                .body(Collections.singletonMap("accountList", accountDetails)).build();
-        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.ACCOUNT, response);
         return response;
     }
 
@@ -116,7 +116,7 @@ public class AccountService {
             builder = builder
                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
-        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
+        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
         return builder.build();
     }
 
@@ -145,7 +145,7 @@ public class AccountService {
                                                       : ResponseObject.<List<Balances>>builder()
                                                             .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(tppId, consentId, false, TypeAccess.BALANCE, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, false, TypeAccess.BALANCE, response);
         return response;
     }
 
@@ -187,7 +187,7 @@ public class AccountService {
                                                      : ResponseObject.<AccountReport>builder()
                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(tppId, consentId, withBalance, TypeAccess.TRANSACTION, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.TRANSACTION, response);
         return response;
     }
 

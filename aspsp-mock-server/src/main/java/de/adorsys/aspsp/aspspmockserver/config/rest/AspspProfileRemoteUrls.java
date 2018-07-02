@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config;
+package de.adorsys.aspsp.aspspmockserver.config.rest;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Data
 @Component
-@ConfigurationProperties(prefix = "keycloak")
-public class KeycloakConfigProperties {
-    private String resource;
-    private Credentials credentials;
-    private String realm;
-    private String authServerUrl;
+public class AspspProfileRemoteUrls {
 
-    @Data
-    public static class Credentials {
-        private String secret;
-    }
+    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    private String aspspProfileBaseUrl;
 
-    public String getRootPath() {
-        return authServerUrl + "/realms/" + realm;
+    /**
+     * Returns URL-string in order to get sca approach
+     *
+     * @return String
+     */
+    public String getScaApproach() {
+        return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
     }
 }
