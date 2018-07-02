@@ -74,8 +74,15 @@ function getPaymentInitiationRequestJson(productNumber) {
     formObject.creditorName = $("#creditorName").val();
     formObject.ultimateCreditor = $("#creditorName").val();
 
-    formObject.requestedExecutionDate = '2017-01-01';
-    formObject.requestedExecutionTime = '2017-10-25T15:30:35.035';
+    var dateTime = new Date();
+    dateTime.setDate(dateTime.getDate() + 1);
+    var formattedDateTimeString = dateTime.toISOString();
+
+    var formattedDate = formattedDateTimeString.substring(10, 0);
+    var formattedDateTime = formattedDateTimeString.substring(23, 0);
+
+    formObject.requestedExecutionDate = formattedDate;
+    formObject.requestedExecutionTime = formattedDateTime;
 
     return JSON.stringify(formObject);
 }
@@ -93,5 +100,11 @@ function getRequestHeaders() {
 }
 
 function getXs2aUrl() {
-    return $("#xs2a_url").val();
+    if (document.domain === "localhost") {
+        return "http://localhost:8080/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true";
+    } else if (document.domain === "xs2a.integ.cloud.adorsys.de") {
+        return "https://xs2a.integ.cloud.adorsys.de/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true";
+    } else {
+        return "";
+    }
 }
