@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class PsuAuthenticationService {
+public class TanConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
@@ -73,7 +73,7 @@ public class PsuAuthenticationService {
 
     private boolean sendTanNumberOnEmail(String email, String tanNumber) {
         SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setSubject("TAN for authentication to confirm your payment");
+        mail.setSubject("Your TAN for payment confirmation");
         mail.setFrom(email);
         mail.setTo(email);
         mail.setText("Your TAN number is " + tanNumber);

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.web.view;
 
-import de.adorsys.aspsp.aspspmockserver.service.PsuAuthenticationService;
+import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(path = "/view/payment/confirmation")
 @Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class TanConfirmationController {
-    private final PsuAuthenticationService psuAuthenticationService;
+    private final TanConfirmationService tanConfirmationService;
 
     @GetMapping(path = "/{psu-id}/{consent-id}")
     @ApiOperation(value = "Displays content of email TAN confirmation page")
@@ -43,9 +43,9 @@ public class TanConfirmationController {
     public ModelAndView confirmTan(
         @ModelAttribute("tanConfirmation") TanConfirmation tanConfirmation) {
         String psuId = tanConfirmation.getPaymentConfirmation().getPsuId();
-        psuAuthenticationService.generateAndSendTanForPsu(psuId);
+        tanConfirmationService.generateAndSendTanForPsu(psuId);
 
-        return psuAuthenticationService.isPsuTanNumberValid(psuId, tanConfirmation.getTanNumber())
+        return tanConfirmationService.isPsuTanNumberValid(psuId, tanConfirmation.getTanNumber())
                    ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", tanConfirmation.getPaymentConfirmation())
                    : new ModelAndView("tanConfirmationError");
     }

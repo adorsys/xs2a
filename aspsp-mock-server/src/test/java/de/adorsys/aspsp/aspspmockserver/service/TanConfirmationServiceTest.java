@@ -29,9 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PsuAuthenticationServiceTest {
+public class TanConfirmationServiceTest {
     private static final String PSU_ID_1 = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String PSU_ID_2 = "ad918c89-4346-4f16-b5c8-d781b040200c";
     private static final String WRONG_PSU_ID = "Wrong psu id";
@@ -49,7 +46,7 @@ public class PsuAuthenticationServiceTest {
     private static final String WRONG_TAN_NUMBER = "wrong tan number";
 
     @Autowired
-    PsuAuthenticationService psuAuthenticationService;
+    TanConfirmationService tanConfirmationService;
 
     @MockBean
     private TanRepository tanRepository;
@@ -75,7 +72,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void generateTanForPsu_Failure() {
         //When
-        boolean actualResult = psuAuthenticationService.generateAndSendTanForPsu(WRONG_PSU_ID);
+        boolean actualResult = tanConfirmationService.generateAndSendTanForPsu(WRONG_PSU_ID);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -84,7 +81,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_Success() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER);
+        boolean actualResult = tanConfirmationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER);
 
         //Then
         assertThat(actualResult).isTrue();
@@ -93,7 +90,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_Failure() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+        boolean actualResult = tanConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -102,7 +99,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusValid() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER);
+        boolean actualResult = tanConfirmationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -111,7 +108,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusInvalid() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+        boolean actualResult = tanConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
 
         //Then
         assertThat(actualResult).isFalse();
