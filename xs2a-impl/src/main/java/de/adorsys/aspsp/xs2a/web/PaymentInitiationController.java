@@ -75,7 +75,7 @@ public class PaymentInitiationController {
     public ResponseEntity<TransactionStatus> getPaymentInitiationStatusById(
     @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
     @PathVariable("payment-product") String paymentProduct,
-    @ApiParam(name = "consentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
+    @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
     @PathVariable("paymentId") String paymentId) {
         return responseMapper.ok(paymentService.getPaymentStatusById(paymentId, paymentProduct));
     }

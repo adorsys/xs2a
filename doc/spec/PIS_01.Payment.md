@@ -66,7 +66,7 @@ The following usage of abbreviations in the Location and Usage columns is define
 | TPP NationalCompetent Authority     |                                      |      |       |        |      |      x      |     m     |            |     m    |           |     m     |            |
 | Transaction Identification          | TPP-Transaction-ID (unique ID of TPP)|      |       |    x   |      |             |     m     |            |     m    |           |     m     |            |
 | Request Identification              | TPP-Request-ID                       |      |       |    x   |      |             |     m     |            |     m    |           |     m     |            |
-| Resource ID                         | consentId                            |   x  |       |        |   x  |             |           |      m     |     m    |           |     m     |            |
+| Resource ID                         | paymentId                            |   x  |       |        |   x  |             |           |      m     |     m    |           |     m     |            |
 | Access Token (fromoptional OAuth 2) | Authorization Bearer                 |      |       |    x   |      |             |     c     |            |     c    |           |     c     |            |
 | TPP Signing                         | TPP-Certificate                      |      |       |    x   |      |             |     c     |            |     c    |           |     c     |            |
 | Certificate                         |                                      |      |       |    x   |      |             |     c     |            |     c    |           |     c     |            |
@@ -205,7 +205,7 @@ The Location field is used as link to the created resource. No other specific re
 Attribute | Type  | Condition | Description |
 ------- | ---------------- |  ---------  |  ---------
 | transactionStatus | Transaction status  |	Mandatory |	The values defined in the table “Transaction Status” (see "DICT_01_01 Transaction status" in [Dictionary: Business_objects](DICT_01.Business_objects.md) ) might be used. |
-| consentId | String | Mandatory | Resource identification of the generated payment initiation resource. |
+| paymentId | String | Mandatory | Resource identification of the generated payment initiation resource. |
 | transactionFees | Amount | Optional | Can be used by the ASPSP to transport transaction fees relevant for the underlying payments. |
 | transactionFeeIndicator | Boolean | Optional | If equals "true" the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU. <br><br> If equals "false" the transaction will not involve additional specific transaction costs to the PSU. |
 | scaMethods | Array of authentication objects |	Conditional |	This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods. Depending on the risk management of the ASPSP this choice might be offered before or after the PSU has been identified with the first relevant factor, or if an access token is transported. If this data element is contained, then there is also an hyperlink of type "select_authentication_methods" contained in the response body. These methods shall be presented towards the PSU for selection by the TPP. |
@@ -245,7 +245,7 @@ Attribute | Type  | Condition | Description |
 
     {
      "transactionStatus" : "Received",
-     "consentId": "1234-wertiq-983",
+     "paymentId": "1234-wertiq-983",
      “_links" {
         "redirect" : "www.testbank.com/asdfasdfasdf",
         "self" : "/v1/payments/sepa-credit-transfers/1234-wertiq-983"
@@ -260,7 +260,7 @@ Attribute | Type  | Condition | Description |
 
     {
      "transactionStatus" : "Received",
-     "consentId": "1234-wertiq-983",
+     "paymentId": "1234-wertiq-983",
      “_links" {
         "updatePsuIdentification" : "“/v1/payments/sepa-credit-transfers/1234-wertiq-983",
         "self" : "/v1/payments/sepa-credit-transfers/1234-wertiq-983"
@@ -361,7 +361,7 @@ The formats of the Payment Initiation Response resp. the subsequent transaction 
 ## PIS_01_04 Get Status Request
 
 ### Call
-    GET /v1/payments/{payment-product}/{consentId}/status
+    GET /v1/payments/{payment-product}/{paymentId}/status
 
 Can check the status of a payment initiation.
 
@@ -370,7 +370,7 @@ Can check the status of a payment initiation.
 | Attribute | Type | Description |
 |-----------|------|-------------|
 | payment-product |  String  | Payment product of the related payment. |
-| consentId |  String  | Resource Identification of the related payment. |
+| paymentId |  String  | Resource Identification of the related payment. |
 
 
 
