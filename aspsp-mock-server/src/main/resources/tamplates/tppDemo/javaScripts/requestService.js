@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-function sendPaymentRequestAndGetResponse() {
+function sendPaymentRequestAndGetResponse(productNumber) {
     var paymentResponse = new Object();
 
-    var settings = getPaymentAjaxSettings();
+    var settings = getPaymentAjaxSettings(productNumber);
     $.ajax(settings)
         .done(function (resp) {
             console.log("complete : " + JSON.stringify(resp));
@@ -32,9 +32,9 @@ function sendPaymentRequestAndGetResponse() {
     return paymentResponse;
 }
 
-function getPaymentAjaxSettings() {
+function getPaymentAjaxSettings(productNumber) {
 
-    var paymentReqJson = getPaymentInitiationRequestJson();
+    var paymentReqJson = getPaymentInitiationRequestJson(productNumber);
     var headers = getRequestHeaders();
     var xs2aUrl = getXs2aUrl();
 
@@ -50,7 +50,7 @@ function getPaymentAjaxSettings() {
 
 }
 
-function getPaymentInitiationRequestJson() {
+function getPaymentInitiationRequestJson(productNumber) {
     var formObject = new Object();
 
     var debtorAccount = new Object();
@@ -63,8 +63,8 @@ function getPaymentInitiationRequestJson() {
     creditorAccount.iban = $("#creditorIban").val();
     creditorAccount.currency = $("#creditorCurrency").val();
 
-    instructedAmount.content = $("#amount").val();
-    instructedAmount.currency = $("#currency").val();
+    instructedAmount.content = $("#amount" + productNumber).val();
+    instructedAmount.currency = $("#currency" + productNumber).val();
 
     formObject.debtorAccount = debtorAccount;
     formObject.creditorAccount = creditorAccount;
@@ -76,7 +76,6 @@ function getPaymentInitiationRequestJson() {
 
     formObject.requestedExecutionDate = '2017-01-01';
     formObject.requestedExecutionTime = '2017-10-25T15:30:35.035';
-
 
     return JSON.stringify(formObject);
 }
@@ -94,5 +93,5 @@ function getRequestHeaders() {
 }
 
 function getXs2aUrl() {
-    return 'http://localhost:8080/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true';
+    return $("#xs2a_url").val();
 }

@@ -15,8 +15,8 @@
  */
 
 
-function getPaymentRedirectLink() {
-    var paymentResp = sendPaymentRequestAndGetResponse();
+function getPaymentRedirectLink(productNumber) {
+    var paymentResp = sendPaymentRequestAndGetResponse(productNumber);
 
     if ((paymentResp["_links"] !== undefined)
         && (paymentResp["_links"].redirect !== undefined)) {
