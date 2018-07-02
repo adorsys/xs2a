@@ -28,11 +28,9 @@ import java.time.LocalDate;
 public class AisConsentRequest {
 
     @ApiModelProperty(value = "ID of the corresponding PSU", required = true, example = "32aad578-58a6-4d5d-8b0c-45546dd88f07")
-    @JsonIgnore
     private String psuId;
 
     @ApiModelProperty(value = "ID of the corresponding TPP.", required = true, example = "testTPP")
-    @JsonIgnore
     private String tppId;
 
     @ApiModelProperty(value = "Requested maximum frequency for an access per day. For a once-off access, this attribute is set to 1", required = true, example = "4")

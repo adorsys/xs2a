@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web;
+package de.adorsys.aspsp.aspspmockserver.web.view;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuAuthenticationService;
 import io.swagger.annotations.Api;
@@ -39,10 +39,13 @@ public class TanConfirmationController {
     }
 
     @PostMapping(path = "/")
-    @ApiOperation(value = "Validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
+    @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView confirmTan(
         @ModelAttribute("tanConfirmation") TanConfirmation tanConfirmation) {
-        return psuAuthenticationService.isPsuTanNumberValid(tanConfirmation.getPaymentConfirmation().getPsuId(), tanConfirmation.getTanNumber())
+        String psuId = tanConfirmation.getPaymentConfirmation().getPsuId();
+        psuAuthenticationService.generateAndSendTanForPsu(psuId);
+
+        return psuAuthenticationService.isPsuTanNumberValid(psuId, tanConfirmation.getTanNumber())
                    ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", tanConfirmation.getPaymentConfirmation())
                    : new ModelAndView("tanConfirmationError");
     }

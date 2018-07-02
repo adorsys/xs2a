@@ -40,8 +40,8 @@ import static org.springframework.http.HttpStatus.OK;
 public class PsuAuthenticationControllerTest {
     private static final String PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String WRONG_PSU_ID = "Wrong psu id";
-    private static final int TAN_NUMBER = 123456;
-    private static final int WRONG_TAN_NUMBER = 0;
+    private static final String TAN_NUMBER = "123456";
+    private static final String WRONG_TAN_NUMBER = "wrong tan number";
     private static MockHttpServletRequest MOCK_SERVLET;
     @Autowired
     private PsuAuthenticationController psuAuthenticationController;

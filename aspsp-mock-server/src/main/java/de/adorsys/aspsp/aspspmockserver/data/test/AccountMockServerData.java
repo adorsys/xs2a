@@ -146,8 +146,8 @@ public class AccountMockServerData {
     }
 
     private void fillTanRepository() {
-        tanRepository.save(new Tan("PSU_001", 111111));
-        tanRepository.save(new Tan("PSU_002", 222222));
-        tanRepository.save(new Tan("PSU_003", 333333));
+        tanRepository.save(new Tan("PSU_001", "111111"));
+        tanRepository.save(new Tan("PSU_002", "222222"));
+        tanRepository.save(new Tan("PSU_003", "333333"));
     }
 }

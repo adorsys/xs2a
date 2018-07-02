@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web;
+package de.adorsys.aspsp.aspspmockserver.web.view;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TanConfirmation {
-    private int tanNumber;
+    private String tanNumber;
     private PaymentConfirmation paymentConfirmation;
 
     public TanConfirmation(String psuId, String paymentId) {
