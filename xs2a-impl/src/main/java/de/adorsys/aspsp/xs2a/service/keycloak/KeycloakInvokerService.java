@@ -38,7 +38,7 @@ public class KeycloakInvokerService {
     private KeycloakConfigProperties keycloakConfig;
     @Autowired
     @Qualifier("keycloakRestTemplate")
-    private RestTemplate keycloackRestTemplate;
+    private RestTemplate keycloakRestTemplate;
 
     @Value("${keycloak-username}")
     private String keycloakUsername;
@@ -56,7 +56,7 @@ public class KeycloakInvokerService {
         map.add("client_id", keycloakConfig.getResource());
         map.add("client_secret", keycloakConfig.getCredentials().getSecret());
 
-        ResponseEntity<HashMap<String, String>> response = keycloackRestTemplate.exchange(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", HttpMethod.POST, new HttpEntity<>(map, headers),
+        ResponseEntity<HashMap<String, String>> response = keycloakRestTemplate.exchange(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", HttpMethod.POST, new HttpEntity<>(map, headers),
             new ParameterizedTypeReference<HashMap<String, String>>() {
             });
 

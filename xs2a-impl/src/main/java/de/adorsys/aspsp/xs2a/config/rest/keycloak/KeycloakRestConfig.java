@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloack;
+package de.adorsys.aspsp.xs2a.config.rest.keycloak;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -46,7 +46,7 @@ public class KeycloakRestConfig {
                                 : new RestTemplate();
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
-        rest.setErrorHandler(new KeycloackRestErrorHandler());
+        rest.setErrorHandler(new KeycloakRestErrorHandler());
         return rest;
     }
 

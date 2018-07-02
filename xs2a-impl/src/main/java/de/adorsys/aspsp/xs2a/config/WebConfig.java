@@ -67,7 +67,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private AspspProfileService aspspProfileService;
     @Autowired
-    private KeycloakInvokerService keycloackInvokerService;
+    private KeycloakInvokerService keycloakInvokerService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -151,7 +151,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         if (OAUTH == scaApproach) {
             accessToken = obtainAccessTokenFromHeader(request);
         } else if (REDIRECT == scaApproach) {
-            accessToken = keycloackInvokerService.obtainAccessToken();
+            accessToken = keycloakInvokerService.obtainAccessToken();
         }
         return Optional.ofNullable(accessToken)
                    .orElseThrow(IllegalArgumentException::new);
