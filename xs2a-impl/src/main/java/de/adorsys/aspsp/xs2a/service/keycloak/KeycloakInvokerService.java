@@ -37,7 +37,7 @@ public class KeycloakInvokerService {
     @Autowired
     private KeycloakConfigProperties keycloakConfig;
     @Autowired
-    @Qualifier("keycloackRestTemplate")
+    @Qualifier("keycloakRestTemplate")
     private RestTemplate keycloackRestTemplate;
 
     @Value("${keycloak-username}")

@@ -20,6 +20,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.TrustStrategy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -34,18 +35,22 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 @Configuration
-public class KeycloackRestConfig {
+public class KeycloakRestConfig {
+    @Value("${skip.ssl.certificate.verification}")
+    private boolean skipSslCertificateVerification;
 
-    @Bean(name = "keycloackRestTemplate")
-    public RestTemplate keycloackRestTemplate() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
-        RestTemplate rest = new RestTemplate(buildHttpRequestFactoryWithoutSSLvalidation());
+    @Bean(name = "keycloakRestTemplate")
+    public RestTemplate keycloakRestTemplate() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+        RestTemplate rest = skipSslCertificateVerification
+                                ? new RestTemplate(buildHttpRequestFactoryWithoutSSLVerification())
+                                : new RestTemplate();
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
         rest.setErrorHandler(new KeycloackRestErrorHandler());
         return rest;
     }
 
-    private HttpComponentsClientHttpRequestFactory buildHttpRequestFactoryWithoutSSLvalidation() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
+    private HttpComponentsClientHttpRequestFactory buildHttpRequestFactoryWithoutSSLVerification() throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException {
         TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
         SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
                                     .loadTrustMaterial(null, acceptingTrustStrategy)
