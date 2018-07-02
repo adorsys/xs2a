@@ -35,18 +35,18 @@ public class TanConfirmationController {
     @ApiOperation(value = "Displays content of email TAN confirmation page")
     public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId,
                                              @PathVariable("consent-id") String consentId) {
-        return new ModelAndView("tanConfirmationPage", "tanConfirmation", new TanConfirmation(psuId, consentId));
+        return new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(psuId, consentId));
     }
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView confirmTan(
-        @ModelAttribute("tanConfirmation") TanConfirmation tanConfirmation) {
-        String psuId = tanConfirmation.getPaymentConfirmation().getPsuId();
+        @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
+        String psuId = paymentConfirmation.getPsuId();
         tanConfirmationService.generateAndSendTanForPsu(psuId);
 
-        return tanConfirmationService.isPsuTanNumberValid(psuId, tanConfirmation.getTanNumber())
-                   ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", tanConfirmation.getPaymentConfirmation())
+        return tanConfirmationService.isPsuTanNumberValid(psuId, paymentConfirmation.getTanNumber())
+                   ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", paymentConfirmation)
                    : new ModelAndView("tanConfirmationError");
     }
 }

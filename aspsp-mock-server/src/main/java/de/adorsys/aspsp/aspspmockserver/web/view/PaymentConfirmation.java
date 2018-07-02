@@ -17,9 +17,17 @@
 package de.adorsys.aspsp.aspspmockserver.web.view;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class PaymentConfirmation {
     private String psuId;
     private String consentId;
+    private String tanNumber;
+
+    public PaymentConfirmation(String psuId, String paymentId) {
+        this.setPsuId(psuId);
+        this.setConsentId(paymentId);
+    }
 }
