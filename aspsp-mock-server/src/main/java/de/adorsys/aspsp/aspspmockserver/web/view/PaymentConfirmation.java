@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.psu;
+package de.adorsys.aspsp.aspspmockserver.web.view;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-public class Tan {
-
-    @Id
-    private String id;
+@NoArgsConstructor
+public class PaymentConfirmation {
     private String psuId;
+    private String consentId;
     private String tanNumber;
-    private TanStatus tanStatus;
 
-    public Tan(){}
-
-    public Tan(String psuId, String tanNumber) {
+    public PaymentConfirmation(String psuId, String consentId) {
         this.psuId = psuId;
-        this.tanNumber = tanNumber;
-        this.tanStatus = TanStatus.UNUSED;
+        this.consentId = consentId;
     }
 }
