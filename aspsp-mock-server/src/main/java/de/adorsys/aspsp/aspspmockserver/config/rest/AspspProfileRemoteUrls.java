@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web;
+package de.adorsys.aspsp.aspspmockserver.config.rest;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@Data
-@NoArgsConstructor
-public class PaymentConfirmation {
-    private String psuId;
-    private String consentId;
+@Component
+public class AspspProfileRemoteUrls {
+
+    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    private String aspspProfileBaseUrl;
+
+    /**
+     * Returns URL-string in order to get sca approach
+     *
+     * @return String
+     */
+    public String getScaApproach() {
+        return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
+    }
 }

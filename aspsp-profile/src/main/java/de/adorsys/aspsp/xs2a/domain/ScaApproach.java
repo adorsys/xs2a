@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.consent;
+package de.adorsys.aspsp.xs2a.domain;
 
-import de.adorsys.aspsp.xs2a.exception.RestException;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-
-import java.io.IOException;
-
-public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        throw new RestException(response.getStatusCode(), response.getStatusCode().getReasonPhrase());
-    }
+public enum ScaApproach {
+    REDIRECT,
+    OAUTH,
+    DECOUPLED,
+    EMBEDDED
 }

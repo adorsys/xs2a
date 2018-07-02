@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.consent;
+package de.adorsys.aspsp.aspspmockserver.config.rest;
 
-import de.adorsys.aspsp.xs2a.exception.RestException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 
 import java.io.IOException;
 
-public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
+@Slf4j
+public class AspspProfileRestErrorHandler extends DefaultResponseErrorHandler {
+
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        throw new RestException(response.getStatusCode(), response.getStatusCode().getReasonPhrase());
+        log.info("Aspsp profile exception, status: {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
     }
 }

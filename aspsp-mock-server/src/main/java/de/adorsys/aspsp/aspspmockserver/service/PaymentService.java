@@ -79,6 +79,10 @@ public class PaymentService {
                    .orElse(Optional.empty());
     }
 
+    public void revokePaymentConsent(@NotNull String consentId) {
+        consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, "REVOKED_BY_PSU");
+    }
+
     private List<SpiSinglePayments> getPaymentsFromPisConsent(String consentId) {
         ResponseEntity<PisConsentResponse> responseEntity = consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId);
 
@@ -107,7 +111,6 @@ public class PaymentService {
 
         return Optional.ofNullable(savedPayment);
     }
-
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
         return Optional.ofNullable(payment.getDebtorAccount())

@@ -55,16 +55,14 @@ public class TppSignatureValidator {
 			throw new IllegalArgumentException("CERTIFICAT_MISSING");
 		}
 
-		X509Certificate cert = X509CertUtils.parse(tppEncodedCert);
-
-		PublicKey key = cert.getPublicKey();
-
 		Signature signatureData = Signature.fromString(signature);
 
 		if (!signatureData.getHeaders().containsAll(MANDATORY_HEADERS_PSD2)) {
 			throw new IllegalArgumentException("SIGNATURE_INVALID");
 		}
 
+		X509Certificate cert = X509CertUtils.parse(tppEncodedCert);
+		PublicKey key = cert.getPublicKey();
 		SignatureVerifier verifier = new SignatureVerifier(key, signatureData);
 		return verifier.verify("method", "uri", headers);
 	}

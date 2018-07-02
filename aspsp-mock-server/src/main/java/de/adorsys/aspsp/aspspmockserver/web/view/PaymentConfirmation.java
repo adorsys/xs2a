@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web;
+package de.adorsys.aspsp.aspspmockserver.web.view;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class TanConfirmation {
-    private int tanNumber;
-    private PaymentConfirmation paymentConfirmation;
+public class PaymentConfirmation {
+    private String psuId;
+    private String consentId;
+    private String tanNumber;
 
-    public TanConfirmation(String psuId, String paymentId) {
-        paymentConfirmation = new PaymentConfirmation();
-        this.paymentConfirmation.setPsuId(psuId);
-        this.paymentConfirmation.setConsentId(paymentId);
+    public PaymentConfirmation(String psuId, String consentId) {
+        this.psuId = psuId;
+        this.consentId = consentId;
     }
 }

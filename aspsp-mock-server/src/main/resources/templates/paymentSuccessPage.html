@@ -23,6 +23,10 @@
 <div th:object="${paymentDetails}">
     <label>Your payment is successful!Payment id is:</label>
     <p th:utext="*{paymentId}"></p>
+    <label>Amount to be charged:</label>
+    <p th:utext="*{instructedAmount.content}"></p>
+    <label>Currency:</label>
+    <p th:utext="*{instructedAmount.currency}"></p>
 </div>
 </body>
 </html>

@@ -20,11 +20,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<form th:object="${tanConfirmation}" th:action="@{/view/payment/confirmation/}" method="post">
+<form th:object="${paymentConfirmation}" th:action="@{/view/payment/confirmation/}" method="post">
     <label>Enter your TAN number: </label>
-    <input type="number" th:field="*{tanNumber}"/>
-    <input type="hidden" th:field="*{paymentConfirmation.psuId}" th:value="*{paymentConfirmation.getPsuId()}"/>
-    <input type="hidden" th:field="*{paymentConfirmation.consentId}" th:value="*{paymentConfirmation.getConsentId()}"/>
+    <input type="text" th:field="*{tanNumber}"/>
+    <input type="hidden" th:field="*{psuId}" th:value="*{psuId}"/>
+    <input type="hidden" th:field="*{consentId}" th:value="*{consentId}"/>
     <button>Validate</button>
 </form>
 </body>
