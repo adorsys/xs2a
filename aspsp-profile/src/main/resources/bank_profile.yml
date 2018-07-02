@@ -8,5 +8,5 @@ setting:
  - bulk
  - periodic
  - delayed
- scaApproach: redirect
+ scaApproach: REDIRECT
  tppSignatureRequired: false

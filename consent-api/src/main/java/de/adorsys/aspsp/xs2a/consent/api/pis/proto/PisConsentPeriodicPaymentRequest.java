@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
 import lombok.Value;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Currency;
-
 @Value
-public class PisPayment {
-    private String endToEndIdentification;
-    private String debtorIban;
-    private String ultimateDebtor;
-    private Currency currency;
-    private BigDecimal amount;
-    private String creditorIban;
-    private String creditorAgent;
-    private String creditorName;
-    private LocalDate requestedExecutionDate;
-    private LocalDateTime requestedExecutionTime;
-    private String ultimateCreditor;
-    private String purposeCode;
+public class PisConsentPeriodicPaymentRequest {
+    private PisPeriodicPayment pisPeriodicPayment;
 }

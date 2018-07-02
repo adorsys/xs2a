@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisAccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisAmount;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -116,6 +118,12 @@ public class AccountMapper {
                    .orElse(null);
     }
 
+    public PisAmount mapToPisAmount(Amount amount) {
+        return Optional.ofNullable(amount)
+                   .map(am -> new PisAmount(am.getCurrency(), new BigDecimal(am.getContent())))
+                   .orElse(null);
+    }
+
     public Optional<AccountReport> mapToAccountReport(List<SpiTransaction> spiTransactions) {
 
         if (spiTransactions.isEmpty()) {
@@ -190,6 +198,18 @@ public class AccountMapper {
     public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
         return Optional.ofNullable(account)
                    .map(ac -> new SpiAccountReference(
+                       ac.getIban(),
+                       ac.getBban(),
+                       ac.getPan(),
+                       ac.getMaskedPan(),
+                       ac.getMsisdn(),
+                       ac.getCurrency()))
+                   .orElse(null);
+    }
+
+    public PisAccountReference mapToPisAccountReference(AccountReference account) {
+        return Optional.ofNullable(account)
+                   .map(ac -> new PisAccountReference(
                        ac.getIban(),
                        ac.getBban(),
                        ac.getPan(),

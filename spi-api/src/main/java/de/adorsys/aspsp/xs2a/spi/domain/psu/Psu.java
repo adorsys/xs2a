@@ -16,9 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.psu;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
@@ -30,4 +33,11 @@ public class Psu {
     private String id;
     private String email;
     private List<SpiAccountDetails> accountDetailsList;
+
+    @JsonIgnore
+    public boolean isValid() {
+        return StringUtils.isNotBlank(this.email) && this.email.contains("@")
+                   && CollectionUtils.isNotEmpty(this.accountDetailsList)
+                   && StringUtils.isNotBlank(this.accountDetailsList.get(0).getIban());
+    }
 }

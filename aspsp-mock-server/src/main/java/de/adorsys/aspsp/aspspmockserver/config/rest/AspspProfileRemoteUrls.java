@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent.pis;
+package de.adorsys.aspsp.aspspmockserver.config.rest;
 
-import io.swagger.annotations.ApiModel;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@ApiModel(description = "Type of the pis consent", value = "PisConsentType")
-public enum PisConsentType {
-    BULK,
-    SINGLE,
-    PERIODIC
+@Component
+public class AspspProfileRemoteUrls {
+
+    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    private String aspspProfileBaseUrl;
+
+    /**
+     * Returns URL-string in order to get sca approach
+     *
+     * @return String
+     */
+    public String getScaApproach() {
+        return aspspProfileBaseUrl + "/aspsp-profile/sca-approach";
+    }
 }

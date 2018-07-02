@@ -59,7 +59,7 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity<>(status.getReasonPhrase(), status);
     }
 
-    @ExceptionHandler(value = {RestException.class})
+    @ExceptionHandler(value = RestException.class)
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 

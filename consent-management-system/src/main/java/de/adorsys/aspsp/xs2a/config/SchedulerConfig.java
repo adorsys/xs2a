@@ -25,12 +25,12 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 public class SchedulerConfig implements SchedulingConfigurer {
     @Value("${scheduler.pool.size:20}")
-    private int POOL_SIZE;
+    private int poolSize;
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         ThreadPoolTaskScheduler threadPool = new ThreadPoolTaskScheduler();
-        threadPool.setPoolSize(POOL_SIZE);
+        threadPool.setPoolSize(poolSize);
         threadPool.setThreadNamePrefix("consent-scheduler-pool");
         threadPool.initialize();
 

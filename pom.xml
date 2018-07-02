@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.aspsp</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <modules>
         <module>aspsp-idp</module>
         <module>spi-api</module>
@@ -53,7 +53,7 @@
         <javax.validation.api.version>2.0.1.Final</javax.validation.api.version>
         <jsr311.pi.version>1.1.1</jsr311.pi.version>
         <commons.io.version>2.6</commons.io.version>
-        <pmd.plugin.version>3.9.0</pmd.plugin.version>
+        <pmd.plugin.version>3.10.0</pmd.plugin.version>
         <keycloak.version>3.4.3.Final</keycloak.version>
         <com.auth0.java-jwt.version>3.3.0</com.auth0.java-jwt.version>
         <tomitribe-http-signatures.version>1.0</tomitribe-http-signatures.version>
@@ -98,7 +98,8 @@
                     <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                     <minimumTokens>100</minimumTokens>
                     <targetJdk>${java.version}</targetJdk>
-
+                    <analysisCache>true</analysisCache>
+                    <linkXRef>false</linkXRef>
                     <rulesets>
                         <ruleset>${ruleset.basedir}/qa/pmd/pmd-ruleset.xml</ruleset>
                     </rulesets>

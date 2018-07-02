@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2018 adorsys GmbH & Co. KG
+ * Copyright 2018-2018 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,11 +41,12 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegistrationProvider {
 
-	public OIDCClientRegistrationExtendedProvider(KeycloakSession session) {
+	OIDCClientRegistrationExtendedProvider(KeycloakSession session) {
 		super(session);
 	}
 
@@ -77,9 +78,9 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 			updateClientRepWithProtocolMappers(clientModel, client);
 
 			URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
-			clientOIDC = DescriptionConverterExt.toExternalResponse(session, client, uri);
-			clientOIDC.setClientIdIssuedAt(Time.currentTime());
-			return Response.created(uri).entity(clientOIDC).build();
+            OIDCClientRepresentationExtended clientOIDCResponse = DescriptionConverterExt.toExternalResponse(session, client, uri);
+            clientOIDCResponse.setClientIdIssuedAt(Time.currentTime());
+			return Response.created(uri).entity(clientOIDCResponse).build();
 		} catch (ClientRegistrationException cre) {
 			ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
 			throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid",
@@ -111,8 +112,8 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
             updateClientRepWithProtocolMappers(clientModel, client);
 
             URI uri = session.getContext().getUri().getAbsolutePathBuilder().path(client.getClientId()).build();
-            clientOIDC = DescriptionConverterExt.toExternalResponse(session, client, uri);
-            return Response.ok(clientOIDC).build();
+            OIDCClientRepresentationExtended clientOIDCResponse = DescriptionConverterExt.toExternalResponse(session, client, uri);
+            return Response.ok(clientOIDCResponse).build();
         } catch (ClientRegistrationException cre) {
             ServicesLogger.LOGGER.clientRegistrationException(cre.getMessage());
             throw new ErrorResponseException(ErrorCodes.INVALID_CLIENT_METADATA, "Client metadata invalid", Response.Status.BAD_REQUEST);
@@ -127,25 +128,22 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 
 	private void updatePairwiseSubMappers(ClientModel clientModel, SubjectType subjectType,
 			String sectorIdentifierUri) {
-		if (subjectType == SubjectType.PAIRWISE) {
+        Set<ProtocolMapperModel> protocolMappers = clientModel.getProtocolMappers();
+        if (subjectType == SubjectType.PAIRWISE) {
 
 			// See if we have existing pairwise mapper and update it. Otherwise
 			// create new
 			AtomicBoolean foundPairwise = new AtomicBoolean(false);
 
-			clientModel.getProtocolMappers().stream().filter((ProtocolMapperModel mapping) -> {
-				if (mapping.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX)) {
-					foundPairwise.set(true);
-					return true;
-				} else {
-					return false;
-				}
-			}).forEach((ProtocolMapperModel mapping) -> {
-				PairwiseSubMapperHelper.setSectorIdentifierUri(mapping, sectorIdentifierUri);
-				clientModel.updateProtocolMapper(mapping);
-			});
+            for (ProtocolMapperModel mapping : protocolMappers) {
+                if (mapping.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX)) {
+                    foundPairwise.set(true);
+                    PairwiseSubMapperHelper.setSectorIdentifierUri(mapping, sectorIdentifierUri);
+                    clientModel.updateProtocolMapper(mapping);
+                }
+            }
 
-			// We don't have existing pairwise mapper. So create new
+            // We don't have existing pairwise mapper. So create new
 			if (!foundPairwise.get()) {
 				ProtocolMapperRepresentation newPairwise = SHA256PairwiseSubMapper
 						.createPairwiseMapper(sectorIdentifierUri, null);
@@ -154,11 +152,11 @@ public class OIDCClientRegistrationExtendedProvider extends AbstractClientRegist
 
 		} else {
 			// Rather find and remove all pairwise mappers
-			clientModel.getProtocolMappers().stream().filter((ProtocolMapperModel mapperRep) -> {
-				return mapperRep.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX);
-			}).forEach((ProtocolMapperModel mapping) -> {
-				clientModel.getProtocolMappers().remove(mapping);
-			});
+            for (ProtocolMapperModel mapping : protocolMappers) {
+                if (mapping.getProtocolMapper().endsWith(AbstractPairwiseSubMapper.PROVIDER_ID_SUFFIX)) {
+                    protocolMappers.remove(mapping);
+                }
+            }
 		}
 	}
 

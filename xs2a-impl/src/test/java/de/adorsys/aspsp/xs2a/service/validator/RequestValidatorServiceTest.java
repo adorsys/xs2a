@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
@@ -69,7 +69,7 @@ public class RequestValidatorServiceTest {
             .thenReturn(Arrays.asList(PaymentProduct.ISCT, PaymentProduct.SCT));
 
         when(aspspProfileService.getAvailablePaymentTypes())
-            .thenReturn(Arrays.asList(PaymentType.BULK, PaymentType.FUTURE_DATED));
+            .thenReturn(Arrays.asList(PisPaymentType.BULK, PisPaymentType.FUTURE_DATED));
     }
 
     @Test

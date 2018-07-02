@@ -23,10 +23,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +50,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.List;
+import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.domain.ScaApproach.OAUTH;
+import static de.adorsys.aspsp.xs2a.domain.ScaApproach.REDIRECT;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
@@ -57,6 +64,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Value("${application.link.redirect-to}")
     private String redirectLinkToSource;
+    @Autowired
+    private AspspProfileService aspspProfileService;
+    @Autowired
+    private KeycloakInvokerService keycloackInvokerService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -99,8 +110,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ParametersFactory parametersFactory() {
-        return new ParametersFactory(objectMapper());
+    public ParametersFactory parametersFactory(ObjectMapper objectMapper) {
+        return new ParametersFactory(objectMapper);
     }
 
     @Bean
@@ -131,6 +142,22 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public BearerToken getBearerToken(HttpServletRequest request) {
-        return new BearerToken(request.getHeader(AUTHORIZATION_HEADER));
+        return new BearerToken(getAccessToken(request));
+    }
+
+    private String getAccessToken(HttpServletRequest request) {
+        ScaApproach scaApproach = aspspProfileService.readScaApproach();
+        String accessToken = null;
+        if (OAUTH == scaApproach) {
+            accessToken = obtainAccessTokenFromHeader(request);
+        } else if (REDIRECT == scaApproach) {
+            accessToken = keycloackInvokerService.obtainAccessToken();
+        }
+        return Optional.ofNullable(accessToken)
+                   .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private String obtainAccessTokenFromHeader(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION_HEADER);
     }
 }

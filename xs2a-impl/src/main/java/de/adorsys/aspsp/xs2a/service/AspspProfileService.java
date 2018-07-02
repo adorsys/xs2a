@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Log4j
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {
@@ -40,6 +39,11 @@ public class AspspProfileService {
     private final RestTemplate aspspProfileRestTemplate;
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
+    /**
+     * Reads List of available payment products from ASPSP profile service
+     *
+     * @return List of payment products
+     */
     public List<PaymentProduct> getAvailablePaymentProducts() {
         return Optional.ofNullable(readAvailablePaymentProducts())
                    .map(list -> list.stream()
@@ -50,14 +54,50 @@ public class AspspProfileService {
                    .orElse(Collections.emptyList());
     }
 
-    public List<PaymentType> getAvailablePaymentTypes() {
+    /**
+     * Reads List of available payment types from ASPSP profile service
+     *
+     * @return List of payment types
+     */
+    public List<PisPaymentType> getAvailablePaymentTypes() {
         return Optional.ofNullable(readAvailablePaymentTypes())
                    .map(list -> list.stream()
-                                    .map(PaymentType::getByValue)
+                                    .map(PisPaymentType::getByValue)
                                     .filter(Optional::isPresent)
                                     .map(Optional::get)
                                     .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
+    }
+
+    /**
+     * Reads current sca approach mode from ASPSP profile service
+     *
+     * @return 'true' if current sca approach requires 'redirect', 'false' if not
+     */
+    public boolean isRedirectMode() {
+        ScaApproach scaApproach = readScaApproach();
+        return scaApproach == ScaApproach.REDIRECT
+                   || scaApproach == ScaApproach.DECOUPLED;
+    }
+
+    /**
+     * Reads requirement of tpp signature from ASPSP profile service
+     *
+     * @return 'true' if tpp signature is required, 'false' if not
+     */
+    public Boolean getTppSignatureRequired() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+    }
+
+    /**
+     * Read sca approach from ASPSP profile service
+     *
+     * @return Available SCA approach for tpp
+     */
+    public ScaApproach readScaApproach() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
     }
 
     private List<String> readAvailablePaymentProducts() {
@@ -65,13 +105,6 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
             }).getBody();
     }
-    
-   
-	public Boolean getTppSignatureRequired() {
-		return aspspProfileRestTemplate.exchange(
-	            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
-	}
-
 
     private List<String> readAvailablePaymentTypes() {
         return aspspProfileRestTemplate.exchange(
