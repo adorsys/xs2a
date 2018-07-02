@@ -26,8 +26,8 @@ public class PaymentConfirmation {
     private String consentId;
     private String tanNumber;
 
-    public PaymentConfirmation(String psuId, String paymentId) {
-        this.setPsuId(psuId);
-        this.setConsentId(paymentId);
+    public PaymentConfirmation(String psuId, String consentId) {
+        this.psuId = psuId;
+        this.consentId = consentId;
     }
 }
