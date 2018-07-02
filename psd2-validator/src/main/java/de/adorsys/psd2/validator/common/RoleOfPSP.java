@@ -40,15 +40,15 @@ public class RoleOfPSP {
 		}
 		if (RoleOfPspOid.id_psd2_role_psp_pi.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_PI.getString().equals(instance.getString())) {
-			return PSP_AS;
+			return PSP_PI;
 		}
 		if (RoleOfPspOid.id_psd2_role_psp_ai.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_AI.getString().equals(instance.getString())) {
-			return PSP_AS;
+			return PSP_AI;
 		}
 		if (RoleOfPspOid.id_psd2_role_psp_ic.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_IC.getString().equals(instance.getString())) {
-			return PSP_AS;
+			return PSP_IC;
 		}
 		throw new IllegalArgumentException("unknown object in getInstance: " + asn1Encodable.getClass().getName());
 	}

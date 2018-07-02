@@ -27,7 +27,6 @@ public class CertificateExtractorUtil {
 		List<TppRole> roles = new ArrayList<>();
 
 		TppCertificateData tppCertData = new TppCertificateData();
-		tppCertData.setPspName(cert.getSubjectDN().getName());
 
 		PSD2QCType psd2qcType = PSD2QCStatement.psd2QCType(cert);
 		RolesOfPSP rolesOfPSP = psd2qcType.getRolesOfPSP();
@@ -38,12 +37,17 @@ public class CertificateExtractorUtil {
 		tppCertData.setPspRoles(roles);
 
 		tppCertData.setPspAuthorityName(psd2qcType.getnCAName().getString());
+		tppCertData.setPspAuthorityId(psd2qcType.getnCAId().getString());
 
 		try {
 			X500Name x500name = new JcaX509CertificateHolder(cert).getSubject();
 			String pspAuthorisationNber = IETFUtils
 					.valueToString(x500name.getRDNs(BCStyle.ORGANIZATION_IDENTIFIER)[0].getFirst().getValue());
 			tppCertData.setPspAuthorzationNumber(pspAuthorisationNber);
+			
+			String pspName = IETFUtils
+					.valueToString(x500name.getRDNs(BCStyle.CN)[0].getFirst().getValue());
+			tppCertData.setPspName(pspName);
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 		}
