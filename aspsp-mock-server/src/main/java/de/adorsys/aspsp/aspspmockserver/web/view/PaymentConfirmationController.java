@@ -25,6 +25,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REVOKED_BY_PSU;
+
 @RequiredArgsConstructor
 @Controller
 @RequestMapping(path = "/view/payment/confirmation")
@@ -37,20 +40,19 @@ public class PaymentConfirmationController {
     @ApiOperation(value = "Displays content of email TAN confirmation page")
     public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId,
                                              @PathVariable("consent-id") String consentId) {
+        paymentConfirmationService.generateAndSendTanForPsu(psuId);
         return new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(psuId, consentId));
     }
 
     @PostMapping(path = "/")
-    @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sended to PSU`s e-mail and returns a link to continue as authenticated user")
+    @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sent to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView confirmTan(
         @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
-        String psuId = paymentConfirmation.getPsuId();
-        paymentConfirmationService.generateAndSendTanForPsu(psuId);
 
-        if (paymentConfirmationService.isPsuTanNumberValid(psuId, paymentConfirmation.getTanNumber())) {
+        if (paymentConfirmationService.isPsuTanNumberValid(paymentConfirmation.getPsuId(), paymentConfirmation.getTanNumber())) {
             return new ModelAndView("consentConfirmationPage", "paymentConfirmation", paymentConfirmation);
         } else {
-            paymentService.revokePaymentConsent(paymentConfirmation.getConsentId());
+            paymentService.revokeOrRejectPaymentConsent(paymentConfirmation.getConsentId(), REJECTED);
             return new ModelAndView("tanConfirmationError");
         }
     }
@@ -67,7 +69,7 @@ public class PaymentConfirmationController {
     @ApiOperation(value = "Shows payment failure page")
     public ModelAndView revokePaymentConsent(
         @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
-        paymentService.revokePaymentConsent(paymentConfirmation.getConsentId());
+        paymentService.revokeOrRejectPaymentConsent(paymentConfirmation.getConsentId(), REVOKED_BY_PSU);
         return new ModelAndView("consentRevokedPage");
     }
 }

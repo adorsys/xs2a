@@ -19,7 +19,6 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
@@ -27,6 +26,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.INVALID;
+import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
+import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.VALID;
 
 @Service
 @AllArgsConstructor
@@ -42,12 +45,14 @@ public class PaymentConfirmationService {
     }
 
     public boolean isPsuTanNumberValid(String psuId, String tanNumber) {
-        return tanRepository.findByPsuIdAndTanStatus(psuId, TanStatus.UNUSED)
+        return tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
+                   .findFirst()
                    .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
     }
 
     private boolean createAndSendTan(String psuId, String email) {
+        changeOldTansToInvalid(psuId);
         Tan tan = new Tan(psuId, generateTanNumber());
 
         return Optional.ofNullable(tanRepository.save(tan))
@@ -55,12 +60,21 @@ public class PaymentConfirmationService {
                    .orElse(false);
     }
 
+    private void changeOldTansToInvalid(String psuId) {
+        for (Tan oldTan : tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED)) {
+            oldTan.setTanStatus(INVALID);
+            tanRepository.save(oldTan);
+        }
+    }
+
     private boolean validateTanAndUpdateTanStatus(Tan originalTan, String givenTanNumber) {
+        tanRepository.findAll();
+
         boolean isValid = originalTan.getTanNumber().equals(givenTanNumber);
         if (isValid) {
-            originalTan.setTanStatus(TanStatus.VALID);
+            originalTan.setTanStatus(VALID);
         } else {
-            originalTan.setTanStatus(TanStatus.INVALID);
+            originalTan.setTanStatus(INVALID);
         }
         tanRepository.save(originalTan);
 

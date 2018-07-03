@@ -22,6 +22,7 @@ import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.AllArgsConstructor;
@@ -79,8 +80,9 @@ public class PaymentService {
                    .orElse(Optional.empty());
     }
 
-    public void revokePaymentConsent(@NotNull String consentId) {
-        consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, "REVOKED_BY_PSU");
+    //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
+    public void revokeOrRejectPaymentConsent(@NotNull String consentId, SpiConsentStatus consentStatus) {
+        consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, consentStatus.name());
     }
 
     private List<SpiSinglePayments> getPaymentsFromPisConsent(String consentId) {
@@ -101,6 +103,7 @@ public class PaymentService {
                    : null;
     }
 
+    //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
     private Optional<SpiSinglePayments> proceedPayment(SpiSinglePayments spiSinglePayments, String consentId) {
         SpiSinglePayments savedPayment = paymentRepository.save(spiSinglePayments);
         if (savedPayment != null) {

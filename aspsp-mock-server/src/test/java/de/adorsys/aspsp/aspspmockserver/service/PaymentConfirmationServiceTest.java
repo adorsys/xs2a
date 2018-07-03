@@ -29,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -64,9 +65,9 @@ public class PaymentConfirmationServiceTest {
         when(tanRepository.save(any(Tan.class)))
             .thenReturn(getUnusedTan());
         when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_1, TanStatus.UNUSED))
-            .thenReturn(Optional.of(getUnusedTan()));
+            .thenReturn(Collections.singletonList(getUnusedTan()));
         when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_2, TanStatus.UNUSED))
-            .thenReturn(Optional.empty());
+            .thenReturn(Collections.emptyList());
     }
 
     @Test
