@@ -17,7 +17,9 @@ import de.adorsys.psd2.validator.common.PSD2QCStatement;
 import de.adorsys.psd2.validator.common.PSD2QCType;
 import de.adorsys.psd2.validator.common.RoleOfPSP;
 import de.adorsys.psd2.validator.common.RolesOfPSP;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CertificateExtractorUtil {
 
 	public static TppCertificateData extract(String encodedCert) throws IOException {
@@ -49,7 +51,7 @@ public class CertificateExtractorUtil {
 					.valueToString(x500name.getRDNs(BCStyle.CN)[0].getFirst().getValue());
 			tppCertData.setPspName(pspName);
 		} catch (CertificateEncodingException e) {
-			e.printStackTrace();
+			log.debug(e.getMessage());
 		}
 
 		return tppCertData;

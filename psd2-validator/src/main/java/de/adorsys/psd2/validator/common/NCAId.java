@@ -9,7 +9,9 @@ public class NCAId extends DERUTF8String {
 	}
 
 	public static NCAId getInstance(Object obj){
-		if(obj instanceof NCAId) return (NCAId) obj;
+		if(obj instanceof NCAId) {
+			return (NCAId) obj;
+		}
 		return new NCAId(DERUTF8String.getInstance(obj).getString());
 	}
 }

@@ -8,7 +8,9 @@ public class NCAName extends DERUTF8String {
 	}
 
 	public static NCAName getInstance(Object obj){
-		if(obj instanceof NCAName) return (NCAName) obj;
+		if(obj instanceof NCAName) {
+			return (NCAName) obj;
+		}
 		return new NCAName(DERUTF8String.getInstance(obj).getString());
 	}
 }

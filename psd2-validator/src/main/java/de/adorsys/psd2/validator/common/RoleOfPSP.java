@@ -34,6 +34,7 @@ public class RoleOfPSP {
 		ASN1Sequence sequence = ASN1Sequence.getInstance(asn1Encodable);
 		ASN1ObjectIdentifier objectIdentifier = ASN1ObjectIdentifier.getInstance(sequence.getObjectAt(0));
 		DERUTF8String instance = DERUTF8String.getInstance(sequence.getObjectAt(1));
+		//NOPMD
 		if (RoleOfPspOid.id_psd2_role_psp_as.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_AS.getString().equals(instance.getString())) {
 			return PSP_AS;

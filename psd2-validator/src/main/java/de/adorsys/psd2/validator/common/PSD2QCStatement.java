@@ -22,10 +22,11 @@ public class PSD2QCStatement {
 
 	public static PSD2QCType psd2QCType(X509Certificate cert) {
 		byte[] extValues = cert.getExtensionValue(Extension.qCStatements.getId());
-		if (extValues == null)
+		if (extValues == null) {
 			throw new IllegalArgumentException(
 					String.format("QCStatement not found in psd2 certificate. Missing extension with value %s",
 							Extension.qCStatements.getId()));
+		}
 
 		QCStatement qcStatement = readQCStatement(extValues);
 
@@ -46,10 +47,12 @@ public class PSD2QCStatement {
 			throw new IllegalStateException("Error reading qcstatement", e);
 		}
 		QCStatement qcStatement = QCStatement.getInstance(qcStatements);
-		if (!id_etsi_psd2_qcStatement.getId().equals(qcStatement.getStatementId().getId()))
+		if (!id_etsi_psd2_qcStatement.getId().equals(qcStatement.getStatementId().getId())) {
 			throw new IllegalArgumentException(
 					String.format("Wrong staement tzpe in psd2 certificate. expected is %s but found %s",
 							id_etsi_psd2_qcStatement.getId(), qcStatement.getStatementId().getId()));
+		}
+
 		return qcStatement;
 	}
 }

@@ -8,7 +8,7 @@ public class RolesOfPSP {
 	private final RoleOfPSP[] roles;
 	private final DERSequence sequence;
 
-	public RolesOfPSP(RoleOfPSP[] roles) {
+	public RolesOfPSP(RoleOfPSP... roles) {
 		this.roles = roles;
 		ASN1Encodable[] array = new ASN1Encodable[roles.length];
 		for (int i = 0; i < this.roles.length; i++) {
@@ -18,8 +18,9 @@ public class RolesOfPSP {
 	}
 
 	public static RolesOfPSP getInstance(Object obj) {
-		if (obj instanceof RolesOfPSP)
+		if (obj instanceof RolesOfPSP) {
 			return (RolesOfPSP) obj;
+		}
 		ASN1Sequence instance = DERSequence.getInstance(obj);
 		ASN1Encodable[] array = instance.toArray();
 		RoleOfPSP[] roles = new RoleOfPSP[array.length];
@@ -34,7 +35,7 @@ public class RolesOfPSP {
 	}
 
 	public RoleOfPSP[] getRoles() {
-		return roles;
+		return roles.clone();
 	}
 
 }
