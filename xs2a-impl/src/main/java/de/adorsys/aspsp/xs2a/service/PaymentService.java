@@ -175,7 +175,7 @@ public class PaymentService {
             PaymentInitialisationResponse response = new PaymentInitialisationResponse();
             response.setTransactionStatus(TransactionStatus.ACCP);
             response.setPisConsentId(pisConsentId);
-            response.setIban(payments.get(0).getDebtorAccount().getIban()); // TODO ASK HOW IT SOLVE!!!
+            response.setIban(payments.get(0).getDebtorAccount().getIban()); // TODO Establish order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
 
             return Arrays.asList(response);
         }
