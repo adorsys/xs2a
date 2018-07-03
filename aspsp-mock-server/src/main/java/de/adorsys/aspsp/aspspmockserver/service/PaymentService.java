@@ -40,6 +40,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus.REJECTED;
+import static de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus.VALID;
 import static org.springframework.http.HttpStatus.OK;
 
 @Service
@@ -88,13 +90,16 @@ public class PaymentService {
     private List<SpiSinglePayments> getPaymentsFromPisConsent(String consentId) {
         ResponseEntity<PisConsentResponse> responseEntity = consentRestTemplate.getForEntity(remotePisConsentUrls.getPisConsentById(), PisConsentResponse.class, consentId);
 
-        if (responseEntity.getStatusCode() == OK && responseEntity.getBody().getPisConsentStatus() == RECEIVED) {
+        if (isPisConsentValid(responseEntity)) {
             return responseEntity.getBody().getPayments().stream()
                        .map(pis -> paymentMapper.mapToSpiSinglePayments(pis))
                        .collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
         }
+        return Collections.emptyList();
+    }
+
+    private boolean isPisConsentValid(ResponseEntity<PisConsentResponse> responseEntity) {
+        return responseEntity.getStatusCode() == OK && responseEntity.getBody().getPisConsentStatus() == RECEIVED;
     }
 
     private SpiSinglePayments getFirstSpiSinglePayment(List<SpiSinglePayments> payments) {
@@ -107,9 +112,9 @@ public class PaymentService {
     private Optional<SpiSinglePayments> proceedPayment(SpiSinglePayments spiSinglePayments, String consentId) {
         SpiSinglePayments savedPayment = paymentRepository.save(spiSinglePayments);
         if (savedPayment != null) {
-            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, "VALID");
+            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, VALID);
         } else {
-            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, "REJECTED");
+            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, REJECTED);
         }
 
         return Optional.ofNullable(savedPayment);

@@ -56,10 +56,9 @@ public class PaymentConfirmationService {
     private boolean createAndSendTan(String psuId, String email) {
         changeOldTansToInvalid(psuId);
         Tan tan = new Tan(psuId, generateTanNumber());
+        tan = tanRepository.save(tan);
 
-        return Optional.ofNullable(tanRepository.save(tan))
-                   .map(t -> sendTanNumberOnEmail(email, t.getTanNumber()))
-                   .orElse(false);
+        return sendTanNumberOnEmail(email, tan.getTanNumber());
     }
 
     private void changeOldTansToInvalid(String psuId) {
