@@ -18,7 +18,7 @@
  */
 
 function sendPaymentRequestAndGetResponse(productNumber) {
-    var paymentResponse = new Object();
+    var paymentResponse = {};
 
     var settings = getPaymentAjaxSettings(productNumber);
     $.ajax(settings)
@@ -53,11 +53,11 @@ function getPaymentAjaxSettings(productNumber) {
 }
 
 function getPaymentInitiationRequestJson(productNumber) {
-    var formObject = new Object();
+    var formObject = {};
 
-    var debtorAccount = new Object();
-    var creditorAccount = new Object();
-    var instructedAmount = new Object();
+    var debtorAccount = {};
+    var creditorAccount = {};
+    var instructedAmount = {};
 
     debtorAccount.iban = $("#debtorIban").val();
     debtorAccount.currency = $("#debtorCurrency").val();
@@ -91,7 +91,7 @@ function getPaymentInitiationRequestJson(productNumber) {
 
 function getRequestHeaders() {
 
-    var headers = new Object();
+    var headers = {};
 
     headers["tpp-transaction-id"] = "16d40f49-a110-4344-a949-f99828ae13c9";
     headers["tpp-request-id"] = "2f77a125-aa7a-45c0-b414-cea25a116035";
