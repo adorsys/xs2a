@@ -22,12 +22,8 @@ function getPaymentRedirectLink(productNumber) {
         && (paymentResp["_links"].redirect !== undefined)) {
 
         var redirectLink = paymentResp["_links"].redirect;
-
         console.log("redirectLink : " + redirectLink);
-        redirectToPage(redirectLink);
-    }
-}
 
-function redirectToPage(url) {
-    window.location = url;
+        window.location = redirectLink;
+    }
 }
