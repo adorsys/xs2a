@@ -21,7 +21,7 @@ import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import lombok.AllArgsConstructor;
-import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class PsuAuthenticationService {
+public class TanConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
@@ -41,7 +41,7 @@ public class PsuAuthenticationService {
                    .orElse(false);
     }
 
-    public boolean isPsuTanNumberValid(String psuId, int tanNumber) {
+    public boolean isPsuTanNumberValid(String psuId, String tanNumber) {
         return tanRepository.findByPsuIdAndTanStatus(psuId, TanStatus.UNUSED)
                    .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                    .orElse(false);
@@ -55,8 +55,8 @@ public class PsuAuthenticationService {
                    .orElse(false);
     }
 
-    private boolean validateTanAndUpdateTanStatus(Tan originalTan, int givenTanNumber) {
-        boolean isValid = originalTan.getTanNumber() == givenTanNumber;
+    private boolean validateTanAndUpdateTanStatus(Tan originalTan, String givenTanNumber) {
+        boolean isValid = originalTan.getTanNumber().equals(givenTanNumber);
         if (isValid) {
             originalTan.setTanStatus(TanStatus.VALID);
         } else {
@@ -67,13 +67,13 @@ public class PsuAuthenticationService {
         return isValid;
     }
 
-    private int generateTanNumber() {
-        return RandomUtils.nextInt(100000, 1000000);
+    private String generateTanNumber() {
+        return RandomStringUtils.random(6, true, true);
     }
 
-    private boolean sendTanNumberOnEmail(String email, int tanNumber) {
+    private boolean sendTanNumberOnEmail(String email, String tanNumber) {
         SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setSubject("TAN for authentication to confirm your payment");
+        mail.setSubject("Your TAN for payment confirmation");
         mail.setFrom(email);
         mail.setTo(email);
         mail.setText("Your TAN number is " + tanNumber);

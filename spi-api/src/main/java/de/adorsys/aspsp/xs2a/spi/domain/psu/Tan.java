@@ -27,12 +27,12 @@ public class Tan {
     @Id
     private String id;
     private String psuId;
-    private int tanNumber;
+    private String tanNumber;
     private TanStatus tanStatus;
 
     public Tan(){}
 
-    public Tan(String psuId, int tanNumber) {
+    public Tan(String psuId, String tanNumber) {
         this.psuId = psuId;
         this.tanNumber = tanNumber;
         this.tanStatus = TanStatus.UNUSED;

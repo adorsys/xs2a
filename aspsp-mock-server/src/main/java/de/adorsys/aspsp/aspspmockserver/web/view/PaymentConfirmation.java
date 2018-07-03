@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloack;
+package de.adorsys.aspsp.aspspmockserver.web.view;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.IOException;
+@Data
+@NoArgsConstructor
+public class PaymentConfirmation {
+    private String psuId;
+    private String consentId;
+    private String tanNumber;
 
-@Slf4j
-public class KeycloackRestErrorHandler extends DefaultResponseErrorHandler {
-
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        log.info("Keycloack rest call exception: httpStatus {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
+    public PaymentConfirmation(String psuId, String consentId) {
+        this.psuId = psuId;
+        this.consentId = consentId;
     }
 }
