@@ -78,8 +78,7 @@ public class PaymentService {
 
     public Optional<SpiSinglePayments> addSinglePaymentWithRedirectApproach(@NotNull String consentId) {
         return Optional.ofNullable(getFirstSpiSinglePayment(getPaymentsFromPisConsent(consentId)))
-                   .map(paym -> proceedPayment(paym, consentId))
-                   .orElse(Optional.empty());
+                   .flatMap(paym -> proceedPayment(paym, consentId));
     }
 
     //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
