@@ -20,12 +20,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<form th:object="${paymentConfirmation}" th:action="@{/view/payment/confirmation/consent}" method="post">
-    <label>Are you sure you want to execute the payment?</label>
-    <button type="submit" name="decision" value="confirmed">Yes</button>
-    <button type="submit" name="decision" value="revoked">No</button>
-    <input type="hidden" th:field="*{psuId}" th:value="*{psuId}"/>
-    <input type="hidden" th:field="*{consentId}" th:value="*{consentId}"/>
-</form>
+<div th:object="${paymentDetails}">
+    <label>Your payment is successful!Payment id is:</label>
+    <p th:utext="*{paymentId}"></p>
+    <label>Amount to be charged:</label>
+    <p th:utext="*{instructedAmount.content}"></p>
+    <label>Currency:</label>
+    <p th:utext="*{instructedAmount.currency}"></p>
+</div>
 </body>
 </html>
