@@ -110,14 +110,9 @@ public class PaymentService {
 
     //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
     private Optional<SpiSinglePayments> proceedPayment(SpiSinglePayments spiSinglePayments, String consentId) {
-        SpiSinglePayments savedPayment = paymentRepository.save(spiSinglePayments);
-        if (savedPayment != null) {
-            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, VALID);
-        } else {
-            consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, REJECTED);
-        }
-
-        return Optional.ofNullable(savedPayment);
+        Optional<SpiSinglePayments> saved = Optional.ofNullable(paymentRepository.save(spiSinglePayments));
+        consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, saved.map(s -> VALID).orElse(REJECTED));
+        return saved;
     }
 
     private String getDebtorAccountIdFromPayment(SpiSinglePayments payment) {
