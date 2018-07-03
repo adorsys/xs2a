@@ -19,6 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
@@ -28,9 +29,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.INVALID;
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
-import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.VALID;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
@@ -39,6 +39,7 @@ public class PaymentConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
+    private final PaymentService paymentService;
 
     public boolean generateAndSendTanForPsu(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
@@ -46,11 +47,15 @@ public class PaymentConfirmationService {
                    .orElse(false);
     }
 
-    public boolean isPsuTanNumberValid(String psuId, String tanNumber) {
-        return tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
-                   .findFirst()
-                   .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
-                   .orElse(false);
+    public boolean isPsuTanNumberValid(String psuId, String tanNumber, String consentId) {
+        boolean tanNumberValid = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
+                                     .findFirst()
+                                     .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
+                                     .orElse(false);
+        if (!tanNumberValid) {
+            paymentService.revokeOrRejectPaymentConsent(consentId, REJECTED);
+        }
+        return tanNumberValid;
     }
 
     private boolean createAndSendTan(String psuId, String email) {
@@ -64,22 +69,21 @@ public class PaymentConfirmationService {
     private void changeOldTansToInvalid(String psuId) {
         List<Tan> tans = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED);
         if (isNotEmpty(tans)) {
-            for (Tan oldTan : tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED)) {
-                oldTan.setTanStatus(INVALID);
-                tanRepository.save(oldTan);
+            for (Tan oldTan : tans) {
+                oldTan.setTanStatus(TanStatus.INVALID);
             }
+            tanRepository.save(tans);
         }
     }
 
     private boolean validateTanAndUpdateTanStatus(Tan originalTan, String givenTanNumber) {
         boolean isValid = originalTan.getTanNumber().equals(givenTanNumber);
         if (isValid) {
-            originalTan.setTanStatus(VALID);
+            originalTan.setTanStatus(TanStatus.VALID);
         } else {
-            originalTan.setTanStatus(INVALID);
+            originalTan.setTanStatus(TanStatus.INVALID);
         }
         tanRepository.save(originalTan);
-
         return isValid;
     }
 

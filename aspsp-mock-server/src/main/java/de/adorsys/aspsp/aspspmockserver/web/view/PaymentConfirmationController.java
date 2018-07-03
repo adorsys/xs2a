@@ -25,7 +25,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REVOKED_BY_PSU;
 
 @RequiredArgsConstructor
@@ -49,18 +48,15 @@ public class PaymentConfirmationController {
     public ModelAndView confirmTan(
         @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
 
-        if (paymentConfirmationService.isPsuTanNumberValid(paymentConfirmation.getPsuId(), paymentConfirmation.getTanNumber())) {
-            return new ModelAndView("consentConfirmationPage", "paymentConfirmation", paymentConfirmation);
-        } else {
-            paymentService.revokeOrRejectPaymentConsent(paymentConfirmation.getConsentId(), REJECTED);
-            return new ModelAndView("tanConfirmationError");
-        }
+        return paymentConfirmationService.isPsuTanNumberValid(paymentConfirmation.getPsuId(), paymentConfirmation.getTanNumber(), paymentConfirmation.getConsentId())
+                   ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", paymentConfirmation)
+                   : new ModelAndView("tanConfirmationError");
     }
 
     @PostMapping(path = "/consent", params = "decision=confirmed")
     @ApiOperation(value = "Proceeds payment and changes the status of the corresponding consent")
     public ModelAndView proceedPayment(@ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
-        return paymentService.addPaymentWithRedirectApproach(paymentConfirmation.getConsentId())
+        return paymentService.addSinglePaymentWithRedirectApproach(paymentConfirmation.getConsentId())
                    .map(paym -> new ModelAndView("paymentSuccessPage", "paymentDetails", paym))
                    .orElse(new ModelAndView("paymentFailurePage"));
     }

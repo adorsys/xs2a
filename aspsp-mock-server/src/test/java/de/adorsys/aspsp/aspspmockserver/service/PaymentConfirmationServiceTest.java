@@ -18,6 +18,7 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
@@ -30,7 +31,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -45,6 +45,7 @@ public class PaymentConfirmationServiceTest {
     private static final String TAN_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
     private static final String TAN_NUMBER = "123456";
     private static final String WRONG_TAN_NUMBER = "wrong tan number";
+    private static final String CONSENT_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
 
     @Autowired
     PaymentConfirmationService paymentConfirmationService;
@@ -53,6 +54,8 @@ public class PaymentConfirmationServiceTest {
     private TanRepository tanRepository;
     @MockBean
     private PsuRepository psuRepository;
+    @MockBean
+    private PaymentService paymentService;
 
     @Before
     public void setUp() {
@@ -82,7 +85,7 @@ public class PaymentConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_Success() {
         //When
-        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isTrue();
@@ -91,7 +94,7 @@ public class PaymentConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_Failure() {
         //When
-        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -100,7 +103,7 @@ public class PaymentConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusValid() {
         //When
-        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -109,7 +112,7 @@ public class PaymentConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusInvalid() {
         //When
-        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isFalse();

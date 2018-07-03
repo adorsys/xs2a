@@ -76,7 +76,7 @@ public class PaymentService {
                    .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public Optional<SpiSinglePayments> addPaymentWithRedirectApproach(@NotNull String consentId) {
+    public Optional<SpiSinglePayments> addSinglePaymentWithRedirectApproach(@NotNull String consentId) {
         return Optional.ofNullable(getFirstSpiSinglePayment(getPaymentsFromPisConsent(consentId)))
                    .map(paym -> proceedPayment(paym, consentId))
                    .orElse(Optional.empty());
@@ -92,7 +92,7 @@ public class PaymentService {
 
         if (isPisConsentValid(responseEntity)) {
             return responseEntity.getBody().getPayments().stream()
-                       .map(pis -> paymentMapper.mapToSpiSinglePayments(pis))
+                       .map(paymentMapper::mapToSpiSinglePayments)
                        .collect(Collectors.toList());
         }
         return Collections.emptyList();
