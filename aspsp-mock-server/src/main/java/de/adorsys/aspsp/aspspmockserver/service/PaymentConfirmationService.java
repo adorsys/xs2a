@@ -68,8 +68,6 @@ public class PaymentConfirmationService {
     }
 
     private boolean validateTanAndUpdateTanStatus(Tan originalTan, String givenTanNumber) {
-        tanRepository.findAll();
-
         boolean isValid = originalTan.getTanNumber().equals(givenTanNumber);
         if (isValid) {
             originalTan.setTanStatus(VALID);
