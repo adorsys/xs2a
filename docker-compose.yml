@@ -1,8 +1,7 @@
 version: "3"
 
 networks:
-  frontend:
-  backend:
+  xs2a-net:
 
 volumes:
   keycloak-data:
@@ -29,8 +28,7 @@ services:
     ports:
       - "8081:8080"
     networks:
-      - frontend
-      - backend
+      - xs2a-net
 
   keycloak-postgres:
     image: centos/postgresql-95-centos7
@@ -38,7 +36,7 @@ services:
       - keycloak-data:/var/lib/pgsql/data
     restart: on-failure
     networks:
-      - backend
+      - xs2a-net
     environment:
       - POSTGRESQL_ADMIN_PASSWORD=postgres
       - POSTGRESQL_DATABASE=keycloak
@@ -56,8 +54,7 @@ services:
     ports:
       - "28080:8080"
     networks:
-      - frontend
-      - backend
+      - xs2a-net
     environment:
       - JAVA_TOOL_OPTIONS="-Xmx512M"
       - SPRING_DATA_MONGODB_HOST=aspsp-mock-mongo
@@ -74,7 +71,7 @@ services:
     expose:
       - 27017
     networks:
-      - backend
+      - xs2a-net
     volumes:
       - aspsp-mock-mongo-config:/data/configdb
       - aspsp-mock-mongo-data:/data/db
@@ -91,7 +88,7 @@ services:
     ports:
       - "48080:8080"
     networks:
-      - frontend
+      - xs2a-net
 
 # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
@@ -102,8 +99,7 @@ services:
     ports:
       - "38080:8080"
     networks:
-      - frontend
-      - backend
+      - xs2a-net
     environment:
       - JAVA_TOOL_OPTIONS="-Xmx512M"
       - SPRING_DATASOURCE_URL=jdbc:postgresql://consent-management-postgres/consent
@@ -120,7 +116,7 @@ services:
       - consent-management-data:/var/lib/pgsql/data
     restart: on-failure
     networks:
-      - backend
+      - xs2a-net
     environment:
       - POSTGRESQL_ADMIN_PASSWORD=postgres
       - POSTGRESQL_DATABASE=consent
@@ -137,7 +133,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - frontend
+      - xs2a-net
     environment:
       - JAVA_TOOL_OPTIONS="-Xmx512M"
       - SPRING_PROFILES_ACTIVE=mockspi
