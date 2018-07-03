@@ -54,9 +54,9 @@ public class PaymentConfirmationService {
                    .orElse(false);
     }
 
-    public boolean isTanNumberValidByIban(String iban, String tanNumber) {
+    public boolean isTanNumberValidByIban(String iban, String tanNumber, String consentId) {
         return accountService.getPsuIdByIban(iban)
-                   .map(psuId-> isPsuTanNumberValid(psuId, tanNumber))
+                   .map(psuId -> isPsuTanNumberValid(psuId, tanNumber, consentId))
                    .orElse(false);
     }
 
