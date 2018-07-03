@@ -23,7 +23,7 @@
 <form th:object="${paymentConfirmation}" th:action="@{/view/payment/confirmation/}" method="post">
     <label>Enter your TAN number: </label>
     <input type="text" th:field="*{tanNumber}"/>
-    <input type="hidden" th:field="*{psuId}" th:value="*{psuId}"/>
+    <input type="hidden" th:field="*{iban}" th:value="*{iban}"/>
     <input type="hidden" th:field="*{consentId}" th:value="*{consentId}"/>
     <button>Validate</button>
 </form>

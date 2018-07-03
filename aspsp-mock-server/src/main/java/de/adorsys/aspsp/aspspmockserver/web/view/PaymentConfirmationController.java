@@ -35,12 +35,14 @@ public class PaymentConfirmationController {
     private final PaymentConfirmationService paymentConfirmationService;
     private final PaymentService paymentService;
 
-    @GetMapping(path = "/{psu-id}/{consent-id}")
+    @GetMapping(path = "/{iban}/{consent-id}")
     @ApiOperation(value = "Displays content of email TAN confirmation page")
-    public ModelAndView showConfirmationPage(@PathVariable("psu-id") String psuId,
+    public ModelAndView showConfirmationPage(@PathVariable("iban") String iban,
                                              @PathVariable("consent-id") String consentId) {
-        paymentConfirmationService.generateAndSendTanForPsu(psuId);
-        return new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(psuId, consentId));
+
+        paymentConfirmationService.generateAndSendTanForPsuByIban(iban);
+
+        return new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(iban, consentId));
     }
 
     @PostMapping(path = "/")
@@ -48,7 +50,7 @@ public class PaymentConfirmationController {
     public ModelAndView confirmTan(
         @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
 
-        return paymentConfirmationService.isPsuTanNumberValid(paymentConfirmation.getPsuId(), paymentConfirmation.getTanNumber(), paymentConfirmation.getConsentId())
+        return paymentConfirmationService.isTanNumberValidByIban(paymentConfirmation.getIban(), paymentConfirmation.getTanNumber(), paymentConfirmation.getConsentId())
                    ? new ModelAndView("consentConfirmationPage", "paymentConfirmation", paymentConfirmation)
                    : new ModelAndView("tanConfirmationError");
     }
