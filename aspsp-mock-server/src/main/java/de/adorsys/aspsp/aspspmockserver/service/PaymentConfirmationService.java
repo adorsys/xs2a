@@ -26,14 +26,20 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+
+import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
+import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 @AllArgsConstructor
-public class TanConfirmationService {
+public class PaymentConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
+    private final PaymentService paymentService;
     private final AccountService accountService;
 
     public boolean generateAndSendTanForPsuByIban(String iban) {
@@ -54,18 +60,33 @@ public class TanConfirmationService {
                    .orElse(false);
     }
 
-    public boolean isPsuTanNumberValid(String psuId, String tanNumber) {
-        return tanRepository.findByPsuIdAndTanStatus(psuId, TanStatus.UNUSED)
-                   .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
-                   .orElse(false);
+    public boolean isPsuTanNumberValid(String psuId, String tanNumber, String consentId) {
+        boolean tanNumberValid = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
+                                     .findFirst()
+                                     .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
+                                     .orElse(false);
+        if (!tanNumberValid) {
+            paymentService.revokeOrRejectPaymentConsent(consentId, REJECTED);
+        }
+        return tanNumberValid;
     }
 
     private boolean createAndSendTan(String psuId, String email) {
+        changeOldTansToInvalid(psuId);
         Tan tan = new Tan(psuId, generateTanNumber());
+        tan = tanRepository.save(tan);
 
-        return Optional.ofNullable(tanRepository.save(tan))
-                   .map(t -> sendTanNumberOnEmail(email, t.getTanNumber()))
-                   .orElse(false);
+        return sendTanNumberOnEmail(email, tan.getTanNumber());
+    }
+
+    private void changeOldTansToInvalid(String psuId) {
+        List<Tan> tans = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED);
+        if (isNotEmpty(tans)) {
+            for (Tan oldTan : tans) {
+                oldTan.setTanStatus(TanStatus.INVALID);
+            }
+            tanRepository.save(tans);
+        }
     }
 
     private boolean validateTanAndUpdateTanStatus(Tan originalTan, String givenTanNumber) {
@@ -76,7 +97,6 @@ public class TanConfirmationService {
             originalTan.setTanStatus(TanStatus.INVALID);
         }
         tanRepository.save(originalTan);
-
         return isValid;
     }
 

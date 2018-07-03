@@ -62,6 +62,7 @@ public class PaymentController {
                    ? ResponseEntity.badRequest().build()
                    : new ResponseEntity<>(saved, CREATED);
     }
+
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class)})

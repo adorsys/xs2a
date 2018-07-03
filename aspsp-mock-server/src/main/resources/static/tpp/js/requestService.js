@@ -1,3 +1,6 @@
+
+
+
 /*
  * Copyright 2018-2018 adorsys GmbH & Co KG
  *
@@ -15,7 +18,7 @@
  */
 
 function sendPaymentRequestAndGetResponse(productNumber) {
-    var paymentResponse = new Object();
+    var paymentResponse = {};
 
     var settings = getPaymentAjaxSettings(productNumber);
     $.ajax(settings)
@@ -33,10 +36,9 @@ function sendPaymentRequestAndGetResponse(productNumber) {
 }
 
 function getPaymentAjaxSettings(productNumber) {
-
     var paymentReqJson = getPaymentInitiationRequestJson(productNumber);
     var headers = getRequestHeaders();
-    var xs2aUrl = getXs2aUrl();
+    var xs2aUrl = configs.xs2a;
 
     return {
         "async": false,
@@ -51,11 +53,11 @@ function getPaymentAjaxSettings(productNumber) {
 }
 
 function getPaymentInitiationRequestJson(productNumber) {
-    var formObject = new Object();
+    var formObject = {};
 
-    var debtorAccount = new Object();
-    var creditorAccount = new Object();
-    var instructedAmount = new Object();
+    var debtorAccount = {};
+    var creditorAccount = {};
+    var instructedAmount = {};
 
     debtorAccount.iban = $("#debtorIban").val();
     debtorAccount.currency = $("#debtorCurrency").val();
@@ -89,7 +91,7 @@ function getPaymentInitiationRequestJson(productNumber) {
 
 function getRequestHeaders() {
 
-    var headers = new Object();
+    var headers = {};
 
     headers["tpp-transaction-id"] = "16d40f49-a110-4344-a949-f99828ae13c9";
     headers["tpp-request-id"] = "2f77a125-aa7a-45c0-b414-cea25a116035";
@@ -97,14 +99,4 @@ function getRequestHeaders() {
     headers["content-type"] = "application/json";
 
     return headers;
-}
-
-function getXs2aUrl() {
-    if (document.domain === "localhost") {
-        return "http://localhost:8080/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true";
-    } else if (document.domain === "xs2a.integ.cloud.adorsys.de") {
-        return "https://xs2a.integ.cloud.adorsys.de/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true";
-    } else {
-        return "";
-    }
 }

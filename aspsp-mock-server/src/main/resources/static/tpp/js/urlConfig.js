@@ -13,17 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
-function getPaymentRedirectLink(productNumber) {
-    var paymentResp = sendPaymentRequestAndGetResponse(productNumber);
-
-    if ((paymentResp["_links"] !== undefined)
-        && (paymentResp["_links"].redirect !== undefined)) {
-
-        var redirectLink = paymentResp["_links"].redirect;
-        console.log("redirectLink : " + redirectLink);
-
-        window.location = redirectLink;
-    }
-}
+configs = {
+    localhost: "http://localhost:8080/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true",
+    xs2a: "https://xs2a.integ.cloud.adorsys.de/api/v1/payments/sepa-credit-transfers?tppRedirectPreferred=true"
+};
