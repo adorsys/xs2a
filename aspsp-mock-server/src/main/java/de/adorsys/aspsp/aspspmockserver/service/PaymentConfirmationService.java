@@ -25,11 +25,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.INVALID;
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.VALID;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Service
 @AllArgsConstructor
@@ -61,9 +63,12 @@ public class PaymentConfirmationService {
     }
 
     private void changeOldTansToInvalid(String psuId) {
-        for (Tan oldTan : tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED)) {
-            oldTan.setTanStatus(INVALID);
-            tanRepository.save(oldTan);
+        List<Tan> tans = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED);
+        if (isNotEmpty(tans)) {
+            for (Tan oldTan : tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED)) {
+                oldTan.setTanStatus(INVALID);
+                tanRepository.save(oldTan);
+            }
         }
     }
 
