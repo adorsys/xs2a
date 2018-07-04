@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 
@@ -42,4 +43,6 @@ public interface AccountSpi {
     List<SpiAccountDetails> readAccountDetailsByIban(String iban);
 
     List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans);
+
+    List<String> readPsuAllowedPaymentProductList(SpiAccountReference reference);
 }

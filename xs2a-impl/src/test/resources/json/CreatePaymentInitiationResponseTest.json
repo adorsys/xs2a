@@ -5,7 +5,7 @@
   "scaMethods": [],
   "tppMessages": [],
   "_links": {
-     "redirect":"http://localhost:28080/view/payment/confirmation/932f8184-59dc-4fdb-848e-58b887b3ba02",
+     "redirect":"https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/DE371234599999/932f8184-59dc-4fdb-848e-58b887b3ba02",
      "updatePsuIdentification":"http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02",
      "updatePsuAuthentication":"http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02",
      "self":"http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02",

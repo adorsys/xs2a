@@ -42,26 +42,27 @@ public class PaymentController {
     @ApiOperation(value = "Creates a single payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = SpiSinglePayments.class),
-        @ApiResponse(code = 400, message = "Bad Request")})
+        @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/")
     public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) {
         return paymentService.addPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
-                   .orElse(ResponseEntity.badRequest().build());
+                   .orElse(ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "Creates a bulk payment(list of single payments) based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = List.class),
-        @ApiResponse(code = 400, message = "Bad Request")})
+        @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/bulk-payments")
     public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
         @RequestBody List<SpiSinglePayments> payments) {
         List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
         return isEmpty(saved)
-                   ? ResponseEntity.badRequest().build()
+                   ? ResponseEntity.noContent().build()
                    : new ResponseEntity<>(saved, CREATED);
     }
+
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class)})
@@ -75,7 +76,7 @@ public class PaymentController {
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = SpiPeriodicPayment.class),
         @ApiResponse(code = 400, message = "Bad Request")})
-    @PostMapping(path = "/createPeriodicPayment")
+    @PostMapping(path = "/create-periodic-payment")
     public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))

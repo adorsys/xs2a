@@ -113,7 +113,7 @@ public class PaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult = paymentInitiationController
-            .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
+                                                                         .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -121,11 +121,19 @@ public class PaymentInitiationControllerTest {
     }
 
     private ResponseObject readResponseObject() throws IOException {
-        return ResponseObject.builder().body(readPaymentInitialisationResponse()).build();
+        PaymentInitialisationResponse resp = readPaymentInitialisationResponse();
+        resp.setIban("DE371234599999");
+        resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
+
+        return ResponseObject.builder().body(resp).build();
     }
 
     private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {
-        return jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
+        PaymentInitialisationResponse resp = jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
+        resp.setIban("DE371234599999");
+        resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
+
+        return resp;
     }
 
     private SinglePayments readSinglePayments() throws IOException {

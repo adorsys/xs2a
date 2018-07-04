@@ -14,23 +14,36 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloack;
+package de.adorsys.aspsp.aspspmockserver.config.rest.consent;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class KeycloackRestConfig {
+public class ConsentRestConfig {
+    @Value("${rest-consent-config.read-timeout.ms:10000}")
+    private int readTimeout;
+    @Value("${rest-consent-config.connection-timeout.ms:10000}")
+    private int connectionTimeout;
 
-    @Bean(name = "keycloackRestTemplate")
-    public RestTemplate keycloackRestTemplate() {
-        RestTemplate rest = new RestTemplate();
+    @Bean(name = "consentRestTemplate")
+    public RestTemplate consentRestTemplate(){
+        RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
-        rest.setErrorHandler(new KeycloackRestErrorHandler());
         return rest;
+    }
+
+    private ClientHttpRequestFactory clientHttpRequestFactory() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setReadTimeout(readTimeout);
+        factory.setConnectTimeout(connectionTimeout);
+        return factory;
     }
 }

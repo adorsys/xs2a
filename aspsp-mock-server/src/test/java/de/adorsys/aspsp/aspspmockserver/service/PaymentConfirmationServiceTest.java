@@ -16,8 +16,9 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
-import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
@@ -29,10 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -40,21 +38,24 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class PsuAuthenticationServiceTest {
+public class PaymentConfirmationServiceTest {
     private static final String PSU_ID_1 = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String PSU_ID_2 = "ad918c89-4346-4f16-b5c8-d781b040200c";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String TAN_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
-    private static final int TAN_NUMBER = 123456;
-    private static final int WRONG_TAN_NUMBER = 0;
+    private static final String TAN_NUMBER = "123456";
+    private static final String WRONG_TAN_NUMBER = "wrong tan number";
+    private static final String CONSENT_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
 
     @Autowired
-    PsuAuthenticationService psuAuthenticationService;
+    PaymentConfirmationService paymentConfirmationService;
 
     @MockBean
     private TanRepository tanRepository;
     @MockBean
     private PsuRepository psuRepository;
+    @MockBean
+    private PaymentService paymentService;
 
     @Before
     public void setUp() {
@@ -67,15 +68,15 @@ public class PsuAuthenticationServiceTest {
         when(tanRepository.save(any(Tan.class)))
             .thenReturn(getUnusedTan());
         when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_1, TanStatus.UNUSED))
-            .thenReturn(Optional.of(getUnusedTan()));
+            .thenReturn(Collections.singletonList(getUnusedTan()));
         when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_2, TanStatus.UNUSED))
-            .thenReturn(Optional.empty());
+            .thenReturn(Collections.emptyList());
     }
 
     @Test
     public void generateTanForPsu_Failure() {
         //When
-        boolean actualResult = psuAuthenticationService.generateAndSendTanForPsu(WRONG_PSU_ID);
+        boolean actualResult = paymentConfirmationService.generateAndSendTanForPsu(WRONG_PSU_ID);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -84,7 +85,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_Success() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isTrue();
@@ -93,7 +94,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_Failure() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -102,7 +103,7 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusValid() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_2, TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -111,18 +112,18 @@ public class PsuAuthenticationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusInvalid() {
         //When
-        boolean actualResult = psuAuthenticationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER);
+        boolean actualResult = paymentConfirmationService.isPsuTanNumberValid(PSU_ID_1, WRONG_TAN_NUMBER, CONSENT_ID);
 
         //Then
         assertThat(actualResult).isFalse();
     }
 
     private Psu getPsu1() {
-        return new Psu(PSU_ID_1, "test1@gmail.com", null);
+        return new Psu(PSU_ID_1, "test1@gmail.com", null, null);
     }
 
     private Psu getPsu2() {
-        return new Psu(PSU_ID_2, "test2@gmail.com", null);
+        return new Psu(PSU_ID_2, "test2@gmail.com", null, null);
     }
 
     private Tan getUnusedTan() {

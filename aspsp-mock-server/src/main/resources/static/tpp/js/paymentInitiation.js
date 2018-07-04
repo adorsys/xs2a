@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloack;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+function getPaymentRedirectLink(productNumber) {
+    var paymentResp = sendPaymentRequestAndGetResponse(productNumber);
 
-import java.io.IOException;
+    if ((paymentResp["_links"] !== undefined)
+        && (paymentResp["_links"].redirect !== undefined)) {
 
-@Slf4j
-public class KeycloackRestErrorHandler extends DefaultResponseErrorHandler {
+        var redirectLink = paymentResp["_links"].redirect;
+        console.log("redirectLink : " + redirectLink);
 
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        log.info("Keycloack rest call exception: httpStatus {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
+        window.location = redirectLink;
     }
 }

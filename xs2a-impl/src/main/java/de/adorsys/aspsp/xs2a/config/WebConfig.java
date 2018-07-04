@@ -25,7 +25,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
@@ -67,7 +67,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private AspspProfileService aspspProfileService;
     @Autowired
-    private KeycloakInvokerService keycloackInvokerService;
+    private KeycloakInvokerService keycloakInvokerService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -151,7 +151,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         if (OAUTH == scaApproach) {
             accessToken = obtainAccessTokenFromHeader(request);
         } else if (REDIRECT == scaApproach) {
-            accessToken = keycloackInvokerService.obtainAccessToken();
+            accessToken = keycloakInvokerService.obtainAccessToken();
         }
         return Optional.ofNullable(accessToken)
                    .orElseThrow(IllegalArgumentException::new);

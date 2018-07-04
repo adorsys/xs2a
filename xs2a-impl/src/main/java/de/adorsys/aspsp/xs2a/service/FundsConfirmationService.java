@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.SingleBalance;
+import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -27,6 +28,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +40,7 @@ public class FundsConfirmationService {
     /**
      * Checks if the account balance is sufficient for requested operation
      *
-     * @param  request Contains the requested amount in order to comparing with available amount on account
+     * @param request Contains the requested amount in order to comparing with available amount on account
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
@@ -51,7 +53,7 @@ public class FundsConfirmationService {
     }
 
     private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
-        List<Balances> balances = accountService.getAccountBalancesByAccountReference(accountReference);
+        List<Balances> balances = getAccountBalancesByAccountReference(accountReference);
 
         return balances.stream()
                    .findFirst()
@@ -62,7 +64,7 @@ public class FundsConfirmationService {
     }
 
     private boolean isRequiredAmountEnough(Amount requiredAmount, Amount availableAmount) {
-        return convertToBigDecimal(availableAmount.getContent()).compareTo(convertToBigDecimal(requiredAmount.getContent()))  >= 0 &&
+        return convertToBigDecimal(availableAmount.getContent()).compareTo(convertToBigDecimal(requiredAmount.getContent())) >= 0 &&
                    availableAmount.getCurrency() == requiredAmount.getCurrency();
     }
 
@@ -70,5 +72,14 @@ public class FundsConfirmationService {
         return Optional.ofNullable(content)
                    .map(BigDecimal::new)
                    .orElse(BigDecimal.ZERO);
+    }
+
+    private List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
+        return Optional.ofNullable(reference)
+                   .map(accountService::getAccountDetailsByAccountReference)
+                   .filter(Optional::isPresent)
+                   .map(Optional::get)
+                   .map(AccountDetails::getBalances)
+                   .orElse(Collections.emptyList());
     }
 }

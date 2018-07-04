@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static org.springframework.http.HttpStatus.OK;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "/future-bookings")
@@ -38,11 +36,11 @@ public class FutureBookingsController {
     @ApiOperation(value = "Executes future payments for account specified by IBAN and Currency, with update on corresponding account balances", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiAccountDetails.class),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(code = 204, message = "No Content")})
     @PostMapping(path = "/{iban}/{currency}")
     public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
         return futureBookingsService.changeBalances(iban, currency)
-                   .map(saved -> new ResponseEntity<>(saved, OK))
-                   .orElse(ResponseEntity.notFound().build());
+                   .map(ResponseEntity::ok)
+                   .orElse(ResponseEntity.noContent().build());
     }
 }

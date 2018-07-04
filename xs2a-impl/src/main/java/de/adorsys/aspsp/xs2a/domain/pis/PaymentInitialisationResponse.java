@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -61,5 +62,11 @@ public class PaymentInitialisationResponse {
 
     @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
     private boolean tppRedirectPreferred;
+
+    @JsonIgnore
+    private String iban;
+
+    @JsonIgnore
+    private String pisConsentId;
 }
 

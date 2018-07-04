@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
@@ -35,14 +35,14 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
-
 
 @Service
 @AllArgsConstructor
@@ -54,9 +54,9 @@ public class PaymentService {
     private final AspspProfileService aspspProfileService;
 
     /**
-     * Get information about the status of a payment
+     * Retrieves payment status from ASPSP
      *
-     * @param paymentId      Id for a required payment
+     * @param paymentId      String representation of payment primary ASPSP identifier
      * @param paymentProduct The addressed payment product
      * @return Information about the status of a payment
      */
@@ -68,25 +68,24 @@ public class PaymentService {
     }
 
     /**
-     * Initialises a new periodic payment
+     * Initiates periodic payment
      *
-     * @param periodicPayment      Information in order to create new periodic payment
-     * @param paymentProduct       The addressed payment product endpoint for periodic payments
-     * @param tppRedirectPreferred If it equals “true”, the TPP prefers a redirect over an embedded SCA approach
-     * @return Response included information about created periodic payment
+     * @param periodicPayment      Periodic payment information
+     * @param paymentProduct       The addressed payment product
+     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
+     * @return Response containing information about created periodic payment or corresponding error
      */
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
-        PaymentInitialisationResponse paymentInitiation = null;
-
-        if (periodicPayment != null
-                && areAccountsExist(periodicPayment.getDebtorAccount(), periodicPayment.getCreditorAccount())) {
-
-            paymentInitiation = aspspProfileService.isRedirectMode()
-                                    ? getPeriodicPaymentResponseWhenRedirectMode(periodicPayment, paymentProduct, tppRedirectPreferred)
-                                    : getPeriodicPaymentResponseWhenOAuthMode(periodicPayment, paymentProduct, tppRedirectPreferred);
+        ResponseObject paymentRelatedErrors = containsPeriodicPaymentRelatedErrors(periodicPayment, paymentProduct);
+        if (paymentRelatedErrors.hasError()) {
+            return ResponseObject.<PaymentInitialisationResponse>builder().fail(paymentRelatedErrors.getError()).build();
         }
 
-        return Optional.ofNullable(paymentInitiation)
+        Optional<PaymentInitialisationResponse> paymentInitiation = aspspProfileService.isRedirectMode()
+                                                                        ? getPeriodicPaymentResponseWhenRedirectMode(periodicPayment)
+                                                                        : getPeriodicPaymentResponseWhenOAuthMode(periodicPayment, paymentProduct, tppRedirectPreferred);
+
+        return paymentInitiation
                    .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
@@ -94,77 +93,142 @@ public class PaymentService {
     }
 
     /**
-     * Initialises a bulk payment
+     * Initiates a bulk payment
      *
-     * @param payments             List of payments in order to create bulk payments
-     * @param paymentProduct       The addressed payment product endpoint for bulk payments
-     * @param tppRedirectPreferred If it equals “true”, the TPP prefers a redirect over an embedded SCA approach
-     * @return List of responses which are included information about created payments
+     * @param payments             List of single payments forming bulk payment
+     * @param paymentProduct       The addressed payment product
+     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
+     * @return List of payment initiation responses containing inforamtion about created payments or an error if non of the payments could pass the validation
      */
     public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        List<PaymentInitialisationResponse> paymentResponses = aspspProfileService.isRedirectMode()
-                                                                   ? getBulkPaymentResponseWhenRedirectMode(payments, paymentProduct, tppRedirectPreferred)
-                                                                   : getBulkPaymentResponseWhenOAuthMode(payments, paymentProduct, tppRedirectPreferred);
-
-
-        return CollectionUtils.isEmpty(paymentResponses)
-                   ? ResponseObject.<List<PaymentInitialisationResponse>>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build()
-                   : ResponseObject.<List<PaymentInitialisationResponse>>builder()
-                         .body(paymentResponses).build();
+        if (CollectionUtils.isEmpty(payments)) {
+            return ResponseObject.<List<PaymentInitialisationResponse>>builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
+                       .build();
+        }
+        List<SinglePayments> validPayments = new ArrayList<>();
+        List<PaymentInitialisationResponse> invalidPayments = new ArrayList<>();
+        for (SinglePayments s : payments) {
+            ResponseObject paymentRelatedErrors = containsSinglePaymentRelatedErrors(s, paymentProduct);
+            if (paymentRelatedErrors.hasError()) {
+                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayments() : s, paymentRelatedErrors.getError().getTppMessage().getCode(), tppRedirectPreferred)
+                    .map(invalidPayments::add);
+            } else {
+                validPayments.add(s);
+            }
+        }
+        if (CollectionUtils.isNotEmpty(validPayments)) {
+            List<PaymentInitialisationResponse> paymentResponses = getBulkPaymentResponses(paymentProduct, tppRedirectPreferred, validPayments);
+            if (CollectionUtils.isNotEmpty(paymentResponses) && paymentResponses.stream()
+                                                                    .anyMatch(pr -> pr.getTransactionStatus() != TransactionStatus.RJCT)) {
+                paymentResponses.addAll(invalidPayments);
+                return ResponseObject.<List<PaymentInitialisationResponse>>builder()
+                           .body(paymentResponses).build();
+            }
+        }
+        return ResponseObject.<List<PaymentInitialisationResponse>>builder()
+                   .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build();
     }
 
     /**
-     * Initialises a single payment
+     * Initiates a single payment
      *
-     * @param singlePayment        Payment in order to create single payments
-     * @param paymentProduct       The addressed payment product endpoint for single payments
-     * @param tppRedirectPreferred If it equals “true”, the TPP prefers a redirect over an embedded SCA approach
-     * @return Response included information about created single payment
+     * @param singlePayment        Single payment information
+     * @param paymentProduct       The addressed payment product
+     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
+     * @return Response containing information about created single payment or corresponding error
      */
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
-        PaymentInitialisationResponse paymentInitialisationResponse = null;
-
-        if (singlePayment != null
-                && areAccountsExist(singlePayment.getDebtorAccount(), singlePayment.getCreditorAccount())) {
-
-            paymentInitialisationResponse = aspspProfileService.isRedirectMode()
-                                                ? getSinglePaymentResponseWhenRedirectMode(singlePayment, paymentProduct, tppRedirectPreferred)
-                                                : getSinglePaymentResponseWhenOAuthMode(singlePayment, paymentProduct, tppRedirectPreferred);
+        ResponseObject paymentRelatedErrors = containsSinglePaymentRelatedErrors(singlePayment, paymentProduct);
+        if (paymentRelatedErrors.hasError()) {
+            return ResponseObject.<PaymentInitialisationResponse>builder().fail(paymentRelatedErrors.getError()).build();
         }
 
-        return Optional.ofNullable(paymentInitialisationResponse)
+        Optional<PaymentInitialisationResponse> paymentInitResp = aspspProfileService.isRedirectMode()
+                                                                      ? getSinglePaymentResponseWhenRedirectMode(singlePayment)
+                                                                      : getSinglePaymentResponseWhenOAuthMode(singlePayment, paymentProduct, tppRedirectPreferred);
+
+        return paymentInitResp
                    .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                                .build());
     }
 
-    private boolean areAccountsExist(AccountReference debtorAccount, AccountReference creditorAccount) {
-        return accountService.isAccountExists(debtorAccount)
-                   && accountService.isAccountExists(creditorAccount);
+    private List<PaymentInitialisationResponse> getBulkPaymentResponses(String paymentProduct, boolean tppRedirectPreferred, List<SinglePayments> validPayments) {
+        return aspspProfileService.isRedirectMode()
+                   ? getBulkPaymentResponseWhenRedirectMode(validPayments)
+                   : getBulkPaymentResponseWhenOAuthMode(validPayments, paymentProduct, tppRedirectPreferred);
     }
 
-    private PaymentInitialisationResponse getPeriodicPaymentResponseWhenRedirectMode(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
-        return StringUtils.isBlank(pisConsentService.createPisConsentForPeriodicPaymentAndGetId(periodicPayment))
-                   ? null
-                   : createPeriodicPaymentAndGetResponse(periodicPayment, paymentProduct, tppRedirectPreferred);
+    private ResponseObject containsSinglePaymentRelatedErrors(SinglePayments payment, String paymentProduct) {
+        return payment != null && payment.isValidDated()
+                   ? containsPaymentRelatedErrors(payment, paymentProduct)
+                   : ResponseObject.builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
+                         .build();
     }
 
-    private PaymentInitialisationResponse getPeriodicPaymentResponseWhenOAuthMode(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+    private ResponseObject containsPeriodicPaymentRelatedErrors(PeriodicPayment payment, String paymentProduct) {
+        return payment != null && payment.isValidDate()
+                   ? containsPaymentRelatedErrors(payment, paymentProduct)
+                   : ResponseObject.builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
+                         .build();
+    }
+
+    private ResponseObject containsPaymentRelatedErrors(SinglePayments payment, String paymentProduct) {
+        if (!accountService.getAccountDetailsByAccountReference(payment.getDebtorAccount()).isPresent()
+                && !accountService.getAccountDetailsByAccountReference(payment.getCreditorAccount()).isPresent()) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_400)))
+                       .build();
+        }
+        if (accountService.isInvalidPaymentProductForPsu(payment.getDebtorAccount(), paymentProduct)) {
+            return ResponseObject.<PaymentInitialisationResponse>builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, PRODUCT_INVALID)))
+                       .build();
+        }
+        return ResponseObject.builder().build();
+    }
+
+    private Optional<PaymentInitialisationResponse> getPeriodicPaymentResponseWhenRedirectMode(PeriodicPayment periodicPayment) {
+        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(periodicPayment);
+
+        if (StringUtils.isNotBlank(pisConsentId)) {
+            PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+            response.setTransactionStatus(TransactionStatus.ACCP);
+            response.setPisConsentId(pisConsentId);
+            response.setIban(periodicPayment.getDebtorAccount().getIban());
+
+            return Optional.of(response);
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<PaymentInitialisationResponse> getPeriodicPaymentResponseWhenOAuthMode(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
         return createPeriodicPaymentAndGetResponse(periodicPayment, paymentProduct, tppRedirectPreferred);
     }
 
-    private PaymentInitialisationResponse createPeriodicPaymentAndGetResponse(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+    private Optional<PaymentInitialisationResponse> createPeriodicPaymentAndGetResponse(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
         SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(periodicPayment);
-        SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, paymentProduct, tppRedirectPreferred);
-        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
+        return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, paymentProduct, tppRedirectPreferred));
     }
 
-    private List<PaymentInitialisationResponse> getBulkPaymentResponseWhenRedirectMode(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        return StringUtils.isBlank(pisConsentService.createPisConsentForBulkPaymentAndGetId(payments))
-                   ? null
-                   : createBulkPaymentAndGetResponse(payments, paymentProduct, tppRedirectPreferred);
+    private List<PaymentInitialisationResponse> getBulkPaymentResponseWhenRedirectMode(List<SinglePayments> payments) {
+        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(payments);
+
+        if (!StringUtils.isBlank(pisConsentId)) {
+            PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+            response.setTransactionStatus(TransactionStatus.ACCP);
+            response.setPisConsentId(pisConsentId);
+            response.setIban(payments.get(0).getDebtorAccount().getIban()); // TODO Establish order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
+
+            return new ArrayList<>(Collections.singletonList(response));
+        }
+
+        return Collections.emptyList();
     }
 
     private List<PaymentInitialisationResponse> getBulkPaymentResponseWhenOAuthMode(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
@@ -172,30 +236,41 @@ public class PaymentService {
     }
 
     private List<PaymentInitialisationResponse> createBulkPaymentAndGetResponse(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
-        List<SinglePayments> validatedPayments = payments.stream()
-                                                     .filter(Objects::nonNull)
-                                                     .filter(pmt -> areAccountsExist(pmt.getDebtorAccount(), pmt.getCreditorAccount()))
-                                                     .collect(Collectors.toList());
-
-        List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(validatedPayments);
+        List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments, paymentProduct, tppRedirectPreferred);
 
         return spiPaymentInitiations.stream()
                    .map(paymentMapper::mapToPaymentInitializationResponse)
+                   .filter(Optional::isPresent)
+                   .map(Optional::get)
+                   .peek(resp -> {
+                       if (StringUtils.isBlank(resp.getPaymentId()) || resp.getTransactionStatus() == TransactionStatus.RJCT) {
+                           resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
+                           resp.setTransactionStatus(TransactionStatus.RJCT);
+                       }
+                   })
                    .collect(Collectors.toList());
     }
 
-    private PaymentInitialisationResponse getSinglePaymentResponseWhenRedirectMode(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
-        return StringUtils.isBlank(pisConsentService.createPisConsentForSinglePaymentAndGetId(singlePayment))
-                   ? null
-                   : createSinglePaymentAndGetResponse(singlePayment, paymentProduct, tppRedirectPreferred);
+    private Optional<PaymentInitialisationResponse> getSinglePaymentResponseWhenRedirectMode(SinglePayments singlePayment) {
+        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(singlePayment);
+
+        if (!StringUtils.isBlank(pisConsentId)) {
+            PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+            response.setTransactionStatus(TransactionStatus.RCVD);
+            response.setPisConsentId(pisConsentId);
+            response.setIban(singlePayment.getDebtorAccount().getIban());
+
+            return Optional.of(response);
+        }
+        return Optional.empty();
     }
 
-    private PaymentInitialisationResponse getSinglePaymentResponseWhenOAuthMode(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+    private Optional<PaymentInitialisationResponse> getSinglePaymentResponseWhenOAuthMode(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
         return createSinglePaymentAndGetResponse(singlePayment, paymentProduct, tppRedirectPreferred);
     }
 
-    private PaymentInitialisationResponse createSinglePaymentAndGetResponse(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+    private Optional<PaymentInitialisationResponse> createSinglePaymentAndGetResponse(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
         SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
         SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayments, paymentProduct, tppRedirectPreferred);
         return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);

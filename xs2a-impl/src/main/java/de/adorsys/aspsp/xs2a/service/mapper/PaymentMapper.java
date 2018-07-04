@@ -62,11 +62,14 @@ public class PaymentMapper {
                        spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
                        spiSinglePayments.setInstructedAmount(accountMapper.mapToSpiAmount(paymentRe.getInstructedAmount()));
                        spiSinglePayments.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
-                       spiSinglePayments.setCreditorAgent(paymentRe.getCreditorAgent().getCode());
+
+                       spiSinglePayments.setCreditorAgent(Optional.ofNullable(paymentRe.getCreditorAgent())
+                                                              .map(BICFI::getCode).orElse(""));
                        spiSinglePayments.setCreditorName(paymentRe.getCreditorName());
                        spiSinglePayments.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
                        spiSinglePayments.setUltimateCreditor(paymentRe.getUltimateCreditor());
-                       spiSinglePayments.setPurposeCode(paymentRe.getPurposeCode().getCode());
+                       spiSinglePayments.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
+                                                              .map(PurposeCode::getCode).orElse(""));
                        spiSinglePayments.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
                        spiSinglePayments.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayments.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
@@ -106,8 +109,7 @@ public class PaymentMapper {
                    }).orElse(null);
     }
 
-    public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
-
+    public Optional<PaymentInitialisationResponse> mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
         return Optional.ofNullable(response)
                    .map(pir -> {
                        PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
@@ -121,7 +123,19 @@ public class PaymentMapper {
                        initialisationResponse.setTppMessages(mapToMessageCodes(pir.getTppMessages()));
                        initialisationResponse.setLinks(new Links());
                        return initialisationResponse;
-                   }).orElse(null);
+                   });
+    }
+
+    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayments payment, MessageErrorCode error, boolean tppRedirectPreferred) {
+        return Optional.ofNullable(payment)
+                   .map(p -> {
+                       PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+                       response.setTransactionStatus(TransactionStatus.RJCT);
+                       response.setPaymentId(p.getEndToEndIdentification());
+                       response.setTppRedirectPreferred(tppRedirectPreferred);
+                       response.setTppMessages(new MessageErrorCode[]{error});
+                       return response;
+                   });
     }
 
     private String getFrequency(PeriodicPayment pp) {
@@ -182,17 +196,20 @@ public class PaymentMapper {
                        pisSinglePayment.setUltimateDebtor(payReq.getUltimateDebtor());
                        pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(payReq.getInstructedAmount()));
                        pisSinglePayment.setCreditorAccount(accountMapper.mapToPisAccountReference(payReq.getCreditorAccount()));
-                       pisSinglePayment.setCreditorAgent(payReq.getCreditorAgent().getCode());
+                       pisSinglePayment.setCreditorAgent(Optional.ofNullable(payReq.getCreditorAgent())
+                                                             .map(BICFI::getCode).orElse(""));
                        pisSinglePayment.setCreditorName(payReq.getCreditorName());
                        pisSinglePayment.setCreditorAddress(mapToPisAddress(payReq.getCreditorAddress()));
                        pisSinglePayment.setUltimateCreditor(payReq.getUltimateCreditor());
-                       pisSinglePayment.setPurposeCode(payReq.getPurposeCode().getCode());
+                       pisSinglePayment.setPurposeCode(Optional.ofNullable(payReq.getPurposeCode())
+                                                           .map(PurposeCode::getCode).orElse(""));
                        pisSinglePayment.setRemittanceInformationUnstructured(payReq.getRemittanceInformationUnstructured());
                        pisSinglePayment.setRemittanceInformationStructured(mapToPisRemittance(payReq.getRemittanceInformationStructured()));
                        pisSinglePayment.setRequestedExecutionDate(payReq.getRequestedExecutionDate());
                        pisSinglePayment.setRequestedExecutionTime(payReq.getRequestedExecutionTime());
 
-                       return pisSinglePayment;})
+                       return pisSinglePayment;
+                   })
                    .orElse(null);
     }
 
@@ -226,7 +243,8 @@ public class PaymentMapper {
                        pisPeriodicPayment.setFrequency(getFrequency(pp));
                        pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
 
-                       return pisPeriodicPayment;})
+                       return pisPeriodicPayment;
+                   })
                    .orElse(null);
     }
 
