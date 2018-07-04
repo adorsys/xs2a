@@ -10,5 +10,5 @@ setting:
  - delayed
  scaApproach: REDIRECT
  tppSignatureRequired: false
- pisRedirectUrlToAspsp: https://aspsp-mock.integ.cloud.adorsys.de/view/payment/confirmation/
- aisRedirectUrlToAspsp: https://aspsp-mock.integ.cloud.adorsys.de/
+ pisRedirectUrlToAspsp: https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/
+ aisRedirectUrlToAspsp: https://aspsp-mock-integ.cloud.adorsys.de/
