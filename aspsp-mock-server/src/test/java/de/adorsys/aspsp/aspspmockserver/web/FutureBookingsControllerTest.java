@@ -66,7 +66,7 @@ public class FutureBookingsControllerTest {
     }
 
     @Test
-    public void changeBalances_Success() throws Exception {
+    public void changeBalances_Success() {
         //Given
         HttpStatus expectedStatusCode = HttpStatus.OK;
         BigDecimal expectedAmount = BALANCE.subtract(AMOUNT_TO_BE_CHARGED);
@@ -80,9 +80,9 @@ public class FutureBookingsControllerTest {
     }
 
     @Test
-    public void changeBalances_WrongId() throws Exception {
+    public void changeBalances_WrongId() {
         //Given
-        HttpStatus expectedStatusCode = HttpStatus.NOT_FOUND;
+        HttpStatus expectedStatusCode = HttpStatus.NO_CONTENT;
 
         //When:
         ResponseEntity<SpiAccountDetails> actualResult = futureBookingsController.changeBalances(WRONG_IBAN, "EUR");

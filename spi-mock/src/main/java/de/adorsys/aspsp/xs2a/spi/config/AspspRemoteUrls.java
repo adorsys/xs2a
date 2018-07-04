@@ -76,7 +76,7 @@ public class AspspRemoteUrls {
     }
 
     public String createPeriodicPayment() {
-        return spiMockBaseUrl + "/payments/createPeriodicPayment";
+        return spiMockBaseUrl + "/payments/create-periodic-payment";
     }
 
     //Transactions urls
@@ -106,5 +106,14 @@ public class AspspRemoteUrls {
      */
     public String createTransaction() {
         return spiMockBaseUrl + "/transaction";
+    }
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs list of allowed payment products for PSU by one of its account ibans
+     *
+     * @return URL
+     */
+    public String getAllowedPaymentProducts() {
+        return spiMockBaseUrl + "/psu/allowed-payment-products/{iban}";
     }
 }

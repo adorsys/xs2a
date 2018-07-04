@@ -33,43 +33,66 @@ import java.util.stream.Collectors;
 public class AccountService {
     private final PsuRepository psuRepository;
 
+    /**
+     * Adds new account to corresponding PSU by it's primary ASPSP identifier
+     *
+     * @param psuId          PSU's primary ASPSP identifier
+     * @param accountDetails account details to be added
+     * @return Optional of saved account details
+     */
     public Optional<SpiAccountDetails> addAccount(String psuId, SpiAccountDetails accountDetails) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(psu -> addAccountToPsuAndSave(psu, accountDetails))
                    .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
     }
 
-    public Optional<SpiAccountDetails> updateAccount(SpiAccountDetails accountDetails) {
-        return Optional.ofNullable(accountDetails.getId())
-                   .flatMap(psuRepository::findPsuByAccountDetailsList_Id)
-                   .map(psu -> updateAccountInPsu(psu, accountDetails))
-                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
-    }
-
+    /**
+     * Returns a list of all accounts of all PSUs at this ASPSP (DEBUG ONLY!)
+     *
+     * @return list of all accounts at ASPSP
+     */
     public List<SpiAccountDetails> getAllAccounts() {
         return psuRepository.findAll().stream()
                    .flatMap(psu -> psu.getAccountDetailsList().stream())
                    .collect(Collectors.toList());
     }
 
+    /**
+     * Returns account details by accounts primary ASPSP identifier
+     *
+     * @param accountId accounts primary ASPSP identifier
+     * @return Optional of account details
+     */
     public Optional<SpiAccountDetails> getAccountById(String accountId) {
         return psuRepository.findPsuByAccountDetailsList_Id(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId));
     }
 
+    /**
+     * Returns a list of account details containing requested IBAN
+     *
+     * @param iban account IBAN
+     * @return list of account details
+     */
     public List<SpiAccountDetails> getAccountsByIban(String iban) {
-        return psuRepository.findPsuByAccountDetailsList_Iban(iban).stream()
-                   .flatMap(psu -> psu.getAccountDetailsList().stream())
-                   .filter(aD -> aD.getIban().equals(iban))
-                   .collect(Collectors.toList());
+        return psuRepository.findPsuByAccountDetailsList_Iban(iban)
+                   .map(psu -> psu.getAccountDetailsList().stream()
+                                   .filter(aD -> aD.getIban().equals(iban))
+                                   .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
     }
 
-    public Optional<String> getPsuIdByIban(String iban) {
-        return psuRepository.findPsuByAccountDetailsList_Iban(iban).stream()
-                   .findFirst()
+    Optional<String> getPsuIdByIban(String iban) {
+        return psuRepository.findPsuByAccountDetailsList_Iban(iban)
                    .map(Psu::getId);
     }
 
+    /**
+     * Returns a list of balances for account represented by its primary ASPSP identifier
+     *
+     * @param accountId accounts primary ASPSP identifier
+     * @return list of account balances
+     */
     public List<SpiBalances> getAccountBalancesById(String accountId) {
         return psuRepository.findPsuByAccountDetailsList_Id(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId))
@@ -77,15 +100,34 @@ public class AccountService {
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * Returns a list of PSU's account details by PSU's primary ASPSP identifier
+     *
+     * @param psuId PSU's primary ASPSP identifier
+     * @return list of account details
+     */
     public List<SpiAccountDetails> getAccountsByPsuId(String psuId) {
-        return Optional.ofNullable(psuRepository.findOne(psuId)).map(Psu::getAccountDetailsList)
+        return Optional.ofNullable(psuRepository.findOne(psuId))
+                   .map(Psu::getAccountDetailsList)
                    .orElse(Collections.emptyList());
     }
 
+    /**
+     * Deletes account by its primary ASPSP identifier
+     *
+     * @param accountId accounts primary ASPSP identifier
+     */
     public void deleteAccountById(String accountId) {
         psuRepository.findPsuByAccountDetailsList_Id(accountId)
             .map(psu -> getPsuWithFilteredAccountListById(psu, accountId))
             .map(psuRepository::save);
+    }
+
+    Optional<SpiAccountDetails> updateAccount(SpiAccountDetails accountDetails) {
+        return Optional.ofNullable(accountDetails.getId())
+                   .flatMap(psuRepository::findPsuByAccountDetailsList_Id)
+                   .map(psu -> updateAccountInPsu(psu, accountDetails))
+                   .flatMap(psu -> findAccountInPsuById(psu, accountDetails.getId()));
     }
 
     private Psu updateAccountInPsu(Psu psu, SpiAccountDetails accountDetails) {

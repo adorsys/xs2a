@@ -17,11 +17,11 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,9 +64,9 @@ public class AccountServiceTest {
         when(psuRepository.findOne(WRONG_PSU_ID))
             .thenReturn(null);
         when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN))
-            .thenReturn(psuList);
+            .thenReturn(Optional.of(getPsuWithRightAccounts()));
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN))
-            .thenReturn(Collections.emptyList());
+            .thenReturn(Optional.empty());
 
         when(psuRepository.findPsuByAccountDetailsList_Id(ACCOUNT_ID))
             .thenReturn(Optional.of(getPsuWithRightAccounts()));
@@ -209,7 +209,7 @@ public class AccountServiceTest {
     }
 
     private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", "test@gmail.com", getAccounts());
+        return new Psu("12345678910", "test@gmail.com", getAccounts(), null);
     }
 
     private List<SpiAccountDetails> getAccounts() {
