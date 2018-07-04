@@ -50,9 +50,7 @@ public class SignatureFilter implements Filter {
 
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-			String encodedTppCert = httpRequest.getHeader("tpp-certificate");
 			String signature = httpRequest.getHeader("signature");
-
 			if (StringUtils.isBlank(signature)) {
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED,
 						CertificateErrorMsgCode.SIGNATURE_MISSING.toString());
@@ -60,7 +58,7 @@ public class SignatureFilter implements Filter {
 			}
 
 			Map<String, String> headers = obtainRequestHeaders(httpRequest);
-
+			String encodedTppCert = httpRequest.getHeader("tpp-certificate");
 			TppSignatureValidator tppSignatureValidator = new TppSignatureValidator();
 			try {
 
