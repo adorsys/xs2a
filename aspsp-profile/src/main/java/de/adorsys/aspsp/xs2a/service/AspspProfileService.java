@@ -117,4 +117,34 @@ public class AspspProfileService {
     public void updateTppSignatureRequired(boolean tppSignatureRequired) {
         profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
     }
+
+    /**
+     * Read Pis redirect url to Aspsp
+     */
+    public String getPisRedirectUrlToAspsp() {
+        return profileConfiguration.getPisRedirectUrlToAspsp();
+    }
+
+    /**
+     * Update redirect url to aspsp
+     * @param redirectUrlToAspsp the new value of redirectUrlToAspsp
+     */
+    public void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp) {
+        profileConfiguration.setPisRedirectUrlToAspsp(redirectUrlToAspsp);
+    }
+
+    /**
+     * Read Ais redirect url to Aspsp
+     */
+    public String getAisRedirectUrlToAspsp() {
+        return profileConfiguration.getAisRedirectUrlToAspsp();
+    }
+
+    /**
+     * Update redirect url to aspsp
+     * @param redirectUrlToAspsp the new value of redirectUrlToAspsp
+     */
+    public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
+        profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);
+    }
 }

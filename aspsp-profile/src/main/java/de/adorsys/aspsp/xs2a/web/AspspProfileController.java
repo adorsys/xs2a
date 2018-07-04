@@ -77,4 +77,18 @@ public class AspspProfileController {
     public ResponseEntity<Boolean> getTppSignatureRequired() {
         return new ResponseEntity<>(aspspProfileService.isTppSignatureRequired(), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/redirect-url-to-aspsp-pis")
+    @ApiOperation(value = "Reads redirect url to aspsp")
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
+    public ResponseEntity<String> getPisRedirectUrlToAspsp() {
+        return new ResponseEntity<>(aspspProfileService.getPisRedirectUrlToAspsp(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/redirect-url-to-aspsp-ais")
+    @ApiOperation(value = "Reads redirect url to aspsp")
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
+    public ResponseEntity<String> getAisRedirectUrlToAspsp() {
+        return new ResponseEntity<>(aspspProfileService.getAisRedirectUrlToAspsp(), HttpStatus.OK);
+    }
 }

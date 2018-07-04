@@ -99,4 +99,24 @@ public class AspspProfileUpdateController {
         aspspProfileService.updateTppSignatureRequired(tppSignatureRequired);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/redirect-url-to-aspsp-pis")
+    @ApiOperation(value = "Updates value of PIS redirect url to aspsp. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateRedirectUrlToAspsp(@RequestBody String redirectUrlToAspsp) {
+        aspspProfileService.updatePisRedirectUrlToAspsp(redirectUrlToAspsp);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/redirect-url-to-aspsp-ais")
+    @ApiOperation(value = "Updates value of PIS redirect url to aspsp. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateAisRedirectUrlToAspsp(@RequestBody String redirectUrlToAspsp) {
+        aspspProfileService.updateAisRedirectUrlToAspsp(redirectUrlToAspsp);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

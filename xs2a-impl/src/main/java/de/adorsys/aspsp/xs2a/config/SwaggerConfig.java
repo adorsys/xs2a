@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.config;
 
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.*;
@@ -37,8 +37,8 @@ import static springfox.documentation.swagger.web.SecurityConfigurationBuilder.b
 @EnableSwagger2
 @RequiredArgsConstructor
 public class SwaggerConfig {
-    @Value("${license.url}")
-    private final String licenseUrl;
+    @Autowired
+    private String licenseUrl;
 
     private final KeycloakConfigProperties keycloakConfig;
 

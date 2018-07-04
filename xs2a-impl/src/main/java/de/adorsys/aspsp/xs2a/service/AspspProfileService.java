@@ -100,6 +100,26 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
     }
 
+    /**
+     * Read get PIS redirect url to aspsp from ASPSP profile service
+     *
+     * @return Url in order to redirect SCA approach
+     */
+    public String getPisRedirectUrlToAspsp() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getPisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
+    }
+
+    /**
+     * Read get AIS redirect url to aspsp from ASPSP profile service
+     *
+     * @return Url in order to redirect SCA approach
+     */
+    public String getAisRedirectUrlToAspsp() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
+    }
+
     private List<String> readAvailablePaymentProducts() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
