@@ -11,7 +11,7 @@ public enum CertificateErrorMsgCode {
 	
 	private String description;
 
-	private CertificateErrorMsgCode(String description) {
+	CertificateErrorMsgCode(String description) {
 		this.description = description;
 	}
 

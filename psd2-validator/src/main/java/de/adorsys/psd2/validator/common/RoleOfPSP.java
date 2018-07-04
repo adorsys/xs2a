@@ -8,6 +8,7 @@ import org.bouncycastle.asn1.DERUTF8String;
 
 import de.adorsys.psd2.validator.certificate.util.TppRole;
 
+@SuppressWarnings("PMD")
 public class RoleOfPSP {
 	public static final RoleOfPSP PSP_AS = new RoleOfPSP(RoleOfPspOid.id_psd2_role_psp_as, RoleOfPspName.PSP_AS,
 			TppRole.ASPSP.name());
@@ -35,22 +36,18 @@ public class RoleOfPSP {
 		ASN1ObjectIdentifier objectIdentifier = ASN1ObjectIdentifier.getInstance(sequence.getObjectAt(0));
 		DERUTF8String instance = DERUTF8String.getInstance(sequence.getObjectAt(1));
 		
-		//NOPMD
 		if (RoleOfPspOid.id_psd2_role_psp_as.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_AS.getString().equals(instance.getString())) {
 			return PSP_AS;
 		}
-		//NOPMD
 		if (RoleOfPspOid.id_psd2_role_psp_pi.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_PI.getString().equals(instance.getString())) {
 			return PSP_PI;
 		}
-		//NOPMD
 		if (RoleOfPspOid.id_psd2_role_psp_ai.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_AI.getString().equals(instance.getString())) {
 			return PSP_AI;
 		}
-		//NOPMD
 		if (RoleOfPspOid.id_psd2_role_psp_ic.getId().equals(objectIdentifier.getId())
 				&& RoleOfPspName.PSP_IC.getString().equals(instance.getString())) {
 			return PSP_IC;
