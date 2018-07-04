@@ -17,7 +17,10 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.junit.Before;
@@ -29,9 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -42,32 +43,51 @@ import static org.mockito.Mockito.when;
 public class PaymentServiceTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String WRONG_PAYMENT_ID = "0";
+    private static final String IBAN = "DE123456789";
+    private static final String WRONG_IBAN = "wrong_iban";
+    private static final Currency CURRENCY = Currency.getInstance("EUR");
 
     @Autowired
     private PaymentService paymentService;
     @MockBean
     private PaymentRepository paymentRepository;
+    @MockBean
+    private AccountService accountService;
 
     @Before
     public void setUp() {
         when(paymentRepository.save(any(SpiSinglePayments.class)))
-            .thenReturn(getSpiSinglePayment());
+            .thenReturn(getSpiSinglePayment(50));
         when(paymentRepository.exists(PAYMENT_ID))
             .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
             .thenReturn(false);
+        when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
+        when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
     }
 
     @Test
-    public void addPayment() {
+    public void addPayment_Success() {
         //Given
-        SpiSinglePayments expectedPayment = getSpiSinglePayment();
+        SpiSinglePayments expectedPayment = getSpiSinglePayment(50);
 
         //When
         SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment).get();
 
         //Then
         assertThat(actualPayment).isNotNull();
+    }
+
+    @Test
+    public void addPayment_Failure() {
+        //Given
+        SpiSinglePayments expectedPayment = getSpiSinglePayment(100);
+
+        //When
+        Optional<SpiSinglePayments> actualPayment = paymentService.addPayment(expectedPayment);
+
+        //Then
+        assertThat(actualPayment).isEqualTo(Optional.empty());
     }
 
     @Test
@@ -81,7 +101,7 @@ public class PaymentServiceTest {
     public void addBulkPayments() {
         //Given
         List<SpiSinglePayments> expectedPayments = new ArrayList<>();
-        expectedPayments.add(getSpiSinglePayment());
+        expectedPayments.add(getSpiSinglePayment(50));
 
         //When
         List<SpiSinglePayments> actualPayments = paymentService.addBulkPayments(expectedPayments);
@@ -90,18 +110,36 @@ public class PaymentServiceTest {
         assertThat(actualPayments).isNotNull();
     }
 
-    private SpiSinglePayments getSpiSinglePayment() {
+    private SpiSinglePayments getSpiSinglePayment(long amountToTransfer) {
         SpiSinglePayments payment = new SpiSinglePayments();
-        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(20));
-        SpiAccountReference accountReference = new SpiAccountReference("DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(amountToTransfer));
         payment.setInstructedAmount(amount);
-        payment.setDebtorAccount(accountReference);
+        payment.setDebtorAccount(getReference());
         payment.setCreditorName("Merchant123");
         payment.setPurposeCode("BEQNSD");
         payment.setCreditorAgent("sdasd");
-        payment.setCreditorAccount(accountReference);
+        payment.setCreditorAccount(getReference());
         payment.setRemittanceInformationUnstructured("Ref Number Merchant");
 
         return payment;
+    }
+
+    private List<SpiAccountDetails> getAccountDetails() {
+        return Collections.singletonList(
+            new SpiAccountDetails("12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, getBalances())
+        );
+    }
+
+    private List<SpiBalances> getBalances() {
+        SpiBalances balances = new SpiBalances();
+        SpiAccountBalance balance = new SpiAccountBalance();
+        balance.setSpiAmount(new SpiAmount(CURRENCY, BigDecimal.valueOf(100)));
+        balances.setInterimAvailable(balance);
+        return Collections.singletonList(balances);
+    }
+
+    private SpiAccountReference getReference() {
+        SpiAccountDetails details = getAccountDetails().get(0);
+        return new SpiAccountReference(details.getIban(), null, null, null, null, details.getCurrency());
     }
 }

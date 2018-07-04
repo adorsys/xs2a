@@ -33,11 +33,14 @@ public class Psu {
     private String id;
     private String email;
     private List<SpiAccountDetails> accountDetailsList;
+    private List<String> permittedPaymentProducts;
 
     @JsonIgnore
     public boolean isValid() {
         return StringUtils.isNotBlank(this.email) && this.email.contains("@")
                    && CollectionUtils.isNotEmpty(this.accountDetailsList)
-                   && StringUtils.isNotBlank(this.accountDetailsList.get(0).getIban());
+                   && StringUtils.isNotBlank(this.accountDetailsList.get(0).getIban())
+                   && CollectionUtils.isNotEmpty(this.permittedPaymentProducts)
+                   && StringUtils.isNotBlank(this.permittedPaymentProducts.get(0));
     }
 }

@@ -49,7 +49,6 @@ import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 @Validated
 @AllArgsConstructor
 public class AccountService {
-
     private final AccountSpi accountSpi;
     private final AccountMapper accountMapper;
     private final ValueValidatorService validatorService;
@@ -110,11 +109,11 @@ public class AccountService {
         ResponseObject.ResponseBuilder<AccountDetails> builder = ResponseObject.builder();
         if (isValid) {
             builder = withBalance
-                           ? builder.body(accountDetails)
-                           : builder.body(getAccountDetailNoBalances(accountDetails));
+                          ? builder.body(accountDetails)
+                          : builder.body(getAccountDetailNoBalances(accountDetails));
         } else {
             builder = builder
-                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
+                          .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
         aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
         return builder.build();
@@ -191,19 +190,6 @@ public class AccountService {
         return response;
     }
 
-    List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
-        return Optional.ofNullable(reference)
-                   .map(this::getAccountDetailsByAccountReference)
-                   .filter(Optional::isPresent)
-                   .map(Optional::get)
-                   .map(AccountDetails::getBalances)
-                   .orElse(Collections.emptyList());
-    }
-
-    boolean isAccountExists(AccountReference reference) {
-        return getAccountDetailsByAccountReference(reference).isPresent();
-    }
-
     private List<AccountDetails> getAccountDetailsFromReferences(boolean withBalance, AccountAccess accountAccess) {
         List<AccountReference> references = withBalance
                                                 ? accountAccess.getBalances()
@@ -240,15 +226,11 @@ public class AccountService {
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElse(LocalDate.now());
 
-        Optional<AccountReport> report;
-        if (StringUtils.isBlank(transactionId)) {
-            report = getAccountReportByPeriod(accountId, dateFrom, dateToChecked)
+        return StringUtils.isNotBlank(transactionId)
+                   ? getAccountReportByTransaction(transactionId, accountId)
+                   : getAccountReportByPeriod(accountId, dateFrom, dateToChecked)
                          .map(r -> filterByBookingStatus(r, bookingStatus));
-        } else {
-            report = getAccountReportByTransaction(transactionId, accountId);
-        }
 
-        return report;
     }
 
     private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
@@ -273,7 +255,7 @@ public class AccountService {
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }
 
-    private Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
+    Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
                    .map(Collection::stream)
@@ -299,5 +281,10 @@ public class AccountService {
         fieldValidator.setTransactionId(transactionId);
 
         validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
+    }
+
+    boolean isInvalidPaymentProductForPsu(AccountReference reference, String paymentProduct) {
+        return !accountSpi.readPsuAllowedPaymentProductList(accountMapper.mapToSpiAccountReference(reference))
+                    .contains(paymentProduct);
     }
 }
