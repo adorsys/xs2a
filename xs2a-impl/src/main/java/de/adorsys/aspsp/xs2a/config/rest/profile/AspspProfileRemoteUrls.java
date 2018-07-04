@@ -79,4 +79,21 @@ public class AspspProfileRemoteUrls {
         return aspspProfileBaseUrl + "/aspsp-profile/tpp-signature-required";
     }
 
+    /**
+     * Returns URL-string in order to get PIS redirectUrlToAspsp
+     *
+     * @return String
+     */
+    public String getPisRedirectUrlToAspsp() {
+        return aspspProfileBaseUrl + "/aspsp-profile/redirect-url-to-aspsp-pis";
+    }
+
+    /**
+     * Returns URL-string in order to get AIS redirectUrlToAspsp
+     *
+     * @return String
+     */
+    public String getAisRedirectUrlToAspsp() {
+        return aspspProfileBaseUrl + "/aspsp-profile/redirect-url-to-aspsp-ais";
+    }
 }

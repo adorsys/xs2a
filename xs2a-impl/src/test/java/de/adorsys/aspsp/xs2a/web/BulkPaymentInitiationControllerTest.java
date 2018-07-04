@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -53,21 +54,22 @@ public class BulkPaymentInitiationControllerTest {
     private final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private final PaymentProduct PAYMENT_PRODUCT = PaymentProduct.SCT;
+    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
-    @Autowired
-    protected String redirectLinkToSource;
     @Autowired
     private BulkPaymentInitiationController bulkPaymentInitiationController;
     @Autowired
-
     private JsonConverter jsonConverter;
 
     @MockBean(name = "paymentService")
     private PaymentService paymentService;
+    @MockBean
+    private AspspProfileService aspspProfileService;
 
     @Before
     public void setUp() throws IOException {
         when(paymentService.createBulkPayments(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
 
     @Test
@@ -95,7 +97,7 @@ public class BulkPaymentInitiationControllerTest {
         PaymentInitialisationResponse response = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class).get();
         List<PaymentInitialisationResponse> responseList = new ArrayList<>();
         Links links = new Links();
-        links.setRedirect(redirectLinkToSource + response.getIban() + "/" + response.getPisConsentId());
+        links.setRedirect(REDIRECT_LINK + response.getIban() + "/" + response.getPisConsentId());
         links.setSelf(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
         links.setUpdatePsuIdentification(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
         links.setUpdatePsuAuthentication(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
