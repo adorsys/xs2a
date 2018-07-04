@@ -38,7 +38,7 @@ function sendPaymentRequestAndGetResponse(productNumber) {
 function getPaymentAjaxSettings(productNumber) {
     var paymentReqJson = getPaymentInitiationRequestJson(productNumber);
     var headers = getRequestHeaders();
-    var xs2aUrl = configs.localhost;
+    var xs2aUrl = configs.xs2a;
 
     return {
         "async": false,
