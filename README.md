@@ -106,3 +106,20 @@ See also the list of [contributors](doc/contributors.md) who participated in thi
 ## License
 
 This project is licensed under the Apache License version 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+
+
+##Features of adorsys/XS2A 
+
+* All mandatory API endpoints defined in Berlin Group specification V1.0 are implemented
+
+* **Swagger documentation** is presented for all REST API modules: XS2A, ASPSP-Server, Consent Management System.
+
+* **ASPSP-Mock** is implemented. This is a simple example of ASPSP implementation. Mock-implementation of ASPSP exists for the purposes of testing and introspection of XS2A functionality. This module is not in the Berlin Group specification.
+
+* **Consent Management System**. The system is intended  to store and manage consents given by PSU to corresponding TPPs.  This system is developed for ASPSPs that don't have their own Consents Management System.
+
+* **ASPSP-Profile** - REST API Module to store and read ASPSP-specific configurations for XS2A-features. The behavior of XS2A can change depending on the stored values, for example, using different SCA approaches.
+
+* **Prototype Online Banking** - Web Demo application to show how the PSU - ASPSP Interface works. Through this Interface PSU passes SCA and provides the consents to TTP. This module is not in the Berlin Group specification. *(Current state: under construction)*.
+
+* **Logging System** - The system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification. *(Current state: planned)*.
