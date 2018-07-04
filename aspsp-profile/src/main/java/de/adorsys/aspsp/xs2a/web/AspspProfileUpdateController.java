@@ -111,7 +111,7 @@ public class AspspProfileUpdateController {
     }
 
     @PutMapping(path = "/redirect-url-to-aspsp-ais")
-    @ApiOperation(value = "Updates value of PIS redirect url to aspsp. Only for DEBUG!")
+    @ApiOperation(value = "Updates value of AIS redirect url to aspsp. Only for DEBUG!")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})

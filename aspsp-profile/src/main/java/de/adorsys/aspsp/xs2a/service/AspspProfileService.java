@@ -126,8 +126,8 @@ public class AspspProfileService {
     }
 
     /**
-     * Update redirect url to aspsp
-     * @param redirectUrlToAspsp the new value of redirectUrlToAspsp
+     * Update Pis redirect url to aspsp
+     * @param redirectUrlToAspsp the new value of Pis redirectUrlToAspsp
      */
     public void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp) {
         profileConfiguration.setPisRedirectUrlToAspsp(redirectUrlToAspsp);
@@ -141,8 +141,8 @@ public class AspspProfileService {
     }
 
     /**
-     * Update redirect url to aspsp
-     * @param redirectUrlToAspsp the new value of redirectUrlToAspsp
+     * Update Ais redirect url to aspsp
+     * @param redirectUrlToAspsp the new value of Ais redirectUrlToAspsp
      */
     public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
         profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);

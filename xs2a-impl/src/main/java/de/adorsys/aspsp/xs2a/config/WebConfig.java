@@ -62,8 +62,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
-    @Value("${license.url}")
-    private String licenseUrl;
     @Autowired
     private AspspProfileService aspspProfileService;
     @Autowired
@@ -127,11 +125,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public int maxNumberOfCharInTransactionJson() {
         return maxNumberOfCharInTransactionJson;
-    }
-
-    @Bean
-    public String licenseUrl() {
-        return licenseUrl;
     }
 
     @Bean

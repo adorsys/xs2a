@@ -57,18 +57,14 @@ public class BulkPaymentInitiationControllerTest {
     private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
     @Autowired
-    protected String redirectLinkToSource;
-    @Autowired
     private BulkPaymentInitiationController bulkPaymentInitiationController;
     @Autowired
-
     private JsonConverter jsonConverter;
 
     @MockBean(name = "paymentService")
     private PaymentService paymentService;
     @MockBean
     private AspspProfileService aspspProfileService;
-
 
     @Before
     public void setUp() throws IOException {
