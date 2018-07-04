@@ -66,7 +66,9 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
         ResponseEntity<SpiPeriodicPayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), periodicPayment, SpiPeriodicPayment.class);
-        return responseEntity.getStatusCode() == CREATED ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred) : null;
+        return responseEntity.getStatusCode() == CREATED
+                   ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred)
+                   : null;
     }
 
     @Override

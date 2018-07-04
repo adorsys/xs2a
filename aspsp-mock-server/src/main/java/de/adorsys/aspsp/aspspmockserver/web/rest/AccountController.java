@@ -34,7 +34,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @AllArgsConstructor
 @RequestMapping(path = "/account")
 @Api(tags = "PSU Accounts", description = "Provides access to the Psu`s accounts")
-public class AccountController {
+public class AccountController { //TODO: Remove unnecessary endpoints and service methods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/157
     private final AccountService accountService;
 
     @ApiOperation(value = "Returns all accounts available at ASPSP.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

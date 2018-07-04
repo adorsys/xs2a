@@ -109,8 +109,7 @@ public class PaymentMapper {
                    }).orElse(null);
     }
 
-    public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
-
+    public Optional<PaymentInitialisationResponse> mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
         return Optional.ofNullable(response)
                    .map(pir -> {
                        PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
@@ -124,7 +123,19 @@ public class PaymentMapper {
                        initialisationResponse.setTppMessages(mapToMessageCodes(pir.getTppMessages()));
                        initialisationResponse.setLinks(new Links());
                        return initialisationResponse;
-                   }).orElse(null);
+                   });
+    }
+
+    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayments payment, MessageErrorCode error, boolean tppRedirectPreferred) {
+        return Optional.ofNullable(payment)
+                   .map(p -> {
+                       PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+                       response.setTransactionStatus(TransactionStatus.RJCT);
+                       response.setPaymentId(p.getEndToEndIdentification());
+                       response.setTppRedirectPreferred(tppRedirectPreferred);
+                       response.setTppMessages(new MessageErrorCode[]{error});
+                       return response;
+                   });
     }
 
     private String getFrequency(PeriodicPayment pp) {
@@ -197,7 +208,8 @@ public class PaymentMapper {
                        pisSinglePayment.setRequestedExecutionDate(payReq.getRequestedExecutionDate());
                        pisSinglePayment.setRequestedExecutionTime(payReq.getRequestedExecutionTime());
 
-                       return pisSinglePayment;})
+                       return pisSinglePayment;
+                   })
                    .orElse(null);
     }
 
@@ -231,7 +243,8 @@ public class PaymentMapper {
                        pisPeriodicPayment.setFrequency(getFrequency(pp));
                        pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
 
-                       return pisPeriodicPayment;})
+                       return pisPeriodicPayment;
+                   })
                    .orElse(null);
     }
 
