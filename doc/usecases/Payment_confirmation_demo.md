@@ -5,8 +5,10 @@
 To test the flow of payment confirmation locally, follow next steps:
 
 ## Happy path
-* You can find TPP demo start page inside the project by path 'aspsp-xs2a/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
-                                                                                                
+* You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+  This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+  Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+                                                                                                  
 * Choose one of the product and press "Buy now".
 
 * You will be redirected to the login page. Enter the credentials for your keycloak user. By default it is `aspsp` for login and `zzz` for password.
@@ -21,8 +23,10 @@ To test the flow of payment confirmation locally, follow next steps:
 
    **Wrong credentials**
 
-   * You can find TPP demo start page inside the project by path 'aspsp-xs2a/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
-    
+  * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+  This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+  Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+  
    * Choose one of the product and press "Buy now".
    
    * You will be redirected to the login page. Enter wrong credentials for your keycloak user, for example `wrong password` and `wrong login`.
@@ -31,8 +35,10 @@ To test the flow of payment confirmation locally, follow next steps:
    
    **Wrong TAN number**
    
-   * Open url http://localhost:28080/tpp/product/index.html. You should see "TPP demo" page with four different products to buy. 
-   
+  * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+    This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+    Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+        
    * Choose one of the product and press "Buy now".
    
    * You will be redirected to the login page. Enter the credentials for your keycloak user. By default it is `aspsp` for login and `zzz` for password.
@@ -43,8 +49,10 @@ To test the flow of payment confirmation locally, follow next steps:
    
    **Consent revoked by PSU**
    
-   * Open url http://localhost:28080/tpp/product/index.html. You should see "TPP demo" page with four different products to buy. 
-
+  * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+    This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+    Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+        
    * Choose one of the product and press "Buy now".
 
    * You will be redirected to the login page. Enter the credentials for your keycloak user. By default it is `aspsp` for login and `zzz` for password.
