@@ -42,6 +42,8 @@ public class AspspProfileControllerTest {
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
+    private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/";
+    private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -64,6 +66,12 @@ public class AspspProfileControllerTest {
             .thenReturn(AVAILABLE_PAYMENT_TYPES);
         when(aspspProfileService.getScaApproach())
             .thenReturn(ScaApproach.REDIRECT);
+        when(aspspProfileService.isTppSignatureRequired())
+            .thenReturn(true);
+        when(aspspProfileService.getPisRedirectUrlToAspsp())
+            .thenReturn(PIS_REDIRECT_LINK);
+        when(aspspProfileService.getAisRedirectUrlToAspsp())
+            .thenReturn(AIS_REDIRECT_LINK);
     }
 
     @Test
@@ -129,6 +137,45 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(ScaApproach.REDIRECT);
+    }
+
+    @Test
+    public void getTppSignatureRequired() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Boolean> actualResponse = aspspProfileController.getTppSignatureRequired();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(true);
+    }
+
+    @Test
+    public void getPisRedirectUrlToAspsp() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<String> actualResponse = aspspProfileController.getPisRedirectUrlToAspsp();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(PIS_REDIRECT_LINK);
+    }
+
+    @Test
+    public void getAisRedirectUrlToAspsp() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<String> actualResponse = aspspProfileController.getAisRedirectUrlToAspsp();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(AIS_REDIRECT_LINK);
     }
 
     private static List<String> getPaymentProducts() {

@@ -35,6 +35,13 @@ public class FutureBookingsService {
     private final AccountService accountService;
     private final PaymentService paymentService;
 
+    /**
+     * Find all stored payments with current iban and update balance in psu account according payments
+     *
+     * @param iban Iban for searching payments
+     * @param currency Currency for searching payments
+     * @return sca approach method which is stored in profile
+     */
     public Optional<SpiAccountDetails> changeBalances(String iban, String currency) {
         return accountService.getAccountsByIban(iban).stream()
                    .filter(acc -> areCurrenciesEqual(acc.getCurrency(), currency))

@@ -40,6 +40,8 @@ public class AspspProfileServiceTest {
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
+    private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/";
+    private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
 
     @Autowired
     private AspspProfileService aspspProfileService;
@@ -59,6 +61,12 @@ public class AspspProfileServiceTest {
             .thenReturn(AVAILABLE_PAYMENT_TYPES);
         when(profileConfiguration.getScaApproach())
             .thenReturn(SCA_APPROACH);
+        when(profileConfiguration.isTppSignatureRequired())
+            .thenReturn(true);
+        when(profileConfiguration.getPisRedirectUrlToAspsp())
+            .thenReturn(PIS_REDIRECT_LINK);
+        when(profileConfiguration.getAisRedirectUrlToAspsp())
+            .thenReturn(AIS_REDIRECT_LINK);
     }
 
     @Test
@@ -104,6 +112,33 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
+    }
+
+    @Test
+    public void isTppSignatureRequired() {
+        //When:
+        boolean actualResponse = aspspProfileService.isTppSignatureRequired();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(true);
+    }
+
+    @Test
+    public void getPisRedirectUrlToAspsp() {
+        //When:
+        String actualResponse = aspspProfileService.getPisRedirectUrlToAspsp();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(PIS_REDIRECT_LINK);
+    }
+
+    @Test
+    public void getAisRedirectUrlToAspsp() {
+        //When:
+        String actualResponse = aspspProfileService.getAisRedirectUrlToAspsp();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(AIS_REDIRECT_LINK);
     }
 
     private static List<String> getPaymentProducts() {
