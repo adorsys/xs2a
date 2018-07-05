@@ -7,7 +7,7 @@ To test the flow of payment confirmation locally, follow next steps:
 ## Happy path
 * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
   This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
-  Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+  Please create a PSU Objects with accounts including hardcoded IBANs and an e-mail address you can access (to get incoming TANs) on a mock server.
                                                                                                   
 * Choose one of the product and press "Buy now".
 
@@ -23,9 +23,9 @@ To test the flow of payment confirmation locally, follow next steps:
 
    **Wrong credentials**
 
-  * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
-  This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
-  Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+   * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+     This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+     Please create a PSU Objects with accounts including hardcoded IBANs and an e-mail address you can access (to get incoming TANs) on a mock server.
   
    * Choose one of the product and press "Buy now".
    
@@ -35,9 +35,9 @@ To test the flow of payment confirmation locally, follow next steps:
    
    **Wrong TAN number**
    
-  * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
-    This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
-    Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+   * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+     This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+     Please create a PSU Objects with accounts including hardcoded IBANs and an e-mail address you can access (to get incoming TANs) on a mock server.
         
    * Choose one of the product and press "Buy now".
    
@@ -49,9 +49,9 @@ To test the flow of payment confirmation locally, follow next steps:
    
    **Consent revoked by PSU**
    
-  * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
-    This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
-    Please create a PSU Objects with accounts included hardcoded IBANs and an e-mail address you can access (to check incoming TANs) on a mock server.
+   * You can find TPP demo start page inside the project by path '/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+     This demo contains hardcoded account number with IBAN (for debtor IBAN is `DE89370400440532013002` and for creditor IBAN is `DE89370400440532013000`).  
+     Please create a PSU Objects with accounts including hardcoded IBANs and an e-mail address you can access (to get incoming TANs) on a mock server.
         
    * Choose one of the product and press "Buy now".
 
