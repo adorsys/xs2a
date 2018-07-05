@@ -38,11 +38,11 @@ public class AisConsentController {
     @ApiOperation(value = "Create consent for given psu id and accesses.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 204, message = "No Content")})
     public ResponseEntity<String> createConsent(@RequestBody AisConsentRequest request) {
         return aisConsentService.createConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @PostMapping(path = "/action")
@@ -56,20 +56,20 @@ public class AisConsentController {
     @ApiOperation(value = "Read account consent by given consent id.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiAccountConsent.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 204, message = "No Content")})
     public ResponseEntity<SpiAccountConsent> getConsentById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getSpiAccountConsentById(consentId)
                    .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "Can check the status of an account information consent resource.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = SpiConsentStatus.class),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<SpiConsentStatus> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
@@ -82,7 +82,7 @@ public class AisConsentController {
     @ApiOperation(value = "Update consent status in the consent identified by given consent id.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad request")})
+        @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<Void> updateConsentStatus(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
