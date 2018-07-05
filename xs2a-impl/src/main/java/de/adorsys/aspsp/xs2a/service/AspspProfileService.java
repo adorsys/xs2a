@@ -40,9 +40,9 @@ public class AspspProfileService {
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
     /**
-     * Reads List of available payment products from ASPSP profile service
+     * Gets a list of payment products allowed by current ASPSP from ASPSP profile service
      *
-     * @return List of payment products
+     * @return List of payment products supported by current ASPSP
      */
     public List<PaymentProduct> getAvailablePaymentProducts() {
         return Optional.ofNullable(readAvailablePaymentProducts())
@@ -55,9 +55,9 @@ public class AspspProfileService {
     }
 
     /**
-     * Reads List of available payment types from ASPSP profile service
+     * Gets a list of payment types available at current ASPSP from ASPSP profile service
      *
-     * @return List of payment types
+     * @return List of payment types allowed by ASPSP
      */
     public List<PisPaymentType> getAvailablePaymentTypes() {
         return Optional.ofNullable(readAvailablePaymentTypes())
@@ -81,13 +81,19 @@ public class AspspProfileService {
     }
 
     /**
-     * Reads requirement of tpp signature from ASPSP profile service
+     * Checks if payment product is allowed by ASPSP
      *
-     * @return 'true' if tpp signature is required, 'false' if not
+     * @param product Payment product to be checked for availability at ASPSP
+     * @return Boolean representing if the payment product is supported by ASPSP
      */
-    public Boolean getTppSignatureRequired() {
+    public boolean isSupportedPaymentProduct(PaymentProduct product) {
+        return getAvailablePaymentProducts().contains(product);
+    }
+
+    private List<String> readAvailablePaymentProducts() {
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+            aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+            }).getBody();
     }
 
     /**
@@ -100,10 +106,35 @@ public class AspspProfileService {
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
     }
 
-    private List<String> readAvailablePaymentProducts() {
+    /**
+     * Reads requirement of tpp signature from ASPSP profile service
+     *
+     * @return 'true' if tpp signature is required, 'false' if not
+     */
+    public Boolean getTppSignatureRequired() {
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
-            }).getBody();
+            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+    }
+
+
+    /**
+     * Read get PIS redirect url to aspsp from ASPSP profile service
+     *
+     * @return Url in order to redirect SCA approach
+     */
+    public String getPisRedirectUrlToAspsp() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getPisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
+    }
+
+    /**
+     * Read get AIS redirect url to aspsp from ASPSP profile service
+     *
+     * @return Url in order to redirect SCA approach
+     */
+    public String getAisRedirectUrlToAspsp() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
     }
 
     private List<String> readAvailablePaymentTypes() {

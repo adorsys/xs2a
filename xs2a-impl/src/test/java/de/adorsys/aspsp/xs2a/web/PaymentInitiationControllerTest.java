@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -54,6 +55,7 @@ public class PaymentInitiationControllerTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "Really wrong id";
+    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
     @Autowired
     private PaymentInitiationController paymentInitiationController;
@@ -61,6 +63,8 @@ public class PaymentInitiationControllerTest {
     private JsonConverter jsonConverter;
     @MockBean
     private PaymentService paymentService;
+    @MockBean
+    private AspspProfileService aspspProfileService;
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
@@ -71,6 +75,7 @@ public class PaymentInitiationControllerTest {
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build());
         when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
 
     @Test
@@ -113,7 +118,7 @@ public class PaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult = paymentInitiationController
-            .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
+                                                                         .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -121,11 +126,19 @@ public class PaymentInitiationControllerTest {
     }
 
     private ResponseObject readResponseObject() throws IOException {
-        return ResponseObject.builder().body(readPaymentInitialisationResponse()).build();
+        PaymentInitialisationResponse resp = readPaymentInitialisationResponse();
+        resp.setIban("DE371234599999");
+        resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
+
+        return ResponseObject.builder().body(resp).build();
     }
 
     private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {
-        return jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
+        PaymentInitialisationResponse resp = jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
+        resp.setIban("DE371234599999");
+        resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
+
+        return resp;
     }
 
     private SinglePayments readSinglePayments() throws IOException {

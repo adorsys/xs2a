@@ -17,10 +17,11 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import org.apache.commons.io.IOUtils;
@@ -34,7 +35,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -60,8 +64,8 @@ public class FundsConfirmationServiceTest {
 
     @Before
     public void setUp() throws IOException {
-        when(accountService.getAccountBalancesByAccountReference(any(AccountReference.class)))
-            .thenReturn(getBalances());
+        when(accountService.getAccountDetailsByAccountReference(any(AccountReference.class)))
+            .thenReturn(Optional.of(new AccountDetails(null, null, null, null, null, null, null, null, null, null, null, getBalances())));
     }
 
     @Test
@@ -90,7 +94,7 @@ public class FundsConfirmationServiceTest {
     }
 
     @Test
-    public void fundsConfirmation_reqIsNull() throws Exception {
+    public void fundsConfirmation_reqIsNull() {
         //Given:
         FundsConfirmationRequest request = null;
 

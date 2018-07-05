@@ -126,6 +126,11 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.adorsys.aspsp</groupId>
+            <artifactId>consent-api</artifactId>
+            <version>1.2-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 

@@ -22,12 +22,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PaymentConfirmation {
-    private String psuId;
+    private String iban;
     private String consentId;
     private String tanNumber;
 
-    public PaymentConfirmation(String psuId, String consentId) {
-        this.psuId = psuId;
+    public PaymentConfirmation(String iban, String consentId) {
+        this.iban = iban;
         this.consentId = consentId;
     }
 }

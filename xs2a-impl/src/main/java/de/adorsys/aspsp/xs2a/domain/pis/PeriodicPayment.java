@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.code.FrequencyCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,6 +25,7 @@ import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Data
 @ApiModel(description = "Periodic Payment Initialisation Request", value = "Periodic Payment")
@@ -45,4 +47,11 @@ public class PeriodicPayment extends SinglePayments {
     @Max(31)
     @Min(1)
     private int dayOfExecution; //Day here max 31
+
+    @JsonIgnore
+    public boolean isValidDate() {
+        return Optional.ofNullable(startDate)
+                   .map(d -> d.isAfter(LocalDate.now()))
+                   .orElse(false);
+    }
 }

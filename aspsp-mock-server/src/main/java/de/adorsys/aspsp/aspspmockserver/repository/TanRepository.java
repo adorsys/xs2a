@@ -21,10 +21,10 @@ import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Profile({"mongo", "fongo"})
 public interface TanRepository extends MongoRepository<Tan, String> {
 
-    Optional<Tan> findByPsuIdAndTanStatus(String psuId, TanStatus tanStatus);
+    List<Tan> findByPsuIdAndTanStatus(String psuId, TanStatus tanStatus);
 }

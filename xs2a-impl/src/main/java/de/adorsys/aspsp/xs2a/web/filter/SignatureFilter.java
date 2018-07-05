@@ -88,7 +88,7 @@ public class SignatureFilter implements Filter {
 
 	private Map<String, String> obtainRequestHeaders(HttpServletRequest request) {
 		return Collections.list(request.getHeaderNames()).stream()
-				.collect(Collectors.toMap(Function.identity(), e -> request.getHeader(e)));
+				.collect(Collectors.toMap(Function.identity(), request::getHeader));
 	}
 
 }

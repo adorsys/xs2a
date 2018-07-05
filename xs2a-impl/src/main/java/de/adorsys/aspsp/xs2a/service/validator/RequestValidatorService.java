@@ -33,6 +33,7 @@ import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -63,6 +64,11 @@ public class RequestValidatorService {
 
     public Map<String, String> getRequestViolationMap(HttpServletRequest request, Object handler) {
         Map<String, String> violationMap = new HashMap<>();
+
+        if (handler instanceof CorsConfigurationSource) { // TODO delete after creation original 'Tpp Demo app' https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/156
+            return violationMap;
+        }
+
         violationMap.putAll(getRequestHeaderViolationMap(request, handler));
         violationMap.putAll(getRequestParametersViolationMap(request, handler));
         violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
@@ -101,14 +107,12 @@ public class RequestValidatorService {
 
         Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
 
-        RequestHeader headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap,
-                                                                 ((HandlerMethod) handler).getBeanType()
-                                                                );
+        RequestHeader headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap, ((HandlerMethod) handler).getBeanType());
 
         if (headerImpl instanceof ErrorMessageHeaderImpl) {
             return Collections.singletonMap("Wrong header arguments: ",
-                                            ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
-                                           );
+                ((ErrorMessageHeaderImpl) headerImpl).getErrorMessage()
+            );
         }
 
         return getViolationMessagesMap(validator.validate(headerImpl));

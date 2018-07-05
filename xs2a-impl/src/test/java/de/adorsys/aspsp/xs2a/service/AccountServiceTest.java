@@ -78,7 +78,7 @@ public class AccountServiceTest {
     @Before
     public void setUp() {
         //AisReporting
-        doNothing().when(aisConsentService).consentActionLog(anyString(),anyString(),anyBoolean(),any(TypeAccess.class),any(ResponseObject.class));
+        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), anyBoolean(), any(TypeAccess.class), any(ResponseObject.class));
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails(ACCOUNT_ID, IBAN));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
@@ -228,77 +228,6 @@ public class AccountServiceTest {
         assertThat(response.hasError()).isEqualTo(true);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
         assertThat(response.getError().getTppMessage().getCode()).isEqualTo(RESOURCE_UNKNOWN_404);
-    }
-
-    //Internal method test
-    @Test
-    public void getAccountBalancesByAccountReference_referenceIsNull() {
-        // Given:
-        AccountReference reference = null;
-
-        //When:
-        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
-
-        //Then:
-        assertThat(actualResult).isEmpty();
-    }
-
-    @Test
-    public void getAccountBalancesByAccountReference() {
-        // Given:
-        AccountReference reference = new AccountReference();
-        reference.setIban(IBAN);
-        reference.setCurrency(CURRENCY);
-
-        List<Balances> expectedResult = getBalancesList();
-
-        //When:
-        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
-
-        //Then:
-        assertThat(actualResult).isEqualTo(expectedResult);
-    }
-
-    @Test
-    public void getAccountBalancesByAccountReference_wrongCurrency() {
-        // Given:
-        AccountReference reference = new AccountReference();
-        reference.setIban(IBAN);
-        reference.setCurrency(Currency.getInstance("USD"));
-
-        //When:
-        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
-
-        //Then:
-        assertThat(actualResult).isEmpty();
-    }
-
-    @Test
-    public void getAccountBalancesByAccountReference_ibanIsNull() {
-        // Given:
-        AccountReference reference = new AccountReference();
-        reference.setIban(null);
-        reference.setCurrency(Currency.getInstance("USD"));
-
-        //When:
-        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
-
-        //Then:
-        assertThat(actualResult).isEmpty();
-    }
-
-    @Test
-    public void getAccountBalancesByAccountReference_currencyIsNull() {
-        // Given:
-        AccountReference reference = new AccountReference();
-        reference.setIban(IBAN);
-        reference.setCurrency(null);
-
-        //When:
-        List<Balances> actualResult = accountService.getAccountBalancesByAccountReference(reference);
-
-        //Then:
-        assertThat(actualResult).isEmpty();
     }
 
     //Get Transaction By TransactionId

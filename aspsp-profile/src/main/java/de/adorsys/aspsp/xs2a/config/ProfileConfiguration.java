@@ -59,12 +59,22 @@ public class ProfileConfiguration {
      */
     private ScaApproach scaApproach;
 
-    /*
+    /**
      * A signature of the request by the TPP on application level.
      * If the value is `true`, the signature is mandated by ASPSP.
      * If the value is `false`, the signature can be omitted.
      */
     private boolean tppSignatureRequired;
+
+    /**
+     * URL to ASPSP service in order to to work with PIS
+     */
+    private String pisRedirectUrlToAspsp;
+
+    /**
+     * URL to ASPSP service in order to work with AIS
+     */
+    private String aisRedirectUrlToAspsp;
 
     @PostConstruct
     private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default

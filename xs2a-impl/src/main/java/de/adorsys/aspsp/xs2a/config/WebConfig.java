@@ -23,12 +23,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
-import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,8 +62,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
-    @Value("${application.link.redirect-to}")
-    private String redirectLinkToSource;
     @Autowired
     private AspspProfileService aspspProfileService;
     @Autowired
@@ -127,11 +125,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public int maxNumberOfCharInTransactionJson() {
         return maxNumberOfCharInTransactionJson;
-    }
-
-    @Bean
-    public String redirectLinkToSource() {
-        return redirectLinkToSource;
     }
 
     @Bean

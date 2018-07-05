@@ -16,8 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
@@ -25,9 +26,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Data
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
@@ -40,7 +43,7 @@ public class SinglePayments {
     @ApiModelProperty(value = "debtor account", required = true)
     private AccountReference debtorAccount;
 
-    @ApiModelProperty(value = "ultimate debtor", required = false, example = "Mueller")
+    @ApiModelProperty(value = "ultimate debtor", example = "Mueller")
     @Size(max = 70)
     private String ultimateDebtor;
 
@@ -50,35 +53,47 @@ public class SinglePayments {
     @ApiModelProperty(value = "creditor account", required = true)
     private AccountReference creditorAccount;
 
-    @ApiModelProperty(value = "creditor agent", required = false)
+    @ApiModelProperty(value = "creditor agent")
     private BICFI creditorAgent;
 
     @ApiModelProperty(value = "creditor name", required = true, example = "Telekom")
     @Size(max = 70)
     private String creditorName;
 
-    @ApiModelProperty(value = "creditor Address", required = false)
+    @ApiModelProperty(value = "creditor Address")
     private Address creditorAddress;
 
-    @ApiModelProperty(value = "ultimate creditor", required = false, example = "Telekom")
+    @ApiModelProperty(value = "ultimate creditor", example = "Telekom")
     @Size(max = 70)
     private String ultimateCreditor;
 
-    @ApiModelProperty(value = "purpose code", required = false)
+    @ApiModelProperty(value = "purpose code")
     private PurposeCode purposeCode;
 
-    @ApiModelProperty(value = "remittance information unstructured", required = false, example = "Ref. Number TELEKOM-1222")
+    @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     @Size(max = 140)
     private String remittanceInformationUnstructured;
 
-    @ApiModelProperty(value = "remittance information structured", required = false)
+    @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "requested execution date", required = false, example = "2017-01-01")
+    @ApiModelProperty(value = "requested execution date", example = "2017-01-01")
+    @FutureOrPresent
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "requested execution time", required = false, example = "2017-10-25T15:30:35.035")
+    @ApiModelProperty(value = "requested execution time", example = "2017-10-25T15:30:35.035")
+    @FutureOrPresent
     // TODO add support of all types of DateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/148
     private LocalDateTime requestedExecutionTime;
 
+    @JsonIgnore
+    public boolean isValidDated() {
+        return Optional.ofNullable(requestedExecutionDate)
+                   .map(d -> d.isAfter(LocalDate.now()))
+                   .orElse(false)
+                   &&
+                   Optional.ofNullable(requestedExecutionTime)
+                       .map(d -> d.isAfter(LocalDateTime.now()))
+                       .orElse(false);
+    }
 }

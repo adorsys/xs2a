@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 import de.adorsys.aspsp.xs2a.spi.config.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -161,5 +162,18 @@ public class AccountSpiImpl implements AccountSpi {
         }
 
         return accountDetails;
+    }
+
+    /**
+     * Queries ASPSP to (GET) list of allowed payment products for current PSU by its account reference
+     *
+     * @param reference Account reference
+     * @return a list of allowed payment products
+     */
+    @Override
+    public List<String> readPsuAllowedPaymentProductList(SpiAccountReference reference) {
+        return Optional.ofNullable(aspspRestTemplate.exchange(remoteSpiUrls.getAllowedPaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+        }, reference.getIban()).getBody())
+                   .orElse(Collections.emptyList());
     }
 }

@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -48,6 +49,8 @@ import static org.mockito.Mockito.when;
 public class PeriodicPaymentsControllerTest {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
+    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
+
 
     @Autowired
     private PeriodicPaymentsController periodicPaymentsController;
@@ -56,10 +59,13 @@ public class PeriodicPaymentsControllerTest {
 
     @MockBean(name = "paymentService")
     private PaymentService paymentService;
+    @MockBean
+    private AspspProfileService aspspProfileService;
 
     @Before
     public void setUp() {
         when(paymentService.initiatePeriodicPayment(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
 
     @Test
