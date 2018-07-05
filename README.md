@@ -26,13 +26,13 @@ regulated by PSD2.
 * **Consent Management System** is the system intended  to store and manage consents given by PSU to corresponding TPPs.  This system is developed for ASPSPs that don't have their own Consents Management System.
 
 * **ASPSP-Profile** is REST API Module to store and read ASPSP-specific configurations for XS2A-features. The behavior of XS2A can change depending on the stored values, for example, using different SCA approaches.
+
+* **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification. *(Current state: planned)*.
 ##
 
 * **ASPSP-Mock** is a simple example of ASPSP implementation. Mock-implementation of ASPSP exists for the purposes of testing and introspection of XS2A functionality. This module is not in the Berlin Group specification.
 
 * **Prototype Online Banking** is a Web Demo application to show how the PSU - ASPSP Interface works. Through this Interface PSU passes SCA and provides the consents to TTP. This module is not in the Berlin Group specification. *(Current state: under construction)*.
-
-* **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification. *(Current state: planned)*.
 
 
 ## Getting Started
