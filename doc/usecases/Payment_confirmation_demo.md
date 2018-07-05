@@ -4,7 +4,7 @@
 
 To test the flow of payment confirmation locally, follow next steps:
 
-**Happy path**
+##Happy path
 
 * Open ASPSP-mock-server and go to the TPP demo page (by default the URL is `http://localhost:28080/tpp/product/index.html`). You should see "TPP demo" page with four different products to buy. 
 
@@ -12,15 +12,15 @@ To test the flow of payment confirmation locally, follow next steps:
 
 * You will be redirected to the login page. Enter the credentials for your keycloak user. By default it is `aspsp` for login and `zzz` for password.
 
-* After successful login you will be redirected to TAN confirmation page. You should receive TAN number on the email you added while creating PSU. Copy TAN and enter in the the field, than press "Validate".
+* After successful login you will be redirected to TAN confirmation page. You should receive TAN number on the email you added while creating PSU. Copy TAN and enter in the the field, then press "Validate".
 
 * If the TAN is correct, you will be redirected to the next page, consent confirmation. There you should choose "Yes".
 
 * After giving the consent you will see page with payment details (payment id, purchase price and currency). It means that payment successfully executed.
 
-**Unhappy paths**
+##Unhappy paths
 
-   *Wrong credentials*
+   **Wrong credentials**
 
    * Open url http://localhost:28080/tpp/product/index.html. You should see "TPP demo" page with four different products to buy. 
    
@@ -30,7 +30,7 @@ To test the flow of payment confirmation locally, follow next steps:
    
    * You should see a message from keycloak about wrong login or password.
    
-   *Wrong TAN number*
+   **Wrong TAN number**
    
    * Open url http://localhost:28080/tpp/product/index.html. You should see "TPP demo" page with four different products to buy. 
    
@@ -42,7 +42,7 @@ To test the flow of payment confirmation locally, follow next steps:
 
    * You will see page with the message  `TAN confirmation failed! Your payment is unsuccessful`.
    
-   *Consent revoked by PSU*
+   **Consent revoked by PSU**
    
    * Open url http://localhost:28080/tpp/product/index.html. You should see "TPP demo" page with four different products to buy. 
 
