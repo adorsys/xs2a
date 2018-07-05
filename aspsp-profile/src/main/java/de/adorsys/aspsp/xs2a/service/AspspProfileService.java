@@ -90,6 +90,7 @@ public class AspspProfileService {
 
     /**
      * Read sca approach method
+     * @return sca approach method which is stored in profile
      */
     public ScaApproach getScaApproach() {
         return profileConfiguration.getScaApproach();

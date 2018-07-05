@@ -36,7 +36,7 @@ public class PaymentConfirmationController {
     private final PaymentService paymentService;
 
     @GetMapping(path = "/{iban}/{consent-id}")
-    @ApiOperation(value = "Displays content of email TAN confirmation page")
+    @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sent to PSU`s e-mail and returns a link to continue as authenticated user")
     public ModelAndView showConfirmationPage(@PathVariable("iban") String iban,
                                              @PathVariable("consent-id") String consentId) {
 
@@ -46,7 +46,7 @@ public class PaymentConfirmationController {
     }
 
     @PostMapping(path = "/")
-    @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sent to PSU`s e-mail and returns a link to continue as authenticated user")
+    @ApiOperation(value = "Displays content of email TAN confirmation page")
     public ModelAndView confirmTan(
         @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
 
