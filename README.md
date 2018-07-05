@@ -12,12 +12,18 @@ These new services are:
 
 To implement these new services (subject to PSU consent) a TPP needs to access the account of the PSU. 
 The account is usually managed by another PSP called the *Account Servicing Payment Service Provider* (ASPSP). 
-To support the TPP in accessing the accounts managed by an ASPSP, each ASPSP has to provide an **"access to account 
+To support the TPP in accessing the accounts managed by an ASPSP, each ASPSP has to provide an **"access to account
 interface"** (**XS2A interface**).
-Responsibilities and rights of TPP and ASPSP concerning the interaction at the XS2A interface are defined and 
+Responsibilities and rights of TPP and ASPSP concerning the interaction at the XS2A interface are defined and
 regulated by PSD2.
 
-## Features of adorsys/XS2A 
+## Who we are
+[adorsys](https://adorsys.de/en) is a company who works ever since the very beginning of PSD2 with its requirements and its implicit tasks.
+We help banks to achieve PSD2 to comply with all technical and legal terms.
+To speed up the process we provide this open source XS2A interface, specified by Berlin Group, that we are ready to connect to your middleware system.
+You may find more details and contact us via [our Web-site](https://adorsys.de/en/psd2.html).
+
+## Features of adorsys/XS2A
 
 * **XS2A-impl** is an implemetation of PSD2 XS2A Interface of Berlin Group. All mandatory API endpoints defined in Berlin Group specification V1.0 are implemented.
 
