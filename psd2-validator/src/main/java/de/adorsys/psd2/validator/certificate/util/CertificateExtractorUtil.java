@@ -1,6 +1,5 @@
 package de.adorsys.psd2.validator.certificate.util;
 
-import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -13,16 +12,18 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 import com.nimbusds.jose.util.X509CertUtils;
 
+import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.common.PSD2QCStatement;
 import de.adorsys.psd2.validator.common.PSD2QCType;
 import de.adorsys.psd2.validator.common.RoleOfPSP;
 import de.adorsys.psd2.validator.common.RolesOfPSP;
 import lombok.extern.slf4j.Slf4j;
+import no.difi.certvalidator.api.CertificateValidationException;
 
 @Slf4j
 public class CertificateExtractorUtil {
 
-	public static TppCertificateData extract(String encodedCert) throws IOException {
+	public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
 
@@ -52,6 +53,7 @@ public class CertificateExtractorUtil {
 			tppCertData.setPspName(pspName);
 		} catch (CertificateEncodingException e) {
 			log.debug(e.getMessage());
+			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
 		}
 
 		return tppCertData;
