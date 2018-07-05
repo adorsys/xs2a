@@ -1,13 +1,12 @@
 #Payment confirmation demo for redirect approach 
 
-"Payment confirmation demo" are test pages and services for showing how XS2A interface will work with TPP`s payment initiation request through redirect SCA approach.
+"Payment confirmation demo" are test pages and services for showing how XS2A interface will work with TPP's payment initiation request through redirect SCA approach.
 
 To test the flow of payment confirmation locally, follow next steps:
 
-##Happy path
-
-* Open ASPSP-mock-server and go to the TPP demo page (by default the URL is `http://localhost:28080/tpp/product/index.html`). You should see "TPP demo" page with four different products to buy. 
-
+## Happy path
+* You can find TPP demo start page inside the project by path 'aspsp-xs2a/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+                                                                                                
 * Choose one of the product and press "Buy now".
 
 * You will be redirected to the login page. Enter the credentials for your keycloak user. By default it is `aspsp` for login and `zzz` for password.
@@ -18,12 +17,12 @@ To test the flow of payment confirmation locally, follow next steps:
 
 * After giving the consent you will see page with payment details (payment id, purchase price and currency). It means that payment successfully executed.
 
-##Unhappy paths
+## Unhappy paths
 
    **Wrong credentials**
 
-   * Open url http://localhost:28080/tpp/product/index.html. You should see "TPP demo" page with four different products to buy. 
-   
+   * You can find TPP demo start page inside the project by path 'aspsp-xs2a/tpp-demo/index.html'. You can run it in your browser locally. When page is open you should see "TPP demo" page with four different products to buy.  
+    
    * Choose one of the product and press "Buy now".
    
    * You will be redirected to the login page. Enter wrong credentials for your keycloak user, for example `wrong password` and `wrong login`.
