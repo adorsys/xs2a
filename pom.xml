@@ -35,8 +35,68 @@
     </modules>
     <packaging>pom</packaging>
 
-    <name>aspsp-xs2a</name>
-    <description>xs2a interfaces</description>
+    <name>xs2a</name>
+    <description>OpenSource PMD2 XS2A API implementation</description>
+
+    <url>https://github.com/adorsys/xs2a</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Francis Pouatcha</name>
+            <email>fpo@adorsys.de</email>
+            <organization>adorsys</organization>
+            <organizationUrl>https://adorsys.de/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Denys Golubiev</name>
+            <email>dgo@adorsys.de</email>
+            <organization>adorsys</organization>
+            <organizationUrl>https://adorsys.de/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Guy Moyo</name>
+            <email>gmo@adorsys.de</email>
+            <organization>adorsys</organization>
+            <organizationUrl>https://adorsys.de/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Dmytro Storozhyk</name>
+            <email>dst@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Roman Yelizarov</name>
+            <email>rye@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Dmytro Mishchuck</name>
+            <email>dmi@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Mariia Polikarpova</name>
+            <email>mpo@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Petro Rudenko</name>
+            <email>pru@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -112,7 +172,85 @@
     </build>
 
     <scm>
-        <connection>scm:git:https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a.git</connection>
-        <tag>DEVELOP</tag>
+        <connection>scm:git@github.com:adorsys/xs2a.git</connection>
+        <developerConnection>scm:git:git@github.com:adorsys/xs2a.git</developerConnection>
+        <url>git@github.com:adorsys/xs2a.git</url>
+        <tag>HEAD</tag>
     </scm>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sonatype</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <distributionManagement>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
