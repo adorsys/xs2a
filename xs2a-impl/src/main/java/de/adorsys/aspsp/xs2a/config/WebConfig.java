@@ -27,7 +27,7 @@ import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.payment.OauthApproachPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.PaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.RedirectApproachPaymentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
@@ -158,7 +158,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public PaymentService paymentServiceInterface() {
+    public ScaPaymentService paymentServiceInterface() {
         ScaApproach scaApproach = aspspProfileService.readScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthApproachPaymentService();

@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import java.util.List;
 import java.util.Optional;
 
-public interface PaymentService {
+public interface ScaPaymentService {
     Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment);
     List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayments> payments);
     Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayments singlePayment);

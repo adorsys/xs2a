@@ -25,14 +25,13 @@ import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.PaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,10 +41,10 @@ import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Service
 @AllArgsConstructor
-public class CommonPaymentService {
+public class PaymentService {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
-    private final PaymentService paymentServiceInterface;
+    private final ScaPaymentService scaPaymentService;
     private final PaymentValidationService paymentValidationService;
 
     /**
@@ -75,7 +74,7 @@ public class CommonPaymentService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
                        .build();
         }
-        return paymentServiceInterface.createPeriodicPayment(periodicPayment)
+        return scaPaymentService.createPeriodicPayment(periodicPayment)
                    .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
@@ -109,7 +108,7 @@ public class CommonPaymentService {
             }
         }
         if (CollectionUtils.isNotEmpty(validPayments)) {
-            List<PaymentInitialisationResponse> paymentResponses = paymentServiceInterface.createBulkPayment(validPayments);
+            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments);
             if (CollectionUtils.isNotEmpty(paymentResponses) && paymentResponses.stream()
                                                                     .anyMatch(pr -> pr.getTransactionStatus() != TransactionStatus.RJCT)) {
                 paymentResponses.addAll(invalidPayments);
@@ -136,7 +135,7 @@ public class CommonPaymentService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
                        .build();
         }
-        return paymentServiceInterface.createSinglePayment(singlePayment)
+        return scaPaymentService.createSinglePayment(singlePayment)
                    .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))

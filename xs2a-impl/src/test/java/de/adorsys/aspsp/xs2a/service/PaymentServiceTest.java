@@ -71,7 +71,7 @@ public class PaymentServiceTest {
     private static final String FORBIDDEN_PAYMENT_PRODUCT = "cross-border-credit-transfers";
 
     @Autowired
-    private CommonPaymentService paymentService;
+    private PaymentService paymentService;
     @Autowired
     PaymentMapper paymentMapper;
     @Autowired

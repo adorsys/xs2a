@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.service.CommonPaymentService;
+import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ import java.util.List;
 @Api(value = "api/v1/consents", tags = "PISP, Bulk payment initiation", description = "Payment Initiation for Bulk Payments and Multiple Payments")
 public class BulkPaymentInitiationController {
     private final ResponseMapper responseMapper;
-    private final CommonPaymentService paymentService;
+    private final PaymentService paymentService;
 
     @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),

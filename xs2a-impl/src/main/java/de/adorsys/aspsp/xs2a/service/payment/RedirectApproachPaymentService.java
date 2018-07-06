@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.payment.PaymentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RedirectApproachPaymentService implements PaymentService {
+public class RedirectApproachPaymentService implements ScaPaymentService {
     @Autowired
     private PisConsentService pisConsentService;
 

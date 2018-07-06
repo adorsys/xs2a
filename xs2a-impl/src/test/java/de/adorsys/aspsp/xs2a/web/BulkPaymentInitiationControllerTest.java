@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.CommonPaymentService;
+import de.adorsys.aspsp.xs2a.service.PaymentService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +62,7 @@ public class BulkPaymentInitiationControllerTest {
     private JsonConverter jsonConverter;
 
     @MockBean(name = "paymentService")
-    private CommonPaymentService paymentService;
+    private PaymentService paymentService;
     @MockBean
     private AspspProfileService aspspProfileService;
 
