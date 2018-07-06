@@ -25,11 +25,11 @@ import java.util.List;
 
 public interface PaymentSpi {
 
-    SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String code, boolean tppRedirectPreferred);
+    SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments);
 
-    SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred);
+    SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment);
 
-    List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred);
+    List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments);
 
     SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
 }

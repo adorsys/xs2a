@@ -254,7 +254,7 @@ public class AccountService {
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }
 
-    Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
+    public Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban()))
                    .map(Collection::stream)
@@ -282,7 +282,7 @@ public class AccountService {
         validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
     }
 
-    boolean isInvalidPaymentProductForPsu(AccountReference reference, String paymentProduct) {
+    public boolean isInvalidPaymentProductForPsu(AccountReference reference, String paymentProduct) {
         return !accountSpi.readPsuAllowedPaymentProductList(accountMapper.mapToSpiAccountReference(reference))
                     .contains(paymentProduct);
     }

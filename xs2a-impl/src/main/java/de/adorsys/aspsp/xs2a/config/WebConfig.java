@@ -26,6 +26,9 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.payment.OauthApproachPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.PaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.RedirectApproachPaymentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
@@ -152,5 +155,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     private String obtainAccessTokenFromHeader(HttpServletRequest request) {
         return request.getHeader(AUTHORIZATION_HEADER);
+    }
+
+    @Bean
+    public PaymentService paymentServiceInterface() {
+        ScaApproach scaApproach = aspspProfileService.readScaApproach();
+        if (OAUTH == scaApproach) {
+            return new OauthApproachPaymentService();
+        } else if (REDIRECT == scaApproach) {
+            return new RedirectApproachPaymentService();
+        }
+        throw new IllegalArgumentException();
     }
 }
