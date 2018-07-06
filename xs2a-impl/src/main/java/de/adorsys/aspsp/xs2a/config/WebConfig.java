@@ -26,9 +26,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.payment.OauthApproachPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.RedirectApproachPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
@@ -55,8 +53,7 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.ScaApproach.OAUTH;
-import static de.adorsys.aspsp.xs2a.domain.ScaApproach.REDIRECT;
+import static de.adorsys.aspsp.xs2a.domain.ScaApproach.*;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
@@ -161,10 +158,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public ScaPaymentService paymentServiceInterface() {
         ScaApproach scaApproach = aspspProfileService.readScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthApproachPaymentService();
+            return new OauthScaPaymentService();
         } else if (REDIRECT == scaApproach) {
-            return new RedirectApproachPaymentService();
+            return new RedirectScaPaymentService();
+        } else if (DECOUPLED == scaApproach) {
+            return new DecoupedScaPaymentService();
+        } else if (EMBEDDED == scaApproach) {
+            return new EmbeddedScaPaymentService();
         }
-        throw new IllegalArgumentException();
+        throw new UnsupportedOperationException("This ASPSP doesn't support such SCA approach");
     }
 }

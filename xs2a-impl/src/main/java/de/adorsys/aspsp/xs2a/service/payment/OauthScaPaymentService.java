@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 
 @Service
-public class OauthApproachPaymentService implements ScaPaymentService {
+public class OauthScaPaymentService implements ScaPaymentService {
     @Autowired
     private PaymentMapper paymentMapper;
     @Autowired

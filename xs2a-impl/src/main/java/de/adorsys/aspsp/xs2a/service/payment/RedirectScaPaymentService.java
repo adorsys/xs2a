@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RedirectApproachPaymentService implements ScaPaymentService {
+public class RedirectScaPaymentService implements ScaPaymentService {
     @Autowired
     private PisConsentService pisConsentService;
 
