@@ -22,12 +22,12 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>aspsp-mock-server</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>aspsp-mock-server</name>
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
 
         <dependency>
@@ -124,7 +124,7 @@
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
 
     </dependencies>

@@ -6,13 +6,13 @@
 	<parent>
 		<groupId>de.adorsys.aspsp</groupId>
 		<artifactId>aspsp-idp</artifactId>
-		<version>1.2-SNAPSHOT</version>
+		<version>1.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<groupId>de.adorsys.keycloak</groupId>
 	<artifactId>keycloak-provider-extension</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 	<packaging>pom</packaging>
 
     <properties>
