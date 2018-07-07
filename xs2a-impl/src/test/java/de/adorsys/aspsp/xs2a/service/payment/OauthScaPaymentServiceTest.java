@@ -16,9 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -31,10 +34,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RCVD;
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
-import static org.assertj.core.api.Assertions.assertThat;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +46,6 @@ public class OauthScaPaymentServiceTest {
     private static final String OK_CREDITOR = "OK";
     private static final String WRONG_CREDITOR = "NOK";
     private static final String PAYMENT_ID = "123456789";
-
 
     @InjectMocks
     OauthScaPaymentService oauthScaPaymentService;
@@ -53,25 +56,16 @@ public class OauthScaPaymentServiceTest {
 
     @Before
     public void setUp() {
-        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(true, true))).thenReturn(getSpiBulk(true,true));
-        when(paymentMapper.mapToSpiSinglePaymentList()).thenReturn();
-        when(paymentSpi.createBulkPayments(getSpiBulk(true,true))).thenReturn(getSpiRespList(true,true));
-        when(paymentSpi.).thenReturn();
-    }
-
-    private List<SpiPaymentInitialisationResponse> getSpiRespList(boolean firstOk, boolean secondOk) {
-    return Arrays.asList(getSpiResp(firstOk),getSpiResp(secondOk));
-    }
-
-    private SpiPaymentInitialisationResponse getSpiResp(boolean firstOk) {
-        SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
-        if (firstOk) {
-            response.setPaymentId(PAYMENT_ID);
-            response.setTransactionStatus(RCVD);
-        }
-        else {
-            response.setTransactionStatus(RJCT);
-        }
+        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(true, true))).thenReturn(getSpiBulk(true, true));
+        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(true,false))).thenReturn(getSpiBulk(true,false));
+        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(false,false))).thenReturn(getSpiBulk(false,false));
+        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true))).thenReturn(getResp(true));
+        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
+        when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED, false))
+            .thenReturn(getResp(false));
+        when(paymentSpi.createBulkPayments(getSpiBulk(true, true))).thenReturn(getSpiRespList(true, true));
+        when(paymentSpi.createBulkPayments(getSpiBulk(true, false))).thenReturn(getSpiRespList(true, false));
+        when(paymentSpi.createBulkPayments(getSpiBulk(false, false))).thenReturn(getSpiRespList(false, false));
     }
 
     @Test
@@ -85,12 +79,34 @@ public class OauthScaPaymentServiceTest {
         List<SinglePayments> payments = getBulk(true, true);
         //When
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments);
-        assertThat(actualResponse).isEqualTo();
-
+        assertNotNull(actualResponse);
+        assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId().equals(PAYMENT_ID));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RCVD));
+        assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages() == null);
     }
 
-    private List<SinglePayments> getBulk(boolean firstOk, boolean secondOk) {
-        return Arrays.asList(getPayment(firstOk), getPayment(secondOk));
+    @Test
+    public void createBulkPayment_Failure_partial() {
+        //Given
+        List<SinglePayments> payments = getBulk(true, false);
+        //When
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments);
+        assertNotNull(actualResponse);
+        assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId()==null);
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
+        assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages()[0]==PAYMENT_FAILED);
+    }
+
+    @Test
+    public void createBulkPayment_Failure_total() {
+        //Given
+        List<SinglePayments> payments = getBulk(false, false);
+        //When
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments);
+        assertNotNull(actualResponse);
+        assertTrue(actualResponse.get(0).getPaymentId()==null && actualResponse.get(1).getPaymentId()==null);
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
+        assertTrue(actualResponse.get(0).getTppMessages()[0]==PAYMENT_FAILED && actualResponse.get(1).getTppMessages()[0]==PAYMENT_FAILED);
     }
 
     @Test
@@ -98,9 +114,41 @@ public class OauthScaPaymentServiceTest {
         //Nothing to be tested here
     }
 
-    private SinglePayments getPayment(boolean creditorName) {
+    private List<SinglePayments> getBulk(boolean firstOk, boolean secondOk) {
+        return Arrays.asList(getPayment(firstOk), getPayment(secondOk));
+    }
+
+    private Optional<PaymentInitialisationResponse> getResp(boolean paymentPassed) {
+        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
+        if (paymentPassed) {
+            response.setPaymentId(PAYMENT_ID);
+            response.setTransactionStatus(TransactionStatus.RCVD);
+        } else {
+            response.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
+            response.setTransactionStatus(TransactionStatus.RJCT);
+        }
+        return Optional.of(response);
+    }
+
+    private List<SpiPaymentInitialisationResponse> getSpiRespList(boolean firstOk, boolean secondOk) {
+        return Arrays.asList(getSpiResp(firstOk), getSpiResp(secondOk));
+    }
+
+    private SpiPaymentInitialisationResponse getSpiResp(boolean paymentOk) {
+        SpiPaymentInitialisationResponse response = new SpiPaymentInitialisationResponse();
+        if (paymentOk) {
+            response.setPaymentId(PAYMENT_ID);
+            response.setTransactionStatus(SpiTransactionStatus.RCVD);
+        } else {
+            response.setTransactionStatus(SpiTransactionStatus.RJCT);
+        }
+
+        return response;
+    }
+
+    private SinglePayments getPayment(boolean paymentOk) {
         SinglePayments payment = new SinglePayments();
-        payment.setCreditorName(creditorName
+        payment.setCreditorName(paymentOk
                                     ? OK_CREDITOR
                                     : WRONG_CREDITOR);
         return payment;
@@ -110,9 +158,9 @@ public class OauthScaPaymentServiceTest {
         return Arrays.asList(getSpiPayment(firstOk), getSpiPayment(secondOk));
     }
 
-    private SpiSinglePayments getSpiPayment(boolean creditorName) {
+    private SpiSinglePayments getSpiPayment(boolean paymentOk) {
         SpiSinglePayments payment = new SpiSinglePayments();
-        payment.setCreditorName(creditorName
+        payment.setCreditorName(paymentOk
                                     ? OK_CREDITOR
                                     : WRONG_CREDITOR);
         return payment;
