@@ -8,6 +8,9 @@ Provide access to next values:
  - available payment products
  - available payment types
  - sca approach
+ - tppSignatureRequired
+ - pisRedirectUrlToAspsp
+ - aisRedirectUrlToAspsp
  
  To test getting data of ASPSP Profile need to make next steps:
  
@@ -20,5 +23,12 @@ Provide access to next values:
  * To get 'available payment products' create Get request to URI 'http://your_host:port/aspsp-profile/available-payment-products'
  
  * To get 'available payment types' create Get request to URI 'http://your_host:port/aspsp-profile/available-payment-types'
- 
+  
  * To get 'sca approach' create Get request to URI 'http://your_host:port/aspsp-profile/sca-approach'
+ 
+ * To get 'tppSignatureRequired' create Get request to URI 'http://your_host:port/aspsp-profile/tpp-signature-required'
+
+ * To get 'pisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-pis'
+
+ * To get 'aisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-ais'
+

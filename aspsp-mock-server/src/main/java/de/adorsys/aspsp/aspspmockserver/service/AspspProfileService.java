@@ -30,6 +30,11 @@ public class AspspProfileService {
     private final RestTemplate aspspProfileRestTemplate;
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
+    /**
+     * Read sca approach method from aspsp profile
+     *
+     * @return sca approach method which is stored in profile
+     */
     public String getScaApproach() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, String.class).getBody();

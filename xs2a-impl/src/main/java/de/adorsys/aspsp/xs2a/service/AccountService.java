@@ -223,12 +223,9 @@ public class AccountService {
 
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
-        LocalDate dateToChecked = Optional.ofNullable(dateTo)
-                                      .orElse(LocalDate.now());
-
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
-                   : getAccountReportByPeriod(accountId, dateFrom, dateToChecked)
+                   : getAccountReportByPeriod(accountId, dateFrom, dateTo)
                          .map(r -> filterByBookingStatus(r, bookingStatus));
 
     }
@@ -251,7 +248,9 @@ public class AccountService {
     }
 
     private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
-        validateAccountIdPeriod(accountId, dateFrom, dateTo);
+        LocalDate dateToChecked = Optional.ofNullable(dateTo)
+                                      .orElse(LocalDate.now());
+        validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo));
     }
 
