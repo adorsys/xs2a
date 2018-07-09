@@ -80,8 +80,6 @@ public class PaymentServiceTest {
     @Mock
     private PaymentSpi paymentSpi;
 
-    /*
-    Should be change by Dima 2M
     @Before
     public void setUp() {
         //Mapper
@@ -258,22 +256,21 @@ public class PaymentServiceTest {
     @Test
     public void createPaymentInitiation_Failure_Validation() {
         SinglePayments payment = SINGLE_PAYMENT_NOK_IBAN;
-        //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT, false);
-        //Then:
-        assertThat(actualResponse.getBody()).isNull();
-        assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(RESOURCE_UNKNOWN_400);
-        assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
+        createPaymentInitiationFailureTests(payment, RESOURCE_UNKNOWN_400);
     }
 
     @Test
     public void createPaymentInitiation_Failure_ASPSP_RJCT() {
         SinglePayments payment = SINGLE_PAYMENT_NOK_AMOUNT;
+        createPaymentInitiationFailureTests(payment, PAYMENT_FAILED);
+    }
+
+    private void createPaymentInitiationFailureTests(SinglePayments payment, MessageErrorCode errorCode) {
         //When:
         ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT, false);
         //Then:
         assertThat(actualResponse.getBody()).isNull();
-        assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(PAYMENT_FAILED);
+        assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
         assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
@@ -323,5 +320,4 @@ public class PaymentServiceTest {
     private List<PaymentInitialisationResponse> getBulkResponses(PaymentInitialisationResponse... response) {
         return Arrays.stream(response).collect(Collectors.toList());
     }
-    */
 }

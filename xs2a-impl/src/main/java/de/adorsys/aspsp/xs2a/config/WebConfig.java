@@ -159,13 +159,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ScaApproach scaApproach = aspspProfileService.readScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthScaPaymentService();
-        } else if (REDIRECT == scaApproach) {
-            return new RedirectScaPaymentService();
         } else if (DECOUPLED == scaApproach) {
             return new DecoupedScaPaymentService();
         } else if (EMBEDDED == scaApproach) {
             return new EmbeddedScaPaymentService();
         }
-        throw new UnsupportedOperationException("This ASPSP doesn't support such SCA approach");
+        return new RedirectScaPaymentService();
     }
 }
