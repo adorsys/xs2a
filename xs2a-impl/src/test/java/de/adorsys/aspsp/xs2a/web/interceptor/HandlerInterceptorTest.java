@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
 
+import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = WebConfigTest.class)
 public class HandlerInterceptorTest {
 
     @Autowired
@@ -81,7 +82,7 @@ public class HandlerInterceptorTest {
         int expectedResponseHttpStatusCode = 400;
 
         //When:
-        boolean actualResponse = handlerInterceptor.preHandle(wrongRequest, response ,handler);
+        boolean actualResponse = handlerInterceptor.preHandle(wrongRequest, response, handler);
 
         //Then:
         assertThat(actualResponse).isFalse();

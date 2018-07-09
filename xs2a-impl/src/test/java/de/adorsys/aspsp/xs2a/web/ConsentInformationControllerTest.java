@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = WebConfigTest.class)
 public class ConsentInformationControllerTest {
     private final String CORRECT_PSU_ID = "ID 777";
     private final String WRONG_PSU_ID = "ID 666";
