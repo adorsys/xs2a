@@ -25,8 +25,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
+import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,7 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Service
@@ -63,8 +64,8 @@ public class PaymentService {
     /**
      * Initiates periodic payment
      *
-     * @param periodicPayment      Periodic payment information
-     * @param paymentProduct       The addressed payment product
+     * @param periodicPayment Periodic payment information
+     * @param paymentProduct  The addressed payment product
      * @return Response containing information about created periodic payment or corresponding error
      */
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {

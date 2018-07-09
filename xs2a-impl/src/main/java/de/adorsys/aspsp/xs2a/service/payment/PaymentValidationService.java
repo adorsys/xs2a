@@ -35,20 +35,25 @@ public class PaymentValidationService {
     private final AccountService accountService;
 
     public Optional<MessageErrorCode> validatePeriodicPayment(PeriodicPayment payment, String paymentProduct) {
-        return payment != null && payment.isValidDate()
+        if (payment == null) { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+            return of(FORMAT_ERROR);
+        }
+        return payment.isValidDate()
                    ? containsPaymentRelatedErrors(payment, paymentProduct)
-                   : of(FORMAT_ERROR);
+                   : of(EXECUTION_DATE_INVALID);
     }
 
     public Optional<MessageErrorCode> validateSinglePayment(SinglePayments payment, String paymentProduct) {
-        return payment != null && payment.isValidDated()
+        if (payment == null) { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+            return of(FORMAT_ERROR);
+        }
+        return payment.isValidDated() //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
                    ? containsPaymentRelatedErrors(payment, paymentProduct)
-                   : of(FORMAT_ERROR);
+                   : of(EXECUTION_DATE_INVALID);
     }
 
     private Optional<MessageErrorCode> containsPaymentRelatedErrors(SinglePayments payment, String paymentProduct) {
-        if (!accountService.getAccountDetailsByAccountReference(payment.getDebtorAccount()).isPresent()
-                && !accountService.getAccountDetailsByAccountReference(payment.getCreditorAccount()).isPresent()) {
+        if (!accountService.getAccountDetailsByAccountReference(payment.getDebtorAccount()).isPresent()) {
             return of(RESOURCE_UNKNOWN_400);
         }
         if (accountService.isInvalidPaymentProductForPsu(payment.getDebtorAccount(), paymentProduct)) {
