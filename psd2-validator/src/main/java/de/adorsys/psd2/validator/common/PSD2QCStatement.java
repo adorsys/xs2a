@@ -28,8 +28,8 @@ public class PSD2QCStatement {
 	public static PSD2QCType psd2QCType(X509Certificate cert) throws CertificateValidationException {
 		byte[] extValues = cert.getExtensionValue(Extension.qCStatements.getId());
 		if (extValues == null) {
-			log.debug(String.format("QCStatement not found in psd2 certificate. Missing extension with value %s",
-					Extension.qCStatements.getId()));
+			log.debug("QCStatement not found in psd2 certificate. Missing extension with value {}",
+					Extension.qCStatements.getId());
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
 		}
 
@@ -54,8 +54,8 @@ public class PSD2QCStatement {
 		}
 		QCStatement qcStatement = QCStatement.getInstance(qcStatements);
 		if (!idEtsiPsd2QcStatement.getId().equals(qcStatement.getStatementId().getId())) {
-			log.debug(String.format("Wrong statement type in psd2 certificate. expected is %s but found %s",
-					idEtsiPsd2QcStatement.getId(), qcStatement.getStatementId().getId()));
+			log.debug("Wrong statement type in psd2 certificate. expected is {} but found {}",
+					idEtsiPsd2QcStatement.getId(), qcStatement.getStatementId().getId());
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
 		}
 
