@@ -155,7 +155,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ScaPaymentService paymentServiceInterface() {
+    public ScaPaymentService scaPaymentService() {
         ScaApproach scaApproach = aspspProfileService.readScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthScaPaymentService();
