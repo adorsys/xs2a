@@ -90,6 +90,7 @@ public class AspspProfileService {
 
     /**
      * Read sca approach method
+     * @return sca approach method which is stored in profile
      */
     public ScaApproach getScaApproach() {
         return profileConfiguration.getScaApproach();
@@ -116,5 +117,35 @@ public class AspspProfileService {
      */
     public void updateTppSignatureRequired(boolean tppSignatureRequired) {
         profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
+    }
+
+    /**
+     * Read Pis redirect url to Aspsp
+     */
+    public String getPisRedirectUrlToAspsp() {
+        return profileConfiguration.getPisRedirectUrlToAspsp();
+    }
+
+    /**
+     * Update Pis redirect url to aspsp
+     * @param redirectUrlToAspsp the new value of Pis redirectUrlToAspsp
+     */
+    public void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp) {
+        profileConfiguration.setPisRedirectUrlToAspsp(redirectUrlToAspsp);
+    }
+
+    /**
+     * Read Ais redirect url to Aspsp
+     */
+    public String getAisRedirectUrlToAspsp() {
+        return profileConfiguration.getAisRedirectUrlToAspsp();
+    }
+
+    /**
+     * Update Ais redirect url to aspsp
+     * @param redirectUrlToAspsp the new value of Ais redirectUrlToAspsp
+     */
+    public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
+        profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);
     }
 }

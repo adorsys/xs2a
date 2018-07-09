@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public abstract class AbstractLinkAspect<T> {
     @Autowired
     protected int maxNumberOfCharInTransactionJson;
     @Autowired
-    protected String redirectLinkToSource;
+    protected AspspProfileService aspspProfileService;
     @Autowired
     protected JsonConverter jsonConverter;
 

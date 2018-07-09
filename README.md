@@ -1,23 +1,29 @@
 # Reference Java implementation of PSD2 XS2A Interface of Berlin Group
-With **PSD2** (Directive (EU) 2015/2366 of the European Parliament and of the Council on Payment Services in the 
-Internal Market, published 25 November 2016) the European Union has published a new directive on payment services 
-in the internal market. 
-Among others PSD2 contains regulations on new services to be operated by so called 
+With **PSD2** (Directive (EU) 2015/2366 of the European Parliament and of the Council on Payment Services in the
+Internal Market, published 25 November 2016) the European Union has published a new directive on payment services
+in the internal market.
+Among others PSD2 contains regulations on new services to be operated by so called
 *Third Party Payment Service Providers* (TPP) on behalf of a *Payment Service User* (PSU).
- 
+
 These new services are:
 * *Payment Initiation Service* (PIS) to be operated by a Payment Initiation Service Provider (PISP) TPP as defined by article 66 of [PSD2],
 * *Account Information Service* (AIS) to be operated by an Account Information Service Provider (AISP) TPP as defined by article 67 of [PSD2], and
 * *Confirmation on the Availability of Funds Service* (FCS) to be used by a Payment Instrument Issuing Service Provider (PIISP) TPP as defined by article 65 of [PSD2].
 
-To implement these new services (subject to PSU consent) a TPP needs to access the account of the PSU. 
-The account is usually managed by another PSP called the *Account Servicing Payment Service Provider* (ASPSP). 
-To support the TPP in accessing the accounts managed by an ASPSP, each ASPSP has to provide an **"access to account 
+To implement these new services (subject to PSU consent) a TPP needs to access the account of the PSU.
+The account is usually managed by another PSP called the *Account Servicing Payment Service Provider* (ASPSP).
+To support the TPP in accessing the accounts managed by an ASPSP, each ASPSP has to provide an **"access to account
 interface"** (**XS2A interface**).
-Responsibilities and rights of TPP and ASPSP concerning the interaction at the XS2A interface are defined and 
+Responsibilities and rights of TPP and ASPSP concerning the interaction at the XS2A interface are defined and
 regulated by PSD2.
 
-##Features of adorsys/XS2A 
+## Who we are
+[adorsys](https://adorsys.de/en/index.html) is a company who works ever since the very beginning of PSD2 with its requirements and implicit tasks.
+We help banks to be PSD2 complaint (technical and legal terms). To speed up the process we provide this open source XS2A interface, specified by Berlin Group,
+that can be connected to your middleware system.
+You can check your readiness for PSD2 Compliance and other information via [our Web-site](https://adorsys.de/en/psd2.html).
+
+## Features of adorsys/XS2A
 
 * **XS2A-impl** is an implemetation of PSD2 XS2A Interface of Berlin Group. All mandatory API endpoints defined in Berlin Group specification V1.0 are implemented.
 
@@ -26,13 +32,13 @@ regulated by PSD2.
 * **Consent Management System** is the system intended  to store and manage consents given by PSU to corresponding TPPs.  This system is developed for ASPSPs that don't have their own Consents Management System.
 
 * **ASPSP-Profile** is REST API Module to store and read ASPSP-specific configurations for XS2A-features. The behavior of XS2A can change depending on the stored values, for example, using different SCA approaches.
-##
+
+* **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification. *(Current state: planned)*.
+### Test services
 
 * **ASPSP-Mock** is a simple example of ASPSP implementation. Mock-implementation of ASPSP exists for the purposes of testing and introspection of XS2A functionality. This module is not in the Berlin Group specification.
 
 * **Prototype Online Banking** is a Web Demo application to show how the PSU - ASPSP Interface works. Through this Interface PSU passes SCA and provides the consents to TTP. This module is not in the Berlin Group specification. *(Current state: under construction)*.
-
-* **Logging System** is the system that allows ASPSP operators to track all logically related calls in XS2A, starting from the requests from TPP to the final responses to TPP. This module is not in the Berlin Group specification. *(Current state: planned)*.
 
 
 ## Getting Started

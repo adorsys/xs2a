@@ -42,25 +42,40 @@ public class PaymentConfirmationService {
     private final PaymentService paymentService;
     private final AccountService accountService;
 
+    /**
+     *  Generates new Tan and sends them to psu's email for payment confirmation
+     *
+     *  @param iban Iban of Psu order to get correct Psu and than get psu's email
+     *  @return true if psu was found and new Tan was sent successfully, otherwise return false
+     */
     public boolean generateAndSendTanForPsuByIban(String iban) {
         return accountService.getPsuIdByIban(iban)
                    .map(this::generateAndSendTanForPsu)
                    .orElse(false);
     }
 
-    public boolean generateAndSendTanForPsu(String psuId) {
+    private boolean generateAndSendTanForPsu(String psuId) {
         return Optional.ofNullable(psuRepository.findOne(psuId))
                    .map(psu -> createAndSendTan(psu.getId(), psu.getEmail()))
                    .orElse(false);
     }
 
+    /**
+     *  Gets new Tan and sends them to psu's email for payment confirmation
+     *
+     *  @param iban Iban of Psu order to get correct Psu
+     *  @param tanNumber TAN
+     *  @param consentId Id of consent in order to reject when Tan is wrong
+     *
+     *  @return true if Tan has UNUSED, otherwise return false
+     */
     public boolean isTanNumberValidByIban(String iban, String tanNumber, String consentId) {
         return accountService.getPsuIdByIban(iban)
                    .map(psuId -> isPsuTanNumberValid(psuId, tanNumber, consentId))
                    .orElse(false);
     }
 
-    public boolean isPsuTanNumberValid(String psuId, String tanNumber, String consentId) {
+    private boolean isPsuTanNumberValid(String psuId, String tanNumber, String consentId) {
         boolean tanNumberValid = tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
                                      .findFirst()
                                      .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
