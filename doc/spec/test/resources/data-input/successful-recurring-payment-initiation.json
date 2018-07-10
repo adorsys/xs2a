@@ -1,0 +1,85 @@
+{
+  "request": {
+    "header": [
+      {
+        "tpp-transaction-id": "",
+        "tpp-request-id": "",
+        "psu-ip-address": "192.168.0.26"
+      }
+    ],
+    "body": [
+      {
+        "creditorAccount": {
+          "bban": "1234000000059999999",
+          "currency": "EUR",
+          "iban": "DE371234000000059999999",
+          "maskedPan": "23456xxxxxx1234",
+          "msisdn": "0172/3876289909",
+          "pan": "234561234561234"
+        },
+        "creditorAddress": {
+          "buildingNumber": "12",
+          "city": "Nürnberg",
+          "country": {
+            "code": "49"
+          },
+          "postalCode": "90431",
+          "street": "Herrnstraße"
+        },
+        "creditorAgent": {
+          "code": "BCENECEQ"
+        },
+        "creditorName": "Telekom",
+        "dayOfExecution": 14,
+        "debtorAccount": {
+          "bban": "4321000000041111111",
+          "currency": "EUR",
+          "iban": "DE814321000000041111111",
+          "maskedPan": "65432xxxxxx4321",
+          "msisdn": "0178/219822920",
+          "pan": "654326543214321"
+        },
+        "endDate": "2018-12-14",
+        "endToEndIdentification": "RI-123456789",
+        "executionRule": "latest",
+        "frequency": "MONTHLY",
+        "instructedAmount": {
+          "content": "32.39",
+          "currency": "EUR"
+        },
+        "purposeCode": {
+          "code": "BCENECEQ"
+        },
+        "remittanceInformationStructured": {
+          "reference": "Ref Number Merchant",
+          "referenceIssuer": "string",
+          "referenceType": "string"
+        },
+        "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+        "requestedExecutionDate": "2018-07-14",
+        "requestedExecutionTime": "2018-07-14T10:30:35.035",
+        "startDate": "2018-07-14",
+        "ultimateCreditor": "Telekom",
+        "ultimateDebtor": "Alexander Mueller"
+      }
+    ]
+  },
+  "response": {
+    "code": "201",
+    "header": [
+      {
+        "key": "value"
+      }
+    ],
+    "body": [
+      {
+        "transactionStatus": "",
+        "paymentId": "",
+        "_links": {
+          "redirect": "",
+          "self": ""
+        }
+      }
+    ]
+  }
+}

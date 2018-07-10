@@ -1,0 +1,129 @@
+{
+  "request": {
+    "header": [
+      {
+        "tpp-transaction-id": "",
+        "tpp-request-id": "",
+        "psu-ip-address": "192.168.0.26"
+      }
+    ],
+    "body": [
+      {
+        "creditorAccount": {
+          "bban": "1234000000059999999",
+          "currency": "EUR",
+          "iban": "DE371234000000059999999",
+          "maskedPan": "23456xxxxxx1234",
+          "msisdn": "0172/3876289909",
+          "pan": "234561234561234"
+        },
+        "creditorAddress": {
+          "buildingNumber": "12",
+          "city": "Nürnberg",
+          "country": {
+            "code": "49"
+          },
+          "postalCode": "90431",
+          "street": "Herrnstraße"
+        },
+        "creditorAgent": {
+          "code": "BCENECEQ"
+        },
+        "creditorName": "Telekom",
+        "debtorAccount": {
+          "bban": "4321000000041111111",
+          "currency": "EUR",
+          "iban": "DE814321000000041111111",
+          "maskedPan": "65432xxxxxx4321",
+          "msisdn": "0178/219822920",
+          "pan": "654326543214321"
+        },
+        "endToEndIdentification": "RI-123456789",
+        "instructedAmount": {
+          "content": "32.39",
+          "currency": "EUR"
+        },
+        "purposeCode": {
+          "code": "BCENECEQ"
+        },
+        "remittanceInformationStructured": {
+          "reference": "Ref Number Merchant",
+          "referenceIssuer": "string",
+          "referenceType": "string"
+        },
+        "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+        "requestedExecutionDate": "2018-07-01",
+        "requestedExecutionTime": "2018-07-01T10:30:35.035",
+        "ultimateCreditor": "Telekom",
+        "ultimateDebtor": "Alexander Mueller"
+      },
+      {
+        "creditorAccount": {
+          "bban": "1111000000057777777",
+          "currency": "EUR",
+          "iban": "DE491111000000057777777",
+          "maskedPan": "34567xxxxxx2345",
+          "msisdn": "0172/129479213",
+          "pan": "345671234562345"
+        },
+        "creditorAddress": {
+          "buildingNumber": "74",
+          "city": "Dresden",
+          "country": {
+            "code": "49"
+          },
+          "postalCode": "01067",
+          "street": "Kaisergasse"
+        },
+        "creditorAgent": {
+          "code": "XTBNECOH"
+        },
+        "creditorName": "Grünstrom",
+        "debtorAccount": {
+          "bban": "4321000000041111111",
+          "currency": "EUR",
+          "iban": "DE814321000000041111111",
+          "maskedPan": "65432xxxxxx4321",
+          "msisdn": "0178/219822920",
+          "pan": "654326543214321"
+        },
+        "endToEndIdentification": "RI-234567890",
+        "instructedAmount": {
+          "content": "71.07",
+          "currency": "EUR"
+        },
+        "purposeCode": {
+          "code": "BCENECEQ"
+        },
+        "remittanceInformationStructured": {
+          "reference": "Ref Number Merchant",
+          "referenceIssuer": "string",
+          "referenceType": "string"
+        },
+        "remittanceInformationUnstructured": "Ref. Number GRUENSTROM-2444",
+        "requestedExecutionDate": "2018-06-01",
+        "requestedExecutionTime": "2018-06-01T09:02:16.341",
+        "ultimateCreditor": "Grünstrom",
+        "ultimateDebtor": "Alexander Mueller"
+      }
+    ]
+  },
+  "response": {
+    "code": "201",
+    "header": [
+      {
+        "key": ""
+      }
+    ],
+    "body": [
+      {
+        "transactionStatus": "",
+        "paymentId": "",
+        "_links": {
+          "redirect": "",
+          "self": ""
+        }
+      }
+    ]
+  }
+}
