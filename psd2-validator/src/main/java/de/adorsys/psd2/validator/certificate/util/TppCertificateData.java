@@ -17,4 +17,6 @@ public class TppCertificateData {
 	
 	private String pspAuthorityCountry;
 	
+	private String pspAuthorityId;
+	
 }

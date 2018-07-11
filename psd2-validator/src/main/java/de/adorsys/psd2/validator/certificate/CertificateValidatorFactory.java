@@ -32,6 +32,11 @@ public class CertificateValidatorFactory {
 		}
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
+		
+		if(cert == null) {
+			throw new FailedCertValidationException(CertificateErrorMsgCode.CERTIFICATE_MISSING.name(),
+					CertificateErrorMsgCode.CERTIFICATE_MISSING.toString());
+		}
 
 		validator.validate(cert);
 

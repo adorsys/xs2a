@@ -37,13 +37,14 @@ public class TppSignatureValidatorTest {
 	public void when_ValidSignature_Expected_true() throws NoSuchAlgorithmException, SignatureException, IOException {
 
 		Map<String, String> headersMap = new HashMap<>();
-		headersMap.put("Digest", new SignatureGeneratorUtil().generateDigest());
+	    headersMap.put("Digest", new SignatureGeneratorUtil().generateDigest());
 		headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
 		headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
 		headersMap.put("PSU-ID", "PSU-1234");
-		headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");
+		headersMap.put("Timestamp", "Sun, 06 Aug 2017 15:02:37 GMT");
 
-		Assert.assertEquals(new TppSignatureValidator().verifySignature(signature, tppEncodedValidCert, headersMap),
+		boolean verifySignature = new TppSignatureValidator().verifySignature(signature, tppEncodedValidCert, headersMap);
+		Assert.assertEquals(verifySignature,
 				true);
 	}
 
@@ -69,7 +70,7 @@ public class TppSignatureValidatorTest {
 		headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
 		headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
 		headersMap.put("PSU-ID", "PSU-1234");
-		headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");
+		headersMap.put("Timestamp", "Sun, 06 Aug 2017 15:02:37 GMT");
 
 		Assert.assertFalse(new TppSignatureValidator().verifySignature(signature, tppEncodedInvalidCert, headersMap));
 	}

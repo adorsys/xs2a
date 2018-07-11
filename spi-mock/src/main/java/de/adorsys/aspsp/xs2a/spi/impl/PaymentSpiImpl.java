@@ -45,29 +45,29 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate aspspRestTemplate;
 
     @Override
-    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments, String paymentProduct, boolean tppRedirectPreferred) {
+    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments) {
         ResponseEntity<SpiSinglePayments> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), spiSinglePayments, SpiSinglePayments.class);
         return responseEntity.getStatusCode() == CREATED
-                   ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred)
+                   ? mapToSpiPaymentResponse(responseEntity.getBody())
                    : null;
     }
 
     @Override
-    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments) {
         ResponseEntity<List<SpiSinglePayments>> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.createBulkPayment(), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
         });
         return (responseEntity.getStatusCode() == CREATED)
                    ? responseEntity.getBody().stream()
-                         .map(spiPaym -> mapToSpiPaymentResponse(spiPaym, tppRedirectPreferred))
+                         .map(this::mapToSpiPaymentResponse)
                          .collect(Collectors.toList())
                    : Collections.emptyList();
     }
 
     @Override
-    public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+    public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment) {
         ResponseEntity<SpiPeriodicPayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), periodicPayment, SpiPeriodicPayment.class);
         return responseEntity.getStatusCode() == CREATED
-                   ? mapToSpiPaymentResponse(responseEntity.getBody(), tppRedirectPreferred)
+                   ? mapToSpiPaymentResponse(responseEntity.getBody())
                    : null;
     }
 
@@ -79,12 +79,10 @@ public class PaymentSpiImpl implements PaymentSpi {
                    .orElse(SpiTransactionStatus.RJCT);
     }
 
-    private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments, boolean tppRedirectPreferred) {
+    private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments) {
         SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
         paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
         paymentResponse.setPaymentId(spiSinglePayments.getPaymentId());
-        paymentResponse.setTppRedirectPreferred(tppRedirectPreferred);
-
         return paymentResponse;
     }
 }

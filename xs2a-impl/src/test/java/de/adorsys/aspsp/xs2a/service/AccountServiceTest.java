@@ -26,16 +26,17 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,8 +48,7 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class AccountServiceTest {
     private final String ACCOUNT_ID = "33333-999999999";
     private final String ACCOUNT_ID_1 = "77777-999999999";
@@ -65,18 +65,29 @@ public class AccountServiceTest {
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
     private final String TPP_ID = "This is a test TppId";
 
-    @Autowired
+    @InjectMocks
     private AccountService accountService;
 
-    @MockBean(name = "accountSpi")
+    @Mock
     private AccountSpi accountSpi;
-    @MockBean
+    @Mock
     private ConsentService consentService;
-    @MockBean
+    @Mock
     private AisConsentService aisConsentService;
+    @Mock
+    private AccountMapper accountMapper;
+    @Mock
+    private ValueValidatorService valueValidatorService;
 
     @Before
     public void setUp() {
+        //Validation
+        doNothing().when(valueValidatorService).validate(any(),any());
+        //AccountMapping
+        when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID,IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID,IBAN));
+        when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1,IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1,IBAN_1));
+        when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
+        when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
         //AisReporting
         doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), anyBoolean(), any(TypeAccess.class), any(ResponseObject.class));
         //getAccountDetailsByAccountId_WoB_Success
@@ -380,5 +391,8 @@ public class AccountServiceTest {
         reference.setIban(iban);
         reference.setCurrency(iban.equals(IBAN) ? CURRENCY : CURRENCY_1);
         return reference;
+    }
+    private AccountReport getReport(){
+        return new AccountReport(new Transactions[]{getTransaction()},new Transactions[]{});
     }
 }

@@ -1,53 +1,56 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import de.adorsys.psd2.validator.certificate.util.TppRole;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.SpringRunner;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import de.adorsys.psd2.validator.certificate.util.TppRole;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class TppRoleValidationServiceTest {
 
-	@Autowired
-	private TppRoleValidationService tppRoleValidationService;
+    @InjectMocks
+    private TppRoleValidationService tppRoleValidationService;
 
-	@Test
-	public void shouldSuccess_when_correctRole() {
+    @Before
+    public void setUp() {
+        tppRoleValidationService.initCertificatePathMatchers();
+    }
 
-		List<TppRole> roles = new ArrayList<>();
-		roles.add(TppRole.AISP);
+    @Test
+    public void shouldSuccess_when_correctRole() {
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setMethod("GET");
-		request.setPathInfo("/accounts");
-		request.setServletPath("/api/v1");
+        List<TppRole> roles = new ArrayList<>();
+        roles.add(TppRole.AISP);
 
-		assertThat(tppRoleValidationService.validate(request, roles)).isTrue();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("GET");
+        request.setPathInfo("/accounts");
+        request.setServletPath("/api/v1");
 
-	}
+        assertThat(tppRoleValidationService.validate(request, roles)).isTrue();
 
-	@Test
-	public void shouldFail_when_wrongRole() {
+    }
 
-		List<TppRole> roles = new ArrayList<>();
-		roles.add(TppRole.PIISP);
+    @Test
+    public void shouldFail_when_wrongRole() {
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setMethod("POST");
-		request.setPathInfo("/payments/sepa");
-		request.setServletPath("/api/v1");
+        List<TppRole> roles = new ArrayList<>();
+        roles.add(TppRole.PIISP);
 
-		assertThat(tppRoleValidationService.validate(request, roles)).isFalse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod("POST");
+        request.setPathInfo("/payments/sepa");
+        request.setServletPath("/api/v1");
 
-	}
+        assertThat(tppRoleValidationService.validate(request, roles)).isFalse();
+
+    }
 }

@@ -42,6 +42,8 @@ public class PeriodicPaymentsController {
         @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, paramType = "header"), //NOPMD value is correct according to specification
         @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPeriodicPayment(

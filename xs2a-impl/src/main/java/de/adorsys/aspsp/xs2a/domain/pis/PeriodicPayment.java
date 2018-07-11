@@ -22,9 +22,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.Optional;
 
 @Data
@@ -32,6 +34,7 @@ import java.util.Optional;
 public class PeriodicPayment extends SinglePayments {
 
     @ApiModelProperty(name = "startDate", required = true, example = "2017-03-03")
+    @FutureOrPresent
     private LocalDate startDate;
 
     @ApiModelProperty(name = "executionRule", required = false, example = "preceeding")
@@ -50,8 +53,17 @@ public class PeriodicPayment extends SinglePayments {
 
     @JsonIgnore
     public boolean isValidDate() {
-        return Optional.ofNullable(startDate)
-                   .map(d -> d.isAfter(LocalDate.now()))
-                   .orElse(false);
+        return isValidDated() && isValidStartDate() //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+                   &&
+                   Optional.ofNullable(this.endDate)
+                       .map(d -> d.isAfter(this.startDate))
+                       .orElse(true);
+
+    }
+
+    @JsonIgnore
+    private boolean isValidStartDate() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+        return this.startDate.isEqual(ChronoLocalDate.from(LocalDate.now()))
+                   || this.startDate.isAfter(ChronoLocalDate.from(LocalDate.now()));
     }
 }
