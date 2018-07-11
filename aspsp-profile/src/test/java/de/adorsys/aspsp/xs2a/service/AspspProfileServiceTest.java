@@ -67,6 +67,8 @@ public class AspspProfileServiceTest {
             .thenReturn(PIS_REDIRECT_LINK);
         when(profileConfiguration.getAisRedirectUrlToAspsp())
             .thenReturn(AIS_REDIRECT_LINK);
+        when(profileConfiguration.getMulticurrencyAccountLevel())
+            .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
     }
 
     @Test

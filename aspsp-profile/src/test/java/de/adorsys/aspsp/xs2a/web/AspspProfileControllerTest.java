@@ -45,6 +45,7 @@ public class AspspProfileControllerTest {
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
+    private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUB_ACCOUNT;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -73,6 +74,8 @@ public class AspspProfileControllerTest {
             .thenReturn(PIS_REDIRECT_LINK);
         when(aspspProfileService.getAisRedirectUrlToAspsp())
             .thenReturn(AIS_REDIRECT_LINK);
+        when(aspspProfileService.getMulticurrencyAccountLevel())
+            .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
     }
 
     @Test
@@ -189,7 +192,7 @@ public class AspspProfileControllerTest {
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(MulticurrencyAccountLevel.SUB_ACCOUNT);
+        assertThat(actualResponse.getBody()).isEqualTo(MULTICURRENCY_ACCOUNT_LEVEL);
     }
 
     private static List<String> getPaymentProducts() {
