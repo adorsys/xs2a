@@ -17,28 +17,33 @@
 package de.adorsys.aspsp.xs2a.service.validator;
 
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.validation.Validation;
 import javax.validation.ValidationException;
 import java.time.LocalDate;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class ValueValidatorServiceTest {
     private static final String ACCOUNT_ID = "11111111";
     private static final String TRANSACTION_ID = "22222222";
     private static final LocalDate DATE_FROM = LocalDate.parse("2019-03-03");
     private static final LocalDate DATE_TO = LocalDate.parse("2019-03-03");
 
-    @Autowired
+    @InjectMocks
     private ValueValidatorService valueValidatorService;
+
+    @Before
+    public void setUp() {
+        valueValidatorService = new ValueValidatorService(Validation.buildDefaultValidatorFactory().getValidator());
+    }
+
 
     @Test
     public void validate_AccountAndPeriod() {
@@ -71,7 +76,7 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-        .isInstanceOf(ValidationException.class);
+            .isInstanceOf(ValidationException.class);
     }
 
     @Test
@@ -82,7 +87,7 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
-        .isInstanceOf(ValidationException.class);
+            .isInstanceOf(ValidationException.class);
     }
 
     @Test
@@ -94,6 +99,6 @@ public class ValueValidatorServiceTest {
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class))
-        .isInstanceOf(ValidationException.class);
+            .isInstanceOf(ValidationException.class);
     }
 }

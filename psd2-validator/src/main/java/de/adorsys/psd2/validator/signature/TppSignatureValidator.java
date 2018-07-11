@@ -35,7 +35,7 @@ public class TppSignatureValidator {
 	 * mandatory header fields for http signature in case of psd2
 	 */
 	private static final List<String> MANDATORY_HEADERS_PSD2 = Arrays
-			.asList("digest", "tpp-transaction-id", "tpp-request-id", "date");
+			.asList("digest", "tpp-transaction-id", "tpp-request-id", "timestamp");
 
 	/**
 	 * signature should not be null signature should be conform with psd2

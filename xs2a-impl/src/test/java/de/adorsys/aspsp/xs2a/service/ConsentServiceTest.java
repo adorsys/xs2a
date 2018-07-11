@@ -22,6 +22,8 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
@@ -32,10 +34,9 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -45,9 +46,9 @@ import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceTest {
+    private static final String WRONG_CONSENT_ID = "wrong_consent_id";
     private final String TPP_ID = "This is a test TppId";
     private final String CORRECT_ACCOUNT_ID = "123";
     private final String CORRECT_PSU_ID = "123456789";
@@ -60,16 +61,30 @@ public class ConsentServiceTest {
     private final Currency CURRENCY_2 = Currency.getInstance("USD");
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
 
-    @Autowired
+    @InjectMocks
     private ConsentService consentService;
 
-    @MockBean(name = "accountSpi")
+    @Mock
     AccountSpi accountSpi;
-    @MockBean(name = "aisConsentService")
+    @Mock
     AisConsentService aisConsentService;
+    @Mock
+    AccountMapper accountMapper;
+    @Mock
+    ConsentMapper consentMapper;
+
 
     @Before
     public void setUp() {
+        //AccountMapping
+        when(accountMapper.mapToAccountReferencesFromDetails(getSpiDetailsList()))
+            .thenReturn(getReferenceList());
+        //ConsentMapping
+        when(consentMapper.mapToAccountConsent(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN,CURRENCY)), null, null, false, false), false)))
+            .thenReturn(getConsent(CONSENT_ID,getAccess(Collections.singletonList(getReference(CORRECT_IBAN,CURRENCY)),null,null,false,false),false));
+        when(consentMapper.mapToConsentStatus(SpiConsentStatus.RECEIVED)).thenReturn(Optional.of(ConsentStatus.RECEIVED));
+        when(consentMapper.mapToConsentStatus(null)).thenReturn(Optional.empty());
+
         //AisReportMock
         doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), anyBoolean(), any(TypeAccess.class), any(ResponseObject.class));
         when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID)).thenReturn(getSpiDetailsList());
@@ -98,13 +113,18 @@ public class ConsentServiceTest {
             Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
             .thenReturn(CONSENT_ID);
 
+        //GetAccDetails
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)))).thenReturn(getSpiDetailsList());
 
-        when(aisConsentService.getAccountConsentById(CORRECT_PSU_ID)).thenReturn(getSpiConsent(CORRECT_PSU_ID, getSpiAccountAccess(getSpiReferensesList(CORRECT_IBAN), null, null, false, false), false));
-        when(aisConsentService.getAccountConsentById(WRONG_PSU_ID)).thenReturn(null);
+        //GetConsentById
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN,CURRENCY)), null, null, false, false), false));
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
 
+        //GetStatusById
         when(aisConsentService.getAccountConsentStatusById(CONSENT_ID))
             .thenReturn(SpiConsentStatus.RECEIVED);
+        when(aisConsentService.getAccountConsentStatusById(WRONG_CONSENT_ID))
+            .thenReturn(null);
         doNothing().when(aisConsentService).revokeConsent(anyString());
     }
 
@@ -208,7 +228,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsStatusById_Failure() {
         //When:
-        ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_PSU_ID);
+        ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID);
         //Then:
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
@@ -216,7 +236,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsById_Success() {
         //When:
-        ResponseObject response = consentService.getAccountConsentById(CORRECT_PSU_ID);
+        ResponseObject response = consentService.getAccountConsentById(CONSENT_ID);
         AccountConsent consent = (AccountConsent) response.getBody();
         //Than:
         assertThat(consent.getAccess().getAccounts().get(0).getIban()).isEqualTo(CORRECT_IBAN);
@@ -225,7 +245,7 @@ public class ConsentServiceTest {
     @Test
     public void getAccountConsentsById_Failure() {
         //When:
-        ResponseObject response = consentService.getAccountConsentById(WRONG_PSU_ID);
+        ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
         //Than:
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
@@ -233,7 +253,7 @@ public class ConsentServiceTest {
     @Test
     public void deleteAccountConsentsById_Success() {
         //When:
-        ResponseObject response = consentService.deleteAccountConsentsById(CORRECT_PSU_ID);
+        ResponseObject response = consentService.deleteAccountConsentsById(CONSENT_ID);
         //Than:
         assertThat(response.hasError()).isEqualTo(false);
     }
@@ -241,7 +261,7 @@ public class ConsentServiceTest {
     @Test
     public void deleteAccountConsentsById_Failure() {
         //When:
-        ResponseObject response = consentService.deleteAccountConsentsById(WRONG_PSU_ID);
+        ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
         //Than:
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
@@ -267,6 +287,10 @@ public class ConsentServiceTest {
 
     private SpiAccountAccess getSpiAccountAccess(List<SpiAccountReference> accounts, List<SpiAccountReference> balances, List<SpiAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return new SpiAccountAccess(accounts, balances, transactions, allAccounts ? SpiAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? SpiAccountAccessType.ALL_ACCOUNTS : null);
+    }
+
+    private AccountConsent getConsent(String id, AccountAccess access, boolean withBalance) {
+    return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
     }
 
     private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
