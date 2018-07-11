@@ -19,5 +19,5 @@ package de.adorsys.aspsp.xs2a.domain;
 public enum MulticurrencyAccountLevel {
     SUB_ACCOUNT,
     AGGREGATION,
-    AGGREGATION_AND_SUB_ACCOUNT
+    AGGREGATION_SUB_ACCOUNT
 }
