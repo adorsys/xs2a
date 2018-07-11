@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.config;
 
 
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.Data;
@@ -75,6 +76,11 @@ public class ProfileConfiguration {
      * URL to ASPSP service in order to work with AIS
      */
     private String aisRedirectUrlToAspsp;
+
+    /**
+     * Multicurrency account types supported by ASPSP
+     */
+    private MulticurrencyAccountLevel multicurrencyAccountLevel;
 
     @PostConstruct
     private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default
