@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
@@ -176,6 +177,19 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(AIS_REDIRECT_LINK);
+    }
+
+    @Test
+    public void getMulticurrencyAccountLevel(){
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<MulticurrencyAccountLevel> actualResponse = aspspProfileController.getMulticurrencyAccountLevel();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(MulticurrencyAccountLevel.SUB_ACCOUNT);
     }
 
     private static List<String> getPaymentProducts() {

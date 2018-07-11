@@ -11,6 +11,7 @@ Provide access to next values:
  - tppSignatureRequired
  - pisRedirectUrlToAspsp
  - aisRedirectUrlToAspsp
+ - multicurrencyAccountLevel
  
  To test getting data of ASPSP Profile need to make next steps:
  
@@ -31,4 +32,6 @@ Provide access to next values:
  * To get 'pisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-pis'
 
  * To get 'aisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-ais'
+ 
+ * To get 'multicurrencyAccountLevel' create Get request to URI 'http://your_host:port/aspsp-profile/multicurrency-account-level'
 
