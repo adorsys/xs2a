@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
+import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -40,7 +41,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = WebConfigTest.class)
 public class FundsConfirmationControllerTest {
     private final String FUNDS_REQ_DATA = "/json/FundsConfirmationRequestTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");

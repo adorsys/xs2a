@@ -50,7 +50,7 @@ public class SignatureGeneratorUtil {
 	 * Corporate-ID” is included as a header of the HTTP-Request). “Date” No
 	 * other entries may be included
 	 */
-	private String headers = "Digest TPP-Transaction-ID TPP-Request-ID PSU-ID Date";
+	private String headers = "Digest TPP-Transaction-ID TPP-Request-ID PSU-ID Timestamp";
 
 	// NOPMD TODO remove this and inside a file
 	private String privateKeyPem = "-----BEGIN PRIVATE KEY-----\n"
@@ -100,7 +100,7 @@ public class SignatureGeneratorUtil {
 		headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
 		headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
 		headersMap.put("PSU-ID", "PSU-1234");
-		headersMap.put("Date", "Sun, 06 Aug 2017 15:02:37 GMT");
+		headersMap.put("Timestamp", "Sun, 06 Aug 2017 15:02:37 GMT");
 
 		Signature signature = new Signature(keyId, algorithm, null, headers.split(" "));
 
