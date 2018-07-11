@@ -16,6 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.common;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public enum SpiTransactionStatus {
 
     ACCP("AcceptedCustomerProfile"),  //Preceding check of technical validation was successful. Customer profile check was also successful
@@ -28,6 +32,14 @@ public enum SpiTransactionStatus {
     PDNG("Pending"),  //Payment initiation or individual transaction included in the payment initiation is pending. Further checks and status update will be performed
     RJCT("Rejected");  //Payment initiation or individual transaction included in the payment initiation has been rejected
 
+    private static final Map<String, SpiTransactionStatus> container = new HashMap<>();
+
+    static {
+        for (SpiTransactionStatus status : values()) {
+            container.put(status.getName(), status);
+        }
+    }
+
     private String name;
 
     SpiTransactionStatus(String name) {
@@ -36,5 +48,9 @@ public enum SpiTransactionStatus {
 
     public String getName() {
         return name;
+    }
+
+    public static Optional<SpiTransactionStatus> getByName(String name){
+        return Optional.ofNullable(container.get(name));
     }
 }

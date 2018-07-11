@@ -18,6 +18,11 @@ package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TransactionStatus {
@@ -32,14 +37,27 @@ public enum TransactionStatus {
     PDNG("Pending"),  //Payment initiation or individual transaction included in the payment initiation is pending. Further checks and status update will be performed
     RJCT("Rejected");  //Payment initiation or individual transaction included in the payment initiation has been rejected
 
-    private String transactionStatus;
+    private static final Map<String, TransactionStatus> container = new HashMap<>();
 
-    @JsonCreator
-    TransactionStatus(String transactionStatus) {
-        this.transactionStatus = transactionStatus;
+    static {
+        for (TransactionStatus status : values()) {
+            container.put(status.getName(), status);
+        }
     }
 
-    public String getTransactionStatus(){
-        return transactionStatus;
+    private String name;
+
+    @JsonCreator
+    TransactionStatus(String name) {
+        this.name = name;
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
+
+    public static Optional<TransactionStatus> getByName(String name) {
+        return Optional.ofNullable(container.get(name));
     }
 }

@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -65,11 +63,12 @@ public class PaymentController {
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class)})
+        @ApiResponse(code = 200, message = "OK")})
     @GetMapping(path = "/{paymentId}/status")
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
-        return paymentService.isPaymentExist(paymentId)
-                   ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
+        return paymentService.getPaymentStatusById(paymentId)
+                   .map(st -> ResponseEntity.ok(st.getName()))
+                   .orElse(ResponseEntity.ok(SpiTransactionStatus.RJCT.getName()));
     }
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

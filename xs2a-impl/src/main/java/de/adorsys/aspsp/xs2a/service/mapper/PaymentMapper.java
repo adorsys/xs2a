@@ -31,6 +31,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.Remittance;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
@@ -74,6 +75,7 @@ public class PaymentMapper {
                        spiSinglePayments.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayments.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
                        spiSinglePayments.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
+                       spiSinglePayments.setPaymentStatus(SpiTransactionStatus.RCVD);
 
                        return spiSinglePayments;
                    })
@@ -103,6 +105,7 @@ public class PaymentMapper {
                        spiPeriodicPayment.setEndDate(pp.getEndDate());
                        spiPeriodicPayment.setFrequency(getFrequency(pp));
                        spiPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
+                       spiPeriodicPayment.setPaymentStatus(SpiTransactionStatus.RCVD);
 
                        return spiPeriodicPayment;
 
