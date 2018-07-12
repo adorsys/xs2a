@@ -10,6 +10,6 @@ setting:
  - delayed
  scaApproach: REDIRECT
  tppSignatureRequired: false
- pisRedirectUrlToAspsp: https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/
- aisRedirectUrlToAspsp: https://aspsp-mock-integ.cloud.adorsys.de/
+ pisRedirectUrlToAspsp: http://localhost:28080/view/payment/confirmation/
+ aisRedirectUrlToAspsp: http://localhost:28080/
  multicurrencyAccountLevel: SUBACCOUNT

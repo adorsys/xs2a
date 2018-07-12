@@ -24,6 +24,8 @@ import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -33,6 +35,8 @@ import javax.validation.Validator;
 
 @EnableWebMvc
 @TestConfiguration
+@ActiveProfiles(profiles = {"mockspi","test"})
+@TestPropertySource("classpath:application-test.properties")
 public class WebConfigTest extends WebMvcConfigurerAdapter {
 
     @Bean
