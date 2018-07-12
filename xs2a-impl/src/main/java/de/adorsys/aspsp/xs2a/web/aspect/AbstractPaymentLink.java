@@ -28,7 +28,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
         Links links = new Links();
 
-        links.setRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getIban() + "/" + body.getPisConsentId());
+        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getIban() + "/" + body.getPisConsentId());
         links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
         links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
         links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
