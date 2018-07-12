@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import io.swagger.annotations.*;
@@ -117,6 +118,16 @@ public class AspspProfileUpdateController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateAisRedirectUrlToAspsp(@RequestBody String redirectUrlToAspsp) {
         aspspProfileService.updateAisRedirectUrlToAspsp(redirectUrlToAspsp);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/multicurrency-account-level")
+    @ApiOperation(value = "Updates supported multicurrency account levels. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateMulticurrencyAccountLevel(@RequestBody String multicurrencyAccountLevel) {
+        aspspProfileService.updateMulticurrencyAccountLevel(MulticurrencyAccountLevel.valueOf(multicurrencyAccountLevel.trim().toUpperCase()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

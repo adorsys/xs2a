@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -147,5 +148,20 @@ public class AspspProfileService {
      */
     public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
         profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);
+    }
+
+    /**
+     * Read supported multicurrency account levels
+     */
+    public MulticurrencyAccountLevel getMulticurrencyAccountLevel(){
+        return profileConfiguration.getMulticurrencyAccountLevel();
+    }
+
+    /**
+     * Update value of supported multicurrency account levels
+     * @param multicurrencyAccountLevel new value of of supported multicurrency account levels
+     */
+    public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
+        profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
     }
 }
