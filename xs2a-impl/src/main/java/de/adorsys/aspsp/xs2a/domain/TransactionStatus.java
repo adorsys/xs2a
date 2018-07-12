@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +51,6 @@ public enum TransactionStatus {
         this.name = name;
     }
 
-    @JsonValue
     public String getName() {
         return name;
     }

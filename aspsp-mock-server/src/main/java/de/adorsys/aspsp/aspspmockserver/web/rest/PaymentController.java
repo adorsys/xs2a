@@ -63,12 +63,12 @@ public class PaymentController {
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK")})
+        @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class)})
     @GetMapping(path = "/{paymentId}/status")
-    public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
+    public ResponseEntity<SpiTransactionStatus> getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentStatusById(paymentId)
-                   .map(st -> ResponseEntity.ok(st.getName()))
-                   .orElse(ResponseEntity.ok(SpiTransactionStatus.RJCT.getName()));
+                   .map(ResponseEntity::ok)
+                   .orElse(ResponseEntity.ok(SpiTransactionStatus.RJCT));
     }
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

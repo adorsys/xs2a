@@ -73,10 +73,7 @@ public class PaymentSpiImpl implements PaymentSpi {
 
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
-        String statusName = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), String.class, paymentId).getBody();
-
-        return SpiTransactionStatus.getByName(statusName)
-                   .orElse(SpiTransactionStatus.RJCT);
+        return aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), SpiTransactionStatus.class, paymentId).getBody();
     }
 
     private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments) {
