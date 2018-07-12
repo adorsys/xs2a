@@ -70,7 +70,8 @@ public class PaymentController {
     @GetMapping(path = "/{paymentId}/status")
     public ResponseEntity getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.isPaymentExist(paymentId)
-                   ? ResponseEntity.ok(ACCP) : ResponseEntity.ok(RJCT);
+                   ? ResponseEntity.ok(ACCP)
+                   : ResponseEntity.ok(RJCT);
     }
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -89,6 +90,8 @@ public class PaymentController {
         @ApiResponse(code = 200, message = "OK", response = AspspPayment.class)})
     @GetMapping(path = "/{payment-type}/{payment-product}/{paymentId}")
     public ResponseEntity<AspspPayment> getPaymentById(@PathVariable("payment-type") String paymentType, @PathVariable("payment-product") String paymentProduct, @PathVariable("paymentId") String paymentId) {
-        return ResponseEntity.ok(paymentService.getPaymentById(paymentId));
+        return paymentService.getPaymentById(paymentId)
+                   .map(ResponseEntity::ok)
+                   .orElse(ResponseEntity.noContent().build());
     }
 }

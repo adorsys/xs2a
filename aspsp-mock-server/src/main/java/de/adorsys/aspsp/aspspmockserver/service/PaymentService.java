@@ -193,7 +193,7 @@ public class PaymentService {
                    .orElse(BigDecimal.ZERO);
     }
 
-    public AspspPayment getPaymentById(String paymentId) {
-        return paymentRepository.findOne(paymentId);
+    public Optional<AspspPayment> getPaymentById(String paymentId) {
+        return Optional.ofNullable(paymentRepository.findOne(paymentId));
     }
 }
