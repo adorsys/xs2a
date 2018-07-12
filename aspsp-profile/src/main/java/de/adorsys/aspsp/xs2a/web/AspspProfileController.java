@@ -94,7 +94,7 @@ public class AspspProfileController {
     }
 
     @GetMapping(path = "/multicurrency-account-level")
-    @ApiOperation(value = "Reads supported multicurrency account levels")
+    @ApiOperation(value = "Reads supported multicurrency account levels, on which XS2A interface can handle sub-accounts in accordance of capabilities of ASPSP Core systems")
     @ApiResponse(code = 200, message = "Ok", response = MulticurrencyAccountLevel.class)
     public ResponseEntity<MulticurrencyAccountLevel> getMulticurrencyAccountLevel() {
         return new ResponseEntity<>(aspspProfileService.getMulticurrencyAccountLevel(), HttpStatus.OK);
