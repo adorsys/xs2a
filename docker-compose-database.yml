@@ -1,0 +1,145 @@
+version: "3"
+
+networks:
+  xs2a-net:
+
+volumes:
+  keycloak-data:
+  aspsp-mock-mongo-config:
+  aspsp-mock-mongo-data:
+  consent-management-data:
+
+services:
+# ASPSP-IDP
+  xs2a-idp:
+    build:
+      context: aspsp-idp
+      dockerfile: Dockerfile
+    restart: on-failure
+    environment:
+      - JAVA_TOOL_OPTIONS="-Xmx512M"
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin123
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_PORT_5432_TCP_ADDR=keycloak-postgres
+    depends_on:
+      - keycloak-postgres
+    ports:
+      - "8081:8080"
+    networks:
+      - xs2a-net
+
+  keycloak-postgres:
+    image: centos/postgresql-95-centos7
+    volumes:
+      - keycloak-data:/var/lib/pgsql/data
+    restart: on-failure
+    networks:
+      - xs2a-net
+    environment:
+      - POSTGRESQL_ADMIN_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=keycloak
+      - POSTGRESQL_USER=keycloak
+      - POSTGRESQL_PASSWORD=keycloak
+    expose:
+      - 5432
+
+# ASPSP-MOCK-SERVER
+#  aspsp-mock-server:
+#    build:
+#      context: aspsp-mock-server
+#      dockerfile: Dockerfile
+#    restart: on-failure
+#    ports:
+#      - "28080:8080"
+#    networks:
+#      - xs2a-net
+#    environment:
+#      - JAVA_TOOL_OPTIONS="-Xmx512M"
+#      - SPRING_DATA_MONGODB_HOST=aspsp-mock-mongo
+#      - SPRING_DATA_MONGODB_DATABASE=spimock
+#      - ASPSP_PROFILE_BASEURL=http://aspsp-profile:8080/api/v1
+#      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
+#      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_ASPSP_MOCK_CLIENT_SECRET}"
+#    depends_on:
+#      - aspsp-mock-mongo
+
+  aspsp-mock-mongo:
+    image: mongo
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    networks:
+      - xs2a-net
+    volumes:
+      - aspsp-mock-mongo-config:/data/configdb
+      - aspsp-mock-mongo-data:/data/db
+#
+## ASPSP-PROFILE
+#  aspsp-profile:
+#    build:
+#      context: aspsp-profile
+#      dockerfile: Dockerfile
+#    restart: on-failure
+#    environment:
+#      - JAVA_TOOL_OPTIONS="-Xmx256M"
+#      - SPRING_PROFILES_ACTIVE=debug_mode
+#    ports:
+#      - "48080:8080"
+#    networks:
+#      - xs2a-net
+#
+## CONSENT-MANAGEMENT-SYSTEM
+#  consent-management:
+#    build:
+#      context: consent-management-system
+#      dockerfile: Dockerfile
+#    restart: on-failure
+#    ports:
+#      - "38080:8080"
+#    networks:
+#      - xs2a-net
+#    environment:
+#      - JAVA_TOOL_OPTIONS="-Xmx512M"
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://consent-management-postgres/consent
+#      - SPRING_DATASOURCE_USERNAME=cms
+#      - SPRING_DATASOURCE_PASSWORD=cms
+#      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
+#      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_CMS_CLIENT_SECRET}"
+#    depends_on:
+#      - consent-management-postgres
+#
+#  consent-management-postgres:
+#    image: centos/postgresql-95-centos7
+#    volumes:
+#      - consent-management-data:/var/lib/pgsql/data
+#    restart: on-failure
+#    networks:
+#      - xs2a-net
+#    environment:
+#      - POSTGRESQL_ADMIN_PASSWORD=postgres
+#      - POSTGRESQL_DATABASE=consent
+#      - POSTGRESQL_USER=cms
+#      - POSTGRESQL_PASSWORD=cms
+#    ports:
+#      - 5432:5432
+#
+#  xs2a-service:
+#    build:
+#      context: xs2a-impl
+#      dockerfile: Dockerfile
+#    restart: on-failure
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - xs2a-net
+#    environment:
+#      - JAVA_TOOL_OPTIONS="-Xmx512M"
+#      - SPRING_PROFILES_ACTIVE=mockspi
+#      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
+#      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_SERVICE_CLIENT_SECRET}"
+#      - CONSENT_SERVICE_BASEURL=http://consent-management:8080/api/v1
+#      - ASPSP_PROFILE_BASEURL=http://aspsp-profile:8080/api/v1
+#      - KEYCLOAK_USERNAME=aspsp
+#      - KEYCLOAK_PASSWORD=zzz
