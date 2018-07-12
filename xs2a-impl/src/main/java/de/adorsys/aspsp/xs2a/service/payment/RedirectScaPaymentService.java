@@ -28,9 +28,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -41,13 +41,11 @@ import java.util.stream.Collectors;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 
 @Service
+@RequiredArgsConstructor
 public class RedirectScaPaymentService implements ScaPaymentService {
-    @Autowired
-    private PisConsentService pisConsentService;
-    @Autowired
-    private PaymentMapper paymentMapper;
-    @Autowired
-    private PaymentSpi paymentSpi;
+    private final PisConsentService pisConsentService;
+    private final PaymentMapper paymentMapper;
+    private final PaymentSpi paymentSpi;
 
     @Override
     public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment) {
@@ -82,17 +80,21 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
         List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments);
 
-        return spiPaymentInitiations.stream()
-                   .map(paymentMapper::mapToPaymentInitializationResponse)
-                   .filter(Optional::isPresent)
-                   .map(Optional::get)
-                   .peek(resp -> {
-                       if (StringUtils.isBlank(resp.getPaymentId()) || resp.getTransactionStatus() == TransactionStatus.RJCT) {
-                           resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
-                           resp.setTransactionStatus(TransactionStatus.RJCT);
-                       }
-                   })
-                   .collect(Collectors.toList());
+        List<PaymentInitialisationResponse> paymentResponses = spiPaymentInitiations.stream()
+                                                                   .map(paymentMapper::mapToPaymentInitializationResponse)
+                                                                   .filter(Optional::isPresent)
+                                                                   .map(Optional::get)
+                                                                   .collect(Collectors.toList());
+
+        for (PaymentInitialisationResponse resp : paymentResponses) {
+            if (StringUtils.isBlank(resp.getPaymentId())
+                    || resp.getTransactionStatus() == TransactionStatus.RJCT) {
+                resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
+                resp.setTransactionStatus(TransactionStatus.RJCT);
+            }
+        }
+
+        return paymentResponses;
     }
 
     private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(List<SinglePayments> payments, List<PaymentInitialisationResponse> responseList) {
