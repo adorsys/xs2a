@@ -58,9 +58,7 @@ public class PaymentConfirmationServiceTest {
     @MockBean
     private PsuRepository psuRepository;
     @MockBean
-    private PaymentService paymentService;
-    @MockBean
-    private  AccountService accountService;
+    private AccountService accountService;
 
     @Before
     public void setUp() {
