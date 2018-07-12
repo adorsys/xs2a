@@ -26,7 +26,7 @@ PSU is giving consent on
 
     With Redirect SCA Approach
     If the ASPSP supports the Redirect SCA Approach, the message flow within the Account Information Consent sub-service is simple. 
-    The Account Information Consent Request is followed by a redirection to the ASPSP SCA authorisation site. 
+    The Account Information Consent Request is followed by a redirection to the ASPSP SCA authorization site. 
     A status or content request on the created consent resource might be requested by the TPP after the session is reredirected to the TPP’s system.
     
 ![Account Information Consent Flow for Redirect Approach](img/AIS_Consent_Redirect.png)
@@ -185,7 +185,7 @@ The consequence for this function is that the list of transactions will contain 
 Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.
 
 ##### Side Effects
-When this Consent Request is a request where the "recurringIndicator" equals "true" and if it exists already a former consent for recurring access on account information for the addressed PSU, then the former consent automatically expires as soon as the new consent request is authorised by the PSU.
+When this Consent Request is a request where the "recurringIndicator" equals "true" and if it exists already a former consent for recurring access on account information for the addressed PSU, then the former consent automatically expires as soon as the new consent request is authorized by the PSU.
  
 ##### Query Parameters
 | Attribute | Type  | Condition | Description |

@@ -12,3 +12,4 @@ setting:
  tppSignatureRequired: false
  pisRedirectUrlToAspsp: https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/
  aisRedirectUrlToAspsp: https://aspsp-mock-integ.cloud.adorsys.de/
+ multicurrencyAccountLevel: SUBACCOUNT

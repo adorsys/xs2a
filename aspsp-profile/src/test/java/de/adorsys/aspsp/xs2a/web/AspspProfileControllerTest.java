@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
@@ -44,6 +45,7 @@ public class AspspProfileControllerTest {
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
+    private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -72,6 +74,8 @@ public class AspspProfileControllerTest {
             .thenReturn(PIS_REDIRECT_LINK);
         when(aspspProfileService.getAisRedirectUrlToAspsp())
             .thenReturn(AIS_REDIRECT_LINK);
+        when(aspspProfileService.getMulticurrencyAccountLevel())
+            .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
     }
 
     @Test
@@ -176,6 +180,19 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(AIS_REDIRECT_LINK);
+    }
+
+    @Test
+    public void getMulticurrencyAccountLevel(){
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<MulticurrencyAccountLevel> actualResponse = aspspProfileController.getMulticurrencyAccountLevel();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(MULTICURRENCY_ACCOUNT_LEVEL);
     }
 
     private static List<String> getPaymentProducts() {
