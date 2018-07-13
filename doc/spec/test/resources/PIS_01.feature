@@ -18,6 +18,16 @@ Feature: Payment Initiation Service
             | redirect     | sepa-credit-transfer | singlePayInit-successful.json |
 
 
+    Scenario Outline: Single payment initiation with incorrect payment-product
+        Given PSU is logged in
+        And <sca-approach> approach is used
+        And PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
+        When PSU sends the payment initiating request
+        Then an error response code is displayed
+        And the appropriate error response is delivered to the PSU
+        Examples:
+            | sca-approach | payment-product   | single-payment                               |
+            | redirect     | sepa-credit-trans | singlePayInit-incorrect-payment-product.json |
     # TODO Single payment initiation with incorrect payment-product -> 404
 
     # TODO Single payment initiation with incorrect body syntax -> 400
