@@ -14,8 +14,9 @@ Feature: Payment Initiation Service
         And a successful response code and
         And the appropriate single payment response data is delivered to the PSU
         Examples:
-            | sca-approach | payment-product      | single-payment                            |
-            | redirect     | sepa-credit-transfer | successful-single-payment-initiation.json |
+            | sca-approach | payment-product      | single-payment                |
+            | redirect     | sepa-credit-transfer | singlePayInit-successful.json |
+
 
     # TODO Single payment initiation with incorrect payment-product -> 404
 
