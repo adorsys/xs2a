@@ -5,7 +5,7 @@ Feature: Payment Initiation Service
     # Single Payment                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
-    Scenario Outline: Payment initiation request for single payments
+    Scenario Outline: Successful payment initiation request for single payments
         Given PSU is logged in
         And <sca-approach> approach is used
         And PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
@@ -18,7 +18,7 @@ Feature: Payment Initiation Service
             | redirect     | sepa-credit-transfer | singlePayInit-successful.json |
 
 
-    Scenario Outline: Single payment initiation with incorrect payment-product
+    Scenario Outline: Failed payment initiation request for single payments
         Given PSU is logged in
         And <sca-approach> approach is used
         And PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
@@ -26,14 +26,28 @@ Feature: Payment Initiation Service
         Then an error response code is displayed
         And the appropriate error response is delivered to the PSU
         Examples:
-            | sca-approach | payment-product   | single-payment                               |
-            | redirect     | sepa-credit-trans | singlePayInit-incorrect-payment-product.json |
-    # TODO Single payment initiation with incorrect payment-product -> 404
+            | sca-approach | payment-product      | single-payment                                 |
+            | redirect     | sepa-credit-trans    | singlePayInit-incorrect-payment-product.json   |
+            | redirect     | sepa-credit-transfer | singlePayInit-incorrect-syntax.json            |
+            | redirect     | sepa-credit-transfer | singlePayInit-no-transaction-id.json           |
+            | redirect     | sepa-credit-transfer | singlePayInit-no-request-id.json               |
+            | redirect     | sepa-credit-transfer | singlePayInit-no-ip-address.json               |
+            | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-transaction-id.json |
+            | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-request-id.json     |
+            | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-psu-ip-address.json |
 
-    # TODO Single payment initiation with incorrect body syntax -> 400
-    # TODO Single payment with not existing tpp-transaction-id -> 400
-    # TODO Single payment with not existing tpp-request-id -> 400
-    # TODO Single payment with not existing psu-ip-address -> 400
+
+
+    # TODO Single payment initiation with incorrect body syntax -> 400 //
+    # TODO Single payment with not existing tpp-transaction-id -> 400  (are there not existant id's / not in the system?)
+    # TODO Single payment with not existing tpp-request-id -> 400      (are there not existant id's / not in the system?)
+    # TODO Single payment with not existing psu-ip-address -> 400      (are there not existant id's / not in the system?)
+    # TODO Single payment without tpp-transaction-id -> 400 //
+    # TODO Single payment without tpp-request-id --> 400 //
+    # TODO Single payment without psu-ip-address -> 400 //
+    # TODO Single payment with wrong uuid-format for tpp-transaction-id -> 400 //
+    # TODO Single payment with wrong uuid-format for tpp-request-id -> 400 //
+    # TODO Single payment with wrong uuid-format for psu-ip-address -> 400 //
 
 
     ####################################################################################################################

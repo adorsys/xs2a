@@ -2,69 +2,52 @@
   "request": {
     "header": [
       {
-        "tpp-transaction-id": "",
-        "tpp-request-id": "",
+        "tpp-transaction-id": "16d40f49-a110-4344-a949-f99828ae13c9",
+        "tpp-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
         "psu-ip-address": "192.168.0.26"
       }
     ],
     "body": [
       {
+        "id": "abb03ee0-37f7-4337-b0af-8fab920a52d1",
         "creditorAccount": {
-          "bban": "1234000000059999999",
           "currency": "EUR",
-          "iban": "DE371234000000059999999",
-          "maskedPan": "23456xxxxxx1234",
-          "msisdn": "0172/3876289909",
-          "pan": "234561234561234"
+          "iban": "DE938274817361740591263"
         },
         "creditorAddress": {
-          "buildingNumber": "12",
+          "buildingNumber": "56",
           "city": "Nürnberg",
           "country": {
             "code": "49"
           },
-          "postalCode": "90431",
-          "street": "Herrnstraße"
+          "postalCode": "90543",
+          "street": "WBG Straße"
         },
-        "creditorAgent": {
-          "code": "BCENECEQ"
-        },
-        "creditorName": "Telekom",
+        "creditorName": "WBG",
         "debtorAccount": {
-          "bban": "4321000000041111111",
           "currency": "EUR",
-          "iban": "DE814321000000041111111",
-          "maskedPan": "65432xxxxxx4321",
-          "msisdn": "0178/219822920",
-          "pan": "654326543214321"
+          "iban": "DE81432100000004111111"
         },
-        "endToEndIdentification": "RI-123456789",
+        "endToEndIdentification": "WBG-123456789",
         "instructedAmount": {
-          "content": "32.39",
+          "content": "520.00",
           "currency": "EUR"
         },
-        "purposeCode": {
-          "code": "BCENECEQ"
-        },
+        "purposeCode":  "Monatsmiete Mueller, Alexander",
         "remittanceInformationStructured": {
-          "reference": "Ref Number Merchant",
-          "referenceIssuer": "string",
-          "referenceType": "string"
+          "reference": "Ref Number Merchant"
         },
-        "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-        "requestedExecutionDate": "2018-07-01",
-        "requestedExecutionTime": "2018-07-01T10:30:35.035",
-        "ultimateCreditor": "Telekom",
+        "remittanceInformationUnstructured": "Ref. Number WBG-1234",
+        "requestedExecutionDate": "2018-10-01",
+        "requestedExecutionTime": "2018-10-01T10:30:35.035",
+        "ultimateCreditor": "WBG",
         "ultimateDebtor": "Alexander Mueller"
       },
       {
+        "id": "",
         "creditorAccount": {
-          "bban": "1111000000057777777",
           "currency": "EUR",
-          "iban": "DE491111000000057777777",
-          "maskedPan": "34567xxxxxx2345",
-          "msisdn": "0172/129479213",
-          "pan": "345671234562345"
+          "iban": "DE491111000000057777777"
         },
         "creditorAddress": {
           "buildingNumber": "74",
@@ -80,29 +63,21 @@
         },
         "creditorName": "Grünstrom",
         "debtorAccount": {
-          "bban": "4321000000041111111",
           "currency": "EUR",
-          "iban": "DE814321000000041111111",
-          "maskedPan": "65432xxxxxx4321",
-          "msisdn": "0178/219822920",
-          "pan": "654326543214321"
+          "iban": "DE81432100000004111111"
         },
         "endToEndIdentification": "RI-234567890",
         "instructedAmount": {
           "content": "71.07",
           "currency": "EUR"
         },
-        "purposeCode": {
-          "code": "BCENECEQ"
-        },
+        "purposeCode": "Abrechnung Strom 10/2018",
         "remittanceInformationStructured": {
-          "reference": "Ref Number Merchant",
-          "referenceIssuer": "string",
-          "referenceType": "string"
+          "reference": "Ref Number Merchant"
         },
         "remittanceInformationUnstructured": "Ref. Number GRUENSTROM-2444",
-        "requestedExecutionDate": "2018-06-01",
-        "requestedExecutionTime": "2018-06-01T09:02:16.341",
+        "requestedExecutionDate": "2018-10-01",
+        "requestedExecutionTime": "2018-10-01T09:02:16.341",
         "ultimateCreditor": "Grünstrom",
         "ultimateDebtor": "Alexander Mueller"
       }
@@ -110,18 +85,13 @@
   },
   "response": {
     "code": "201",
-    "header": [
-      {
-        "key": ""
-      }
-    ],
+    "header": [],
     "body": [
       {
-        "transactionStatus": "",
+        "transactionStatus": "Reiceived",
         "paymentId": "",
         "_links": {
-          "redirect": "",
-          "self": ""
+          "redirect": "https://url.suffix/redirect"
         }
       }
     ]

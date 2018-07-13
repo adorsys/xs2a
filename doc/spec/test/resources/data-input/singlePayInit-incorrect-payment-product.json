@@ -33,9 +33,7 @@
           "content": "520.00",
           "currency": "EUR"
         },
-        "purposeCode": {
-          "code": "Monatsmiete Mueller, Alexander"
-        },
+        "purposeCode": "Monatsmiete Mueller, Alexander",
         "remittanceInformationStructured": {
           "reference": "Ref Number Merchant"
         },
