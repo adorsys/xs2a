@@ -28,9 +28,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -41,11 +41,13 @@ import java.util.stream.Collectors;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 
 @Service
-@RequiredArgsConstructor
 public class RedirectScaPaymentService implements ScaPaymentService {
-    private final PisConsentService pisConsentService;
-    private final PaymentMapper paymentMapper;
-    private final PaymentSpi paymentSpi;
+    @Autowired
+    private PisConsentService pisConsentService;
+    @Autowired
+    private PaymentMapper paymentMapper;
+    @Autowired
+    private PaymentSpi paymentSpi;
 
     @Override
     public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment) {
