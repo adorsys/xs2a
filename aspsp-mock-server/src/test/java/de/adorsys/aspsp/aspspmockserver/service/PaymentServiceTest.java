@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,8 +57,8 @@ public class PaymentServiceTest {
 
     @Before
     public void setUp() {
-        when(paymentRepository.save(any(SpiSinglePayments.class)))
-            .thenReturn(getSpiSinglePayment(50));
+        when(paymentRepository.save(any(AspspPayment.class)))
+            .thenReturn(getAspspPayment());
         when(paymentRepository.exists(PAYMENT_ID))
             .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
@@ -121,6 +122,19 @@ public class PaymentServiceTest {
         payment.setCreditorAccount(getReference());
         payment.setRemittanceInformationUnstructured("Ref Number Merchant");
 
+        return payment;
+    }
+
+    private AspspPayment getAspspPayment() {
+        AspspPayment payment = new AspspPayment();
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), new BigDecimal((long) 50));
+        payment.setInstructedAmount(amount);
+        payment.setDebtorAccount(getReference());
+        payment.setCreditorName("Merchant123");
+        payment.setPurposeCode("BEQNSD");
+        payment.setCreditorAgent("sdasd");
+        payment.setCreditorAccount(getReference());
+        payment.setRemittanceInformationUnstructured("Ref Number Merchant");
         return payment;
     }
 
