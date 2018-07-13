@@ -28,21 +28,62 @@ import java.util.Optional;
 
 public interface AccountSpi {
 
-    List<SpiBalances> readBalances(String accountId);
-
+    /**
+     * Queries ASPSP to get List of transactions dependant on period and accountId
+     *
+     * @param accountId String representation of ASPSP account primary identifier
+     * @param dateFrom  Date representing the beginning of the search period
+     * @param dateTo    Date representing the ending of the search period
+     * @return List of transactions
+     */
     List<SpiTransaction> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo);
 
+    /**
+     * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
+     *
+     * @param transactionId String representation of ASPSP primary identifier of transaction
+     * @param accountId     String representation of ASPSP account primary identifier
+     * @return Transaction
+     */
     Optional<SpiTransaction> readTransactionById(String transactionId, String accountId);
 
-    String saveTransaction(SpiTransaction transaction);
-
+    /**
+     * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
+     *
+     * @param accountId String representation of ASPSP account primary identifier
+     * @return Account details
+     */
     SpiAccountDetails readAccountDetails(String accountId);
 
+    /**
+     * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
+     *
+     * @param psuId String representing ASPSP`s primary identifier of PSU
+     * @return List of account details
+     */
     List<SpiAccountDetails> readAccountsByPsuId(String psuId);
 
+    /**
+     * Queries ASPSP to (GET) List of AccountDetails by IBAN
+     *
+     * @param iban String representation of Account IBAN
+     * @return List of account details
+     */
     List<SpiAccountDetails> readAccountDetailsByIban(String iban);
 
+    /**
+     * Queries ASPSP to (GET) list of account details with certain account IBANS
+     *
+     * @param ibans a collection of Strings representing account IBANS
+     * @return List of account details
+     */
     List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans);
 
+    /**
+     * Queries ASPSP to (GET) list of allowed payment products for current PSU by its account reference
+     *
+     * @param reference Account reference
+     * @return a list of allowed payment products
+     */
     List<String> readPsuAllowedPaymentProductList(SpiAccountReference reference);
 }

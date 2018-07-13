@@ -25,11 +25,36 @@ import java.util.List;
 
 public interface PaymentSpi {
 
+    /**
+     * Queries ASPSP to add single payment to aspsp database
+     *
+     * @param spiSinglePayments SpiSinglePayments representation of initiated single payment
+     * @return Payment initialisation response with related information about initiated payment
+     */
     SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments);
 
+    /**
+     * Queries ASPSP to to add periodic payment to aspsp database
+     *
+     * @param periodicPayment SpiPeriodicPayment representation of initiated periodic payment
+     * @return Payment initialisation response with related information about initiated payment
+     */
     SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment);
 
+    /**
+     * Queries ASPSP to add bulk payment to aspsp database
+     *
+     * @param payments List of SpiSinglePayments representation of initiated bulk payment
+     * @return List of payment initialisation responses with related information about initiated payments
+     */
     List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments);
 
+    /**
+     * Queries ASPSP to get status of the payment identified by payment id
+     *
+     * @param paymentId      String representation of ASPSP payment primary identifier
+     * @param paymentProduct String representing the beginning of the search period
+     * @return Transaction status of the payment identified by given id
+     */
     SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
 }
