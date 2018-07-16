@@ -23,6 +23,9 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 
+/**
+ * Help to avoid exception when the email sender is not defined
+ */
 @Lazy
 @Slf4j
 @Service
@@ -32,7 +35,7 @@ public class EmailSenderService extends JavaMailSenderImpl {
         try {
             super.testConnection();
         } catch (MessagingException m) {
-            log.info(m.getMessage());
+            log.warn(m.getMessage());
         }
     }
 }
