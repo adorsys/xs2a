@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config.rest.consent;
+package de.adorsys.aspsp.xs2a.integtest.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,15 +26,16 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class ConsentRestConfig {
+public class ConsentsRestConfig {
     @Value("${rest-consent-config.read-timeout.ms:10000}")
     private int readTimeout;
     @Value("${rest-consent-config.connection-timeout.ms:10000}")
     private int connectionTimeout;
+
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
-    @Bean(name = "consentServiceBaseUrl")
+    @Bean(name="consentServiceBaseUrl")
     public String consentServiceBaseUrl() {
         return consentServiceBaseUrl;
     }
@@ -53,4 +54,5 @@ public class ConsentRestConfig {
         factory.setConnectTimeout(connectionTimeout);
         return factory;
     }
+
 }
