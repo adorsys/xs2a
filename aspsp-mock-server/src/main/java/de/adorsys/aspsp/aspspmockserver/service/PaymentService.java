@@ -96,7 +96,7 @@ public class PaymentService {
      */
     public Optional<SpiTransactionStatus> getPaymentStatusById(String paymentId) {
         return Optional.ofNullable(paymentRepository.findOne(paymentId))
-                   .map(SpiSinglePayments::getPaymentStatus);
+                   .map(AspspPayment::getPaymentStatus);
     }
 
     /**
