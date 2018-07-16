@@ -38,7 +38,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus.*;
@@ -195,5 +198,9 @@ public class PaymentService {
 
     public Optional<AspspPayment> getPaymentById(String paymentId) {
         return Optional.ofNullable(paymentRepository.findOne(paymentId));
+    }
+
+    public List<AspspPayment> getAllPayments() {
+        return paymentRepository.findAll();
     }
 }

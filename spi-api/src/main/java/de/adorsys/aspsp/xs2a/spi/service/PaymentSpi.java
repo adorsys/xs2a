@@ -18,43 +18,73 @@ package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 
 import java.util.List;
 
 public interface PaymentSpi {
-
     /**
-     * Queries ASPSP to add single payment to aspsp database
+     * Initiates a single payment at ASPSP
      *
-     * @param spiSinglePayments SpiSinglePayments representation of initiated single payment
-     * @return Payment initialisation response with related information about initiated payment
+     * @param spiSinglePayments single payment to be sent for saving at ASPSP
+     * @return Response from ASPSP containing information about carried payment initiation operation
      */
     SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments);
 
     /**
-     * Queries ASPSP to to add periodic payment to aspsp database
+     * Initiates a periodic payment at ASPSP
      *
-     * @param periodicPayment SpiPeriodicPayment representation of initiated periodic payment
-     * @return Payment initialisation response with related information about initiated payment
+     * @param periodicPayment periodic payment to be sent for saving at ASPSP
+     * @return Response from ASPSP containing information about carried payment initiation operation
      */
     SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment);
 
     /**
-     * Queries ASPSP to add bulk payment to aspsp database
+     * Initiates a bulk payment at ASPSP
      *
-     * @param payments List of SpiSinglePayments representation of initiated bulk payment
-     * @return List of payment initialisation responses with related information about initiated payments
+     * @param payments bulk payment to be sent for saving at ASPSP
+     * @return Response from ASPSP containing information about carried payment initiation operation
      */
     List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments);
 
     /**
-     * Queries ASPSP to get status of the payment identified by payment id
+     * Returns a payment status by its ASPSP identifier
      *
-     * @param paymentId      String representation of ASPSP payment primary identifier
-     * @param paymentProduct String representing the beginning of the search period
-     * @return Transaction status of the payment identified by given id
+     * @param paymentId      ASPSP identifier of a payment
+     * @param paymentProduct The addressed payment product
+     * @return payment status
      */
     SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
+
+    /**
+     * Returns a single payment by its ASPSP identifier
+     *
+     * @param paymentType    Type of payment
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of a payment
+     * @return single payment
+     */
+    SpiSinglePayments getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+
+    /**
+     * Returns a periodic payment by its ASPSP identifier
+     *
+     * @param paymentType    Type of payment
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of a payment
+     * @return periodic payment
+     */
+    SpiPeriodicPayment getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+
+    /**
+     * Returns a bulk payment by its ASPSP identifier
+     *
+     * @param paymentType    Type of payment
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of a payment
+     * @return bulk payment
+     */
+    List<SpiSinglePayments> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
 }
