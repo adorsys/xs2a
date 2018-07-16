@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config.rest.consent;
+package de.adorsys.aspsp.xs2a.integtest.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,21 +26,23 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class ConsentRestConfig {
-    @Value("${rest-consent-config.read-timeout.ms:10000}")
-    private int readTimeout;
-    @Value("${rest-consent-config.connection-timeout.ms:10000}")
-    private int connectionTimeout;
-    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
-    private String consentServiceBaseUrl;
+public class Xs2aRestConfig {
 
-    @Bean(name = "consentServiceBaseUrl")
-    public String consentServiceBaseUrl() {
-        return consentServiceBaseUrl;
+    @Value("${xs2a-config.read-timeout.ms:10000}")
+    private int readTimeout;
+    @Value("${xs2a-config.connection-timeout.ms:10000}")
+    private int connectionTimeout;
+
+    @Value("${xs2a.baseurl:http://localhost:8080/api/v1}")
+    private String xs2aBaseUrl;
+
+    @Bean(name = "xs2aBaseUrl")
+    public String xs2aBaseUrl() {
+        return xs2aBaseUrl;
     }
 
-    @Bean(name = "consentRestTemplate")
-    public RestTemplate consentRestTemplate(){
+    @Bean(name = "xs2aRestConfig")
+    public RestTemplate xs2aRestConfig() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
@@ -53,4 +55,5 @@ public class ConsentRestConfig {
         factory.setConnectTimeout(connectionTimeout);
         return factory;
     }
+
 }
