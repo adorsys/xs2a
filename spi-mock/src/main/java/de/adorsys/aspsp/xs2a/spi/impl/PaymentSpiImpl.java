@@ -46,6 +46,9 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
 
+    /**
+     * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayments)}
+     */
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments) {
         ResponseEntity<SpiSinglePayments> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), spiSinglePayments, SpiSinglePayments.class);
@@ -54,6 +57,9 @@ public class PaymentSpiImpl implements PaymentSpi {
                    : null;
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#createBulkPayments(List)}
+     */
     @Override
     public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments) {
         ResponseEntity<List<SpiSinglePayments>> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.createBulkPayment(), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
@@ -65,6 +71,9 @@ public class PaymentSpiImpl implements PaymentSpi {
                    : Collections.emptyList();
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#initiatePeriodicPayment(SpiPeriodicPayment)}
+     */
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment) {
         ResponseEntity<SpiPeriodicPayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), periodicPayment, SpiPeriodicPayment.class);
@@ -73,6 +82,9 @@ public class PaymentSpiImpl implements PaymentSpi {
                    : null;
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#getPaymentStatusById(String, String)}
+     */
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {
         return aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), SpiTransactionStatus.class, paymentId).getBody();
