@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.service;
+package de.adorsys.aspsp.aspspmockserver.config.email;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-
-/**
- * Help to avoid exception when the email sender is not defined
- */
-@Lazy
 @Slf4j
-@Service
-public class EmailSenderService extends JavaMailSenderImpl {
-    @Override
-    public void testConnection() {
-        try {
-            super.testConnection();
-        } catch (MessagingException m) {
-            log.warn(m.getMessage());
+@Configuration
+@RequiredArgsConstructor
+public class EmailConfiguration {
+    private final EmailConfigurationProperties emailConfigurationProperties;
+
+    @Bean
+    public JavaMailSender javaMailSender() {
+        if (emailConfigurationProperties.isParametersExist()) {
+            return new JavaMailSenderImpl();
         }
+        log.warn("Email properties has not been set");
+        return null;
     }
 }
