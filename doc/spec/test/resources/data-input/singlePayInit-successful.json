@@ -1,0 +1,61 @@
+{
+  "request": {
+    "header": [
+      {
+        "tpp-transaction-id": "16d40f49-a110-4344-a949-f99828ae13c9",
+        "tpp-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+        "psu-ip-address": "192.168.0.26"
+      }
+    ],
+    "body": [
+      {
+        "id": "abb03ee0-37f7-4337-b0af-8fab920a52d1",
+        "creditorAccount": {
+          "currency": "EUR",
+          "iban": "DE938274817361740591263"
+        },
+        "creditorAddress": {
+          "buildingNumber": "56",
+          "city": "Nürnberg",
+          "country": {
+            "code": "49"
+          },
+          "postalCode": "90543",
+          "street": "WBG Straße"
+        },
+        "creditorName": "WBG",
+        "debtorAccount": {
+          "currency": "EUR",
+          "iban": "DE81432100000004111111"
+        },
+        "endToEndIdentification": "WBG-123456789",
+        "instructedAmount": {
+          "content": "520.00",
+          "currency": "EUR"
+        },
+        "purposeCode": "Monatsmiete Mueller, Alexander",
+        "remittanceInformationStructured": {
+          "reference": "Ref Number Merchant"
+        },
+        "remittanceInformationUnstructured": "Ref. Number WBG-1234",
+        "requestedExecutionDate": "2018-10-01",
+        "requestedExecutionTime": "2018-10-01T10:30:35.035",
+        "ultimateCreditor": "WBG",
+        "ultimateDebtor": "Alexander Mueller"
+      }
+    ]
+  },
+  "response": {
+    "code": "201",
+    "header": [],
+    "body": [
+      {
+        "transactionStatus": "Received",
+        "paymentId": "abb03ee0-37f7-4337-b0af-8fab920a52d1",
+        "_links": {
+          "redirect": "https://url.suffix/redirect"
+        }
+      }
+    ]
+  }
+}

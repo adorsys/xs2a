@@ -18,8 +18,11 @@ package de.adorsys.aspsp.aspspmockserver.service.mapper;
 
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -65,6 +68,89 @@ public class PaymentMapper {
                    .filter(accDet -> accDet.getCurrency() == currency)
                    .findFirst()
                    .map(acc -> new SpiAccountReference(iban, acc.getBban(), acc.getPan(), acc.getMaskedPan(), acc.getMsisdn(), currency))
+                   .orElse(null);
+    }
+
+    public AspspPayment mapToAspspPayment(SpiSinglePayments singlePayments, PisPaymentType paymentType) {
+        return Optional.ofNullable(singlePayments)
+                   .map(s -> buildAspspPayment(s, paymentType))
+                   .orElse(null);
+    }
+
+    public AspspPayment mapToAspspPayment(SpiPeriodicPayment periodicPayment, PisPaymentType paymentType) {
+        return Optional.ofNullable(periodicPayment)
+                   .map(s -> {
+                       AspspPayment aspsp = buildAspspPayment(periodicPayment, paymentType);
+                       aspsp.setStartDate(periodicPayment.getStartDate());
+                       aspsp.setEndDate(periodicPayment.getEndDate());
+                       aspsp.setExecutionRule(periodicPayment.getExecutionRule());
+                       aspsp.setFrequency(periodicPayment.getFrequency());
+                       aspsp.setDayOfExecution(periodicPayment.getDayOfExecution());
+                       return aspsp;
+                   })
+                   .orElse(null);
+    }
+
+    private AspspPayment buildAspspPayment(SpiSinglePayments single, PisPaymentType paymentType) {
+        AspspPayment aspsp = new AspspPayment(paymentType);
+        aspsp.setEndToEndIdentification(single.getEndToEndIdentification());
+        aspsp.setDebtorAccount(single.getDebtorAccount());
+        aspsp.setUltimateDebtor(single.getUltimateDebtor());
+        aspsp.setInstructedAmount(single.getInstructedAmount());
+        aspsp.setCreditorAccount(single.getCreditorAccount());
+        aspsp.setCreditorAgent(single.getCreditorAgent());
+        aspsp.setCreditorName(single.getCreditorName());
+        aspsp.setUltimateCreditor(single.getUltimateCreditor());
+        aspsp.setPurposeCode(single.getPurposeCode());
+        aspsp.setRequestedExecutionDate(single.getRequestedExecutionDate());
+        aspsp.setRequestedExecutionTime(single.getRequestedExecutionTime());
+        return aspsp;
+    }
+
+    public SpiSinglePayments mapToSpiSinglePayments(AspspPayment aspspPayment) {
+        return Optional.ofNullable(aspspPayment)
+                   .map(aspsp -> {
+                       SpiSinglePayments single = new SpiSinglePayments();
+                       single.setPaymentId(aspsp.getPaymentId());
+                       single.setEndToEndIdentification(aspsp.getEndToEndIdentification());
+                       single.setDebtorAccount(aspsp.getDebtorAccount());
+                       single.setUltimateDebtor(aspsp.getUltimateDebtor());
+                       single.setInstructedAmount(aspsp.getInstructedAmount());
+                       single.setCreditorAccount(aspsp.getCreditorAccount());
+                       single.setCreditorAgent(aspsp.getCreditorAgent());
+                       single.setCreditorName(aspsp.getCreditorName());
+                       single.setUltimateCreditor(aspsp.getUltimateCreditor());
+                       single.setPurposeCode(aspsp.getPurposeCode());
+                       single.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
+                       single.setRequestedExecutionTime(aspsp.getRequestedExecutionTime());
+                       return single;
+                   })
+                   .orElse(null);
+    }
+
+    public SpiPeriodicPayment mapToSpiPeriodicPayment(AspspPayment aspspPayment) {
+        return Optional.ofNullable(aspspPayment)
+                   .map(aspsp -> {
+                       SpiPeriodicPayment periodic = new SpiPeriodicPayment();
+                       periodic.setPaymentId(aspsp.getPaymentId());
+                       periodic.setEndToEndIdentification(aspsp.getEndToEndIdentification());
+                       periodic.setDebtorAccount(aspsp.getDebtorAccount());
+                       periodic.setUltimateDebtor(aspsp.getUltimateDebtor());
+                       periodic.setInstructedAmount(aspsp.getInstructedAmount());
+                       periodic.setCreditorAccount(aspsp.getCreditorAccount());
+                       periodic.setCreditorAgent(aspsp.getCreditorAgent());
+                       periodic.setCreditorName(aspsp.getCreditorName());
+                       periodic.setUltimateCreditor(aspsp.getUltimateCreditor());
+                       periodic.setPurposeCode(aspsp.getPurposeCode());
+                       periodic.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
+                       periodic.setRequestedExecutionTime(aspsp.getRequestedExecutionTime());
+                       periodic.setStartDate(aspsp.getStartDate());
+                       periodic.setEndDate(aspsp.getEndDate());
+                       periodic.setExecutionRule(aspsp.getExecutionRule());
+                       periodic.setFrequency(aspsp.getFrequency());
+                       periodic.setDayOfExecution(aspsp.getDayOfExecution());
+                       return periodic;
+                   })
                    .orElse(null);
     }
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.repository;
+package de.adorsys.aspsp.xs2a.integtest;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Repository
-@Profile({"mongo", "fongo"})
-public interface PaymentRepository extends MongoRepository<AspspPayment, String> {
+@SpringBootApplication
+public class IntegrationTestApp {
+    public static void main(String[] args) {
+            SpringApplication.run(IntegrationTestApp.class, args);
+    }
 }

@@ -32,6 +32,7 @@
         <module>consent-management-system</module>
         <module>consent-api</module>
         <module>aspsp-profile</module>
+        <module>integration-tests</module>
     </modules>
     <packaging>pom</packaging>
 
