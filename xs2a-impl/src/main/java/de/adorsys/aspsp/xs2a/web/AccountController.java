@@ -84,7 +84,7 @@ public class AccountController {
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<AccountDetails> readAccountDetails(
         @RequestHeader(name = "consent-id", required = false) String consentId,
-        @ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource", example = "11111-999999999")
+        @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed", example = "11111-999999999")
         @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
         @RequestParam(name = "with-balance", required = false) boolean withBalance,
@@ -112,6 +112,7 @@ public class AccountController {
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
     public ResponseEntity<List<Balances>> getBalances(
         @RequestHeader(name = "consent-id", required = false) String consentId,
+        @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
         @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
         @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
@@ -134,7 +135,7 @@ public class AccountController {
         @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
-    public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", value = "The account consent identification assigned to the created resource")
+    public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
                                                          @PathVariable(name = "account-id") String accountId,
                                                          @RequestHeader(name = "consent-id", required = false) String consentId,
                                                          @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")

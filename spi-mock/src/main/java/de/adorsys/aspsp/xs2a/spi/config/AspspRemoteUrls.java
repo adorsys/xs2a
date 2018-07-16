@@ -116,4 +116,13 @@ public class AspspRemoteUrls {
     public String getAllowedPaymentProducts() {
         return spiMockBaseUrl + "/psu/allowed-payment-products/{iban}";
     }
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs payment by its ASPSP id
+     *
+     * @return URL
+     */
+    public String getPaymentById() {
+        return spiMockBaseUrl + "/payments/{payment-type}/{payment-product}/{paymentId}";
+    }
 }

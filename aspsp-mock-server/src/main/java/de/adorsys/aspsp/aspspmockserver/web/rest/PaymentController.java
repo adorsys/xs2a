@@ -85,6 +85,15 @@ public class PaymentController {
                    .orElse(ResponseEntity.badRequest().build());
     }
 
+    @ApiOperation(value = "Returns all payments present at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = AspspPayment.class)})
+    @GetMapping(path = "/getAllPayments")
+    public ResponseEntity<List<AspspPayment>> getAllPayments() {
+        List<AspspPayment> allPayments = paymentService.getAllPayments();
+        return ResponseEntity.ok(allPayments);
+    }
+
     @ApiOperation(value = "Returns the payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AspspPayment.class)})
