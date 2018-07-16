@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +37,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 public class PaymentConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
-    private final JavaMailSender emailSender;
+    private final EmailSenderService emailSender;
     private final PaymentService paymentService;
     private final AccountService accountService;
 
