@@ -68,6 +68,10 @@ public class PaymentControllerTest {
             .thenReturn(true);
         when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))
             .thenReturn(false);
+        when(paymentService.getPaymentStatusById(PAYMENT_ID))
+            .thenReturn(Optional.of(ACCP));
+        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.of(RJCT));
     }
 
     @Test

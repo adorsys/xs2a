@@ -104,6 +104,7 @@ public class PaymentMapper {
         aspsp.setPurposeCode(single.getPurposeCode());
         aspsp.setRequestedExecutionDate(single.getRequestedExecutionDate());
         aspsp.setRequestedExecutionTime(single.getRequestedExecutionTime());
+        aspsp.setPaymentStatus(single.getPaymentStatus());
         return aspsp;
     }
 
@@ -123,6 +124,7 @@ public class PaymentMapper {
                        single.setPurposeCode(aspsp.getPurposeCode());
                        single.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
                        single.setRequestedExecutionTime(aspsp.getRequestedExecutionTime());
+                       single.setPaymentStatus(aspspPayment.getPaymentStatus());
                        return single;
                    })
                    .orElse(null);
@@ -149,6 +151,7 @@ public class PaymentMapper {
                        periodic.setExecutionRule(aspsp.getExecutionRule());
                        periodic.setFrequency(aspsp.getFrequency());
                        periodic.setDayOfExecution(aspsp.getDayOfExecution());
+                       periodic.setPaymentStatus(aspspPayment.getPaymentStatus());
                        return periodic;
                    })
                    .orElse(null);

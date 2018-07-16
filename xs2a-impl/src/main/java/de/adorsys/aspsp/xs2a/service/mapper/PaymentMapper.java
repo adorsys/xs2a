@@ -70,6 +70,7 @@ public class PaymentMapper {
                        spiSinglePayments.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayments.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
                        spiSinglePayments.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
+                       spiSinglePayments.setPaymentStatus(SpiTransactionStatus.RCVD);
 
                        return spiSinglePayments;
                    })
@@ -99,6 +100,7 @@ public class PaymentMapper {
                        spiPeriodicPayment.setEndDate(pp.getEndDate());
                        spiPeriodicPayment.setFrequency(getFrequency(pp));
                        spiPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
+                       spiPeriodicPayment.setPaymentStatus(SpiTransactionStatus.RCVD);
 
                        return spiPeriodicPayment;
 
