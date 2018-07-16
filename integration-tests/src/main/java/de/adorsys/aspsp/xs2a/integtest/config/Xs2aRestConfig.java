@@ -41,8 +41,8 @@ public class Xs2aRestConfig {
         return xs2aBaseUrl;
     }
 
-    @Bean(name = "aspspMockRestTemplate")
-    public RestTemplate aspspProfileRestTemplate() {
+    @Bean(name = "xs2aRestConfig")
+    public RestTemplate xs2aRestConfig() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());
