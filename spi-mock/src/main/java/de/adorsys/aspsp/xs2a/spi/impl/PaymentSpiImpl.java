@@ -47,9 +47,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate aspspRestTemplate;
 
     /**
-     * For detailed description
-     *
-     * @see PaymentSpi#createPaymentInitiation(SpiSinglePayments)
+     * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayments)}
      */
     @Override
     public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments) {
@@ -60,9 +58,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see PaymentSpi#createBulkPayments(List)
+     * For detailed description see {@link PaymentSpi#createBulkPayments(List)}
      */
     @Override
     public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments) {
@@ -76,9 +72,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see PaymentSpi#initiatePeriodicPayment(SpiPeriodicPayment)
+     * For detailed description see {@link PaymentSpi#initiatePeriodicPayment(SpiPeriodicPayment)}
      */
     @Override
     public SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment) {
@@ -89,9 +83,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see PaymentSpi#getPaymentStatusById(String, String)
+     * For detailed description see {@link PaymentSpi#getPaymentStatusById(String, String)}
      */
     @Override
     public SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct) {

@@ -20,7 +20,6 @@ import de.adorsys.aspsp.xs2a.spi.config.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
@@ -46,9 +45,7 @@ public class AccountSpiImpl implements AccountSpi {
     private final RestTemplate aspspRestTemplate;
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readAccountDetailsByIban(String iban)
+     * For detailed description see {@link AccountSpi#readAccountDetailsByIban(String)}
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIban(String iban) {
@@ -59,9 +56,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readTransactionsByPeriod(String, LocalDate, LocalDate)
+     * For detailed description see {@link AccountSpi#readTransactionsByPeriod(String, LocalDate, LocalDate)}
      */
     @Override
     public List<SpiTransaction> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
@@ -79,9 +74,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readTransactionById(String, String)
+     * For detailed description see {@link AccountSpi#readTransactionById(String, String)}
      */
     @Override
     public Optional<SpiTransaction> readTransactionById(String transactionId, String accountId) {
@@ -89,9 +82,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readAccountDetails(String)
+     * For detailed description see {@link AccountSpi#readAccountDetails(String)}
      */
     @Override
     public SpiAccountDetails readAccountDetails(String accountId) {
@@ -99,9 +90,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readAccountsByPsuId(String)
+     * For detailed description see {@link AccountSpi#readAccountsByPsuId(String)}
      */
     @Override
     public List<SpiAccountDetails> readAccountsByPsuId(String psuId) {
@@ -112,9 +101,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readAccountDetailsByIbans(Collection)
+     * For detailed description see {@link AccountSpi#readAccountDetailsByIbans(Collection)}
      */
     @Override
     public List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans) {
@@ -131,9 +118,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description
-     *
-     * @see AccountSpi#readPsuAllowedPaymentProductList(SpiAccountReference)
+     * For detailed description see {@link AccountSpi#readPsuAllowedPaymentProductList(SpiAccountReference)}
      */
     @Override
     public List<String> readPsuAllowedPaymentProductList(SpiAccountReference reference) {
