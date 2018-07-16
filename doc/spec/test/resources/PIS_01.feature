@@ -36,18 +36,9 @@ Feature: Payment Initiation Service
             | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-request-id.json     |
             | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-psu-ip-address.json |
 
-
-
-    # TODO Single payment initiation with incorrect body syntax -> 400 //
     # TODO Single payment with not existing tpp-transaction-id -> 400  (are there not existant id's / not in the system?)
     # TODO Single payment with not existing tpp-request-id -> 400      (are there not existant id's / not in the system?)
     # TODO Single payment with not existing psu-ip-address -> 400      (are there not existant id's / not in the system?)
-    # TODO Single payment without tpp-transaction-id -> 400 //
-    # TODO Single payment without tpp-request-id --> 400 //
-    # TODO Single payment without psu-ip-address -> 400 //
-    # TODO Single payment with wrong uuid-format for tpp-transaction-id -> 400 //
-    # TODO Single payment with wrong uuid-format for tpp-request-id -> 400 //
-    # TODO Single payment with wrong uuid-format for psu-ip-address -> 400 //
 
 
     ####################################################################################################################
@@ -64,8 +55,8 @@ Feature: Payment Initiation Service
         And a successful response code and
         And the appropriate bulk payment response data is delivered to the PSU
         Examples:
-            | sca-approach | bulk-payment                            |
-            | redirect     | successful-bulk-payment-initiation.json |
+            | sca-approach | bulk-payment                |
+            | redirect     | bulkPayInit-successful.json |
 
 
     ####################################################################################################################
@@ -81,8 +72,8 @@ Feature: Payment Initiation Service
         And a successful response code and
         And the appropriate recurring payment response data is delivered to the PSU
         Examples:
-            | sca-approach | recurring-payment                            |
-            | redirect     | successful-recurring-payment-initiation.json |
+            | sca-approach | recurring-payment          |
+            | redirect     | recPayInit-successful.json |
 
     # TODO Recurring payment initiation with not defined frequency -> 400
     # TODO Recurring payment initiation with start date in the past -> 400
