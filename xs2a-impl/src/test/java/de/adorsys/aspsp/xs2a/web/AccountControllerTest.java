@@ -16,24 +16,24 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.domain.Balances;
-import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -43,10 +43,8 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
     private final String ACCOUNT_ID = "33333-999999999";
     private final String CONSENT_ID = "12345";
@@ -56,13 +54,16 @@ public class AccountControllerTest {
     private final String BALANCES_SOURCE = "/json/BalancesTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
-    @Autowired
+    @InjectMocks
     private AccountController accountController;
-    @Autowired
-    private JsonConverter jsonConverter;
 
-    @MockBean(name = "accountService")
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+
+    @Mock
     private AccountService accountService;
+    @Mock
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -75,6 +76,7 @@ public class AccountControllerTest {
 
     @Test
     public void getAccountDetails_withBalance() throws IOException {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(getAccountDetails().getBody(), HttpStatus.OK));
         //Given
         boolean withBalance = true;
         boolean psuInvolved = true;
@@ -89,6 +91,7 @@ public class AccountControllerTest {
 
     @Test
     public void getAccounts_ResultTest() throws IOException {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody(), HttpStatus.OK));
         //Given
         boolean withBalance = true;
         boolean psuInvolved = true;
@@ -103,6 +106,7 @@ public class AccountControllerTest {
 
     @Test
     public void getBalances_ResultTest() throws IOException {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(readBalances().getBody(), HttpStatus.OK));
         //Given:
         boolean psuInvolved = true;
         Balances expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
@@ -118,6 +122,7 @@ public class AccountControllerTest {
 
     @Test
     public void getTransactions_ResultTest() throws IOException {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(createAccountReport(ACCOUNT_REPORT_SOURCE).getBody(), HttpStatus.OK));
         //Given:
         boolean psuInvolved = true;
         AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), AccountReport.class).get();
@@ -127,72 +132,6 @@ public class AccountControllerTest {
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
-    }
-
-    @Test
-    public void getAccounts_withBalance() {
-        boolean withBalance = true;
-        boolean psuInvolved = false;
-
-        checkAccountResults(withBalance, psuInvolved);
-    }
-
-    @Test
-    public void getAccounts_noBalances() {
-        boolean withBalance = false;
-        boolean psuInvolved = false;
-
-        checkAccountResults(withBalance, psuInvolved);
-    }
-
-    @Test
-    public void getAccounts_withBalanceAndPsuInvolved() {
-        boolean withBalance = true;
-        boolean psuInvolved = true;
-
-        checkAccountResults(withBalance, psuInvolved);
-    }
-
-    private void checkAccountResults(boolean withBalance, boolean psuInvolved) {
-        //Given:
-        AccountDetails accountDetails = new AccountDetails(
-            "21fef",
-            "DE1234523543",
-            null,
-            null,
-            null,
-            null,
-            Currency.getInstance("EUR"),
-            "name",
-            "GIRO",
-            null,
-            "XE3DDD",
-            null
-        );
-        Links links = new Links();
-        links.setViewBalances(linkTo(AccountController.class).slash(accountDetails.getId()).slash("balances").toString());
-        links.setViewTransactions(linkTo(AccountController.class).slash(accountDetails.getId()).slash("transactions").toString());
-        accountDetails.setLinks(links);
-
-        List<AccountDetails> accountDetailsList = new ArrayList<>();
-        accountDetailsList.add(accountDetails);
-        Map<String, List<AccountDetails>> mockMap = new HashMap<>();
-        mockMap.put("accountList", accountDetailsList);
-        ResponseObject mockedResponse = ResponseObject.builder()
-                                            .body(mockMap).build();
-
-        Map<String, List<AccountDetails>> expectedMap = new HashMap<>();
-        expectedMap.put("accountList", accountDetailsList);
-        ResponseEntity<Map<String, List<AccountDetails>>> expectedResult = new ResponseEntity<>(expectedMap, HttpStatus.OK);
-
-        when(accountService.getAccountDetailsList("id", withBalance, psuInvolved))
-            .thenReturn(mockedResponse);
-
-        //When:
-        ResponseEntity<Map<String, List<AccountDetails>>> actualResponse = accountController.getAccounts("id", withBalance, psuInvolved);
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(expectedResult);
     }
 
     private ResponseObject<Map<String, List<AccountDetails>>> createAccountDetailsList(String path) throws IOException {

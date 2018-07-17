@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -24,16 +26,16 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -46,8 +48,7 @@ import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentInitiationControllerTest {
 
     private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
@@ -57,14 +58,18 @@ public class PaymentInitiationControllerTest {
     private static final String WRONG_PAYMENT_ID = "Really wrong id";
     private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
-    @Autowired
+    @InjectMocks
     private PaymentInitiationController paymentInitiationController;
-    @Autowired
-    private JsonConverter jsonConverter;
-    @MockBean
+
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+
+    @Mock
     private PaymentService paymentService;
-    @MockBean
+    @Mock
     private AspspProfileService aspspProfileService;
+    @Mock
+    ResponseMapper responseMapper;
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
@@ -80,6 +85,7 @@ public class PaymentInitiationControllerTest {
 
     @Test
     public void getTransactionStatusById_Success() {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(TransactionStatus.ACCP, HttpStatus.OK));
         //Given:
         HttpStatus expectedHttpStatus = OK;
         TransactionStatus expectedTransactionStatus = TransactionStatus.ACCP;
@@ -95,6 +101,7 @@ public class PaymentInitiationControllerTest {
 
     @Test
     public void getTransactionStatusById_WrongId() {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(TransactionStatus.RJCT, HttpStatus.OK));
         //Given:
         HttpStatus expectedHttpStatus = OK;
         TransactionStatus expectedTransactionStatus = TransactionStatus.RJCT;
@@ -110,6 +117,7 @@ public class PaymentInitiationControllerTest {
 
     @Test
     public void createPaymentInitiation() throws IOException {
+        when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
         boolean tppRedirectPreferred = false;
