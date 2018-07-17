@@ -42,6 +42,7 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")
     })
+
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
         return Optional.ofNullable(accountService.getAllAccounts())
