@@ -17,23 +17,15 @@
 package de.adorsys.aspsp.aspspmockserver.config.email;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 @Data
-@Component
+@Configuration
 @ConfigurationProperties(prefix = "spring.mail")
 public class EmailConfigurationProperties {
     private String host;
     private String port;
     private String password;
     private String username;
-
-    public boolean isParametersExist() {
-        return StringUtils.isNotBlank(host) &&
-                   StringUtils.isNotBlank(port) &&
-                   StringUtils.isNotBlank(username) &&
-                   StringUtils.isNotBlank(password);
-    }
 }

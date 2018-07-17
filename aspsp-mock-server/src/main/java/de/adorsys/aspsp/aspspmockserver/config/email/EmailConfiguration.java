@@ -16,25 +16,43 @@
 
 package de.adorsys.aspsp.aspspmockserver.config.email;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Slf4j
 @Configuration
-@RequiredArgsConstructor
 public class EmailConfiguration {
-    private final EmailConfigurationProperties emailConfigurationProperties;
+    @Autowired
+    private EmailConfigurationProperties emailConfigurationProperties;
+
+    //TODO Move to EmailConfigurationProperties: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/176
+    @Value("#{ new Boolean('${spring.mail.properties.mail.smtp.auth}') }")
+    private boolean auth;
 
     @Bean
     public JavaMailSender javaMailSender() {
-        if (emailConfigurationProperties.isParametersExist()) {
+        if (isParametersExist()) {
             return new JavaMailSenderImpl();
         }
         log.warn("Email properties has not been set");
         return null;
+    }
+
+    private boolean isParametersExist() {
+        return isNotBlank(emailConfigurationProperties.getHost()) &&
+                   isNotBlank(emailConfigurationProperties.getPort()) &&
+                   isAuthParametersExist();
+    }
+
+    private boolean isAuthParametersExist() {
+        return !auth || isNotBlank(emailConfigurationProperties.getUsername()) &&
+                            isNotBlank(emailConfigurationProperties.getPassword());
     }
 }
