@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+@Slf4j
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${bank_profile.path}")
@@ -64,7 +66,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public ProfileConfiguration profileConfiguration() {
         File file = new File(bankProfilePath);
-        ProfileConfiguration profileConfiguration = getBankConfFromProp();
+        ProfileConfiguration profileConfiguration = getBankConfFromResource();
 
         if (file.exists()) {
             profileConfiguration = getBankConfFromFile(file);
@@ -75,18 +77,18 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     private ProfileConfiguration getBankConfFromFile(File file) {
         try {
             return new Yaml().loadAs(new FileInputStream(file), ProfileConfiguration.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            log.warn("Problem with loading bank profile form file system: {}", ex);
             return null;
         }
     }
 
-    private ProfileConfiguration getBankConfFromProp() {
+    private ProfileConfiguration getBankConfFromResource() {
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(BANK_CONF_PROPERTY_FILE);
             return new Yaml().loadAs(inputStream, ProfileConfiguration.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            log.warn("Problem with loading bank profile form resource: {}", ex);
             return null;
         }
     }

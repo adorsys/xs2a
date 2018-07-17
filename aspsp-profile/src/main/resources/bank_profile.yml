@@ -1,4 +1,4 @@
- frequencyPerDay: 6
+ frequencyPerDay: 5
  combinedServiceIndicator: false
  availablePaymentProducts :
  - sepa-credit-transfers
