@@ -24,20 +24,21 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class TransactionServiceTest {
     private static LocalDate DATE = LocalDate.parse("2019-03-03");
     private static final String TRANSACTION_ID = "00001";
@@ -48,11 +49,11 @@ public class TransactionServiceTest {
     private static final String IBAN_2 = "DE54321";
     private static final Currency EUR = Currency.getInstance("EUR");
 
-    @Autowired
+    @InjectMocks
     private TransactionService transactionService;
-    @MockBean
+    @Mock
     TransactionRepository transactionRepository;
-    @MockBean
+    @Mock
     AccountService accountService;
 
     @Before

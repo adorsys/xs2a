@@ -25,12 +25,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,8 +39,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class AccountControllerTest {
     private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw-2n123";
     private static final String WRONG_ACCOUNT_ID = "Really wrong id";
@@ -51,9 +49,9 @@ public class AccountControllerTest {
     private static final String WRONG_PSU_ID = "Wrong PSU id";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
 
-    @MockBean
+    @Mock
     private AccountService accountService;
-    @Autowired
+    @InjectMocks
     private AccountController accountController;
     private List<SpiAccountDetails> accountList = new ArrayList<>();
 
