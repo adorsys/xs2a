@@ -21,17 +21,11 @@ import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Data
-@Configuration
-@PropertySource("classpath:bank_profile.yml")
-@ConfigurationProperties(prefix = "setting")
 public class ProfileConfiguration {
     private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
