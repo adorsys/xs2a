@@ -16,8 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
@@ -29,10 +30,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -45,8 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationServiceTest {
     private final String FUNDS_REQ_DATA = "/json/FundsConfirmationRequestTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
@@ -55,12 +54,12 @@ public class FundsConfirmationServiceTest {
     private final Currency EUR = Currency.getInstance("EUR");
     private final String AMOUNT_1600 = "1600.00";
 
-    @Autowired
+    @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
-    @Autowired
-    private JsonConverter jsonConverter;
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
 
-    @MockBean(name = "accountService")
+    @Mock
     private AccountService accountService;
 
     @Before
