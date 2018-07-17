@@ -18,14 +18,14 @@ package de.adorsys.aspsp.xs2a.config;
 
 
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Data
+@RequiredArgsConstructor
 public class ProfileConfiguration {
     private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
@@ -76,12 +76,4 @@ public class ProfileConfiguration {
      */
     private MulticurrencyAccountLevel multicurrencyAccountLevel;
 
-    @PostConstruct
-    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default
-        String necessaryType = PaymentType.FUTURE_DATED.getValue();
-
-        if (!availablePaymentTypes.contains(necessaryType)) {
-            availablePaymentTypes.add(PaymentType.FUTURE_DATED.getValue());
-        }
-    }
 }

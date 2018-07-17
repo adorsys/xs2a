@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.Yaml;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
@@ -29,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,10 +36,9 @@ import java.io.InputStream;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
-    private final String BANK_CONF_PROPERTY_FILE = "bank_profile.yml";
-
-    @Value("${bank_profile.path:http}")
+    @Value("${bank_profile.path}")
     private String bankProfilePath;
+    private final static String BANK_CONF_PROPERTY_FILE = "bank_profile.yml";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -70,16 +69,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         if (file.exists()) {
             profileConfiguration = getBankConfFromFile(file);
         }
-
         return profileConfiguration;
     }
 
     private ProfileConfiguration getBankConfFromFile(File file) {
         try {
-            Yaml yaml = new Yaml();
-            InputStream in = new FileInputStream(file);
-
-            return yaml.loadAs(in, ProfileConfiguration.class);
+            return new Yaml().loadAs(new FileInputStream(file), ProfileConfiguration.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -88,10 +83,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     private ProfileConfiguration getBankConfFromProp() {
         try {
-            Yaml yaml = new Yaml();
-            InputStream in = getClass().getResourceAsStream(BANK_CONF_PROPERTY_FILE);
-
-            return yaml.loadAs(in, ProfileConfiguration.class);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(BANK_CONF_PROPERTY_FILE);
+            return new Yaml().loadAs(inputStream, ProfileConfiguration.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
