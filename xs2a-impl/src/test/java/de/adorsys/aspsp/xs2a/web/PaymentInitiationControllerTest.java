@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
@@ -39,6 +40,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,9 +137,6 @@ public class PaymentInitiationControllerTest {
 
     private ResponseObject readResponseObject() throws IOException {
         PaymentInitialisationResponse resp = readPaymentInitialisationResponse();
-        resp.setIban("DE371234599999");
-        resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
-
         return ResponseObject.builder().body(resp).build();
     }
 
@@ -145,6 +144,9 @@ public class PaymentInitiationControllerTest {
         PaymentInitialisationResponse resp = jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
         resp.setIban("DE371234599999");
         resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
+        Links links = new Links();
+        String encodedPaymentId = Base64.getEncoder().encodeToString(resp.getPaymentId().getBytes());
+        links.setScaRedirect(REDIRECT_LINK + resp.getIban() + "/" + resp.getPisConsentId() + "/" + encodedPaymentId);
 
         return resp;
     }

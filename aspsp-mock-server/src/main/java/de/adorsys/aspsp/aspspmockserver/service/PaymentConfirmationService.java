@@ -83,7 +83,7 @@ public class PaymentConfirmationService {
                                      .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                                      .orElse(false);
         if (!tanNumberValid) {
-            paymentService.revokeOrRejectPaymentConsent(consentId, REJECTED);
+            paymentService.updatePaymentConsentStatus(consentId, REJECTED);
         }
         return tanNumberValid;
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web.view;
+package de.adorsys.aspsp.aspspmockserver.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,10 +24,12 @@ import lombok.NoArgsConstructor;
 public class PaymentConfirmation {
     private String iban;
     private String consentId;
+    private String paymentId;
     private String tanNumber;
 
-    public PaymentConfirmation(String iban, String consentId) {
+    public PaymentConfirmation(String iban, String consentId, String paymentId) {
         this.iban = iban;
         this.consentId = consentId;
+        this.paymentId = paymentId;
     }
 }

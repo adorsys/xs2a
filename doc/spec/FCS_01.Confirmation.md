@@ -63,7 +63,7 @@ The following usage of abbreviations in the Location and Usage columns is define
 | TPP Name                   |                    |      |        |      |      x      |      m      |              |
 | TPP Roles                  |                    |      |        |      |      x      |      m      |              |
 | Transaction Identification | TPP- Transaction-ID|      |        |   x  |             |             |              |
-| Request Identification     | TPP-Request-ID     |      |        |      |             |             |              |
+| Request Identification     | x-request-id     |      |        |      |             |             |              |
 | TPP Certificate Data       | TPP-Certificate    |      |    x   |      |             |      c      |              |
 | TPP Electronic Signature   | Signature          |      |    x   |      |             |      c      |              |
 | Service Type               |                    |   x  |        |      |             |      m      |              |
@@ -94,7 +94,7 @@ No specific query parameter.
 | Attribute            | Type     | Condition   | Description                                                                                |
 |----------------------|----------|-------------|--------------------------------------------------------------------------------------------|
 | TPP-Transaction-ID   | UUID     | Mandatory   | ID of the transaction as determined by the initiating party.                               |
-| TPP-Request-ID       | UUID     | Mandatory   | ID of the request, unique to the call, asdetermined by theinitiating party.                |
+| x-request-id       | UUID     | Mandatory   | ID of the request, unique to the call, asdetermined by theinitiating party.                |
 | Authorization Bearer | String   | Conditional | Is contained only, if the optional Oauth Pre-Step was performed.                           |
 | Signature            | String   | Conditional | A signature of the request by the TPP onapplication level. This might be mandated byASPSP. |
 | TPP-Certificate      | String   | Conditional | The certificate used for signing the request in base64 encoding.                                              |
@@ -129,7 +129,7 @@ The following rules will apply in interpreting the Confirmation of Funds Request
     Content-Encoding:	gzip
     Content-Type:	application/json
     TPP-Transaction-ID: 3dc3d5b3-7023-4848-9853-f5400a64e879 
-    TPP-Request-ID: 99391c7e-ad88-49ec-a2ad-99ddcb1f7721 
+    x-request-id: 99391c7e-ad88-49ec-a2ad-99ddcb1f7721 
     Date:	Sun, 06 Aug 2017 15:02:37 GMT
     {	
      "cardNumber": "12345678901234", 
