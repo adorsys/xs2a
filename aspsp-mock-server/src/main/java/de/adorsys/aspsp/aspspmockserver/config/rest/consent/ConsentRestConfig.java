@@ -31,6 +31,13 @@ public class ConsentRestConfig {
     private int readTimeout;
     @Value("${rest-consent-config.connection-timeout.ms:10000}")
     private int connectionTimeout;
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
+
+    @Bean(name = "consentServiceBaseUrl")
+    public String consentServiceBaseUrl() {
+        return consentServiceBaseUrl;
+    }
 
     @Bean(name = "consentRestTemplate")
     public RestTemplate consentRestTemplate(){

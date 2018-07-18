@@ -26,11 +26,11 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Links {
 
-    @ApiModelProperty(value = "redirect: A link to an ASPSP site where SCA is performed within the Redirect SCA approach.", example = "https://www.testbank.com/authentication/1234-wertiq-983")
-    private String redirect;
+    @ApiModelProperty(value = "The link to an ASPSP site where SCA is performed within the Redirect SCA approach.", example = "https://www.testbank.com/authentication/1234-wertiq-983")
+    private String scaRedirect;
 
     @ApiModelProperty(value = "The link refers to a JSON document specifying the OAuth details of the ASPSP’s authorisation server.", example = "https://www.testbank.com/oauth/.well-known/oauth- authorization-server")
-    private String oAuth;
+    private String scaOAuth;
 
     @ApiModelProperty(value = "The link to the payment initiation or account information resource, which needs to be updated by the PSU identification if not delivered yet.", example = "api/v1/consents/1234-wertiq-983")
     private String updatePsuIdentification;

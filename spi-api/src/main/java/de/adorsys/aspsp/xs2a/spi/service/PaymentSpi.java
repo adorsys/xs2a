@@ -18,18 +18,73 @@ package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 
 import java.util.List;
 
 public interface PaymentSpi {
-
+    /**
+     * Initiates a single payment at ASPSP
+     *
+     * @param spiSinglePayments single payment to be sent for saving at ASPSP
+     * @return Response from ASPSP containing information about carried payment initiation operation
+     */
     SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments);
 
+    /**
+     * Initiates a periodic payment at ASPSP
+     *
+     * @param periodicPayment periodic payment to be sent for saving at ASPSP
+     * @return Response from ASPSP containing information about carried payment initiation operation
+     */
     SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment);
 
+    /**
+     * Initiates a bulk payment at ASPSP
+     *
+     * @param payments bulk payment to be sent for saving at ASPSP
+     * @return Response from ASPSP containing information about carried payment initiation operation
+     */
     List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments);
 
+    /**
+     * Returns a payment status by its ASPSP identifier
+     *
+     * @param paymentId      ASPSP identifier of a payment
+     * @param paymentProduct The addressed payment product
+     * @return payment status
+     */
     SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
+
+    /**
+     * Returns a single payment by its ASPSP identifier
+     *
+     * @param paymentType    Type of payment
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of a payment
+     * @return single payment
+     */
+    SpiSinglePayments getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+
+    /**
+     * Returns a periodic payment by its ASPSP identifier
+     *
+     * @param paymentType    Type of payment
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of a payment
+     * @return periodic payment
+     */
+    SpiPeriodicPayment getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+
+    /**
+     * Returns a bulk payment by its ASPSP identifier
+     *
+     * @param paymentType    Type of payment
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of a payment
+     * @return bulk payment
+     */
+    List<SpiSinglePayments> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
 }

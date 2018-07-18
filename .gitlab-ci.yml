@@ -29,6 +29,10 @@ variables:
   GITLAB_IMAGE_NAME_ASPSP_PROFILE: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-aspsp-profile"
   OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-aspsp-profile"
 
+  # XS2A Integration Tests
+  GITLAB_IMAGE_NAME_INTEG_TESTS: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-integtests"
+  OPENSHIFT_IMAGE_NAME_INTEG_TESTS: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-integtests"
+
   JAVA_TOOL_OPTIONS: "-Xmx350M"
 
   GITHUB_REPO: "adorsys/xs2a"
@@ -49,6 +53,7 @@ variables:
     - "aspsp-profile/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
+    - "integration-tests/target/xs2a-integtests.jar"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
 .build_java: &build_java
@@ -80,6 +85,9 @@ variables:
     - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile
     - docker push "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
 
+    - docker build -t "$GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG" integration-tests
+    - docker push "$GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG"
+
 .deploy_image_script: &deploy_image_script
   tags:
     - aws_shell
@@ -106,6 +114,10 @@ variables:
     - docker pull $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
+
+    - docker pull $GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG
 
 # ------------------------------------------------------------------
 # stages

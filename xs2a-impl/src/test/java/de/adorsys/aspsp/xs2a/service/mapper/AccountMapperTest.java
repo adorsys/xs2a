@@ -16,9 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.CashAccountType;
+import de.adorsys.aspsp.xs2a.domain.SingleBalance;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
@@ -27,31 +31,32 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
     private static final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
     private static final String SPI_TRANSACTION_JSON_PATH = "/json/AccountReportDataTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    @Autowired
+    @InjectMocks
     private AccountMapper accountMapper;
-    @Autowired
-    private JsonConverter jsonConverter;
+
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
 
     @Test
     public void mapSpiAccountDetailsToXs2aAccountDetails() throws IOException {
@@ -115,8 +120,8 @@ public class AccountMapperTest {
         List<SpiTransaction> donorSpiTransactions = new ArrayList<>();
         donorSpiTransactions.add(donorSpiTransaction);
         SpiTransaction[] expectedBooked = donorSpiTransactions.stream()
-                                          .filter(transaction -> transaction.getBookingDate() != null)
-                                          .toArray(SpiTransaction[]::new);
+                                              .filter(transaction -> transaction.getBookingDate() != null)
+                                              .toArray(SpiTransaction[]::new);
 
         //When:
         assertNotNull(donorSpiTransaction);
@@ -139,11 +144,11 @@ public class AccountMapperTest {
         assertThat(actualAccountReport.getBooked()[0].getUltimateCreditor()).isEqualTo(expectedBooked[0].getUltimateCreditor());
         assertThat(actualAccountReport.getBooked()[0].getValueDate()).isEqualTo(expectedBooked[0].getValueDate());
         assertThat(actualAccountReport.getBooked()[0].getAmount().getContent()).isEqualTo(expectedBooked[0].getSpiAmount()
-        .getContent().toString());
+                                                                                              .getContent().toString());
         assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount()
-        .getCurrency());
+                                                                                               .getCurrency());
         assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode()
-        .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
+                       .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
         assertThat(actualAccountReport.getBooked()[0].getPurposeCode().getCode()).isEqualTo(expectedBooked[0].getPurposeCode());
     }
 }

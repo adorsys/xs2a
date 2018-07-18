@@ -23,22 +23,25 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.context.WebApplicationContext;
@@ -165,5 +168,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             return new EmbeddedScaPaymentService();
         }
         return new RedirectScaPaymentService();
+    }
+
+    @Bean
+    public ServiceLocatorFactoryBean readPaymentFactory() {
+        ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+        serviceLocatorFactoryBean.setServiceLocatorInterface(ReadPaymentFactory.class);
+        return serviceLocatorFactoryBean;
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new PaymentTypeEnumConverter());
     }
 }

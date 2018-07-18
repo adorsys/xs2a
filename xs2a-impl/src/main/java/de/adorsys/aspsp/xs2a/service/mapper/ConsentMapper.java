@@ -118,11 +118,15 @@ public class ConsentMapper {
     public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
-                       ac.getId(), mapToAccountAccess(ac.getAccess()),
-                       ac.isRecurringIndicator(), ac.getValidUntil(),
-                       ac.getFrequencyPerDay(), ac.getLastActionDate(),
+                       ac.getId(),
+                       mapToAccountAccess(ac.getAccess()),
+                       ac.isRecurringIndicator(),
+                       ac.getValidUntil(),
+                       ac.getFrequencyPerDay(),
+                       ac.getLastActionDate(),
                        ConsentStatus.valueOf(ac.getSpiConsentStatus().name()),
-                       ac.isWithBalance(), ac.isTppRedirectPreferred()))
+                       ac.isWithBalance(),
+                       ac.isTppRedirectPreferred()))
                    .orElse(null);
     }
 

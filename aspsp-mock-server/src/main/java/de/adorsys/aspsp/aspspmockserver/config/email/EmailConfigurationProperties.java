@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.common;
+package de.adorsys.aspsp.aspspmockserver.config.email;
 
-public enum TransactionsArt {
-    booked, expected, authorised, opening_booked, closing_booked, interim_available
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "spring.mail")
+public class EmailConfigurationProperties {
+    private String host;
+    private int port;
+    private String password;
+    private String username;
 }

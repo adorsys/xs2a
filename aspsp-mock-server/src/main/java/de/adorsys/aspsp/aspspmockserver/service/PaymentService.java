@@ -20,11 +20,9 @@ import de.adorsys.aspsp.aspspmockserver.config.rest.consent.PisConsentRemoteUrls
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -38,7 +36,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus.*;
@@ -88,6 +89,17 @@ public class PaymentService {
      */
     public boolean isPaymentExist(String paymentId) {
         return paymentRepository.exists(paymentId);
+    }
+
+    /**
+     * Checks payment status
+     *
+     * @param paymentId Payments primary ASPSP identifier
+     * @return SpiPaymentStatus status of payment
+     */
+    public Optional<SpiTransactionStatus> getPaymentStatusById(String paymentId) {
+        return Optional.ofNullable(paymentRepository.findOne(paymentId))
+                   .map(AspspPayment::getPaymentStatus);
     }
 
     /**
@@ -195,5 +207,9 @@ public class PaymentService {
 
     public Optional<AspspPayment> getPaymentById(String paymentId) {
         return Optional.ofNullable(paymentRepository.findOne(paymentId));
+    }
+
+    public List<AspspPayment> getAllPayments() {
+        return paymentRepository.findAll();
     }
 }

@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.spi.domain.payment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -49,6 +50,7 @@ public class AspspPayment {
     private String frequency; // TODO consider using an enum similar to FrequencyCode based on the the "EventFrequency7Code" of ISO 20022
     private int dayOfExecution; //Day here max 31
     private PisPaymentType pisPaymentType;
+    private SpiTransactionStatus paymentStatus;
 
     public AspspPayment() {}
 

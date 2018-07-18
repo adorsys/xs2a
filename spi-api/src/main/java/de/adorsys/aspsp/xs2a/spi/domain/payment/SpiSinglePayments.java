@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
@@ -43,5 +44,6 @@ public class SpiSinglePayments {
     private SpiRemittance remittanceInformationStructured;
     private LocalDate requestedExecutionDate;
     private LocalDateTime requestedExecutionTime;
+    private SpiTransactionStatus paymentStatus;
 
 }
