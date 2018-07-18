@@ -24,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import java.util.Properties;
+
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
@@ -36,18 +38,34 @@ public class EmailConfiguration {
     @Value("#{ new Boolean('${spring.mail.properties.mail.smtp.auth}') }")
     private boolean auth;
 
+    @Value("#{ new Boolean('${spring.mail.properties.mail.smtp.starttls.enable}') }")
+    private boolean isStarttlsEnable;
+
     @Bean
     public JavaMailSender javaMailSender() {
         if (isParametersExist()) {
-            return new JavaMailSenderImpl();
+            JavaMailSenderImpl sender = new JavaMailSenderImpl();
+            sender.setHost(emailConfigurationProperties.getHost());
+            sender.setPort(emailConfigurationProperties.getPort());
+            sender.setUsername(emailConfigurationProperties.getUsername());
+            sender.setPassword(emailConfigurationProperties.getPassword());
+            sender.setJavaMailProperties(buildMailProperties());
+            return sender;
         }
         log.warn("Email properties has not been set");
         return null;
     }
 
+    private Properties buildMailProperties() {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", auth);
+        props.put("mail.smtp.starttls.enable", isStarttlsEnable);
+        return props;
+    }
+
     private boolean isParametersExist() {
         return isNotBlank(emailConfigurationProperties.getHost()) &&
-                   isNotBlank(emailConfigurationProperties.getPort()) &&
+                   emailConfigurationProperties.getPort() != 0 &&
                    isAuthParametersExist();
     }
 

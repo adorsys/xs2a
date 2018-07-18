@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "spring.mail")
 public class EmailConfigurationProperties {
     private String host;
-    private String port;
+    private int port;
     private String password;
     private String username;
 }

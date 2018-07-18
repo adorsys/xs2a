@@ -25,12 +25,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,8 +41,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class FutureBookingsControllerTest {
     private static final String IBAN = "123456789";
     private static final String WRONG_IBAN = "Wrong iban";
@@ -51,10 +49,10 @@ public class FutureBookingsControllerTest {
     private static final BigDecimal AMOUNT_TO_BE_CHARGED = BigDecimal.valueOf(500);
 
 
-    @Autowired
+    @InjectMocks
     private FutureBookingsController futureBookingsController;
 
-    @MockBean(name = "futureBookingsService")
+    @Mock
     private FutureBookingsService futureBookingsService;
 
     @Before

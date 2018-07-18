@@ -22,10 +22,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.*;
 
@@ -33,8 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class PsuServiceTest {
     private static final String PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String PSU_ID_1 = "zz99999-9999-9999-9999-999999999999";
@@ -47,10 +45,10 @@ public class PsuServiceTest {
     private static final String WRONG_IBAN = "wrong_iban";
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
 
-    @Autowired
+    @InjectMocks
     private PsuService psuService;
 
-    @MockBean
+    @Mock
     private PsuRepository psuRepository;
 
     @Before
