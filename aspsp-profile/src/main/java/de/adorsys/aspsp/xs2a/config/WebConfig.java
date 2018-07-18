@@ -34,6 +34,10 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Slf4j
 @Configuration
@@ -65,20 +69,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ProfileConfiguration profileConfiguration() {
-        File file = new File(bankProfilePath);
-        ProfileConfiguration profileConfiguration = getBankConfFromResource();
-
-        if (file.exists()) {
-            profileConfiguration = getBankConfFromFile(file);
-        }
-        return profileConfiguration;
+        Path path = Paths.get(bankProfilePath);
+        return Files.exists(path, LinkOption.NOFOLLOW_LINKS)
+                   ? getBankConfFromFile(path.toFile())
+                   : getBankConfFromResource();
     }
 
     private ProfileConfiguration getBankConfFromFile(File file) {
         try {
             return new Yaml().loadAs(new FileInputStream(file), ProfileConfiguration.class);
         } catch (Exception ex) {
-            log.warn("Problem with loading bank profile form file system: {}", ex);
+            log.warn("An error occurred while reading the bank profile from file system: {}", ex);
             return null;
         }
     }
@@ -88,7 +89,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(BANK_CONF_PROPERTY_FILE);
             return new Yaml().loadAs(inputStream, ProfileConfiguration.class);
         } catch (Exception ex) {
-            log.warn("Problem with loading bank profile form resource: {}", ex);
+            log.warn("An error occurred while reading the bank profile from internal resource: {}", ex);
             return null;
         }
     }
