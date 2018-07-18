@@ -26,6 +26,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class EmailConfiguration {
         if (isParametersExist()) {
             JavaMailSenderImpl sender = new JavaMailSenderImpl();
             sender.setHost(emailConfigurationProperties.getHost());
-            sender.setPort(emailConfigurationProperties.getPort());
+            sender.setPort(parseInt(emailConfigurationProperties.getPort()));
             sender.setUsername(emailConfigurationProperties.getUsername());
             sender.setPassword(emailConfigurationProperties.getPassword());
             sender.setJavaMailProperties(buildMailProperties());
@@ -65,7 +66,7 @@ public class EmailConfiguration {
 
     private boolean isParametersExist() {
         return isNotBlank(emailConfigurationProperties.getHost()) &&
-                   emailConfigurationProperties.getPort() != 0 &&
+                   isNotBlank(emailConfigurationProperties.getPort()) &&
                    isAuthParametersExist();
     }
 
