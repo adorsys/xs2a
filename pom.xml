@@ -122,6 +122,7 @@
         <commons-certvalidator.version>2.1.1</commons-certvalidator.version>
         <bcpkix-jdk15on.version>1.59</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
+        <freemarker.version>2.3.28</freemarker.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
