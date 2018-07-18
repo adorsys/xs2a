@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PisConsentService {
+public class PISConsentService {
     private final PisConsentRepository pisConsentRepository;
 
     public Optional<String> createSinglePaymentConsent(PisConsentRequest request) {
