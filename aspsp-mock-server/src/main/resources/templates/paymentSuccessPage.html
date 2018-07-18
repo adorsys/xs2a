@@ -23,10 +23,23 @@
 <div th:object="${paymentDetails}">
     <label>Your payment is successful!Payment id is:</label>
     <p th:utext="*{paymentId}"></p>
+    <label>The purchase:</label>
+    <p th:utext="*{remittanceInformationUnstructured}"></p>
     <label>Amount to be charged:</label>
     <p th:utext="*{instructedAmount.content}"></p>
     <label>Currency:</label>
     <p th:utext="*{instructedAmount.currency}"></p>
+    <label>Debtor: </label>
+    <p th:utext="*{ultimateDebtor}"></p>
+    <p th:utext="*{debtorAccount.getIban()}"></p>
+    <label>Creditor: </label>
+    <p th:utext="*{creditorName}"></p>
+    <p th:utext="*{creditorAccount.getIban()}"></p>
+
+    <label>Date: </label>
+    <p th:utext="*{requestedExecutionDate}"></p>
+    <label>Time: </label>
+    <p th:utext="*{requestedExecutionTime}"></p>
 </div>
 </body>
 </html>

@@ -37,7 +37,7 @@ Feature: Payment Initiation Service
             | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-psu-ip-address.json |
 
     # TODO Single payment with not existing tpp-transaction-id -> 400  (are there not existant id's / not in the system?)
-    # TODO Single payment with not existing tpp-request-id -> 400      (are there not existant id's / not in the system?)
+    # TODO Single payment with not existing x-request-id -> 400      (are there not existant id's / not in the system?)
     # TODO Single payment with not existing psu-ip-address -> 400      (are there not existant id's / not in the system?)
 
 

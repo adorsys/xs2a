@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class CmsPisMapper {
-    private AccountMapper accountMapper;
-    private PaymentMapper paymentMapper;
+    private final AccountMapper accountMapper;
+    private final PaymentMapper paymentMapper;
 
     public PisSinglePayment mapToPisSinglePayment(SinglePayments paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)

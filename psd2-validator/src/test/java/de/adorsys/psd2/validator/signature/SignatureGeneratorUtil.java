@@ -15,9 +15,9 @@ import org.tomitribe.auth.signatures.Signature;
 import org.tomitribe.auth.signatures.Signer;
 
 /**
- * 
+ *
  * @author guymoyo
- * 
+ *
  *         an example of TPP signature
  *
  */
@@ -45,12 +45,12 @@ public class SignatureGeneratorUtil {
 
 	/**
 	 * According to Psd2, it Must include “Digest”, “TPP-Transaction-ID”,
-	 * “TPP-Request-ID”, “PSU-ID” (if and only if “PSU-ID” is included as a
+	 * “x-request-id”, “PSU-ID” (if and only if “PSU-ID” is included as a
 	 * header of the HTTP- Request). “PSU-Corporate-ID” (if and only if “PSU-
 	 * Corporate-ID” is included as a header of the HTTP-Request). “Date” No
 	 * other entries may be included
 	 */
-	private String headers = "Digest TPP-Transaction-ID TPP-Request-ID PSU-ID Timestamp";
+	private String headers = "Digest TPP-Transaction-ID x-request-id PSU-ID Timestamp";
 
 	// NOPMD TODO remove this and inside a file
 	private String privateKeyPem = "-----BEGIN PRIVATE KEY-----\n"
@@ -98,7 +98,7 @@ public class SignatureGeneratorUtil {
 		Map<String, String> headersMap = new HashMap<>();
 		headersMap.put("Digest", digest);
 		headersMap.put("TPP-Transaction-ID", "3dc3d5b3-7023-4848-9853-f5400a64e80f");
-		headersMap.put("TPP-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
+		headersMap.put("X-Request-ID", "99391c7e-ad88-49ec-a2ad-99ddcb1f7721");
 		headersMap.put("PSU-ID", "PSU-1234");
 		headersMap.put("Timestamp", "Sun, 06 Aug 2017 15:02:37 GMT");
 

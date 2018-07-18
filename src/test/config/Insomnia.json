@@ -376,7 +376,7 @@
 				},
 				{
 					"id": "pair_1baeeacbf7b44fb89c707c85c8c8752f",
-					"name": "tpp-request-id",
+					"name": "x-request-id",
 					"value": "21d40f65-a150-8343-b539-b9a822ae98c0"
 				},
 				{
@@ -421,7 +421,7 @@
 				},
 				{
 					"id": "pair_1baeeacbf7b44fb89c707c85c8c8752f",
-					"name": "tpp-request-id",
+					"name": "x-request-id",
 					"value": "21d40f65-a150-8343-b539-b9a822ae98c0"
 				},
 				{
@@ -466,7 +466,7 @@
 				},
 				{
 					"id": "pair_1baeeacbf7b44fb89c707c85c8c8752f",
-					"name": "tpp-request-id",
+					"name": "x-request-id",
 					"value": "21d40f65-a150-8343-b539-b9a822ae98c0"
 				},
 				{

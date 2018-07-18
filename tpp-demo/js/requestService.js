@@ -75,6 +75,7 @@ function getPaymentInitiationRequestJson(productNumber) {
     formObject.ultimateDebtor = $("#debtorName").val();
     formObject.creditorName = $("#creditorName").val();
     formObject.ultimateCreditor = $("#creditorName").val();
+    formObject.remittanceInformationUnstructured = $("#productName"+ productNumber).val();
 
     var dateTime = new Date();
     dateTime.setDate(dateTime.getDate() + 1);
@@ -94,7 +95,7 @@ function getRequestHeaders() {
     var headers = {};
 
     headers["tpp-transaction-id"] = "16d40f49-a110-4344-a949-f99828ae13c9";
-    headers["tpp-request-id"] = "2f77a125-aa7a-45c0-b414-cea25a116035";
+    headers["x-request-id"] = "2f77a125-aa7a-45c0-b414-cea25a116035";
     headers["psu-ip-address"] = "192.168.8.78";
     headers["content-type"] = "application/json";
 

@@ -103,7 +103,7 @@ The following usage of abbreviations in the Location and Usage columns is define
 | TPP Role                            |                                   |      |     |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
 | TPP National Competent Authority    |                                   |      |     |        |      |      x      |        m        |                  |     m     |            |     m      |             |      m       |               |
 | Transaction Identification          | TPP-Transaction-ID                |      |     |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
-| Request Identification              | TPP-Request-ID                    |      |     |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
+| Request Identification              | x-request-id                    |      |     |    x   |      |             |        m        |                  |     m     |            |     m      |             |      m       |               |
 | Resource ID                         | consentId                         |      |     |        |  x   |             |                 |        m         |           |            |            |             |              |               |
 | Resource-ID[^5]                     | Consent-ID                        |      |     |    x   |      |             |                 |                  |           |            |            |             |              |      c        |
 | Access Token (from optional OAuth2) | Authorization Bearer              |      |     |    x   |      |             |        c        |                  |     c     |            |     c      |             |      c       |               |
@@ -199,7 +199,7 @@ When this Consent Request is a request where the "recurringIndicator" equals "tr
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
 | TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| x-request-id	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
 | PSU-ID|	String	|Conditional	|Might be mandated in the ASPSP’s documentation. Is not contained if the optional OAuth Pre-Step was performed.|
 | PSU-ID-Type |	String	|Conditional	|Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. |
 | PSU-Corporate-ID |	String |	Conditional |	Might be mandated in the ASPSP's documentation. Only used in a corporate context. |
@@ -249,7 +249,7 @@ The Location field is used as hyperlink to the status of the created resource. N
     Content-Encoding        gzip
     Content-Type            application/json
     TPP-Transaction-ID      3dc3d5b3-7023-4848-9853-f5400a64e80g
-    TPP-Request-ID          99391c7e-ad88-49ec-a2ad-99ddcb1f7756
+    x-request-id          99391c7e-ad88-49ec-a2ad-99ddcb1f7756
     PSU-IP-Address          192.168.8.78
     PSU-Agent               Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
     Date                    Sun, 06 Aug 2017 15:02:37 GMT
@@ -338,7 +338,7 @@ If this function is supported, it will imply a consent on all available accounts
     Content-Encoding:       gzip
     Content-Type:           application/json
     TPP-Transaction-ID:     3dc3d5b3-7023-4848-9853-f5400a64e80g 
-    TPP-Request-ID:          99391c7e-ad88-49ec-a2ad-99ddcb1f7756 
+    x-request-id:          99391c7e-ad88-49ec-a2ad-99ddcb1f7756 
     PSU-IP-Address:         192.168.8.78
     PSU-Agent:              Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
     Date:                   Sun, 06 Aug 2017 15:05:37 GMT
@@ -358,7 +358,7 @@ If this function is supported, it will imply a consent on all available accounts
         Content-Encoding:       gzip
         Content-Type:           application/json
         TPP-Transaction-ID:     3dc3d5b3-7023-4848-9853-f5400a64e80g 
-        TPP-Request-ID:         99391c7e-ad88-49ec-a2ad-99ddcb1f7756 
+        x-request-id:         99391c7e-ad88-49ec-a2ad-99ddcb1f7756 
         PSU-IP-Address:         192.168.8.78
         PSU-Agent:              Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
         Date:                   Sun, 06 Aug 2017 15:05:37 GMT
@@ -509,7 +509,7 @@ No specific query parameters.
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
 | TPP-Transaction-ID | UUID | Mandatory | ID of the transaction as determined by the initiating party. |
-| TPP-Request-ID | UUID | Mandatory | |
+| x-request-id | UUID | Mandatory | |
 | Authorization Bearer | String | Conditional | Is contained only, if an OAuth2 based SCA was performed in the corresponding consent transaction. |
 
 
@@ -564,7 +564,7 @@ Reads a list of accounts. It is assumed that a consent of the PSU to this access
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
 | TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| x-request-id	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
 | Consent-ID | String | Mandatory | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
 | Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed or an OAuth2 based SCA was performed in the related consent authorization. |
 | Signature | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
@@ -690,7 +690,7 @@ Reads details about an account, with balances where required. It is assumed that
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
 | TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| x-request-id	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
 | Consent-ID | String | Mandatory | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
 | Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed or an OAuth2 based SCA was performed in the related consent authorization. |
 | Signature | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
@@ -767,7 +767,7 @@ Remark: This account-id can be a tokenized identification due to data protection
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
 | TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| TPP-Request-ID	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| x-request-id	| UUID|  	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
 | Consent-ID | String | Mandatory | Shall be contained if "Establish Consent Transaction" was performed via this API before. |
 | Authorization Bearer |	String |	Conditional |	Is contained only, if the optional OAuth2 Pre-Step was performed or an OAuth2 based SCA was performed in the related consent authorization. |
 | Signature | String | Conditional | A signature of the request by the TPP on application level. This might be mandated by ASPSP. |
@@ -862,7 +862,7 @@ Remark: If the ASPSP is not providing the "GET Account List" call, then the ASPS
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
 | TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party. In case of a once off read data request, this Process-ID equals the Process-ID of the corresponding Account Information Consent Request.|
-| TPP-Request-ID	| UUID|  	Mandatory	|  |
+| x-request-id	| UUID|  	Mandatory	|  |
 | Consent-ID | String | Mandatory |  |
 | Authorization Bearer |	String |	Conditional |	Is contained only, if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in the related consent authorization. |
 | Accept | String | Conditional | The TPP can indicate the formats of account reports supported together with a priorisation following the http header definition. The supported formats are XML, JSON and text. |   

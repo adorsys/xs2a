@@ -39,17 +39,17 @@ abstract class CommonRequestHeader implements RequestHeader {
     private UUID tppTransactionId;
 
     @ApiModelProperty(value = "ID of the tpp request", required = true, example = "f87cdfbe-a35e-407b-93a4-94fe2edc8d2e")
-    @JsonProperty(value = "tpp-request-id")
+    @JsonProperty(value = "x-request-id")
     @NotNull
-    private UUID tppRequestId;
+    private UUID xRequestId;
 
-    @ApiModelProperty(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP", required = false, example = "keyId='Serial_Number_Of_The_TPP’s_certificate',algorithm='rsa- sha256', headers='Digest TPP-Transaction-ID TPP-Request-ID PSU-ID Date', signature='Base64(RSA-SHA256(signing string))")
+    @ApiModelProperty(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP", required = false, example = "keyId='Serial_Number_Of_The_TPP’s_certificate',algorithm='rsa- sha256', headers='Digest TPP-Transaction-ID x-request-id PSU-ID Date', signature='Base64(RSA-SHA256(signing string))")
     @JsonProperty(value = "signature")
     private String signature;
 
     @ApiModelProperty(value = "The certificate used for signing the request, in base64 encoding. It shall be contained if a signature is used, see above", required = false, example = "TPP's_eIDAS_Certificate")
-    @JsonProperty(value = "tpp-certificate")
-    private String tppCertificate;
+    @JsonProperty(value = "tpp-signature-certificate")
+    private String tppSignatureCertificate;
 
     @ApiModelProperty(value = "If OAuth2 has been chosen as pre-step to authenticate the PSU", required = false, example = "FJFJWOIEJFOIWEJOEWJ")
     @JsonProperty(value = "Authorization")
