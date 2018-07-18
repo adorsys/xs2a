@@ -66,22 +66,23 @@ public class PaymentServiceTest {
             .thenReturn(false);
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
+        when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
+        when(paymentMapper.mapToSpiSinglePayments(any(AspspPayment.class))).thenReturn(getSpiSinglePayment(50));
     }
 
-    /*
-    TODO Will be fix in the next sprint
     @Test
     public void addPayment_Success() {
+        when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         //Given
         SpiSinglePayments expectedPayment = getSpiSinglePayment(50);
 
         //When
-        SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment).get();
+        Optional<SpiSinglePayments> spiSinglePayments = paymentService.addPayment(expectedPayment);
+        SpiSinglePayments actualPayment = spiSinglePayments.orElse(null);
 
         //Then
         assertThat(actualPayment).isNotNull();
     }
-    */
 
     @Test
     public void addPayment_Failure() {

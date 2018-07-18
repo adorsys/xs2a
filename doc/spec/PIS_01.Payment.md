@@ -65,7 +65,7 @@ The following usage of abbreviations in the Location and Usage columns is define
 | TPP Roles                           |                                      |      |       |        |      |      x      |     m     |            |     m    |           |     m     |            |
 | TPP NationalCompetent Authority     |                                      |      |       |        |      |      x      |     m     |            |     m    |           |     m     |            |
 | Transaction Identification          | TPP-Transaction-ID (unique ID of TPP)|      |       |    x   |      |             |     m     |            |     m    |           |     m     |            |
-| Request Identification              | TPP-Request-ID                       |      |       |    x   |      |             |     m     |            |     m    |           |     m     |            |
+| Request Identification              | x-request-id                       |      |       |    x   |      |             |     m     |            |     m    |           |     m     |            |
 | Resource ID                         | paymentId                            |   x  |       |        |   x  |             |           |      m     |     m    |           |     m     |            |
 | Access Token (fromoptional OAuth 2) | Authorization Bearer                 |      |       |    x   |      |             |     c     |            |     c    |           |     c     |            |
 | TPP Signing                         | TPP-Certificate                      |      |       |    x   |      |             |     c     |            |     c    |           |     c     |            |
@@ -135,7 +135,7 @@ Attribute | Type  | Condition | Description |
 ------- | ---------------- |  :---------  |  :---------
 | Content-Type	| string |	Mandatory |	application/json |
 | TPP-Transaction-ID	| UUID	|Mandatory|	ID of the transaction as determined by the initiating party|
-| TPP-Request-ID	| UUID|	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
+| x-request-id	| UUID|	Mandatory	| ID of the request, unique to the call, as determined by the initiating party.|
 | PSU-ID|	String	|Conditional	| Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP’s documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session.|
 | PSU-ID-Type | String | Conditional | Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. |
 | PSU-Corporate-ID |	String |	Conditional |	Might be mandated in the ASPSP's documentation. Only used in a corporate context. |
@@ -223,7 +223,7 @@ Attribute | Type  | Condition | Description |
     Content-Encoding gzip
     Content-Type application/json
     TPP-Transaction-ID 3dc3d5b3-7023-4848-9853-f5400a64e80f
-    TPP-Request-ID 99391c7e-ad88-49ec-a2ad-99ddcb1f7721
+    x-request-id 99391c7e-ad88-49ec-a2ad-99ddcb1f7721
     PSU-IP-Address 192.168.8.78
     PSU-GEO-Location:	GEO:52.506931,13.144558
     PSU-Agent Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
@@ -339,7 +339,7 @@ The formats of the Payment Initiation Response resp. the subsequent transaction 
     Content-Encoding:    gzip
     Content-Type:        application/json
     TPP-Transaction-ID:  3dc3d5b3-7023-4848-9853-f5400a64e80f 
-    TPP-Request-ID:      99391c7e-ad88-49ec-a2ad-99ddcb1f7721 
+    x-request-id:      99391c7e-ad88-49ec-a2ad-99ddcb1f7721 
     PSU-IP-Address:      192.168.8.78
     PSU-Agent:           Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0
     Date:                Sun, 06 Aug 2017 15:02:37 GMT
@@ -379,7 +379,7 @@ Can check the status of a payment initiation.
 Attribute | Type | Condition | Description |
 ------- | ---------------- | ---------------- | ----------------
 | TPP-Transaction-ID |  UUID  | Mandatory | |
-| TPP-Request-ID |  UUID  | Mandatory | |
+| x-request-id |  UUID  | Mandatory | |
 | Authorization Bearer |  String  | Conditional | Is contained only, if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in the current PIS transaction or in a preceeding AIS service in the same session, if no such OAuth2 SCA approach was chosen in the current PIS transaction.  |
 | Signature |  String | Conditional | A signature of the request by the TPP on  application level. This might be mandated by ASPSP. |
 | TPP-Certificate |  String | Conditional | The certificate used for signing the request in base64 encoding. Must be contained if a signature is contained, see above. |
@@ -405,7 +405,7 @@ Attribute | Type | Condition | Description |
     GET https://api.testbank.com/v1/payments/sepa-credittransfers/qwer3456tzui7890/status
     Accept application/json
     TPP-Transaction-ID 3dc3d5b3-7023-4848-9853-f5400a64e80f
-    TPP-Request-ID 99391c7e-ad88-49ec-a2ad-99ddcb1f7721
+    x-request-id 99391c7e-ad88-49ec-a2ad-99ddcb1f7721
     Date Sun, 06 Aug 2017 15:04:07 GMT
     
 Response Code 200

@@ -106,6 +106,9 @@ public class PeriodicPaymentsControllerTest {
     private PaymentInitialisationResponse getPaymentInitializationResponse() {
         PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
         resp.setTransactionStatus(TransactionStatus.ACCP);
+        resp.setPaymentId("352397d6-a9f2-4914-8549-d127c02660ba");
+        resp.setPisConsentId("f33e9b14-56b8-4f3b-b2fd-87884a4a24b9");
+        resp.setIban("DE89370400440532013000");
         resp.setLinks(new Links());
         return resp;
     }

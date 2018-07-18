@@ -3,7 +3,7 @@
     "header": [
       {
         "tpp-transaction-id": "16d40f49a110-4344-a949-f99828ae13c9",
-        "tpp-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+        "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
         "psu-ip-address": "192.168.0.26"
       }
     ],
