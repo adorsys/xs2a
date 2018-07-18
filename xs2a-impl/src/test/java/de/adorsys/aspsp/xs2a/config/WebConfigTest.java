@@ -35,7 +35,7 @@ import javax.validation.Validator;
 
 @EnableWebMvc
 @TestConfiguration
-@ActiveProfiles(profiles = {"mockspi","test"})
+@ActiveProfiles(profiles = "test")
 @TestPropertySource("classpath:application-test.properties")
 public class WebConfigTest extends WebMvcConfigurerAdapter {
 

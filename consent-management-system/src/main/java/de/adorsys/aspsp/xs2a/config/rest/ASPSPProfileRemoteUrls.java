@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AspspProfileRemoteUrls {
+public class ASPSPProfileRemoteUrls {
 
     @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
     private String aspspProfileBaseUrl;

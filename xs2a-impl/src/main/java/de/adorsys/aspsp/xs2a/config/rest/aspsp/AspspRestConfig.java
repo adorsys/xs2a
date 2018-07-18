@@ -28,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 @Configuration
-@Profile("mockspi")
 public class AspspRestConfig {
     @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
