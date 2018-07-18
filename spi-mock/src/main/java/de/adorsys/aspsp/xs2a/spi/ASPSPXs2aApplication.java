@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a;
+package de.adorsys.aspsp.xs2a.spi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2.validator"})
 public class ASPSPXs2aApplication {
 
     public static void main(String[] args) {
