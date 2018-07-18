@@ -7,8 +7,8 @@ ENV JAVA_TOOL_OPTIONS -Xmx1024m
 
 WORKDIR /opt/aspsp-xs2a
 
-COPY ./target/aspsp-xs2a*jar /opt/aspsp-xs2a/aspsp-xs2a.jar
+COPY ./target/spi-mock*jar /opt/aspsp-xs2a/spi-mock.jar
 
 EXPOSE 8080
 
-CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/aspsp-xs2a/aspsp-xs2a.jar
+CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/aspsp-xs2a/spi-mock.jar
