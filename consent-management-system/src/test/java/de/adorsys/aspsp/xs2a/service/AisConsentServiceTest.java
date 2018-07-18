@@ -30,7 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +46,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentServiceTest {
     @InjectMocks
-    private AisConsentService aisConsentService;
+    private AISConsentService aisConsentService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock

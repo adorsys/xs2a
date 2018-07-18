@@ -44,7 +44,7 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.*;
 
 @Service
 @RequiredArgsConstructor
-public class AisConsentService {
+public class AISConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
     private final ConsentMapper consentMapper;
