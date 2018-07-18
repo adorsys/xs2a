@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a;
+package de.adorsys.aspsp.aspspmockserver.domain;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@SpringBootApplication
-public class ASPSPXs2aApplication {
+@Data
+@NoArgsConstructor
+public class PaymentConfirmation {
+    private String iban;
+    private String consentId;
+    private String paymentId;
+    private String tanNumber;
 
-    public static void main(String[] args) {
-        SpringApplication.run(ASPSPXs2aApplication.class, args);
+    public PaymentConfirmation(String iban, String consentId, String paymentId) {
+        this.iban = iban;
+        this.consentId = consentId;
+        this.paymentId = paymentId;
     }
 }

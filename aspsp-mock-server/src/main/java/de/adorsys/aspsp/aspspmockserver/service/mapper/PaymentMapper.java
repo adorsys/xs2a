@@ -16,61 +16,16 @@
 
 package de.adorsys.aspsp.aspspmockserver.service.mapper;
 
-import de.adorsys.aspsp.aspspmockserver.service.AccountService;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.Currency;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
 public class PaymentMapper {
-    private final AccountService accountService;
-
-    public SpiSinglePayments mapToSpiSinglePayments(PisPayment pisPayment) {
-        return Optional.ofNullable(pisPayment)
-                   .map(pis -> {
-                       SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
-                       spiSinglePayments.setEndToEndIdentification(pis.getEndToEndIdentification());
-                       spiSinglePayments.setDebtorAccount(mapToSpiAccountReference(pis.getDebtorIban(), pis.getCurrency()));
-                       spiSinglePayments.setUltimateDebtor(pis.getUltimateDebtor());
-                       spiSinglePayments.setInstructedAmount(mapToSpiAmount(pis.getAmount(), pis.getCurrency()));
-                       spiSinglePayments.setCreditorAccount(mapToSpiAccountReference(pis.getCreditorIban(), pis.getCurrency()));
-                       spiSinglePayments.setCreditorAgent(pis.getCreditorAgent());
-                       spiSinglePayments.setCreditorName(pis.getCreditorName());
-                       spiSinglePayments.setUltimateCreditor(pis.getUltimateCreditor());
-                       spiSinglePayments.setPurposeCode(pis.getPurposeCode());
-                       spiSinglePayments.setRequestedExecutionDate(pis.getRequestedExecutionDate());
-                       spiSinglePayments.setRequestedExecutionTime(pis.getRequestedExecutionTime());
-
-                       return spiSinglePayments;
-                   })
-                   .orElse(null);
-    }
-
-    private SpiAmount mapToSpiAmount(BigDecimal amount, Currency currency) {
-        return Optional.ofNullable(currency)
-                   .map(curr -> new SpiAmount(currency, amount))
-                   .orElse(null);
-    }
-
-    private SpiAccountReference mapToSpiAccountReference(String iban, Currency currency) {
-        return accountService.getAccountsByIban(iban).stream()
-                   .filter(accDet -> accDet.getCurrency() == currency)
-                   .findFirst()
-                   .map(acc -> new SpiAccountReference(iban, acc.getBban(), acc.getPan(), acc.getMaskedPan(), acc.getMsisdn(), currency))
-                   .orElse(null);
-    }
-
     public AspspPayment mapToAspspPayment(SpiSinglePayments singlePayments, PisPaymentType paymentType) {
         return Optional.ofNullable(singlePayments)
                    .map(s -> buildAspspPayment(s, paymentType))
@@ -105,6 +60,8 @@ public class PaymentMapper {
         aspsp.setRequestedExecutionDate(single.getRequestedExecutionDate());
         aspsp.setRequestedExecutionTime(single.getRequestedExecutionTime());
         aspsp.setPaymentStatus(single.getPaymentStatus());
+        aspsp.setRemittanceInformationStructured(single.getRemittanceInformationStructured());
+        aspsp.setRemittanceInformationUnstructured(single.getRemittanceInformationUnstructured());
         return aspsp;
     }
 
@@ -125,6 +82,8 @@ public class PaymentMapper {
                        single.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
                        single.setRequestedExecutionTime(aspsp.getRequestedExecutionTime());
                        single.setPaymentStatus(aspspPayment.getPaymentStatus());
+                       single.setRemittanceInformationStructured(aspsp.getRemittanceInformationStructured());
+                       single.setRemittanceInformationUnstructured(aspsp.getRemittanceInformationUnstructured());
                        return single;
                    })
                    .orElse(null);
@@ -152,6 +111,8 @@ public class PaymentMapper {
                        periodic.setFrequency(aspsp.getFrequency());
                        periodic.setDayOfExecution(aspsp.getDayOfExecution());
                        periodic.setPaymentStatus(aspspPayment.getPaymentStatus());
+                       periodic.setRemittanceInformationStructured(aspsp.getRemittanceInformationStructured());
+                       periodic.setRemittanceInformationUnstructured(aspsp.getRemittanceInformationUnstructured());
                        return periodic;
                    })
                    .orElse(null);

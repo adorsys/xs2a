@@ -44,7 +44,7 @@ public class PaymentController<T> {
         @ApiResponse(code = 403, message = "Wrong path variables")})
     @GetMapping(path = "/{payment-service}/{payment-product}/{paymentId}")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "Content-Type", value = "application/json", required = true, dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "Content-Type", value = "application/json", required = true, dataType = "String", paramType = "header", allowableValues = "application/json"),
         @ApiImplicitParam(name = "X-Request-ID", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "PSU-ID", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "PSU-ID-Type", value = "no data", required = false, dataType = "String", paramType = "header"),

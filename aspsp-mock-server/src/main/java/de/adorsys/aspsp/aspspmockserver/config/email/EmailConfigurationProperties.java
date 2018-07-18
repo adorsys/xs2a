@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
+package de.adorsys.aspsp.aspspmockserver.config.email;
 
-function getPaymentRedirectLink(productNumber) {
-    var paymentResp = sendPaymentRequestAndGetResponse(productNumber);
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-    if ((paymentResp["_links"] !== undefined)
-        && (paymentResp["_links"].scaRedirect !== undefined)) {
-
-        var redirectLink = paymentResp["_links"].scaRedirect;
-        console.log("redirectLink : " + redirectLink);
-
-        window.location = redirectLink;
-    }
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "spring.mail")
+public class EmailConfigurationProperties {
+    private String host;
+    private String port;
+    private String password;
+    private String username;
 }

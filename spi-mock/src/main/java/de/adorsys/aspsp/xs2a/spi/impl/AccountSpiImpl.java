@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -38,7 +37,6 @@ import java.util.*;
 
 @Component
 @AllArgsConstructor
-@Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")

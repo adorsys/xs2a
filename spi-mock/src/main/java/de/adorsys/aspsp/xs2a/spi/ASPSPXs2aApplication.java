@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest;
+package de.adorsys.aspsp.xs2a.spi;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-@Component
-public class AspspProfileRemoteUrls {
+@SpringBootApplication
+@ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2.validator"})
+public class ASPSPXs2aApplication {
 
-    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
-    private String aspspProfileBaseUrl;
-
-    /**
-     * Returns URL-string in order to get frequency per day
-     *
-     * @return String
-     */
-    public String getFrequencyPerDay() {
-        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
+    public static void main(String[] args) {
+        SpringApplication.run(ASPSPXs2aApplication.class, args);
     }
 }

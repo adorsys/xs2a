@@ -16,17 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.domain.consents;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -38,8 +37,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class SpiAccountConsentModelsTest {
     private static final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private static final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
@@ -47,8 +45,8 @@ public class SpiAccountConsentModelsTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    @Autowired
-    private JsonConverter jsonConverter;
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
 
     @Test
     public void createConsentReq_jsonTest() throws IOException {

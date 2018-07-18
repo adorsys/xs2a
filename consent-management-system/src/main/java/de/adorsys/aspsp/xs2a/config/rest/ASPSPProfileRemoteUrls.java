@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web.view;
+package de.adorsys.aspsp.xs2a.config.rest;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-@Data
-@NoArgsConstructor
-public class PaymentConfirmation {
-    private String iban;
-    private String consentId;
-    private String tanNumber;
+@Component
+public class ASPSPProfileRemoteUrls {
 
-    public PaymentConfirmation(String iban, String consentId) {
-        this.iban = iban;
-        this.consentId = consentId;
+    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    private String aspspProfileBaseUrl;
+
+    /**
+     * Returns URL-string in order to get frequency per day
+     *
+     * @return String
+     */
+    public String getFrequencyPerDay() {
+        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
     }
 }

@@ -21,8 +21,10 @@ import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,12 +34,13 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PaymentConfirmationService {
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
-    private final EmailSenderService emailSender;
+    private final JavaMailSender emailSender;
     private final PaymentService paymentService;
     private final AccountService accountService;
 
@@ -80,7 +83,7 @@ public class PaymentConfirmationService {
                                      .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                                      .orElse(false);
         if (!tanNumberValid) {
-            paymentService.revokeOrRejectPaymentConsent(consentId, REJECTED);
+            paymentService.updatePaymentConsentStatus(consentId, REJECTED);
         }
         return tanNumberValid;
     }
@@ -124,6 +127,10 @@ public class PaymentConfirmationService {
         mail.setFrom(email);
         mail.setTo(email);
         mail.setText("Your TAN number is " + tanNumber);
+        if(emailSender == null){
+            log.warn("Email properties has not been set");
+            return false;
+        }
         emailSender.send(mail);
         return true;
     }

@@ -24,10 +24,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -36,8 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentConfirmationServiceTest {
     private static final String PSU_ID_1 = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String PSU_ID_2 = "ad918c89-4346-4f16-b5c8-d781b040200c";
@@ -50,16 +48,16 @@ public class PaymentConfirmationServiceTest {
     private static final String WRONG_TAN_NUMBER = "wrong tan number";
     private static final String CONSENT_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
 
-    @Autowired
+    @InjectMocks
     PaymentConfirmationService paymentConfirmationService;
 
-    @MockBean
+    @Mock
     private TanRepository tanRepository;
-    @MockBean
+    @Mock
     private PsuRepository psuRepository;
-    @MockBean
+    @Mock
     private AccountService accountService;
-    @MockBean
+    @Mock
     private PaymentService paymentService;
 
     @Before
