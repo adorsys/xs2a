@@ -38,7 +38,6 @@ import java.util.*;
 
 @Component
 @AllArgsConstructor
-@Profile("mockspi")
 public class AccountSpiImpl implements AccountSpi {
     private final AspspRemoteUrls remoteSpiUrls;
     @Qualifier("aspspRestTemplate")

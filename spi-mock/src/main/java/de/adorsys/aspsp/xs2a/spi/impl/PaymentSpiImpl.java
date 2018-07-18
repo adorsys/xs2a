@@ -42,7 +42,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @Component
 @AllArgsConstructor
-@Profile("mockspi")
 public class PaymentSpiImpl implements PaymentSpi {
     private final AspspRemoteUrls aspspRemoteUrls;
     @Qualifier("aspspRestTemplate")
