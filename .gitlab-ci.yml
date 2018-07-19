@@ -48,7 +48,7 @@ variables:
 
 .java_artifacts: &java_artifacts
   paths:
-    - "xs2a-impl/target/aspsp-xs2a*jar"
+    - "spi-mock/target/spi-mock*jar"
     - "consent-management-system/target/consent-management*jar"
     - "aspsp-profile/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
