@@ -53,9 +53,9 @@ public class PaymentConfirmationService {
     private final Configuration fmConfiguration;
 
     /**
-     * Generates new Tan and sends them to psu's email for payment confirmation
+     * Generates new Tan and sends it to psu's email for payment confirmation
      *
-     * @param iban Iban of Psu order to get correct Psu and than get psu's email
+     * @param iban Iban of Psu in order to get correct Psu and than get psu's email
      * @return true if psu was found and new Tan was sent successfully, otherwise return false
      */
     public boolean generateAndSendTanForPsuByIban(String iban) {
@@ -71,12 +71,12 @@ public class PaymentConfirmationService {
     }
 
     /**
-     * Gets new Tan and sends them to psu's email for payment confirmation
+     * Gets new Tan and sends it to psu's email for payment confirmation
      *
-     * @param iban      Iban of Psu order to get correct Psu
+     * @param iban      Iban of Psu in order to get correct Psu
      * @param tanNumber TAN
-     * @param consentId Id of consent in order to reject when Tan is wrong
-     * @return true if Tan has UNUSED, otherwise return false
+     * @param consentId Id of the consent in order to reject consent when tan is wrong
+     * @return true if Tan has status UNUSED, otherwise return false
      */
     public boolean isTanNumberValidByIban(String iban, String tanNumber, String consentId) {
         return accountService.getPsuIdByIban(iban)
