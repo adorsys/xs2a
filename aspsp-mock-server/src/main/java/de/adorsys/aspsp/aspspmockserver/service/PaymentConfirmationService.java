@@ -34,7 +34,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
@@ -130,6 +129,10 @@ public class PaymentConfirmationService {
     }
 
     private boolean sendTanNumberOnEmail(String email, String tanNumber) {
+        if (emailSender == null) {
+            log.warn("Email properties has not been set");
+            return false;
+        }
 
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         try {
@@ -137,8 +140,8 @@ public class PaymentConfirmationService {
             mail.setSubject("Your TAN for payment confirmation");
             mail.setFrom(email);
             mail.setTo(email);
+            mail.setText(getEmailContentFromTemplate(tanNumber), true);
 
-            mail.setText(getEmailContentFromTemplate(Collections.singletonMap("tan", tanNumber)), true);
             emailSender.send(mail.getMimeMessage());
             return true;
         } catch (MessagingException e) {
@@ -147,13 +150,14 @@ public class PaymentConfirmationService {
         }
     }
 
-    private String getEmailContentFromTemplate(Map<String, Object> model) {
+    private String getEmailContentFromTemplate(String tanNumber) {
         StringBuilder content = new StringBuilder();
         try {
             Template emailTemplate = fmConfiguration.getTemplate(EMAIL_TEMPLATE_PATH);
-            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(emailTemplate, model));
+            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(emailTemplate, Collections.singletonMap("tan", tanNumber)));
         } catch (Exception e) {
             log.warn("Problem with reading email template : {}", e);
+            return "Your TAN number is " + tanNumber;
         }
         return content.toString();
     }
