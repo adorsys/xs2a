@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -96,11 +98,23 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(BANK_CONF_PROPERTY_FILE);
             ProfileConfiguration profileConfiguration = new Yaml().loadAs(inputStream, ProfileConfiguration.class);
             inputStream.close();
+            addDefaultPaymentTypesToProfileConf(profileConfiguration);
 
             return profileConfiguration;
         } catch (Exception ex) {
             log.warn("An error occurred while reading the bank profile from internal resource: {}", ex);
             return null;
         }
+    }
+
+    private ProfileConfiguration addDefaultPaymentTypesToProfileConf(ProfileConfiguration profileConfiguration) {
+        String necessaryType = PaymentType.FUTURE_DATED.getValue();
+        List<String> types = profileConfiguration.getAvailablePaymentTypes();
+
+        if (!types.contains(necessaryType)) {
+            types.add(PaymentType.FUTURE_DATED.getValue());
+            profileConfiguration.setAvailablePaymentTypes(types);
+        }
+        return profileConfiguration;
     }
 }

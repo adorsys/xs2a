@@ -176,15 +176,4 @@ public class AspspProfileService {
     public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
         profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
     }
-
-    @PostConstruct
-    private void addDefaultPaymentTypesToProfileConf() { //NOPMD It is necessary for set single payment available by default
-        String necessaryType = PaymentType.FUTURE_DATED.getValue();
-        List<String> types = profileConfiguration.getAvailablePaymentTypes();
-
-        if (!types.contains(necessaryType)) {
-            types.add(PaymentType.FUTURE_DATED.getValue());
-            profileConfiguration.setAvailablePaymentTypes(types);
-        }
-    }
 }
