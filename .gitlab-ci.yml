@@ -146,8 +146,7 @@ pmd_report:
   tags:
     - aws_docker
   script:
-    - mvn -DskipTests clean install
-    - mvn pmd:pmd
+    - mvn -Dmaven.test.skip=true package pmd:pmd
   artifacts:
     paths:
     - "qa/pmd/pmd-ruleset.xml"
@@ -162,8 +161,7 @@ check_pmd:
   tags:
     - aws_docker
   script:
-    - mvn -DskipTests clean install
-    - mvn pmd:check
+    - mvn -Dmaven.test.skip=true package pmd:check
 
 check_javadoc:
   stage: "build:qa"
@@ -171,8 +169,7 @@ check_javadoc:
   tags:
     - aws_docker
   script:
-    - mvn -DskipTests clean install
-    - mvn javadoc:javadoc
+    - mvn -Dmaven.test.skip=true package javadoc:javadoc
   artifacts:
     paths:
     - "**/target/site/*"
