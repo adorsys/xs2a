@@ -33,11 +33,6 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 abstract class CommonRequestHeader implements RequestHeader {
 
-    @ApiModelProperty(value = "ID of the transaction as determined by the initiating party", required = true, example = "16d40f49-a110-4344-a949-f99828ae13c9")
-    @JsonProperty(value = "tpp-transaction-id")
-    @NotNull
-    private UUID tppTransactionId;
-
     @ApiModelProperty(value = "ID of the tpp request", required = true, example = "f87cdfbe-a35e-407b-93a4-94fe2edc8d2e")
     @JsonProperty(value = "x-request-id")
     @NotNull

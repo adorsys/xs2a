@@ -30,9 +30,7 @@ import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +39,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
@@ -77,7 +74,6 @@ public class PaymentServiceTest {
     private final SinglePayments SINGLE_PAYMENT_NOK_IBAN = getSinglePayment(WRONG_IBAN, AMOUNT);
     private final SinglePayments SINGLE_PAYMENT_NOK_AMOUNT = getSinglePayment(IBAN, EXCESSIVE_AMOUNT);
 
-
     @InjectMocks
     private PaymentService paymentService;
     @Mock
@@ -99,7 +95,7 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RCVD)).thenReturn(RCVD);
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(TransactionStatus.ACCP);
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(TransactionStatus.RJCT);
-        when(paymentMapper.mapToPaymentInitResponseFailedPayment(SINGLE_PAYMENT_NOK_IBAN, RESOURCE_UNKNOWN_400, false))
+        when(paymentMapper.mapToPaymentInitResponseFailedPayment(SINGLE_PAYMENT_NOK_IBAN, RESOURCE_UNKNOWN_400))
             .thenReturn(Optional.of(getPaymentResponse(RJCT, RESOURCE_UNKNOWN_400)));
 
         //Status by ID
@@ -157,7 +153,7 @@ public class PaymentServiceTest {
         when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK)).thenReturn(Optional.of(getPaymentResponse(RCVD, null)));
         PeriodicPayment payment = PERIODIC_PAYMENT_OK;
         //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -181,7 +177,7 @@ public class PaymentServiceTest {
 
     private void initiatePeriodicPaymentFailureTest(PeriodicPayment payment, MessageErrorCode errorCode) {
         //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
@@ -193,7 +189,7 @@ public class PaymentServiceTest {
     public void createBulkPayments() {
         List<SinglePayments> payment = Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_OK);
         //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().get(0).getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -216,7 +212,7 @@ public class PaymentServiceTest {
 
     private void createBulkPartialFailureTest(List<SinglePayments> payment, MessageErrorCode errorCode) {
         //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().get(0).getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -247,7 +243,7 @@ public class PaymentServiceTest {
 
     private void createBulkFailureTest(List<SinglePayments> payment, MessageErrorCode errorCode) {
         //When
-        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
@@ -259,7 +255,7 @@ public class PaymentServiceTest {
     public void createPaymentInitiation() {
         SinglePayments payment = SINGLE_PAYMENT_OK;
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then:
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -280,7 +276,7 @@ public class PaymentServiceTest {
 
     private void createPaymentInitiationFailureTests(SinglePayments payment, MessageErrorCode errorCode) {
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT, false);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then:
         assertThat(actualResponse.getBody()).isNull();
         assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
@@ -335,16 +331,6 @@ public class PaymentServiceTest {
         singlePayments.setInstructedAmount(amount);
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
-        return singlePayments;
-    }
-
-    private SpiSinglePayments getSpiSinglePayment(String iban, String amountToPay) {
-        SpiSinglePayments singlePayments = new SpiSinglePayments();
-        singlePayments.setEndToEndIdentification(PAYMENT_ID);
-        SpiAmount amount = new SpiAmount(CURRENCY, new BigDecimal(amountToPay));
-        singlePayments.setInstructedAmount(amount);
-        singlePayments.setDebtorAccount(getSpiReference(iban));
-        singlePayments.setCreditorAccount(getSpiReference(iban));
         return singlePayments;
     }
 

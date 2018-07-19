@@ -61,7 +61,7 @@ public class OauthScaPaymentServiceTest {
         when(paymentMapper.mapToSpiSinglePaymentList(getBulk(false,false))).thenReturn(getSpiBulk(false,false));
         when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true))).thenReturn(getResp(true));
         when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
-        when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED, false))
+        when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED))
             .thenReturn(getResp(false));
         when(paymentSpi.createBulkPayments(getSpiBulk(true, true))).thenReturn(getSpiRespList(true, true));
         when(paymentSpi.createBulkPayments(getSpiBulk(true, false))).thenReturn(getSpiRespList(true, false));

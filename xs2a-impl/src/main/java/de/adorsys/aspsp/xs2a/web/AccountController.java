@@ -50,19 +50,15 @@ public class AccountController {
     @GetMapping
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
-        @RequestHeader(name = "consent-id", required = false) String consentId,
+        @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-        @RequestParam(name = "with-balance", required = false) boolean withBalance,
-        @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-        @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance, psuInvolved);
+        @RequestParam(name = "with-balance", required = false) boolean withBalance) {
+        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance);
         return responseMapper.ok(responseObject);
     }
 
@@ -76,21 +72,17 @@ public class AccountController {
     @GetMapping(path = "/{account-id}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<AccountDetails> readAccountDetails(
-        @RequestHeader(name = "consent-id", required = false) String consentId,
+        @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed", example = "11111-999999999")
         @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-        @RequestParam(name = "with-balance", required = false) boolean withBalance,
-        @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-        @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance, psuInvolved);
+        @RequestParam(name = "with-balance", required = false) boolean withBalance) {
+        ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance);
         return responseMapper.ok(responseObject);
     }
 
@@ -104,19 +96,15 @@ public class AccountController {
     @GetMapping(path = "/{account-id}/balances")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<List<Balances>> getBalances(
-        @RequestHeader(name = "consent-id", required = false) String consentId,
+        @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
-        @PathVariable(name = "account-id") String accountId,
-        @ApiParam(name = "psu-involved", value = "If contained, it is indicated that a Psu has directly asked this account access in realtime. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-        @RequestParam(name = "psu-involved", required = false) boolean psuInvolved) {
-        ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId, psuInvolved);
+        @PathVariable(name = "account-id") String accountId) {
+        ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId);
         return responseMapper.ok(responseObject);
     }
 

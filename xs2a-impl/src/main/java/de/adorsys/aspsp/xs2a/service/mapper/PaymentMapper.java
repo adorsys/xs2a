@@ -124,13 +124,12 @@ public class PaymentMapper {
                    });
     }
 
-    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayments payment, MessageErrorCode error, boolean tppRedirectPreferred) {
+    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayments payment, MessageErrorCode error) {
         return Optional.ofNullable(payment)
                    .map(p -> {
                        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
                        response.setTransactionStatus(TransactionStatus.RJCT);
                        response.setPaymentId(p.getEndToEndIdentification());
-                       response.setTppRedirectPreferred(tppRedirectPreferred);
                        response.setTppMessages(new MessageErrorCode[]{error});
                        return response;
                    });

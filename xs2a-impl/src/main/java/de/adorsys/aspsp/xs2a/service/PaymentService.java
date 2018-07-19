@@ -71,7 +71,7 @@ public class PaymentService {
      * @param paymentProduct  The addressed payment product
      * @return Response containing information about created periodic payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validatePeriodicPayment(periodicPayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
             return ResponseObject.<PaymentInitialisationResponse>builder()
@@ -90,10 +90,9 @@ public class PaymentService {
      *
      * @param payments             List of single payments forming bulk payment
      * @param paymentProduct       The addressed payment product
-     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
      * @return List of payment initiation responses containing inforamtion about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct) {
         // TODO: should be validated by interceptors https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/166
         if (CollectionUtils.isEmpty(payments)) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
@@ -105,7 +104,7 @@ public class PaymentService {
         for (SinglePayments s : payments) {
             Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(s, paymentProduct);
             if (messageErrorCode.isPresent()) {
-                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayments() : s, messageErrorCode.get(), tppRedirectPreferred)
+                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayments() : s, messageErrorCode.get())
                     .map(invalidPayments::add);
             } else {
                 validPayments.add(s);
@@ -129,10 +128,9 @@ public class PaymentService {
      *
      * @param singlePayment        Single payment information
      * @param paymentProduct       The addressed payment product
-     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
      * @return Response containing information about created single payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(singlePayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
             return ResponseObject.<PaymentInitialisationResponse>builder()
