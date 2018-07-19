@@ -42,9 +42,10 @@ import java.nio.file.Paths;
 @Slf4j
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+    private final static String BANK_CONF_PROPERTY_FILE = "bank_profile.yml";
+
     @Value("${bank_profile.path}")
     private String bankProfilePath;
-    private final static String BANK_CONF_PROPERTY_FILE = "bank_profile.yml";
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -71,23 +72,32 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public ProfileConfiguration profileConfiguration() {
         Path path = Paths.get(bankProfilePath);
         return Files.exists(path, LinkOption.NOFOLLOW_LINKS)
-                   ? getBankConfFromFile(path.toFile())
-                   : getBankConfFromResource();
+                   ? getAspspConfigFromFileOrDefault(path.toFile())
+                   : getDefaultAspspFromResource();
     }
 
-    private ProfileConfiguration getBankConfFromFile(File file) {
+    private ProfileConfiguration getAspspConfigFromFileOrDefault(File file) {
         try {
-            return new Yaml().loadAs(new FileInputStream(file), ProfileConfiguration.class);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ProfileConfiguration profileConfiguration = new Yaml().loadAs(fileInputStream, ProfileConfiguration.class);
+            fileInputStream.close();
+
+            return profileConfiguration;
         } catch (Exception ex) {
             log.warn("An error occurred while reading the bank profile from file system: {}", ex);
-            return null;
+
+            // Load default aspsp config from resource
+            return getDefaultAspspFromResource();
         }
     }
 
-    private ProfileConfiguration getBankConfFromResource() {
+    private ProfileConfiguration getDefaultAspspFromResource() {
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(BANK_CONF_PROPERTY_FILE);
-            return new Yaml().loadAs(inputStream, ProfileConfiguration.class);
+            ProfileConfiguration profileConfiguration = new Yaml().loadAs(inputStream, ProfileConfiguration.class);
+            inputStream.close();
+
+            return profileConfiguration;
         } catch (Exception ex) {
             log.warn("An error occurred while reading the bank profile from internal resource: {}", ex);
             return null;
