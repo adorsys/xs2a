@@ -31,7 +31,7 @@ import java.util.List;
 @Data
 @Configuration
 @PropertySource(value = {"classpath:bank_profile.yml", "file:${bank_profile.path}"}, ignoreResourceNotFound = true)
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "setting")
 public class ProfileConfiguration {
     private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
