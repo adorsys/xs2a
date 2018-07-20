@@ -27,10 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -89,16 +86,7 @@ public class AccountMapper {
 
     public AccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
         return Optional.ofNullable(spiAccountReference)
-                   .map(ar -> {
-                       AccountReference accountReference = new AccountReference();
-                       accountReference.setIban(ar.getIban());
-                       accountReference.setBban(ar.getBban());
-                       accountReference.setPan(ar.getPan());
-                       accountReference.setMaskedPan(ar.getMaskedPan());
-                       accountReference.setMsisdn(ar.getMsisdn());
-                       accountReference.setCurrency(ar.getCurrency());
-                       return accountReference;
-                   })
+                   .map(ar -> getAccountReference(ar.getIban(), ar.getBban(), ar.getPan(), ar.getMaskedPan(), ar.getMsisdn(), ar.getCurrency()))
                    .orElse(null);
 
     }
@@ -179,9 +167,20 @@ public class AccountMapper {
 
     private AccountReference mapToAccountReference(AccountDetails details) {
         return Optional.ofNullable(details)
-                   .map(AccountDetails::getAccountReference)
+                   .map(det-> getAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()))
                    .orElse(null);
 
+    }
+
+    private AccountReference getAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
+        AccountReference reference = new AccountReference();
+        reference.setIban(iban);
+        reference.setBban(bban);
+        reference.setPan(pan);
+        reference.setMaskedPan(maskedPan);
+        reference.setMsisdn(msisdn);
+        reference.setCurrency(currency);
+        return reference;
     }
 
     private CashAccountType mapToAccountType(SpiAccountType spiAccountType) {

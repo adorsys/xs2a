@@ -80,16 +80,4 @@ public class AccountDetails {
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")
     private Links links = new Links();
-
-    public AccountReference getAccountReference(){
-        AccountReference reference = new AccountReference();
-        reference.setIban(this.iban);
-        reference.setBban(this.bban);
-        reference.setPan(this.pan);
-        reference.setMaskedPan(this.maskedPan);
-        reference.setMsisdn(this.msisdn);
-        reference.setCurrency(this.currency);
-        return reference;
-    }
-
 }
