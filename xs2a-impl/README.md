@@ -1,6 +1,6 @@
 # XS2A Server
 
-Rest-implementation of PSD2 XS2A Specification of Berlin Group
+Rest-implementation of PSD2 XS2A Specification of Berlin Group, used as a library for spi-mock server.
 
 ## Configuration and deployment
 To interact with keycloak server properly, please add following parameters to your application.properties file 
@@ -25,15 +25,6 @@ keycloak-password=zzz
 To skip ssl certificate verification add the following property to your application.properties file: 
 ```
 skip.ssl.certificate.verification=true
-```
-
-To run XS2A-Server app from command line
-
-```
-mvn clean install 
-mvn spring-boot:run
- 
-```
 
 ``` 
 # Keycloak run and setting instruction
