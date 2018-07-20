@@ -122,7 +122,6 @@
         <commons-certvalidator.version>2.1.1</commons-certvalidator.version>
         <bcpkix-jdk15on.version>1.59</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
-        <jackson-dataformat-yaml.version>2.9.6</jackson-dataformat-yaml.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
