@@ -22,14 +22,12 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -62,6 +60,7 @@ public class ConsentMapperTest {
     private ConsentMapper consentMapper;
 
     @Mock
+    private
     AccountMapper accountMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -117,18 +116,6 @@ public class ConsentMapperTest {
                                    })
                                    .collect(Collectors.toList()))
                    .orElse(Collections.emptyList());
-    }
-
-    @Test
-    public void mapGetAccountConsentStatusById() {
-        //Given:
-        SpiTransactionStatus expectedTransactionStatus = SpiTransactionStatus.ACCP;
-
-        //When:
-        TransactionStatus actualTransactionStatus = consentMapper.mapToTransactionStatus(expectedTransactionStatus);
-
-        //Then:
-        assertThat(expectedTransactionStatus.name()).isEqualTo(actualTransactionStatus.name());
     }
 
     @Test

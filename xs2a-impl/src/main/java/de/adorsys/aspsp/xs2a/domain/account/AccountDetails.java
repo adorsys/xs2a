@@ -81,4 +81,15 @@ public class AccountDetails {
     @JsonProperty("_links")
     private Links links = new Links();
 
+    public AccountReference getAccountReference(){
+        AccountReference reference = new AccountReference();
+        reference.setIban(this.iban);
+        reference.setBban(this.bban);
+        reference.setPan(this.pan);
+        reference.setMaskedPan(this.maskedPan);
+        reference.setMsisdn(this.msisdn);
+        reference.setCurrency(this.currency);
+        return reference;
+    }
+
 }
