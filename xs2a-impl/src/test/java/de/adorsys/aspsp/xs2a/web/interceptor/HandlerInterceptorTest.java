@@ -112,7 +112,6 @@ public class HandlerInterceptorTest {
     private HttpServletRequest getWrongRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
-        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 
         return request;
@@ -121,7 +120,6 @@ public class HandlerInterceptorTest {
     private HttpServletRequest getWrongRequestWrongTppRequestIdFormat() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
-        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
         request.addHeader("x-request-id", "wrong_format");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 
@@ -131,7 +129,6 @@ public class HandlerInterceptorTest {
     private HttpServletRequest getCorrectRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
-        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
         request.addHeader("x-request-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 

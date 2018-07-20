@@ -39,18 +39,18 @@ public class PaymentController<T> {
     private final PaymentService paymentService;
 
     @ApiOperation(value = "Get payment information", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = TransactionStatus.class),
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = TransactionStatus.class),
         @ApiResponse(code = 404, message = "Not found"),
         @ApiResponse(code = 403, message = "Wrong path variables")})
     @GetMapping(path = "/{payment-service}/{payment-product}/{paymentId}")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "Content-Type", value = "application/json", required = true, dataType = "String", paramType = "header", allowableValues = "application/json"),
-        @ApiImplicitParam(name = "X-Request-ID", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "PSU-ID", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "PSU-ID-Type", value = "no data", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "PSU-IP-Address", value = "192.168.0.26", required = true, dataType = "String", paramType = "header")})//NOPMD //Ip is required as description of the field
+        @ApiImplicitParam(name = "x-request-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "psu-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "psu-ip-type", value = "no data", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, dataType = "String", paramType = "header")})//NOPMD //Ip is required as description of the field
     public ResponseEntity getPaymentById(
         @ApiParam(name = "payment-service", value = "The addressed payment service", required = true, allowableValues = "payments, bulk-payments,periodic-payments")
         @PathVariable("payment-service") PaymentType paymentType,

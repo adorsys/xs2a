@@ -16,13 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.validator;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
@@ -63,9 +60,8 @@ public class RequestValidatorServiceTest {
     @Mock
     private AspspProfileService aspspProfileService;
 
-    private ParametersFactory parametersFactory = new ParametersFactory(new ObjectMapper());
     @Mock
-    Validator validator;
+    private Validator validator;
 
     @Before
     public void setUp() {
@@ -210,6 +206,6 @@ public class RequestValidatorServiceTest {
     }
 
     private Object getPeriodicPaymentsControllerHandler() throws NoSuchMethodException {
-        return new HandlerMethod(periodicPaymentsController, "createPeriodicPayment", String.class, boolean.class, PeriodicPayment.class);
+        return new HandlerMethod(periodicPaymentsController, "createPeriodicPayment", String.class, PeriodicPayment.class);
     }
 }

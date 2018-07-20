@@ -59,8 +59,8 @@ public class ConsentInformationControllerTest {
 
     @Before
     public void setUp() {
-        when(consentService.createAccountConsentsWithResponse(any(), anyBoolean(), anyBoolean(), eq(CORRECT_PSU_ID))).thenReturn(createConsentResponse(CONSENT_ID));
-        when(consentService.createAccountConsentsWithResponse(any(), anyBoolean(), anyBoolean(), eq(WRONG_PSU_ID))).thenReturn(createConsentResponse(null));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(CORRECT_PSU_ID))).thenReturn(createConsentResponse(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(WRONG_PSU_ID))).thenReturn(createConsentResponse(null));
         when(consentService.getAccountConsentsStatusById(CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatus>builder().body(ConsentStatus.RECEIVED).build());
         when(consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatus>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build());
         when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(getConsent(CONSENT_ID));
@@ -73,12 +73,10 @@ public class ConsentInformationControllerTest {
     public void createAccountConsent_Success() {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(createConsentResponse(CONSENT_ID).getBody(), HttpStatus.CREATED));
         //Given:
-        boolean tppRedirect = false;
-        boolean withBalance = false;
         CreateConsentReq consentRequest = new CreateConsentReq();
 
         //When:
-        ResponseEntity responseEntity = consentInformationController.createAccountConsent(CORRECT_PSU_ID, tppRedirect, withBalance, consentRequest);
+        ResponseEntity responseEntity = consentInformationController.createAccountConsent(CORRECT_PSU_ID, consentRequest);
         CreateConsentResp resp = (CreateConsentResp) responseEntity.getBody();
 
         //Then:
@@ -91,11 +89,9 @@ public class ConsentInformationControllerTest {
     public void createAccountConsent_Failure() {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(createConsentResponse(null).getError(), HttpStatus.NOT_FOUND));
         //Given:
-        boolean tppRedirect = false;
-        boolean withBalance = false;
         CreateConsentReq consentRequest = new CreateConsentReq();
         //When:
-        ResponseEntity responseEntity = consentInformationController.createAccountConsent(WRONG_PSU_ID, tppRedirect, withBalance, consentRequest);
+        ResponseEntity responseEntity = consentInformationController.createAccountConsent(WRONG_PSU_ID, consentRequest);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }

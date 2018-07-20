@@ -67,11 +67,11 @@ public class AccountControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        when(accountService.getAccountDetailsList(anyString(), anyBoolean(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
+        when(accountService.getAccountDetailsList(anyString(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
         ResponseObject<List<Balances>> balances = readBalances();
-        when(accountService.getBalances(anyString(), anyString(), anyBoolean())).thenReturn(balances);
+        when(accountService.getBalances(anyString(), anyString())).thenReturn(balances);
         when(accountService.getAccountReport(any(String.class), any(String.class), any(LocalDate.class), any(LocalDate.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
-        when(accountService.getAccountDetails(anyString(), any(), anyBoolean(), anyBoolean())).thenReturn(getAccountDetails());
+        when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getAccountDetails());
     }
 
     @Test
@@ -79,11 +79,10 @@ public class AccountControllerTest {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(getAccountDetails().getBody(), HttpStatus.OK));
         //Given
         boolean withBalance = true;
-        boolean psuInvolved = true;
         ResponseObject<AccountDetails> expectedResult = getAccountDetails();
 
         //When
-        AccountDetails result = accountController.readAccountDetails(CONSENT_ID, ACCOUNT_ID, withBalance, psuInvolved).getBody();
+        AccountDetails result = accountController.readAccountDetails(CONSENT_ID, ACCOUNT_ID, withBalance).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult.getBody());
@@ -94,11 +93,10 @@ public class AccountControllerTest {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody(), HttpStatus.OK));
         //Given
         boolean withBalance = true;
-        boolean psuInvolved = true;
         Map<String, List<AccountDetails>> expectedResult = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
 
         //When:
-        Map<String, List<AccountDetails>> result = accountController.getAccounts("id", withBalance, psuInvolved).getBody();
+        Map<String, List<AccountDetails>> result = accountController.getAccounts("id", withBalance).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -108,13 +106,12 @@ public class AccountControllerTest {
     public void getBalances_ResultTest() throws IOException {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(readBalances().getBody(), HttpStatus.OK));
         //Given:
-        boolean psuInvolved = true;
         Balances expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
         List<Balances> expectedResult = new ArrayList<>();
         expectedResult.add(expectedBalances);
 
         //When:
-        List<Balances> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID, psuInvolved).getBody();
+        List<Balances> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);

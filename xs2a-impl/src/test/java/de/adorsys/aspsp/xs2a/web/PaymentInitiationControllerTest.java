@@ -46,7 +46,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -71,7 +70,7 @@ public class PaymentInitiationControllerTest {
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    ResponseMapper responseMapper;
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
@@ -81,7 +80,7 @@ public class PaymentInitiationControllerTest {
         paymentStatusResponseWrongId.put("transactionStatus", TransactionStatus.RJCT);
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build());
-        when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(paymentService.createPaymentInitiation(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
 
@@ -122,13 +121,12 @@ public class PaymentInitiationControllerTest {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
-        boolean tppRedirectPreferred = false;
         SinglePayments payment = readSinglePayments();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult = paymentInitiationController
-                                                                         .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
+                                                                         .createPaymentInitiation(paymentProduct.getCode(), payment);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

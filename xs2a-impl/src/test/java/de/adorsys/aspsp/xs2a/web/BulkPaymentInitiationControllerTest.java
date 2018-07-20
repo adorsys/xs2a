@@ -44,7 +44,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,7 +69,7 @@ public class BulkPaymentInitiationControllerTest {
 
     @Before
     public void setUp() throws IOException {
-        when(paymentService.createBulkPayments(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(paymentService.createBulkPayments(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
     }
@@ -78,13 +77,12 @@ public class BulkPaymentInitiationControllerTest {
     @Test
     public void createBulkPaymentInitiation() throws IOException {
         //Given
-        boolean tppRedirectPreferred = false;
         List<SinglePayments> payments = readBulkPayments();
         ResponseEntity<List<PaymentInitialisationResponse>> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<List<PaymentInitialisationResponse>> actualResult = bulkPaymentInitiationController
-                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), tppRedirectPreferred, payments);
+                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), payments);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
