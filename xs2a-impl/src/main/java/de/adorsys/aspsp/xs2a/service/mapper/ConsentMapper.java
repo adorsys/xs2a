@@ -92,18 +92,14 @@ public class ConsentMapper {
         ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
         if (error == MessageErrorCode.ACCESS_EXCEEDED) {
             actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
-        }
-        if (error == MessageErrorCode.CONSENT_EXPIRED) {
+        } else if (error == MessageErrorCode.CONSENT_EXPIRED) {
             actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
-        }
-        if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
+        } else if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
             actionStatus = ActionStatus.CONSENT_NOT_FOUND;
-        }
-        if (error == MessageErrorCode.CONSENT_INVALID) {
+        } else if (error == MessageErrorCode.CONSENT_INVALID) {
             if (access == TypeAccess.TRANSACTION) {
                 actionStatus = ActionStatus.FAILURE_TRANSACTION;
-            }
-            if (access == TypeAccess.BALANCE || withBalance) {
+            } else if (access == TypeAccess.BALANCE || withBalance) {
                 actionStatus = ActionStatus.FAILURE_BALANCE;
             }
         }

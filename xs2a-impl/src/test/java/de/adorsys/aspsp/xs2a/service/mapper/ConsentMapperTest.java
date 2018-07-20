@@ -60,8 +60,7 @@ public class ConsentMapperTest {
     private ConsentMapper consentMapper;
 
     @Mock
-    private
-    AccountMapper accountMapper;
+    private AccountMapper accountMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private JsonConverter jsonConverter = new JsonConverter(objectMapper);
