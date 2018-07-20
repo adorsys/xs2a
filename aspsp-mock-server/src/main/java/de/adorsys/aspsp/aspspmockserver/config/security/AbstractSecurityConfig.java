@@ -35,7 +35,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
 public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-    protected final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/api-docs/**", "/v2/api-docs/**",
+    protected final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/","/api-docs/**", "/v2/api-docs/**",
         "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**",
         "/sso/**"};
 
