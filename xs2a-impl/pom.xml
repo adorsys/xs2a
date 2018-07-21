@@ -88,9 +88,9 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-web</artifactId>
-		</dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
 
         <!--test-->
         <dependency>
@@ -177,7 +177,6 @@
                     <argLine>-Dspring.profiles.active=mockspi,test</argLine>
                 </configuration>
             </plugin>
-
 
         </plugins>
     </build>

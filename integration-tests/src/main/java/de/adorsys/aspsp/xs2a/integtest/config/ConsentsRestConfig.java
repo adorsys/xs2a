@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +28,12 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ConsentsRestConfig {
-    @Value("${rest-consent-config.read-timeout.ms:10000}")
+    @Value("${consent.config.readTimeoutInMs}")
     private int readTimeout;
-    @Value("${rest-consent-config.connection-timeout.ms:10000}")
+    @Value("${consent.config.connectionTimeoutInMs}")
     private int connectionTimeout;
 
-    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    @Value("${consent.baseUrl}")
     private String consentServiceBaseUrl;
 
     @Bean(name="consentServiceBaseUrl")
@@ -41,6 +42,7 @@ public class ConsentsRestConfig {
     }
 
     @Bean(name = "consentRestTemplate")
+    @Qualifier("consent")
     public RestTemplate consentRestTemplate(){
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());

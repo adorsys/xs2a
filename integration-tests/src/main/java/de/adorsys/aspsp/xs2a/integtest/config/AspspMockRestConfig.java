@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +28,12 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AspspMockRestConfig {
-    @Value("${aspspmockserver-config.read-timeout.ms:10000}")
+    @Value("${aspspMock.config.readTimeoutInMs}")
     private int readTimeout;
-    @Value("${aspspmockserver-config.connection-timeout.ms:10000}")
+    @Value("${aspspMock.config.connectionTimeoutInMs}")
     private int connectionTimeout;
 
-    @Value("${aspspmockserver.baseurl:http://localhost:28080}")
+    @Value("${aspspMock.baseUrl}")
     private String aspspMockBaseUrl;
 
     @Bean(name = "aspspMockBaseUrl")
@@ -41,6 +42,7 @@ public class AspspMockRestConfig {
     }
 
     @Bean(name = "aspspMockRestTemplate")
+    @Qualifier("aspsp-mock")
     public RestTemplate aspspProfileRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
