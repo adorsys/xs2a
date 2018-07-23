@@ -52,7 +52,7 @@ public class PaymentInitiationController {
         @ApiImplicitParam(name = "psu-agent", value = "The forwarded Agent header field of the http request between PSU and TPP.", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "psu-geo-location", value = "GEO:52.506931,13.1445588", dataType = "Geo Location", paramType = "header"),
         @ApiImplicitParam(name = "tpp-redirect-uri", value = "Uri of TPP", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "A signature of the request by TPP", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPaymentInitiation(
@@ -68,7 +68,7 @@ public class PaymentInitiationController {
     @GetMapping(path = "/{paymentId}/status")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<TransactionStatus> getPaymentInitiationStatusById(
