@@ -11,7 +11,7 @@
       },
       "creditorAddress": {
         "buildingNumber": "56",
-        "city": "Nürnberg"
+        "city": "Nürnberg",
         "country": {
           "code": "49"
         },

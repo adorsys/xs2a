@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions;
 
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 @FeatureFileSteps
 public class GlobalSteps {
@@ -52,14 +52,14 @@ public class GlobalSteps {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("grant_type", grantType);
         map.add("password", password);
         map.add("client_id", clientId);
         map.add("client_secret", clientSecret);
         map.add("username", username);
 
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
 
         ResponseEntity<HashMap> response = null;
         try {
@@ -69,7 +69,7 @@ public class GlobalSteps {
         }
 
         context.setScaApproach("redirect");
-        context.setAccessToken(response.getBody().get("access_token").toString());
+        context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
     }
 
 }

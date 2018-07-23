@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @ContextConfiguration("classpath:*cucumber.xml")
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public @interface FeatureFileSteps {
+@interface FeatureFileSteps {
 }

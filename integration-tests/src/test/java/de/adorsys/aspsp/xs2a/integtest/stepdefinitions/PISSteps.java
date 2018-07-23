@@ -53,6 +53,7 @@ public class PISSteps {
         context.setTestData(data);
     }
 
+    @SuppressWarnings("unchecked")
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
         HttpHeaders headers = new HttpHeaders();
@@ -72,6 +73,7 @@ public class PISSteps {
         context.setResponse(response);
     }
 
+    @SuppressWarnings("unchecked")
     @Then("^a successful response code and the appropriate single payment response data$")
     public void checkResponseCode() {
         ResponseEntity<HashMap> actualResponse = context.getResponse();
