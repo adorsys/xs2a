@@ -12,6 +12,7 @@ Provide access to next values:
  - pisRedirectUrlToAspsp
  - aisRedirectUrlToAspsp
  - multicurrencyAccountLevel
+ - availableBookingStatuses
  
  To test getting data of ASPSP Profile need to make next steps:
  
@@ -34,4 +35,6 @@ Provide access to next values:
  * To get 'aisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-ais'
  
  * To get 'multicurrencyAccountLevel' create Get request to URI 'http://your_host:port/aspsp-profile/multicurrency-account-level'
+
+ * To get 'availableBookingStatuses' create Get request to URI 'http://your_host:port/aspsp-profile/available-booking-statuses'
 

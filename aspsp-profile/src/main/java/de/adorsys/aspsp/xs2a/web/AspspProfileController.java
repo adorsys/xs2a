@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
@@ -32,8 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "aspsp-profile")
-@Api(value = "Aspsp profile", tags = "Aspsp profile", description = "Provides access to aspsp profile",
-     authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API") })})
+@Api(value = "Aspsp profile", tags = "Aspsp profile", description = "Provides access to aspsp profile")
 public class AspspProfileController {
     private final AspspProfileService aspspProfileService;
 
@@ -98,5 +98,12 @@ public class AspspProfileController {
     @ApiResponse(code = 200, message = "Ok", response = MulticurrencyAccountLevel.class)
     public ResponseEntity<MulticurrencyAccountLevel> getMulticurrencyAccountLevel() {
         return new ResponseEntity<>(aspspProfileService.getMulticurrencyAccountLevel(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/available-booking-statuses")
+    @ApiOperation(value = "Reads available booking statuses, such as booked, pending and both")
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
+    public ResponseEntity<List<BookingStatus>> getAvailableBookingStatuses() {
+        return new ResponseEntity<>(aspspProfileService.getAvailableBookingStatuses(), HttpStatus.OK);
     }
 }

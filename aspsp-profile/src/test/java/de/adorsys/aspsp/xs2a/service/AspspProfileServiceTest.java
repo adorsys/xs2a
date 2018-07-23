@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import org.junit.Before;
@@ -29,6 +30,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +46,7 @@ public class AspspProfileServiceTest {
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
+    private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -69,6 +74,8 @@ public class AspspProfileServiceTest {
             .thenReturn(AIS_REDIRECT_LINK);
         when(profileConfiguration.getMulticurrencyAccountLevel())
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
+        when(profileConfiguration.getAvailableBookingStatuses())
+            .thenReturn(AVAILABLE_BOOKING_STATUSES);
     }
 
     @Test
@@ -152,6 +159,15 @@ public class AspspProfileServiceTest {
         assertThat(actualResponse).isEqualTo(MULTICURRENCY_ACCOUNT_LEVEL);
     }
 
+    @Test
+    public void getAvailableBookingStatuses() {
+        //When:
+        List<BookingStatus> actualResponse = aspspProfileService.getAvailableBookingStatuses();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(AVAILABLE_BOOKING_STATUSES);
+    }
+
     private static List<String> getPaymentProducts() {
         return Arrays.asList(
             "sepa-credit-transfers",
@@ -163,5 +179,13 @@ public class AspspProfileServiceTest {
             "periodic",
             "delayed",
             "bulk");
+    }
+
+    private static List<BookingStatus> getBookingStatuses() {
+        return Arrays.asList(
+            BOOKED,
+            PENDING,
+            BOTH
+        );
     }
 }
