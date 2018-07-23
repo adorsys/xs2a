@@ -29,6 +29,8 @@
 
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
+        <cucumber.version>1.2.5</cucumber.version>
+        <hamcrest.version>1.3</hamcrest.version>
     </properties>
 
     <dependencies>
@@ -40,6 +42,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 <!--
 
@@ -75,7 +82,15 @@
 		    <artifactId>spring-security-web</artifactId>
 		</dependency>
 
+         <!--aspsp models-->
+        <dependency>
+            <groupId>de.adorsys.aspsp</groupId>
+            <artifactId>xs2a-impl</artifactId>
+            <version>1.4-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
 
+        <!-- parsing -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-parameter-names</artifactId>
@@ -87,6 +102,43 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.aspsp</groupId>
+            <artifactId>xs2a-impl</artifactId>
+            <version>1.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>${hamcrest.version}</version>
         </dependency>
     </dependencies>
 

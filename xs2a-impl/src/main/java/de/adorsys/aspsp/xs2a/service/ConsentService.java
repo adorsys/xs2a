@@ -49,15 +49,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     /**
      * @param request              body of create consent request carrying such parameters as AccountAccess, validity terms etc.
-     * @param withBalance          boolean representing if the response should include balances (Not applicable since v1.1)
-     * @param tppRedirectPreferred boolean indication that TPP prefers to use Redirect approach
      * @param psuId                String representing PSU identification at ASPSP
      * @return CreateConsentResp representing the complete response to create consent request
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
      * account details or by getting account details from ASPSP by psuId and filling the appropriate fields in
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
-    public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, boolean withBalance, boolean tppRedirectPreferred, String psuId) {
+    public ResponseObject<CreateConsentResp> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         CreateConsentReq checkedRequest = new CreateConsentReq();
         if (isNotEmptyAccess(request.getAccess()) && request.getValidUntil().isAfter(LocalDate.now())) {

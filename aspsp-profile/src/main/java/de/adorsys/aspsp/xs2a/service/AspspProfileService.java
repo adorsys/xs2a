@@ -17,12 +17,15 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
 
 @Service
 @RequiredArgsConstructor
@@ -169,9 +172,28 @@ public class AspspProfileService {
     /**
      * Update value of supported multicurrency account levels
      *
-     * @param multicurrencyAccountLevel new value of of supported multicurrency account levels
+     * @param multicurrencyAccountLevel new value of supported multicurrency account levels
      */
     public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
         profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
+    }
+
+    /**
+     * Read list of available booking statuses
+     */
+    public List<BookingStatus> getAvailableBookingStatuses() {
+        return profileConfiguration.getAvailableBookingStatuses();
+    }
+
+    /**
+     * Update list of available booking statuses
+     *
+     * @param availableBookingStatuses new value of available booking statuses
+     */
+    public void updateAvailableBookingStatuses(List<BookingStatus> availableBookingStatuses) {
+        if (!availableBookingStatuses.contains(BOOKED)) {
+            availableBookingStatuses.add(BOOKED);
+        }
+        profileConfiguration.setAvailableBookingStatuses(availableBookingStatuses);
     }
 }

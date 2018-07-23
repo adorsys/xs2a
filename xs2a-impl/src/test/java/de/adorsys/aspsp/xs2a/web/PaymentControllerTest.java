@@ -47,12 +47,12 @@ public class PaymentControllerTest {
     private static final String PAYMENT_PRODUCT = "33333-444444-55555-55555";
 
     @InjectMocks
-    PaymentController paymentController;
+    private PaymentController paymentController;
 
     @Mock
-    PaymentService paymentService;
+    private PaymentService paymentService;
     @Mock
-    ResponseMapper responseMapper;
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUp() {

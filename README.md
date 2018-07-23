@@ -57,6 +57,17 @@ Available in [the documentation](doc/architecture/README.md)
 
 ### Installing and running development environment
 
+Download and run keycloak (port 8081):
+
+`Windows`
+```bash
+> ...\bin\standalone.bat -Djboss.http.port=8081
+```
+`Linux`
+```bash
+$ .../bin/standalone.sh -Djboss.http.port=8081
+```
+
 Clone git repository and build a project:
 ```bash
 $ git clone https://github.com/adorsys/xs2a.git
@@ -71,9 +82,15 @@ $ mvn spring-boot:run -Drun.profiles=fongo
 ```
 Open a browser on page [http://localhost:28080/swagger-ui.html](http://localhost:28080/swagger-ui.html)
 
+Run an ASPSP-Profile:
+```bash
+$ cd aspsp-profile
+$ mvn spring-boot:run
+```
+
 Run a XS2A-Server:
 ```bash
-$ cd xs2a-impl
+$ cd spi-mock
 $ mvn spring-boot:run 
 ```
 Open a browser on page [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)

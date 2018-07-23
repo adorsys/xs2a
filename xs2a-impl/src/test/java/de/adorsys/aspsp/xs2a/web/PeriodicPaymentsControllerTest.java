@@ -35,19 +35,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 
@@ -68,11 +63,11 @@ public class PeriodicPaymentsControllerTest {
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    ResponseMapper responseMapper;
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUp() {
-        when(paymentService.initiatePeriodicPayment(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(paymentService.initiatePeriodicPayment(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED));
     }
@@ -81,12 +76,11 @@ public class PeriodicPaymentsControllerTest {
     public void initiationForStandingOrdersForRecurringOrPeriodicPayments() throws IOException {
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
-        boolean tppRedirectPreferred = false;
         PeriodicPayment periodicPayment = readPeriodicPayment();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED);
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(), tppRedirectPreferred, periodicPayment);
+        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(),periodicPayment);
 
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

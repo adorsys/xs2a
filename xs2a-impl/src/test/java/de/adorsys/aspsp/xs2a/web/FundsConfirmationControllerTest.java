@@ -51,7 +51,7 @@ public class FundsConfirmationControllerTest {
     private FundsConfirmationService fundsConfirmationService;
 
     @Mock
-    ResponseMapper responseMapper;
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUp() {

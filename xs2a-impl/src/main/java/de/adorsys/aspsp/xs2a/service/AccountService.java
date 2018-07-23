@@ -62,10 +62,9 @@ public class AccountService {
      *
      * @param consentId   String representing an AccountConsent identification
      * @param withBalance boolean representing if the responded AccountDetails should contain
-     * @param psuInvolved Not applicable since v1.1
      * @return List of AccountDetails with Balances if requested and granted by consent
      */
-    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance, boolean psuInvolved) {
+    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<Map<String, List<AccountDetails>>>builder()
@@ -88,10 +87,9 @@ public class AccountService {
      * @param consentId   String representing an AccountConsent identification
      * @param accountId   String representing a PSU`s Account at ASPSP
      * @param withBalance boolean representing if the responded AccountDetails should contain
-     * @param psuInvolved Not applicable since v1.1
      * @return AccountDetails based on accountId with Balances if requested and granted by consent
      */
-    public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance, boolean psuInvolved) {
+    public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<AccountDetails>builder()
@@ -124,10 +122,9 @@ public class AccountService {
      *
      * @param consentId   String representing an AccountConsent identification
      * @param accountId   String representing a PSU`s Account at ASPSP
-     * @param psuInvolved Not applicable since v1.1
      * @return List of AccountBalances based on accountId if granted by consent
      */
-    public ResponseObject<List<Balances>> getBalances(String consentId, String accountId, boolean psuInvolved) {
+    public ResponseObject<List<Balances>> getBalances(String consentId, String accountId) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<List<Balances>>builder()

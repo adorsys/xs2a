@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,12 +28,12 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AspspProfileRestConfig {
-    @Value("${rest-aspsp-profile-config.read-timeout.ms:10000}")
+    @Value("${aspspProfile.config.readTimeoutInMs}")
     private int readTimeout;
-    @Value("${rest-aspsp-profile.connection-timeout.ms:10000}")
+    @Value("${aspspProfile.config.connectionTimeoutInMs}")
     private int connectionTimeout;
 
-    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    @Value("${aspspProfile.baseUrl}")
     private String aspspProfileBaseUrl;
 
     @Bean(name = "aspspProfileBaseUrl")
@@ -41,6 +42,7 @@ public class AspspProfileRestConfig {
     }
 
     @Bean(name = "aspspProfileRestTemplate")
+    @Qualifier("aspsp-profile")
     public RestTemplate aspspProfileRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());

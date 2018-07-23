@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.integtest.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +29,12 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class Xs2aRestConfig {
 
-    @Value("${xs2a-config.read-timeout.ms:10000}")
+    @Value("${xs2a.config.readTimeoutInMs}")
     private int readTimeout;
-    @Value("${xs2a-config.connection-timeout.ms:10000}")
+    @Value("${xs2a.config.connectionTimeoutInMs}")
     private int connectionTimeout;
 
-    @Value("${xs2a.baseurl:http://localhost:8080/api/v1}")
+    @Value("${xs2a.baseUrl}")
     private String xs2aBaseUrl;
 
     @Bean(name = "xs2aBaseUrl")
@@ -41,7 +42,8 @@ public class Xs2aRestConfig {
         return xs2aBaseUrl;
     }
 
-    @Bean(name = "xs2aRestConfig")
+    @Bean(name = "xs2aRestTemplate")
+    @Qualifier("xs2a")
     public RestTemplate xs2aRestConfig() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -55,5 +57,4 @@ public class Xs2aRestConfig {
         factory.setConnectTimeout(connectionTimeout);
         return factory;
     }
-
 }
