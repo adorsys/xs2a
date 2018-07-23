@@ -16,10 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisAddress;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.*;
+import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
@@ -29,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,18 +36,15 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class CmsPisMapper {
-    private final AccountMapper accountMapper;
-    private final PaymentMapper paymentMapper;
-
     public PisSinglePayment mapToPisSinglePayment(SinglePayments paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
                    .map(payReq -> {
                        PisSinglePayment pisSinglePayment = new PisSinglePayment();
                        pisSinglePayment.setEndToEndIdentification(payReq.getEndToEndIdentification());
-                       pisSinglePayment.setDebtorAccount(accountMapper.mapToPisAccountReference(payReq.getDebtorAccount()));
+                       pisSinglePayment.setDebtorAccount(mapToPisAccountReference(payReq.getDebtorAccount()));
                        pisSinglePayment.setUltimateDebtor(payReq.getUltimateDebtor());
-                       pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(payReq.getInstructedAmount()));
-                       pisSinglePayment.setCreditorAccount(accountMapper.mapToPisAccountReference(payReq.getCreditorAccount()));
+                       pisSinglePayment.setInstructedAmount(mapToPisAmount(payReq.getInstructedAmount()));
+                       pisSinglePayment.setCreditorAccount(mapToPisAccountReference(payReq.getCreditorAccount()));
                        pisSinglePayment.setCreditorAgent(Optional.ofNullable(payReq.getCreditorAgent())
                                                              .map(BICFI::getCode).orElse(""));
                        pisSinglePayment.setCreditorName(payReq.getCreditorName());
@@ -76,15 +73,15 @@ public class CmsPisMapper {
                    .map(pp -> {
                        PisPeriodicPayment pisPeriodicPayment = new PisPeriodicPayment();
                        pisPeriodicPayment.setEndToEndIdentification(pp.getEndToEndIdentification());
-                       pisPeriodicPayment.setDebtorAccount(accountMapper.mapToPisAccountReference(pp.getDebtorAccount()));
+                       pisPeriodicPayment.setDebtorAccount(mapToPisAccountReference(pp.getDebtorAccount()));
                        pisPeriodicPayment.setUltimateDebtor(pp.getUltimateDebtor());
-                       pisPeriodicPayment.setInstructedAmount(accountMapper.mapToPisAmount(pp.getInstructedAmount()));
-                       pisPeriodicPayment.setCreditorAccount(accountMapper.mapToPisAccountReference(pp.getCreditorAccount()));
-                       pisPeriodicPayment.setCreditorAgent(paymentMapper.getCreditorAgentCode(pp));
+                       pisPeriodicPayment.setInstructedAmount(mapToPisAmount(pp.getInstructedAmount()));
+                       pisPeriodicPayment.setCreditorAccount(mapToPisAccountReference(pp.getCreditorAccount()));
+                       pisPeriodicPayment.setCreditorAgent(Optional.ofNullable(pp.getCreditorAgent()).map(BICFI::getCode).orElse(null));
                        pisPeriodicPayment.setCreditorName(pp.getCreditorName());
                        pisPeriodicPayment.setCreditorAddress(mapToPisAddress(pp.getCreditorAddress()));
                        pisPeriodicPayment.setUltimateCreditor(pp.getUltimateCreditor());
-                       pisPeriodicPayment.setPurposeCode(paymentMapper.getPurposeCode(pp));
+                       pisPeriodicPayment.setPurposeCode(Optional.ofNullable(pp.getPurposeCode()).map(PurposeCode::getCode).orElse(null));
                        pisPeriodicPayment.setRemittanceInformationUnstructured(pp.getRemittanceInformationUnstructured());
                        pisPeriodicPayment.setRemittanceInformationStructured(mapToPisRemittance(pp.getRemittanceInformationStructured()));
                        pisPeriodicPayment.setRequestedExecutionDate(pp.getRequestedExecutionDate());
@@ -92,7 +89,7 @@ public class CmsPisMapper {
                        pisPeriodicPayment.setStartDate(pp.getStartDate());
                        pisPeriodicPayment.setExecutionRule(pp.getExecutionRule());
                        pisPeriodicPayment.setEndDate(pp.getEndDate());
-                       pisPeriodicPayment.setFrequency(paymentMapper.getFrequency(pp));
+                       pisPeriodicPayment.setFrequency(Optional.ofNullable(pp.getFrequency()).map(Enum::name).orElse(null));
                        pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());
 
                        return pisPeriodicPayment;
@@ -112,4 +109,21 @@ public class CmsPisMapper {
                    .orElse(null);
     }
 
+    private PisAmount mapToPisAmount(Amount amount) {
+        return Optional.ofNullable(amount)
+                   .map(am -> new PisAmount(am.getCurrency(), new BigDecimal(am.getContent())))
+                   .orElse(null);
+    }
+
+    private PisAccountReference mapToPisAccountReference(AccountReference account) {
+        return Optional.ofNullable(account)
+                   .map(ac -> new PisAccountReference(
+                       ac.getIban(),
+                       ac.getBban(),
+                       ac.getPan(),
+                       ac.getMaskedPan(),
+                       ac.getMsisdn(),
+                       ac.getCurrency()))
+                   .orElse(null);
+    }
 }

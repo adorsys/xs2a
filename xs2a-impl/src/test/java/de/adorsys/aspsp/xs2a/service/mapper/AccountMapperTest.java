@@ -19,14 +19,12 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Balances;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.SingleBalance;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -80,36 +78,6 @@ public class AccountMapperTest {
         assertThat(closingBooked.getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
         assertThat(closingBooked.getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
         assertThat(closingBooked.getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-    }
-
-    @Test
-    public void mapSpiBalances() throws IOException {
-        //Given:
-        String spiBalancesJson = IOUtils.resourceToString(SPI_BALANCES_JSON_PATH, UTF_8);
-        SpiBalances donorBalances = jsonConverter.toObject(spiBalancesJson, SpiBalances.class).get();
-        List<SpiBalances> donorBalancesList = new ArrayList<>();
-        donorBalancesList.add(donorBalances);
-
-        //When:
-        assertNotNull(donorBalances);
-        List<Balances> actualBalances = accountMapper.mapToBalancesList(donorBalancesList);
-
-        //Then:
-        assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getClosingBooked().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getAuthorised().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getAuthorised().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getExpected().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getExpected().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getInterimAvailable().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getInterimAvailable().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getOpeningBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getOpeningBooked().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
     }
 
     @Test
