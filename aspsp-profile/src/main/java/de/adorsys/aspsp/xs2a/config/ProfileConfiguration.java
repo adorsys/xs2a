@@ -32,8 +32,8 @@ import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
 
 @Data
 @Configuration
-@PropertySource("classpath:bank_profile.yml")
-@ConfigurationProperties(prefix = "setting")
+@PropertySource(value = {"classpath:bank_profile.yml", "file:${bank_profile.path}"}, ignoreResourceNotFound = true)
+@ConfigurationProperties
 public class ProfileConfiguration {
     private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
