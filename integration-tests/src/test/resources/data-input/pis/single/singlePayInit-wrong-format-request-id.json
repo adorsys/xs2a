@@ -1,8 +1,8 @@
 {
   "request": {
     "header": {
-      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-ip-address": "192168.0.26"
+      "x-request-id": "2f77a125aa7a-45c0-b414-cea25a116035",
+      "psu-ip-address": "192.168.0.26"
     },
     "body": {
       "creditorAccount": {
@@ -43,7 +43,7 @@
   },
   "response": {
     "code": "400",
-    "header": [],
+    "header": {},
     "body": {
       "tppMessages": {
         "category": "ERROR",

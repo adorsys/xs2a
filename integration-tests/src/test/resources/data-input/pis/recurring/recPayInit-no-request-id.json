@@ -6,43 +6,51 @@
     "body": {
       "creditorAccount": {
         "currency": "EUR",
-        "iban": "DE938274817361740591263"
+        "iban": "DE371234000000059999789"
       },
       "creditorAddress": {
-        "buildingNumber": "56",
+        "buildingNumber": "34",
         "city": "Nürnberg",
         "country": {
           "code": "49"
         },
-        "postalCode": "90543",
-        "street": "WBG Straße"
+        "postalCode": "90457",
+        "street": "Breite Gasse"
       },
-      "creditorName": "WBG",
+      "creditorAgent": {
+        "code": "BCENEVOD"
+      },
+      "creditorName": "Vodafone",
+      "dayOfExecution": 14,
       "debtorAccount": {
         "currency": "EUR",
         "iban": "DE81432100000004111111"
       },
-      "endToEndIdentification": "WBG-123456789",
+      "endDate": "2020-12-14",
+      "endToEndIdentification": "VOD-123456789",
+      "executionRule": "latest",
+      "frequency": "MONTHLY",
       "instructedAmount": {
-        "content": "520.00",
+        "content": "44.99",
         "currency": "EUR"
       },
       "purposeCode": {
-        "code": "Monatsmiete Mueller, Alexander"
+        "code": "Telefonrechnung 10/2018"
       },
       "remittanceInformationStructured": {
         "reference": "Ref Number Merchant"
       },
-      "remittanceInformationUnstructured": "Ref. Number WBG-1234",
-      "requestedExecutionDate": "2018-10-01",
-      "requestedExecutionTime": "2018-10-01T10:30:35.035",
-      "ultimateCreditor": "WBG",
+      "remittanceInformationUnstructured": "Ref. Number Vodafone-1222",
+      "requestedExecutionDate": "2018-10-14",
+      "requestedExecutionTime": "2018-10-14T10:30:35.035",
+      "startDate": "2018-10-14",
+      "ultimateCreditor": "Vodafone",
       "ultimateDebtor": "Alexander Mueller"
     }
   },
   "response": {
     "code": "400",
-    "header": [],
+    "header": {},
     "body": {
       "tppMessages": {
         "category": "ERROR",
