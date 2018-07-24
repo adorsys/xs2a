@@ -297,7 +297,7 @@ The same query parameter and http header definition as in section PIS_01_01 appl
 
 ## PIS_01_03 Initiation for Standing Orders for Recurring/Periodic Payments
 
-The recurring payments initiation function will be covered in this specification as a specific standing order initiation: The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorized by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP. No further TPP action is needed. This payment is called a periodic payment in this context to differentiate the payment from recurring payment types, where third parties are initiating the same balanceAmount of money e.g. payees for using credit card transactions or direct debits for reccuring payments of goods or services. These latter types of payment initiations are not part of this interface.
+The recurring payments initiation function will be covered in this specification as a specific standing order initiation: The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorized by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP. No further TPP action is needed. This payment is called a periodic payment in this context to differentiate the payment from recurring payment types, where third parties are initiating the same amount of money e.g. payees for using credit card transactions or direct debits for reccuring payments of goods or services. These latter types of payment initiations are not part of this interface.
 
 
 ### Call

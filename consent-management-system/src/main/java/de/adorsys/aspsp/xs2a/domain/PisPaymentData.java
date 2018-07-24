@@ -48,8 +48,8 @@ public class PisPaymentData {
     @ApiModelProperty(value = "Iso currency code", required = true, example = "EUR")
     private Currency currency;
 
-    @Column(name = "balanceAmount", nullable = false)
-    @ApiModelProperty(value = "Payment balanceAmount", required = true, example = "1000")
+    @Column(name = "amount", nullable = false)
+    @ApiModelProperty(value = "Payment amount", required = true, example = "1000")
     private BigDecimal amount;
 
     @Column(name = "creditor_iban", nullable = false)
@@ -65,7 +65,7 @@ public class PisPaymentData {
     private String creditorName;
 
     @Column(name = "requested_execution_date", nullable = false)
-    @ApiModelProperty(value = "Requested execution referenceDate", required = true, example = "2017-01-01")
+    @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
     private LocalDate requestedExecutionDate;
 
     @Column(name = "requested_execution_time", nullable = false)

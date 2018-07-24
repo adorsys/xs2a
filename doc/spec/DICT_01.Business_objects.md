@@ -234,7 +234,7 @@ This type is containing any account identification which can be used on payload-
 | Attribute | Type | Condition | Description |
 |:---------:|:----:|:---------:|-----------|
 | amount | Amount | Mandatory | | 
-| lastChangeDateTime | ISODateTime | Optional | This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked. |
+| lastActionDateTime | ISODateTime | Optional | This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked. |
 | date | ISODate | Optional | |
 
 
