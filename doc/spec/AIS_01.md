@@ -216,7 +216,7 @@ When this Consent Request is a request where the "recurringIndicator" equals "tr
 |--------|------------------|----------|---------|
 | access	| Account Access | Mandatory | Requested access service. Only the sub attributes with the tags "accounts", "balances" and "transactions" are accepted for this request. |
 | recurringIndicator | boolean | Mandatory | "true", if the consent is for recurring access to the account data or "false", if the consent is for one access to the account data |
-| validUntil | ISODate | Mandatory | This parameter is requesting a valid until referenceDate for the requested consent. The content is the local ASPSP referenceDate in ISODate Format, e.g. 2017-10-30. If a maximal available referenceDate is requested, a referenceDate in far future is to be used: "9999-12-31". The consent object to be retrieved by the GET Consent Request will contain the adjusted referenceDate. |
+| validUntil | ISODate | Mandatory | This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format, e.g. 2017-10-30. If a maximal available date is requested, a date in far future is to be used: "9999-12-31". The consent object to be retrieved by the GET Consent Request will contain the adjusted date. |
 | frequencyPerDay | Integer | Mandatory | This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to "1". |
 | combinedServiceIndicator | boolean | Mandatory | If "true" indicates that a payment initiation service will be addressed in the same "session". |
 
@@ -453,9 +453,9 @@ No body.
 |--------|------------------|----------|---------|
 | access | Account Access | Mandatory | Requested access service. Only the sub attributes with the tags "accounts", "balances" and "transactions" are accepted for this request. |
 | recurringIndicator | Boolean | Mandatory | "true", if the consent is for recurring access to the account data or "false", if the consent is for one access to the account data |
-| validUntil | ISODate | Mandatory | This parameter is a valid until referenceDate for the requested consent. The content is the local ASPSP referenceDate in ISODate Format, e.g. 2017-10-30 |
+| validUntil | ISODate | Mandatory | This parameter is a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format, e.g. 2017-10-30 |
 | frequencyPerDay | Integer | Mandatory | This field indicates the requested maximum frequency for an access per day. For a once-off access, this attribute is set to "1". |
-| lastActionDate | ISODate | Mandatory | This referenceDate is containing the referenceDate of the last action on the consent object either trough the XS2A interface or the PSU/ASPSP interface having an impact on the status. |
+| lastActionDate | ISODate | Mandatory | This date is containing the date of the last action on the consent object either trough the XS2A interface or the PSU/ASPSP interface having an impact on the status. |
 | transactionsStatus | Transaction Status | Mandatory | |
 | consentStatus | String | Mandatory | The following code values are permitted "empty", "valid", "blocked", "expired", "deleted". These values might be extended by ASPSP by more values. |
 
@@ -789,13 +789,13 @@ Remark: This account-id can be a tokenized identification due to data protection
        “balances” :
           [{“closingBooked”:
              {
-              “balanceAmount”: {“currency” : “EUR”, “content”: “500.00”}, 
-              “referenceDate” : “2017-10-25”
+              “amount”: {“currency” : “EUR”, “content”: “500.00”}, 
+              “date” : “2017-10-25”
              },
           “expected”:
              {
-              “balanceAmount”: {“currency” : “EUR” ,“content” : “900.00”}, 
-              “lastChangeDateTime” : “2017-10-25T15:30:35.035Z”
+              “amount”: {“currency” : “EUR” ,“content” : “900.00”}, 
+              “lastActionDateTime” : “2017-10-25T15:30:35.035Z”
              }
           }]
     }
@@ -806,24 +806,24 @@ Remark: This account-id can be a tokenized identification due to data protection
        “balances” :
           [{“closingBooked”:
              {
-              “balanceAmount”: {“currency” : “EUR”, “content”: “500.00”}, 
-              “referenceDate” : “2017-10-25”
+              “amount”: {“currency” : “EUR”, “content”: “500.00”}, 
+              “date” : “2017-10-25”
              },
           “expected”:
              {
-              “balanceAmount”: {“currency” : “EUR” ,“content” : “900.00”}, 
-              “lastChangeDateTime” : “2017-10-25T15:30:35.035Z”
+              “amount”: {“currency” : “EUR” ,“content” : “900.00”}, 
+              “lastActionDateTime” : “2017-10-25T15:30:35.035Z”
              }
           },
           {“closingBooked”:
              {
-              “balanceAmount”: {“currency” : “USD”, “content”: “350.00”}, 
-              “referenceDate” : “2017-10-25”
+              “amount”: {“currency” : “USD”, “content”: “350.00”}, 
+              “date” : “2017-10-25”
              },
           “expected”:
              {
-              “balanceAmount”: {“currency” : “USD” ,“content” : “350.00”}, 
-              “lastChangeDateTime” : “2017-10-25T15:30:35.035Z”
+              “amount”: {“currency” : “USD” ,“content” : “350.00”}, 
+              “lastActionDateTime” : “2017-10-25T15:30:35.035Z”
              }]
     }
      
@@ -849,8 +849,8 @@ Remark: If the ASPSP is not providing the "GET Account List" call, then the ASPS
 
 | Attribute | Type  | Condition | Description |
 |--------|------------------|----------|---------|
-| dateFrom | ISODate | Conditional | Starting referenceDate of the transaction list, mandated if no delta access is required. |
-| dateTo | ISODate | Optional | End referenceDate of the transaction list, default is now if not given. |
+| dateFrom | ISODate | Conditional | Starting date of the transaction list, mandated if no delta access is required. |
+| dateTo | ISODate | Optional | End date of the transaction list, default is now if not given. |
 | transactionId | String | Optional | This data attribute is indicating that the AISP is in favour to get all transactions after the transaction with identification transactionId alternatively to the above defined period. This is a implementation of a delta access. <br><br> If this data element is contained, the entries "dateFrom" and "dateTo" might be ignored by the ASPSP if a delta report is supported. |
 | psuInvolved | Boolean | Conditional | It must be contained if the PSU has asked for this account in realtime. This flag is then set to "true". The PSU then might be involved in an additional consent process, if the given consent is not any more sufficient. |
 | bookingStatus | String | Mandatory | Permitted codes are "booked", "pending" and "both" <br><br> "booked" and "both" are to be supported mandatorily by the ASPSP <br><br> To support the "pending" feature is optional for the ASPSP, Error code if not supported in the online banking frontend. |
@@ -906,7 +906,7 @@ Response Code 200
              "transactioId" : "1234567" ,
              "creditorName" : "John Miles" ,
              "creditorAccount" : {"iban" : "DE43533700240123456900"},
-             "balanceAmount” : {"currency" : "EUR", "content" : "-256,67"} ,
+             "amount” : {"currency" : "EUR", "content" : "-256,67"} ,
              "bookingDate" : "2017-10-25" ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 1"
@@ -915,7 +915,7 @@ Response Code 200
              "transactionId" : "1234568",
              "debtorName" : "Paul Simpson" ,
              "debtorAccount" : {"iban" : "NL354543123456900"} ,
-             "balanceAmount" : {"currency" : "EUR", content: "343,01"} ,
+             "amount" : {"currency" : "EUR", content: "343,01"} ,
              "bookingDate" : "2017-10-25" ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 2"
@@ -926,7 +926,7 @@ Response Code 200
              "transactionId" : "1234569" ,
              "creditorName" : "Claude Renault" ,
              "creditorAccount : {"iban" : "FR33554543123456900"},
-             "balanceAmount” : {"currency" : "EUR", "content" : "-100,03"} ,
+             "amount” : {"currency" : "EUR", "content" : "-100,03"} ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 3"
           }]
@@ -936,7 +936,7 @@ Response Code 200
        }
     }
     
-*Response in case of a huge data balanceAmount as download*
+*Response in case of a huge data amount as download*
 
     {
        "_links : {"download" : www.testapi.com/xs2a/v1/accounts/12345678999/transactions/download/}
@@ -950,7 +950,7 @@ Response Code 200
              "transactioId" : "1234567" ,
              "creditorName" : "John Miles" ,
              "creditorAccount" : {"iban" : "DE43533700240123456900"},
-             "balanceAmount” : {"currency" : "EUR", "content" : "-256,67"} ,
+             "amount” : {"currency" : "EUR", "content" : "-256,67"} ,
              "bookingDate" : "2017-10-25" ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 1"
@@ -959,7 +959,7 @@ Response Code 200
              "transactionId" : "1234568",
              "debtorName" : "Paul Simpson" ,
              "debtorAccount" : {"iban" : "NL354543123456900"} ,
-             "balanceAmount" : {"currency" : "EUR", content: "343,01"} ,
+             "amount" : {"currency" : "EUR", content: "343,01"} ,
              "bookingDate" : "2017-10-25" ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 2"
@@ -968,7 +968,7 @@ Response Code 200
              "transactionId" : "1234569",
              "debtorName" : "Pepe Martin" ,
              "debtorAccount" : {"iban" : "SE1234567891234"} ,
-             "balanceAmount" : {"currency" : "USD", content: "100"} ,
+             "amount" : {"currency" : "USD", content: "100"} ,
              "bookingDate" : "2017-10-25" ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 3"
@@ -979,7 +979,7 @@ Response Code 200
              "transactionId" : "1234570" ,
              "creditorName" : "Claude Renault" ,
              "creditorAccount : {"iban" : "FR33554543123456900"},
-             "balanceAmount” : {"currency" : "EUR", "content" : "-100,03"} ,
+             "amount” : {"currency" : "EUR", "content" : "-100,03"} ,
              "valueDate" : "2017-10-26" ,
              "remittanceInformationUnstructured" : "Example 4"
           }]

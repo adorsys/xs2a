@@ -152,8 +152,8 @@ public class AccountService {
      *
      * @param consentId     String representing an AccountConsent identification
      * @param accountId     String representing a PSU`s Account at ASPSP
-     * @param dateFrom      ISO Date representing the value of desired start referenceDate of AccountReport
-     * @param dateTo        ISO Date representing the value of desired end referenceDate of AccountReport (if omitted is set to current referenceDate)
+     * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
+     * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set to current date)
      * @param transactionId String representing the ASPSP identification of transaction
      * @param psuInvolved   Not applicable since v1.1
      * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses

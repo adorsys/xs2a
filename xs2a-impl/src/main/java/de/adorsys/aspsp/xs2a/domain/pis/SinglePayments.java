@@ -77,7 +77,7 @@ public class SinglePayments {
     @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "requested execution referenceDate", example = "2017-01-01")
+    @ApiModelProperty(value = "requested execution date", example = "2017-01-01")
     @FutureOrPresent
     private LocalDate requestedExecutionDate;
 

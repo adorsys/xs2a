@@ -22,7 +22,7 @@
 | Attribute | Type | Condition | Description |
 |:---------:|:----:|:---------:|-----------|
 | currency | Currency Code | Mandatory | ISO 4217 code |
-| content | Floating Point Number | Mandatory | The balanceAmount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot. |
+| content | Floating Point Number | Mandatory | The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot. |
 
 
 ## DICT_01_04 Address
@@ -59,7 +59,7 @@
 | status | String | Optional | |
 | viewAccount | String | Optional | |
 | viewBalances | String | Optional | A link to the resource providing the balance of a dedicated account. |
-| viewTransactions | String | Optional | A link to the resource providing the transaction history of a dediated balanceAmount. |
+| viewTransactions | String | Optional | A link to the resource providing the transaction history of a dediated amount. |
 | first | String | Optional | Navigation link for paginated account reports. |
 | next | String | Optional | Navigation link for paginated account reports. |
 | previous | String | Optional | Navigation link for paginated account reports. |
@@ -161,7 +161,7 @@ Code | Name | ISO 20022 Definition |
 | ACSC | AcceptedSettlementCompleted | Settlement on th’ debtor's account has been completed.  Usage : this can be used by the first agent to report to  the debtor that the transaction has been completed.  Warning : this status is provided for transaction status  reasons, not for financial information. It can only be used after bilateral agreement.  |
 | ACSP | AcceptedSettlementInProcess | All preceding checks such as technical validation and customer profile were successful and therefore the payment initiation has been accepted for execution. |
 | ACTC | AcceptedTechnicalValidation | Authentication and syntactical and semantical validation are successful |
-| ACWC | AcceptedWithChange | Instruction is accepted but a change will be made, such as referenceDate or remittance not sent. |
+| ACWC | AcceptedWithChange | Instruction is accepted but a change will be made, such as date or remittance not sent. |
 | ACWP | AcceptedWithoutPosting | Payment instruction included in the credit transfer is accepted without being posted to the creditor  customer’s account. |
 | RCVD | Received | Payment initiation has been received by the receiving  agent. |
 | PDNG | Pending | Payment initiation or individual transaction included in  the payment initiation is pending. Further checks and  status update will be performed. |
@@ -233,9 +233,9 @@ This type is containing any account identification which can be used on payload-
 
 | Attribute | Type | Condition | Description |
 |:---------:|:----:|:---------:|-----------|
-| balanceAmount | Amount | Mandatory | | 
+| amount | Amount | Mandatory | | 
 | lastChangeDateTime | ISODateTime | Optional | This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked. |
-| referenceDate | ISODate | Optional | |
+| date | ISODate | Optional | |
 
 
 ## DICT_01_17 Account Report
@@ -257,7 +257,7 @@ This type is containing any account identification which can be used on payload-
 | creditorId | Max35Text | Optional | Identification of Creditors, e.g. a SEPA Creditor ID |
 | bookingDate | ISODate | Optional | |
 | valueDate | ISODate | Optional | |
-| balanceAmount | Amount | Mandatory | |
+| amount | Amount | Mandatory | |
 | creditorName | Max70Text | Optional | Name of the creditor if a "Debited" transaction |
 | creditorAccount | Account Reference | Conditional | |
 | ultimateCreditor | Max70Text | Optional | |
@@ -296,7 +296,7 @@ The following codes and definitions are used from ISO20022
 * BICFI: BICFIIdentifier
 * IBAN: IBAN2007Identifier
 * BBAN: BBANIdentifier
-* Floating Point Number: Same definitions as done by the ActiveOrHistoricCurrencyAndAmount definition on the balanceAmount
+* Floating Point Number: Same definitions as done by the ActiveOrHistoricCurrencyAndAmount definition on the amount
 
 For all codes used in JSON structures not the abbreviation defined for XML encoding, but the name of the code is used as value.
 
@@ -304,6 +304,6 @@ The following codes are used from other ISO standards:
 * Currency Code: Codes following ISO 4217
 
 Further basic ISO data types:
-* ISODateTime: A particular point in the progression of time defined by a mandatory referenceDate and a mandatory time component, expressed in either UTC time format (YYYY-MM-DDThh:mm:ss.sssZ), local time with UTC offset format (YYYY- MM-DDThh:mm:ss.sss+/-hh:mm), or local time format (YYYY- MMDDThh:mm:ss.sss). These representations are defined in "XML Schema Part 2: Datatypes Second Edition - W3C Recommendation 28 October 2004" which is aligned with ISO 8601.
+* ISODateTime: A particular point in the progression of time defined by a mandatory date and a mandatory time component, expressed in either UTC time format (YYYY-MM-DDThh:mm:ss.sssZ), local time with UTC offset format (YYYY- MM-DDThh:mm:ss.sss+/-hh:mm), or local time format (YYYY- MMDDThh:mm:ss.sss). These representations are defined in "XML Schema Part 2: Datatypes Second Edition - W3C Recommendation 28 October 2004" which is aligned with ISO 8601.
 * ISODate: A particular point in the progression of time in a calendar year expressed in the YYYY-MM-DD format.cd 
 

@@ -33,7 +33,7 @@ public class PeriodicPaymentsController {
     private final PaymentService paymentService;
     private final ResponseMapper responseMapper;
 
-    @ApiOperation(value = "The TPP can submit a recurring payment initiation where the starting referenceDate, frequency and conditionally an end referenceDate is provided. Once authorised by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorised by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 400, message = "Bad request")})

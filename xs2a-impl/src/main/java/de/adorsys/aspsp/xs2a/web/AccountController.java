@@ -126,9 +126,9 @@ public class AccountController {
     public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
                                                          @PathVariable(name = "account-id") String accountId,
                                                          @RequestHeader(name = "consent-id", required = false) String consentId,
-                                                         @ApiParam(name = "dateFrom", value = "Starting referenceDate of the account statement", example = "2017-10-30")
+                                                         @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
                                                          @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                                                         @ApiParam(name = "dateTo", value = "End referenceDate of the account statement", example = "2017-11-30")
+                                                         @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
                                                          @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
                                                          @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
                                                          @RequestParam(name = "transactionId", required = false) String transactionId,

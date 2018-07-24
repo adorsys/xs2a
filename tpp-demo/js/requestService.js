@@ -65,7 +65,7 @@ function getPaymentInitiationRequestJson(productNumber) {
     creditorAccount.iban = $("#creditorIban").val();
     creditorAccount.currency = $("#creditorCurrency").val();
 
-    instructedAmount.content = $("#balanceAmount" + productNumber).val();
+    instructedAmount.content = $("#amount" + productNumber).val();
     instructedAmount.currency = $("#currency" + productNumber).val();
 
     formObject.debtorAccount = debtorAccount;

@@ -108,7 +108,7 @@ No specific query parameter.
 | cardNumber        | String            | Conditional | Card Number of the card issued by the PIISP. Must be delivered if available. |
 | psuAccount        | Account Reference | Mandatory   | PSU’s account number.                                                        |
 | payee             | String            | Optional    | The merchant where the card is acceptedas an information to the PSU.         |
-| instructedAmount  | Amount            | Mandatory   | Transaction balanceAmount to be checked withinthe funds check mechanism.            |
+| instructedAmount  | Amount            | Mandatory   | Transaction amount to be checked withinthe funds check mechanism.            |
 
 ##### Response Body
 

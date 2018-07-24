@@ -186,7 +186,7 @@ else
     TIMEOUT_CMD="timeout"
 fi
 
-start_ts=$(referenceDate +%s)
+start_ts=$(date +%s)
 
 if [ "${CHILD}" -eq 1 ]; then
     wait_for
@@ -206,7 +206,7 @@ if [ "${RESULT}" -ne "${STATUS}" ]; then
     echoto 2 "$cmdname: timeout occurred after waiting $TIMEOUT seconds for $CMD to return status: $STATUS (was status: $RESULT)"
     exit $RESULT
 else
-    end_ts=$(referenceDate +%s)
+    end_ts=$(date +%s)
     echoto 1 "$cmdname: $CMD finished with expected status $RESULT after $((end_ts - start_ts)) seconds"
     exit 0
 fi
