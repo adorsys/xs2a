@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
@@ -100,11 +100,11 @@ public class AccountController {
         @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
-    public ResponseEntity<List<Balances>> getBalances(
+    public ResponseEntity<List<Balance>> getBalances(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
         @PathVariable(name = "account-id") String accountId) {
-        ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId);
+        ResponseObject<List<Balance>> responseObject = accountService.getBalances(consentId, accountId);
         return responseMapper.ok(responseObject);
     }
 
@@ -126,9 +126,9 @@ public class AccountController {
     public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
                                                          @PathVariable(name = "account-id") String accountId,
                                                          @RequestHeader(name = "consent-id", required = false) String consentId,
-                                                         @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
+                                                         @ApiParam(name = "dateFrom", value = "Starting referenceDate of the account statement", example = "2017-10-30")
                                                          @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                                                         @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
+                                                         @ApiParam(name = "dateTo", value = "End referenceDate of the account statement", example = "2017-11-30")
                                                          @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
                                                          @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
                                                          @RequestParam(name = "transactionId", required = false) String transactionId,

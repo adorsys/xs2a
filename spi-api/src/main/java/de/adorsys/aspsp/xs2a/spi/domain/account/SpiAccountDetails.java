@@ -75,14 +75,19 @@ public class SpiAccountDetails {
      * DEUTDE8EXXX (Deuche Bank AG example)
      */
     private String bic;
-    private List<SpiBalances> balances;
+    private List<SpiAccountBalance> balances;
 
     @JsonIgnore
-    public Optional<SpiBalances> getFirstBalance() {
-        return Optional.ofNullable(balances.get(0));
+    public Optional<SpiAccountBalance> getFirstBalance() {
+        return balances.stream()
+                   .filter(bal -> SpiBalanceType.INTERIM_AVAILABLE == bal.getSpiBalanceType())
+                   .findFirst();
     }
 
-    public void updateFirstBalance(SpiBalances balance) {
-        balances.set(0, balance);
+    public void updateFirstBalance(SpiAccountBalance balance) {
+        balances.stream()
+            .filter(bal -> SpiBalanceType.INTERIM_AVAILABLE == bal.getSpiBalanceType())
+            .findFirst()
+            .map(b -> balance);
     }
 }

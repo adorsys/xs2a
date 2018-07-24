@@ -180,8 +180,8 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   
   The endpoint should be queried with:
   * account-id (id of an existing PSU account)
-  * date from (a date in the past filled in format "yyyy-mm-dd")
-  * date to (a date in the past filled in format "yyyy-mm-dd" is automatically set no Current date if left empty)
+  * referenceDate from (a referenceDate in the past filled in format "yyyy-mm-dd")
+  * referenceDate to (a referenceDate in the past filled in format "yyyy-mm-dd" is automatically set no Current referenceDate if left empty)
   * booking status (BOOKED, PENDING or BOTH)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)
@@ -196,8 +196,8 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
    
    The endpoint should be queried with:
   * _**account-id**_ (wrong or nonexistent id of a PSU account)
-  * date from (a date in the past filled in format "yyyy-mm-dd")
-  * date to (a date in the past filled in format "yyyy-mm-dd" is automatically set no Current date if left empty)
+  * referenceDate from (a referenceDate in the past filled in format "yyyy-mm-dd")
+  * referenceDate to (a referenceDate in the past filled in format "yyyy-mm-dd" is automatically set no Current referenceDate if left empty)
   * booking status (BOOKED, PENDING or BOTH)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)

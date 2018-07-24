@@ -30,11 +30,11 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountRequestParameter implements RequestParameter {
 
-    @ApiModelProperty(value = "Starting date of the account statement", example = "2017-10-30")
+    @ApiModelProperty(value = "Starting referenceDate of the account statement", example = "2017-10-30")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateFrom;
 
-    @ApiModelProperty(value = "End date of the account statement", example = "2017-11-30")
+    @ApiModelProperty(value = "End referenceDate of the account statement", example = "2017-11-30")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateTo;
 }

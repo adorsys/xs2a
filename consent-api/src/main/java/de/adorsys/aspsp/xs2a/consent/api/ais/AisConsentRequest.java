@@ -38,7 +38,7 @@ public class AisConsentRequest {
     @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
     private AisAccountAccessInfo access;
 
-    @ApiModelProperty(value = "Consent`s expiration date. The content is the local ASPSP date in ISODate Format", required = true, example = "2020-10-10")
+    @ApiModelProperty(value = "Consent`s expiration referenceDate. The content is the local ASPSP referenceDate in ISODate Format", required = true, example = "2020-10-10")
     private LocalDate validUntil;
 
     @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true, example = "false")

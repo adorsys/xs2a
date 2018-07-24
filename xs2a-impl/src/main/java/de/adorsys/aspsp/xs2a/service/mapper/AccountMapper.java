@@ -154,14 +154,13 @@ public class AccountMapper {
                    .orElse(Collections.emptyList());
     }
 
-    private List<Balances> mapToBalancesList(List<SpiBalances> spiBalances) {
+    private List<Balance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
             return new ArrayList<>();
         }
 
-        return spiBalances
-                   .stream()
-                   .map(this::mapToBalances)
+        return spiBalances.stream()
+                   .map(this::mapToBalance)
                    .collect(Collectors.toList());
     }
 
@@ -189,28 +188,16 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    private Balances mapToBalances(SpiBalances spiBalances) {
-        return Optional.ofNullable(spiBalances)
-                   .map(b -> {
-                       Balances balances = new Balances();
-                       balances.setAuthorised(mapToSingleBalance(b.getAuthorised()));
-                       balances.setClosingBooked(mapToSingleBalance(b.getClosingBooked()));
-                       balances.setExpected(mapToSingleBalance(b.getExpected()));
-                       balances.setInterimAvailable(mapToSingleBalance(b.getInterimAvailable()));
-                       balances.setOpeningBooked(mapToSingleBalance(b.getOpeningBooked()));
-                       return balances;
-                   })
-                   .orElse(null);
-    }
-
-    private SingleBalance mapToSingleBalance(SpiAccountBalance spiAccountBalance) {
+    private Balance mapToBalance(SpiAccountBalance spiAccountBalance) {
         return Optional.ofNullable(spiAccountBalance)
                    .map(b -> {
-                       SingleBalance singleBalance = new SingleBalance();
-                       singleBalance.setAmount(mapToAmount(b.getSpiAmount()));
-                       singleBalance.setDate(b.getDate());
-                       singleBalance.setLastActionDateTime(b.getLastActionDateTime());
-                       return singleBalance;
+                       Balance balance = new Balance();
+                       balance.setBalanceAmount(mapToAmount(spiAccountBalance.getSpiBalanceAmount()));
+                       balance.setBalanceType(BalanceType.valueOf(spiAccountBalance.getSpiBalanceType().name()));
+                       balance.setLastChangeDateTime(spiAccountBalance.getLastChangeDateTime());
+                       balance.setReferenceDate(spiAccountBalance.getReferenceDate());
+                       balance.setLastCommittedTransaction(spiAccountBalance.getLastCommittedTransaction());
+                       return balance;
                    })
                    .orElse(null);
     }
