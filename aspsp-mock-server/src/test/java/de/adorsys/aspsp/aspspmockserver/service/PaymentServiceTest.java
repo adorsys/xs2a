@@ -21,7 +21,7 @@ import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
@@ -149,12 +149,11 @@ public class PaymentServiceTest {
         );
     }
 
-    private List<SpiBalances> getBalances() {
-        SpiBalances balances = new SpiBalances();
+    private List<SpiAccountBalance> getBalances() {
         SpiAccountBalance balance = new SpiAccountBalance();
-        balance.setSpiAmount(new SpiAmount(CURRENCY, BigDecimal.valueOf(100)));
-        balances.setInterimAvailable(balance);
-        return Collections.singletonList(balances);
+        balance.setSpiBalanceAmount(new SpiAmount(CURRENCY, BigDecimal.valueOf(100)));
+        balance.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        return Collections.singletonList(balance);
     }
 
     private SpiAccountReference getReference() {
