@@ -34,7 +34,7 @@ public class AisConsentAction {
     private Long id;
 
     @Column(name = "request_date", nullable = false)
-    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP referenceDate in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
+    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04T15:30:35.035Z")
     private LocalDate requestDate;
 
     @Column(name = "tpp_id", nullable = false)
