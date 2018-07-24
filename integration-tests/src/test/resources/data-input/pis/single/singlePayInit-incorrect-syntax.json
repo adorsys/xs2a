@@ -11,7 +11,7 @@
       },
       "creditorAddress": {
         "buildingNumber": "56",
-        "city": "Nürnberg",
+        "city": "Nürnberg"
         "country": {
           "code": "49"
         },
@@ -34,9 +34,9 @@
       "remittanceInformationStructured": {
         "reference": "Ref Number Merchant"
       },
-      "remittanceInformationUnstructured": "Ref. Number WBG-1222",
-      "requestedExecutionDate": "2018-08-18",
-      "requestedExecutionTime": "2018-08-18T18:30:35.035",
+      "remittanceInformationUnstructured": "Ref. Number WBG-1234",
+      "requestedExecutionDate": "2018-10-01",
+      "requestedExecutionTime": "2018-10-01T10:30:35.035",
       "ultimateCreditor": "WBG",
       "ultimateDebtor": "Alexander Mueller"
     }
@@ -45,11 +45,8 @@
     "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "Rejected",
-      "tppMessage": {
-        "category": "ERROR",
-        "code": "PAYMENT_FAILED"
-      }
+      "category": "ERROR",
+      "transactionStatus": "FORMAT_ERROR"
     }
   }
 }

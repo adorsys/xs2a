@@ -82,14 +82,6 @@
 		    <artifactId>spring-security-web</artifactId>
 		</dependency>
 
-         <!--aspsp models-->
-        <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>xs2a-impl</artifactId>
-            <version>1.4-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- parsing -->
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>

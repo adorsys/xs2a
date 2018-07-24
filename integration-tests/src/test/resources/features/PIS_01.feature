@@ -30,12 +30,11 @@ Feature: Payment Initiation Service
 #            | sepa-credit-transfer | singlePayInit-wrong-format-request-id.json     |
 #            | sepa-credit-transfer | singlePayInit-wrong-format-psu-ip-address.json |
 #            | sepa-credit-transfer | singlePayInit-exceeding-amount.json            |
-#            | sepa-credit-transfer | singlePayInit-expired-exec-time.json           |
+#            | sepa-credit-transfer | singlePayInit-expired-exec-date.json           |
 
 
         # TODO create Scenario for other SCA-Approaches
 
-    # TODO Single payment with not existing tpp-transaction-id -> 400  (are there not existant id's / not in the system?)
     # TODO Single payment with not existing tpp-request-id -> 400      (are there not existant id's / not in the system?)
     # TODO Single payment with not existing psu-ip-address -> 400      (are there not existant id's / not in the system?)
 
@@ -71,8 +70,27 @@ Feature: Payment Initiation Service
 #            | payment-product       | recurring-payment          |
 #            | sepa-credit-transfers | recPayInit-successful.json |
 
-    # TODO Recurring payment initiation with not defined frequency -> 400
-    # TODO Recurring payment initiation with start date in the past -> 400
+
+#    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
+#        Given PSU is logged in using redirect approach
+#        And PSU wants to initiate a recurring payment <recurring-payment> using the payment product <payment-product>
+#        When PSU sends the recurring payment initiating request
+#        Then an error response code is displayed the appropriate error response
+#        And a redirect URL is delivered to the PSU
+#        Examples:
+#            | payment-product      | recurring-payment                           |
+#            | sepa-credit-transfer | recPayInit-incorrect-syntax.json            |
+#            | sepa-credit-trans    | recPayInit-incorrect-payment-product.json   |
+#            | sepa-credit-transfer | recPayInit-no-frequency.json                |
+#            | sepa-credit-transfer | recPayInit-not-defined-frequency.json       |
+#            | sepa-credit-transfer | recPayInit-no-request-id.json               |
+#            | sepa-credit-transfer | recPayInit-no-ip-address.json               |
+#            | sepa-credit-transfer | recPayInit-wrong-format-request-id.json     |
+#            | sepa-credit-transfer | recPayInit-wrong-format-psu-ip-address.json |
+#            | sepa-credit-transfer | recPayInit-exceeding-amount.json            |
+#            | sepa-credit-transfer | recPayInit-expired-exec-time.json           |
+#            | sepa-credit-transfer | recPayInit-start-date-in-past.json          |
+#            | sepa-credit-transfer | recPayInit-end-date-before-start-date.json  |
 
 
     ####################################################################################################################
