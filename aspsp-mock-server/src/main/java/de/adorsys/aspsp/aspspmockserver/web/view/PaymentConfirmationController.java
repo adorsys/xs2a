@@ -53,14 +53,13 @@ public class PaymentConfirmationController {
 
     @GetMapping(path = "/{iban}/{consent-id}/{payment-id}")
     @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sent to PSU`s e-mail and returns a link to continue as authenticated user")
-    public ModelAndView showConfirmationPage(@PathVariable("iban") String iban,
+    public String showConfirmationPage(@PathVariable("iban") String iban,
                                              @PathVariable("consent-id") String consentId,
                                              @PathVariable("payment-id") String paymentId) {
 
         paymentConfirmationService.generateAndSendTanForPsuByIban(iban);
-        String decodedPaymentId = new String(Base64.getDecoder().decode(paymentId));
 
-        return new ModelAndView("tanConfirmationPage", "paymentConfirmation", new PaymentConfirmation(iban, consentId, decodedPaymentId));
+        return "redirect:" + pisWebapp + "/" + iban + "/" + consentId + "/" + paymentId;
     }
 
     @PostMapping
