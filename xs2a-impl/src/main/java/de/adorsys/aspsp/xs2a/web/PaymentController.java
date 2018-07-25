@@ -50,6 +50,7 @@ public class PaymentController<T> {
         @ApiImplicitParam(name = "psu-ip-type", value = "no data", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, dataType = "String", paramType = "header")})//NOPMD //Ip is required as description of the field
     public ResponseEntity getPaymentById(
         @ApiParam(name = "payment-service", value = "The addressed payment service", required = true, allowableValues = "payments, bulk-payments,periodic-payments")
