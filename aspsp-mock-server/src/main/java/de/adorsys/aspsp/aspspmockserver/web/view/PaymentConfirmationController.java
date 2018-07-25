@@ -75,14 +75,14 @@ public class PaymentConfirmationController {
                 responseEntity = new ResponseEntity(HttpStatus.OK);
             } else {
                 ApiError error = new ApiError(HttpStatus.UNAUTHORIZED, "WRONG_TAN", "Unauthorized");
-                responseEntity = new ResponseEntity(error, error.getStatus());
+                responseEntity = new ResponseEntity<>(error, error.getStatus());
             }
 
             return responseEntity;
         }
         else {
             ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request");
-            return new ResponseEntity(error, error.getStatus());
+            return new ResponseEntity<>(error, error.getStatus());
         }
     }
 
