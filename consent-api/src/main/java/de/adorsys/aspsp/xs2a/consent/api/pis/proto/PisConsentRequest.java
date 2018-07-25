@@ -16,10 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
 import lombok.Value;
 
 @Value
 public class PisConsentRequest {
-    private PisSinglePayment pisSinglePayment;
+    private String paymentId;
 }

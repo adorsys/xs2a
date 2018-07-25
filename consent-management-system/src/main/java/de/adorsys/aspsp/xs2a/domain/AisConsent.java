@@ -72,7 +72,7 @@ public class AisConsent {
     @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
     private String psuId;
 
-    @Column(name = "tpp_id", nullable = false)
+    @Column(name = "tpp_id", nullable = false, length = 16)
     @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
     private String tppId;
 
