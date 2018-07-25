@@ -16,12 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
 import lombok.Value;
 
 import java.util.List;
 
 @Value
 public class PisConsentBulkPaymentRequest {
-    private List<PisSinglePayment> payments;
+    private List<String> paymentIds;
 }
