@@ -100,8 +100,6 @@ public class PaymentConfirmationService {
         Tan tan = new Tan(psuId, generateTanNumber());
         tan = tanRepository.save(tan);
 
-        System.out.println("awi tan: " + tan);
-
         return sendTanNumberOnEmail(email, tan.getTanNumber());
     }
 
