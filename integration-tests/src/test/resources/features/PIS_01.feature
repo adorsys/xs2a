@@ -44,15 +44,15 @@ Feature: Payment Initiation Service
     # Bulk Payment                                                                                                     #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Payment initiation request for bulk payments (redirect)
-#        Given PSU is logged in using redirect approach
-#        And PSU wants to initiate multiple payments <bulk-payment> using the payment product <payment-product>
-#        When PSU sends the bulk payment initiating request
-#        Then a successful response code and the appropriate bulk payment response data
-#        And a redirect URL is delivered to the PSU
-#        Examples:
-#            | payment-product       | bulk-payment                |
-#            | sepa-credit-transfers | bulkPayInit-successful.json |
+    Scenario Outline: Payment initiation request for bulk payments (redirect)
+        Given PSU is logged in using redirect approach
+        And PSU wants to initiate multiple payments <bulk-payment> using the payment product <payment-product>
+        When PSU sends the bulk payment initiating request
+        Then a successful response code and the appropriate bulk payment response data
+        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
+        Examples:
+            | payment-product       | bulk-payment                |
+            | sepa-credit-transfers | bulkPayInit-successful.json |
 
 
     ####################################################################################################################
