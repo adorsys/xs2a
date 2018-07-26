@@ -202,7 +202,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Success_Consent_WB() {
         //When:
-        ResponseObject<List<Balances>> response = accountService.getBalances(CONSENT_ID_WB, ACCOUNT_ID);
+        ResponseObject<List<Balance>> response = accountService.getBalances(CONSENT_ID_WB, ACCOUNT_ID);
 
         //Then:
         assertThat(response.getBody()).isEqualTo(getBalancesList());
@@ -211,7 +211,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Consent_WOB() {
         //When:
-        ResponseObject<List<Balances>> response = accountService.getBalances(CONSENT_ID_WOB, ACCOUNT_ID);
+        ResponseObject<List<Balance>> response = accountService.getBalances(CONSENT_ID_WOB, ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -222,7 +222,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Wrong_Consent() {
         //When:
-        ResponseObject<List<Balances>> response = accountService.getBalances(WRONG_CONSENT_ID, ACCOUNT_ID);
+        ResponseObject<List<Balance>> response = accountService.getBalances(WRONG_CONSENT_ID, ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -233,7 +233,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Wrong_Account() {
         //When:
-        ResponseObject<List<Balances>> response = accountService.getBalances(CONSENT_ID_WB, WRONG_ACCOUNT_ID);
+        ResponseObject<List<Balance>> response = accountService.getBalances(CONSENT_ID_WB, WRONG_ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -342,15 +342,14 @@ public class AccountServiceTest {
             getBalancesList());
     }
 
-    private List<Balances> getBalancesList() {
-        Balances balances = new Balances();
-        SingleBalance sb = new SingleBalance();
+    private List<Balance> getBalancesList() {
+        Balance balances = new Balance();
+        Balance sb = new Balance();
         Amount amount = new Amount();
         amount.setCurrency(CURRENCY);
         amount.setContent("1000");
-        sb.setAmount(amount);
-        balances.setOpeningBooked(sb);
-        return Collections.singletonList(new Balances());
+        sb.setBalanceAmount(amount);
+        return Collections.singletonList(sb);
     }
 
     private SpiAccountDetails getSpiAccountDetails(String accountId, String iban) {
@@ -371,13 +370,12 @@ public class AccountServiceTest {
             getSpiBalances());
     }
 
-    private List<SpiBalances> getSpiBalances() {
-        SpiBalances balances = new SpiBalances();
+    private List<SpiAccountBalance> getSpiBalances() {
         SpiAccountBalance sb = new SpiAccountBalance();
         SpiAmount amount = new SpiAmount(CURRENCY, BigDecimal.valueOf(1000));
-        sb.setSpiAmount(amount);
-        balances.setOpeningBooked(sb);
-        return Collections.singletonList(new SpiBalances());
+        sb.setSpiBalanceAmount(amount);
+        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        return Collections.singletonList(sb);
     }
 
     private Transactions getTransaction() {

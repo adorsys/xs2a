@@ -19,7 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import org.junit.Before;
@@ -149,10 +149,10 @@ public class AccountServiceTest {
     @Test
     public void getBalances() {
         //Given
-        List<SpiBalances> expectedBalance = getNewBalanceList();
+        List<SpiAccountBalance> expectedBalance = getNewBalanceList();
 
         //When
-        List<SpiBalances> actualBalanceList = accountService.getAccountBalancesById(ACCOUNT_ID);
+        List<SpiAccountBalance> actualBalanceList = accountService.getAccountBalancesById(ACCOUNT_ID);
 
         //Then
         assertThat(actualBalanceList).isEqualTo(expectedBalance);
@@ -188,21 +188,17 @@ public class AccountServiceTest {
             "GIRO", null, "ACVB222", null);
     }
 
-    private List<SpiBalances> getNewBalanceList() {
-        Currency euro = Currency.getInstance("EUR");
-
-        SpiBalances balance = new SpiBalances();
-        balance.setAuthorised(getNewSingleBalances(new SpiAmount(euro, BigDecimal.valueOf(1000))));
-        balance.setOpeningBooked(getNewSingleBalances(new SpiAmount(euro, BigDecimal.valueOf(200))));
-
-        return Collections.singletonList(balance);
+    private List<SpiAccountBalance> getNewBalanceList() {
+        return Collections.singletonList(getNewSingleBalances(new SpiAmount(EUR, BigDecimal.valueOf(1000))));
     }
 
     private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
         SpiAccountBalance sb = new SpiAccountBalance();
-        sb.setDate(LocalDate.parse("2019-03-03"));
-        sb.setSpiAmount(spiAmount);
-        sb.setLastActionDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
+        sb.setReferenceDate(LocalDate.parse("2019-03-03"));
+        sb.setSpiBalanceAmount(spiAmount);
+        sb.setLastChangeDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
+        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        sb.setLastCommittedTransaction("abc");
         return sb;
     }
 

@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
@@ -68,7 +68,7 @@ public class AccountControllerTest {
     @Before
     public void setUp() throws Exception {
         when(accountService.getAccountDetailsList(anyString(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
-        ResponseObject<List<Balances>> balances = readBalances();
+        ResponseObject<List<Balance>> balances = readBalances();
         when(accountService.getBalances(anyString(), anyString())).thenReturn(balances);
         when(accountService.getAccountReport(any(String.class), any(String.class), any(LocalDate.class), any(LocalDate.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getAccountDetails());
@@ -106,12 +106,12 @@ public class AccountControllerTest {
     public void getBalances_ResultTest() throws IOException {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(readBalances().getBody(), HttpStatus.OK));
         //Given:
-        Balances expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
-        List<Balances> expectedResult = new ArrayList<>();
+        Balance expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balance.class).get();
+        List<Balance> expectedResult = new ArrayList<>();
         expectedResult.add(expectedBalances);
 
         //When:
-        List<Balances> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID).getBody();
+        List<Balance> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -152,11 +152,11 @@ public class AccountControllerTest {
                    .body(accountReport).build();
     }
 
-    private ResponseObject<List<Balances>> readBalances() throws IOException {
-        Balances read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
-        List<Balances> res = new ArrayList<>();
+    private ResponseObject<List<Balance>> readBalances() throws IOException {
+        Balance read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balance.class).get();
+        List<Balance> res = new ArrayList<>();
         res.add(read);
-        return ResponseObject.<List<Balances>>builder()
+        return ResponseObject.<List<Balance>>builder()
                    .body(res).build();
     }
 }

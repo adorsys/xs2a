@@ -16,17 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import lombok.Data;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-@Data
-public class SpiAccountBalance {
-    private SpiAmount spiBalanceAmount;
-    private SpiBalanceType spiBalanceType;
-    private LocalDateTime lastChangeDateTime;
-    private LocalDate referenceDate;
-    private String lastCommittedTransaction;
+public enum SpiBalanceType {
+    CLOSING_BOOKED,
+    EXPECTED,
+    AUTHORISED,
+    OPENING_BOOKED,
+    INTERIM_AVAILABLE,
+    FORWARD_AVAILABLE
 }

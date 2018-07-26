@@ -18,7 +18,6 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class FutureBookingsService {
     /**
      * Find all stored payments with current iban and update balance in psu account according payments
      *
-     * @param iban Iban for searching payments
+     * @param iban     Iban for searching payments
      * @param currency Currency for searching payments
      * @return sca approach method which is stored in profile
      */
@@ -54,31 +53,30 @@ public class FutureBookingsService {
                    .flatMap(bal -> saveNewBalanceToAccount(account, bal));
     }
 
-    private Optional<SpiAccountDetails> saveNewBalanceToAccount(SpiAccountDetails account, SpiBalances balance) {
+    private Optional<SpiAccountDetails> saveNewBalanceToAccount(SpiAccountDetails account, SpiAccountBalance balance) {
         account.updateFirstBalance(balance);
         return accountService.updateAccount(account);
     }
 
-    private Optional<SpiBalances> calculateNewBalance(SpiAccountDetails account) {
+    private Optional<SpiAccountBalance> calculateNewBalance(SpiAccountDetails account) {
         return account.getFirstBalance()
                    .map(bal -> getNewBalance(account, bal));
     }
 
-    private SpiBalances getNewBalance(SpiAccountDetails account, SpiBalances balance) {
+    private SpiAccountBalance getNewBalance(SpiAccountDetails account, SpiAccountBalance balance) {
         SpiAccountBalance newAccountBalance = new SpiAccountBalance();
-        newAccountBalance.setSpiAmount(getNewAmount(account, balance));
-        newAccountBalance.setLastActionDateTime(LocalDateTime.now());
-        newAccountBalance.setDate(LocalDate.now());
-        balance.setInterimAvailable(newAccountBalance);
+        newAccountBalance.setSpiBalanceAmount(getNewAmount(account, balance));
+        newAccountBalance.setLastChangeDateTime(LocalDateTime.now());
+        newAccountBalance.setReferenceDate(LocalDate.now());
         return balance;
     }
 
-    private SpiAmount getNewAmount(SpiAccountDetails account, SpiBalances b) {
+    private SpiAmount getNewAmount(SpiAccountDetails account, SpiAccountBalance b) {
         return new SpiAmount(Currency.getInstance("EUR"), getNewBalanceAmount(account, b));
     }
 
-    private BigDecimal getNewBalanceAmount(SpiAccountDetails account, SpiBalances balance) {
-        BigDecimal oldBalanceAmount = balance.getInterimAvailable().getSpiAmount().getContent();
+    private BigDecimal getNewBalanceAmount(SpiAccountDetails account, SpiAccountBalance balance) {
+        BigDecimal oldBalanceAmount = balance.getSpiBalanceAmount().getContent();
         return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getId()));
     }
 

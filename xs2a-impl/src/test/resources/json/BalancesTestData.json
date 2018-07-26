@@ -1,18 +1,10 @@
 {
-  "closingBooked": {
-    "amount": {
+    "balanceAmount": {
       "currency": "EUR",
-      "content": "3000.45"
+      "content": "300.45"
     },
-    "lastActionDateTime": "2018-03-31T15:16:16.374",
-    "date": "2018-03-29"
-  },
-  "interimAvailable": {
-    "amount": {
-      "currency": "EUR",
-      "content": "1530.93"
-    },
-    "lastActionDateTime": "2018-03-31T15:16:16.374",
-    "date": "2018-03-29"
-  }
+    "balanceType": "INTERIM_AVAILABLE",
+    "lastChangeDateTime": "2018-03-31T15:16:16.374",
+    "referenceDate": "2018-03-29",
+    "lastCommittedTransaction": "abc"
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
@@ -100,11 +100,11 @@ public class AccountController {
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
-    public ResponseEntity<List<Balances>> getBalances(
+    public ResponseEntity<List<Balance>> getBalances(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
         @PathVariable(name = "account-id") String accountId) {
-        ResponseObject<List<Balances>> responseObject = accountService.getBalances(consentId, accountId);
+        ResponseObject<List<Balance>> responseObject = accountService.getBalances(consentId, accountId);
         return responseMapper.ok(responseObject);
     }
 
