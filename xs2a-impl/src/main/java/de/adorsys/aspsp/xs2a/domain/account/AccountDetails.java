@@ -80,5 +80,4 @@ public class AccountDetails {
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")
     private Links links = new Links();
-
 }

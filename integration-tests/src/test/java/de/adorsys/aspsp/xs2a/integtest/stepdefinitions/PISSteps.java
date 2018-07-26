@@ -45,7 +45,7 @@ public class PISSteps {
     public void loadTestData(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        File jsonFile = new File("src/test/resources/data-input/" + dataFileName);
+        File jsonFile = new File("src/test/resources/data-input/pis/single/" + dataFileName);
 
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         TestData<SinglePayments> data = mapper.readValue(jsonFile, new TypeReference<TestData<SinglePayments>>() {

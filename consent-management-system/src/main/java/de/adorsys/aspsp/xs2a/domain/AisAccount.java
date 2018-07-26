@@ -36,7 +36,7 @@ public class AisAccount {
     @SequenceGenerator(name = "ais_account_generator", sequenceName = "ais_account_id_seq")
     private Long id;
 
-    @Column(name = "iban", nullable = false)
+    @Column(name = "iban", nullable = false, length = 34)
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = true, example = "DE2310010010123456789")
     private String iban;
 

@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
@@ -33,6 +34,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -46,6 +50,7 @@ public class AspspProfileControllerTest {
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
+    private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -76,6 +81,8 @@ public class AspspProfileControllerTest {
             .thenReturn(AIS_REDIRECT_LINK);
         when(aspspProfileService.getMulticurrencyAccountLevel())
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
+        when(aspspProfileService.getAvailableBookingStatuses())
+            .thenReturn(AVAILABLE_BOOKING_STATUSES);
     }
 
     @Test
@@ -183,7 +190,7 @@ public class AspspProfileControllerTest {
     }
 
     @Test
-    public void getMulticurrencyAccountLevel(){
+    public void getMulticurrencyAccountLevel() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
@@ -193,6 +200,19 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(MULTICURRENCY_ACCOUNT_LEVEL);
+    }
+
+    @Test
+    public void getAvailableBookingStatuses() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<List<BookingStatus>> actualResponse = aspspProfileController.getAvailableBookingStatuses();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(AVAILABLE_BOOKING_STATUSES);
     }
 
     private static List<String> getPaymentProducts() {
@@ -206,5 +226,13 @@ public class AspspProfileControllerTest {
             "periodic",
             "delayed",
             "bulk");
+    }
+
+    private static List<BookingStatus> getBookingStatuses() {
+        return Arrays.asList(
+            BOOKED,
+            PENDING,
+            BOTH
+        );
     }
 }

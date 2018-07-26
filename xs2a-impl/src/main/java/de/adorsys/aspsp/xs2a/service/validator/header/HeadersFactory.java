@@ -38,6 +38,7 @@ public class HeadersFactory {
         controllerClassMap.put(BulkPaymentInitiationController.class, PaymentInitiationRequestHeader.class);
         controllerClassMap.put(PeriodicPaymentsController.class, PaymentInitiationRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
+        controllerClassMap.put(PaymentController.class, PaymentInitiationRequestHeader.class);
     }
 
     public static RequestHeader getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {

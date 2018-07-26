@@ -14,27 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.aspsp.xs2a.domain;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import io.swagger.annotations.ApiModel;
 
-@Data
-@Component
-@ConfigurationProperties(prefix = "keycloak")
-public class KeycloakConfigProperties {
-    private String realm;
-    private String resource;
-    private Credentials credentials;
-    private String authServerUrl;
-
-    @Data
-    public static class Credentials {
-        private String secret;
-    }
-
-    public String getRootPath() {
-        return authServerUrl + "/realms/" + realm;
-    }
+@ApiModel(description = "Booking status", value = "BookingStatus")
+public enum BookingStatus {
+    BOOKED,
+    PENDING,
+    BOTH
 }

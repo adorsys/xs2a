@@ -31,11 +31,11 @@ import java.util.Currency;
 @Embeddable
 @ApiModel(description = "Account access", value = "AccountAccess")
 public class AccountAccess {
-    @Column(name = "currency")
+    @Column(name = "currency", length = 3)
     @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private Currency currency;
 
-    @Column(name = "type_access", nullable = false)
+    @Column(name = "type_access", nullable = false, length = 15)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Types of given accesses: account, balance, transaction, payment", required = true, example = "ACCOUNT")
     private TypeAccess typeAccess;

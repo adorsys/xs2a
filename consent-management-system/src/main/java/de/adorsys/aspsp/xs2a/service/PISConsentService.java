@@ -16,14 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.*;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
 import de.adorsys.aspsp.xs2a.domain.PisConsent;
-import de.adorsys.aspsp.xs2a.domain.PisPaymentData;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,19 +39,19 @@ public class PISConsentService {
     private final PisConsentRepository pisConsentRepository;
 
     public Optional<String> createSinglePaymentConsent(PisConsentRequest request) {
-        return mapToPisConsent(request.getPisSinglePayment())
+        return mapToPisConsent(request.getPaymentId())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
     public Optional<String> createBulkPaymentConsent(PisConsentBulkPaymentRequest request) {
-        return mapToBulkPaymentConsent(request.getPayments())
+        return mapToBulkPaymentConsent(request.getPaymentIds())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
     public Optional<String> createPeriodicPaymentConsent(PisConsentPeriodicPaymentRequest request) {
-        return mapToPeriodicPaymentConsent(request.getPisPeriodicPayment())
+        return mapToPeriodicPaymentConsent(request.getPeriodicPaymentId())
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
@@ -83,15 +82,10 @@ public class PISConsentService {
         return pisConsentRepository.save(consent);
     }
 
-    private Optional<PisConsent> mapToBulkPaymentConsent(List<PisSinglePayment> payments) {
-        List<PisPaymentData> paymentDataList = payments.stream()
-                                                   .map(this::mapToPisPaymentData)
-                                                   .filter(Optional::isPresent)
-                                                   .map(Optional::get)
-                                                   .collect(Collectors.toList());
+    private Optional<PisConsent> mapToBulkPaymentConsent(List<String> paymentIds) {
         PisConsent consent = new PisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
-        consent.setPayments(paymentDataList);
+        consent.setPaymentId(paymentIds);
         consent.setConsentType(ConsentType.PIS);
         consent.setPisConsentType(PisConsentType.BULK);
         consent.setConsentStatus(PisConsentStatus.RECEIVED);
@@ -99,13 +93,12 @@ public class PISConsentService {
         return Optional.of(consent);
     }
 
-    private Optional<PisConsent> mapToPeriodicPaymentConsent(PisPeriodicPayment periodicPayment) {
-        return Optional.ofNullable(periodicPayment)
-                   .flatMap(this::mapToPisPaymentData)
+    private Optional<PisConsent> mapToPeriodicPaymentConsent(String periodicPaymentId) {
+        return Optional.ofNullable(periodicPaymentId)
                    .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPayments(Collections.singletonList(pmt));
+                       consent.setPaymentId(Collections.singletonList(pmt));
                        consent.setConsentType(ConsentType.PIS);
                        consent.setPisConsentType(PisConsentType.PERIODIC);
                        consent.setConsentStatus(PisConsentStatus.RECEIVED);
@@ -113,37 +106,16 @@ public class PISConsentService {
                    });
     }
 
-    private Optional<PisConsent> mapToPisConsent(PisSinglePayment singlePayment) {
-        return Optional.ofNullable(singlePayment)
-                   .flatMap(this::mapToPisPaymentData)
+    private Optional<PisConsent> mapToPisConsent(String paymentId) {
+        return Optional.ofNullable(paymentId)
                    .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPayments(Collections.singletonList(pmt));
+                       consent.setPaymentId(Collections.singletonList(pmt));
                        consent.setConsentType(ConsentType.PIS);
                        consent.setPisConsentType(PisConsentType.SINGLE);
                        consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
-                   });
-    }
-
-    private Optional<PisPaymentData> mapToPisPaymentData(PisSinglePayment singlePayment) {
-        return Optional.ofNullable(singlePayment)
-                   .map(sp -> {
-                       PisPaymentData payment = new PisPaymentData();
-                       payment.setEndToEndIdentification(sp.getEndToEndIdentification());
-                       payment.setDebtorIban(sp.getDebtorAccount().getIban());
-                       payment.setUltimateDebtor(sp.getUltimateDebtor());
-                       payment.setAmount(sp.getInstructedAmount().getContent());
-                       payment.setCurrency(sp.getInstructedAmount().getCurrency());
-                       payment.setCreditorIban(sp.getCreditorAccount().getIban());
-                       payment.setCreditorAgent(sp.getCreditorAgent());
-                       payment.setCreditorName(sp.getCreditorName());
-                       payment.setRequestedExecutionDate(sp.getRequestedExecutionDate());
-                       payment.setRequestedExecutionTime(sp.getRequestedExecutionTime());
-                       payment.setUltimateCreditor(sp.getUltimateCreditor());
-                       payment.setPurposeCode(sp.getPurposeCode());
-                       return payment;
                    });
     }
 
@@ -153,25 +125,7 @@ public class PISConsentService {
                        pc.getExternalId(),
                        pc.getPisConsentType(),
                        pc.getConsentStatus(),
-                       mapToPisPayments(pc.getPayments()))
+                       pc.getPaymentId())
                    );
-    }
-
-    private List<PisPayment> mapToPisPayments(List<PisPaymentData> payments) {
-        return payments.stream()
-                   .map(pmt -> new PisPayment(
-                       pmt.getEndToEndIdentification(),
-                       pmt.getDebtorIban(),
-                       pmt.getUltimateDebtor(),
-                       pmt.getCurrency(),
-                       pmt.getAmount(),
-                       pmt.getCreditorIban(),
-                       pmt.getCreditorAgent(),
-                       pmt.getCreditorName(),
-                       pmt.getRequestedExecutionDate(),
-                       pmt.getRequestedExecutionTime(),
-                       pmt.getUltimateCreditor(),
-                       pmt.getPurposeCode()))
-                   .collect(Collectors.toList());
     }
 }
