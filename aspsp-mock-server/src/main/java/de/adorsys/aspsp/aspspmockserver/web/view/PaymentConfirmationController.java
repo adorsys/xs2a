@@ -31,6 +31,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -38,13 +40,13 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REVOKED_
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @RequestMapping(path = "/view/payment/confirmation")
 @Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class PaymentConfirmationController {
 
     @Value("${pis-webapp.baseurl}")
-    private String pisWebapp;
+    private String pisWebappUrl;
 
     private final PaymentConfirmationService paymentConfirmationService;
     private final PaymentService paymentService;
@@ -57,7 +59,11 @@ public class PaymentConfirmationController {
 
         paymentConfirmationService.generateAndSendTanForPsuByIban(iban);
 
-        return "redirect:" + pisWebapp + "/" + iban + "/" + consentId + "/" + paymentId;
+        UriComponents uriComponents = UriComponentsBuilder.newInstance()
+            .host("{host}")
+            .path("/{iban}/{consentId}/{paymentId}").buildAndExpand(pisWebappUrl, iban, consentId, paymentId);
+
+        return uriComponents.toUriString();
     }
 
     @PostMapping
@@ -66,36 +72,32 @@ public class PaymentConfirmationController {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity confirmTan(@ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
+    public ResponseEntity confirmTan(@RequestBody PaymentConfirmation paymentConfirmation) {
         Optional<AspspPayment> payment = paymentService.getPaymentById(paymentConfirmation.getPaymentId());
         if(payment.isPresent()) {
             ResponseEntity responseEntity;
             if (paymentConfirmationService.isTanNumberValidByIban(paymentConfirmation.getIban(), paymentConfirmation.getTanNumber(), paymentConfirmation.getConsentId())) {
                 responseEntity = new ResponseEntity(HttpStatus.OK);
             } else {
-                ApiError error = new ApiError(HttpStatus.UNAUTHORIZED, "WRONG_TAN", "Bad request");
+                ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
                 responseEntity = new ResponseEntity<>(error, error.getStatus());
             }
-
             return responseEntity;
         }
-        else {
-            ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request");
-            return new ResponseEntity<>(error, error.getStatus());
-        }
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request");
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     @PostMapping(path = "/consent", params = "decision=confirmed")
     @ApiOperation(value = "Proceeds payment and changes the status of the corresponding consent")
-    public ResponseEntity proceedPayment(@ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
+    public ResponseEntity proceedPayment(@RequestBody PaymentConfirmation paymentConfirmation) {
         paymentService.updatePaymentConsentStatus(paymentConfirmation.getConsentId(), VALID);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping(path = "/consent", params = "decision=revoked")
     @ApiOperation(value = "Shows payment failure page")
-    public ResponseEntity revokePaymentConsent(
-        @ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
+    public ResponseEntity revokePaymentConsent(@RequestBody PaymentConfirmation paymentConfirmation) {
         paymentService.updatePaymentConsentStatus(paymentConfirmation.getConsentId(), REVOKED_BY_PSU);
         return new ResponseEntity(HttpStatus.OK);
     }
