@@ -64,8 +64,7 @@ public class PaymentConfirmationController {
     @ApiOperation(value = "Validates tan")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
-        @ApiResponse(code = 400, message = "Bad request"),
-        @ApiResponse(code = 401, message = "Wrong tan")
+        @ApiResponse(code = 400, message = "Bad request")
     })
     public ResponseEntity confirmTan(@ModelAttribute("paymentConfirmation") PaymentConfirmation paymentConfirmation) {
         Optional<AspspPayment> payment = paymentService.getPaymentById(paymentConfirmation.getPaymentId());
@@ -74,7 +73,7 @@ public class PaymentConfirmationController {
             if (paymentConfirmationService.isTanNumberValidByIban(paymentConfirmation.getIban(), paymentConfirmation.getTanNumber(), paymentConfirmation.getConsentId())) {
                 responseEntity = new ResponseEntity(HttpStatus.OK);
             } else {
-                ApiError error = new ApiError(HttpStatus.UNAUTHORIZED, "WRONG_TAN", "Unauthorized");
+                ApiError error = new ApiError(HttpStatus.UNAUTHORIZED, "WRONG_TAN", "Bad request");
                 responseEntity = new ResponseEntity<>(error, error.getStatus());
             }
 
