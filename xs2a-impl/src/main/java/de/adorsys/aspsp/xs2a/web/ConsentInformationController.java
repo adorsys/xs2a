@@ -52,7 +52,7 @@ public class ConsentInformationController {
         @ApiImplicitParam(name = "psu-corporate-id", value = "Might be mandated in the ASPSP’s documentation", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "psu-corporate-id-type", value = "Might be mandated in the ASPSP’s documentation", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-redirect-uri", value = "http://example.com", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<CreateConsentResp> createAccountConsent(
@@ -69,7 +69,7 @@ public class ConsentInformationController {
     @GetMapping(path = "/{consent-id}/status")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<ConsentStatus> getAccountConsentsStatusById(
@@ -86,7 +86,7 @@ public class ConsentInformationController {
     @GetMapping(path = "/{consent-id}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
