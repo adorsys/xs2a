@@ -74,15 +74,12 @@ public class PaymentConfirmationController {
     public ResponseEntity confirmTan(@RequestBody PaymentConfirmation paymentConfirmation) {
         Optional<AspspPayment> payment = paymentService.getPaymentById(paymentConfirmation.getPaymentId());
         if(payment.isPresent()) {
-            ResponseEntity responseEntity;
             if (paymentConfirmationService.isTanNumberValidByIban(paymentConfirmation.getIban(), paymentConfirmation.getTanNumber(), paymentConfirmation.getConsentId())) {
-                responseEntity = new ResponseEntity(HttpStatus.OK);
-            } else {
-                ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
-                responseEntity = new ResponseEntity<>(error, error.getStatus());
+                return new ResponseEntity(HttpStatus.OK);
             }
-            return responseEntity;
-        }
+            ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
+            return  new ResponseEntity<>(error, error.getStatus());
+            }
         ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request");
         return new ResponseEntity<>(error, error.getStatus());
     }
