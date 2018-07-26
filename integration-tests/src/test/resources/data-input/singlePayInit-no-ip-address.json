@@ -42,7 +42,7 @@
   },
   "response": {
     "code": "400",
-    "header": [],
+    "header": {},
     "body": {
       "tppMessages": {
         "category": "ERROR",

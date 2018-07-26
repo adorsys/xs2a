@@ -21,7 +21,7 @@
       "creditorName": "WBG",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE81432100000004111111"
+        "iban": "DE81432100000004111111OO"
       },
       "endToEndIdentification": "WBG-123456789",
       "instructedAmount": {
@@ -43,7 +43,7 @@
   },
   "response": {
     "code": "400",
-    "header": [],
+    "header": {},
     "body": {
       "category": "ERROR",
       "transactionStatus": "FORMAT_ERROR"

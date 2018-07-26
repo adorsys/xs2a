@@ -43,7 +43,7 @@
   },
   "response": {
     "code": "404",
-    "header": [],
+    "header": {},
     "body": {
       "tppMessages": {
         "category": "ERROR",
