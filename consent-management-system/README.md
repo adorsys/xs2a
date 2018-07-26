@@ -10,7 +10,7 @@ spring.datasource.username=yourUsername
 spring.datasource.password=yourPassword
 spring.jpa.properties.hibernate.default_schema=yourDatabaseName
 ```
-We use liquibase for generating DB tables. Property file with settings you can find in resources folder.
+We use liquibase for generating DB tables. Property file with settings you can find in resources folder. You can find brief instruction how to setup database quickly in the `cms-db-schema/README.md` file.
 
 Some of these parameters you can obtain after installing and running PostgreSQL DB (see 'PostgreSQL database run and settings instuctions' section below)
 
