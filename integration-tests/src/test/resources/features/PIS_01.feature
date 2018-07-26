@@ -31,7 +31,7 @@ Feature: Payment Initiation Service
             | sepa-credit-transfers | singlePayInit-wrong-format-request-id.json     |
             | sepa-credit-transfers | singlePayInit-wrong-format-psu-ip-address.json |
             | sepa-credit-transfers | singlePayInit-exceeding-amount.json            |
-            | sepa-credit-transfers | singlePayInit-expired-exec-time.json           |
+            | sepa-credit-transfers | singlePayInit-expired-exec-date.json           |
 
 
         # TODO create Scenario for other SCA-Approaches

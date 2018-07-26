@@ -120,6 +120,7 @@ public class PISSteps {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(context.getTestData().getRequest().getHeader());
         headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
 
         return new HttpEntity<>(
             (SinglePayments) context.getTestData().getRequest().getBody(),

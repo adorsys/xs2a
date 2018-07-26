@@ -53,7 +53,7 @@
     "code": "201",
     "header": {},
     "body": {
-      "transactionStatus": "Received"
+      "transactionStatus": "RCVD"
     }
   }
 }

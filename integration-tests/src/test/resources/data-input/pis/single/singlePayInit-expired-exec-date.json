@@ -45,7 +45,7 @@
     "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "Rejected",
+      "transactionStatus": "RJCT",
       "tppMessage": {
         "category": "ERROR",
         "code": "EXECUTION_DATE_INVALID"
