@@ -63,7 +63,7 @@ public class PaymentInitiationController {
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = TransactionStatus.class),
-        @ApiResponse(code = 404, message = "Not found")})
+        @ApiResponse(code = 403, message = "Not found")})
     @GetMapping(path = "/{paymentId}/status")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
