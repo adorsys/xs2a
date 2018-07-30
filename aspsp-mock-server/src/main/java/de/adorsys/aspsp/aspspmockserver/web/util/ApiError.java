@@ -11,11 +11,11 @@ public class ApiError {
 
     private HttpStatus status;
     private String message;
-    private List<String> errors;
+    private String error;
 
     public ApiError(HttpStatus status, String message, String error) {
         this.status = status;
         this.message = message;
-        errors = Arrays.asList(error);
+        this.error = error;
     }
 }
