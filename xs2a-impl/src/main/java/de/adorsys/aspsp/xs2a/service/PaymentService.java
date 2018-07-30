@@ -60,8 +60,10 @@ public class PaymentService {
      */
     public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct) {
         TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct));
-        return ResponseObject.<TransactionStatus>builder()
-                   .body(transactionStatus).build();
+        return Optional.ofNullable(transactionStatus)
+                   .map(tr -> ResponseObject.<TransactionStatus>builder()
+                                  .body(tr).build())
+                   .orElse(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
 
     /**
@@ -88,8 +90,8 @@ public class PaymentService {
     /**
      * Initiates a bulk payment
      *
-     * @param payments             List of single payments forming bulk payment
-     * @param paymentProduct       The addressed payment product
+     * @param payments       List of single payments forming bulk payment
+     * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing inforamtion about created payments or an error if non of the payments could pass the validation
      */
     public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct) {
@@ -126,8 +128,8 @@ public class PaymentService {
     /**
      * Initiates a single payment
      *
-     * @param singlePayment        Single payment information
-     * @param paymentProduct       The addressed payment product
+     * @param singlePayment  Single payment information
+     * @param paymentProduct The addressed payment product
      * @return Response containing information about created single payment or corresponding error
      */
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct) {

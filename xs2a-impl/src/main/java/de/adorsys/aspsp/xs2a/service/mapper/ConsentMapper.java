@@ -22,11 +22,9 @@ import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
@@ -62,51 +60,6 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
-        AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
-        accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
-
-        accessInfo.setBalances(Optional.ofNullable(access.getBalances())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
-
-        accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
-                                       .map(this::mapToListAccountInfo)
-                                       .orElse(Collections.emptyList()));
-
-        accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
-                                            .map(AccountAccessType::name)
-                                            .orElse(null));
-        accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
-                                  .map(AccountAccessType::name)
-                                  .orElse(null));
-
-        return accessInfo;
-    }
-
-    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
-        return refs.stream()
-                   .map(this::mapToAccountInfo)
-                   .collect(Collectors.toList());
-    }
-
-    private AccountInfo mapToAccountInfo(AccountReference ref) {
-        AccountInfo info = new AccountInfo();
-        info.setIban(ref.getIban());
-        info.setCurrency(Optional.ofNullable(ref.getCurrency())
-                             .map(Currency::getCurrencyCode)
-                             .orElse(null));
-        return info;
-    }
-
-    public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
-        return Optional.ofNullable(spiTransactionStatus)
-                   .map(ts -> TransactionStatus.valueOf(ts.name()))
-                   .orElse(null);
-    }
-
     public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
                    .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
@@ -133,6 +86,24 @@ public class ConsentMapper {
     public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus) {
         return Optional.ofNullable(spiConsentStatus)
                    .map(status -> ConsentStatus.valueOf(status.name()));
+    }
+
+    public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
+        ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
+        if (error == MessageErrorCode.ACCESS_EXCEEDED) {
+            actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
+        } else if (error == MessageErrorCode.CONSENT_EXPIRED) {
+            actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
+        } else if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
+            actionStatus = ActionStatus.CONSENT_NOT_FOUND;
+        } else if (error == MessageErrorCode.CONSENT_INVALID) {
+            if (access == TypeAccess.TRANSACTION) {
+                actionStatus = ActionStatus.FAILURE_TRANSACTION;
+            } else if (access == TypeAccess.BALANCE || withBalance) {
+                actionStatus = ActionStatus.FAILURE_BALANCE;
+            }
+        }
+        return actionStatus;
     }
 
     //Domain
@@ -177,25 +148,42 @@ public class ConsentMapper {
 
     }
 
-    public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
-        ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
-        if (error == MessageErrorCode.ACCESS_EXCEEDED) {
-            actionStatus = ActionStatus.CONSENT_LIMIT_EXCEEDED;
-        }
-        if (error == MessageErrorCode.CONSENT_EXPIRED) {
-            actionStatus = ActionStatus.CONSENT_INVALID_STATUS;
-        }
-        if (error == MessageErrorCode.CONSENT_UNKNOWN_400) {
-            actionStatus = ActionStatus.CONSENT_NOT_FOUND;
-        }
-        if (error == MessageErrorCode.CONSENT_INVALID) {
-            if (access == TypeAccess.TRANSACTION) {
-                actionStatus = ActionStatus.FAILURE_TRANSACTION;
-            }
-            if (access == TypeAccess.BALANCE || withBalance) {
-                actionStatus = ActionStatus.FAILURE_BALANCE;
-            }
-        }
-        return actionStatus;
+    private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
+        AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
+        accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
+                                   .map(this::mapToListAccountInfo)
+                                   .orElse(Collections.emptyList()));
+
+        accessInfo.setBalances(Optional.ofNullable(access.getBalances())
+                                   .map(this::mapToListAccountInfo)
+                                   .orElse(Collections.emptyList()));
+
+        accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
+                                       .map(this::mapToListAccountInfo)
+                                       .orElse(Collections.emptyList()));
+
+        accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
+                                            .map(AccountAccessType::name)
+                                            .orElse(null));
+        accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
+                                  .map(AccountAccessType::name)
+                                  .orElse(null));
+
+        return accessInfo;
+    }
+
+    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
+        return refs.stream()
+                   .map(this::mapToAccountInfo)
+                   .collect(Collectors.toList());
+    }
+
+    private AccountInfo mapToAccountInfo(AccountReference ref) {
+        AccountInfo info = new AccountInfo();
+        info.setIban(ref.getIban());
+        info.setCurrency(Optional.ofNullable(ref.getCurrency())
+                             .map(Currency::getCurrencyCode)
+                             .orElse(null));
+        return info;
     }
 }

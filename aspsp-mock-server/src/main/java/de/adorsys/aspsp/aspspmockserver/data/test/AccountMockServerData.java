@@ -52,6 +52,7 @@ public class AccountMockServerData {
     private final List<String> ALLOWED_PAYMENTS = Collections.singletonList("sepa-credit-transfers");
     private final Currency EUR = Currency.getInstance("EUR");
     private final Currency USD = Currency.getInstance("USD");
+    private final SpiBalanceType BALANCE_TYPE = SpiBalanceType.INTERIM_AVAILABLE;
 
     // Allowed Payments for Cucumber Test User
     private final List<String> ALLOWED_PAYMENTS_CUCUMBER_TESTUSER = Arrays.asList("sepa-credit-transfers", "instant-sepa-credit-transfers");
@@ -119,13 +120,13 @@ public class AccountMockServerData {
     private List<SpiAccountDetails> fillAccounts() {
 
         return Arrays.asList(
-            getNewAccount("11111-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(1000), BigDecimal.valueOf(200)), "DE89370400440532013000", "AEYPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("77777-999999999", getNewBalanceList(USD, BigDecimal.valueOf(350), BigDecimal.valueOf(100)), "DE89370400440532013000", "FFGHPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("22222-999999999", getNewBalanceList(USD, BigDecimal.valueOf(2500), BigDecimal.valueOf(300)), "DE89370400440532013001", "QWEPM6427U", "DEUTDE8EXXX", "Müller", "SCT"),
-            getNewAccount("33333-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(3000), BigDecimal.valueOf(400)), "DE89370400440532013002", "EWQPS8534R", "DEUTDE8EXXX", "Schmidt", "SCT"),
-            getNewAccount("44444-999999999", getNewBalanceList(USD, BigDecimal.valueOf(3500), BigDecimal.valueOf(500)), "DE89370400440532013003", "ASDPS9547Z", "DEUTDE8EXXX", "Schmidt", "SCT"),
-            getNewAccount("55555-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(4000), BigDecimal.valueOf(600)), "DE89370400440532013004", "DSACC1876N", "DEUTDE8EXXX", "Company AG", "SCT"),
-            getNewAccount("66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400), BigDecimal.valueOf(700)), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"),
+            getNewAccount("11111-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(1000)), "DE89370400440532013000", "AEYPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
+            getNewAccount("77777-999999999", getNewBalanceList(USD, BigDecimal.valueOf(350)), "DE89370400440532013000", "FFGHPM5403H", "DEUTDE8EXXX", "Müller", "SCT"),
+            getNewAccount("22222-999999999", getNewBalanceList(USD, BigDecimal.valueOf(2500)), "DE89370400440532013001", "QWEPM6427U", "DEUTDE8EXXX", "Müller", "SCT"),
+            getNewAccount("33333-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(3000)), "DE89370400440532013002", "EWQPS8534R", "DEUTDE8EXXX", "Schmidt", "SCT"),
+            getNewAccount("44444-999999999", getNewBalanceList(USD, BigDecimal.valueOf(3500)), "DE89370400440532013003", "ASDPS9547Z", "DEUTDE8EXXX", "Schmidt", "SCT"),
+            getNewAccount("55555-999999999", getNewBalanceList(EUR, BigDecimal.valueOf(4000)), "DE89370400440532013004", "DSACC1876N", "DEUTDE8EXXX", "Company AG", "SCT"),
+            getNewAccount("66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400)), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"),
 
             // account Test User for Cucumber
             getNewAccountCucumberTest("42fb4cc3-91cb-45ba-9159-b87acf6d8add", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE81432100000004111111", null, null, "Alexander Mueller", "GIRO"),
@@ -135,7 +136,7 @@ public class AccountMockServerData {
         );
     }
 
-    private SpiAccountDetails getNewAccount(String id, List<SpiBalances> balance, String iban, String pan, String bic, String name, String accountType) {
+    private SpiAccountDetails getNewAccount(String id, List<SpiAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
         return new SpiAccountDetails(
             id,
             iban,
@@ -143,7 +144,7 @@ public class AccountMockServerData {
             pan,
             pan.substring(3) + "****",
             null,
-            balance.get(0).getOpeningBooked().getSpiAmount().getCurrency(),
+            balance.get(0).getSpiBalanceAmount().getCurrency(),
             name,
             accountType,
             null,
@@ -152,24 +153,22 @@ public class AccountMockServerData {
         );
     }
 
-    private List<SpiBalances> getNewBalanceList(Currency currency, BigDecimal amount1, BigDecimal amount2) {
-        SpiBalances spiBalances = new SpiBalances();
-        spiBalances.setOpeningBooked(getBalance(currency, amount1, LocalDate.now(), LocalDateTime.now()));
-        spiBalances.setInterimAvailable(getBalance(currency, amount1, LocalDate.now(), LocalDateTime.now()));
-        spiBalances.setAuthorised(getBalance(currency, amount2, LocalDate.now(), LocalDateTime.now()));
-        return Collections.singletonList(spiBalances);
+    private List<SpiAccountBalance> getNewBalanceList(Currency currency, BigDecimal amount1) {
+        return Collections.singletonList(getBalance(currency, amount1, LocalDate.now(), LocalDateTime.now()));
     }
 
     private SpiAccountBalance getBalance(Currency currency, BigDecimal amount, LocalDate date, LocalDateTime dateTime) {
         SpiAccountBalance balance = new SpiAccountBalance();
-        balance.setSpiAmount(new SpiAmount(currency, amount));
-        balance.setDate(date);
-        balance.setLastActionDateTime(dateTime);
+        balance.setSpiBalanceAmount(new SpiAmount(currency, amount));
+        balance.setSpiBalanceType(BALANCE_TYPE);
+        balance.setReferenceDate(date);
+        balance.setLastChangeDateTime(dateTime);
+        balance.setLastCommittedTransaction("abcd");
         return balance;
     }
 
     // Custom Methods to create Test account for Cucumber tests
-    private SpiAccountDetails getNewAccountCucumberTest(String id, List<SpiBalances> balance, String iban, String pan, String bic, String name, String accountType) {
+    private SpiAccountDetails getNewAccountCucumberTest(String id, List<SpiAccountBalance> balance, String iban, String pan, String bic, String name, String accountType) {
         return new SpiAccountDetails(
             id,
             iban,
@@ -177,7 +176,7 @@ public class AccountMockServerData {
             pan,
             null,
             null,
-            balance.get(0).getInterimAvailable().getSpiAmount().getCurrency(),
+            balance.get(0).getSpiBalanceAmount().getCurrency(),
             name,
             accountType,
             null,
@@ -186,10 +185,8 @@ public class AccountMockServerData {
         );
     }
 
-    private List<SpiBalances> getNewBalanceListCucumberTests(Currency currency, BigDecimal amount1) {
-        SpiBalances spiBalances = new SpiBalances();
-        spiBalances.setInterimAvailable(getBalance(currency, amount1, LocalDate.now(), LocalDateTime.now()));
-        return Collections.singletonList(spiBalances);
+    private List<SpiAccountBalance> getNewBalanceListCucumberTests(Currency currency, BigDecimal amount1) {
+        return Collections.singletonList(getBalance(currency, amount1, LocalDate.now(), LocalDateTime.now()));
     }
 
     private SpiAccountReference mapToReferenceFromDetails(SpiAccountDetails details) {

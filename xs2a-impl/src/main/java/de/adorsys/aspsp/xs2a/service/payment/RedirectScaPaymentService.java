@@ -52,6 +52,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     @Override
     public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment) {
         return createPeriodicPaymentAndGetResponse(periodicPayment)
+                   .filter(pmt -> pmt.getTransactionStatus() != TransactionStatus.RJCT)
                    .map(resp -> createConsentForPeriodicPaymentAndExtendPaymentResponse(periodicPayment, resp));
     }
 
@@ -61,7 +62,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(PeriodicPayment periodicPayment, PaymentInitialisationResponse response) {
-        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(periodicPayment);
+        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(response.getPaymentId());
         String iban = periodicPayment.getDebtorAccount().getIban();
 
         return StringUtils.isBlank(pisConsentId)
@@ -100,7 +101,12 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(List<SinglePayments> payments, List<PaymentInitialisationResponse> responseList) {
-        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(payments);
+        List<String> validPaymentIds = responseList.stream()
+                                           .filter(pmt -> pmt.getTransactionStatus() != TransactionStatus.RJCT)
+                                           .map(PaymentInitialisationResponse::getPaymentId)
+                                           .collect(Collectors.toList());
+
+        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(validPaymentIds);
 
         return getDebtorIbanFromPayments(payments)
                    .map(iban -> responseList.stream()
@@ -112,6 +118,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     @Override
     public Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayments singlePayment) {
         return createSinglePaymentAndGetResponse(singlePayment)
+                   .filter(resp -> resp.getTransactionStatus() != TransactionStatus.RJCT)
                    .map(resp -> createConsentForSinglePaymentAndExtendPaymentResponse(singlePayment, resp));
     }
 
@@ -122,7 +129,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(SinglePayments singlePayment, PaymentInitialisationResponse response) {
-        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(singlePayment);
+        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(response.getPaymentId());
         String iban = singlePayment.getDebtorAccount().getIban();
 
         return StringUtils.isBlank(pisConsentId)
@@ -139,6 +146,5 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     private Optional<String> getDebtorIbanFromPayments(List<SinglePayments> payments) {
         return Optional.ofNullable(payments.get(0).getDebtorAccount())
                    .map(AccountReference::getIban);
-
     }
 }

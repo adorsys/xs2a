@@ -33,6 +33,7 @@
         <module>consent-api</module>
         <module>aspsp-profile</module>
         <module>integration-tests</module>
+        <module>cms-db-schema</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -123,6 +124,7 @@
         <bcpkix-jdk15on.version>1.59</bcpkix-jdk15on.version>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <freemarker.version>2.3.28</freemarker.version>
+        <liquibase.version>3.6.2</liquibase.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>

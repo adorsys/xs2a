@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -116,8 +116,8 @@ public class FundsConfirmationServiceTest {
         return amount;
     }
 
-    private List<Balances> getBalances() throws IOException {
-        Balances balances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balances.class).get();
-        return Collections.singletonList(balances);
+    private List<Balance> getBalances() throws IOException {
+        Balance balance = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balance.class).get();
+        return Collections.singletonList(balance);
     }
 }

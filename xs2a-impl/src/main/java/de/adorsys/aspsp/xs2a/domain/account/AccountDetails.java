@@ -18,7 +18,7 @@
 package de.adorsys.aspsp.xs2a.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import io.swagger.annotations.ApiModel;
@@ -75,10 +75,9 @@ public class AccountDetails {
     private final String bic;
 
     @ApiModelProperty(value = "Balances")
-    private final List<Balances> balances;
+    private final List<Balance> balances;
 
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")
     private Links links = new Links();
-
 }

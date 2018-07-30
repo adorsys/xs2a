@@ -9,17 +9,5 @@
   "accountType": "Girokonto",
   "cashSpiAccountType": "CURRENT_ACCOUNT",
   "bic": "EDEKDEHHXXX",
-  "balances":
-    [{
-      "closingBooked":
-      {
-        "spiAmount":
-        {
-          "currency": "EUR",
-          "content": "1000.0"
-        },
-        "lastActionDateTime":"2017-10-25T15:30:35.035",
-        "date":"2007-01-01"
-      }
-    }]
+  "balances": []
 }

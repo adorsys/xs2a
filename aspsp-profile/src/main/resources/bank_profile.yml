@@ -1,15 +1,12 @@
+---
 setting:
  frequencyPerDay: 5
  combinedServiceIndicator: false
- availablePaymentProducts :
- - sepa-credit-transfers
- - instant-sepa-credit-transfers
- availablePaymentTypes :
- - bulk
- - periodic
- - delayed
+ availablePaymentProducts: sepa-credit-transfers, instant-sepa-credit-transfers
+ availablePaymentTypes: bulk, periodic, delayed
  scaApproach: REDIRECT
  tppSignatureRequired: false
  pisRedirectUrlToAspsp: http://localhost:28080/view/payment/confirmation/
  aisRedirectUrlToAspsp: http://localhost:28080/
  multicurrencyAccountLevel: SUBACCOUNT
+ availableBookingStatuses: BOOKED, PENDING
