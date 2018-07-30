@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Balances;
+import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.SingleBalance;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
@@ -40,7 +40,7 @@ public class FundsConfirmationService {
     /**
      * Checks if the account balance is sufficient for requested operation
      *
-     * @param request Contains the requested amount in order to comparing with available amount on account
+     * @param request Contains the requested balanceAmount in order to comparing with available balanceAmount on account
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
@@ -53,12 +53,12 @@ public class FundsConfirmationService {
     }
 
     private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
-        List<Balances> balances = getAccountBalancesByAccountReference(accountReference);
+        List<Balance> balances = getAccountBalancesByAccountReference(accountReference);
 
         return balances.stream()
+                   .filter(bal -> BalanceType.INTERIM_AVAILABLE == bal.getBalanceType())
                    .findFirst()
-                   .map(Balances::getInterimAvailable)
-                   .map(SingleBalance::getAmount)
+                   .map(Balance::getBalanceAmount)
                    .map(am -> isRequiredAmountEnough(requiredAmount, am))
                    .orElse(false);
     }
@@ -74,7 +74,7 @@ public class FundsConfirmationService {
                    .orElse(BigDecimal.ZERO);
     }
 
-    private List<Balances> getAccountBalancesByAccountReference(AccountReference reference) {
+    private List<Balance> getAccountBalancesByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(accountService::getAccountDetailsByAccountReference)
                    .filter(Optional::isPresent)

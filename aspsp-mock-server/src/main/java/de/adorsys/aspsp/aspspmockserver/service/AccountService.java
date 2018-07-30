@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -93,7 +93,7 @@ public class AccountService {
      * @param accountId accounts primary ASPSP identifier
      * @return list of account balances
      */
-    public List<SpiBalances> getAccountBalancesById(String accountId) {
+    public List<SpiAccountBalance> getAccountBalancesById(String accountId) {
         return psuRepository.findPsuByAccountDetailsList_Id(accountId)
                    .flatMap(psu -> findAccountInPsuById(psu, accountId))
                    .map(SpiAccountDetails::getBalances)

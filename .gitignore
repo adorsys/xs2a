@@ -38,3 +38,5 @@ log
 
 .DS_Store
 .springBeans
+
+cms-db-schema/liquibase.properties

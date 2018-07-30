@@ -129,15 +129,14 @@ public class PaymentService {
         Optional<SpiAccountBalance> balance = Optional.ofNullable(reference)
                                                   .flatMap(this::getInterimAvailableBalanceByReference);
         return balance
-                   .map(b -> b.getSpiAmount().getContent().compareTo(amount) > 0)
+                   .map(b -> b.getSpiBalanceAmount().getContent().compareTo(amount) > 0)
                    .orElse(false);
     }
 
     private Optional<SpiAccountBalance> getInterimAvailableBalanceByReference(SpiAccountReference reference) {
         List<SpiAccountDetails> accountsByIban = accountService.getAccountsByIban(reference.getIban());
         return filterDetailsByCurrency(accountsByIban, reference.getCurrency())
-                   .flatMap(SpiAccountDetails::getFirstBalance)
-                   .map(SpiBalances::getInterimAvailable);
+                   .flatMap(SpiAccountDetails::getFirstBalance);
     }
 
     private Optional<SpiAccountDetails> filterDetailsByCurrency(List<SpiAccountDetails> accounts, Currency currency) {

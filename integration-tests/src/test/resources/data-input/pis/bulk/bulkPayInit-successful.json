@@ -84,10 +84,10 @@
     "header": {},
     "body": [
       {
-        "transactionStatus": "Received"
+        "transactionStatus": "RCVD"
       },
       {
-        "transactionStatus": "Received"
+        "transactionStatus": "RCVD"
       }
     ]
   }

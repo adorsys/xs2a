@@ -20,7 +20,7 @@ import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
 import de.adorsys.aspsp.aspspmockserver.web.rest.FutureBookingsController;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,9 +34,7 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -95,22 +93,17 @@ public class FutureBookingsControllerTest {
             null, "ACVB222", getNewBalanceList(amount)));
     }
 
-    private ArrayList<SpiBalances> getNewBalanceList(BigDecimal amount) {
-        Currency euro = Currency.getInstance("EUR");
-
-        SpiBalances balance = new SpiBalances();
-        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, amount)));
-        ArrayList<SpiBalances> balances = new ArrayList<>();
-        balances.add(balance);
-
-        return balances;
+    private List<SpiAccountBalance> getNewBalanceList(BigDecimal amount) {
+        return Collections.singletonList(getNewSingleBalances(new SpiAmount(Currency.getInstance("EUR"), amount)));
     }
 
     private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
         SpiAccountBalance sb = new SpiAccountBalance();
-        sb.setDate(LocalDate.parse("2019-03-03"));
-        sb.setSpiAmount(spiAmount);
-        sb.setLastActionDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
+        sb.setReferenceDate(LocalDate.parse("2019-03-03"));
+        sb.setSpiBalanceAmount(spiAmount);
+        sb.setLastChangeDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
+        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        sb.setLastCommittedTransaction("abc");
         return sb;
     }
 }

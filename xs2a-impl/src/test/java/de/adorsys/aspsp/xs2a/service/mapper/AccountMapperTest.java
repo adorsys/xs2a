@@ -19,8 +19,8 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
-import de.adorsys.aspsp.xs2a.domain.SingleBalance;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
@@ -46,7 +46,6 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
-    private static final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
     private static final String SPI_TRANSACTION_JSON_PATH = "/json/AccountReportDataTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
@@ -74,10 +73,6 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getName()).isEqualTo("Main Account");
         assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
-        SingleBalance closingBooked = actualAccountDetails.getBalances().get(0).getClosingBooked();
-        assertThat(closingBooked.getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(closingBooked.getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(closingBooked.getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
     }
 
     @Test

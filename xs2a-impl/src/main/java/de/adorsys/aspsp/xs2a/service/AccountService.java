@@ -124,21 +124,21 @@ public class AccountService {
      * @param accountId   String representing a PSU`s Account at ASPSP
      * @return List of AccountBalances based on accountId if granted by consent
      */
-    public ResponseObject<List<Balances>> getBalances(String consentId, String accountId) {
+    public ResponseObject<List<Balance>> getBalances(String consentId, String accountId) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<List<Balances>>builder()
+            return ResponseObject.<List<Balance>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
         AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId));
         if (accountDetails == null) {
-            return ResponseObject.<List<Balances>>builder()
+            return ResponseObject.<List<Balance>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
-        ResponseObject<List<Balances>> response = isValid
-                                                      ? ResponseObject.<List<Balances>>builder().body(accountDetails.getBalances()).build()
-                                                      : ResponseObject.<List<Balances>>builder()
+        ResponseObject<List<Balance>> response = isValid
+                                                      ? ResponseObject.<List<Balance>>builder().body(accountDetails.getBalances()).build()
+                                                      : ResponseObject.<List<Balance>>builder()
                                                             .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
         aisConsentService.consentActionLog(TPP_ID, consentId, false, TypeAccess.BALANCE, response);
@@ -203,7 +203,8 @@ public class AccountService {
                    : references.stream()
                          .map(this::getAccountDetailsByAccountReference)
                          .filter(Optional::isPresent)
-                         .collect(Collectors.mapping(Optional::get, Collectors.toList()));
+                         .map(Optional::get)
+                         .collect(Collectors.toList());
     }
 
     private List<AccountDetails> getAccountDetailsNoBalances(List<AccountDetails> details) {
