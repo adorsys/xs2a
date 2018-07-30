@@ -51,9 +51,9 @@
   },
   "response": {
     "code": "201",
-    "header": [],
+    "header": {},
     "body": {
-      "transactionStatus": "Received"
+      "transactionStatus": "RCVD"
     }
   }
 }

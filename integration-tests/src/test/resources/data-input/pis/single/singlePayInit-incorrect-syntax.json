@@ -11,7 +11,7 @@
       },
       "creditorAddress": {
         "buildingNumber": "56",
-        "city": "Nürnberg"
+        "city": "Nürnberg",
         "country": {
           "code": "49"
         },
@@ -21,7 +21,7 @@
       "creditorName": "WBG",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE81432100000004111111"
+        "iban": "DE81432100000004111111OO"
       },
       "endToEndIdentification": "WBG-123456789",
       "instructedAmount": {
