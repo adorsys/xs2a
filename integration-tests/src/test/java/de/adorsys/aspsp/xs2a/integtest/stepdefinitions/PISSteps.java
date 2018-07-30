@@ -13,6 +13,7 @@ import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -57,12 +58,7 @@ public class PISSteps {
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-
-        HttpEntity<SinglePayments> entity = new HttpEntity<>(context.getTestData().getRequest().getBody(),
-            headers);
+        HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
 
         ResponseEntity<PaymentInitialisationResponse> response = restTemplate.exchange(
             context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
@@ -94,5 +90,40 @@ public class PISSteps {
 
     private HttpStatus convertStringToHttpStatusCode(String code){
         return HttpStatus.valueOf(Integer.valueOf(code));
+    }
+
+    @When("^PSU sends the single payment initiating request with error$")
+    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException {
+        HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
+
+        try {
+            restTemplate.exchange(
+                context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
+                HttpMethod.POST,
+                entity,
+                HashMap.class);
+        } catch (HttpClientErrorException hce) {
+            ResponseEntity<HashMap> actualResponse = new ResponseEntity<>(hce.getStatusCode());
+            context.setResponse(actualResponse);
+        }
+    }
+
+    @Then("^an error response code is displayed the appropriate error response$")
+    public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
+        ResponseEntity<HashMap> response = context.getResponse();
+        HttpStatus httpStatus = convertStringToHttpStatusCode(context.getTestData().getResponse().getCode());
+        assertThat(response.getStatusCode(), equalTo(httpStatus));
+    }
+
+    @SuppressWarnings("unchecked")
+    private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAll(context.getTestData().getRequest().getHeader());
+        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
+
+        return new HttpEntity<>(
+            (SinglePayments) context.getTestData().getRequest().getBody(),
+            headers);
     }
 }
