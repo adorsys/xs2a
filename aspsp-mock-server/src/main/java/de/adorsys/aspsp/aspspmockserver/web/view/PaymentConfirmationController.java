@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REVOKED_BY_PSU;
@@ -44,25 +46,25 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
 @Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class PaymentConfirmationController {
 
-    @Value("${pis-webapp.baseurl}")
-    private String pisWebappUrl;
+    @Value("${onlinebanking-mock-webapp.baseurl}")
+    private String onlineBankingMockWebappUrl;
 
     private final PaymentConfirmationService paymentConfirmationService;
     private final PaymentService paymentService;
 
     @GetMapping(path = "/{iban}/{consent-id}/{payment-id}")
     @ApiOperation(value = "Sends TAN to psu`s email, validates TAN sent to PSU`s e-mail and returns a link to continue as authenticated user")
-    public String showConfirmationPage(@PathVariable("iban") String iban,
+    public void showConfirmationPage(@PathVariable("iban") String iban,
                                              @PathVariable("consent-id") String consentId,
-                                             @PathVariable("payment-id") String paymentId) {
+                                             @PathVariable("payment-id") String paymentId,
+                                                HttpServletResponse response) throws IOException {
 
         paymentConfirmationService.generateAndSendTanForPsuByIban(iban);
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
-            .host("{host}")
-            .path("/{iban}/{consentId}/{paymentId}").buildAndExpand(pisWebappUrl, iban, consentId, paymentId);
+            .path("/{iban}/{consentId}/{paymentId}").buildAndExpand(iban, consentId, paymentId);
 
-        return uriComponents.toUriString();
+        response.sendRedirect(onlineBankingMockWebappUrl + uriComponents.toUriString());
     }
 
     @PostMapping
