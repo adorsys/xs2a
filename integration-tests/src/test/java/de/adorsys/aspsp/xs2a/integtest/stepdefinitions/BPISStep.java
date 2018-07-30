@@ -31,7 +31,7 @@ public class BPISStep {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context context;
+    private Context<List<SinglePayments>, List<HashMap>, List<HashMap>> context;
 
 /* see GlobalSteps.java
         @Given("^PSU is logged in$")
@@ -48,7 +48,7 @@ public class BPISStep {
         File jsonFile = new File("src/test/resources/data-input/pis/bulk/" + dataFileName);
 
         ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        TestData<List<SinglePayments>> data = mapper.readValue(jsonFile, new TypeReference<TestData<List<SinglePayments>>>() {
+        TestData<List<SinglePayments>, List<HashMap>> data = mapper.readValue(jsonFile, new TypeReference<TestData<List<SinglePayments>, List<HashMap>>>() {
         });
 
         context.setTestData(data);
@@ -61,20 +61,20 @@ public class BPISStep {
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
 
-        List<SinglePayments> paymentsList = ((List<SinglePayments>) context.getTestData().getRequest().getBody());
+        List<SinglePayments> paymentsList = context.getTestData().getRequest().getBody();
 
         ResponseEntity<List<HashMap>> response = restTemplate.exchange(
             context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
             HttpMethod.POST, new HttpEntity<>(paymentsList, headers), new ParameterizedTypeReference<List<HashMap>>() {
             });
 
-        context.setResponse(response);
+        context.setActualResponse(response);
     }
 
     @Then("^a successful response code and the appropriate bulk payment response data$")
     public void checkResponseCode() {
-        ResponseEntity<List<HashMap>> actualResponse = context.getResponse();
-        List<HashMap<String, String>> givenResponseBody = (List<HashMap<String, String>>) context.getTestData().getResponse().getBody();
+        ResponseEntity<List<HashMap>> actualResponse = context.getActualResponse();
+        List<HashMap> givenResponseBody = context.getTestData().getResponse().getBody();
 
         HttpStatus compareStatus = convertStringToHttpStatusCode(context.getTestData().getResponse().getCode());
         assertThat(actualResponse.getStatusCode(), equalTo(compareStatus));
@@ -88,7 +88,7 @@ public class BPISStep {
 
     @And("^a redirect URL for every payment of the Bulk payment is delivered to the PSU$")
     public void checkRedirectUrl() {
-        ResponseEntity<List<HashMap>> actualResponse = context.getResponse();
+        ResponseEntity<List<HashMap>> actualResponse = context.getActualResponse();
 
         assertThat(((HashMap) (actualResponse.getBody()).get(0).get("_links")).get("scaRedirect"), notNullValue());
         assertThat(((HashMap) (actualResponse.getBody()).get(1).get("_links")).get("scaRedirect"), notNullValue());
