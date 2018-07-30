@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.config.security;
+package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-
-@Configuration
-public class SecurityConfig extends AbstractSecurityConfig {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-
-        http
-            .csrf().disable()
-            .cors().and()
-            .authorizeRequests()
-            .antMatchers(ALLOW_PATH).permitAll()
-            .anyRequest()
-            .authenticated();
-    }
+public enum SpiBalanceType {
+    CLOSING_BOOKED,
+    EXPECTED,
+    AUTHORISED,
+    OPENING_BOOKED,
+    INTERIM_AVAILABLE,
+    FORWARD_AVAILABLE
 }

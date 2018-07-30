@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.account;
+package de.adorsys.aspsp.xs2a.domain;
 
-import lombok.Data;
-
-@Data
-public class SpiBalances {
-	private SpiAccountBalance closingBooked;
-	private SpiAccountBalance expected;
-	private SpiAccountBalance authorised;
-	private SpiAccountBalance openingBooked;
-	private SpiAccountBalance interimAvailable;
+public enum BalanceType {
+    CLOSING_BOOKED,
+    EXPECTED,
+    AUTHORISED,
+    OPENING_BOOKED,
+    INTERIM_AVAILABLE,
+    FORWARD_AVAILABLE
 }

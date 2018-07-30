@@ -24,7 +24,9 @@ import java.time.LocalDateTime;
 
 @Data
 public class SpiAccountBalance {
-    private SpiAmount spiAmount;
-    private LocalDateTime lastActionDateTime;
-    private LocalDate date;
+    private SpiAmount spiBalanceAmount;
+    private SpiBalanceType spiBalanceType;
+    private LocalDateTime lastChangeDateTime;
+    private LocalDate referenceDate;
+    private String lastCommittedTransaction;
 }
