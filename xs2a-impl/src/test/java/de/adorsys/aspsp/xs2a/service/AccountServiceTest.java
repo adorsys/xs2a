@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -63,7 +64,7 @@ public class AccountServiceTest {
     private final String WRONG_CONSENT_ID = "Wromg consent id";
     private final String TRANSACTION_ID = "0001";
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
-    private final String TPP_ID = "This is a test TppId";
+    private final byte[] ASPSP_CONSENT_DATA = "ewogIHBheW1lbnRUb2tlbjogQUJDRDEyMzE0MSwKICBzeXN0ZW1JZDogREVEQUlKRUosCiAgbXVsdGl1c2U6IHRydWUsCiAgZXhwaXJlczogMCwKICB0cmFuc2FjdGlvbnM6IFsKICAgIHsKICAgICAgdHJhbnNhY3Rpb25JZDogaWppZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllamZ3cndpZTIzcjIsCiAgICAgIHN0YXR1czogRkFJTEVECiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllcnQyamZpZTIzcjIsCiAgICAgIHN0YXR1czogT0sKICAgIH0sCiAgICB7CiAgICAgIHRyYW5zYWN0aW9uSWQ6IGlqMzI0MzJpZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9CiAgXQp9Cg==".getBytes();
 
     @InjectMocks
     private AccountService accountService;
@@ -91,28 +92,28 @@ public class AccountServiceTest {
         //AisReporting
         doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), anyBoolean(), any(TypeAccess.class), any(ResponseObject.class));
         //getAccountDetailsByAccountId_WoB_Success
-        when(accountSpi.readAccountDetails(ACCOUNT_ID)).thenReturn(getSpiAccountDetails(ACCOUNT_ID, IBAN));
+        when(accountSpi.readAccountDetails(ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiAccountDetails(ACCOUNT_ID, IBAN), ASPSP_CONSENT_DATA));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
         when(consentService.isValidAccountByAccess(IBAN, CURRENCY, getReferences(IBAN, IBAN_1))).thenReturn(true);
         //getAccountDetailsByAccountId_WB_Success
         when(consentService.getValidatedConsent(CONSENT_ID_WB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), getReferences(IBAN, IBAN_1), null, false, false));
         when(consentService.isValidAccountByAccess(IBAN, CURRENCY, getReferences(IBAN, IBAN_1))).thenReturn(true);
         //getAccountDetailsByAccountId_Failure_wrongAccount
-        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID)).thenReturn(null);
+        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
         //getAccountDetailsByAccountId_Failure_wrongConsent
         when(consentService.getValidatedConsent(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<AccountAccess>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build());
 
         //getAccountDetailsListByConsent_Success
-        when(accountSpi.readAccountDetailsByIban(IBAN)).thenReturn(Collections.singletonList(getSpiAccountDetails(ACCOUNT_ID, IBAN)));
-        when(accountSpi.readAccountDetailsByIban(IBAN_1)).thenReturn(Collections.singletonList(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1)));
+        when(accountSpi.readAccountDetailsByIban(IBAN, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiAccountDetails(ACCOUNT_ID, IBAN)), ASPSP_CONSENT_DATA));
+        when(accountSpi.readAccountDetailsByIban(IBAN_1, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1)), ASPSP_CONSENT_DATA));
 
-        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID)).thenReturn(null);
+        when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
 
         //getAccountReport_ByTransactionId_Success
         when(consentService.getValidatedConsent(CONSENT_ID_WT)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, getReferences(IBAN, IBAN_1), false, false));
-        when(accountSpi.readTransactionById(TRANSACTION_ID, ACCOUNT_ID)).thenReturn(Optional.of(getSpiTransaction()));
+        when(accountSpi.readTransactionById(TRANSACTION_ID, ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Optional.of(getSpiTransaction()), ASPSP_CONSENT_DATA));
 
-        when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE)).thenReturn(Collections.singletonList(getSpiTransaction()));
+        when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiTransaction()), ASPSP_CONSENT_DATA));
     }
 
     //Get Account By AccountId

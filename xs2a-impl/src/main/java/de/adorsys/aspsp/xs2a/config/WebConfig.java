@@ -27,12 +27,15 @@ import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.MessageSource;
@@ -59,14 +62,14 @@ import static de.adorsys.aspsp.xs2a.domain.ScaApproach.*;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
-    @Autowired
-    private AspspProfileService aspspProfileService;
-    @Autowired
-    private KeycloakInvokerService keycloakInvokerService;
+    private final AspspProfileService aspspProfileService;
+
+    private final KeycloakInvokerService keycloakInvokerService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -156,16 +159,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ScaPaymentService scaPaymentService() {
+    public ScaPaymentService scaPaymentService(PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
         ScaApproach scaApproach = aspspProfileService.readScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthScaPaymentService();
+            return new OauthScaPaymentService(paymentMapper, paymentSpi);
         } else if (DECOUPLED == scaApproach) {
             return new DecoupedScaPaymentService();
         } else if (EMBEDDED == scaApproach) {
             return new EmbeddedScaPaymentService();
         }
-        return new RedirectScaPaymentService();
+        return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
     }
 
     @Bean
