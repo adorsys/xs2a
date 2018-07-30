@@ -16,11 +16,15 @@
 
 package de.adorsys.aspsp.aspspmockserver.data.test;
 
+import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import org.springframework.context.annotation.Profile;
@@ -47,6 +51,7 @@ public class AccountMockServerData {
     private PsuRepository psuRepository;
     private TransactionRepository transactionRepository;
     private TanRepository tanRepository;
+    private PaymentRepository paymentRepository;
     private List<SpiAccountDetails> accountDetails;
     private List<Psu> psus;
     private final List<String> ALLOWED_PAYMENTS = Collections.singletonList("sepa-credit-transfers");
@@ -57,15 +62,43 @@ public class AccountMockServerData {
     // Allowed Payments for Cucumber Test User
     private final List<String> ALLOWED_PAYMENTS_CUCUMBER_TESTUSER = Arrays.asList("sepa-credit-transfers", "instant-sepa-credit-transfers");
 
-    public AccountMockServerData(PsuRepository psuRepository, TransactionRepository transactionRepository, TanRepository tanRepository) {
+    public AccountMockServerData(PsuRepository psuRepository, TransactionRepository transactionRepository, TanRepository tanRepository, PaymentRepository paymentRepository) {
         this.psuRepository = psuRepository;
         this.transactionRepository = transactionRepository;
         this.tanRepository = tanRepository;
+        this.paymentRepository = paymentRepository;
         this.accountDetails = fillAccounts();
         this.psus = fillPsu();
         fillTransactions();
         fillTanRepository();
+        fillPayments();
     }
+
+    private void fillPayments() {
+        // Payment data for Cucumber Test
+        paymentRepository.save(getPayment("61gh89hf56-vb23-12er-zr5g-kh0075hf2312", psus.get(3), EUR, BigDecimal.valueOf(150), psus.get(4),
+            "Spende", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), SpiTransactionStatus.RCVD, PisPaymentType.SINGLE, 15));
+    }
+
+    private AspspPayment getPayment(String paymentId, Psu debtor, Currency currency, BigDecimal amount, Psu creditor, String purposeCode, LocalDate requestedExecutionDate,
+                                    LocalDateTime requestedExecutionTime, SpiTransactionStatus paymentStatus, PisPaymentType paymentType, int dayOfExecution) {
+        AspspPayment payment = new AspspPayment();
+        payment.setPaymentId(paymentId);
+        payment.setDebtorAccount(getRef(debtor, currency));
+        payment.setUltimateDebtor(getFirstElementName(debtor));
+        payment.setInstructedAmount(new SpiAmount(currency, amount));
+        payment.setCreditorAccount(getRef(creditor, currency));
+        payment.setCreditorName(getFirstElementName(creditor));
+        payment.setUltimateCreditor(getFirstElementName(creditor));
+        payment.setPurposeCode(purposeCode);
+        payment.setRequestedExecutionDate(requestedExecutionDate);
+        payment.setRequestedExecutionTime(requestedExecutionTime);
+        payment.setDayOfExecution(dayOfExecution);
+        payment.setPisPaymentType(paymentType);
+        payment.setPaymentStatus(paymentStatus);
+        return payment;
+    }
+
 
     private void fillTransactions() {
         transactionRepository.save(getTransaction("0001", psus.get(0), psus.get(1), BigDecimal.valueOf(200), EUR, LocalDate.parse("2018-01-02"), LocalDate.parse("2018-01-02"), ""));
