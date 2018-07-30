@@ -21,10 +21,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -41,12 +43,13 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
+import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -76,10 +79,8 @@ public class PaymentInitiationControllerTest {
     public void setUpPaymentServiceMock() throws IOException {
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
-        Map<String, TransactionStatus> paymentStatusResponseWrongId = new HashMap<>();
-        paymentStatusResponseWrongId.put("transactionStatus", TransactionStatus.RJCT);
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build());
+            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPaymentInitiation(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
@@ -102,18 +103,16 @@ public class PaymentInitiationControllerTest {
 
     @Test
     public void getTransactionStatusById_WrongId() {
-        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(TransactionStatus.RJCT, HttpStatus.OK));
+        when(responseMapper.ok(any()))
+            .thenReturn(new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403)), HttpStatus.FORBIDDEN));
         //Given:
-        HttpStatus expectedHttpStatus = OK;
-        TransactionStatus expectedTransactionStatus = TransactionStatus.RJCT;
+        HttpStatus expectedHttpStatus = FORBIDDEN;
 
         //When:
         ResponseEntity<TransactionStatus> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
 
         //Then:
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
-        assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
-        assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
     }
 
     @Test
