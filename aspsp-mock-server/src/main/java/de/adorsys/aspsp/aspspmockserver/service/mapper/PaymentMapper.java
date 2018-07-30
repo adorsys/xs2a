@@ -19,14 +19,14 @@ package de.adorsys.aspsp.aspspmockserver.service.mapper;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 public class PaymentMapper {
-    public AspspPayment mapToAspspPayment(SpiSinglePayments singlePayments, PisPaymentType paymentType) {
+    public AspspPayment mapToAspspPayment(SpiSinglePayment singlePayments, PisPaymentType paymentType) {
         return Optional.ofNullable(singlePayments)
                    .map(s -> buildAspspPayment(s, paymentType))
                    .orElse(null);
@@ -46,7 +46,7 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    private AspspPayment buildAspspPayment(SpiSinglePayments single, PisPaymentType paymentType) {
+    private AspspPayment buildAspspPayment(SpiSinglePayment single, PisPaymentType paymentType) {
         AspspPayment aspsp = new AspspPayment(paymentType);
         aspsp.setEndToEndIdentification(single.getEndToEndIdentification());
         aspsp.setDebtorAccount(single.getDebtorAccount());
@@ -65,10 +65,10 @@ public class PaymentMapper {
         return aspsp;
     }
 
-    public SpiSinglePayments mapToSpiSinglePayments(AspspPayment aspspPayment) {
+    public SpiSinglePayment mapToSpiSinglePayments(AspspPayment aspspPayment) {
         return Optional.ofNullable(aspspPayment)
                    .map(aspsp -> {
-                       SpiSinglePayments single = new SpiSinglePayments();
+                       SpiSinglePayment single = new SpiSinglePayment();
                        single.setPaymentId(aspsp.getPaymentId());
                        single.setEndToEndIdentification(aspsp.getEndToEndIdentification());
                        single.setDebtorAccount(aspsp.getDebtorAccount());

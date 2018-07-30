@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,11 +47,11 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate aspspRestTemplate;
 
     /**
-     * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayments)}
+     * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayment)}
      */
     @Override
-    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments) {
-        ResponseEntity<SpiSinglePayments> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), spiSinglePayments, SpiSinglePayments.class);
+    public SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayment spiSinglePayments) {
+        ResponseEntity<SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), spiSinglePayments, SpiSinglePayment.class);
         return responseEntity.getStatusCode() == CREATED
                    ? mapToSpiPaymentResponse(responseEntity.getBody())
                    : null;
@@ -61,8 +61,8 @@ public class PaymentSpiImpl implements PaymentSpi {
      * For detailed description see {@link PaymentSpi#createBulkPayments(List)}
      */
     @Override
-    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments) {
-        ResponseEntity<List<SpiSinglePayments>> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.createBulkPayment(), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayments>>() {
+    public List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayment> payments) {
+        ResponseEntity<List<SpiSinglePayment>> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.createBulkPayment(), HttpMethod.POST, new HttpEntity<>(payments, null), new ParameterizedTypeReference<List<SpiSinglePayment>>() {
         });
         return (responseEntity.getStatusCode() == CREATED)
                    ? responseEntity.getBody().stream()
@@ -91,8 +91,8 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public SpiSinglePayments getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId) {
-        return aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayments.class, paymentType, paymentProduct, paymentId);
+    public SpiSinglePayment getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId) {
+        return aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayment.class, paymentType, paymentProduct, paymentId);
     }
 
     @Override
@@ -101,14 +101,14 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public List<SpiSinglePayments> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId) {
-        SpiSinglePayments response = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayments.class, paymentType, paymentProduct, paymentId);
+    public List<SpiSinglePayment> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId) {
+        SpiSinglePayment response = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayment.class, paymentType, paymentProduct, paymentId);
         return Optional.ofNullable(response)
                    .map(Collections::singletonList)
                    .orElse(null);
     }
 
-    private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayments spiSinglePayments) {
+    private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayment spiSinglePayments) {
         SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
         paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
         paymentResponse.setPaymentId(spiSinglePayments.getPaymentId());

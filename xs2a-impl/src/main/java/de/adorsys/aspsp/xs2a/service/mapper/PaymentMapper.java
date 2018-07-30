@@ -51,16 +51,16 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public List<SpiSinglePayments> mapToSpiSinglePaymentList(List<SinglePayments> payments) {
+    public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<SinglePayments> payments) {
         return payments.stream()
                    .map(this::mapToSpiSinglePayments)
                    .collect(Collectors.toList());
     }
 
-    public SpiSinglePayments mapToSpiSinglePayments(SinglePayments paymentInitiationRequest) {
+    public SpiSinglePayment mapToSpiSinglePayments(SinglePayments paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
                    .map(paymentRe -> {
-                       SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
+                       SpiSinglePayment spiSinglePayments = new SpiSinglePayment();
                        spiSinglePayments.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
                        spiSinglePayments.setDebtorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getDebtorAccount()));
                        spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
@@ -153,7 +153,7 @@ public class PaymentMapper {
         return SpiPaymentType.valueOf(paymentType.name());
     }
 
-    public SinglePayments mapToSinglePayment(SpiSinglePayments spiSinglePayment) {
+    public SinglePayments mapToSinglePayment(SpiSinglePayment spiSinglePayment) {
         return Optional.ofNullable(spiSinglePayment)
                    .map(sp -> {
                        SinglePayments payments = new SinglePayments();
@@ -203,7 +203,7 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public List<SinglePayments> mapToBulkPayment(List<SpiSinglePayments> spiSinglePayments) {
+    public List<SinglePayments> mapToBulkPayment(List<SpiSinglePayment> spiSinglePayments) {
         return CollectionUtils.isNotEmpty(spiSinglePayments)
                    ? spiSinglePayments.stream().map(this::mapToSinglePayment).collect(Collectors.toList())
                    : null;

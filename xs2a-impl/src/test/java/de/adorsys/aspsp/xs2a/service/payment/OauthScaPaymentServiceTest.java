@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -154,12 +154,12 @@ public class OauthScaPaymentServiceTest {
         return payment;
     }
 
-    private List<SpiSinglePayments> getSpiBulk(boolean firstOk, boolean secondOk) {
+    private List<SpiSinglePayment> getSpiBulk(boolean firstOk, boolean secondOk) {
         return Arrays.asList(getSpiPayment(firstOk), getSpiPayment(secondOk));
     }
 
-    private SpiSinglePayments getSpiPayment(boolean paymentOk) {
-        SpiSinglePayments payment = new SpiSinglePayments();
+    private SpiSinglePayment getSpiPayment(boolean paymentOk) {
+        SpiSinglePayment payment = new SpiSinglePayment();
         payment.setCreditorName(paymentOk
                                     ? OK_CREDITOR
                                     : WRONG_CREDITOR);

@@ -24,7 +24,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,11 +74,11 @@ public class PaymentServiceTest {
     public void addPayment_Success() {
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         //Given
-        SpiSinglePayments expectedPayment = getSpiSinglePayment(50);
+        SpiSinglePayment expectedPayment = getSpiSinglePayment(50);
 
         //When
-        Optional<SpiSinglePayments> spiSinglePayments = paymentService.addPayment(expectedPayment);
-        SpiSinglePayments actualPayment = spiSinglePayments.orElse(null);
+        Optional<SpiSinglePayment> spiSinglePayments = paymentService.addPayment(expectedPayment);
+        SpiSinglePayment actualPayment = spiSinglePayments.orElse(null);
 
         //Then
         assertThat(actualPayment).isNotNull();
@@ -87,10 +87,10 @@ public class PaymentServiceTest {
     @Test
     public void addPayment_Failure() {
         //Given
-        SpiSinglePayments expectedPayment = getSpiSinglePayment(100);
+        SpiSinglePayment expectedPayment = getSpiSinglePayment(100);
 
         //When
-        Optional<SpiSinglePayments> actualPayment = paymentService.addPayment(expectedPayment);
+        Optional<SpiSinglePayment> actualPayment = paymentService.addPayment(expectedPayment);
 
         //Then
         assertThat(actualPayment).isEqualTo(Optional.empty());
@@ -106,18 +106,18 @@ public class PaymentServiceTest {
     @Test
     public void addBulkPayments() {
         //Given
-        List<SpiSinglePayments> expectedPayments = new ArrayList<>();
+        List<SpiSinglePayment> expectedPayments = new ArrayList<>();
         expectedPayments.add(getSpiSinglePayment(50));
 
         //When
-        List<SpiSinglePayments> actualPayments = paymentService.addBulkPayments(expectedPayments);
+        List<SpiSinglePayment> actualPayments = paymentService.addBulkPayments(expectedPayments);
 
         //Then
         assertThat(actualPayments).isNotNull();
     }
 
-    private SpiSinglePayments getSpiSinglePayment(long amountToTransfer) {
-        SpiSinglePayments payment = new SpiSinglePayments();
+    private SpiSinglePayment getSpiSinglePayment(long amountToTransfer) {
+        SpiSinglePayment payment = new SpiSinglePayment();
         SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(amountToTransfer));
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(getReference());
