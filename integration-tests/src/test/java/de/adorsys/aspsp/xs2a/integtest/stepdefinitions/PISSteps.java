@@ -91,13 +91,12 @@ public class PISSteps {
         return HttpStatus.valueOf(Integer.valueOf(code));
     }
 
-    @SuppressWarnings("unchecked")
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException {
         HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
 
         try {
-            ResponseEntity<HashMap> response = restTemplate.exchange(
+            restTemplate.exchange(
                 context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
