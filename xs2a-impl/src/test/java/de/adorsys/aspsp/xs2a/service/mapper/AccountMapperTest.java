@@ -16,42 +16,44 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.CashAccountType;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
-    private static final String SPI_BALANCES_JSON_PATH = "/json/MapSpiBalancesTest.json";
     private static final String SPI_TRANSACTION_JSON_PATH = "/json/AccountReportDataTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
-    @Autowired
+    @InjectMocks
     private AccountMapper accountMapper;
-    @Autowired
-    private JsonConverter jsonConverter;
+
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
 
     @Test
     public void mapSpiAccountDetailsToXs2aAccountDetails() throws IOException {
@@ -71,40 +73,6 @@ public class AccountMapperTest {
         assertThat(actualAccountDetails.getName()).isEqualTo("Main Account");
         assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
-        SingleBalance closingBooked = actualAccountDetails.getBalances().get(0).getClosingBooked();
-        assertThat(closingBooked.getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(closingBooked.getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(closingBooked.getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-    }
-
-    @Test
-    public void mapSpiBalances() throws IOException {
-        //Given:
-        String spiBalancesJson = IOUtils.resourceToString(SPI_BALANCES_JSON_PATH, UTF_8);
-        SpiBalances donorBalances = jsonConverter.toObject(spiBalancesJson, SpiBalances.class).get();
-        List<SpiBalances> donorBalancesList = new ArrayList<>();
-        donorBalancesList.add(donorBalances);
-
-        //When:
-        assertNotNull(donorBalances);
-        List<Balances> actualBalances = accountMapper.mapToBalancesList(donorBalancesList);
-
-        //Then:
-        assertThat(actualBalances.get(0).getClosingBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getClosingBooked().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getClosingBooked().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getAuthorised().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getAuthorised().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getAuthorised().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getExpected().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getExpected().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getExpected().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getInterimAvailable().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getInterimAvailable().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getInterimAvailable().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
-        assertThat(actualBalances.get(0).getOpeningBooked().getAmount().getCurrency().getCurrencyCode()).isEqualTo("EUR");
-        assertThat(actualBalances.get(0).getOpeningBooked().getLastActionDateTime()).isEqualTo(LocalDateTime.parse("2017-10-25T15:30:35.035"));
-        assertThat(actualBalances.get(0).getOpeningBooked().getDate()).isEqualTo(LocalDate.parse("2007-01-01"));
     }
 
     @Test
@@ -115,8 +83,8 @@ public class AccountMapperTest {
         List<SpiTransaction> donorSpiTransactions = new ArrayList<>();
         donorSpiTransactions.add(donorSpiTransaction);
         SpiTransaction[] expectedBooked = donorSpiTransactions.stream()
-                                          .filter(transaction -> transaction.getBookingDate() != null)
-                                          .toArray(SpiTransaction[]::new);
+                                              .filter(transaction -> transaction.getBookingDate() != null)
+                                              .toArray(SpiTransaction[]::new);
 
         //When:
         assertNotNull(donorSpiTransaction);
@@ -139,11 +107,11 @@ public class AccountMapperTest {
         assertThat(actualAccountReport.getBooked()[0].getUltimateCreditor()).isEqualTo(expectedBooked[0].getUltimateCreditor());
         assertThat(actualAccountReport.getBooked()[0].getValueDate()).isEqualTo(expectedBooked[0].getValueDate());
         assertThat(actualAccountReport.getBooked()[0].getAmount().getContent()).isEqualTo(expectedBooked[0].getSpiAmount()
-        .getContent().toString());
+                                                                                              .getContent().toString());
         assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount()
-        .getCurrency());
+                                                                                               .getCurrency());
         assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode()
-        .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
+                       .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
         assertThat(actualAccountReport.getBooked()[0].getPurposeCode().getCode()).isEqualTo(expectedBooked[0].getPurposeCode());
     }
 }

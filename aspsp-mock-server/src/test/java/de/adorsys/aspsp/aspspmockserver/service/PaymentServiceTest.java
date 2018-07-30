@@ -17,19 +17,20 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
+import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -38,8 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String WRONG_PAYMENT_ID = "0";
@@ -47,32 +47,38 @@ public class PaymentServiceTest {
     private static final String WRONG_IBAN = "wrong_iban";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
 
-    @Autowired
+    @InjectMocks
     private PaymentService paymentService;
-    @MockBean
+    @Mock
     private PaymentRepository paymentRepository;
-    @MockBean
+    @Mock
     private AccountService accountService;
+    @Mock
+    private PaymentMapper paymentMapper;
 
     @Before
     public void setUp() {
-        when(paymentRepository.save(any(SpiSinglePayments.class)))
-            .thenReturn(getSpiSinglePayment(50));
+        when(paymentRepository.save(any(AspspPayment.class)))
+            .thenReturn(getAspspPayment());
         when(paymentRepository.exists(PAYMENT_ID))
             .thenReturn(true);
         when(paymentRepository.exists(WRONG_PAYMENT_ID))
             .thenReturn(false);
         when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
+        when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
+        when(paymentMapper.mapToSpiSinglePayments(any(AspspPayment.class))).thenReturn(getSpiSinglePayment(50));
     }
 
     @Test
     public void addPayment_Success() {
+        when(accountService.getAccountsByIban(IBAN)).thenReturn(getAccountDetails());
         //Given
         SpiSinglePayments expectedPayment = getSpiSinglePayment(50);
 
         //When
-        SpiSinglePayments actualPayment = paymentService.addPayment(expectedPayment).get();
+        Optional<SpiSinglePayments> spiSinglePayments = paymentService.addPayment(expectedPayment);
+        SpiSinglePayments actualPayment = spiSinglePayments.orElse(null);
 
         //Then
         assertThat(actualPayment).isNotNull();
@@ -124,18 +130,30 @@ public class PaymentServiceTest {
         return payment;
     }
 
+    private AspspPayment getAspspPayment() {
+        AspspPayment payment = new AspspPayment();
+        SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), new BigDecimal((long) 50));
+        payment.setInstructedAmount(amount);
+        payment.setDebtorAccount(getReference());
+        payment.setCreditorName("Merchant123");
+        payment.setPurposeCode("BEQNSD");
+        payment.setCreditorAgent("sdasd");
+        payment.setCreditorAccount(getReference());
+        payment.setRemittanceInformationUnstructured("Ref Number Merchant");
+        return payment;
+    }
+
     private List<SpiAccountDetails> getAccountDetails() {
         return Collections.singletonList(
             new SpiAccountDetails("12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, getBalances())
         );
     }
 
-    private List<SpiBalances> getBalances() {
-        SpiBalances balances = new SpiBalances();
+    private List<SpiAccountBalance> getBalances() {
         SpiAccountBalance balance = new SpiAccountBalance();
-        balance.setSpiAmount(new SpiAmount(CURRENCY, BigDecimal.valueOf(100)));
-        balances.setInterimAvailable(balance);
-        return Collections.singletonList(balances);
+        balance.setSpiBalanceAmount(new SpiAmount(CURRENCY, BigDecimal.valueOf(100)));
+        balance.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        return Collections.singletonList(balance);
     }
 
     private SpiAccountReference getReference() {

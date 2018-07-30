@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.aspsp.xs2a.service.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.PISConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "pis/consent")
 @Api(value = "pis/consent", tags = "PIS, Consents", description = "Provides access to consent management system for PIS")
 public class PisConsentController {
-    private final PisConsentService pisConsentService;
+    private final PISConsentService pisConsentService;
 
     @PostMapping(path = "/")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -47,7 +47,7 @@ public class PisConsentController {
     }
 
     @PostMapping(path = "/bulk")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -58,7 +58,7 @@ public class PisConsentController {
     }
 
     @PostMapping(path = "/periodic")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -69,7 +69,7 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{consent-id}/status")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = PisConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -82,7 +82,7 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{consent-id}")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = PisConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -95,7 +95,7 @@ public class PisConsentController {
     }
 
     @PutMapping(path = "/{consent-id}/status/{status}")
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad request")})

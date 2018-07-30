@@ -4,6 +4,10 @@ Rest-implementation of ASPSP profile for XS2A Interface of Berlin Group
 
 ## Configuration and deployment
 
+In order to run ASPSP profile service with external *.yml property file you must specify correct path to file in  
+`application.properties` in `bank_profile.path =` field.  
+If path will not be correct, system will take *.yml property file by default.
+
 To run ASPSP profile service from command line:
 
 ```

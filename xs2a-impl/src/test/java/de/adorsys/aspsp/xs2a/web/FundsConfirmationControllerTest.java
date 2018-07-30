@@ -17,21 +17,20 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -40,17 +39,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationControllerTest {
     private final String FUNDS_REQ_DATA = "/json/FundsConfirmationRequestTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
-    @Autowired
+    @InjectMocks
     private FundsConfirmationController fundsConfirmationController;
 
-    @MockBean(name = "fundsConfirmationService")
+    @Mock
     private FundsConfirmationService fundsConfirmationService;
+
+    @Mock
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUp() {
@@ -59,6 +60,7 @@ public class FundsConfirmationControllerTest {
 
     @Test
     public void fundConfirmation() throws IOException {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(readResponseObject().getBody(), HttpStatus.OK));
         //Given
         FundsConfirmationRequest fundsReq = readFundsConfirmationRequest();
         HttpStatus expectedStatusCode = HttpStatus.OK;
@@ -73,7 +75,7 @@ public class FundsConfirmationControllerTest {
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {
         return ResponseObject.<FundsConfirmationResponse>builder()
-               .body(new FundsConfirmationResponse(true)).build();
+                   .body(new FundsConfirmationResponse(true)).build();
     }
 
     private FundsConfirmationRequest readFundsConfirmationRequest() throws IOException {

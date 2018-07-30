@@ -24,12 +24,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,15 +42,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentControllerTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String WRONG_PAYMENT_ID = "Wrong payment id";
 
-    @Autowired
+    @InjectMocks
     private PaymentController paymentController;
-    @MockBean
+    @Mock
     private PaymentService paymentService;
 
     @Before
@@ -68,6 +66,10 @@ public class PaymentControllerTest {
             .thenReturn(true);
         when(paymentService.isPaymentExist(WRONG_PAYMENT_ID))
             .thenReturn(false);
+        when(paymentService.getPaymentStatusById(PAYMENT_ID))
+            .thenReturn(Optional.of(ACCP));
+        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID))
+            .thenReturn(Optional.of(RJCT));
     }
 
     @Test

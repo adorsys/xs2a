@@ -39,9 +39,9 @@ public class PisConsent {
     private String externalId;
 
     @ElementCollection
-    @CollectionTable(name = "pis_payments", joinColumns = @JoinColumn(name = "pis_consent_id"))
-    @ApiModelProperty(value = "List of single payments ", required = true)
-    private List<PisPaymentData> payments;
+    @CollectionTable(name = "pis_payment", joinColumns = @JoinColumn(name = "pis_consent_id"))
+    @ApiModelProperty(value = "List of payments ID", required = true)
+    private List<String> paymentId;
 
     @Column(name = "pis_consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

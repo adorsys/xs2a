@@ -17,34 +17,40 @@
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
 
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
+import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class HandlerInterceptorTest {
 
-    @Autowired
+    @InjectMocks
     private HandlerInterceptor handlerInterceptor;
+    @Mock
+    RequestValidatorService requestValidatorService;
 
-    @Autowired
+    @InjectMocks
     private ConsentInformationController consentInformationController;
 
     @Test
     public void preHandle() throws Exception {
+        when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(new HashMap<>());
         //Given:
         HttpServletRequest request = getCorrectRequest();
         HttpServletResponse response = getResponse();
@@ -59,6 +65,7 @@ public class HandlerInterceptorTest {
 
     @Test
     public void shouldFail_preHandle_wrongRequest() throws Exception {
+        when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(getErrorMap());
         //Given:
         HttpServletRequest wrongRequest = getWrongRequest();
         HttpServletResponse response = getResponse();
@@ -75,6 +82,7 @@ public class HandlerInterceptorTest {
 
     @Test
     public void shouldFail_preHandle_wrongRequestHeaderFormat() throws Exception {
+        when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(getErrorMap());
         //Given:
         HttpServletRequest wrongRequest = getWrongRequestWrongTppRequestIdFormat();
         HttpServletResponse response = getResponse();
@@ -91,6 +99,7 @@ public class HandlerInterceptorTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldFail_preHandle_NPE() throws Exception {
+        when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(null);
         //Given:
         HttpServletRequest request = getCorrectRequest();
         HttpServletResponse response = getResponse();
@@ -103,7 +112,6 @@ public class HandlerInterceptorTest {
     private HttpServletRequest getWrongRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
-        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 
         return request;
@@ -112,8 +120,7 @@ public class HandlerInterceptorTest {
     private HttpServletRequest getWrongRequestWrongTppRequestIdFormat() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
-        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
-        request.addHeader("tpp-request-id", "wrong_format");
+        request.addHeader("x-request-id", "wrong_format");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 
         return request;
@@ -122,8 +129,7 @@ public class HandlerInterceptorTest {
     private HttpServletRequest getCorrectRequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
-        request.addHeader("tpp-transaction-id", "16d40f49-a110-4344-a949-f99828ae13c9");
-        request.addHeader("tpp-request-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
+        request.addHeader("x-request-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
         request.addHeader("consent-id", "21d40f65-a150-8343-b539-b9a822ae98c0");
 
         return request;
@@ -137,5 +143,11 @@ public class HandlerInterceptorTest {
 
     private Object getHandler() throws NoSuchMethodException {
         return new HandlerMethod(consentInformationController, "getAccountConsentsInformationById", String.class);
+    }
+
+    private Map<String, String> getErrorMap() {
+        Map<String, String> errors = new HashMap();
+        errors.put("error1", "errorMgs1");
+        return errors;
     }
 }

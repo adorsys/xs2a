@@ -16,38 +16,43 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Base64;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
+import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.OK;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentInitiationControllerTest {
 
     private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
@@ -57,29 +62,32 @@ public class PaymentInitiationControllerTest {
     private static final String WRONG_PAYMENT_ID = "Really wrong id";
     private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
-    @Autowired
+    @InjectMocks
     private PaymentInitiationController paymentInitiationController;
-    @Autowired
-    private JsonConverter jsonConverter;
-    @MockBean
+
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+
+    @Mock
     private PaymentService paymentService;
-    @MockBean
+    @Mock
     private AspspProfileService aspspProfileService;
+    @Mock
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
-        Map<String, TransactionStatus> paymentStatusResponseWrongId = new HashMap<>();
-        paymentStatusResponseWrongId.put("transactionStatus", TransactionStatus.RJCT);
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.RJCT).build());
-        when(paymentService.createPaymentInitiation(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+        when(paymentService.createPaymentInitiation(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
 
     @Test
     public void getTransactionStatusById_Success() {
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(TransactionStatus.ACCP, HttpStatus.OK));
         //Given:
         HttpStatus expectedHttpStatus = OK;
         TransactionStatus expectedTransactionStatus = TransactionStatus.ACCP;
@@ -95,30 +103,29 @@ public class PaymentInitiationControllerTest {
 
     @Test
     public void getTransactionStatusById_WrongId() {
+        when(responseMapper.ok(any()))
+            .thenReturn(new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403)), HttpStatus.FORBIDDEN));
         //Given:
-        HttpStatus expectedHttpStatus = OK;
-        TransactionStatus expectedTransactionStatus = TransactionStatus.RJCT;
+        HttpStatus expectedHttpStatus = FORBIDDEN;
 
         //When:
         ResponseEntity<TransactionStatus> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
 
         //Then:
-        HttpStatus actualHttpStatus = actualResponse.getStatusCode();
-        assertThat(actualHttpStatus).isEqualTo(expectedHttpStatus);
-        assertThat(actualResponse.getBody()).isEqualTo(expectedTransactionStatus);
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
     }
 
     @Test
     public void createPaymentInitiation() throws IOException {
+        when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
-        boolean tppRedirectPreferred = false;
         SinglePayments payment = readSinglePayments();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult = paymentInitiationController
-                                                                         .createPaymentInitiation(paymentProduct.getCode(), tppRedirectPreferred, payment);
+                                                                         .createPaymentInitiation(paymentProduct.getCode(), payment);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -127,9 +134,6 @@ public class PaymentInitiationControllerTest {
 
     private ResponseObject readResponseObject() throws IOException {
         PaymentInitialisationResponse resp = readPaymentInitialisationResponse();
-        resp.setIban("DE371234599999");
-        resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
-
         return ResponseObject.builder().body(resp).build();
     }
 
@@ -137,6 +141,9 @@ public class PaymentInitiationControllerTest {
         PaymentInitialisationResponse resp = jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
         resp.setIban("DE371234599999");
         resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
+        Links links = new Links();
+        String encodedPaymentId = Base64.getEncoder().encodeToString(resp.getPaymentId().getBytes());
+        links.setScaRedirect(REDIRECT_LINK + resp.getIban() + "/" + resp.getPisConsentId() + "/" + encodedPaymentId);
 
         return resp;
     }

@@ -26,7 +26,7 @@ public class AspspProfileApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(AspspProfileApplication.class)
-            .properties("spring.config.name=application,bank_profile")
+            .properties("spring.config.name=application")
             .run(args);
     }
 }

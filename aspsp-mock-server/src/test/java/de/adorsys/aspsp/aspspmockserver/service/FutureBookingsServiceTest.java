@@ -18,15 +18,14 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,19 +37,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class FutureBookingsServiceTest {
     private static final String IBAN = "123456789";
     private static final String WRONG_IBAN = "Wrong iban";
     private static final BigDecimal BALANCE = BigDecimal.valueOf(2000);
     private static final BigDecimal AMOUNT_TO_BE_CHARGED = BigDecimal.valueOf(500);
 
-    @Autowired
+    @InjectMocks
     private FutureBookingsService futureBookingsService;
-    @MockBean
+    @Mock
     private PaymentService paymentService;
-    @MockBean
+    @Mock
     private AccountService accountService;
 
     @Before
@@ -103,22 +101,17 @@ public class FutureBookingsServiceTest {
             "GIRO", null, "ACVB222", getNewBalanceList(amount));
     }
 
-    private ArrayList<SpiBalances> getNewBalanceList(BigDecimal amount) {
-        Currency euro = Currency.getInstance("EUR");
-
-        SpiBalances balance = new SpiBalances();
-        balance.setInterimAvailable(getNewSingleBalances(new SpiAmount(euro, amount)));
-        ArrayList<SpiBalances> balances = new ArrayList<>();
-        balances.add(balance);
-
-        return balances;
+    private List<SpiAccountBalance> getNewBalanceList(BigDecimal amount) {
+        return Collections.singletonList(getNewSingleBalances(new SpiAmount(Currency.getInstance("EUR"), amount)));
     }
 
     private SpiAccountBalance getNewSingleBalances(SpiAmount spiAmount) {
         SpiAccountBalance sb = new SpiAccountBalance();
-        sb.setDate(LocalDate.parse("2019-03-03"));
-        sb.setSpiAmount(spiAmount);
-        sb.setLastActionDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
+        sb.setReferenceDate(LocalDate.parse("2019-03-03"));
+        sb.setSpiBalanceAmount(spiAmount);
+        sb.setLastChangeDateTime(LocalDateTime.parse("2019-03-03T13:34:28.387"));
+        sb.setSpiBalanceType(SpiBalanceType.INTERIM_AVAILABLE);
+        sb.setLastCommittedTransaction("abc");
         return sb;
     }
 }

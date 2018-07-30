@@ -73,15 +73,14 @@ public class ConsentServiceTest {
     @Mock
     ConsentMapper consentMapper;
 
-
     @Before
     public void setUp() {
         //AccountMapping
         when(accountMapper.mapToAccountReferencesFromDetails(getSpiDetailsList()))
             .thenReturn(getReferenceList());
         //ConsentMapping
-        when(consentMapper.mapToAccountConsent(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN,CURRENCY)), null, null, false, false), false)))
-            .thenReturn(getConsent(CONSENT_ID,getAccess(Collections.singletonList(getReference(CORRECT_IBAN,CURRENCY)),null,null,false,false),false));
+        when(consentMapper.mapToAccountConsent(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false)))
+            .thenReturn(getConsent(CONSENT_ID, getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
         when(consentMapper.mapToConsentStatus(SpiConsentStatus.RECEIVED)).thenReturn(Optional.of(ConsentStatus.RECEIVED));
         when(consentMapper.mapToConsentStatus(null)).thenReturn(Optional.empty());
 
@@ -117,7 +116,7 @@ public class ConsentServiceTest {
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)))).thenReturn(getSpiDetailsList());
 
         //GetConsentById
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN,CURRENCY)), null, null, false, false), false));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
 
         //GetStatusById
@@ -137,7 +136,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
-            req, false, false, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID);
         CreateConsentResp response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -152,7 +151,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
-            req, false, false, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID);
         CreateConsentResp response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -167,7 +166,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
-            req, false, false, null);
+            req, null);
         CreateConsentResp response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -182,7 +181,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
-            req, false, false, null);
+            req, null);
         CreateConsentResp response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -197,7 +196,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
-            req, false, false, null);
+            req, null);
         CreateConsentResp response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -212,7 +211,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
-            req, false, false, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID);
         //Then:
         assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
@@ -290,7 +289,7 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, AccountAccess access, boolean withBalance) {
-    return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
     }
 
     private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {

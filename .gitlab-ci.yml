@@ -29,6 +29,10 @@ variables:
   GITLAB_IMAGE_NAME_ASPSP_PROFILE: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-aspsp-profile"
   OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-aspsp-profile"
 
+  # XS2A Integration Tests
+  GITLAB_IMAGE_NAME_INTEG_TESTS: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/xs2a-integtests"
+  OPENSHIFT_IMAGE_NAME_INTEG_TESTS: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/xs2a-integtests"
+
   JAVA_TOOL_OPTIONS: "-Xmx350M"
 
   GITHUB_REPO: "adorsys/xs2a"
@@ -44,11 +48,12 @@ variables:
 
 .java_artifacts: &java_artifacts
   paths:
-    - "xs2a-impl/target/aspsp-xs2a*jar"
+    - "spi-mock/target/spi-mock*jar"
     - "consent-management-system/target/consent-management*jar"
     - "aspsp-profile/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
+    - "integration-tests/target/xs2a-integtests.jar"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
 .build_java: &build_java
@@ -65,7 +70,7 @@ variables:
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
 
-    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" xs2a-impl
+    - docker build -t "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG" spi-mock
     - docker push "$GITLAB_IMAGE_NAME_XS2A:$DOCKER_TAG"
 
     - docker build -t "$GITLAB_IMAGE_NAME_MOCKSRV:$DOCKER_TAG" aspsp-mock-server
@@ -79,6 +84,9 @@ variables:
 
     - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile
     - docker push "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
+
+    - docker build -t "$GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG" integration-tests
+    - docker push "$GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG"
 
 .deploy_image_script: &deploy_image_script
   tags:
@@ -107,6 +115,10 @@ variables:
     - docker tag $GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG
 
+    - docker pull $GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG
+
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
@@ -134,8 +146,7 @@ pmd_report:
   tags:
     - aws_docker
   script:
-    - mvn -DskipTests clean install
-    - mvn pmd:pmd
+    - mvn -Dmaven.test.skip=true package pmd:pmd
   artifacts:
     paths:
     - "qa/pmd/pmd-ruleset.xml"
@@ -150,8 +161,7 @@ check_pmd:
   tags:
     - aws_docker
   script:
-    - mvn -DskipTests clean install
-    - mvn pmd:check
+    - mvn -Dmaven.test.skip=true package pmd:check
 
 check_javadoc:
   stage: "build:qa"
@@ -159,8 +169,7 @@ check_javadoc:
   tags:
     - aws_docker
   script:
-    - mvn -DskipTests clean install
-    - mvn javadoc:javadoc
+    - mvn -Dmaven.test.skip=true package javadoc:javadoc
   artifacts:
     paths:
     - "**/target/site/*"

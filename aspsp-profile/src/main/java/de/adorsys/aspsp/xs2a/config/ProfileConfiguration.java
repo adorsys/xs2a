@@ -16,7 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.Data;
@@ -27,10 +28,12 @@ import org.springframework.context.annotation.PropertySource;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
+
 @Data
 @Configuration
-@PropertySource("classpath:bank_profile.yml")
-@ConfigurationProperties(prefix = "setting")
+@PropertySource(value = {"classpath:bank_profile.yml", "file:${bank_profile.path}"}, ignoreResourceNotFound = true)
+@ConfigurationProperties
 public class ProfileConfiguration {
     private final static boolean isDelayedPaymentTypeAllowedAlways = true;
 
@@ -76,12 +79,31 @@ public class ProfileConfiguration {
      */
     private String aisRedirectUrlToAspsp;
 
-    @PostConstruct
-    private void addNecessaryPaymentTypesByDefault() { //NOPMD It is necessary for set single payment available by default
-        String necessaryType = PaymentType.FUTURE_DATED.getValue();
+    /**
+     * Multicurrency account types supported by ASPSP
+     */
+    private MulticurrencyAccountLevel multicurrencyAccountLevel;
 
-        if (!availablePaymentTypes.contains(necessaryType)) {
-            availablePaymentTypes.add(PaymentType.FUTURE_DATED.getValue());
+    /**
+     * Booking statuses supported by ASPSP, such as Booked, Pending and Both
+     */
+    private List<BookingStatus> availableBookingStatuses;
+
+    @PostConstruct
+    private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
+        setDefaultPaymentType(PaymentType.FUTURE_DATED);
+        setDefaultBookingStatus(BOOKED);
+    }
+
+    private void setDefaultPaymentType(PaymentType necessaryType) {
+        if (!availablePaymentTypes.contains(necessaryType.getValue())) {
+            availablePaymentTypes.add(necessaryType.getValue());
+        }
+    }
+
+    private void setDefaultBookingStatus(BookingStatus necessaryStatus) {
+        if (!availableBookingStatuses.contains(necessaryStatus)) {
+            availableBookingStatuses.add(necessaryStatus);
         }
     }
 }

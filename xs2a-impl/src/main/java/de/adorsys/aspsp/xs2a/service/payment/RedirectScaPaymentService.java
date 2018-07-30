@@ -16,69 +16,135 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 
 @Service
 public class RedirectScaPaymentService implements ScaPaymentService {
     @Autowired
     private PisConsentService pisConsentService;
+    @Autowired
+    private PaymentMapper paymentMapper;
+    @Autowired
+    private PaymentSpi paymentSpi;
 
     @Override
     public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment) {
-        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(periodicPayment);
+        return createPeriodicPaymentAndGetResponse(periodicPayment)
+                   .filter(pmt -> pmt.getTransactionStatus() != TransactionStatus.RJCT)
+                   .map(resp -> createConsentForPeriodicPaymentAndExtendPaymentResponse(periodicPayment, resp));
+    }
 
-        if (StringUtils.isNotBlank(pisConsentId)) {
-            PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-            response.setTransactionStatus(TransactionStatus.ACCP);
-            response.setPisConsentId(pisConsentId);
-            response.setIban(periodicPayment.getDebtorAccount().getIban());
+    private Optional<PaymentInitialisationResponse> createPeriodicPaymentAndGetResponse(PeriodicPayment periodicPayment) {
+        SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(periodicPayment);
+        return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment));
+    }
 
-            return Optional.of(response);
-        }
+    private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(PeriodicPayment periodicPayment, PaymentInitialisationResponse response) {
+        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(response.getPaymentId());
+        String iban = periodicPayment.getDebtorAccount().getIban();
 
-        return Optional.empty();
+        return StringUtils.isBlank(pisConsentId)
+                   ? null
+                   : extendPaymentResponseFields(response, iban, pisConsentId);
     }
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayments> payments) {
-        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(payments);
+        List<PaymentInitialisationResponse> responseList = createBulkPaymentAndGetResponse(payments);
 
-        if (!StringUtils.isBlank(pisConsentId)) {
-            PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-            response.setTransactionStatus(TransactionStatus.ACCP);
-            response.setPisConsentId(pisConsentId);
-            response.setIban(payments.get(0).getDebtorAccount().getIban()); // TODO Establish order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
+        return CollectionUtils.isNotEmpty(responseList)
+                   ? createConsentForBulkPaymentAndExtendPaymentResponses(payments, responseList)
+                   : Collections.emptyList();
+    }
 
-            return new ArrayList<>(Collections.singletonList(response));
+    private List<PaymentInitialisationResponse> createBulkPaymentAndGetResponse(List<SinglePayments> payments) {
+        List<SpiSinglePayments> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
+        List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments);
+
+        List<PaymentInitialisationResponse> paymentResponses = spiPaymentInitiations.stream()
+                                                                   .map(paymentMapper::mapToPaymentInitializationResponse)
+                                                                   .filter(Optional::isPresent)
+                                                                   .map(Optional::get)
+                                                                   .collect(Collectors.toList());
+
+        for (PaymentInitialisationResponse resp : paymentResponses) {
+            if (StringUtils.isBlank(resp.getPaymentId())
+                    || resp.getTransactionStatus() == TransactionStatus.RJCT) {
+                resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
+                resp.setTransactionStatus(TransactionStatus.RJCT);
+            }
         }
 
-        return Collections.emptyList();
+        return paymentResponses;
+    }
+
+    private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(List<SinglePayments> payments, List<PaymentInitialisationResponse> responseList) {
+        List<String> validPaymentIds = responseList.stream()
+                                           .filter(pmt -> pmt.getTransactionStatus() != TransactionStatus.RJCT)
+                                           .map(PaymentInitialisationResponse::getPaymentId)
+                                           .collect(Collectors.toList());
+
+        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(validPaymentIds);
+
+        return getDebtorIbanFromPayments(payments)
+                   .map(iban -> responseList.stream()
+                                    .map(resp -> extendPaymentResponseFields(resp, iban, pisConsentId))
+                                    .collect(Collectors.toList()))
+                   .orElse(Collections.emptyList());
     }
 
     @Override
     public Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayments singlePayment) {
-        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(singlePayment);
+        return createSinglePaymentAndGetResponse(singlePayment)
+                   .filter(resp -> resp.getTransactionStatus() != TransactionStatus.RJCT)
+                   .map(resp -> createConsentForSinglePaymentAndExtendPaymentResponse(singlePayment, resp));
+    }
 
-        if (!StringUtils.isBlank(pisConsentId)) {
-            PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-            response.setTransactionStatus(TransactionStatus.RCVD);
-            response.setPisConsentId(pisConsentId);
-            response.setIban(singlePayment.getDebtorAccount().getIban());
+    private Optional<PaymentInitialisationResponse> createSinglePaymentAndGetResponse(SinglePayments singlePayment) {
+        SpiSinglePayments spiSinglePayments = paymentMapper.mapToSpiSinglePayments(singlePayment);
+        SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayments);
+        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
+    }
 
-            return Optional.of(response);
-        }
-        return Optional.empty();
+    private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(SinglePayments singlePayment, PaymentInitialisationResponse response) {
+        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(response.getPaymentId());
+        String iban = singlePayment.getDebtorAccount().getIban();
+
+        return StringUtils.isBlank(pisConsentId)
+                   ? null
+                   : extendPaymentResponseFields(response, iban, pisConsentId);
+    }
+
+    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, String iban, String pisConsentId) {
+        response.setPisConsentId(pisConsentId);
+        response.setIban(iban);
+        return response;
+    }
+
+    private Optional<String> getDebtorIbanFromPayments(List<SinglePayments> payments) {
+        return Optional.ofNullable(payments.get(0).getDebtorAccount())
+                   .map(AccountReference::getIban);
     }
 }

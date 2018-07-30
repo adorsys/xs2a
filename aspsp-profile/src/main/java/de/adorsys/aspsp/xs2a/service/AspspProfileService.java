@@ -17,11 +17,15 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.BookingStatus;
+import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +41,7 @@ public class AspspProfileService {
 
     /**
      * Update frequency per day
+     *
      * @param frequencyPerDay the new value of frequencyPerDay
      */
     public void updateFrequencyPerDay(int frequencyPerDay) {
@@ -52,6 +57,7 @@ public class AspspProfileService {
 
     /**
      * Update combined service indicator
+     *
      * @param combinedServiceIndicator the new value of combinedServiceIndicator
      */
     public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
@@ -67,6 +73,7 @@ public class AspspProfileService {
 
     /**
      * Update available payment types
+     *
      * @param availablePaymentProducts List of payment product values
      */
     public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
@@ -82,6 +89,7 @@ public class AspspProfileService {
 
     /**
      * Update available payment availablePaymentTypes
+     *
      * @param availablePaymentTypes List of payment type values
      */
     public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
@@ -90,6 +98,7 @@ public class AspspProfileService {
 
     /**
      * Read sca approach method
+     *
      * @return sca approach method which is stored in profile
      */
     public ScaApproach getScaApproach() {
@@ -98,6 +107,7 @@ public class AspspProfileService {
 
     /**
      * Update sca approach
+     *
      * @param scaApproach the new value of scaApproach
      */
     public void updateScaApproach(ScaApproach scaApproach) {
@@ -113,6 +123,7 @@ public class AspspProfileService {
 
     /**
      * Update if tpp signature is required or not
+     *
      * @param tppSignatureRequired the new value of tppSignatureRequired
      */
     public void updateTppSignatureRequired(boolean tppSignatureRequired) {
@@ -128,6 +139,7 @@ public class AspspProfileService {
 
     /**
      * Update Pis redirect url to aspsp
+     *
      * @param redirectUrlToAspsp the new value of Pis redirectUrlToAspsp
      */
     public void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp) {
@@ -143,9 +155,45 @@ public class AspspProfileService {
 
     /**
      * Update Ais redirect url to aspsp
+     *
      * @param redirectUrlToAspsp the new value of Ais redirectUrlToAspsp
      */
     public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
         profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);
+    }
+
+    /**
+     * Read supported multicurrency account levels
+     */
+    public MulticurrencyAccountLevel getMulticurrencyAccountLevel() {
+        return profileConfiguration.getMulticurrencyAccountLevel();
+    }
+
+    /**
+     * Update value of supported multicurrency account levels
+     *
+     * @param multicurrencyAccountLevel new value of supported multicurrency account levels
+     */
+    public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
+        profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
+    }
+
+    /**
+     * Read list of available booking statuses
+     */
+    public List<BookingStatus> getAvailableBookingStatuses() {
+        return profileConfiguration.getAvailableBookingStatuses();
+    }
+
+    /**
+     * Update list of available booking statuses
+     *
+     * @param availableBookingStatuses new value of available booking statuses
+     */
+    public void updateAvailableBookingStatuses(List<BookingStatus> availableBookingStatuses) {
+        if (!availableBookingStatuses.contains(BOOKED)) {
+            availableBookingStatuses.add(BOOKED);
+        }
+        profileConfiguration.setAvailableBookingStatuses(availableBookingStatuses);
     }
 }

@@ -55,7 +55,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
  The endpoint should be queried with:
  * with-balance (according to AIS consent)
  * tpp-transaction-id (correct UUID)
- * tpp-request-id (correct UUID)
+ * x-request-id (correct UUID)
  * consent-id (id of present ASPSP AIS consent)
  
  **Result:** You retrieve a list of account details relevant to the previously received AIS consent.   
@@ -73,7 +73,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
  * account-id (id of an existing PSU account)
  * with-balance (according to AIS consent)
  * tpp-transaction-id (correct UUID)
- * tpp-request-id (correct UUID)
+ * x-request-id (correct UUID)
  * consent-id (id of present ASPSP AIS consent)
  
  **Result:** You retrieve account details relevant to the previously received AIS consent.   
@@ -86,7 +86,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * _**account-id**_ (wrong or nonexistent id of a PSU account)
   * with-balance (according to AIS consent)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present and valid AIS consent with frequencyPerDay value at 0)
   
   **Result:** You get an error message.   
@@ -104,7 +104,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * account-id (id of an existing PSU account)
   * with-balance (according to AIS consent)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present ASPSP AIS consent)
   
   **Result:** You get a list of account balances relevant to the previously received AIS consent.   
@@ -117,7 +117,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
    * _**account-id**_ (wrong or nonexistent id of a PSU account)
    * with-balance (according to AIS consent)
    * tpp-transaction-id (correct UUID)
-   * tpp-request-id (correct UUID)
+   * x-request-id (correct UUID)
    * consent-id (id of present and valid AIS consent with frequencyPerDay value at 0)
    
    **Result:** You get an error message.   
@@ -137,7 +137,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * booking status (BOOKED, PENDING or BOTH)(IGNORED IF TRANSACTION ID IS PRESENT)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present ASPSP AIS consent)
   
   **Result:** You retrieve a transaction.  
@@ -152,7 +152,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * booking status (BOOKED, PENDING or BOTH)(IGNORED IF TRANSACTION ID IS PRESENT)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present ASPSP AIS consent)
    
    **Result:** You get an error message.   
@@ -167,7 +167,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * booking status (BOOKED, PENDING or BOTH)(IGNORED IF TRANSACTION ID IS PRESENT)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present ASPSP AIS consent)
    
    **Result:** You get an error message.   
@@ -185,7 +185,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * booking status (BOOKED, PENDING or BOTH)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present ASPSP AIS consent)
   
   **Result:** You retrieve 2 lists of transaction BOOKED and PENDING according to the request.  
@@ -201,7 +201,7 @@ AIS Consent related errors and their causes are same for all AIS endpoints:
   * booking status (BOOKED, PENDING or BOTH)
   * with-balance (according to AIS consent) (CURRENTLY IGNORED)
   * tpp-transaction-id (correct UUID)
-  * tpp-request-id (correct UUID)
+  * x-request-id (correct UUID)
   * consent-id (id of present ASPSP AIS consent)
    
    **Result:** You get an error message. 

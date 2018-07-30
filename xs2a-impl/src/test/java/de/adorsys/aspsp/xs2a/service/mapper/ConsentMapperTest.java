@@ -16,40 +16,39 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.config.WebConfigTest;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebConfigTest.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ConsentMapperTest {
     private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private final String SPI_ACCOUNT_CONSENT_REQ_JSON_PATH = "/json/MapGetAccountConsentTest.json";
@@ -57,10 +56,20 @@ public class ConsentMapperTest {
     private final String PSU_ID = "12345";
     private final String TPP_ID = "This is a test TppId";
 
-    @Autowired
+    @InjectMocks
     private ConsentMapper consentMapper;
-    @Autowired
-    private JsonConverter jsonConverter;
+
+    @Mock
+    private AccountMapper accountMapper;
+
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+
+    @Before
+    public void setUp() {
+        when(accountMapper.mapToAccountReferences(any())).thenReturn(getReferences());
+        when(accountMapper.mapToSpiAccountReferences(any())).thenReturn(getSpiReferences());
+    }
 
     @Test
     public void mapToAisConsentRequest() throws IOException {
@@ -109,18 +118,6 @@ public class ConsentMapperTest {
     }
 
     @Test
-    public void mapGetAccountConsentStatusById() {
-        //Given:
-        SpiTransactionStatus expectedTransactionStatus = SpiTransactionStatus.ACCP;
-
-        //When:
-        TransactionStatus actualTransactionStatus = consentMapper.mapToTransactionStatus(expectedTransactionStatus);
-
-        //Then:
-        assertThat(expectedTransactionStatus.name()).isEqualTo(actualTransactionStatus.name());
-    }
-
-    @Test
     public void mapSpiCreateConsentRequest() throws IOException {
         //Given:
         String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
@@ -131,11 +128,15 @@ public class ConsentMapperTest {
         SpiCreateConsentRequest actualRequest = consentMapper.mapToSpiCreateConsentRequest(donorRequest);
 
         //Then:
-        assertThat(actualRequest).isEqualTo(expectedRequest);
+        assertThat(actualRequest.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
+        assertThat(actualRequest.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
+        assertThat(actualRequest.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
+        assertThat(actualRequest.isCombinedServiceIndicator()).isEqualTo(expectedRequest.isCombinedServiceIndicator());
     }
 
     @Test
     public void mapGetAccountConsent() throws IOException {
+
         //Given:
         String accountConsentJson = IOUtils.resourceToString(SPI_ACCOUNT_CONSENT_REQ_JSON_PATH, UTF_8);
         SpiAccountConsent donorAccountConsent = jsonConverter.toObject(accountConsentJson, SpiAccountConsent.class).get();
@@ -164,4 +165,35 @@ public class ConsentMapperTest {
                    .map(Currency::getCurrencyCode)
                    .orElse(null);
     }
+
+    private List<AccountReference> getReferences() {
+        List<AccountReference> refs = new ArrayList<>();
+        refs.add(getReference("DE2310010010123456789", null, "123456xxxxxx1234"));
+        refs.add(getReference("DE2310010010123456790", Currency.getInstance("USD"), "123456xxxxxx1234"));
+        refs.add(getReference("DE2310010010123456788", null, null));
+
+        return refs;
+    }
+
+    private AccountReference getReference(String iban, Currency currency, String masked) {
+        AccountReference ref = new AccountReference();
+        ref.setIban(iban);
+        ref.setCurrency(currency);
+        ref.setMaskedPan(masked);
+        return ref;
+    }
+
+    private List<SpiAccountReference> getSpiReferences() {
+        List<SpiAccountReference> refs = new ArrayList<>();
+        refs.add(getSpiReference("DE2310010010123456789", null, "123456xxxxxx1234"));
+        refs.add(getSpiReference("DE2310010010123456790", Currency.getInstance("USD"), "123456xxxxxx1234"));
+        refs.add(getSpiReference("DE2310010010123456788", null, null));
+
+        return refs;
+    }
+
+    private SpiAccountReference getSpiReference(String iban, Currency currency, String masked) {
+        return new SpiAccountReference(iban, null, null, masked, null, currency);
+    }
+
 }

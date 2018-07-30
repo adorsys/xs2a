@@ -21,11 +21,14 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
+import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
+import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
@@ -36,8 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Service
@@ -47,6 +49,7 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
     private final ScaPaymentService scaPaymentService;
     private final PaymentValidationService paymentValidationService;
+    private final ReadPaymentFactory readPaymentFactory;
 
     /**
      * Retrieves payment status from ASPSP
@@ -57,8 +60,10 @@ public class PaymentService {
      */
     public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct) {
         TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct));
-        return ResponseObject.<TransactionStatus>builder()
-                   .body(transactionStatus).build();
+        return Optional.ofNullable(transactionStatus)
+                   .map(tr -> ResponseObject.<TransactionStatus>builder()
+                                  .body(tr).build())
+                   .orElse(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
 
     /**
@@ -68,7 +73,7 @@ public class PaymentService {
      * @param paymentProduct  The addressed payment product
      * @return Response containing information about created periodic payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validatePeriodicPayment(periodicPayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
             return ResponseObject.<PaymentInitialisationResponse>builder()
@@ -85,12 +90,11 @@ public class PaymentService {
     /**
      * Initiates a bulk payment
      *
-     * @param payments             List of single payments forming bulk payment
-     * @param paymentProduct       The addressed payment product
-     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
+     * @param payments       List of single payments forming bulk payment
+     * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing inforamtion about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct) {
         // TODO: should be validated by interceptors https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/166
         if (CollectionUtils.isEmpty(payments)) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
@@ -102,7 +106,7 @@ public class PaymentService {
         for (SinglePayments s : payments) {
             Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(s, paymentProduct);
             if (messageErrorCode.isPresent()) {
-                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayments() : s, messageErrorCode.get(), tppRedirectPreferred)
+                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayments() : s, messageErrorCode.get())
                     .map(invalidPayments::add);
             } else {
                 validPayments.add(s);
@@ -124,12 +128,11 @@ public class PaymentService {
     /**
      * Initiates a single payment
      *
-     * @param singlePayment        Single payment information
-     * @param paymentProduct       The addressed payment product
-     * @param tppRedirectPreferred boolean representation of TPP's desire to use redirect approach
+     * @param singlePayment  Single payment information
+     * @param paymentProduct The addressed payment product
      * @return Response containing information about created single payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct, boolean tppRedirectPreferred) {
+    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(singlePayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
             return ResponseObject.<PaymentInitialisationResponse>builder()
@@ -141,5 +144,22 @@ public class PaymentService {
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
                                .build());
+    }
+
+    /**
+     * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
+     *
+     * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentProduct The addressed payment product
+     * @param paymentId      ASPSP identifier of the payment
+     * @return Response containing information about payment or corresponding error
+     */
+    public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
+        ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentProduct, paymentId));
+        return payment.isPresent()
+                   ? ResponseObject.builder().body(payment.get()).build()
+                   : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build();
+
     }
 }

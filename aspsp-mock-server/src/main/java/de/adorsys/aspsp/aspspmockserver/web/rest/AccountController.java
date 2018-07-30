@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.aspspmockserver.web.rest;
 
 import de.adorsys.aspsp.aspspmockserver.service.AccountService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalances;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +42,7 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")
     })
+
     @GetMapping(path = "/")
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
         return Optional.ofNullable(accountService.getAllAccounts())
@@ -85,8 +86,8 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{accountId}/balances")
-    public ResponseEntity<List<SpiBalances>> readBalancesById(@PathVariable("accountId") String accountId) {
-        List<SpiBalances> response = accountService.getAccountBalancesById(accountId);
+    public ResponseEntity<List<SpiAccountBalance>> readBalancesById(@PathVariable("accountId") String accountId) {
+        List<SpiAccountBalance> response = accountService.getAccountBalancesById(accountId);
         return isEmpty(response)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.ok(response);

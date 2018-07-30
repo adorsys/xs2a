@@ -41,38 +41,37 @@ public class ConsentInformationController {
     private final ResponseMapper responseMapper;
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class), @ApiResponse(code = 400, message = "Bad request")})
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class),
+        @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
         @ApiImplicitParam(name = "psu-id", value = "31d50f56-a543-3664-b345-b9a822ae98a7", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "psu-id-type", value = "Type of the PSU-ID", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "psu-corporate-id", value = "Might be mandated in the ASPSP’s documentation", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "psu-corporate-id-type", value = "Might be mandated in the ASPSP’s documentation", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-redirect-uri", value = "http://example.com", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<CreateConsentResp> createAccountConsent(
         @RequestHeader(name = "psu-id", required = false) String psuId,
-        @ApiParam(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
-        @RequestParam(name = "tppRedirectPreferred", required = false) boolean tppRedirectPreferred,
-        @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-        @RequestParam(name = "withBalance", required = false) boolean withBalance,
         @Valid @RequestBody CreateConsentReq createConsent) {
-        ResponseObject<CreateConsentResp> response = consentService.createAccountConsentsWithResponse(createConsent, withBalance, tppRedirectPreferred, psuId);
+        ResponseObject<CreateConsentResp> response = consentService.createAccountConsentsWithResponse(createConsent, psuId);
         return responseMapper.created(response);
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @GetMapping(path = "/{consent-id}/status")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<ConsentStatus> getAccountConsentsStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
@@ -81,16 +80,15 @@ public class ConsentInformationController {
     }
 
     @ApiOperation(value = "Returns the content of an account information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @GetMapping(path = "/{consent-id}")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<AccountConsent> getAccountConsentsInformationById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
@@ -99,16 +97,11 @@ public class ConsentInformationController {
     }
 
     @ApiOperation(value = " Delete information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 204, message = "No Content"),
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
     @DeleteMapping(path = "/{consent-id}")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "timestamp", value = "Sun, 06 Aug 2017 15:02:37 GMT", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "digest of the payload request", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+    @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")
     public ResponseEntity<Void> deleteAccountConsent(
         @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
         @PathVariable("consent-id") String consentId) {

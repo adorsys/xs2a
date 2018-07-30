@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
@@ -25,59 +27,60 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+
+@RunWith(MockitoJUnitRunner.class)
 public class PeriodicPaymentsControllerTest {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
 
-    @Autowired
+    @InjectMocks
     private PeriodicPaymentsController periodicPaymentsController;
-    @Autowired
-    private JsonConverter jsonConverter;
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
 
-    @MockBean(name = "paymentService")
+    @Mock
     private PaymentService paymentService;
-    @MockBean
+    @Mock
     private AspspProfileService aspspProfileService;
+    @Mock
+    private ResponseMapper responseMapper;
 
     @Before
     public void setUp() {
-        when(paymentService.initiatePeriodicPayment(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(paymentService.initiatePeriodicPayment(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
+        when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED));
     }
 
     @Test
     public void initiationForStandingOrdersForRecurringOrPeriodicPayments() throws IOException {
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
-        boolean tppRedirectPreferred = false;
         PeriodicPayment periodicPayment = readPeriodicPayment();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED);
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(), tppRedirectPreferred, periodicPayment);
+        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(),periodicPayment);
 
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -87,7 +90,7 @@ public class PeriodicPaymentsControllerTest {
     private ResponseObject<PaymentInitialisationResponse> readResponseObject() {
 
         return ResponseObject.<PaymentInitialisationResponse>builder()
-               .body(getPaymentInitializationResponse()).build();
+                   .body(getPaymentInitializationResponse()).build();
     }
 
     private PeriodicPayment readPeriodicPayment() throws IOException {
@@ -97,6 +100,9 @@ public class PeriodicPaymentsControllerTest {
     private PaymentInitialisationResponse getPaymentInitializationResponse() {
         PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
         resp.setTransactionStatus(TransactionStatus.ACCP);
+        resp.setPaymentId("352397d6-a9f2-4914-8549-d127c02660ba");
+        resp.setPisConsentId("f33e9b14-56b8-4f3b-b2fd-87884a4a24b9");
+        resp.setIban("DE89370400440532013000");
         resp.setLinks(new Links());
         return resp;
     }

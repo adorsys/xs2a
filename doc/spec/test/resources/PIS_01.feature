@@ -1,48 +1,96 @@
 Feature: Payment Initiation Service
 
-  Scenario: Payment initiation request for single payments
-    Given PISP is logged in
-    And redirect approach is used
-    And PISP wants to initiate a payment with data
-      | instructedAmount | debtorAccount | creditorName | creditorAccount | remittanceInformationUnstructured |
-      | {currency: EUR, content: 123.50} | iban: DE2310010010123456789 | Merchant123 | iban: DE23100120020123456789 | Ref Number Merchant |
-    When PISP sends the payment initiating request
-    Then a payment resource is created at the aspsp mock
-    And response code 201
-    And the following data is delivered to the PISP:
-      | transactionStatus | paymentId | links |
-      | Received | 1234-wertiq-983    | {redirect: www.testbank.com/asdfasdfasdf, self: /v1/payments/sepa-credit-transfers/1234-wertiq-983} |
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Single Payment                                                                                                   #
+    #                                                                                                                  #
+    ####################################################################################################################
+    Scenario Outline: Successful payment initiation request for single payments
+        Given PSU is logged in
+        And <sca-approach> approach is used
+        And PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
+        When PSU sends the payment initiating request
+        Then a payment resource is created at the aspsp mock
+        And a successful response code and
+        And the appropriate single payment response data is delivered to the PSU
+        Examples:
+            | sca-approach | payment-product      | single-payment                |
+            | redirect     | sepa-credit-transfer | singlePayInit-successful.json |
 
-  Scenario: Payment initiation request for bulk payments
-    Given PISP is logged in
-    And redirect approach is used
-    And PISP wants to initiate multiple payments with data
-      | instructedAmount | debtorAccount | creditorName | creditorAccount | remittanceInformationUnstructured |
-      | currency: EUR, content: 123.50 | iban: DE2310010010123456789 | Merchant123 | iban: DE23100120020123456777 | Ref Number Merchant |
-      | currency: EUR, content: 500 | iban: DE2310010010123456789 | Merchant111 | iban: DE23100120020123456888 | Ref Number Merchant |
-    When PISP sends the payment initiating request
-    Then a payment resource is created at the aspsp mock
-    And response code 201
-    And the following data is delivered to the PISP:
-      | transactionStatus | paymentId | links |
-      | Received | 1234-wertiq-988    | {redirect: www.testbank.com/asdfasdfasdf, self: /v1/payments/sepa-credit-transfers/1234-wertiq-988} |
 
-  Scenario: Payment initiation request for standing orders
-    Given PISP is logged in
-    And redirect approach is used
-    And PISP wants to initiate a standing order with data
-      | instructedAmount | debtorAccount | creditorName | creditorAccount | remittanceInformationUnstructured | startDate | executionRule | frequency | dayOfExecution
-      | currency: EUR, content: 123.50 | iban: DE2310010010123456789 | Merchant123 | iban: DE23100120020123456789 | Ref Number Abonnement | 2018-03-01 | latest | monthly | 01 |
-    Then a payment resource is created at the aspsp mock
-    And response code 201
-    And the following data is delivered to the PISP:
-      | transactionStatus | paymentId | links |
-      | Received | 1234-wertiq-999    | {redirect: www.testbank.com/asdfasdfasdf, self: /v1/periodic-payments/sepa-credit-transfers/1234-wertiq-999} |
+    Scenario Outline: Failed payment initiation request for single payments
+        Given PSU is logged in
+        And <sca-approach> approach is used
+        And PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
+        When PSU sends the payment initiating request
+        Then an error response code is displayed
+        And the appropriate error response is delivered to the PSU
+        Examples:
+            | sca-approach | payment-product      | single-payment                                 |
+            | redirect     | sepa-credit-trans    | singlePayInit-incorrect-payment-product.json   |
+            | redirect     | sepa-credit-transfer | singlePayInit-incorrect-syntax.json            |
+            | redirect     | sepa-credit-transfer | singlePayInit-no-transaction-id.json           |
+            | redirect     | sepa-credit-transfer | singlePayInit-no-request-id.json               |
+            | redirect     | sepa-credit-transfer | singlePayInit-no-ip-address.json               |
+            | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-transaction-id.json |
+            | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-request-id.json     |
+            | redirect     | sepa-credit-transfer | singlePayInit-wrong-format-psu-ip-address.json |
 
-  Scenario: Payment Status Request
-    Given PISP is logged in
-    And created payment status request with resource-id qwer3456tzui7890
-    When PISP requests status about the payment
-    Then The payment status request by a PISP should be seen in the aspsp mock
-    And response code 200
-    And Transaction status "AcceptedCustomerProfile" is delivered to the PISP
+    # TODO Single payment with not existing tpp-transaction-id -> 400  (are there not existant id's / not in the system?)
+    # TODO Single payment with not existing x-request-id -> 400      (are there not existant id's / not in the system?)
+    # TODO Single payment with not existing psu-ip-address -> 400      (are there not existant id's / not in the system?)
+
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Bulk Payment                                                                                                     #
+    #                                                                                                                  #
+    ####################################################################################################################
+    Scenario Outline: Payment initiation request for bulk payments
+        Given PSU is logged in
+        And <sca-approach> approach is used
+        And PSU wants to initiate multiple payments <bulk-payment>
+        When PSU sends the payment initiating request
+        Then multiple payment resources are created at the aspsp mock
+        And a successful response code and
+        And the appropriate bulk payment response data is delivered to the PSU
+        Examples:
+            | sca-approach | bulk-payment                |
+            | redirect     | bulkPayInit-successful.json |
+
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Standing Orders                                                                                                  #
+    #                                                                                                                  #
+    ####################################################################################################################
+    Scenario Outline: Payment initiation request for standing orders
+        Given PSU is logged in
+        And <sca-approach> approach is used
+        And PSU wants to initiate a standing order <recurring-payment>
+        Then a payment resource is created at the aspsp mock
+        And a successful response code and
+        And the appropriate recurring payment response data is delivered to the PSU
+        Examples:
+            | sca-approach | recurring-payment          |
+            | redirect     | recPayInit-successful.json |
+
+    # TODO Recurring payment initiation with not defined frequency -> 400
+    # TODO Recurring payment initiation with start date in the past -> 400
+
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Payment Status                                                                                                   #
+    #                                                                                                                  #
+    ####################################################################################################################
+    Scenario Outline: Payment Status Request
+        Given PSU is logged in
+        And created payment status request with resource-id <resource-id>
+        When PSU requests the status of a payment
+        Then The payment status request by the PSU should be seen in the aspsp mock
+        And response code <response-code>
+        And Transaction status <transaction-status> is delivered to the PSU
+        Examples:
+            | resource-id      | transaction-status      | response-code |
+            | qwer3456tzui7890 | AcceptedCustomerProfile | 200           |

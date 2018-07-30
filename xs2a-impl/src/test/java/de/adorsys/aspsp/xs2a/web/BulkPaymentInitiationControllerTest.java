@@ -16,24 +16,25 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -43,12 +44,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class BulkPaymentInitiationControllerTest {
     private final String BULK_PAYMENT_DATA = "/json/BulkPaymentTestData.json";
     private final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
@@ -56,32 +54,35 @@ public class BulkPaymentInitiationControllerTest {
     private final PaymentProduct PAYMENT_PRODUCT = PaymentProduct.SCT;
     private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
 
-    @Autowired
+    @InjectMocks
     private BulkPaymentInitiationController bulkPaymentInitiationController;
-    @Autowired
-    private JsonConverter jsonConverter;
 
-    @MockBean(name = "paymentService")
+    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private JsonConverter jsonConverter = new JsonConverter(objectMapper);
+
+    @Mock
     private PaymentService paymentService;
-    @MockBean
+    @Mock
     private AspspProfileService aspspProfileService;
+    @Mock
+    ResponseMapper responseMapper;
 
     @Before
     public void setUp() throws IOException {
-        when(paymentService.createBulkPayments(any(), any(), anyBoolean())).thenReturn(readResponseObject());
+        when(paymentService.createBulkPayments(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
+        when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
     }
 
     @Test
     public void createBulkPaymentInitiation() throws IOException {
         //Given
-        boolean tppRedirectPreferred = false;
         List<SinglePayments> payments = readBulkPayments();
         ResponseEntity<List<PaymentInitialisationResponse>> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
         ResponseEntity<List<PaymentInitialisationResponse>> actualResult = bulkPaymentInitiationController
-                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), tppRedirectPreferred, payments);
+                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), payments);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
@@ -96,13 +97,6 @@ public class BulkPaymentInitiationControllerTest {
     private List<PaymentInitialisationResponse> readPaymentInitialisationResponse() throws IOException {
         PaymentInitialisationResponse response = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_RESP_DATA, UTF_8), PaymentInitialisationResponse.class).get();
         List<PaymentInitialisationResponse> responseList = new ArrayList<>();
-        Links links = new Links();
-        links.setRedirect(REDIRECT_LINK + response.getIban() + "/" + response.getPisConsentId());
-        links.setSelf(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
-        links.setUpdatePsuIdentification(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
-        links.setUpdatePsuAuthentication(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash(response.getPaymentId()).toString());
-        links.setStatus(linkTo(BulkPaymentInitiationController.class, PAYMENT_PRODUCT.getCode()).slash("status").toString());
-        response.setLinks(links);
         responseList.add(response);
 
         return responseList;

@@ -20,12 +20,33 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<form th:object="${paymentConfirmation}" th:action="@{/view/payment/confirmation/consent}" method="post">
+<form th:action="@{/view/payment/confirmation/consent}" method="post">
     <label>Are you sure you want to execute the payment?</label>
     <button type="submit" name="decision" value="confirmed">Yes</button>
     <button type="submit" name="decision" value="revoked">No</button>
-    <input type="hidden" th:field="*{iban}" th:value="*{iban}"/>
-    <input type="hidden" th:field="*{consentId}" th:value="*{consentId}"/>
+    <input type="hidden" th:field="*{paymentConfirmation.iban}" th:value="*{paymentConfirmation.iban}"/>
+    <input type="hidden" th:field="*{paymentConfirmation.consentId}" th:value="*{paymentConfirmation.consentId}"/>
+    <input type="hidden" th:field="*{paymentConfirmation.paymentId}" th:value="*{paymentConfirmation.paymentId}"/>
+
+    <br/>
+
+    <label> Payment id: </label>
+    <p th:utext="*{paymentDetails.paymentId}"></p>
+    <label>The purchase:</label>
+    <p th:utext="*{paymentDetails.remittanceInformationUnstructured}"></p>
+    <label>Amount: </label>
+    <p th:utext="*{paymentDetails.instructedAmount.getContent().toString()}"></p>
+    <label>Debtor: </label>
+    <p th:utext="*{paymentDetails.ultimateDebtor}"></p>
+    <p th:utext="*{paymentDetails.debtorAccount.getIban()}"></p>
+    <label>Creditor: </label>
+    <p th:utext="*{paymentDetails.creditorName}"></p>
+    <p th:utext="*{paymentDetails.creditorAccount.getIban()}"></p>
+
+    <label>Date: </label>
+    <p th:utext="*{paymentDetails.requestedExecutionDate}"></p>
+    <label>Time: </label>
+    <p th:utext="*{paymentDetails.requestedExecutionTime}"></p>
 </form>
 </body>
 </html>

@@ -23,7 +23,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -35,27 +35,27 @@
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
-            <artifactId>spi-mock</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
         </dependency>
 
 		<dependency>
 			<groupId>de.adorsys</groupId>
 			<artifactId>psd2-validator</artifactId>
-			<version>1.3-SNAPSHOT</version>
+			<version>1.4-SNAPSHOT</version>
 		</dependency>
-		
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -88,9 +88,9 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
-		    <groupId>org.springframework.security</groupId>
-		    <artifactId>spring-security-web</artifactId>
-		</dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
 
         <!--test-->
         <dependency>
@@ -147,13 +147,6 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <version>${jsonassert.version}</version>
@@ -177,23 +170,12 @@
     <build>
         <finalName>aspsp-xs2a</finalName>
         <plugins>
-
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                    <profiles>
-                        <profile>mockspi</profile>
-                    </profiles>
+                    <argLine>-Dspring.profiles.active=mockspi,test</argLine>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
         </plugins>

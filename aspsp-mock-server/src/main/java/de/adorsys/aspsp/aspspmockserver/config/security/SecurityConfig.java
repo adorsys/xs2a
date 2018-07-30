@@ -28,6 +28,7 @@ public class SecurityConfig extends AbstractSecurityConfig {
 
         http
             .csrf().disable()
+            .cors().and()
             .authorizeRequests()
             .antMatchers(ALLOW_PATH).permitAll()
             .anyRequest()

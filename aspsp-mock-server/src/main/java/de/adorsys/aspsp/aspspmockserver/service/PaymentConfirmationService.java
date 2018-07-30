@@ -20,12 +20,19 @@ import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,20 +40,23 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PaymentConfirmationService {
+    private final static String EMAIL_TEMPLATE_PATH = "email/email-template.html";
     private final TanRepository tanRepository;
     private final PsuRepository psuRepository;
     private final JavaMailSender emailSender;
     private final PaymentService paymentService;
     private final AccountService accountService;
+    private final Configuration fmConfiguration;
 
     /**
-     *  Generates new Tan and sends them to psu's email for payment confirmation
+     * Generates new Tan and sends it to psu's email for payment confirmation
      *
-     *  @param iban Iban of Psu order to get correct Psu and than get psu's email
-     *  @return true if psu was found and new Tan was sent successfully, otherwise return false
+     * @param iban Iban of Psu in order to get correct Psu and than get psu's email
+     * @return true if psu was found and new Tan was sent successfully, otherwise return false
      */
     public boolean generateAndSendTanForPsuByIban(String iban) {
         return accountService.getPsuIdByIban(iban)
@@ -61,13 +71,12 @@ public class PaymentConfirmationService {
     }
 
     /**
-     *  Gets new Tan and sends them to psu's email for payment confirmation
+     * Gets new Tan and sends it to psu's email for payment confirmation
      *
-     *  @param iban Iban of Psu order to get correct Psu
-     *  @param tanNumber TAN
-     *  @param consentId Id of consent in order to reject when Tan is wrong
-     *
-     *  @return true if Tan has UNUSED, otherwise return false
+     * @param iban      Iban of Psu in order to get correct Psu
+     * @param tanNumber TAN
+     * @param consentId Id of the consent in order to reject consent when tan is wrong
+     * @return true if Tan has status UNUSED, otherwise return false
      */
     public boolean isTanNumberValidByIban(String iban, String tanNumber, String consentId) {
         return accountService.getPsuIdByIban(iban)
@@ -81,7 +90,7 @@ public class PaymentConfirmationService {
                                      .map(t -> validateTanAndUpdateTanStatus(t, tanNumber))
                                      .orElse(false);
         if (!tanNumberValid) {
-            paymentService.revokeOrRejectPaymentConsent(consentId, REJECTED);
+            paymentService.updatePaymentConsentStatus(consentId, REJECTED);
         }
         return tanNumberValid;
     }
@@ -120,12 +129,36 @@ public class PaymentConfirmationService {
     }
 
     private boolean sendTanNumberOnEmail(String email, String tanNumber) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setSubject("Your TAN for payment confirmation");
-        mail.setFrom(email);
-        mail.setTo(email);
-        mail.setText("Your TAN number is " + tanNumber);
-        emailSender.send(mail);
-        return true;
+        if (emailSender == null) {
+            log.warn("Email properties has not been set");
+            return false;
+        }
+
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mail = new MimeMessageHelper(mimeMessage, true);
+            mail.setSubject("Your TAN for payment confirmation");
+            mail.setFrom(email);
+            mail.setTo(email);
+            mail.setText(getEmailContentFromTemplate(tanNumber), true);
+
+            emailSender.send(mail.getMimeMessage());
+            return true;
+        } catch (MessagingException e) {
+            log.warn("Problem with creating or sanding email: {}", e);
+            return false;
+        }
+    }
+
+    private String getEmailContentFromTemplate(String tanNumber) {
+        StringBuilder content = new StringBuilder();
+        try {
+            Template emailTemplate = fmConfiguration.getTemplate(EMAIL_TEMPLATE_PATH);
+            content.append(FreeMarkerTemplateUtils.processTemplateIntoString(emailTemplate, Collections.singletonMap("tan", tanNumber)));
+        } catch (Exception e) {
+            log.warn("Problem with reading email template : {}", e);
+            return "Your TAN number is " + tanNumber;
+        }
+        return content.toString();
     }
 }
