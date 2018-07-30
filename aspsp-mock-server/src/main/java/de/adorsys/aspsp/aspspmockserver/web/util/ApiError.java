@@ -3,9 +3,6 @@ package de.adorsys.aspsp.aspspmockserver.web.util;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Getter
 public class ApiError {
 
