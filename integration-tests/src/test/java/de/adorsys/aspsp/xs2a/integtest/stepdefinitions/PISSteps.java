@@ -103,27 +103,24 @@ public class PISSteps {
                 entity,
                 HashMap.class);
         } catch (HttpClientErrorException hce) {
-            ResponseEntity<HashMap> actualResponse = new ResponseEntity<>(hce.getStatusCode());
-            context.setResponse(actualResponse);
+            ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(hce.getStatusCode());
+            context.setActualResponse(actualResponse);
         }
     }
 
     @Then("^an error response code is displayed the appropriate error response$")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-        ResponseEntity<HashMap> response = context.getResponse();
+        ResponseEntity<PaymentInitialisationResponse> response = context.getActualResponse();
         HttpStatus httpStatus = convertStringToHttpStatusCode(context.getTestData().getResponse().getCode());
         assertThat(response.getStatusCode(), equalTo(httpStatus));
     }
 
-    @SuppressWarnings("unchecked")
     private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(context.getTestData().getRequest().getHeader());
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
 
-        return new HttpEntity<>(
-            (SinglePayments) context.getTestData().getRequest().getBody(),
-            headers);
+        return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
     }
 }
