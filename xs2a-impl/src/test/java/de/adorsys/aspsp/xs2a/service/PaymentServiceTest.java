@@ -95,6 +95,7 @@ public class PaymentServiceTest {
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RCVD)).thenReturn(RCVD);
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(TransactionStatus.ACCP);
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(TransactionStatus.RJCT);
+        when(paymentMapper.mapToTransactionStatus(null)).thenReturn(null);
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(SINGLE_PAYMENT_NOK_IBAN, RESOURCE_UNKNOWN_400))
             .thenReturn(Optional.of(getPaymentResponse(RJCT, RESOURCE_UNKNOWN_400)));
 
@@ -102,7 +103,7 @@ public class PaymentServiceTest {
         when(paymentSpi.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(SpiTransactionStatus.ACCP);
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(SpiTransactionStatus.RJCT);
+            .thenReturn(null);
 
         //Validation
         when(validationService.validateSinglePayment(SINGLE_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT))
@@ -142,8 +143,9 @@ public class PaymentServiceTest {
         //When
         ResponseObject<TransactionStatus> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
         //Then
-        assertThat(response.hasError()).isFalse();
-        assertThat(response.getBody()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.hasError()).isTrue();
+        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
     //PeriodicPayment Tests

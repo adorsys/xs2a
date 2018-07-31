@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web.view;
+package de.adorsys.aspsp.aspspmockserver.web.rest;
 
 import de.adorsys.aspsp.aspspmockserver.domain.PaymentConfirmation;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;

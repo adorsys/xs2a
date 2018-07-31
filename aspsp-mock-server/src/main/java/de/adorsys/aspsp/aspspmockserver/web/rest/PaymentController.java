@@ -64,12 +64,13 @@ public class PaymentController {
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class)})
+        @ApiResponse(code = 200, message = "OK", response = SpiTransactionStatus.class),
+        @ApiResponse(code = 204, message = "Payment Not Found")})
     @GetMapping(path = "/{paymentId}/status")
     public ResponseEntity<SpiTransactionStatus> getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentStatusById(paymentId)
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.ok(SpiTransactionStatus.RJCT));
+                   .orElse(ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -92,11 +93,22 @@ public class PaymentController {
         return ResponseEntity.ok(allPayments);
     }
 
-    @ApiOperation(value = "Returns the payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Returns the requested payment by it's paymentId", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AspspPayment.class)})
+    @GetMapping(path = "/{paymentId}")
+    public ResponseEntity<AspspPayment> getPaymentById(@PathVariable("paymentId") String paymentId) {
+        return paymentService.getPaymentById(paymentId)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.noContent().build());
+    }
+
+    @ApiOperation(value = "Returns the payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = AspspPayment.class),
+        @ApiResponse(code = 204, message = "Payment Not Found")})
     @GetMapping(path = "/{payment-type}/{payment-product}/{paymentId}")
-    public ResponseEntity<AspspPayment> getPaymentById(@PathVariable("payment-type") String paymentType, @PathVariable("payment-product") String paymentProduct, @PathVariable("paymentId") String paymentId) {
+    public ResponseEntity<AspspPayment> getPaymentByIdAndTypeAndProduct(@PathVariable("payment-type") String paymentType, @PathVariable("payment-product") String paymentProduct, @PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentById(paymentId)
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.noContent().build());
