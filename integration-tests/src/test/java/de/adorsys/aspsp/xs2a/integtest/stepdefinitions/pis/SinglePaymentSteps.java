@@ -9,7 +9,6 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,8 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,9 +60,6 @@ public class SinglePaymentSteps {
     public void sendPaymentInitiatingRequest() {
         HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
 
-        entity.getBody().setRequestedExecutionDate(LocalDate.now());
-        entity.getBody().setRequestedExecutionTime(LocalDateTime.now());
-
         ResponseEntity<PaymentInitialisationResponse> response = restTemplate.exchange(
             context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
             HttpMethod.POST,
@@ -94,7 +88,7 @@ public class SinglePaymentSteps {
         assertThat(actualResponse.getBody().getLinks().getScaRedirect(), notNullValue());
     }
 
-    private HttpStatus convertStringToHttpStatusCode(String code){
+    private HttpStatus convertStringToHttpStatusCode(String code) {
         return HttpStatus.valueOf(Integer.valueOf(code));
     }
 
