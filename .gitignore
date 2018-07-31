@@ -35,8 +35,7 @@ bin/
 logs
 log
 .vscode
-
 .DS_Store
 .springBeans
-
+**/main/java/META-INF
 cms-db-schema/liquibase.properties
