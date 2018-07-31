@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +62,9 @@ public class SinglePaymentSteps {
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
         HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
+
+        entity.getBody().setRequestedExecutionDate(LocalDate.now());
+        entity.getBody().setRequestedExecutionTime(LocalDateTime.now());
 
         ResponseEntity<PaymentInitialisationResponse> response = restTemplate.exchange(
             context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
