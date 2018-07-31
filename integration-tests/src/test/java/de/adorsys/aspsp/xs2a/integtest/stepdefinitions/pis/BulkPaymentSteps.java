@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,6 +66,14 @@ public class BulkPaymentSteps {
 
         List<SinglePayments> paymentsList = context.getTestData().getRequest().getBody();
 
+        // sets the hardcoded date/time within the json files to current date/time
+        paymentsList.forEach(
+            singlePayments -> {
+                singlePayments.setRequestedExecutionDate(LocalDate.now());
+                singlePayments.setRequestedExecutionTime(LocalDateTime.now());
+            }
+        );
+
         ResponseEntity<List<PaymentInitialisationResponse>> response = restTemplate.exchange(
             context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
             HttpMethod.POST, new HttpEntity<>(paymentsList, headers), new ParameterizedTypeReference<List<PaymentInitialisationResponse>>() {
@@ -95,7 +105,7 @@ public class BulkPaymentSteps {
         assertThat(actualResponse.getBody().get(1).getLinks().getScaRedirect(), notNullValue());
     }
 
-    private HttpStatus convertStringToHttpStatusCode(String code){
+    private HttpStatus convertStringToHttpStatusCode(String code) {
         return HttpStatus.valueOf(Integer.valueOf(code));
     }
 }

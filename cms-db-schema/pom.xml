@@ -34,7 +34,7 @@
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>${liquibase.version}</version>
                 <configuration>
-                    <propertyFile>liquibase.properties</propertyFile>
+                    <propertyFile>liquibase.example.properties</propertyFile>
                 </configuration>
             </plugin>
         </plugins>
