@@ -46,7 +46,7 @@
     "code": "400",
     "header": {},
     "body": {
-      "tppMessages": {
+      "tppMessage": {
         "category": "ERROR",
         "code": "FORMAT_ERROR"
       }

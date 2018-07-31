@@ -8,6 +8,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class PISSteps {
     }
 
     @When("^PSU sends the single payment initiating request with error$")
-    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException {
+    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
         HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
 
         try {
@@ -105,14 +106,23 @@ public class PISSteps {
         } catch (HttpClientErrorException hce) {
             ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(hce.getStatusCode());
             context.setActualResponse(actualResponse);
+            String responseBodyAsString = hce.getResponseBodyAsString();
+            ObjectMapper objectMapper = new ObjectMapper();
+            MessageError messageError = objectMapper.readValue(responseBodyAsString, MessageError.class);
+            context.setMessageError(messageError);
         }
     }
 
     @Then("^an error response code is displayed the appropriate error response$")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
         ResponseEntity<PaymentInitialisationResponse> response = context.getActualResponse();
+        MessageError givenErrorObject = context.getMessageError();
+        Map givenResponseBody = context.getTestData().getResponse().getBody();
+
         HttpStatus httpStatus = convertStringToHttpStatusCode(context.getTestData().getResponse().getCode());
         assertThat(response.getStatusCode(), equalTo(httpStatus));
+
+        //assertThat(givenErrorObject.getTppMessage().getCategory(), equalTo(givenResponseBody.get("tppMessage.category")));
     }
 
     private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {
