@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
