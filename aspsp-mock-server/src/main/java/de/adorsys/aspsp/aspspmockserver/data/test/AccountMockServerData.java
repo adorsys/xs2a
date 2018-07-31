@@ -76,8 +76,13 @@ public class AccountMockServerData {
 
     private void fillPayments() {
         // Payment data for Cucumber Test
-        paymentRepository.save(getPayment("61gh89hf56-vb23-12er-zr5g-kh0075hf2312", psus.get(3), EUR, BigDecimal.valueOf(150), psus.get(4),
-            "Spende", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), SpiTransactionStatus.RCVD, PisPaymentType.SINGLE, 15));
+        paymentRepository.save(getPayment("a9115f14-4f72-4e4e-8798-202808e85238", psus.get(3), EUR, BigDecimal.valueOf(150), psus.get(7),
+            "Online-Shoppping Amazon", LocalDate.parse("2018-07-15"), LocalDateTime.parse("2018-07-15T18:30:35.035"), SpiTransactionStatus.RCVD, PisPaymentType.SINGLE, 15));
+        paymentRepository.save(getPayment("68147b90-e4ef-41c6-9c8b-c848c1e93700", psus.get(3), EUR, BigDecimal.valueOf(1030), psus.get(8),
+            "Holidays", LocalDate.parse("2018-07-31"), LocalDateTime.parse("2018-07-31T18:30:35.035"), SpiTransactionStatus.PDNG, PisPaymentType.SINGLE, 31));
+        paymentRepository.save(getPayment("97694f0d-32e2-43a4-9e8d-261f2fc28236", psus.get(3), EUR, BigDecimal.valueOf(70), psus.get(9),
+            "Concert Tickets", LocalDate.parse("2018-07-08"), LocalDateTime.parse("2018-07-08T18:30:35.035"), SpiTransactionStatus.RJCT, PisPaymentType.SINGLE, 8));
+
     }
 
     private AspspPayment getPayment(String paymentId, Psu debtor, Currency currency, BigDecimal amount, Psu creditor, String purposeCode, LocalDate requestedExecutionDate,
@@ -145,7 +150,10 @@ public class AccountMockServerData {
             psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
             psuRepository.save(new Psu("PSU_CucumberGreenpeace", "greenpeace@web.de", Arrays.asList(accountDetails.get(8)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
             psuRepository.save(new Psu("PSU_CucumberTelekom", "telekom@telekom.de", Arrays.asList(accountDetails.get(9)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberJochen", "jochen.mueller@web.de", Arrays.asList(accountDetails.get(10)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER))
+            psuRepository.save(new Psu("PSU_CucumberJochen", "jochen.mueller@web.de", Arrays.asList(accountDetails.get(10)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
+            psuRepository.save(new Psu("PSU_CucumberAmazon", "amazon@mail.com", Arrays.asList(accountDetails.get(11)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
+            psuRepository.save(new Psu("PSU_CucumberHolidayCheck", "holidaycheck@mail.com", Arrays.asList(accountDetails.get(12)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
+            psuRepository.save(new Psu("PSU_CucumberEventim", "eventim@web.de", Arrays.asList(accountDetails.get(13)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER))
         );
 
     }
@@ -165,7 +173,10 @@ public class AccountMockServerData {
             getNewAccountCucumberTest("42fb4cc3-91cb-45ba-9159-b87acf6d8add", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE81432100000004111111", null, null, "Alexander Mueller", "GIRO"),
             getNewAccountCucumberTest("88888-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(1000000)), "DE56432100000005999999", null, null, "Greenpeace", "GIRO"),
             getNewAccountCucumberTest("99999-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(500000)), "DE37123400000005765499", null, null, "Telekom", "GIRO"),
-            getNewAccountCucumberTest("12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE56234891038492849284", null, null, "Jochen Mueller", "GIRO")
+            getNewAccountCucumberTest("12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE56234891038492849284", null, null, "Jochen Mueller", "GIRO"),
+            getNewAccountCucumberTest("23236-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(6500000)), "DE44234891000492849114", null, null, "Amazon", "GIRO"),
+            getNewAccountCucumberTest("37289-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(9500000)), "DE65001291000493459116", null, null, "Holidaycheck.com", "GIRO"),
+            getNewAccountCucumberTest("10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE44234000000497649754", null, null, "Eventim", "GIRO")
         );
     }
 
