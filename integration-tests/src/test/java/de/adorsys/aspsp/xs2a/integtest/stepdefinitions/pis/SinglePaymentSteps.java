@@ -9,7 +9,6 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -89,7 +88,7 @@ public class SinglePaymentSteps {
         assertThat(actualResponse.getBody().getLinks().getScaRedirect(), notNullValue());
     }
 
-    private HttpStatus convertStringToHttpStatusCode(String code){
+    private HttpStatus convertStringToHttpStatusCode(String code) {
         return HttpStatus.valueOf(Integer.valueOf(code));
     }
 

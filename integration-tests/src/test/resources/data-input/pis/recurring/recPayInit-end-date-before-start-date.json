@@ -54,7 +54,7 @@
     "header": {},
     "body": {
       "transactionStatus": "RJCT",
-      "tppMessages": {
+      "tppMessage": {
         "category": "ERROR",
         "code": "DATE_INVALID"
       }

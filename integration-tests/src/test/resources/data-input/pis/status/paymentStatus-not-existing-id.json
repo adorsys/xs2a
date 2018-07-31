@@ -10,7 +10,8 @@
     "code": "404",
     "header": {},
     "body": {
-      "tppMessages": {
+      "transactionStatus": "RJCT",
+      "tppMessage": {
         "category": "ERROR",
         "code": "RESOURCE_UNKNOWN"
       }
