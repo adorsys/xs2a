@@ -43,11 +43,6 @@ public class GlobalSteps {
     @Value("${auth.password}")
     private String password;
 
-    @Given("^PSU is logged in using redirect approach$")
-    public void loginPsuRedirect() {
-        // no login necessary
-    }
-
     @Given("^PSU is logged in using oauth approach$")
     public void loginPsuOAuth() {
         HttpHeaders headers = new HttpHeaders();
