@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -122,7 +123,10 @@ public class PISSteps {
         HttpStatus httpStatus = convertStringToHttpStatusCode(context.getTestData().getResponse().getCode());
         assertThat(response.getStatusCode(), equalTo(httpStatus));
 
-        //assertThat(givenErrorObject.getTppMessage().getCategory(), equalTo(givenResponseBody.get("tppMessage.category")));
+        LinkedHashMap tppMessageContent = (LinkedHashMap) givenResponseBody.get("tppMessage");
+
+        assertThat(givenErrorObject.getTppMessage().getCategory().name(), equalTo(tppMessageContent.get("category")));
+        assertThat(givenErrorObject.getTppMessage().getCode().name(), equalTo(tppMessageContent.get("code")));
     }
 
     private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {
