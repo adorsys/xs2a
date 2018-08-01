@@ -2,6 +2,7 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -10,6 +11,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.utils.CustomLocalDateDeserializer;
+import de.adorsys.aspsp.xs2a.integtest.utils.CustomLocalDateTimeDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
@@ -51,7 +54,13 @@ public class SinglePaymentSteps {
 
         File jsonFile = new File("src/test/resources/data-input/pis/single/" + dataFileName);
 
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(LocalDateTime.class, new CustomLocalDateTimeDeserializer(LocalDateTime.class));
+        module.addDeserializer(LocalDate.class, new CustomLocalDateDeserializer(LocalDate.class));
+        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(module);
+
         TestData<SinglePayments, HashMap> data = mapper.readValue(jsonFile, new TypeReference<TestData<SinglePayments, HashMap>>() {
         });
 
@@ -62,8 +71,6 @@ public class SinglePaymentSteps {
     public void sendPaymentInitiatingRequest() {
         HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
 
-        entity.getBody().setRequestedExecutionDate(LocalDate.now());
-        entity.getBody().setRequestedExecutionTime(LocalDateTime.now());
 
         ResponseEntity<PaymentInitialisationResponse> response = restTemplate.exchange(
             context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
@@ -128,4 +135,6 @@ public class SinglePaymentSteps {
 
         return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
     }
+
+
 }

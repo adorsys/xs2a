@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
@@ -11,6 +12,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.utils.CustomLocalDateDeserializer;
+import de.adorsys.aspsp.xs2a.integtest.utils.CustomLocalDateTimeDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
@@ -50,7 +53,13 @@ public class BulkPaymentSteps {
 
         File jsonFile = new File("src/test/resources/data-input/pis/bulk/" + dataFileName);
 
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(LocalDateTime.class, new CustomLocalDateTimeDeserializer(LocalDateTime.class));
+        module.addDeserializer(LocalDate.class, new CustomLocalDateDeserializer(LocalDate.class));
+        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(module);
+
         TestData<List<SinglePayments>, List<HashMap>> data = mapper.readValue(jsonFile, new TypeReference<TestData<List<SinglePayments>, List<HashMap>>>() {
         });
 
@@ -65,14 +74,6 @@ public class BulkPaymentSteps {
         headers.add("Content-Type", "application/json");
 
         List<SinglePayments> paymentsList = context.getTestData().getRequest().getBody();
-
-        // sets the hardcoded date/time within the json files to current date/time
-        paymentsList.forEach(
-            singlePayments -> {
-                singlePayments.setRequestedExecutionDate(LocalDate.now());
-                singlePayments.setRequestedExecutionTime(LocalDateTime.now());
-            }
-        );
 
         ResponseEntity<List<PaymentInitialisationResponse>> response = restTemplate.exchange(
             context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
@@ -94,7 +95,6 @@ public class BulkPaymentSteps {
         assertThat(actualResponse.getStatusCode(), notNullValue());
 
         assertThat(actualResponse.getBody().get(1).getTransactionStatus().name(), equalTo(givenResponseBody.get(1).get("transactionStatus")));
-
     }
 
     @And("^a redirect URL for every payment of the Bulk payment is delivered to the PSU$")
