@@ -50,10 +50,13 @@
   },
   "response": {
     "code": "400",
-    "header": [],
+    "header": {},
     "body": {
-      "category": "ERROR",
-      "transactionStatus": "FORMAT_ERROR"
+      "transactionStatus": "RJCT",
+      "tppMessage": {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
+      }
     }
   }
 }

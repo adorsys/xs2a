@@ -1,4 +1,4 @@
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
-public class PISSteps {
+public class SinglePaymentSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -90,7 +90,7 @@ public class PISSteps {
         assertThat(actualResponse.getBody().getLinks().getScaRedirect(), notNullValue());
     }
 
-    private HttpStatus convertStringToHttpStatusCode(String code){
+    private HttpStatus convertStringToHttpStatusCode(String code) {
         return HttpStatus.valueOf(Integer.valueOf(code));
     }
 
