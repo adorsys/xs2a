@@ -13,9 +13,10 @@ pom.xml.versionsBackup
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
-!.idea/copyright/profiles_settings.xml
-!.idea/copyright/adorsys___APACHE_2_0.xml
+!.idea
+.idea/*
+!.idea/copyright/
+
 *.iws
 *.iml
 *.ipr
