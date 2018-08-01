@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.integtest.util;
 
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import lombok.Data;
