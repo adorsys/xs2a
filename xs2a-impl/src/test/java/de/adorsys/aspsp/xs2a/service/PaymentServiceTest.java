@@ -105,9 +105,9 @@ public class PaymentServiceTest {
 
         //Status by ID
         when(paymentSpi.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
-            .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA.getAspspConsentData()));
+            .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
-            .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA.getAspspConsentData()));
+            .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
 
         //Validation
         when(validationService.validateSinglePayment(SINGLE_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT))

@@ -67,9 +67,9 @@ public class OauthScaPaymentServiceTest {
         when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED))
             .thenReturn(getResp(false));
-        when(paymentSpi.createBulkPayments(getSpiBulk(true, true), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA.getAspspConsentData()));
-        when(paymentSpi.createBulkPayments(getSpiBulk(true, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA.getAspspConsentData()));
-        when(paymentSpi.createBulkPayments(getSpiBulk(false, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA.getAspspConsentData()));
+        when(paymentSpi.createBulkPayments(getSpiBulk(true, true), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulk(true, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulk(false, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA));
     }
 
     @Test
