@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -34,7 +35,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    SpiResponse<SpiPaymentInitialisationResponse> createPaymentInitiation(SpiSinglePayments spiSinglePayments, byte[] aspspConsentData);
+    SpiResponse<SpiPaymentInitialisationResponse> createPaymentInitiation(SpiSinglePayments spiSinglePayments, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a periodic payment at ASPSP
@@ -44,7 +45,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    SpiResponse<SpiPaymentInitialisationResponse> initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, byte[] aspspConsentData);
+    SpiResponse<SpiPaymentInitialisationResponse> initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a bulk payment at ASPSP
@@ -54,7 +55,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(List<SpiSinglePayments> payments, byte[] aspspConsentData);
+    SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(List<SpiSinglePayments> payments, AspspConsentData aspspConsentData);
 
     /**
      * Returns a payment status by its ASPSP identifier
@@ -65,7 +66,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return payment status
      */
-    SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct, byte[] aspspConsentData);
+    SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct, AspspConsentData aspspConsentData);
 
     /**
      * Returns a single payment by its ASPSP identifier
@@ -77,7 +78,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
      */
-    SpiResponse<SpiSinglePayments> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, byte[] aspspConsentData);
+    SpiResponse<SpiSinglePayments> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a periodic payment by its ASPSP identifier
@@ -89,7 +90,7 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
      */
-    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, byte[] aspspConsentData);
+    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a bulk payment by its ASPSP identifier
@@ -101,5 +102,5 @@ public interface PaymentSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
      */
-    SpiResponse<List<SpiSinglePayments>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, byte[] aspspConsentData);
+    SpiResponse<List<SpiSinglePayments>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 }

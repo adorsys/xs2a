@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,10 +45,10 @@ public class AccountSpiImpl implements AccountSpi {
     private final RestTemplate aspspRestTemplate;
 
     /**
-     * For detailed description see {@link AccountSpi#readAccountDetailsByIban(String, byte[])}
+     * For detailed description see {@link AccountSpi#readAccountDetailsByIban(String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, byte[] aspspConsentData) {
+    public SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, AspspConsentData aspspConsentData) {
         List<SpiAccountDetails> response = Optional.ofNullable(
             aspspRestTemplate.exchange(
                     remoteSpiUrls.getAccountDetailsByIban(),
@@ -63,10 +64,10 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description see {@link AccountSpi#readTransactionsByPeriod(String, LocalDate, LocalDate, byte[])}
+     * For detailed description see {@link AccountSpi#readTransactionsByPeriod(String, LocalDate, LocalDate, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, byte[] aspspConsentData) {
+    public SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, AspspConsentData aspspConsentData) {
         Map<String, String> uriParams = new ObjectHolder<String, String>()
                                             .addValue("account-id", accountId)
                                             .getValues();
@@ -82,28 +83,28 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description see {@link AccountSpi#readTransactionById(String, String, byte[])}
+     * For detailed description see {@link AccountSpi#readTransactionById(String, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, byte[] aspspConsentData) {
+    public SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData) {
         Optional<SpiTransaction> response = Optional.ofNullable(aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
         return new SpiResponse<>(response,  "ewogIHBheW1lbnRUb2tlbjogQUJDRDEyMzE0MSwKICBzeXN0ZW1JZDogREVEQUlKRUosCiAgbXVsdGl1c2U6IHRydWUsCiAgZXhwaXJlczogMCwKICB0cmFuc2FjdGlvbnM6IFsKICAgIHsKICAgICAgdHJhbnNhY3Rpb25JZDogaWppZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllamZ3cndpZTIzcjIsCiAgICAgIHN0YXR1czogRkFJTEVECiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllcnQyamZpZTIzcjIsCiAgICAgIHN0YXR1czogT0sKICAgIH0sCiAgICB7CiAgICAgIHRyYW5zYWN0aW9uSWQ6IGlqMzI0MzJpZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9CiAgXQp9Cg==".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
     /**
-     * For detailed description see {@link AccountSpi#readAccountDetails(String, byte[])}
+     * For detailed description see {@link AccountSpi#readAccountDetails(String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, byte[] aspspConsentData) {
+    public SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData) {
         SpiAccountDetails response = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
         return new SpiResponse<>(response,  "ewogIHBheW1lbnRUb2tlbjogQUJDRDEyMzE0MSwKICBzeXN0ZW1JZDogREVEQUlKRUosCiAgbXVsdGl1c2U6IHRydWUsCiAgZXhwaXJlczogMCwKICB0cmFuc2FjdGlvbnM6IFsKICAgIHsKICAgICAgdHJhbnNhY3Rpb25JZDogaWppZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllamZ3cndpZTIzcjIsCiAgICAgIHN0YXR1czogRkFJTEVECiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllcnQyamZpZTIzcjIsCiAgICAgIHN0YXR1czogT0sKICAgIH0sCiAgICB7CiAgICAgIHRyYW5zYWN0aW9uSWQ6IGlqMzI0MzJpZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9CiAgXQp9Cg==".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
     /**
-     * For detailed description see {@link AccountSpi#readAccountsByPsuId(String, byte[])}
+     * For detailed description see {@link AccountSpi#readAccountsByPsuId(String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, byte[] aspspConsentData) {
+    public SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, AspspConsentData aspspConsentData) {
         List<SpiAccountDetails> response = Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             }, psuId).getBody())
@@ -112,10 +113,10 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description see {@link AccountSpi#readAccountDetailsByIbans(Collection, byte[])}
+     * For detailed description see {@link AccountSpi#readAccountDetailsByIbans(Collection, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, byte[] aspspConsentData) {
+    public SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, AspspConsentData aspspConsentData) {
         List<SpiAccountDetails> accountDetails = new ArrayList<>();
         for (String iban : ibans) {
             List<SpiAccountDetails> det = readAccountDetailsByIban(iban, aspspConsentData).getPayload();
@@ -129,10 +130,10 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description see {@link AccountSpi#readPsuAllowedPaymentProductList(SpiAccountReference, byte[])}
+     * For detailed description see {@link AccountSpi#readPsuAllowedPaymentProductList(SpiAccountReference, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, byte[] aspspConsentData) {
+    public SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData) {
         List<String> response = Optional.ofNullable(aspspRestTemplate.exchange(remoteSpiUrls.getAllowedPaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
         }, reference.getIban()).getBody())
                    .orElse(Collections.emptyList());

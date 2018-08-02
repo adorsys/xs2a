@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -38,7 +39,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of transactions
      */
-    SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, byte[] aspspConsentData);
+    SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
@@ -49,7 +50,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Transaction
      */
-    SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, byte[] aspspConsentData);
+    SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
@@ -59,7 +60,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Account details
      */
-    SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, byte[] aspspConsentData);
+    SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
@@ -69,7 +70,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, byte[] aspspConsentData);
+    SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) List of AccountDetails by IBAN
@@ -79,7 +80,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, byte[] aspspConsentData);
+    SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) list of account details with certain account IBANS
@@ -89,7 +90,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, byte[] aspspConsentData);
+    SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) list of allowed payment products for current PSU by its account reference
@@ -99,5 +100,5 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of allowed payment products
      */
-    SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, byte[] aspspConsentData);
+    SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
 }

@@ -4,6 +4,6 @@ import lombok.Value;
 
 @Value
 public class SpiResponse<T> {
-    private final T payload;
-    private final byte[] aspspConsentData;
+    private T payload;
+    private byte[] aspspConsentData;
 }
