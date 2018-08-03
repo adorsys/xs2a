@@ -1,13 +1,13 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.integtest.config.ObjectMapperConfig;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +39,13 @@ public class SinglePaymentSteps {
     private Context<SinglePayments, HashMap, PaymentInitialisationResponse> context;
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapperConfig mapper;
 
     @Given("^PSU wants to initiate a single payment (.*) using the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<SinglePayments, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<SinglePayments, HashMap>>() {
+        TestData<SinglePayments, HashMap> data = mapper.integrationTestMapper().readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<SinglePayments, HashMap>>() {
         });
 
         context.setTestData(data);
