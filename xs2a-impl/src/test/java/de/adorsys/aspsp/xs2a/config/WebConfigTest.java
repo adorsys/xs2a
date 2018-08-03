@@ -16,51 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.service.payment.RedirectScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
-import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 @EnableWebMvc
 @TestConfiguration
 @ActiveProfiles(profiles = "test")
 @TestPropertySource("classpath:application-test.properties")
 public class WebConfigTest extends WebMvcConfigurerAdapter {
-
-    @Bean
-    public ParametersFactory parametersFactory(ObjectMapper objectMapper) {
-        return new ParametersFactory(objectMapper);
-    }
-
-    @Bean
-    public RequestValidatorService requestValidatorService() {
-        return new RequestValidatorService();
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService()));
-    }
-
-    @Bean
-    public Validator validator() {
-        return Validation.buildDefaultValidatorFactory().getValidator();
-    }
-
-    @Bean
-    public ScaPaymentService scaPaymentService() {
-        return new RedirectScaPaymentService();
-    }
 }

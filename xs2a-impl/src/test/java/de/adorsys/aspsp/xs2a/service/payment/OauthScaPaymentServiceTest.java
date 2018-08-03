@@ -21,7 +21,9 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -46,6 +48,8 @@ public class OauthScaPaymentServiceTest {
     private static final String OK_CREDITOR = "OK";
     private static final String WRONG_CREDITOR = "NOK";
     private static final String PAYMENT_ID = "123456789";
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+
 
     @InjectMocks
     OauthScaPaymentService oauthScaPaymentService;
@@ -63,9 +67,9 @@ public class OauthScaPaymentServiceTest {
         when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED))
             .thenReturn(getResp(false));
-        when(paymentSpi.createBulkPayments(getSpiBulk(true, true))).thenReturn(getSpiRespList(true, true));
-        when(paymentSpi.createBulkPayments(getSpiBulk(true, false))).thenReturn(getSpiRespList(true, false));
-        when(paymentSpi.createBulkPayments(getSpiBulk(false, false))).thenReturn(getSpiRespList(false, false));
+        when(paymentSpi.createBulkPayments(getSpiBulk(true, true), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulk(true, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulk(false, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA));
     }
 
     @Test
