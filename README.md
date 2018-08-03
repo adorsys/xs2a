@@ -128,7 +128,7 @@ For detailed info see [README for release-scripts](scripts/release-scripts/READM
 
 **Release is made from local copy! Ensure that you have enough rights to push to master and develop branches**
 ```bash
-$ git submodule update
+$ git submodule update --init --remote
 $ scripts/release-scripts/release.sh <release-version> <next-develop-version>
 ``` 
 Example

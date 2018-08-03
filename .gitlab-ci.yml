@@ -257,3 +257,20 @@ deploy_image_release:
     DOCKER_TAG: $CI_COMMIT_TAG
   <<: *deploy_image_script
 
+# Integ tests
+
+build_image_integtest:
+  stage: "build:image"
+  only:
+    - schedules
+  variables:
+    DOCKER_TAG: nightly
+  <<: *build_image_script
+
+deploy_image_integtest:
+  stage: deploy
+  only:
+    - schedules
+  variables:
+    DOCKER_TAG: nightly
+  <<: *deploy_image_script
