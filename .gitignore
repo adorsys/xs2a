@@ -29,6 +29,10 @@ dist/
 nbdist/
 .nb-gradle/
 
+### PisMockWebApp ###
+*/node_modules/
+/pis-mock-webapp/node/
+
 ### Other ###
 bin/
 .factorypath
