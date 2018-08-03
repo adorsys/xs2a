@@ -16,9 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -33,56 +35,70 @@ public interface AccountSpi {
      * @param accountId String representation of ASPSP account primary identifier
      * @param dateFrom  Date representing the beginning of the search period
      * @param dateTo    Date representing the ending of the search period
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of transactions
      */
-    List<SpiTransaction> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo);
+    SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
      *
      * @param transactionId String representation of ASPSP primary identifier of transaction
      * @param accountId     String representation of ASPSP account primary identifier
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Transaction
      */
-    Optional<SpiTransaction> readTransactionById(String transactionId, String accountId);
+    SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
      *
      * @param accountId String representation of ASPSP account primary identifier
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Account details
      */
-    SpiAccountDetails readAccountDetails(String accountId);
+    SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
      *
      * @param psuId String representing ASPSP`s primary identifier of PSU
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    List<SpiAccountDetails> readAccountsByPsuId(String psuId);
+    SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) List of AccountDetails by IBAN
      *
      * @param iban String representation of Account IBAN
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    List<SpiAccountDetails> readAccountDetailsByIban(String iban);
+    SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) list of account details with certain account IBANS
      *
      * @param ibans a collection of Strings representing account IBANS
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    List<SpiAccountDetails> readAccountDetailsByIbans(Collection<String> ibans);
+    SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, AspspConsentData aspspConsentData);
 
     /**
      * Queries ASPSP to (GET) list of allowed payment products for current PSU by its account reference
      *
      * @param reference Account reference
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of allowed payment products
      */
-    List<String> readPsuAllowedPaymentProductList(SpiAccountReference reference);
+    SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
 }

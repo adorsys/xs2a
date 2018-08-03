@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import cucumber.api.java.en.And;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
@@ -34,15 +35,7 @@ public class BulkPaymentSteps {
     @Autowired
     private Context<List<SinglePayments>, List<HashMap>, List<PaymentInitialisationResponse>> context;
 
-/* see GlobalSteps.java
-        @Given("^PSU is logged in$")
-    */
-
-/* see GlobalSteps.java
-        @And("^(.*) approach is used$")
-    */
-
-    @And("^PSU wants to initiate multiple payments (.*) using the payment product (.*)$")
+    @Given("^PSU wants to initiate multiple payments (.*) using the payment product (.*)$")
     public void loadTestDataBulkPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 

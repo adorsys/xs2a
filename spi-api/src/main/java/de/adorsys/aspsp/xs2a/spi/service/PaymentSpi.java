@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
@@ -29,34 +31,42 @@ public interface PaymentSpi {
      * Initiates a single payment at ASPSP
      *
      * @param spiSinglePayments single payment to be sent for saving at ASPSP
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    SpiPaymentInitialisationResponse createPaymentInitiation(SpiSinglePayments spiSinglePayments);
+    SpiResponse<SpiPaymentInitialisationResponse> createPaymentInitiation(SpiSinglePayments spiSinglePayments, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a periodic payment at ASPSP
      *
      * @param periodicPayment periodic payment to be sent for saving at ASPSP
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    SpiPaymentInitialisationResponse initiatePeriodicPayment(SpiPeriodicPayment periodicPayment);
+    SpiResponse<SpiPaymentInitialisationResponse> initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a bulk payment at ASPSP
      *
      * @param payments bulk payment to be sent for saving at ASPSP
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    List<SpiPaymentInitialisationResponse> createBulkPayments(List<SpiSinglePayments> payments);
+    SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(List<SpiSinglePayments> payments, AspspConsentData aspspConsentData);
 
     /**
      * Returns a payment status by its ASPSP identifier
      *
      * @param paymentId      ASPSP identifier of a payment
      * @param paymentProduct The addressed payment product
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return payment status
      */
-    SpiTransactionStatus getPaymentStatusById(String paymentId, String paymentProduct);
+    SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct, AspspConsentData aspspConsentData);
 
     /**
      * Returns a single payment by its ASPSP identifier
@@ -64,9 +74,11 @@ public interface PaymentSpi {
      * @param paymentType    Type of payment
      * @param paymentProduct The addressed payment product
      * @param paymentId      ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
      */
-    SpiSinglePayments getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+    SpiResponse<SpiSinglePayments> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a periodic payment by its ASPSP identifier
@@ -74,9 +86,11 @@ public interface PaymentSpi {
      * @param paymentType    Type of payment
      * @param paymentProduct The addressed payment product
      * @param paymentId      ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
      */
-    SpiPeriodicPayment getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+    SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a bulk payment by its ASPSP identifier
@@ -84,7 +98,9 @@ public interface PaymentSpi {
      * @param paymentType    Type of payment
      * @param paymentProduct The addressed payment product
      * @param paymentId      ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
      */
-    List<SpiSinglePayments> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId);
+    SpiResponse<List<SpiSinglePayments>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 }

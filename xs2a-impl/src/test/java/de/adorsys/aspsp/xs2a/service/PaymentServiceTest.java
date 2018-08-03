@@ -29,8 +29,10 @@ import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +67,8 @@ public class PaymentServiceTest {
     private static final String EXCESSIVE_AMOUNT = "10000";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+
 
     private final PeriodicPayment PERIODIC_PAYMENT_OK = getPeriodicPayment(IBAN, AMOUNT);
     private final PeriodicPayment PERIODIC_PAYMENT_NOK_IBAN = getPeriodicPayment(WRONG_IBAN, AMOUNT);
@@ -100,10 +104,10 @@ public class PaymentServiceTest {
             .thenReturn(Optional.of(getPaymentResponse(RJCT, RESOURCE_UNKNOWN_400)));
 
         //Status by ID
-        when(paymentSpi.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(SpiTransactionStatus.ACCP);
-        when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(null);
+        when(paymentSpi.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
+            .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
+        when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
+            .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
 
         //Validation
         when(validationService.validateSinglePayment(SINGLE_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT))

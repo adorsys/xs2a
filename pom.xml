@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.aspsp</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <modules>
         <module>aspsp-idp</module>
         <module>spi-api</module>

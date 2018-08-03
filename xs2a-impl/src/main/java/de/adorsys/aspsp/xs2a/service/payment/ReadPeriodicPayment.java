@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
 public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
     @Override
     public PeriodicPayment getPayment(String paymentProduct, String paymentId) {
-        SpiPeriodicPayment periodicPayment = paymentSpi.getPeriodicPaymentById(paymentMapper.mapToSpiPaymentType(PERIODIC), paymentProduct, paymentId);
+        SpiPeriodicPayment periodicPayment = paymentSpi.getPeriodicPaymentById(paymentMapper.mapToSpiPaymentType(PERIODIC), paymentProduct, paymentId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return paymentMapper.mapToPeriodicPayment(periodicPayment);
     }
 }
