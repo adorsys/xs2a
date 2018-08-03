@@ -12,7 +12,4 @@ public class ITMessageError {
 
     private TransactionStatus transactionStatus;
     private ITTppMessageInformation tppMessage;
-
-    public ITMessageError() {
-    }
 }

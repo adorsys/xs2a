@@ -14,7 +14,4 @@ public class ITTppMessageInformation {
     private MessageCategory category;
     private MessageErrorCode code;
     private String path;
-
-    public ITTppMessageInformation() {
-    }
 }
