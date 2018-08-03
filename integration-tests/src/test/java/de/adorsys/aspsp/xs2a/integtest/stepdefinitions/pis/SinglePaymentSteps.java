@@ -103,10 +103,10 @@ public class SinglePaymentSteps {
         }
     }
 
-    private void handleRequestError(RestClientResponseException hce) throws IOException {
-        ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(hce.getRawStatusCode()));
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         context.setActualResponse(actualResponse);
-        String responseBodyAsString = hce.getResponseBodyAsString();
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
         ObjectMapper objectMapper = new ObjectMapper();
         ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
         context.setMessageError(messageError);
