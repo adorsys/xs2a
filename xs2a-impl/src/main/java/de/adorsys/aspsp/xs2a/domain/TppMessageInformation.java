@@ -21,12 +21,10 @@ import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
 
 @Data
-@NoArgsConstructor
 @ApiModel(description = "Tpp Message Information", value = "TppMessageInformation")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TppMessageInformation {

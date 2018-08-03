@@ -22,10 +22,8 @@ import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageError {
     @JsonUnwrapped

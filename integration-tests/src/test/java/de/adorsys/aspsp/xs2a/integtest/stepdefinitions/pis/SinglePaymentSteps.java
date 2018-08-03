@@ -8,13 +8,14 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -104,20 +105,24 @@ public class SinglePaymentSteps {
                 HttpMethod.POST,
                 entity,
                 HashMap.class);
-        } catch (HttpClientErrorException hce) {
-            ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(hce.getStatusCode());
-            context.setActualResponse(actualResponse);
-            String responseBodyAsString = hce.getResponseBodyAsString();
-            ObjectMapper objectMapper = new ObjectMapper();
-            MessageError messageError = objectMapper.readValue(responseBodyAsString, MessageError.class);
-            context.setMessageError(messageError);
+        } catch (RestClientResponseException rex) {
+            handleRequestError(rex);
         }
+    }
+
+    private void handleRequestError(RestClientResponseException hce) throws IOException {
+        ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(hce.getRawStatusCode()));
+        context.setActualResponse(actualResponse);
+        String responseBodyAsString = hce.getResponseBodyAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
+        context.setMessageError(messageError);
     }
 
     @Then("^an error response code is displayed the appropriate error response$")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
         ResponseEntity<PaymentInitialisationResponse> response = context.getActualResponse();
-        MessageError givenErrorObject = context.getMessageError();
+        ITMessageError givenErrorObject = context.getMessageError();
         Map givenResponseBody = context.getTestData().getResponse().getBody();
 
         HttpStatus httpStatus = convertStringToHttpStatusCode(context.getTestData().getResponse().getCode());
@@ -125,8 +130,11 @@ public class SinglePaymentSteps {
 
         LinkedHashMap tppMessageContent = (LinkedHashMap) givenResponseBody.get("tppMessage");
 
-        assertThat(givenErrorObject.getTppMessage().getCategory().name(), equalTo(tppMessageContent.get("category")));
-        assertThat(givenErrorObject.getTppMessage().getCode().name(), equalTo(tppMessageContent.get("code")));
+        // for cases when transactionStatus and tppMessage created after request
+        if (givenErrorObject.getTppMessage() != null) {
+            assertThat(givenErrorObject.getTppMessage().getCategory().name(), equalTo(tppMessageContent.get("category")));
+            assertThat(givenErrorObject.getTppMessage().getCode().name(), equalTo(tppMessageContent.get("code")));
+        }
     }
 
     private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {
