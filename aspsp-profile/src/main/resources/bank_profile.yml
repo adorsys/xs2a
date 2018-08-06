@@ -10,3 +10,4 @@ setting:
  aisRedirectUrlToAspsp: http://localhost:28080/
  multicurrencyAccountLevel: SUBACCOUNT
  availableBookingStatuses: BOOKED, PENDING
+ supportedAccountReferenceFields: MSISDN
