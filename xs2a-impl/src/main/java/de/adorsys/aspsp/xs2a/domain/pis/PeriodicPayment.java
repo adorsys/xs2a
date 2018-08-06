@@ -31,7 +31,7 @@ import java.util.Optional;
 
 @Data
 @ApiModel(description = "Periodic Payment Initialisation Request", value = "Periodic Payment")
-public class PeriodicPayment extends SinglePayments {
+public class PeriodicPayment extends SinglePayment {
 
     @ApiModelProperty(name = "startDate", required = true, example = "2017-03-03")
     @FutureOrPresent

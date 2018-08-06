@@ -34,7 +34,7 @@ import java.util.Optional;
 
 @Data
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
-public class SinglePayments {
+public class SinglePayment {
 
     @ApiModelProperty(value = "end to end authentication", example = "RI-123456789")
     @Size(max = 35)

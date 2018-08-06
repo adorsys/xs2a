@@ -22,7 +22,7 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -77,7 +77,7 @@ public class BulkPaymentInitiationControllerTest {
     @Test
     public void createBulkPaymentInitiation() throws IOException {
         //Given
-        List<SinglePayments> payments = readBulkPayments();
+        List<SinglePayment> payments = readBulkPayments();
         ResponseEntity<List<PaymentInitialisationResponse>> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
@@ -102,8 +102,8 @@ public class BulkPaymentInitiationControllerTest {
         return responseList;
     }
 
-    private List<SinglePayments> readBulkPayments() throws IOException {
-        SinglePayments[] payments = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_DATA, UTF_8), SinglePayments[].class).get();
+    private List<SinglePayment> readBulkPayments() throws IOException {
+        SinglePayment[] payments = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_DATA, UTF_8), SinglePayment[].class).get();
         return Arrays.asList(payments);
     }
 }

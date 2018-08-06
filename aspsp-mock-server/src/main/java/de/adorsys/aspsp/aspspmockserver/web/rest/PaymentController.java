@@ -20,7 +20,7 @@ import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,10 +40,10 @@ public class PaymentController {
 
     @ApiOperation(value = "Creates a single payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Created", response = SpiSinglePayments.class),
+        @ApiResponse(code = 201, message = "Created", response = SpiSinglePayment.class),
         @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/")
-    public ResponseEntity<SpiSinglePayments> createPayment(@RequestBody SpiSinglePayments payment) {
+    public ResponseEntity<SpiSinglePayment> createPayment(@RequestBody SpiSinglePayment payment) {
         return paymentService.addPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
                    .orElse(ResponseEntity.noContent().build());
@@ -54,9 +54,9 @@ public class PaymentController {
         @ApiResponse(code = 201, message = "Created", response = List.class),
         @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/bulk-payments")
-    public ResponseEntity<List<SpiSinglePayments>> createBulkPayments(
-        @RequestBody List<SpiSinglePayments> payments) {
-        List<SpiSinglePayments> saved = paymentService.addBulkPayments(payments);
+    public ResponseEntity<List<SpiSinglePayment>> createBulkPayments(
+        @RequestBody List<SpiSinglePayment> payments) {
+        List<SpiSinglePayment> saved = paymentService.addBulkPayments(payments);
         return isEmpty(saved)
                    ? ResponseEntity.noContent().build()
                    : new ResponseEntity<>(saved, CREATED);
