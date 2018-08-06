@@ -136,6 +136,11 @@ public class SinglePaymentSteps {
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
 
+        // for OAuth case
+        if (context.getAccessToken() != null) {
+            headers.add("access_token", context.getAccessToken());
+        }
+
         return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
     }
 }
