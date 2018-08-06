@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.repository;
 
-import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.springframework.data.repository.CrudRepository;
 

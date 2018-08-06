@@ -17,18 +17,17 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
-import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -82,50 +81,64 @@ public class PISConsentService {
         return pisConsentRepository.save(consent);
     }
 
-    private Optional<PisConsent> mapToBulkPaymentConsent(List<String> paymentIds) {
+    private Optional<PisConsent> mapToBulkPaymentConsent(List<String> paymentIds) { //NOPMD
+    // todo make correct mapping
+
         PisConsent consent = new PisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
-        consent.setPaymentId(paymentIds);
+        consent.setConsentType(ConsentType.AIS);
         consent.setConsentType(ConsentType.PIS);
-        consent.setPisConsentType(PisConsentType.BULK);
+        consent.setPisPaymentService(PisPaymentService.BULK);
         consent.setConsentStatus(PisConsentStatus.RECEIVED);
 
         return Optional.of(consent);
     }
 
     private Optional<PisConsent> mapToPeriodicPaymentConsent(String periodicPaymentId) {
+        // todo make correct mapping
+
+
+
         return Optional.ofNullable(periodicPaymentId)
                    .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPaymentId(Collections.singletonList(pmt));
+                       consent.setConsentType(ConsentType.AIS);
                        consent.setConsentType(ConsentType.PIS);
-                       consent.setPisConsentType(PisConsentType.PERIODIC);
+                       consent.setPisPaymentService(PisPaymentService.PERIODIC);
                        consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
                    });
     }
 
     private Optional<PisConsent> mapToPisConsent(String paymentId) {
+        // todo make correct mapping
+
+
+
         return Optional.ofNullable(paymentId)
                    .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPaymentId(Collections.singletonList(pmt));
+
                        consent.setConsentType(ConsentType.PIS);
-                       consent.setPisConsentType(PisConsentType.SINGLE);
+                       consent.setPisPaymentService(PisPaymentService.SINGLE);
                        consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
                    });
     }
 
     private Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
+
+
+
+
         return Optional.ofNullable(pisConsent)
                    .map(pc -> new PisConsentResponse(
                        pc.getExternalId(),
-                       pc.getPisConsentType(),
+                       pc.getPisPaymentService(),
                        pc.getConsentStatus(),
-                       pc.getPaymentId())
+                       null) // todo make correct mapping
                    );
     }
 }
