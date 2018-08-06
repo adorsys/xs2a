@@ -16,18 +16,23 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @ApiModel(description = "Request creates an account information consent resource at the ASPSP regarding access to accounts specified in this request")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateConsentReq {
+public class CreateConsentReq implements AccountReferenceCollector {
 
     @ApiModelProperty(value = "Requested access services.", required = true)
     @NotNull
@@ -48,4 +53,27 @@ public class CreateConsentReq {
     @ApiModelProperty(value = "If 'true' indicates that a payment initiation service will be addressed in the same 'session'", required = true)
     @NotNull
     private boolean combinedServiceIndicator;
+
+    @JsonIgnore
+    @Override
+    public Set<AccountReference> getAccountReferences() {
+        return Optional.ofNullable(this.access)
+                   .map(a -> getReferenceSet(a.getAccounts(), a.getBalances(), a.getTransactions()))
+                   .orElse(Collections.emptySet());
+    }
+
+    @JsonIgnore
+    @SafeVarargs
+    private final Set<AccountReference> getReferenceSet(List<AccountReference>... referencesList) {
+        return Arrays.stream(referencesList)
+                   .map(this::getReferenceList)
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toSet());
+    }
+
+    @JsonIgnore
+    private List<AccountReference> getReferenceList(List<AccountReference> reference) {
+        return Optional.ofNullable(reference)
+                   .orElse(Collections.emptyList());
+    }
 }

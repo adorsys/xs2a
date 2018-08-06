@@ -16,10 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/funds-confirmations")
@@ -35,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FundsConfirmationController {
     private final FundsConfirmationService fundsConfirmationService;
     private final ResponseMapper responseMapper;
+    private final AccountReferenceValidationService referenceValidationService;
 
     @PostMapping
     @ApiOperation(value = "Create a confirmation of funds request ", notes = "debtor account, creditor account, creditor name, remittance information unstructured", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -47,7 +53,10 @@ public class FundsConfirmationController {
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<FundsConfirmationResponse> fundConfirmation(@RequestBody FundsConfirmationRequest request) {
-
-        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(request));
+        Optional<MessageError> error = referenceValidationService.validateAccountReferences(request.getAccountReferences());
+        return responseMapper.ok(
+            error
+                .map(e -> ResponseObject.<FundsConfirmationResponse>builder().fail(e).build())
+                .orElse(fundsConfirmationService.fundsConfirmation(request)));
     }
 }
