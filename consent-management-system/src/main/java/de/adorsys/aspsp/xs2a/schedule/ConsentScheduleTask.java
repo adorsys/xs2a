@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.schedule;
 
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.VALID;
 
 @Slf4j
 @Component
@@ -64,9 +64,9 @@ public class ConsentScheduleTask {
         return consent;
     }
 
-    private SpiConsentStatus updateConsentStatus(AisConsent consent) {
+    private ConsentStatus updateConsentStatus(AisConsent consent) {
         return consent.isExpiredByDate()
-                   ? SpiConsentStatus.EXPIRED
+                   ? ConsentStatus.EXPIRED
                    : consent.getConsentStatus();
     }
 }

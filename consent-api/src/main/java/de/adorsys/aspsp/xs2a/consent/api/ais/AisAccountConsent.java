@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-public enum PisConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import lombok.Value;
+
+import java.time.LocalDate;
+
+@Value
+public class AisAccountConsent {
+    private String id;
+    private AisAccountAccess access;
+    private boolean recurringIndicator;
+    private LocalDate validUntil;
+    private int frequencyPerDay;
+    private LocalDate lastActionDate;
+    private ConsentStatus spiConsentStatus;
+    private boolean withBalance;
+    private boolean tppRedirectPreferred;
 }

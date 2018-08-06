@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
 import lombok.Value;
 
@@ -26,7 +26,7 @@ import java.util.List;
 public class PisConsentResponse {
     private String externalId;
     private PisConsentType pisConsentType;
-    private PisConsentStatus pisConsentStatus;
+    private ConsentStatus pisConsentStatus;
     private List<String> paymentIds;
 }
 

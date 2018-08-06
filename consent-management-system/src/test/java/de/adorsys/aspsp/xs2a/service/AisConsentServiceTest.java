@@ -18,11 +18,11 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,10 +67,10 @@ public class AisConsentServiceTest {
     public void shouldReturnAisConsent_whenGetConsentByIdIsCalled() {
         // When
         when(aisConsentRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        when(consentMapper.mapToSpiAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
+        when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
 
         // Then
-        Optional<SpiAccountConsent> retrievedConsent = aisConsentService.getSpiAccountConsentById(EXTERNAL_CONSENT_ID);
+        Optional<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
         // Assert
         assertTrue(retrievedConsent.isPresent());
@@ -122,8 +122,8 @@ public class AisConsentServiceTest {
         return Arrays.asList(new AccountInfo("iban-1", "EUR"));
     }
 
-    private SpiAccountConsent buildSpiAccountConsent() {
-        return new SpiAccountConsent(aisConsent.getId().toString(),
+    private AisAccountConsent buildSpiAccountConsent() {
+        return new AisAccountConsent(aisConsent.getId().toString(),
             null, false,
             null, 0,
             null, null,
