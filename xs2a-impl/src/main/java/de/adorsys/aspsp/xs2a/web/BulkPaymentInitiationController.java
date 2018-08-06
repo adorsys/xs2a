@@ -17,16 +17,20 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -35,6 +39,7 @@ import java.util.List;
 public class BulkPaymentInitiationController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
+    private final AccountReferenceValidationService referenceValidationService;
 
     @ApiOperation(value = "Creates a bulk payment initiation request at the ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 201, message = "transactions_status received, a list of hyperlinks to be recognized by the Tpp."),
@@ -51,6 +56,12 @@ public class BulkPaymentInitiationController {
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
         @PathVariable("payment-product") String paymentProduct,
         @RequestBody List<SinglePayments> payments) {
+        for (SinglePayments payment : payments) {
+            Optional<MessageError> error = referenceValidationService.validateAccountReferences(payment.getAccountReferences());
+            if (error.isPresent()) {
+                return responseMapper.created(ResponseObject.<List<PaymentInitialisationResponse>>builder().fail(error.get()).build());
+            }
+        }
         return responseMapper.created(paymentService.createBulkPayments(payments, paymentProduct));
     }
 }
