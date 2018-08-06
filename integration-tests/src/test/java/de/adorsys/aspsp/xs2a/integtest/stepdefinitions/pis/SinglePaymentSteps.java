@@ -40,13 +40,13 @@ public class SinglePaymentSteps {
     private Context<SinglePayments, HashMap, PaymentInitialisationResponse> context;
 
     @Autowired
-    private ObjectMapperConfig mapper;
+    private ObjectMapper mapper;
 
     @Given("^PSU wants to initiate a single payment (.*) using the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<SinglePayments, HashMap> data = mapper.integrationTestMapper().readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<SinglePayments, HashMap>>() {
+        TestData<SinglePayments, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<SinglePayments, HashMap>>() {
         });
 
         context.setTestData(data);
@@ -112,10 +112,8 @@ public class SinglePaymentSteps {
         ITMessageError givenErrorObject = context.getMessageError();
         Map givenResponseBody = context.getTestData().getResponse().getBody();
 
-
-        HttpStatus httpStatus = HttpStatus.valueOf(context.getTestData().getResponse().getCode());
-        assertThat(context.getActualResponse(), equalTo(httpStatus));
-
+        HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
+        assertThat(context.getActualResponse().getStatusCode(), equalTo(httpStatus));
 
         LinkedHashMap tppMessageContent = (LinkedHashMap) givenResponseBody.get("tppMessage");
 
