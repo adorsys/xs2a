@@ -52,7 +52,7 @@ public class GlobalSteps {
             e.printStackTrace();
         }
 
-        context.setScaApproach("redirect");
+        context.setScaApproach("oauth");
         context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
     }
 

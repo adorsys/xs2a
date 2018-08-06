@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -8,19 +9,19 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
 import de.adorsys.aspsp.xs2a.integtest.config.ObjectMapperConfig;
+import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -83,7 +84,7 @@ public class SinglePaymentSteps {
     }
 
     @When("^PSU sends the single payment initiating request with error$")
-    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException {
+    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
         HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
 
         try {
@@ -92,16 +93,37 @@ public class SinglePaymentSteps {
                 HttpMethod.POST,
                 entity,
                 HashMap.class);
-        } catch (HttpClientErrorException hce) {
-            ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(hce.getStatusCode());
-            context.setActualResponse(actualResponse);
+        } catch (RestClientResponseException rex) {
+            handleRequestError(rex);
         }
+    }
+
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+        context.setActualResponse(actualResponse);
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
+        context.setMessageError(messageError);
     }
 
     @Then("^an error response code is displayed the appropriate error response$")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-        ResponseEntity<PaymentInitialisationResponse> response = context.getActualResponse();
-        assertThat(response.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+        ITMessageError givenErrorObject = context.getMessageError();
+        Map givenResponseBody = context.getTestData().getResponse().getBody();
+
+
+        HttpStatus httpStatus = HttpStatus.valueOf(context.getTestData().getResponse().getCode());
+        assertThat(context.getActualResponse(), equalTo(httpStatus));
+
+
+        LinkedHashMap tppMessageContent = (LinkedHashMap) givenResponseBody.get("tppMessage");
+
+        // for cases when transactionStatus and tppMessage created after request
+        if (givenErrorObject.getTppMessage() != null) {
+            assertThat(givenErrorObject.getTppMessage().getCategory().name(), equalTo(tppMessageContent.get("category")));
+            assertThat(givenErrorObject.getTppMessage().getCode().name(), equalTo(tppMessageContent.get("code")));
+        }
     }
 
     private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {

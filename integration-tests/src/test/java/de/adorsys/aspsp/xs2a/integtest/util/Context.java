@@ -1,5 +1,6 @@
 package de.adorsys.aspsp.xs2a.integtest.util;
 
+import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,4 +22,5 @@ public class Context<T, U, R> {
     private String accessToken;
     private TestData<T, U> testData;
     private ResponseEntity<R> actualResponse;
+    private ITMessageError messageError;
 }
