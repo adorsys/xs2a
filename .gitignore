@@ -29,13 +29,17 @@ dist/
 nbdist/
 .nb-gradle/
 
+### PisMockWebApp ###
+node_modules/
+node
+.vscode
+
 ### Other ###
 bin/
 .factorypath
 *.log
 logs
 log
-.vscode
 
 .DS_Store
 .springBeans
