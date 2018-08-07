@@ -46,7 +46,7 @@ public class BulkPaymentSteps {
     public void loadTestDataBulkPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<List<SinglePayments>, List<HashMap>> data = mapper.readValue(resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8), new TypeReference<TestData<List<SinglePayments>, List<HashMap>>>() {
+        TestData<List<SinglePayment>, List<HashMap>> data = mapper.readValue(resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8), new TypeReference<TestData<List<SinglePayment>, List<HashMap>>>() {
         });
 
         context.setTestData(data);
