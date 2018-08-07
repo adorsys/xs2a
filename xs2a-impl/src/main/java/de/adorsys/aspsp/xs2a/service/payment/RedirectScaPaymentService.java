@@ -61,7 +61,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(PeriodicPayment periodicPayment, PaymentInitialisationResponse response) {
-        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(response.getPaymentId());
+        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(periodicPayment);
         String iban = periodicPayment.getDebtorAccount().getIban();
 
         return StringUtils.isBlank(pisConsentId)
@@ -105,7 +105,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
                                            .map(PaymentInitialisationResponse::getPaymentId)
                                            .collect(Collectors.toList());
 
-        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(validPaymentIds);
+        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(payments);
 
         return getDebtorIbanFromPayments(payments)
                    .map(iban -> responseList.stream()
@@ -128,7 +128,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(SinglePayments singlePayment, PaymentInitialisationResponse response) {
-        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(response.getPaymentId());
+        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(singlePayment);
         String iban = singlePayment.getDebtorAccount().getIban();
 
         return StringUtils.isBlank(pisConsentId)

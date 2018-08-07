@@ -16,9 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
+import lombok.Data;
 import lombok.Value;
 
-@Value
-public class PisConsentRequest {
-    private String paymentId;
+@Data
+public class PisAbstractConsentRequest {
+    private PisPaymentProduct pisPaymentProduct;
+    private PisTppInfo pisTppInfo;
+
+    @Value
+    public class PisTppInfo {
+        private String registrationNumber;
+        private String tppName;
+        private String tppRole;
+        private String nationalCompetentAuthority;
+        private String redirectUri;
+        private String nokRedirectUri;
+    }
 }

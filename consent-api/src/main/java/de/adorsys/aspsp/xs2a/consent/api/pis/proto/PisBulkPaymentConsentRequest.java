@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.repository;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import org.springframework.data.repository.CrudRepository;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
+import lombok.Value;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
-    Optional<PisConsent> findByExternalId(String externalId);
+@Value
+public class PisBulkPaymentConsentRequest extends PisAbstractConsentRequest{
+    private List<PisSinglePayment> payments;
 }

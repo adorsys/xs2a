@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
+package de.adorsys.aspsp.xs2a.consent.api.pis;
 
-import lombok.Value;
+import lombok.Data;
 
-import java.util.List;
+import java.time.LocalDate;
 
-@Value
-public class PisConsentBulkPaymentRequest {
-    private List<String> paymentIds;
+@Data
+public class PisPeriodicPayment extends PisSinglePayment {
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String executionRule;
+    private String frequency;
+    private int dayOfExecution; //Day here max 31
 }

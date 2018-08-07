@@ -16,9 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
 import lombok.Value;
 
 @Value
-public class PisConsentPeriodicPaymentRequest {
-    private String periodicPaymentId;
+public class PisPeriodicPaymentConsentRequest extends PisAbstractConsentRequest{
+    private PisPeriodicPayment periodicPayment;
 }

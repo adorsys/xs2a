@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisBulkPaymentConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisPeriodicPaymentConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisSinglePaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PISConsentService;
 import io.swagger.annotations.*;
@@ -40,7 +40,7 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createSinglePaymentConsent(@RequestBody PisConsentRequest request) {
+    public ResponseEntity<String> createSinglePaymentConsent(@RequestBody PisSinglePaymentConsentRequest request) {
         return pisConsentService.createSinglePaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -51,7 +51,7 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createBulkPaymentConsent(@RequestBody PisConsentBulkPaymentRequest request) {
+    public ResponseEntity<String> createBulkPaymentConsent(@RequestBody PisBulkPaymentConsentRequest request) {
         return pisConsentService.createBulkPaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
@@ -62,7 +62,7 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createPeriodicPaymentConsent(@RequestBody PisConsentPeriodicPaymentRequest request) {
+    public ResponseEntity<String> createPeriodicPaymentConsent(@RequestBody PisPeriodicPaymentConsentRequest request) {
         return pisConsentService.createPeriodicPaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));

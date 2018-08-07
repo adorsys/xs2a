@@ -21,6 +21,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -94,4 +96,24 @@ public class PisPaymentData {
     @Column(name = "purpose_code")
     @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
     private String purposeCode;
+
+    @Column(name = "start_date")
+    @ApiModelProperty(name = "startDate", example = "2017-10-25T15:30:35.035")
+    private LocalDate startDate;
+
+    @Column(name = "execution_rule")
+    @ApiModelProperty(name = "Execution rule", example = "latest")
+    private String executionRule;
+
+    @Column(name = "end_date")
+    @ApiModelProperty(name = "endDate", example = "2018-03-03")
+    private LocalDate endDate;
+
+    @Column(name = "frequency")
+    @ApiModelProperty(name = "frequency", example = "ANNUAL")
+    private String frequency;
+
+    @Column(name = "day_of_execution")
+    @ApiModelProperty(name = "dayOfExecution", example = "14")
+    private int dayOfExecution;
 }

@@ -18,39 +18,40 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.*;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
-import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PISConsentService {
     private final PisConsentRepository pisConsentRepository;
 
-    public Optional<String> createSinglePaymentConsent(PisConsentRequest request) {
-        return mapToPisConsent(request.getPaymentId())
+    public Optional<String> createSinglePaymentConsent(PisSinglePaymentConsentRequest request) {
+        return mapToPisConsent(request)
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<String> createBulkPaymentConsent(PisConsentBulkPaymentRequest request) {
-        return mapToBulkPaymentConsent(request.getPaymentIds())
+    public Optional<String> createBulkPaymentConsent(PisBulkPaymentConsentRequest request) {
+        return mapToBulkPaymentConsent(request)
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<String> createPeriodicPaymentConsent(PisConsentPeriodicPaymentRequest request) {
-        return mapToPeriodicPaymentConsent(request.getPeriodicPaymentId())
+    public Optional<String> createPeriodicPaymentConsent(PisPeriodicPaymentConsentRequest request) {
+        return mapToPeriodicPaymentConsent(request)
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
@@ -81,58 +82,73 @@ public class PISConsentService {
         return pisConsentRepository.save(consent);
     }
 
-    private Optional<PisConsent> mapToBulkPaymentConsent(List<String> paymentIds) { //NOPMD
-    // todo make correct mapping
-
-        PisConsent consent = new PisConsent();
-        consent.setExternalId(UUID.randomUUID().toString());
-        consent.setConsentType(ConsentType.AIS);
-        consent.setConsentType(ConsentType.PIS);
-        consent.setPisPaymentService(PisPaymentService.BULK);
-        consent.setConsentStatus(PisConsentStatus.RECEIVED);
-
-        return Optional.of(consent);
+    private Optional<PisConsent> mapToBulkPaymentConsent(PisBulkPaymentConsentRequest request) {
+        return Optional.ofNullable(request.getPayments())
+                   .map(pmts -> {
+                       PisConsent consent = new PisConsent();
+                       consent.setExternalId(UUID.randomUUID().toString());
+                       consent.setPayments(mapToPisPaymentDataList(pmts));
+                       consent.setPisTppInfo(mapToPisTppInfo(request.getPisTppInfo()));
+                       consent.setPisPaymentService(PisPaymentService.BULK);
+                       consent.setPisPaymentProduct(request.getPisPaymentProduct());
+                       consent.setConsentType(ConsentType.PIS);
+                       consent.setConsentStatus(PisConsentStatus.RECEIVED);
+                       return consent;
+                   });
     }
 
-    private Optional<PisConsent> mapToPeriodicPaymentConsent(String periodicPaymentId) {
-        // todo make correct mapping
-
-
-
-        return Optional.ofNullable(periodicPaymentId)
+    private Optional<PisConsent> mapToPeriodicPaymentConsent(PisPeriodicPaymentConsentRequest request) {
+        return Optional.ofNullable(request.getPeriodicPayment())
                    .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setConsentType(ConsentType.AIS);
-                       consent.setConsentType(ConsentType.PIS);
+                       consent.setPayments(Collections.singletonList(mapToPisPaymentData(pmt)));
+                       consent.setPisTppInfo(mapToPisTppInfo(request.getPisTppInfo()));
                        consent.setPisPaymentService(PisPaymentService.PERIODIC);
+                       consent.setPisPaymentProduct(request.getPisPaymentProduct());
+                       consent.setConsentType(ConsentType.PIS);
                        consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
                    });
     }
 
-    private Optional<PisConsent> mapToPisConsent(String paymentId) {
-        // todo make correct mapping
+    private List<PisPaymentData> mapToPisPaymentDataList(List<PisSinglePayment> payments) {
+        return payments.stream()
+                   .map(this::mapToPisPaymentData)
+                   .collect(Collectors.toList());
+    }
 
-
-
-        return Optional.ofNullable(paymentId)
+    private Optional<PisConsent> mapToPisConsent(PisSinglePaymentConsentRequest request) {
+        return Optional.ofNullable(request.getPisSinglePayment())
                    .map(pmt -> {
                        PisConsent consent = new PisConsent();
                        consent.setExternalId(UUID.randomUUID().toString());
-
-                       consent.setConsentType(ConsentType.PIS);
+                       consent.setPayments(Collections.singletonList(mapToPisPaymentData(pmt)));
+                       consent.setPisTppInfo(mapToPisTppInfo(request.getPisTppInfo()));
                        consent.setPisPaymentService(PisPaymentService.SINGLE);
+                       consent.setPisPaymentProduct(request.getPisPaymentProduct());
+                       consent.setConsentType(ConsentType.PIS);
                        consent.setConsentStatus(PisConsentStatus.RECEIVED);
                        return consent;
                    });
+    }
+
+    private PisTppInfo mapToPisTppInfo(PisAbstractConsentRequest.PisTppInfo pisTppInfo) {
+        return Optional.ofNullable(pisTppInfo)
+                   .map(tin -> {
+                       PisTppInfo tppInfo = new PisTppInfo();
+                       tppInfo.setRegistrationNumber(tin.getRegistrationNumber());
+                       tppInfo.setTppName(tin.getTppName());
+                       tppInfo.setTppRole(tin.getTppRole());
+                       tppInfo.setNationalCompetentAuthority(tin.getNationalCompetentAuthority());
+                       tppInfo.setRedirectUri(tin.getRedirectUri());
+                       tppInfo.setNokRedirectUri(tin.getNokRedirectUri());
+
+                       return tppInfo;
+                   }).orElse(null);
     }
 
     private Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
-
-
-
-
         return Optional.ofNullable(pisConsent)
                    .map(pc -> new PisConsentResponse(
                        pc.getExternalId(),
@@ -140,5 +156,61 @@ public class PISConsentService {
                        pc.getConsentStatus(),
                        null) // todo make correct mapping
                    );
+    }
+
+    private PisPaymentData mapToPisPeriodicPaymentData(PisPeriodicPayment periodicPayment) {
+        PisPaymentData pisPaymentData = mapToPisPaymentData(periodicPayment);
+        pisPaymentData.setStartDate(periodicPayment.getStartDate());
+        pisPaymentData.setExecutionRule(periodicPayment.getExecutionRule());
+        pisPaymentData.setEndDate(periodicPayment.getEndDate());
+        pisPaymentData.setFrequency(periodicPayment.getFrequency());
+        pisPaymentData.setDayOfExecution(periodicPayment.getDayOfExecution());
+
+        return pisPaymentData;
+    }
+
+    private PisPaymentData mapToPisPaymentData(PisSinglePayment singlePayment) {
+        PisPaymentData pisPaymentData = new PisPaymentData();
+        pisPaymentData.setPaymentId(singlePayment.getPaymentId());
+        pisPaymentData.setEndToEndIdentification(singlePayment.getEndToEndIdentification());
+        pisPaymentData.setDebtorAccount(mapToPisAccountReference(singlePayment.getDebtorAccount()));
+        pisPaymentData.setUltimateDebtor(singlePayment.getUltimateDebtor());
+        pisPaymentData.setAmount(singlePayment.getAmount());
+        pisPaymentData.setCurrency(singlePayment.getCurrency());
+        pisPaymentData.setCreditorAccount(mapToPisAccountReference(singlePayment.getCreditorAccount()));
+        pisPaymentData.setCreditorAgent(singlePayment.getCreditorAgent());
+        pisPaymentData.setCreditorName(singlePayment.getCreditorName());
+        pisPaymentData.setCreditorAddress(mapToPisAddress(singlePayment.getCreditorAddress()));
+        pisPaymentData.setRemittanceInformationUnstructured(singlePayment.getRemittanceInformationUnstructured());
+        pisPaymentData.setRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured());
+        pisPaymentData.setRequestedExecutionDate(singlePayment.getRequestedExecutionDate());
+        pisPaymentData.setRequestedExecutionTime(singlePayment.getRequestedExecutionTime());
+        pisPaymentData.setUltimateCreditor(singlePayment.getUltimateCreditor());
+        pisPaymentData.setPurposeCode(singlePayment.getPurposeCode());
+
+        return pisPaymentData;
+    }
+
+    private PisAccountReference mapToPisAccountReference(PisSinglePayment.PisAccountReference accountReference) {
+        PisAccountReference pisAccountReference = new PisAccountReference();
+        pisAccountReference.setIban(accountReference.getIban());
+        pisAccountReference.setBban(accountReference.getBban());
+        pisAccountReference.setPan(accountReference.getPan());
+        pisAccountReference.setMaskedPan(accountReference.getMaskedPan());
+        pisAccountReference.setMsisdn(accountReference.getMsisdn());
+        pisAccountReference.setCurrency(accountReference.getCurrency());
+
+        return pisAccountReference;
+    }
+
+    private PisAddress mapToPisAddress(PisSinglePayment.PisAddress address) {
+        PisAddress pisAddress = new PisAddress();
+        pisAddress.setStreet(address.getStreet());
+        pisAddress.setBuildingNumber(address.getBuildingNumber());
+        pisAddress.setCity(address.getCity());
+        pisAddress.setPostalCode(address.getPostalCode());
+        pisAddress.setCountry(address.getCountry());
+
+        return pisAddress;
     }
 }
