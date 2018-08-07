@@ -29,7 +29,7 @@ public class AisAccountConsent {
     private LocalDate validUntil;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
-    private ConsentStatus spiConsentStatus;
+    private ConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
 }
