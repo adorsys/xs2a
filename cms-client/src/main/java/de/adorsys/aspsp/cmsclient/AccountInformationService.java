@@ -14,20 +14,33 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.repository;
+package de.adorsys.aspsp.cmsclient;
 
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.AisConsent;
-import org.springframework.data.repository.CrudRepository;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+public class AccountInformationService {
 
-public interface AisConsentRepository extends CrudRepository<AisConsent, Long> {
-    List<AisConsent> findByConsentStatusIn(Set<ConsentStatus> statuses);
+    public String createConsent(AisConsentRequest request) {
+        return "";
+    }
 
-    Optional<AisConsent> findByExternalId(String externalId);
+    public void saveConsentActionLog(ConsentActionRequest request) {
 
-    Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
+    }
+
+    public AisAccountConsent getConsentById(String consentId) {
+        return null;
+    }
+
+
+    public ConsentStatus getConsentStatusById() {
+        return null;
+    }
+
+
+    public void updateConsentStatus() {
+    }
 }

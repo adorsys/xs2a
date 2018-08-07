@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.repository;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.AisConsent;
-import org.springframework.data.repository.CrudRepository;
+import de.adorsys.aspsp.xs2a.consent.api.AccountReference;
+import lombok.Value;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-public interface AisConsentRepository extends CrudRepository<AisConsent, Long> {
-    List<AisConsent> findByConsentStatusIn(Set<ConsentStatus> statuses);
-
-    Optional<AisConsent> findByExternalId(String externalId);
-
-    Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
+@Value
+public class AisAccountAccess {
+    private List<AccountReference> accounts;
+    private List<AccountReference> balances;
+    private List<AccountReference> transactions;
 }

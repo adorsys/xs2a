@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -80,16 +81,6 @@ public class AspspProfileService {
                    || scaApproach == ScaApproach.DECOUPLED;
     }
 
-    /**
-     * Checks if payment product is allowed by ASPSP
-     *
-     * @param product Payment product to be checked for availability at ASPSP
-     * @return Boolean representing if the payment product is supported by ASPSP
-     */
-    public boolean isSupportedPaymentProduct(PaymentProduct product) {
-        return getAvailablePaymentProducts().contains(product);
-    }
-
     private List<String> readAvailablePaymentProducts() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
@@ -135,6 +126,17 @@ public class AspspProfileService {
     public String getAisRedirectUrlToAspsp() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getAisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
+    }
+
+    /**
+     * Retrieves list of supported AccountReference fields from ASPSP profile service
+     *
+     * @return List of supported fields
+     */
+    public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getSupportedAccountReferenceFields(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SupportedAccountReferenceField>>() {
+            }).getBody();
     }
 
     private List<String> readAvailablePaymentTypes() {

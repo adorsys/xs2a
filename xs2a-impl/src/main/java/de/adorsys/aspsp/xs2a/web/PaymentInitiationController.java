@@ -16,16 +16,21 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -35,6 +40,7 @@ import org.springframework.web.bind.annotation.*;
 public class PaymentInitiationController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
+    private final AccountReferenceValidationService referenceValidationService;
 
     @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Created"),
@@ -58,7 +64,11 @@ public class PaymentInitiationController {
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for payments e.g. for a SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
         @PathVariable("payment-product") String paymentProduct,
         @RequestBody SinglePayment singlePayment) {
-        return responseMapper.created(paymentService.createPaymentInitiation(singlePayment, paymentProduct));
+        Optional<MessageError> error = referenceValidationService.validateAccountReferences(singlePayment.getAccountReferences());
+        return responseMapper.created(
+            error
+                .map(e -> ResponseObject.<PaymentInitialisationResponse>builder().fail(e).build())
+                .orElse(paymentService.createPaymentInitiation(singlePayment, paymentProduct)));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
