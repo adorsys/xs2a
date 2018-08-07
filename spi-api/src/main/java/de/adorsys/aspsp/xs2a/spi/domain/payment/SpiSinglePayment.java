@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-public class SpiSinglePayments {
+public class SpiSinglePayment {
 
     @Id
     private String paymentId;

@@ -47,10 +47,8 @@ public class SpiAccountDetails {
      */
     private String bban;
     /**
-     * Permanent Account Number
-     * 3 letters + 1 letter(Type) + 1 letter(First letter of Surname)+ 4 digits +1 check digit
-     * Types: P-Individual, C-Company, A-Association, F-Firm, H-HUF, T-Trust
-     * AEYPM5403H (Example)
+     * Primary Account Number
+     * 0000 0000 0000 0000 (Example)
      */
     private String pan;
 

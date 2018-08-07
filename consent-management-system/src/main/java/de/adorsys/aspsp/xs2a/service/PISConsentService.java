@@ -21,6 +21,12 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.*;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
@@ -56,7 +62,7 @@ public class PISConsentService {
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<PisConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
@@ -66,7 +72,7 @@ public class PISConsentService {
                    .flatMap(this::mapToPisConsentResponse);
     }
 
-    public Optional<Boolean> updateConsentStatusById(String consentId, PisConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         return getPisConsentById(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -77,7 +83,7 @@ public class PISConsentService {
                    .flatMap(pisConsentRepository::findByExternalId);
     }
 
-    private PisConsent setStatusAndSaveConsent(PisConsent consent, PisConsentStatus status) {
+    private PisConsent setStatusAndSaveConsent(PisConsent consent, ConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
     }

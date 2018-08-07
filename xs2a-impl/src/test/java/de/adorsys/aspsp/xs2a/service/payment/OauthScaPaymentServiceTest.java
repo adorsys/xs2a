@@ -19,13 +19,13 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createBulkPayment() {
         //Given
-        List<SinglePayments> payments = getBulk(true, true);
+        List<SinglePayment> payments = getBulk(true, true);
         //When
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments);
         assertNotNull(actualResponse);
@@ -92,7 +92,7 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createBulkPayment_Failure_partial() {
         //Given
-        List<SinglePayments> payments = getBulk(true, false);
+        List<SinglePayment> payments = getBulk(true, false);
         //When
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments);
         assertNotNull(actualResponse);
@@ -104,7 +104,7 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createBulkPayment_Failure_total() {
         //Given
-        List<SinglePayments> payments = getBulk(false, false);
+        List<SinglePayment> payments = getBulk(false, false);
         //When
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments);
         assertNotNull(actualResponse);
@@ -118,7 +118,7 @@ public class OauthScaPaymentServiceTest {
         //Nothing to be tested here
     }
 
-    private List<SinglePayments> getBulk(boolean firstOk, boolean secondOk) {
+    private List<SinglePayment> getBulk(boolean firstOk, boolean secondOk) {
         return Arrays.asList(getPayment(firstOk), getPayment(secondOk));
     }
 
@@ -150,20 +150,20 @@ public class OauthScaPaymentServiceTest {
         return response;
     }
 
-    private SinglePayments getPayment(boolean paymentOk) {
-        SinglePayments payment = new SinglePayments();
+    private SinglePayment getPayment(boolean paymentOk) {
+        SinglePayment payment = new SinglePayment();
         payment.setCreditorName(paymentOk
                                     ? OK_CREDITOR
                                     : WRONG_CREDITOR);
         return payment;
     }
 
-    private List<SpiSinglePayments> getSpiBulk(boolean firstOk, boolean secondOk) {
+    private List<SpiSinglePayment> getSpiBulk(boolean firstOk, boolean secondOk) {
         return Arrays.asList(getSpiPayment(firstOk), getSpiPayment(secondOk));
     }
 
-    private SpiSinglePayments getSpiPayment(boolean paymentOk) {
-        SpiSinglePayments payment = new SpiSinglePayments();
+    private SpiSinglePayment getSpiPayment(boolean paymentOk) {
+        SpiSinglePayment payment = new SpiSinglePayment();
         payment.setCreditorName(paymentOk
                                     ? OK_CREDITOR
                                     : WRONG_CREDITOR);

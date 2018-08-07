@@ -19,7 +19,9 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.account.AccountHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
@@ -28,8 +30,6 @@ import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
 import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +39,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.EXPIRED;
+import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.VALID;
 import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -98,9 +100,9 @@ public class AISConsentService {
      * Read status of consent by id
      *
      * @param consentId
-     * @return SpiConsentStatus
+     * @return ConsentStatus
      */
-    public Optional<SpiConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
@@ -111,9 +113,9 @@ public class AISConsentService {
      *
      * @param consentId
      * @param status new consent status
-     * @return SpiConsentStatus
+     * @return Boolean
      */
-    public Optional<Boolean> updateConsentStatusById(String consentId, SpiConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -123,12 +125,12 @@ public class AISConsentService {
      * Read full information of consent by id
      *
      * @param consentId
-     * @return SpiAccountConsent
+     * @return AisAccountConsent
      */
-    public Optional<SpiAccountConsent> getSpiAccountConsentById(String consentId) {
+    public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
         return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
-                   .map(consentMapper::mapToSpiAccountConsent);
+                   .map(consentMapper::mapToAisAccountConsent);
     }
 
     /**
@@ -196,7 +198,7 @@ public class AISConsentService {
         return consent;
     }
 
-    private AisConsent setStatusAndSaveConsent(AisConsent consent, SpiConsentStatus status) {
+    private AisConsent setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);

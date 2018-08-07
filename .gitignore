@@ -41,3 +41,5 @@ log
 .springBeans
 
 cms-db-schema/liquibase.properties
+**/META-INF
+**/main/java/META-INF

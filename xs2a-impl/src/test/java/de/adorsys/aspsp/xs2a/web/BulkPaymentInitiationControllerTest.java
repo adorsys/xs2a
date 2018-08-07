@@ -22,10 +22,11 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +42,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -65,19 +67,22 @@ public class BulkPaymentInitiationControllerTest {
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    ResponseMapper responseMapper;
+    private ResponseMapper responseMapper;
+    @Mock
+    private AccountReferenceValidationService referenceValidationService;
 
     @Before
     public void setUp() throws IOException {
         when(paymentService.createBulkPayments(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
+        when(referenceValidationService.validateAccountReferences(any())).thenReturn(Optional.empty());
     }
 
     @Test
     public void createBulkPaymentInitiation() throws IOException {
         //Given
-        List<SinglePayments> payments = readBulkPayments();
+        List<SinglePayment> payments = readBulkPayments();
         ResponseEntity<List<PaymentInitialisationResponse>> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
@@ -102,8 +107,8 @@ public class BulkPaymentInitiationControllerTest {
         return responseList;
     }
 
-    private List<SinglePayments> readBulkPayments() throws IOException {
-        SinglePayments[] payments = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_DATA, UTF_8), SinglePayments[].class).get();
+    private List<SinglePayment> readBulkPayments() throws IOException {
+        SinglePayment[] payments = jsonConverter.toObject(IOUtils.resourceToString(BULK_PAYMENT_DATA, UTF_8), SinglePayment[].class).get();
         return Arrays.asList(payments);
     }
 }

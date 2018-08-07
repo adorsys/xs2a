@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.PaymentType;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.*;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -89,10 +86,22 @@ public class ProfileConfiguration {
      */
     private List<BookingStatus> availableBookingStatuses;
 
+    /**
+     * Account Reference fields supported by ASPSP, such as: IBAN, PAN, MSIDN
+     */
+    private List<SupportedAccountReferenceField> supportedAccountReferenceFields;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.FUTURE_DATED);
         setDefaultBookingStatus(BOOKED);
+        setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
+    }
+
+    private void setAvailableAccountReferenceField(SupportedAccountReferenceField defaultSupportedAccountReferenceField) {
+        if (!supportedAccountReferenceFields.contains(defaultSupportedAccountReferenceField)) {
+            supportedAccountReferenceFields.add(defaultSupportedAccountReferenceField);
+        }
     }
 
     private void setDefaultPaymentType(PaymentType necessaryType) {

@@ -54,36 +54,36 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public List<SpiSinglePayments> mapToSpiSinglePaymentList(List<SinglePayments> payments) {
+    public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<SinglePayment> payments) {
         return payments.stream()
-                   .map(this::mapToSpiSinglePayments)
+                   .map(this::mapToSpiSinglePayment)
                    .collect(Collectors.toList());
     }
 
-    public SpiSinglePayments mapToSpiSinglePayments(SinglePayments paymentInitiationRequest) {
+    public SpiSinglePayment mapToSpiSinglePayment(SinglePayment paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
                    .map(paymentRe -> {
-                       SpiSinglePayments spiSinglePayments = new SpiSinglePayments();
-                       spiSinglePayments.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
-                       spiSinglePayments.setDebtorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getDebtorAccount()));
-                       spiSinglePayments.setUltimateDebtor(paymentRe.getUltimateDebtor());
-                       spiSinglePayments.setInstructedAmount(mapToSpiAmount(paymentRe.getInstructedAmount()));
-                       spiSinglePayments.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
+                       SpiSinglePayment spiSinglePayment = new SpiSinglePayment();
+                       spiSinglePayment.setEndToEndIdentification(paymentRe.getEndToEndIdentification());
+                       spiSinglePayment.setDebtorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getDebtorAccount()));
+                       spiSinglePayment.setUltimateDebtor(paymentRe.getUltimateDebtor());
+                       spiSinglePayment.setInstructedAmount(mapToSpiAmount(paymentRe.getInstructedAmount()));
+                       spiSinglePayment.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
 
-                       spiSinglePayments.setCreditorAgent(Optional.ofNullable(paymentRe.getCreditorAgent())
+                       spiSinglePayment.setCreditorAgent(Optional.ofNullable(paymentRe.getCreditorAgent())
                                                               .map(BICFI::getCode).orElse(""));
-                       spiSinglePayments.setCreditorName(paymentRe.getCreditorName());
-                       spiSinglePayments.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
-                       spiSinglePayments.setUltimateCreditor(paymentRe.getUltimateCreditor());
-                       spiSinglePayments.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
+                       spiSinglePayment.setCreditorName(paymentRe.getCreditorName());
+                       spiSinglePayment.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
+                       spiSinglePayment.setUltimateCreditor(paymentRe.getUltimateCreditor());
+                       spiSinglePayment.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
                                                             .map(PurposeCode::getCode).orElse(""));
-                       spiSinglePayments.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
-                       spiSinglePayments.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
-                       spiSinglePayments.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
-                       spiSinglePayments.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
-                       spiSinglePayments.setPaymentStatus(SpiTransactionStatus.RCVD);
+                       spiSinglePayment.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
+                       spiSinglePayment.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
+                       spiSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
+                       spiSinglePayment.setRequestedExecutionTime(paymentRe.getRequestedExecutionTime());
+                       spiSinglePayment.setPaymentStatus(SpiTransactionStatus.RCVD);
 
-                       return spiSinglePayments;
+                       return spiSinglePayment;
                    })
                    .orElse(null);
     }
@@ -141,7 +141,7 @@ public class PaymentMapper {
                    });
     }
 
-    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayments payment, MessageErrorCode error) {
+    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayment payment, MessageErrorCode error) {
         return Optional.ofNullable(payment)
                    .map(p -> {
                        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
@@ -156,10 +156,10 @@ public class PaymentMapper {
         return SpiPaymentType.valueOf(paymentType.name());
     }
 
-    public SinglePayments mapToSinglePayment(SpiSinglePayments spiSinglePayment) {
+    public SinglePayment mapToSinglePayment(SpiSinglePayment spiSinglePayment) {
         return Optional.ofNullable(spiSinglePayment)
                    .map(sp -> {
-                       SinglePayments payments = new SinglePayments();
+                       SinglePayment payments = new SinglePayment();
                        payments.setEndToEndIdentification(spiSinglePayment.getEndToEndIdentification());
                        payments.setDebtorAccount(accountMapper.mapToAccountReference(spiSinglePayment.getDebtorAccount()));
                        payments.setUltimateDebtor(spiSinglePayment.getUltimateDebtor());
@@ -206,9 +206,9 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public List<SinglePayments> mapToBulkPayment(List<SpiSinglePayments> spiSinglePayments) {
-        return CollectionUtils.isNotEmpty(spiSinglePayments)
-                   ? spiSinglePayments.stream().map(this::mapToSinglePayment).collect(Collectors.toList())
+    public List<SinglePayment> mapToBulkPayment(List<SpiSinglePayment> spiSinglePayment) {
+        return CollectionUtils.isNotEmpty(spiSinglePayment)
+                   ? spiSinglePayment.stream().map(this::mapToSinglePayment).collect(Collectors.toList())
                    : null;
     }
 

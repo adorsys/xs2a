@@ -20,6 +20,10 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisBulkPaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisPeriodicPaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisSinglePaymentConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PISConsentService;
 import io.swagger.annotations.*;
@@ -71,9 +75,9 @@ public class PisConsentController {
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = PisConsentStatus.class),
+        @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<PisConsentStatus> getConsentStatusById(
+    public ResponseEntity<ConsentStatus> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentStatusById(consentId)
@@ -104,7 +108,7 @@ public class PisConsentController {
         @PathVariable("consent-id") String consentId,
         @ApiParam(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
-        return pisConsentService.updateConsentStatusById(consentId, PisConsentStatus.valueOf(status))
+        return pisConsentService.updateConsentStatusById(consentId, ConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }

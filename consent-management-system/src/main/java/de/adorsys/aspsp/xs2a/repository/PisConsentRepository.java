@@ -16,13 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.repository;
 
+import de.adorsys.aspsp.xs2a.domain.PisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
     Optional<PisConsent> findByExternalId(String externalId);

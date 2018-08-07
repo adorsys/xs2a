@@ -20,6 +20,8 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -69,5 +71,5 @@ public class PisConsent {
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
-    private PisConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
 }

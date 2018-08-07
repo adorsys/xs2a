@@ -96,4 +96,13 @@ public class AspspProfileRemoteUrls {
     public String getAisRedirectUrlToAspsp() {
         return aspspProfileBaseUrl + "/aspsp-profile/redirect-url-to-aspsp-ais";
     }
+
+    /**
+     * Returns URL-string to ASPSP profile get list of supported AccountReference fields
+     *
+     * @return String
+     */
+    public String getSupportedAccountReferenceFields() {
+        return aspspProfileBaseUrl + "/aspsp-profile/supported-account-reference-fields";
+    }
 }

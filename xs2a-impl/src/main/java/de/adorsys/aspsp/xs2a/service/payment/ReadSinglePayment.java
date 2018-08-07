@@ -16,18 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 
 @Service("payments")
-public class ReadSinglePayment extends ReadPayment<SinglePayments> {
+public class ReadSinglePayment extends ReadPayment<SinglePayment> {
     @Override
-    public SinglePayments getPayment(String paymentProduct, String paymentId) {
-        SpiSinglePayments singlePayment = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+    public SinglePayment getPayment(String paymentProduct, String paymentId) {
+        SpiSinglePayment singlePayment = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return paymentMapper.mapToSinglePayment(singlePayment);
     }
 }

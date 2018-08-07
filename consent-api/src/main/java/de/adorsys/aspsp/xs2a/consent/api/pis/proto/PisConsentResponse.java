@@ -25,8 +25,8 @@ import java.util.List;
 @Value
 public class PisConsentResponse {
     private String externalId;
+    private ConsentStatus consentStatus;
     private PisPaymentService pisPaymentService;
-    private PisConsentStatus pisConsentStatus;
     private List<String> paymentIds;
 }
 
