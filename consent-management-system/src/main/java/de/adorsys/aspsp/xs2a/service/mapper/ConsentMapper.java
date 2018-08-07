@@ -16,12 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.consent.api.AccountReference;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -31,10 +31,10 @@ import java.util.stream.Collectors;
 @Component
 public class ConsentMapper {
 
-    public SpiAccountConsent mapToSpiAccountConsent(AisConsent consent) {
-        return new SpiAccountConsent(
+    public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
+        return new AisAccountConsent(
             consent.getId().toString(),
-            mapToSpiAccountAccess(consent.getAccounts()),
+            mapToAisAccountAccess(consent.getAccounts()),
             consent.isRecurringIndicator(),
             consent.getExpireDate(),
             consent.getUsageCounter(),
@@ -43,25 +43,23 @@ public class ConsentMapper {
             false, consent.isTppRedirectPreferred());
     }
 
-    private SpiAccountAccess mapToSpiAccountAccess(List<AisAccount> aisAccounts) {
-        return new SpiAccountAccess(mapToSpiAccountReference(aisAccounts, TypeAccess.ACCOUNT),
-            mapToSpiAccountReference(aisAccounts, TypeAccess.BALANCE),
-            mapToSpiAccountReference(aisAccounts, TypeAccess.TRANSACTION),
-            null,
-            null);
+    private AisAccountAccess mapToAisAccountAccess(List<AisAccount> aisAccounts) {
+        return new AisAccountAccess(mapToAccountReference(aisAccounts, TypeAccess.ACCOUNT),
+            mapToAccountReference(aisAccounts, TypeAccess.BALANCE),
+            mapToAccountReference(aisAccounts, TypeAccess.TRANSACTION));
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReference(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
+    private List<AccountReference> mapToAccountReference(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
         return aisAccounts.stream()
-                   .map(acc -> mapToSpiAccountReference(acc, typeAccess))
+                   .map(acc -> mapToAccountReference(acc, typeAccess))
                    .flatMap(Collection::stream)
                    .collect(Collectors.toList());
     }
 
-    private List<SpiAccountReference> mapToSpiAccountReference(AisAccount aisAccount, TypeAccess typeAccess) {
+    private List<AccountReference> mapToAccountReference(AisAccount aisAccount, TypeAccess typeAccess) {
         return aisAccount.getAccesses().stream()
                    .filter(ass -> ass.getTypeAccess() == typeAccess)
-                   .map(access -> new SpiAccountReference(aisAccount.getIban(), "", "", "", "", access.getCurrency()))
+                   .map(access -> new AccountReference(aisAccount.getIban(), access.getCurrency()))
                    .collect(Collectors.toList());
     }
 }

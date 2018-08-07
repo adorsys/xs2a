@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
@@ -56,7 +56,7 @@ public class PISConsentService {
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<PisConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
@@ -66,7 +66,7 @@ public class PISConsentService {
                    .flatMap(this::mapToPisConsentResponse);
     }
 
-    public Optional<Boolean> updateConsentStatusById(String consentId, PisConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         return getPisConsentById(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -77,7 +77,7 @@ public class PISConsentService {
                    .flatMap(pisConsentRepository::findByExternalId);
     }
 
-    private PisConsent setStatusAndSaveConsent(PisConsent consent, PisConsentStatus status) {
+    private PisConsent setStatusAndSaveConsent(PisConsent consent, ConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
     }
@@ -88,7 +88,7 @@ public class PISConsentService {
         consent.setPaymentId(paymentIds);
         consent.setConsentType(ConsentType.PIS);
         consent.setPisConsentType(PisConsentType.BULK);
-        consent.setConsentStatus(PisConsentStatus.RECEIVED);
+        consent.setConsentStatus(ConsentStatus.RECEIVED);
 
         return Optional.of(consent);
     }
@@ -101,7 +101,7 @@ public class PISConsentService {
                        consent.setPaymentId(Collections.singletonList(pmt));
                        consent.setConsentType(ConsentType.PIS);
                        consent.setPisConsentType(PisConsentType.PERIODIC);
-                       consent.setConsentStatus(PisConsentStatus.RECEIVED);
+                       consent.setConsentStatus(ConsentStatus.RECEIVED);
                        return consent;
                    });
     }
@@ -114,7 +114,7 @@ public class PISConsentService {
                        consent.setPaymentId(Collections.singletonList(pmt));
                        consent.setConsentType(ConsentType.PIS);
                        consent.setPisConsentType(PisConsentType.SINGLE);
-                       consent.setConsentStatus(PisConsentStatus.RECEIVED);
+                       consent.setConsentStatus(ConsentStatus.RECEIVED);
                        return consent;
                    });
     }

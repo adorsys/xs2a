@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.EXPIRED;
+import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.EXPIRED;
 
 @Data
 @ToString(exclude = "accounts")
@@ -72,14 +72,14 @@ public class AisConsent {
     @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
     private String psuId;
 
-    @Column(name = "tpp_id", nullable = false, length = 16)
+    @Column(name = "tpp_id", nullable = false, length = 40)
     @ApiModelProperty(value = "TPP id", required = true, example = "af006545-d713-46d7-b6cf-09c9628f9a5d")
     private String tppId;
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
-    private SpiConsentStatus consentStatus;
+    private ConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

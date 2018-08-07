@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-public enum PisConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.Currency;
+
+@Getter
+@AllArgsConstructor
+public class AccountReference {
+    private String iban;
+    private String bban;
+    private String pan;
+    private String maskedPan;
+    private String msisdn;
+    private Currency currency;
+
+    public AccountReference(String iban, Currency currency) {
+        this(iban, "", "", "", "" ,currency);
+    }
 }
