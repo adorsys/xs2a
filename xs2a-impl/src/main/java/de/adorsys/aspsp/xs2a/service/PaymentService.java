@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
@@ -96,19 +96,19 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing inforamtion about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayments> payments, String paymentProduct) {
+    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayment> payments, String paymentProduct) {
         // TODO: should be validated by interceptors https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/166
         if (CollectionUtils.isEmpty(payments)) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
                        .build();
         }
-        List<SinglePayments> validPayments = new ArrayList<>();
+        List<SinglePayment> validPayments = new ArrayList<>();
         List<PaymentInitialisationResponse> invalidPayments = new ArrayList<>();
-        for (SinglePayments s : payments) {
+        for (SinglePayment s : payments) {
             Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(s, paymentProduct);
             if (messageErrorCode.isPresent()) {
-                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayments() : s, messageErrorCode.get())
+                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayment() : s, messageErrorCode.get())
                     .map(invalidPayments::add);
             } else {
                 validPayments.add(s);
@@ -134,7 +134,7 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return Response containing information about created single payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayments singlePayment, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(singlePayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
             return ResponseObject.<PaymentInitialisationResponse>builder()

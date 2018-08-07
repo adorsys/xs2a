@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -77,9 +77,8 @@ public class PaymentValidationServiceTest {
     public void validatePeriodicPayment() {
         //Given
         PeriodicPayment payment = getPeriodicPayment(IBAN, AMOUNT, DATE, TIME, DATE, DATE.plusDays(1));
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
         //When
-        Optional<MessageErrorCode> actualResponse = validationService.validatePeriodicPayment(payment, paymentProduct);
+        Optional<MessageErrorCode> actualResponse = validationService.validatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.isPresent()).isEqualTo(false);
     }
@@ -88,54 +87,48 @@ public class PaymentValidationServiceTest {
     public void validatePeriodicPayment_Fail_null_payment() {
         //Given
         PeriodicPayment payment = null;
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
 
-        periodicPaymentTest(payment, paymentProduct, FORMAT_ERROR);
+        periodicPaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, FORMAT_ERROR);
     }
 
     @Test
     public void validatePeriodicPayment_Fail_wrong_execDate() {
         //Given
         PeriodicPayment payment = getPeriodicPayment(IBAN, AMOUNT, WRONG_DATE, TIME, DATE, DATE.plusDays(1));
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
 
-        periodicPaymentTest(payment, paymentProduct, EXECUTION_DATE_INVALID);
+        periodicPaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, EXECUTION_DATE_INVALID);
     }
 
     @Test
     public void validatePeriodicPayment_Fail_wrong_execTime() {
         //Given
         PeriodicPayment payment = getPeriodicPayment(IBAN, AMOUNT, DATE, WRONG_TIME, DATE, DATE.plusDays(1));
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
 
-        periodicPaymentTest(payment, paymentProduct, EXECUTION_DATE_INVALID);
+        periodicPaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, EXECUTION_DATE_INVALID);
     }
 
     @Test
     public void validatePeriodicPayment_Fail_wrong_startDate() {
         //Given
         PeriodicPayment payment = getPeriodicPayment(IBAN, AMOUNT, DATE, TIME, WRONG_DATE, DATE.plusDays(1));
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
 
-        periodicPaymentTest(payment, paymentProduct, EXECUTION_DATE_INVALID);
+        periodicPaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, EXECUTION_DATE_INVALID);
     }
 
     @Test
     public void validatePeriodicPayment_Fail_wrong_endDate_same_as_start() {
         //Given
         PeriodicPayment payment = getPeriodicPayment(IBAN, AMOUNT, DATE, TIME, DATE, DATE);
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
 
-        periodicPaymentTest(payment, paymentProduct, EXECUTION_DATE_INVALID);
+        periodicPaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, EXECUTION_DATE_INVALID);
     }
 
     @Test
     public void validatePeriodicPayment_Fail_wrong_iban() {
         //Given
         PeriodicPayment payment = getPeriodicPayment(WRONG_IBAN, AMOUNT, DATE, TIME, DATE, DATE.plusDays(1));
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
 
-        periodicPaymentTest(payment, paymentProduct, RESOURCE_UNKNOWN_400);
+        periodicPaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, RESOURCE_UNKNOWN_400);
     }
 
     private void periodicPaymentTest(PeriodicPayment payment, String paymentProduct, MessageErrorCode errorCode) {
@@ -149,10 +142,9 @@ public class PaymentValidationServiceTest {
     @Test
     public void validateSinglePayment() {
         //Given
-        SinglePayments payment = getPayment(IBAN, AMOUNT, DATE, TIME);
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
+        SinglePayment payment = getPayment(IBAN, AMOUNT, DATE, TIME);
         //When
-        Optional<MessageErrorCode> actualResponse = validationService.validateSinglePayment(payment, paymentProduct);
+        Optional<MessageErrorCode> actualResponse = validationService.validateSinglePayment(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.isPresent()).isEqualTo(false);
     }
@@ -160,40 +152,36 @@ public class PaymentValidationServiceTest {
     @Test
     public void validateSinglePayment_Fail_null_payment() {
         //Given
-        SinglePayments payment = null;
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
+        SinglePayment payment = null;
 
-        singlePaymentTest(payment, paymentProduct, FORMAT_ERROR);
+        singlePaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, FORMAT_ERROR);
     }
 
     @Test
     public void validateSinglePayment_Fail_wrong_execDate() {
         //Given
-        SinglePayments payment = getPayment(IBAN, AMOUNT, WRONG_DATE, TIME);
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
+        SinglePayment payment = getPayment(IBAN, AMOUNT, WRONG_DATE, TIME);
 
-        singlePaymentTest(payment, paymentProduct, EXECUTION_DATE_INVALID);
+        singlePaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, EXECUTION_DATE_INVALID);
     }
 
     @Test
     public void validateSinglePayment_Fail_wrong_execTime() {
         //Given
-        SinglePayments payment = getPayment(IBAN, AMOUNT, DATE, WRONG_TIME);
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
+        SinglePayment payment = getPayment(IBAN, AMOUNT, DATE, WRONG_TIME);
 
-        singlePaymentTest(payment, paymentProduct, EXECUTION_DATE_INVALID);
+        singlePaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, EXECUTION_DATE_INVALID);
     }
 
     @Test
     public void validateSinglePayment_Fail_wrong_iban() {
         //Given
-        SinglePayments payment = getPayment(WRONG_IBAN, AMOUNT, DATE, TIME);
-        String paymentProduct = ALLOWED_PAYMENT_PRODUCT;
+        SinglePayment payment = getPayment(WRONG_IBAN, AMOUNT, DATE, TIME);
 
-        singlePaymentTest(payment, paymentProduct, RESOURCE_UNKNOWN_400);
+        singlePaymentTest(payment, ALLOWED_PAYMENT_PRODUCT, RESOURCE_UNKNOWN_400);
     }
 
-    private void singlePaymentTest(SinglePayments payment, String paymentProduct, MessageErrorCode errorCode) {
+    private void singlePaymentTest(SinglePayment payment, String paymentProduct, MessageErrorCode errorCode) {
         //When
         Optional<MessageErrorCode> actualResponse = validationService.validateSinglePayment(payment, paymentProduct);
         //Then
@@ -226,8 +214,8 @@ public class PaymentValidationServiceTest {
         return payment;
     }
 
-    private SinglePayments getPayment(String iban, String amountToPay, LocalDate execution, LocalDateTime executionTime) {
-        SinglePayments payment = new SinglePayments();
+    private SinglePayment getPayment(String iban, String amountToPay, LocalDate execution, LocalDateTime executionTime) {
+        SinglePayment payment = new SinglePayment();
         Amount amount = new Amount();
         amount.setCurrency(CURRENCY);
         amount.setContent(amountToPay);

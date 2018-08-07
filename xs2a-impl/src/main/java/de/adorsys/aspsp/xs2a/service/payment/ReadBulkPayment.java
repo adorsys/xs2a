@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,10 +26,10 @@ import java.util.List;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.BULK;
 
 @Service("bulk-payments")
-public class ReadBulkPayment extends ReadPayment<List<SinglePayments>> {
+public class ReadBulkPayment extends ReadPayment<List<SinglePayment>> {
     @Override
-    public List<SinglePayments> getPayment(String paymentProduct, String paymentId) {
-        List<SpiSinglePayments> bulkPayments = paymentSpi.getBulkPaymentById(paymentMapper.mapToSpiPaymentType(BULK), paymentProduct, paymentId,  new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+    public List<SinglePayment> getPayment(String paymentProduct, String paymentId) {
+        List<SpiSinglePayment> bulkPayments = paymentSpi.getBulkPaymentById(paymentMapper.mapToSpiPaymentType(BULK), paymentProduct, paymentId,  new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return paymentMapper.mapToBulkPayment(bulkPayments);
     }
 }

@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
@@ -122,10 +122,10 @@ public class PaymentInitiationControllerTest {
     @Test
     public void createPaymentInitiation() throws IOException {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
-        when(referenceValidationService.validateAccountReferences(readSinglePayments().getAccountReferences())).thenReturn(Optional.empty());
+        when(referenceValidationService.validateAccountReferences(readSinglePayment().getAccountReferences())).thenReturn(Optional.empty());
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
-        SinglePayments payment = readSinglePayments();
+        SinglePayment payment = readSinglePayment();
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED);
 
         //When:
@@ -153,8 +153,8 @@ public class PaymentInitiationControllerTest {
         return resp;
     }
 
-    private SinglePayments readSinglePayments() throws IOException {
-        return jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8), SinglePayments.class).get();
+    private SinglePayment readSinglePayment() throws IOException {
+        return jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH, UTF_8), SinglePayment.class).get();
     }
 
 }
