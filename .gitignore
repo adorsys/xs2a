@@ -30,8 +30,9 @@ nbdist/
 .nb-gradle/
 
 ### PisMockWebApp ###
-*/node_modules/
-/pis-mock-webapp/node/
+node_modules/
+node
+.vscode
 
 ### Other ###
 bin/
@@ -39,7 +40,6 @@ bin/
 *.log
 logs
 log
-.vscode
 
 .DS_Store
 .springBeans
