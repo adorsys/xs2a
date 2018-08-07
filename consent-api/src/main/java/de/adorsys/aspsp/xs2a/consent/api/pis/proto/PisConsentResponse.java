@@ -26,7 +26,7 @@ import java.util.List;
 public class PisConsentResponse {
     private String externalId;
     private PisConsentType pisConsentType;
-    private ConsentStatus pisConsentStatus;
+    private ConsentStatus consentStatus;
     private List<String> paymentIds;
 }
 
