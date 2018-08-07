@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -46,16 +48,17 @@ public class FundsConfirmationControllerTest {
 
     @InjectMocks
     private FundsConfirmationController fundsConfirmationController;
-
     @Mock
     private FundsConfirmationService fundsConfirmationService;
-
     @Mock
     private ResponseMapper responseMapper;
+    @Mock
+    private AccountReferenceValidationService referenceValidationService;
 
     @Before
     public void setUp() {
         when(fundsConfirmationService.fundsConfirmation(any())).thenReturn(readResponseObject());
+        when(referenceValidationService.validateAccountReferences(any())).thenReturn(Optional.empty());
     }
 
     @Test

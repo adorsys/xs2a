@@ -19,13 +19,20 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -135,6 +142,16 @@ public class AspspProfileUpdateController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateBookingStatuses(@RequestBody List<BookingStatus> bookingStatuses) {
         aspspProfileService.updateAvailableBookingStatuses(bookingStatuses);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/supported-account-reference-fields")
+    @ApiOperation(value = "Updates supported Account Reference fields. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateAccountReferenceFields(@RequestBody List<SupportedAccountReferenceField> referenceFields) {
+        aspspProfileService.updateSupportedAccountReferenceFields(referenceFields);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

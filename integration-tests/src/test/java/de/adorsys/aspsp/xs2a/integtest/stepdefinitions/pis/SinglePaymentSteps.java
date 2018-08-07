@@ -7,7 +7,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -36,7 +36,7 @@ public class SinglePaymentSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<SinglePayments, HashMap, PaymentInitialisationResponse> context;
+    private Context<SinglePayment, HashMap, PaymentInitialisationResponse> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -53,7 +53,7 @@ public class SinglePaymentSteps {
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-        HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
+        HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
 
         ResponseEntity<PaymentInitialisationResponse> response = restTemplate.exchange(
             context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
@@ -84,7 +84,7 @@ public class SinglePaymentSteps {
 
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
-        HttpEntity<SinglePayments> entity = getSinglePaymentsHttpEntity();
+        HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
 
         try {
             restTemplate.exchange(
@@ -123,7 +123,7 @@ public class SinglePaymentSteps {
         }
     }
 
-    private HttpEntity<SinglePayments> getSinglePaymentsHttpEntity() {
+    private HttpEntity<SinglePayment> getSinglePaymentsHttpEntity() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(context.getTestData().getRequest().getHeader());
         headers.add("Authorization", "Bearer " + context.getAccessToken());

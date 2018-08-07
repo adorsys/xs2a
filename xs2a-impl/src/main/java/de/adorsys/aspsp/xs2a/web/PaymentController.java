@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/")
 @Api(value = "api/v1/", tags = "PISP, Access to Payments", description = "Provides access to the PIS payments")
-public class PaymentController<T> {
+public class PaymentController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
 

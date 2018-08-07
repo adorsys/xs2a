@@ -17,12 +17,15 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -39,6 +44,7 @@ import javax.validation.Valid;
 public class ConsentInformationController {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;
+    private final AccountReferenceValidationService referenceValidationService;
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
@@ -58,8 +64,14 @@ public class ConsentInformationController {
     public ResponseEntity<CreateConsentResp> createAccountConsent(
         @RequestHeader(name = "psu-id", required = false) String psuId,
         @Valid @RequestBody CreateConsentReq createConsent) {
-        ResponseObject<CreateConsentResp> response = consentService.createAccountConsentsWithResponse(createConsent, psuId);
-        return responseMapper.created(response);
+        Set<AccountReference> references = createConsent.getAccountReferences();
+        Optional<MessageError> error = references.isEmpty()
+                                           ? Optional.empty()
+                                           : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
+        return responseMapper.created(
+            error
+                .map(e -> ResponseObject.<CreateConsentResp>builder().fail(e).build())
+                .orElse(consentService.createAccountConsentsWithResponse(createConsent, psuId)));
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

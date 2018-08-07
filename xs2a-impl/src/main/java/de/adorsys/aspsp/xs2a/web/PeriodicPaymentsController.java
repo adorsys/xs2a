@@ -16,14 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -32,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 public class PeriodicPaymentsController {
     private final PaymentService paymentService;
     private final ResponseMapper responseMapper;
+    private final AccountReferenceValidationService referenceValidationService;
 
     @ApiOperation(value = "The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorised by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
@@ -50,6 +56,10 @@ public class PeriodicPaymentsController {
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
         @RequestBody PeriodicPayment periodicPayment) {
-        return responseMapper.created(paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct));
+        Optional<MessageError> error = referenceValidationService.validateAccountReferences(periodicPayment.getAccountReferences());
+        return responseMapper.created(
+            error
+                .map(e -> ResponseObject.<PaymentInitialisationResponse>builder().fail(e).build())
+                .orElse(paymentService.initiatePeriodicPayment(periodicPayment, paymentProduct)));
     }
 }

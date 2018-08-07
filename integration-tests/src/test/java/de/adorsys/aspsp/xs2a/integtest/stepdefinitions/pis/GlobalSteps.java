@@ -31,8 +31,8 @@ public class GlobalSteps {
         // no login necessary
     }
 
-    @Given("^PSU is logged in using oauth approach$")
-    public void loginPsuOAuth() {
+    @Given("^PSU request access token for oauth approach$")
+    public void requestAccessToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 

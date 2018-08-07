@@ -8,7 +8,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class BulkPaymentSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<List<SinglePayments>, List<HashMap>, List<PaymentInitialisationResponse>> context;
+    private Context<List<SinglePayment>, List<HashMap>, List<PaymentInitialisationResponse>> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -59,7 +59,7 @@ public class BulkPaymentSteps {
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
 
-        List<SinglePayments> paymentsList = context.getTestData().getRequest().getBody();
+        List<SinglePayment> paymentsList = context.getTestData().getRequest().getBody();
 
         ResponseEntity<List<PaymentInitialisationResponse>> response = restTemplate.exchange(
             context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),

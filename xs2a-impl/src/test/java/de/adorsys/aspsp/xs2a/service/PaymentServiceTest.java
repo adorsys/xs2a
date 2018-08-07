@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
@@ -74,9 +74,9 @@ public class PaymentServiceTest {
     private final PeriodicPayment PERIODIC_PAYMENT_NOK_IBAN = getPeriodicPayment(WRONG_IBAN, AMOUNT);
     private final PeriodicPayment PERIODIC_PAYMENT_NOK_AMOUNT = getPeriodicPayment(IBAN, EXCESSIVE_AMOUNT);
 
-    private final SinglePayments SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
-    private final SinglePayments SINGLE_PAYMENT_NOK_IBAN = getSinglePayment(WRONG_IBAN, AMOUNT);
-    private final SinglePayments SINGLE_PAYMENT_NOK_AMOUNT = getSinglePayment(IBAN, EXCESSIVE_AMOUNT);
+    private final SinglePayment SINGLE_PAYMENT_OK = getSinglePayment(IBAN, AMOUNT);
+    private final SinglePayment SINGLE_PAYMENT_NOK_IBAN = getSinglePayment(WRONG_IBAN, AMOUNT);
+    private final SinglePayment SINGLE_PAYMENT_NOK_AMOUNT = getSinglePayment(IBAN, EXCESSIVE_AMOUNT);
 
     @InjectMocks
     private PaymentService paymentService;
@@ -193,7 +193,7 @@ public class PaymentServiceTest {
     //Bulk Tests
     @Test
     public void createBulkPayments() {
-        List<SinglePayments> payment = Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_OK);
+        List<SinglePayment> payment = Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_OK);
         //When
         ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
@@ -206,17 +206,17 @@ public class PaymentServiceTest {
 
     @Test
     public void createBulkPayments_Partial_Failure_Validation() {
-        List<SinglePayments> payment = Arrays.asList(SINGLE_PAYMENT_NOK_IBAN, SINGLE_PAYMENT_OK);
+        List<SinglePayment> payment = Arrays.asList(SINGLE_PAYMENT_NOK_IBAN, SINGLE_PAYMENT_OK);
         createBulkPartialFailureTest(payment, RESOURCE_UNKNOWN_400);
     }
 
     @Test
     public void createBulkPayments_Partial_Failure_ASPSP_RJCT() {
-        List<SinglePayments> payment = Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_NOK_AMOUNT);
+        List<SinglePayment> payment = Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_NOK_AMOUNT);
         createBulkPartialFailureTest(payment, PAYMENT_FAILED);
     }
 
-    private void createBulkPartialFailureTest(List<SinglePayments> payment, MessageErrorCode errorCode) {
+    private void createBulkPartialFailureTest(List<SinglePayment> payment, MessageErrorCode errorCode) {
         //When
         ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
@@ -231,23 +231,23 @@ public class PaymentServiceTest {
 
     @Test
     public void createBulkPayments_Failure_null_payments() {
-        List<SinglePayments> payment = null;
+        List<SinglePayment> payment = null;
         createBulkFailureTest(payment, FORMAT_ERROR);
     }
 
     @Test
     public void createBulkPayments_Failure_Validation() {
-        List<SinglePayments> payment = Arrays.asList(SINGLE_PAYMENT_NOK_IBAN, SINGLE_PAYMENT_NOK_IBAN);
+        List<SinglePayment> payment = Arrays.asList(SINGLE_PAYMENT_NOK_IBAN, SINGLE_PAYMENT_NOK_IBAN);
         createBulkFailureTest(payment, PAYMENT_FAILED);
     }
 
     @Test
     public void createBulkPayments_Failure_ASPSP() {
-        List<SinglePayments> payment = Arrays.asList(SINGLE_PAYMENT_NOK_AMOUNT, SINGLE_PAYMENT_NOK_AMOUNT);
+        List<SinglePayment> payment = Arrays.asList(SINGLE_PAYMENT_NOK_AMOUNT, SINGLE_PAYMENT_NOK_AMOUNT);
         createBulkFailureTest(payment, PAYMENT_FAILED);
     }
 
-    private void createBulkFailureTest(List<SinglePayments> payment, MessageErrorCode errorCode) {
+    private void createBulkFailureTest(List<SinglePayment> payment, MessageErrorCode errorCode) {
         //When
         ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
@@ -259,7 +259,7 @@ public class PaymentServiceTest {
     //SinglePayment tests
     @Test
     public void createPaymentInitiation() {
-        SinglePayments payment = SINGLE_PAYMENT_OK;
+        SinglePayment payment = SINGLE_PAYMENT_OK;
         //When:
         ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then:
@@ -270,17 +270,17 @@ public class PaymentServiceTest {
 
     @Test
     public void createPaymentInitiation_Failure_Validation() {
-        SinglePayments payment = SINGLE_PAYMENT_NOK_IBAN;
+        SinglePayment payment = SINGLE_PAYMENT_NOK_IBAN;
         createPaymentInitiationFailureTests(payment, RESOURCE_UNKNOWN_400);
     }
 
     @Test
     public void createPaymentInitiation_Failure_ASPSP_RJCT() {
-        SinglePayments payment = SINGLE_PAYMENT_NOK_AMOUNT;
+        SinglePayment payment = SINGLE_PAYMENT_NOK_AMOUNT;
         createPaymentInitiationFailureTests(payment, PAYMENT_FAILED);
     }
 
-    private void createPaymentInitiationFailureTests(SinglePayments payment, MessageErrorCode errorCode) {
+    private void createPaymentInitiationFailureTests(SinglePayment payment, MessageErrorCode errorCode) {
         //When:
         ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then:
@@ -299,7 +299,7 @@ public class PaymentServiceTest {
         assertThat(response.hasError()).isFalse();
         assertThat(response.getError()).isNull();
         assertThat(response.getBody()).isNotNull();
-        SinglePayments payment = (SinglePayments) response.getBody();
+        SinglePayment payment = (SinglePayment) response.getBody();
         assertThat(payment.getEndToEndIdentification()).isEqualTo(PAYMENT_ID);
     }
 
@@ -328,8 +328,8 @@ public class PaymentServiceTest {
         return paymentInitialisationResponse;
     }
 
-    private SinglePayments getSinglePayment(String iban, String amountToPay) {
-        SinglePayments singlePayments = new SinglePayments();
+    private SinglePayment getSinglePayment(String iban, String amountToPay) {
+        SinglePayment singlePayments = new SinglePayment();
         singlePayments.setEndToEndIdentification(PAYMENT_ID);
         Amount amount = new Amount();
         amount.setCurrency(CURRENCY);

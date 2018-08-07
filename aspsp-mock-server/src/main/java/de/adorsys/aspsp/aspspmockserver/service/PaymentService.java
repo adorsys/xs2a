@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -56,10 +56,10 @@ public class PaymentService {
      * @param payment Single payment
      * @return Optional of saved single payment
      */
-    public Optional<SpiSinglePayments> addPayment(@NotNull SpiSinglePayments payment) {
+    public Optional<SpiSinglePayment> addPayment(@NotNull SpiSinglePayment payment) {
         if (areFundsSufficient(payment.getDebtorAccount(), payment.getInstructedAmount().getContent())) {
             AspspPayment saved = paymentRepository.save(paymentMapper.mapToAspspPayment(payment, SINGLE));
-            return Optional.ofNullable(paymentMapper.mapToSpiSinglePayments(saved));
+            return Optional.ofNullable(paymentMapper.mapToSpiSinglePayment(saved));
         }
         return Optional.empty();
     }
@@ -102,7 +102,7 @@ public class PaymentService {
      * @param payments Bulk payment
      * @return list of single payments forming bulk payment
      */
-    public List<SpiSinglePayments> addBulkPayments(List<SpiSinglePayments> payments) {
+    public List<SpiSinglePayment> addBulkPayments(List<SpiSinglePayment> payments) {
         List<AspspPayment> aspspPayments = payments.stream()
                                                .filter(payment -> areFundsSufficient(payment.getDebtorAccount(), payment.getInstructedAmount().getContent()))
                                                .map(payment -> paymentMapper.mapToAspspPayment(payment, BULK))

@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
@@ -30,11 +31,14 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Data
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
-public class SinglePayments {
+public class SinglePayment implements AccountReferenceCollector {
 
     @ApiModelProperty(value = "end to end authentication", example = "RI-123456789")
     @Size(max = 35)
@@ -95,5 +99,11 @@ public class SinglePayments {
                    Optional.ofNullable(this.requestedExecutionTime)
                        .map(d -> d.isAfter(LocalDate.now().atTime(0, 0)))
                        .orElse(false);
+    }
+
+    @JsonIgnore
+    @Override
+    public Set<AccountReference> getAccountReferences() {
+        return new HashSet<>(Arrays.asList(this.debtorAccount, this.creditorAccount));
     }
 }

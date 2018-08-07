@@ -16,34 +16,45 @@
 
 package de.adorsys.aspsp.xs2a.domain.fund;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Request for the Confirmation Funds")
-public class FundsConfirmationRequest {
+public class FundsConfirmationRequest implements AccountReferenceCollector {
 
     @ApiModelProperty(value = "Card Number of the card issued by the PIISP. Must be delivered if available.", example = "12345")
-    private  String cardNumber;
+    private String cardNumber;
 
     @NotNull
     @ApiModelProperty(value = "PSU’s account number.", required = true)
-    private  AccountReference psuAccount;
+    private AccountReference psuAccount;
 
     @ApiModelProperty(value = "The merchant where the card is accepted as an information to the PSU.", example = "Check24")
-    private  String payee;
+    private String payee;
 
     @NotNull
     @ApiModelProperty(value = "Transaction amount to be checked within the funds check mechanism.", required = true)
-    private  Amount instructedAmount;
+    private Amount instructedAmount;
+
+    @JsonIgnore
+    @Override
+    public Set<AccountReference> getAccountReferences() {
+        return new HashSet<>(Collections.singletonList(this.psuAccount));
+    }
 }
 

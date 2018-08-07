@@ -21,7 +21,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class SpiPeriodicPayment extends SpiSinglePayments {
+public class SpiPeriodicPayment extends SpiSinglePayment {
 
     private LocalDate startDate;
     private LocalDate endDate;
