@@ -1,0 +1,19 @@
+<div class="page">
+  <div class="page-inner">
+    <div class="container">
+      <h1 class="container__title">Tan Confirmation</h1>
+      <p class="container__text">Please fill in the correct TAN sent to your registered E-Mail ID.</p>
+      <div class="authentication">
+        <label class="authentication">
+          Tan
+        </label>
+        <input class="authentication input--text" type="text" name="tan" [(ngModel)]="tan" required>
+      </div>
+      <div class="alert alert-danger" role="alert" *ngIf="wrongTanCount > 0">Your TAN is incorrect. Please try again.</div>
+      <div class="buttons-small">
+        <button (click)=onClickCancel() type="button" class="buttons-small btn--cancel" [routerLink]="['/tanconfirmationcanceled']">Cancel</button>
+        <button (click)=onClickContinue() type="button" class="buttons-small btn--continue">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>

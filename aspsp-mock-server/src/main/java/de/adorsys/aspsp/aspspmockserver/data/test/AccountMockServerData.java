@@ -170,13 +170,13 @@ public class AccountMockServerData {
             getNewAccount("66666-999999999", getNewBalanceList(USD, BigDecimal.valueOf(1400)), "DE89370400440532013005", "CXZCC6427T", "DEUTDE8EXXX", "Company AG", "SCT"),
 
             // account Test User for Cucumber
-            getNewAccountCucumberTest("42fb4cc3-91cb-45ba-9159-b87acf6d8add", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE81432100000004111111", null, null, "Alexander Mueller", "GIRO"),
-            getNewAccountCucumberTest("88888-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(1000000)), "DE56432100000005999999", null, null, "Greenpeace", "GIRO"),
-            getNewAccountCucumberTest("99999-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(500000)), "DE37123400000005765499", null, null, "Telekom", "GIRO"),
-            getNewAccountCucumberTest("12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE56234891038492849284", null, null, "Jochen Mueller", "GIRO"),
-            getNewAccountCucumberTest("23236-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(6500000)), "DE44234891000492849114", null, null, "Amazon", "GIRO"),
-            getNewAccountCucumberTest("37289-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(9500000)), "DE65001291000493459116", null, null, "Holidaycheck.com", "GIRO"),
-            getNewAccountCucumberTest("10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE44234000000497649754", null, null, "Eventim", "GIRO")
+            getNewAccountCucumberTest("42fb4cc3-91cb-45ba-9159-b87acf6d8add", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE52500105173911841934", null, null, "Alexander Mueller", "GIRO"),
+            getNewAccountCucumberTest("88888-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(1000000)), "DE24500105172916349286", null, null, "Greenpeace", "GIRO"),
+            getNewAccountCucumberTest("99999-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(500000)), "DE68500105174416628385", null, null, "Telekom", "GIRO"),
+            getNewAccountCucumberTest("12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE06500105171657611553", null, null, "Jochen Mueller", "GIRO"),
+            getNewAccountCucumberTest("23236-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(6500000)), "DE49500105175378548627", null, null, "Amazon", "GIRO"),
+            getNewAccountCucumberTest("37289-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(9500000)), "DE21500105176194357737", null, null, "Holidaycheck.com", "GIRO"),
+            getNewAccountCucumberTest("10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE54500105173424724776", null, null, "Eventim", "GIRO")
         );
     }
 

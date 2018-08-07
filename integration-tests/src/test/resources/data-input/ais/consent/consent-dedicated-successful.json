@@ -1,0 +1,44 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "psu-ip-address": "192.168.0.26",
+      "":""
+    },
+    "body": {
+      "access": {
+        "accounts": [
+          {
+            "currency": "EUR",
+            "iban": "DE81432100000004111111"
+          }
+        ],
+        "availableAccounts": "all-accounts",
+        "balances": [
+          {
+            "currency": "EUR",
+            "iban": "DE81432100000004111111"
+          }
+        ],
+        "transactions": [
+          {
+            "currency": "EUR",
+            "iban": "DE81432100000004111111"
+          }
+        ]
+      },
+      "combinedServiceIndicator": false,
+      "frequencyPerDay": 4,
+      "recurringIndicator": false,
+      "validUntil": "2012-10-30"
+    }
+  },
+  "response": {
+    "code": "201",
+    "header": {},
+    "body": {
+      "consentId": "",
+      "consentStatus": "RCVD"
+    }
+  }
+}
