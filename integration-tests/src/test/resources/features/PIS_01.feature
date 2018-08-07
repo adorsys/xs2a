@@ -19,16 +19,16 @@ Feature: Payment Initiation Service
         When PSU sends the single payment initiating request with error
         Then an error response code is displayed the appropriate error response
         Examples:
-            | payment-product       | single-payment                                 |
-            #| sepa-credit-transfers | singlePayInit-incorrect-syntax.json            |
-            | sepa-credit-trans     | singlePayInit-incorrect-payment-product.json   |
-            | sepa-credit-transfers | singlePayInit-no-request-id.json               |
-            | sepa-credit-transfers | singlePayInit-no-ip-address.json               |
-            | sepa-credit-transfers | singlePayInit-wrong-format-request-id.json     |
-            | sepa-credit-transfers | singlePayInit-wrong-format-psu-ip-address.json |
-            | sepa-credit-transfers | singlePayInit-exceeding-amount.json            |
-            #| sepa-credit-transfers | singlePayInit-expired-exec-date.json           |
-            | sepa-credit-transfers | singlePayInit-unavailable-product-for-psu.json |
+            | payment-product               | single-payment                                 |
+            #| sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
+            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
+            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
+            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
+            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
+            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
+            | sepa-credit-transfers         | singlePayInit-exceeding-amount.json            |
+            #| sepa-credit-transfers         | singlePayInit-expired-exec-date.json           |
+            | instant-sepa-credit-transfers | singlePayInit-unavailable-product-for-psu.json |
 
 
     Scenario Outline: Successful payment initiation request for single payments (oauth)

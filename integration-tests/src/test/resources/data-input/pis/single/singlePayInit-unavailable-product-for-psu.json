@@ -7,7 +7,7 @@
     "body": {
       "creditorAccount": {
         "currency": "EUR",
-        "iban": "DE89370400440532013000"
+        "iban": "DE15500105172295759744"
       },
       "creditorAddress": {
         "buildingNumber": "56",
@@ -21,7 +21,7 @@
       "creditorName": "WBG",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE81432100000004111111"
+        "iban": "DE52500105173911841934"
       },
       "endToEndIdentification": "WBG-123456789",
       "instructedAmount": {
