@@ -16,11 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.consent.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Currency;
 
 @Getter
+@AllArgsConstructor
 public class AccountReference {
     private String iban;
     private String bban;
@@ -28,15 +30,6 @@ public class AccountReference {
     private String maskedPan;
     private String msisdn;
     private Currency currency;
-
-    public AccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
-        this.iban = iban;
-        this.bban = bban;
-        this.pan = pan;
-        this.maskedPan = maskedPan;
-        this.msisdn = msisdn;
-        this.currency = currency;
-    }
 
     public AccountReference(String iban, Currency currency) {
         this(iban, "", "", "", "" ,currency);
