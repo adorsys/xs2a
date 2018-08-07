@@ -20,7 +20,7 @@ import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.aspspmockserver.web.rest.PaymentController;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayments;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,9 +54,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() {
-        SpiSinglePayments response = getSpiSinglePayment();
+        SpiSinglePayment response = getSpiSinglePayment();
         response.setPaymentId(PAYMENT_ID);
-        List<SpiSinglePayments> responseList = new ArrayList<>();
+        List<SpiSinglePayment> responseList = new ArrayList<>();
         responseList.add(response);
         when(paymentService.addPayment(getSpiSinglePayment()))
             .thenReturn(Optional.of(response));
@@ -78,7 +78,7 @@ public class PaymentControllerTest {
         HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<SpiSinglePayments> actualResponse = paymentController.createPayment(getSpiSinglePayment());
+        ResponseEntity<SpiSinglePayment> actualResponse = paymentController.createPayment(getSpiSinglePayment());
 
         //Then
         HttpStatus actualStatus = actualResponse.getStatusCode();
@@ -91,11 +91,11 @@ public class PaymentControllerTest {
     public void createBulkPayments() {
         //Given
         HttpStatus expectedStatus = HttpStatus.CREATED;
-        List<SpiSinglePayments> expectedRequest = new ArrayList<>();
+        List<SpiSinglePayment> expectedRequest = new ArrayList<>();
         expectedRequest.add(getSpiSinglePayment());
 
         //When
-        ResponseEntity<List<SpiSinglePayments>> actualResponse = paymentController.createBulkPayments(expectedRequest);
+        ResponseEntity<List<SpiSinglePayment>> actualResponse = paymentController.createBulkPayments(expectedRequest);
 
         //Then
         HttpStatus actualStatus = actualResponse.getStatusCode();
@@ -124,8 +124,8 @@ public class PaymentControllerTest {
         assertThat(actualResponse.getBody()).isEqualTo(RJCT);
     }
 
-    private SpiSinglePayments getSpiSinglePayment() {
-        SpiSinglePayments payment = new SpiSinglePayments();
+    private SpiSinglePayment getSpiSinglePayment() {
+        SpiSinglePayment payment = new SpiSinglePayment();
         SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(20));
         SpiAccountReference accountReference = new SpiAccountReference("DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
         payment.setInstructedAmount(amount);

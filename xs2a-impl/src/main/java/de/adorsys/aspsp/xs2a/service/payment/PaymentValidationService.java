@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class PaymentValidationService {
                    : of(EXECUTION_DATE_INVALID);
     }
 
-    public Optional<MessageErrorCode> validateSinglePayment(SinglePayments payment, String paymentProduct) {
+    public Optional<MessageErrorCode> validateSinglePayment(SinglePayment payment, String paymentProduct) {
         if (payment == null) { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
             return of(FORMAT_ERROR);
         }
@@ -52,7 +52,7 @@ public class PaymentValidationService {
                    : of(EXECUTION_DATE_INVALID);
     }
 
-    private Optional<MessageErrorCode> containsPaymentRelatedErrors(SinglePayments payment, String paymentProduct) {
+    private Optional<MessageErrorCode> containsPaymentRelatedErrors(SinglePayment payment, String paymentProduct) {
         if (!accountService.getAccountDetailsByAccountReference(payment.getDebtorAccount()).isPresent()) {
             return of(RESOURCE_UNKNOWN_400);
         }

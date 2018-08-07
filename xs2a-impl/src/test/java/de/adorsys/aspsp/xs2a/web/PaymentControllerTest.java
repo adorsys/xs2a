@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -86,7 +86,7 @@ public class PaymentControllerTest {
     }
 
     private Object getPayment() {
-        SinglePayments payment = new SinglePayments();
+        SinglePayment payment = new SinglePayment();
         payment.setEndToEndIdentification(CORRECT_PAYMENT_ID);
 
         return payment;
