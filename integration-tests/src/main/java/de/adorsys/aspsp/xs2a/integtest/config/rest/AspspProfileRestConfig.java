@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.config;
+package de.adorsys.aspsp.xs2a.integtest.config.rest;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,23 +27,23 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class ConsentsRestConfig {
-    @Value("${consent.config.readTimeoutInMs}")
+public class AspspProfileRestConfig {
+    @Value("${aspspProfile.config.readTimeoutInMs}")
     private int readTimeout;
-    @Value("${consent.config.connectionTimeoutInMs}")
+    @Value("${aspspProfile.config.connectionTimeoutInMs}")
     private int connectionTimeout;
 
-    @Value("${consent.baseUrl}")
-    private String consentServiceBaseUrl;
+    @Value("${aspspProfile.baseUrl}")
+    private String aspspProfileBaseUrl;
 
-    @Bean(name="consentServiceBaseUrl")
-    public String consentServiceBaseUrl() {
-        return consentServiceBaseUrl;
+    @Bean(name = "aspspProfileBaseUrl")
+    public String aspspProfileBaseUrl() {
+        return aspspProfileBaseUrl;
     }
 
-    @Bean(name = "consentRestTemplate")
-    @Qualifier("consent")
-    public RestTemplate consentRestTemplate(){
+    @Bean(name = "aspspProfileRestTemplate")
+    @Qualifier("aspsp-profile")
+    public RestTemplate aspspProfileRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         rest.getMessageConverters().add(new StringHttpMessageConverter());

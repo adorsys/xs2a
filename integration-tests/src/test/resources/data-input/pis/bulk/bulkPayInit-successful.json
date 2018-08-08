@@ -8,7 +8,7 @@
       {
         "creditorAccount": {
           "currency": "EUR",
-          "iban": "DE938274817361740591263"
+          "iban": "DE15500105172295759744"
         },
         "creditorAddress": {
           "buildingNumber": "56",
@@ -22,7 +22,7 @@
         "creditorName": "WBG",
         "debtorAccount": {
           "currency": "EUR",
-          "iban": "DE81432100000004111111"
+          "iban": "DE52500105173911841934"
         },
         "endToEndIdentification": "WBG-123456789",
         "instructedAmount": {
@@ -44,7 +44,7 @@
       {
         "creditorAccount": {
           "currency": "EUR",
-          "iban": "DE491111000000057777777"
+          "iban": "DE03500105172351985719"
         },
         "creditorAddress": {
           "buildingNumber": "74",
@@ -58,7 +58,7 @@
         "creditorName": "Grünstrom",
         "debtorAccount": {
           "currency": "EUR",
-          "iban": "DE81432100000004111111"
+          "iban": "DE52500105173911841934"
         },
         "endToEndIdentification": "RI-234567890",
         "instructedAmount": {

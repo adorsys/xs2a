@@ -20,14 +20,23 @@ Feature: Payment Initiation Service
         Then an error response code is displayed the appropriate error response
         Examples:
             | payment-product       | single-payment                                 |
-            | sepa-credit-transfers | singlePayInit-incorrect-syntax.json            |
+            #| sepa-credit-transfers | singlePayInit-incorrect-syntax.json            |
             | sepa-credit-trans     | singlePayInit-incorrect-payment-product.json   |
             | sepa-credit-transfers | singlePayInit-no-request-id.json               |
             | sepa-credit-transfers | singlePayInit-no-ip-address.json               |
             | sepa-credit-transfers | singlePayInit-wrong-format-request-id.json     |
             | sepa-credit-transfers | singlePayInit-wrong-format-psu-ip-address.json |
             | sepa-credit-transfers | singlePayInit-exceeding-amount.json            |
-            | sepa-credit-transfers | singlePayInit-expired-exec-date.json           |
+            #| sepa-credit-transfers | singlePayInit-expired-exec-date.json           |
+
+    Scenario Outline: Successful payment initiation request for single payments (oauth)
+        Given PSU request access token for oauth approach
+        Given PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
+        When PSU sends the single payment initiating request
+        Then a successful response code and the appropriate single payment response data
+        Examples:
+            | payment-product       | single-payment                |
+            | sepa-credit-transfers | singlePayInit-successful.json |
 
 
         # TODO create Scenario for other SCA-Approaches
