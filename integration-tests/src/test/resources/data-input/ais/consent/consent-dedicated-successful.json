@@ -1,43 +1,39 @@
 {
   "request": {
     "header": {
-      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-ip-address": "192.168.0.26",
-      "":""
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035"
     },
     "body": {
       "access": {
         "accounts": [
           {
             "currency": "EUR",
-            "iban": "DE81432100000004111111"
+            "iban": "DE52500105173911841934"
           }
         ],
-        "availableAccounts": "all-accounts",
         "balances": [
           {
             "currency": "EUR",
-            "iban": "DE81432100000004111111"
+            "iban": "DE52500105173911841934"
           }
         ],
         "transactions": [
           {
             "currency": "EUR",
-            "iban": "DE81432100000004111111"
+            "iban": "DE52500105173911841934"
           }
         ]
       },
       "combinedServiceIndicator": false,
       "frequencyPerDay": 4,
       "recurringIndicator": false,
-      "validUntil": "2012-10-30"
+      "validUntil": "2018-10-30"
     }
   },
   "response": {
     "code": "201",
     "header": {},
     "body": {
-      "consentId": "",
       "consentStatus": "RCVD"
     }
   }

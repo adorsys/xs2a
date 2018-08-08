@@ -29,6 +29,7 @@ Feature: Payment Initiation Service
             | sepa-credit-transfers | singlePayInit-exceeding-amount.json            |
             #| sepa-credit-transfers | singlePayInit-expired-exec-date.json           |
 
+
     Scenario Outline: Successful payment initiation request for single payments (oauth)
         Given PSU request access token for oauth approach
         Given PSU wants to initiate a single payment <single-payment> using the payment product <payment-product>
@@ -37,12 +38,6 @@ Feature: Payment Initiation Service
         Examples:
             | payment-product       | single-payment                |
             | sepa-credit-transfers | singlePayInit-successful.json |
-
-
-        # TODO create Scenario for other SCA-Approaches
-
-    # TODO Single payment with not existing tpp-request-id -> 400      (are there not existant id's / not in the system?)
-    # TODO Single payment with not existing psu-ip-address -> 400      (are there not existant id's / not in the system?)
 
 
     ####################################################################################################################
