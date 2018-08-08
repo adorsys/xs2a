@@ -16,9 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
@@ -288,11 +285,11 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public PisSinglePayment mapToPisSinglePayment(SinglePayment paymentInitiationRequest) {
+/*    public PisSinglePayment mapToPisSinglePayment(SinglePayment paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
                    .map(payReq -> {
                        PisSinglePayment pisSinglePayment = new PisSinglePayment();    // NOPMD todo make correct mapper
-                      /* pisSinglePayment.setEndToEndIdentification(payReq.getEndToEndIdentification());
+                      *//* pisSinglePayment.setEndToEndIdentification(payReq.getEndToEndIdentification());
                        pisSinglePayment.setDebtorAccount(accountMapper.mapToPisAccountReference(payReq.getDebtorAccount()));
                        pisSinglePayment.setUltimateDebtor(payReq.getUltimateDebtor());
                        pisSinglePayment.setInstructedAmount(accountMapper.mapToPisAmount(payReq.getInstructedAmount()));
@@ -307,24 +304,24 @@ public class PaymentMapper {
                        pisSinglePayment.setRemittanceInformationUnstructured(payReq.getRemittanceInformationUnstructured());
                        pisSinglePayment.setRemittanceInformationStructured(mapToPisRemittance(payReq.getRemittanceInformationStructured()));
                        pisSinglePayment.setRequestedExecutionDate(payReq.getRequestedExecutionDate());
-                       pisSinglePayment.setRequestedExecutionTime(payReq.getRequestedExecutionTime());*/
+                       pisSinglePayment.setRequestedExecutionTime(payReq.getRequestedExecutionTime());*//*
 
                        return pisSinglePayment;
                    })
                    .orElse(null);
-    }
+    }*/
 
-    public List<PisSinglePayment> mapToPisSinglePaymentList(List<SinglePayment> singlePayments) { // NOPMD  todo make correct mapper
+  /*  public List<PisSinglePayment> mapToPisSinglePaymentList(List<SinglePayment> singlePayments) { // NOPMD  todo make correct mapper
         return singlePayments.stream()
                    .map(this::mapToPisSinglePayment)
                    .collect(Collectors.toList());
     }
-
-    public PisPeriodicPayment mapToPisPeriodicPayment(PeriodicPayment periodicPayment) { // NOPMD  todo make correct mapper
+*/
+ /*   public PisPeriodicPayment mapToPisPeriodicPayment(PeriodicPayment periodicPayment) { // NOPMD  todo make correct mapper
         return Optional.ofNullable(periodicPayment)
                    .map(pp -> {
                        PisPeriodicPayment pisPeriodicPayment = new PisPeriodicPayment();
-                      /* pisPeriodicPayment.setEndToEndIdentification(pp.getEndToEndIdentification());
+                      *//* pisPeriodicPayment.setEndToEndIdentification(pp.getEndToEndIdentification());
                        pisPeriodicPayment.setDebtorAccount(accountMapper.mapToPisAccountReference(pp.getDebtorAccount()));
                        pisPeriodicPayment.setUltimateDebtor(pp.getUltimateDebtor());
                        pisPeriodicPayment.setInstructedAmount(accountMapper.mapToPisAmount(pp.getInstructedAmount()));
@@ -342,24 +339,24 @@ public class PaymentMapper {
                        pisPeriodicPayment.setExecutionRule(pp.getExecutionRule());
                        pisPeriodicPayment.setEndDate(pp.getEndDate());
                        pisPeriodicPayment.setFrequency(getFrequency(pp));
-                       pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());*/
+                       pisPeriodicPayment.setDayOfExecution(pp.getDayOfExecution());*//*
 
                        return pisPeriodicPayment;
                    })
                    .orElse(null);
-    }
+    }*/
 
-    private Address mapToPisAddress(Address address) { // NOPMD todo make correct mapper
+  /*  private Address mapToPisAddress(Address address) { // NOPMD todo make correct mapper
         return null;
-        /*return Optional.ofNullable(address)
-                   .map(a -> new PisSinglePayment.PisAddress(*//*a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()*//*))
-                   .orElse(null);*/
+        *//*return Optional.ofNullable(address)
+                   .map(a -> new PisSinglePayment.PisAddress(*//**//*a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()*//**//*))
+                   .orElse(null);*//*
     }
 
     private PisRemittance mapToPisRemittance(Remittance remittance) { // NOPMD todo make correct mapper
         return Optional.ofNullable(remittance)
                    .map(r -> new PisRemittance(r.getReference(), r.getReferenceType(), r.getReferenceIssuer()))
                    .orElse(null);
-    }
+    }*/
 
 }

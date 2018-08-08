@@ -17,17 +17,34 @@
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.TppInfo;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public abstract class PisAbstractConsentResponse extends PisAbstractConsentData{
+@ApiModel(description = "Pis payment initialisation consent response", value = "PisConsentResponse")
+public class PisConsentResponse {
+    @ApiModelProperty(value = "Payment data", required = true)
+    private List<PisPayment> payments;
+
+    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
+    private PisPaymentProduct paymentProduct;
+
+    @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    private PisPaymentService paymentService;
+
+    @ApiModelProperty(value = "Tpp information", required = true)
+    private TppInfo tppInfo;
+
     @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
+
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
-    @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
-    private PisPaymentService pisPaymentService;
 }
-

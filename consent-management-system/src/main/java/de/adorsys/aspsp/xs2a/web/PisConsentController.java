@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisAbstractConsentResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisBulkPaymentConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisPeriodicPaymentConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisSinglePaymentConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.*;
 import de.adorsys.aspsp.xs2a.service.PISConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -36,34 +33,11 @@ public class PisConsentController {
     private final PISConsentService pisConsentService;
 
     @PostMapping(path = "/")
-    @ApiOperation(value = "")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createSinglePaymentConsent(@RequestBody PisSinglePaymentConsentRequest request) {
-        return pisConsentService.createSinglePaymentConsent(request)
-                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
-    }
-
-    @PostMapping(path = "/bulk")
-    @ApiOperation(value = "")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createBulkPaymentConsent(@RequestBody PisBulkPaymentConsentRequest request) {
-        return pisConsentService.createBulkPaymentConsent(request)
-                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
-    }
-
-    @PostMapping(path = "/periodic")
-    @ApiOperation(value = "")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = String.class),
-        @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createPeriodicPaymentConsent(@RequestBody PisPeriodicPaymentConsentRequest request) {
-        return pisConsentService.createPeriodicPaymentConsent(request)
+    public ResponseEntity<String> createPaymentConsent(@RequestBody PisConsentRequest request) {
+        return pisConsentService.createPaymentConsent(request)
                    .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
@@ -84,9 +58,9 @@ public class PisConsentController {
     @GetMapping(path = "/{consent-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = PisAbstractConsentResponse.class),
+        @ApiResponse(code = 200, message = "OK", response = PisConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<PisAbstractConsentResponse> getConsentById(
+    public ResponseEntity<PisConsentResponse> getConsentById(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentById(consentId)
