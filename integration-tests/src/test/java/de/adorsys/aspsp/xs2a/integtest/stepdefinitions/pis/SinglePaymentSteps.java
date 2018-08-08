@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +33,10 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class SinglePaymentSteps {
+
+    private static final long DAYS_OFFSET = 1L;
+    private static final long HOURS_OFFSET = 2L;
+
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
@@ -42,9 +47,12 @@ public class SinglePaymentSteps {
     @Autowired
     private ObjectMapper mapper;
 
+    private String dataFileName;
+
     @Given("^PSU wants to initiate a single payment (.*) using the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        this.dataFileName = dataFileName;
 
         TestData<SinglePayment, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<SinglePayment, HashMap>>() {
         });
@@ -86,8 +94,9 @@ public class SinglePaymentSteps {
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
         HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
-        LocalDate dateWithOffset = context.getTestData().getRequest().getBody().getRequestedExecutionDate().minusMonths(1L);
-        entity.getBody().setRequestedExecutionDate(dateWithOffset);
+        if (dataFileName.contains("expired-exec-date")) {
+            makeDateAndTimeOffset(entity);
+        }
 
         try {
             restTemplate.exchange(
@@ -98,6 +107,13 @@ public class SinglePaymentSteps {
         } catch (RestClientResponseException rex) {
             handleRequestError(rex);
         }
+    }
+
+    private void makeDateAndTimeOffset(HttpEntity<SinglePayment> entity) {
+        LocalDate dateOffset = context.getTestData().getRequest().getBody().getRequestedExecutionDate().minusDays(DAYS_OFFSET);
+        LocalDateTime dateTimeOffset = context.getTestData().getRequest().getBody().getRequestedExecutionTime().minusDays(DAYS_OFFSET).minusHours(HOURS_OFFSET);
+        entity.getBody().setRequestedExecutionDate(dateOffset);
+        entity.getBody().setRequestedExecutionTime(dateTimeOffset);
     }
 
     private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
@@ -121,6 +137,7 @@ public class SinglePaymentSteps {
 
         // for cases when transactionStatus and tppMessage created after request
         if (givenErrorObject.getTppMessage() != null) {
+            assertThat(givenErrorObject.getTransactionStatus().name(), equalTo(givenResponseBody.get("transactionStatus")));
             assertThat(givenErrorObject.getTppMessage().getCategory().name(), equalTo(tppMessageContent.get("category")));
             assertThat(givenErrorObject.getTppMessage().getCode().name(), equalTo(tppMessageContent.get("code")));
         }

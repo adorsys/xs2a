@@ -7,7 +7,7 @@
     "body": {
       "creditorAccount": {
         "currency": "EUR",
-        "iban": "DE89370400440532013001"
+        "iban": "DE89370400440532013000"
       },
       "creditorAddress": {
         "buildingNumber": "56",
@@ -17,6 +17,9 @@
         },
         "postalCode": "90543",
         "street": "WBG Straße"
+      },
+      "creditorAgent": {
+        "code": "BCENECEQ"
       },
       "creditorName": "WBG",
       "debtorAccount": {
@@ -29,10 +32,12 @@
         "currency": "EUR"
       },
       "purposeCode": {
-        "code": "Monatsmiete Mueller, Alexander"
+        "code": "BCENECEQ"
       },
       "remittanceInformationStructured": {
-        "reference": "Ref Number Merchant"
+        "reference": "Ref Number Merchant",
+        "referenceIssuer": "string",
+        "referenceType": "string"
       },
       "remittanceInformationUnstructured": "Ref. Number WBG-1222",
       "requestedExecutionDate": "2015-08-18",
