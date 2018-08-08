@@ -19,6 +19,7 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -85,6 +86,8 @@ public class SinglePaymentSteps {
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
         HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
+        LocalDate dateWithOffset = context.getTestData().getRequest().getBody().getRequestedExecutionDate().minusMonths(1L);
+        entity.getBody().setRequestedExecutionDate(dateWithOffset);
 
         try {
             restTemplate.exchange(
