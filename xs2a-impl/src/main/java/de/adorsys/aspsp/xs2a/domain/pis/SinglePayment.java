@@ -91,7 +91,7 @@ public class SinglePayment implements AccountReferenceCollector {
     private LocalDateTime requestedExecutionTime;
 
     @JsonIgnore
-    public boolean isValidDated() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+    public boolean isValidExecutionDateAndTime() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
         return Optional.ofNullable(this.requestedExecutionDate)
                    .map(d -> d.isEqual(LocalDate.now()) || d.isAfter(LocalDate.now()))
                    .orElse(false)
