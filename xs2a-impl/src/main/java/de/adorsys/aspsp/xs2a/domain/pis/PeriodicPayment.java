@@ -52,17 +52,20 @@ public class PeriodicPayment extends SinglePayment {
     private int dayOfExecution; //Day here max 31
 
     @JsonIgnore
-    public boolean isValidDate() {
-        return isValidDated() && isValidStartDate() //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
-                   &&
-                   Optional.ofNullable(this.endDate)
-                       .map(d -> d.isAfter(this.startDate))
-                       .orElse(true);
-
+    public boolean areValidExecutionAndPeriodDates() {
+        return isValidExecutionDateAndTime() && isValidPeriod();
     }
 
     @JsonIgnore
-    private boolean isValidStartDate() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+    private boolean isValidPeriod() {
+        return isValidStartDate()
+                   && Optional.ofNullable(this.endDate)
+                          .map(d -> d.isAfter(this.startDate))
+                          .orElse(true);
+    }
+
+    @JsonIgnore
+    private boolean isValidStartDate() {
         return this.startDate.isEqual(ChronoLocalDate.from(LocalDate.now()))
                    || this.startDate.isAfter(ChronoLocalDate.from(LocalDate.now()));
     }

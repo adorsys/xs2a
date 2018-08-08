@@ -35,9 +35,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -73,7 +75,7 @@ public class ConsentInformationControllerTest {
     public void createAccountConsent_Success() {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(createConsentResponse(CONSENT_ID).getBody(), HttpStatus.CREATED));
         //Given:
-        CreateConsentReq consentRequest = new CreateConsentReq();
+        CreateConsentReq consentRequest = getCreateConsentReq();
 
         //When:
         ResponseEntity responseEntity = consentInformationController.createAccountConsent(CORRECT_PSU_ID, consentRequest);
@@ -89,7 +91,7 @@ public class ConsentInformationControllerTest {
     public void createAccountConsent_Failure() {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(createConsentResponse(null).getError(), HttpStatus.NOT_FOUND));
         //Given:
-        CreateConsentReq consentRequest = new CreateConsentReq();
+        CreateConsentReq consentRequest = getCreateConsentReq();
         //When:
         ResponseEntity responseEntity = consentInformationController.createAccountConsent(WRONG_PSU_ID, consentRequest);
         //Then:
@@ -168,4 +170,10 @@ public class ConsentInformationControllerTest {
                    : ResponseObject.builder().body(accountConsent).build();
     }
 
+    private CreateConsentReq getCreateConsentReq() {
+        CreateConsentReq req = new CreateConsentReq();
+        AccountAccess access = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null);
+        req.setAccess(access);
+        return req;
+    }
 }

@@ -1,4 +1,5 @@
-{"id": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
+{
+  "id": "3dc3d5b3-7023-4848-9853-f5400a64e80f",
   "access": {
     "balances": [
       {
@@ -25,5 +26,5 @@
   "validUntil": "2017-11-01",
   "frequencyPerDay": "4",
   "lastActionDate": "2017-11-01",
-  "spiConsentStatus": "VALID"
+  "consentStatus": "VALID"
 }
