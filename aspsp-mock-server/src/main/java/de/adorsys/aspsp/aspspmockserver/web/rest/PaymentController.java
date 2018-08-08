@@ -99,8 +99,8 @@ public class PaymentController {
     @GetMapping(path = "/{paymentId}")
     public ResponseEntity<AspspPayment> getPaymentById(@PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentById(paymentId)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.noContent().build());
+                   .map(ResponseEntity::ok)
+                   .orElse(ResponseEntity.noContent().build());
     }
 
     @ApiOperation(value = "Returns the payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
