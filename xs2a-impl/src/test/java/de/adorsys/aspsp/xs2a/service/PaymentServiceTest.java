@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
@@ -41,6 +40,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
@@ -83,8 +84,6 @@ public class PaymentServiceTest {
     @Mock
     private PaymentMapper paymentMapper;
     @Mock
-    private PaymentValidationService validationService;
-    @Mock
     private ScaPaymentService scaPaymentService;
     @Mock
     private PaymentSpi paymentSpi;
@@ -108,14 +107,6 @@ public class PaymentServiceTest {
             .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
-
-        //Validation
-        when(validationService.validateSinglePayment(SINGLE_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(Optional.empty());
-        when(validationService.validateSinglePayment(SINGLE_PAYMENT_NOK_IBAN, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(Optional.of(RESOURCE_UNKNOWN_400));
-        when(validationService.validateSinglePayment(SINGLE_PAYMENT_NOK_AMOUNT, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(Optional.empty());
 
         //ScaPayService
         when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_OK))
@@ -155,7 +146,6 @@ public class PaymentServiceTest {
     //PeriodicPayment Tests
     @Test
     public void initiatePeriodicPayment() {
-        when(validationService.validatePeriodicPayment(PERIODIC_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.empty());
         when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK)).thenReturn(Optional.of(getPaymentResponse(RCVD, null)));
         PeriodicPayment payment = PERIODIC_PAYMENT_OK;
         //When
@@ -167,15 +157,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void initiatePeriodicPayment_Failure_Validation() {
-        when(validationService.validatePeriodicPayment(PERIODIC_PAYMENT_NOK_IBAN, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.of(RESOURCE_UNKNOWN_400));
-        PeriodicPayment payment = PERIODIC_PAYMENT_NOK_IBAN;
-        initiatePeriodicPaymentFailureTest(payment, RESOURCE_UNKNOWN_400);
-    }
-
-    @Test
     public void initiatePeriodicPayment_Failure_ASPSP_RJCT() {
-        when(validationService.validatePeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.empty());
         when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT)).thenReturn(Optional.empty());
         PeriodicPayment payment = PERIODIC_PAYMENT_NOK_AMOUNT;
         initiatePeriodicPaymentFailureTest(payment, PAYMENT_FAILED);
@@ -202,12 +184,6 @@ public class PaymentServiceTest {
         assertThat(actualResponse.getBody().get(1).getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().get(0).getTransactionStatus()).isEqualTo(RCVD);
         assertThat(actualResponse.getBody().get(1).getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void createBulkPayments_Partial_Failure_Validation() {
-        List<SinglePayment> payment = Arrays.asList(SINGLE_PAYMENT_NOK_IBAN, SINGLE_PAYMENT_OK);
-        createBulkPartialFailureTest(payment, RESOURCE_UNKNOWN_400);
     }
 
     @Test
@@ -266,12 +242,6 @@ public class PaymentServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void createPaymentInitiation_Failure_Validation() {
-        SinglePayment payment = SINGLE_PAYMENT_NOK_IBAN;
-        createPaymentInitiationFailureTests(payment, RESOURCE_UNKNOWN_400);
     }
 
     @Test
@@ -337,6 +307,8 @@ public class PaymentServiceTest {
         singlePayments.setInstructedAmount(amount);
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
+        singlePayments.setRequestedExecutionDate(LocalDate.now());
+        singlePayments.setRequestedExecutionTime(LocalDateTime.now());
         return singlePayments;
     }
 
@@ -360,6 +332,10 @@ public class PaymentServiceTest {
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(getReference(iban));
         payment.setCreditorAccount(getReference(iban));
+        payment.setStartDate(LocalDate.now());
+        payment.setEndDate(LocalDate.now().plusMonths(4));
+        payment.setRequestedExecutionDate(LocalDate.now());
+        payment.setRequestedExecutionTime(LocalDateTime.now());
         return payment;
     }
 

@@ -77,7 +77,7 @@ public class ConsentMapper {
                        ac.getValidUntil(),
                        ac.getFrequencyPerDay(),
                        ac.getLastActionDate(),
-                       ConsentStatus.valueOf(ac.getSpiConsentStatus().name()),
+                       ConsentStatus.valueOf(ac.getConsentStatus().name()),
                        ac.isWithBalance(),
                        ac.isTppRedirectPreferred()))
                    .orElse(null);

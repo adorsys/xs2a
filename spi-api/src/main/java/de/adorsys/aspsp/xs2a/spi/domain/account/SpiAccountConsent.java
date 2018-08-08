@@ -36,7 +36,7 @@ public class SpiAccountConsent {
     private LocalDate validUntil;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
-    private SpiConsentStatus spiConsentStatus;
+    private SpiConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
 }
