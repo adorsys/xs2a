@@ -42,7 +42,7 @@ import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.VALID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(path = "/view/payment/confirmation")
+@RequestMapping(path = "/payment/confirmation")
 @Api(tags = "TAN confirmation", description = "Provides access to email TAN confirmation for payment execution")
 public class PaymentConfirmationController {
 
@@ -68,7 +68,7 @@ public class PaymentConfirmationController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Validates tan")
+    @ApiOperation(value = "Validates TAN")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
@@ -94,7 +94,7 @@ public class PaymentConfirmationController {
     }
 
     @PostMapping(path = "/consent", params = "decision=revoked")
-    @ApiOperation(value = "Shows payment failure page")
+    @ApiOperation(value = "Sets consent status to revoked")
     public ResponseEntity revokePaymentConsent(@RequestBody PaymentConfirmation paymentConfirmation) {
         paymentService.updatePaymentConsentStatus(paymentConfirmation.getConsentId(), REVOKED_BY_PSU);
         return new ResponseEntity(HttpStatus.OK);

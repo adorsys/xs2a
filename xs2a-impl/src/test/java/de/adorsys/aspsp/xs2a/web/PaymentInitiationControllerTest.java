@@ -62,7 +62,7 @@ public class PaymentInitiationControllerTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "Really wrong id";
-    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
+    private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
 
     @InjectMocks
     private PaymentInitiationController paymentInitiationController;
