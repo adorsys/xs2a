@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import java.time.LocalDate;
+import lombok.NoArgsConstructor;
 
 @Data
-public class PisPeriodicPayment extends PisSinglePayment {
-    @ApiModelProperty(name = "Start date", example = "2018-08-25T15:30:35.035")
-    private LocalDate startDate;
-    @ApiModelProperty(name = "End date", example = "2019-10-25T15:30:35.035")
-    private LocalDate endDate;
-    @ApiModelProperty(name = "Execution rule", example = "latest")
-    private String executionRule;
-    @ApiModelProperty(name = "Frequency", example = "ANNUAL")
-    private String frequency;
-    @ApiModelProperty(name = "Day of execution", example = "14")
-    private int dayOfExecution; //Day here max 31
+@NoArgsConstructor
+@ApiModel(description = "Pis single payment initialisation consent response", value = "PisSinglePaymentConsentRequest")
+public class PisSinglePaymentConsentResponse extends PisAbstractConsentResponse {
+    @ApiModelProperty(value = "Single payment data", required = true)
+    private PisSinglePayment payment;
 }
+

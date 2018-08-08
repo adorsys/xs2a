@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
+import de.adorsys.aspsp.xs2a.consent.api.TppInfo;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
-public class PisPeriodicPayment extends PisSinglePayment {
-    @ApiModelProperty(name = "Start date", example = "2018-08-25T15:30:35.035")
-    private LocalDate startDate;
-    @ApiModelProperty(name = "End date", example = "2019-10-25T15:30:35.035")
-    private LocalDate endDate;
-    @ApiModelProperty(name = "Execution rule", example = "latest")
-    private String executionRule;
-    @ApiModelProperty(name = "Frequency", example = "ANNUAL")
-    private String frequency;
-    @ApiModelProperty(name = "Day of execution", example = "14")
-    private int dayOfExecution; //Day here max 31
+public abstract class PisAbstractConsentData {
+    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
+    private PisPaymentProduct pisPaymentProduct;
+    @ApiModelProperty(value = "Tpp information", required = true)
+    private TppInfo pisTppInfo;
 }

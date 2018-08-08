@@ -16,8 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis;
 
+import de.adorsys.aspsp.xs2a.consent.api.AccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.Address;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,39 +29,36 @@ import java.util.Currency;
 
 @Data
 public class PisSinglePayment {
+    @ApiModelProperty(value = "Payment Id", example = "32454656712432")
     private String paymentId;
+    @ApiModelProperty(value = "End to end authentication", example = "RI-123456789")
     private String endToEndIdentification;
-    private PisAccountReference debtorAccount;
+    @ApiModelProperty(value = "Debtor account", required = true)
+    private AccountReference debtorAccount;
+    @ApiModelProperty(value = "Name of the ultimate debtor", required = true, example = "Mueller")
     private String ultimateDebtor;
+    @ApiModelProperty(value = "Iso currency code", required = true, example = "EUR")
     private Currency currency;
+    @ApiModelProperty(value = "Payment amount", required = true, example = "1000")
     private BigDecimal amount;
-    private PisAccountReference creditorAccount;
+    @ApiModelProperty(value = "Creditor account", required = true)
+    private AccountReference creditorAccount;
+    @ApiModelProperty(value = "Creditor agent", required = true, example = "Telekom")
     private String creditorAgent;
+    @ApiModelProperty(value = "Name of the creditor", required = true, example = "Telekom")
     private String creditorName;
-    private PisAddress creditorAddress;
+    @ApiModelProperty(value = "Creditor Address")
+    private Address creditorAddress;
+    @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
+    @ApiModelProperty(value = "remittance information structured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationStructured;
+    @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
     private LocalDate requestedExecutionDate;
+    @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035")
     private LocalDateTime requestedExecutionTime;
+    @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")
     private String ultimateCreditor;
+    @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
     private String purposeCode;
-
-    @Value
-    public class PisAccountReference {
-        private String iban;
-        private String bban;
-        private String pan;
-        private String maskedPan;
-        private String msisdn;
-        private Currency currency;
-    }
-
-    @Value
-    public class PisAddress {
-        private String street;
-        private String buildingNumber;
-        private String city;
-        private String postalCode;
-        private String country;
-    }
 }

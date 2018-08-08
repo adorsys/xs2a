@@ -17,9 +17,15 @@
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPeriodicPayment;
-import lombok.Value;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
-public class PisPeriodicPaymentConsentRequest extends PisAbstractConsentRequest{
+@Data
+@AllArgsConstructor
+@ApiModel(description = "Pis periodic payment initialisation consent request", value = "PisPeriodicPaymentConsentRequest")
+public class PisPeriodicPaymentConsentRequest extends PisAbstractConsentData{
+    @ApiModelProperty(value = "Pis periodic payment", required = true)
     private PisPeriodicPayment periodicPayment;
 }

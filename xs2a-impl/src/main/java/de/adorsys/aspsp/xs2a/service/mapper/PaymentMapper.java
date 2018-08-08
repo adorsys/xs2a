@@ -71,12 +71,12 @@ public class PaymentMapper {
                        spiSinglePayment.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
 
                        spiSinglePayment.setCreditorAgent(Optional.ofNullable(paymentRe.getCreditorAgent())
-                                                              .map(BICFI::getCode).orElse(""));
+                                                             .map(BICFI::getCode).orElse(""));
                        spiSinglePayment.setCreditorName(paymentRe.getCreditorName());
                        spiSinglePayment.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
                        spiSinglePayment.setUltimateCreditor(paymentRe.getUltimateCreditor());
                        spiSinglePayment.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
-                                                            .map(PurposeCode::getCode).orElse(""));
+                                                           .map(PurposeCode::getCode).orElse(""));
                        spiSinglePayment.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
                        spiSinglePayment.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
@@ -288,7 +288,7 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public PisSinglePayment mapToPisSinglePayment(SinglePayments paymentInitiationRequest) {
+    public PisSinglePayment mapToPisSinglePayment(SinglePayment paymentInitiationRequest) {
         return Optional.ofNullable(paymentInitiationRequest)
                    .map(payReq -> {
                        PisSinglePayment pisSinglePayment = new PisSinglePayment();    // NOPMD todo make correct mapper
@@ -314,7 +314,7 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public List<PisSinglePayment> mapToPisSinglePaymentList(List<SinglePayments> singlePayments) { // NOPMD  todo make correct mapper
+    public List<PisSinglePayment> mapToPisSinglePaymentList(List<SinglePayment> singlePayments) { // NOPMD  todo make correct mapper
         return singlePayments.stream()
                    .map(this::mapToPisSinglePayment)
                    .collect(Collectors.toList());
@@ -349,7 +349,7 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    private PisSinglePayment.PisAddress mapToPisAddress(Address address) { // NOPMD todo make correct mapper
+    private Address mapToPisAddress(Address address) { // NOPMD todo make correct mapper
         return null;
         /*return Optional.ofNullable(address)
                    .map(a -> new PisSinglePayment.PisAddress(*//*a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()*//*))

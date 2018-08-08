@@ -16,17 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
-import lombok.Value;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-import java.util.List;
-
-@Value
-public class PisConsentResponse {
+@Data
+public abstract class PisAbstractConsentResponse extends PisAbstractConsentData{
+    @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
+    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
+    @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PisPaymentService pisPaymentService;
-    private List<String> paymentIds;
 }
 

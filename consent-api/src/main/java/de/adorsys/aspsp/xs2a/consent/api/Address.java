@@ -14,42 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-import javax.persistence.*;
-
-@Data
-@Entity(name = "pis_address")
-@ApiModel(description = "Pis address", value = "Pis address")
-@NoArgsConstructor
-public class PisAddress {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_address_generator")
-    @SequenceGenerator(name = "pis_address_generator", sequenceName = "pis_address_id_seq")
-    private Long id;
-
-    @Column(name = "street")
+@Value
+public class Address {
     @ApiModelProperty(value = "Street", example = "Herrnstraße")
     private String street;
-
-    @Column(name = "building_number")
     @ApiModelProperty(value = "Building number", example = "123-34")
     private String buildingNumber;
-
-    @Column(name = "city")
     @ApiModelProperty(value = "City", example = "Nürnberg")
     private String city;
-
-    @Column(name = "postal_code")
     @ApiModelProperty(value = "Postal code", example = "90431")
     private String postalCode;
-
-    @Column(name = "country")
-    @ApiModelProperty(value = "Country")
+    @ApiModelProperty(value = "Country", example = "Germany")
     private String country;
 }

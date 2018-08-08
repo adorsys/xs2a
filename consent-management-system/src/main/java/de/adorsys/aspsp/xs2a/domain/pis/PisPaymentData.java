@@ -21,8 +21,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +31,10 @@ import java.util.Currency;
 @ApiModel(description = "pis payment entity", value = "PisPaymentData")
 public class PisPaymentData {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_payment_data_generator")
+    @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "ppis_payment_data_id_seq")
+    private Long id;
+
     @Column(name = "payment_id", nullable = false)
     private String paymentId;
 
@@ -78,7 +80,7 @@ public class PisPaymentData {
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
-    @ApiModelProperty(value = "remittance information structured")
+    @ApiModelProperty(value = "remittance information structured", example = "Ref. Number TELEKOM-1222" )
     private String remittanceInformationStructured;
 
     @Column(name = "requested_execution_date", nullable = false)

@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisBulkPaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisPeriodicPaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisSinglePaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayments;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +47,7 @@ public class PisConsentService {
      * @param singlePayment Payment data which will be stored in Pis consent
      * @return String identifier of created PIS consent for single payment
      */
-    public String createPisConsentForSinglePaymentAndGetId(SinglePayments singlePayment) {
+    public String createPisConsentForSinglePaymentAndGetId(SinglePayment singlePayment) {
         PisSinglePayment pisSinglePayment = paymentMapper.mapToPisSinglePayment(singlePayment);
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), new PisSinglePaymentConsentRequest(pisSinglePayment), String.class);
         return responseEntity.getBody();
@@ -59,7 +59,7 @@ public class PisConsentService {
      * @param payments List of payments data which will be stored in Pis consent
      * @return String identifier of created PIS consent for bulk payment
      */
-    public String createPisConsentForBulkPaymentAndGetId(List<SinglePayments> payments) {
+    public String createPisConsentForBulkPaymentAndGetId(List<SinglePayment> payments) {
         List<PisSinglePayment> pisPayments = paymentMapper.mapToPisSinglePaymentList(payments);
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisBulkPaymentConsent(), new PisBulkPaymentConsentRequest(pisPayments), String.class);
         return responseEntity.getBody();

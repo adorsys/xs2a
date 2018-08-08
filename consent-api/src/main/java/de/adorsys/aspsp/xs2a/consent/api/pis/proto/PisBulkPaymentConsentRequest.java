@@ -17,11 +17,17 @@
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
-import lombok.Value;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.util.List;
 
-@Value
-public class PisBulkPaymentConsentRequest extends PisAbstractConsentRequest{
+@Data
+@AllArgsConstructor
+@ApiModel(description = "Pis bulk payment initialisation consent request", value = "PisBulkPaymentConsentRequest")
+public class PisBulkPaymentConsentRequest extends PisAbstractConsentData{
+    @ApiModelProperty(value = "List of single payments", required = true)
     private List<PisSinglePayment> payments;
 }

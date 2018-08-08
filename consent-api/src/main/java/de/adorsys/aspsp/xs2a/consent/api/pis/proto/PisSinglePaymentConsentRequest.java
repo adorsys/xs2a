@@ -17,9 +17,15 @@
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisSinglePayment;
-import lombok.Value;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
-public class PisSinglePaymentConsentRequest extends PisAbstractConsentRequest {
-    private PisSinglePayment pisSinglePayment;
+@Data
+@AllArgsConstructor
+@ApiModel(description = "Pis single payment initialisation consent request", value = "PisSinglePaymentConsentRequest")
+public class PisSinglePaymentConsentRequest extends PisAbstractConsentData {
+    @ApiModelProperty(value = "Single payment data", required = true)
+    private PisSinglePayment singlePayment;
 }

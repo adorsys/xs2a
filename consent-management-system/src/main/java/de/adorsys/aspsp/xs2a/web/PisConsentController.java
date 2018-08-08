@@ -16,15 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisAbstractConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisBulkPaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisPeriodicPaymentConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisSinglePaymentConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PISConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -88,9 +84,9 @@ public class PisConsentController {
     @GetMapping(path = "/{consent-id}")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = PisConsentResponse.class),
+        @ApiResponse(code = 200, message = "OK", response = PisAbstractConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<PisConsentResponse> getConsentById(
+    public ResponseEntity<PisAbstractConsentResponse> getConsentById(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentById(consentId)

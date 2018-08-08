@@ -16,12 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
