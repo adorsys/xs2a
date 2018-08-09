@@ -25,9 +25,13 @@ import org.springframework.http.*;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @FeatureFileSteps
 public class ConsentRequestSteps {
@@ -73,6 +77,14 @@ public class ConsentRequestSteps {
 
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
     public void checkResponseCode() {
+        ResponseEntity<CreateConsentResp> actualResponse = context.getActualResponse();
+        Map givenResponseBody = context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+
+        assertThat(actualResponse.getBody().getConsentStatus().name(), equalTo(givenResponseBody.get("transactionStatus")));
+        assertThat(actualResponse.getBody().getConsentId(), notNullValue());
+
 
     }
 
