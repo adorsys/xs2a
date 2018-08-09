@@ -50,20 +50,20 @@ public class DateTimeDeserializerTest {
 
     @Test
     public void deserialize_Success_UTC_Format() {
-        LocalDateTime actualResault = LocalDateTime.parse(UTC_DATETIME, FORMATTER);
-        assertEquals(EXPECTED_RESULT, actualResault);
+        LocalDateTime actualResult = LocalDateTime.parse(UTC_DATETIME, FORMATTER);
+        assertEquals(EXPECTED_RESULT, actualResult);
     }
 
     @Test
     public void deserialize_Success_Offset_Format() {
-        LocalDateTime actualResault = LocalDateTime.parse(OFFSET_DATETIME, FORMATTER);
-        assertEquals(EXPECTED_RESULT, actualResault);
+        LocalDateTime actualResult = LocalDateTime.parse(OFFSET_DATETIME, FORMATTER);
+        assertEquals(EXPECTED_RESULT, actualResult);
     }
 
     @Test
     public void deserialize_Success_Local_Format() {
-        LocalDateTime actualResault = LocalDateTime.parse(LOCAL_DATETIME, FORMATTER);
-        assertEquals(EXPECTED_RESULT, actualResault);
+        LocalDateTime actualResult = LocalDateTime.parse(LOCAL_DATETIME, FORMATTER);
+        assertEquals(EXPECTED_RESULT, actualResult);
     }
 
     @Test(expected = DateTimeParseException.class)
