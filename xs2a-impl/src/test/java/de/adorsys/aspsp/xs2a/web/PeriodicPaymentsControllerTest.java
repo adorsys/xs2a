@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
 public class PeriodicPaymentsControllerTest {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
-    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
+    private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
 
 
     @InjectMocks
