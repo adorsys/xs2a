@@ -1,32 +1,61 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.client.RestTemplate;
+
+import static org.apache.commons.io.IOUtils.resourceToString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 @FeatureFileSteps
 public class ConsentRequestSteps {
+
+
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
+    @Autowired
+    private Context<CreateConsentReq, HashMap, CreateConsentResp> context;
 
-    @Given("^PSU wants to create a consent(.*)$")
+
+    @Autowired
+    private ObjectMapper mapper;
+
+
+    @Given("^PSU wants to create a consent (.*)$")
+
+
     public void loadTestData(String dataFileName) throws IOException {
-        ///TestData<ConsentStatus,HashMap> data =
+
+        TestData<CreateConsentReq, HashMap> data = mapper.readValue(resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8), new TypeReference<TestData<CreateConsentReq, HashMap>>() {
+        });
+
+        context.setTestData(data);
     }
+
     @When("^PSU sends the create consent request$")
-    public void sendConsentRequest (){
+    public void sendConsentRequest() {
 
     }
+
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
     public void checkResponseCode() {
 
