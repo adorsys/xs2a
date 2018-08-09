@@ -21,7 +21,7 @@
       "creditorName": "WBG",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE52500105173911841934"
+        "iban": "DE525001051739118419"
       },
       "endToEndIdentification": "WBG-123456789",
       "instructedAmount": {
