@@ -111,8 +111,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         objectMapper.registerModule(new Jdk8Module()); // add support for Optionals
         objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
         objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
-        registerDateTimeDeserializerModule(objectMapper);
-
+        objectMapper.registerModule(getDateTimeDeserializerModule());
         return objectMapper;
     }
 
@@ -188,9 +187,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addConverter(new PaymentTypeEnumConverter());
     }
 
-    private void registerDateTimeDeserializerModule(ObjectMapper objectMapper) {
+    private SimpleModule getDateTimeDeserializerModule() {
         SimpleModule dateTimeModule = new SimpleModule();
         dateTimeModule.addDeserializer(LocalDateTime.class, new DateTimeDeserializer(LocalDateTime.class));
-        objectMapper.registerModule(dateTimeModule);
+        return dateTimeModule;
     }
 }
+

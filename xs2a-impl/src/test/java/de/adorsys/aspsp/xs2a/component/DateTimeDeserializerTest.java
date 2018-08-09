@@ -42,10 +42,10 @@ public class DateTimeDeserializerTest {
     @Before
     public void init() {
         FORMATTER = new DateTimeFormatterBuilder()
-            .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN))
-            .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
-            .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_OFFSET))
-            .toFormatter();
+                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN))
+                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_LOCAL))
+                        .appendOptional(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN_OFFSET))
+                        .toFormatter();
     }
 
     @Test
