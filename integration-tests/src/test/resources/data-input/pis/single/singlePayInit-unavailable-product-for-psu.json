@@ -15,13 +15,13 @@
         "country": {
           "code": "49"
         },
-        "postalCode": "90543",
+        "postalCode": "90403",
         "street": "WBG Straße"
       },
       "creditorName": "WBG",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE525001051739118419"
+        "iban": "DE52500105173911841934"
       },
       "endToEndIdentification": "WBG-123456789",
       "instructedAmount": {
@@ -34,21 +34,21 @@
       "remittanceInformationStructured": {
         "reference": "Ref Number Merchant"
       },
-      "remittanceInformationUnstructured": "Ref. Number WBG-1234",
-      "requestedExecutionDate": "2018-10-01",
-      "requestedExecutionTime": "2018-10-01T10:30:35.035",
+      "remittanceInformationUnstructured": "Ref. Number WBG-1222",
+      "requestedExecutionDate": "2018-08-18",
+      "requestedExecutionTime": "2018-08-18T18:30:35.035",
       "ultimateCreditor": "WBG",
       "ultimateDebtor": "Alexander Mueller"
     }
   },
   "response": {
-    "code": "400",
+    "code": "403",
     "header": {},
     "body": {
       "transactionStatus": "RJCT",
       "tppMessage": {
         "category": "ERROR",
-        "code": "FORMAT_ERROR"
+        "code": "PRODUCT_INVALID"
       }
     }
   }
