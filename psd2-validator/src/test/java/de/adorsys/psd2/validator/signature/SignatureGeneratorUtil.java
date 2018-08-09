@@ -7,16 +7,15 @@ import org.tomitribe.auth.signatures.Signer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.resourceToString;
 
 /**
  * @author guymoyo
@@ -61,9 +60,7 @@ public class SignatureGeneratorUtil {
     private void stringToPrivateKey() {
         try {
             privateKey = PEM.readPrivateKey(new ByteArrayInputStream(privateKeyPem.getBytes()));
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (InvalidKeySpecException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -106,10 +103,8 @@ public class SignatureGeneratorUtil {
     }
 
     private String readPrivateKeyPem() {
-        Path filePath = Paths.get("src/test/resources/signature/privateKeyPem.crt");
         try {
-            String result = Files.lines(filePath).collect(Collectors.joining("\n")) + "\n";
-            return result;
+            return resourceToString("/signature/privateKeyPem.crt", UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
