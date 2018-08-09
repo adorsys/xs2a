@@ -14,9 +14,14 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
+import javassist.bytecode.stackmap.BasicBlock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.*;
+
 
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -54,12 +59,30 @@ public class ConsentRequestSteps {
     @When("^PSU sends the create consent request$")
     public void sendConsentRequest() {
 
+        HttpEntity<CreateConsentReq> entity = getConsentRequestHttpEntity();
+
+        ResponseEntity<CreateConsentResp> response = restTemplate.exchange(
+            context.getBaseUrl() + "/consents",
+            HttpMethod.POST,
+            entity,
+            CreateConsentResp.class);
+
+        context.setActualResponse(response);
     }
+
 
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
     public void checkResponseCode() {
 
     }
 
+    private org.springframework.http.HttpEntity<CreateConsentReq> getConsentRequestHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAll(context.getTestData().getRequest().getHeader());
+        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
+
+        return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
+    }
 
 }
