@@ -54,7 +54,7 @@ public class BulkPaymentInitiationControllerTest {
     private final String BULK_PAYMENT_RESP_DATA = "/json/BulkPaymentResponseTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
     private final PaymentProduct PAYMENT_PRODUCT = PaymentProduct.SCT;
-    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
+    private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
 
     @InjectMocks
     private BulkPaymentInitiationController bulkPaymentInitiationController;
