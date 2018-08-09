@@ -118,16 +118,16 @@ public class PaymentServiceTest {
             .thenReturn(Optional.empty());
 
         //ScaPayService
-        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_OK))
+        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(Optional.of(getPaymentResponse(RCVD, null)));
-        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_NOK_AMOUNT))
+        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_NOK_AMOUNT, ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(Optional.empty());
 
-        when(scaPaymentService.createBulkPayment(Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_OK)))
+        when(scaPaymentService.createBulkPayment(Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_OK), ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RCVD, null)));
-        when(scaPaymentService.createBulkPayment(Arrays.asList(SINGLE_PAYMENT_OK)))
+        when(scaPaymentService.createBulkPayment(Arrays.asList(SINGLE_PAYMENT_OK), ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null)));
-        when(scaPaymentService.createBulkPayment(Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_NOK_AMOUNT)))
+        when(scaPaymentService.createBulkPayment(Arrays.asList(SINGLE_PAYMENT_OK, SINGLE_PAYMENT_NOK_AMOUNT), ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RJCT, PAYMENT_FAILED)));
     }
 
@@ -156,7 +156,7 @@ public class PaymentServiceTest {
     @Test
     public void initiatePeriodicPayment() {
         when(validationService.validatePeriodicPayment(PERIODIC_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.empty());
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK)).thenReturn(Optional.of(getPaymentResponse(RCVD, null)));
+        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.of(getPaymentResponse(RCVD, null)));
         PeriodicPayment payment = PERIODIC_PAYMENT_OK;
         //When
         ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT);
@@ -176,7 +176,7 @@ public class PaymentServiceTest {
     @Test
     public void initiatePeriodicPayment_Failure_ASPSP_RJCT() {
         when(validationService.validatePeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.empty());
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT)).thenReturn(Optional.empty());
+        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT, ALLOWED_PAYMENT_PRODUCT)).thenReturn(Optional.empty());
         PeriodicPayment payment = PERIODIC_PAYMENT_NOK_AMOUNT;
         initiatePeriodicPaymentFailureTest(payment, PAYMENT_FAILED);
     }

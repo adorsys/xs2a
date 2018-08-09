@@ -80,8 +80,10 @@ public class PisPaymentData {
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
-    @ApiModelProperty(value = "remittance information structured", example = "Ref. Number TELEKOM-1222" )
-    private String remittanceInformationStructured;
+    @PrimaryKeyJoinColumn
+    @OneToOne(cascade = CascadeType.ALL)
+    @ApiModelProperty(value = "remittance information structured")
+    private PisRemittance remittanceInformationStructured;
 
     @Column(name = "requested_execution_date", nullable = false)
     @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")

@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.xs2a.consent.api;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Value;
+import lombok.Data;
 
-@Value
-public class Address {
+@Data
+public class CmsAddress {
     @ApiModelProperty(value = "Street", example = "Herrnstraße")
     private String street;
     @ApiModelProperty(value = "Building number", example = "123-34")

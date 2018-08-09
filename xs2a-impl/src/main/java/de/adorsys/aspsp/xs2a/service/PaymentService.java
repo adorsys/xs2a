@@ -60,7 +60,7 @@ public class PaymentService {
      * @return Information about the status of a payment
      */
     public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, String paymentProduct) {
-        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct,  new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); //
+        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); //
         // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<TransactionStatus>builder()
@@ -82,7 +82,7 @@ public class PaymentService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
                        .build();
         }
-        return scaPaymentService.createPeriodicPayment(periodicPayment)
+        return scaPaymentService.createPeriodicPayment(periodicPayment, paymentProduct)
                    .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
@@ -115,7 +115,7 @@ public class PaymentService {
             }
         }
         if (CollectionUtils.isNotEmpty(validPayments)) {
-            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments);
+            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments, paymentProduct);
             if (CollectionUtils.isNotEmpty(paymentResponses) && paymentResponses.stream()
                                                                     .anyMatch(pr -> pr.getTransactionStatus() != TransactionStatus.RJCT)) {
                 paymentResponses.addAll(invalidPayments);
@@ -141,7 +141,7 @@ public class PaymentService {
                        .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
                        .build();
         }
-        return scaPaymentService.createSinglePayment(singlePayment)
+        return scaPaymentService.createSinglePayment(singlePayment, paymentProduct)
                    .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))

@@ -27,17 +27,17 @@ import java.util.Optional;
 @Service
 public class DecoupedScaPaymentService implements ScaPaymentService {
     @Override
-    public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment) {
+    public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct) {
         return Optional.empty();
     }
 
     @Override
-    public List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments) {
+    public List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments, String paymentProduct) {
         return null;
     }
 
     @Override
-    public Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment) {
+    public Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, String paymentProduct) {
         return Optional.empty();
     }
 }

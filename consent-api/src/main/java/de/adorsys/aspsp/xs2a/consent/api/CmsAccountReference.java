@@ -18,13 +18,13 @@ package de.adorsys.aspsp.xs2a.consent.api;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
 
 import java.util.Currency;
 
-@Value
+@Data
 @AllArgsConstructor
-public class AccountReference {
+public class CmsAccountReference {
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE371234599999")
     private String iban;
     @ApiModelProperty(value = "BBAN: This data elements is used for payment accounts which have no IBAN", example = "371234599999")
@@ -38,7 +38,7 @@ public class AccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    public AccountReference(String iban, Currency currency) {
-        this(iban, "", "", "", "" ,currency);
+    public CmsAccountReference(String iban, Currency currency) {
+        this(iban, "", "", "", "", currency);
     }
 }

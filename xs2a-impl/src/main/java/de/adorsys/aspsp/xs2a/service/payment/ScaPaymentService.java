@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScaPaymentService {
-    Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment);
-    List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments);
-    Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment);
+    Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct);
+    List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments, String paymentProduct);
+    Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, String paymentProduct);
 }

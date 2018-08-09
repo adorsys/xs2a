@@ -16,8 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.Address;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
+import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -35,7 +36,7 @@ public class PisPayment {
     private String endToEndIdentification;
 
     @ApiModelProperty(value = "Debtor account", required = true)
-    private AccountReference debtorAccount;
+    private CmsAccountReference debtorAccount;
 
     @ApiModelProperty(value = "Name of the ultimate debtor", required = true, example = "Mueller")
     private String ultimateDebtor;
@@ -47,7 +48,7 @@ public class PisPayment {
     private BigDecimal amount;
 
     @ApiModelProperty(value = "Creditor account", required = true)
-    private AccountReference creditorAccount;
+    private CmsAccountReference creditorAccount;
 
     @ApiModelProperty(value = "Creditor agent", required = true, example = "Telekom")
     private String creditorAgent;
@@ -56,13 +57,13 @@ public class PisPayment {
     private String creditorName;
 
     @ApiModelProperty(value = "Creditor Address")
-    private Address creditorAddress;
+    private CmsAddress creditorAddress;
 
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
-    @ApiModelProperty(value = "remittance information structured", example = "Ref. Number TELEKOM-1222")
-    private String remittanceInformationStructured;
+    @ApiModelProperty(value = "remittance information structured")
+    private CmsRemittance remittanceInformationStructured;
 
     @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
     private LocalDate requestedExecutionDate;
