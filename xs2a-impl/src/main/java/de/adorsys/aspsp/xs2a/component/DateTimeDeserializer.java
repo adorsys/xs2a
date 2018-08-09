@@ -43,8 +43,8 @@ public class DateTimeDeserializer extends StdDeserializer<LocalDateTime> {
             .toFormatter();
     }
 
-    public DateTimeDeserializer(Class<LocalDateTime> vc) {
-        super(vc);
+    public DateTimeDeserializer(Class<LocalDateTime> localDateTimeClass) {
+        super(localDateTimeClass);
     }
 
     @Override
