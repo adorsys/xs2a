@@ -1,40 +1,45 @@
 {
   "request": {
     "header": {
-      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035"
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "psu-id": "d9e71419-24e4-4c5a-8d93-fcc23153aaff"
     },
     "body": {
       "access": {
         "accounts": [
           {
             "currency": "EUR",
-            "iban": "DE52500105173911841934"
+            "iban": "DE10101010101010101010"
           }
         ],
         "balances": [
           {
             "currency": "EUR",
-            "iban": "DE52500105173911841934"
+            "iban": "DE10101010101010101010"
           }
         ],
         "transactions": [
           {
             "currency": "EUR",
-            "iban": "DE52500105173911841934"
+            "iban": "DE10101010101010101010"
           }
         ]
       },
       "combinedServiceIndicator": false,
-      "frequencyPerDay": 4,
+      "frequencyPerDay": 10,
       "recurringIndicator": false,
-      "validUntil": "2018-10-30"
+      "validUntil": "2022-10-30"
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": {
-      "consentStatus": "RCVD"
+      "transactionStatus": "RJCT",
+      "tppMessage": {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
+      }
     }
   }
 }

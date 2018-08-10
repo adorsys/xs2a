@@ -34,7 +34,7 @@ public class CreateConsentReqTest {
     public void getAccountReferences_all() {
         //Given:
         CreateConsentReq req = new CreateConsentReq();
-        req.setAccess(getAccess(getRefs(1),getRefs(2),getRefs(3)));
+        req.setAccess(getAccess(getRefs(1), getRefs(2), getRefs(3)));
         //When:
         Set<AccountReference> result = req.getAccountReferences();
         //Then:
@@ -45,7 +45,7 @@ public class CreateConsentReqTest {
     public void getAccountReferences_1_null() {
         //Given:
         CreateConsentReq req = new CreateConsentReq();
-        req.setAccess(getAccess(null,getRefs(2),getRefs(3)));
+        req.setAccess(getAccess(null, getRefs(2), getRefs(3)));
         //When:
         Set<AccountReference> result = req.getAccountReferences();
         //Then:
@@ -56,18 +56,7 @@ public class CreateConsentReqTest {
     public void getAccountReferences_all_null() {
         //Given:
         CreateConsentReq req = new CreateConsentReq();
-        req.setAccess(getAccess(null,null,null));
-        //When:
-        Set<AccountReference> result = req.getAccountReferences();
-        //Then:
-        assertThat(result.size()).isEqualTo(0);
-    }
-
-    @Test
-    public void getAccountReferences_access_null() {
-        //Given:
-        CreateConsentReq req = new CreateConsentReq();
-        req.setAccess(null);
+        req.setAccess(getAccess(null, null, null));
         //When:
         Set<AccountReference> result = req.getAccountReferences();
         //Then:

@@ -20,9 +20,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
@@ -55,6 +57,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -108,6 +111,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         objectMapper.registerModule(new Jdk8Module()); // add support for Optionals
         objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
         objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
+        objectMapper.registerModule(getDateTimeDeserializerModule());
         return objectMapper;
     }
 
@@ -182,4 +186,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new PaymentTypeEnumConverter());
     }
+
+    private SimpleModule getDateTimeDeserializerModule() {
+        SimpleModule dateTimeModule = new SimpleModule();
+        dateTimeModule.addDeserializer(LocalDateTime.class, new DateTimeDeserializer(LocalDateTime.class));
+        return dateTimeModule;
+    }
 }
+

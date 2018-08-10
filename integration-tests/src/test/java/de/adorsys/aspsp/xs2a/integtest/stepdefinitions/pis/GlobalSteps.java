@@ -26,11 +26,6 @@ public class GlobalSteps {
     @Autowired
     private AuthConfigProperty authConfigProperty;
 
-    @Given("^PSU is logged in using redirect approach$")
-    public void loginPsuRedirect() {
-        // no login necessary
-    }
-
     @Given("^PSU request access token for oauth approach$")
     public void requestAccessToken() {
         HttpHeaders headers = new HttpHeaders();
@@ -55,5 +50,4 @@ public class GlobalSteps {
         context.setScaApproach("oauth");
         context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
     }
-
 }

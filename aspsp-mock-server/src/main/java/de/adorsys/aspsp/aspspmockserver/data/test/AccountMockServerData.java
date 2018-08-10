@@ -60,7 +60,7 @@ public class AccountMockServerData {
     private final SpiBalanceType BALANCE_TYPE = SpiBalanceType.INTERIM_AVAILABLE;
 
     // Allowed Payments for Cucumber Test User
-    private final List<String> ALLOWED_PAYMENTS_CUCUMBER_TESTUSER = Arrays.asList("sepa-credit-transfers", "instant-sepa-credit-transfers");
+    private final List<String> ALLOWED_PAYMENTS_CUCUMBER_TESTUSER = Arrays.asList("sepa-credit-transfers");
 
     public AccountMockServerData(PsuRepository psuRepository, TransactionRepository transactionRepository, TanRepository tanRepository, PaymentRepository paymentRepository) {
         this.psuRepository = psuRepository;

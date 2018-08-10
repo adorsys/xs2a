@@ -85,13 +85,12 @@ public class SinglePayment implements AccountReferenceCollector {
     @FutureOrPresent
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "requested execution time", example = "2019-10-25T15:30:35.035")
+    @ApiModelProperty(value = "requested execution time", example = "2019-10-25T15:30:35.035Z")
     @FutureOrPresent
-    // TODO add support of all types of DateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/148
     private LocalDateTime requestedExecutionTime;
 
     @JsonIgnore
-    public boolean isValidDated() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
+    public boolean isValidExecutionDateAndTime() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167
         return Optional.ofNullable(this.requestedExecutionDate)
                    .map(d -> d.isEqual(LocalDate.now()) || d.isAfter(LocalDate.now()))
                    .orElse(false)

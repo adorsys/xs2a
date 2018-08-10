@@ -18,6 +18,9 @@
         "postalCode": "90543",
         "street": "WBG Straße"
       },
+      "creditorAgent": {
+        "code": "BCENECEQ"
+      },
       "creditorName": "WBG",
       "debtorAccount": {
         "currency": "EUR",
@@ -32,7 +35,9 @@
         "code": "Monatsmiete Mueller, Alexander"
       },
       "remittanceInformationStructured": {
-        "reference": "Ref Number Merchant"
+        "reference": "Ref Number Merchant",
+        "referenceIssuer": "string",
+        "referenceType": "string"
       },
       "remittanceInformationUnstructured": "Ref. Number WBG-1222",
       "requestedExecutionDate": "2015-08-18",

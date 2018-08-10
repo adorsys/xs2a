@@ -7,7 +7,7 @@
     "body": {
       "access": {
         "accounts": [],
-        "allPsd2": "all-accounts",
+        "allPsd2": "all",
         "balances": [],
         "transactions": []
       },
@@ -18,10 +18,14 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": {
-      "consentStatus": "RCVD"
+      "transactionStatus": "RJCT",
+      "tppMessage": {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
+      }
     }
   }
 }

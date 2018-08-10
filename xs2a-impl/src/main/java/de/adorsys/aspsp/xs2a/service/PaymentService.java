@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
@@ -26,7 +25,6 @@ import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.PaymentValidationService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
@@ -51,7 +49,6 @@ public class PaymentService {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
     private final ScaPaymentService scaPaymentService;
-    private final PaymentValidationService paymentValidationService;
     private final ReadPaymentFactory readPaymentFactory;
 
     /**
@@ -78,18 +75,15 @@ public class PaymentService {
      * @return Response containing information about created periodic payment or corresponding error
      */
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct) {
-        Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validatePeriodicPayment(periodicPayment, paymentProduct);
-        if (messageErrorCode.isPresent()) {
-            log.warn("Initiate periodic payment error: {} ", messageErrorCode.get().getName());
-            return ResponseObject.<PaymentInitialisationResponse>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
-                       .build();
-        }
-        return scaPaymentService.createPeriodicPayment(periodicPayment, paymentProduct)
-                   .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-                   .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                               .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
-                               .build());
+        return periodicPayment.areValidExecutionAndPeriodDates()
+                   ? scaPaymentService.createPeriodicPayment(periodicPayment)
+                         .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
+                         .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
+                                     .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                                     .build())
+                   : ResponseObject.<PaymentInitialisationResponse>builder()
+                         .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))
+                         .build();
     }
 
     /**
@@ -97,10 +91,9 @@ public class PaymentService {
      *
      * @param payments       List of single payments forming bulk payment
      * @param paymentProduct The addressed payment product
-     * @return List of payment initiation responses containing inforamtion about created payments or an error if non of the payments could pass the validation
+     * @return List of payment initiation responses containing information about created payments or an error if non of the payments could pass the validation
      */
     public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayment> payments, String paymentProduct) {
-        // TODO: should be validated by interceptors https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/166
         if (CollectionUtils.isEmpty(payments)) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
@@ -108,14 +101,13 @@ public class PaymentService {
         }
         List<SinglePayment> validPayments = new ArrayList<>();
         List<PaymentInitialisationResponse> invalidPayments = new ArrayList<>();
-        for (SinglePayment s : payments) {
-            Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(s, paymentProduct);
-            if (messageErrorCode.isPresent()) {
-                log.warn("Initiate bulk payment error: {} ", messageErrorCode.get().getName());
-                paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayment() : s, messageErrorCode.get())
+        for (SinglePayment payment : payments) {
+            if (!payment.isValidExecutionDateAndTime()) {
+                log.warn("Initiate bulk payment error: {} ", EXECUTION_DATE_INVALID);
+                paymentMapper.mapToPaymentInitResponseFailedPayment(payment, EXECUTION_DATE_INVALID)
                     .map(invalidPayments::add);
             } else {
-                validPayments.add(s);
+                validPayments.add(payment);
             }
         }
         if (CollectionUtils.isNotEmpty(validPayments)) {
@@ -139,18 +131,15 @@ public class PaymentService {
      * @return Response containing information about created single payment or corresponding error
      */
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, String paymentProduct) {
-        Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(singlePayment, paymentProduct);
-        if (messageErrorCode.isPresent()) {
-            log.warn("Initiate single payment error: {} ", messageErrorCode.get().getName());
-            return ResponseObject.<PaymentInitialisationResponse>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
-                       .build();
-        }
-        return scaPaymentService.createSinglePayment(singlePayment, paymentProduct)
-                   .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-                   .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                               .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
-                               .build());
+        return singlePayment.isValidExecutionDateAndTime()
+                   ? scaPaymentService.createSinglePayment(singlePayment)
+                         .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
+                         .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
+                                     .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                                     .build())
+                   : ResponseObject.<PaymentInitialisationResponse>builder()
+                         .fail(new MessageError(new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))
+                         .build();
     }
 
     /**
