@@ -139,7 +139,7 @@ public class PaymentServiceTest {
         ResponseObject<TransactionStatus> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(response.hasError()).isTrue();
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
+        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
         assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
@@ -168,7 +168,7 @@ public class PaymentServiceTest {
         ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(errorCode);
         assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
@@ -228,7 +228,7 @@ public class PaymentServiceTest {
         ResponseObject<List<PaymentInitialisationResponse>> actualResponse = paymentService.createBulkPayments(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(errorCode);
         assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
@@ -255,7 +255,7 @@ public class PaymentServiceTest {
         ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, ALLOWED_PAYMENT_PRODUCT);
         //Then:
         assertThat(actualResponse.getBody()).isNull();
-        assertThat(actualResponse.getError().getTppMessage().getCode()).isEqualTo(errorCode);
+        assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(errorCode);
         assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
@@ -283,7 +283,7 @@ public class PaymentServiceTest {
         //Than
         assertThat(response.hasError()).isTrue();
         assertThat(response.getBody()).isNull();
-        assertThat(response.getError().getTppMessage().getCode()).isEqualTo(RESOURCE_UNKNOWN_403);
+        assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(RESOURCE_UNKNOWN_403);
     }
 
     //Test additional methods

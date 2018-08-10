@@ -48,7 +48,7 @@ public class FailResponseAspect {
     private ResponseObject doEnrich(ResponseObject response) {
         MessageError error = response.getError();
         TppMessageInformation tppMessage = error.getTppMessage();
-        tppMessage.setText(messageService.getMessage(tppMessage.getCode().name()));
+        tppMessage.setText(messageService.getMessage(tppMessage.getMessageErrorCode().name()));
         error.setTppMessage(tppMessage);
         return ResponseObject.builder()
             .fail(error)
