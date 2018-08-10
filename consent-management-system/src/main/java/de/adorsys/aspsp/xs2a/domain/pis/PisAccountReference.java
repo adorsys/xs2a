@@ -27,8 +27,8 @@ import java.util.Currency;
 @Entity(name = "pis_account_reference")
 @ApiModel(description = "Pis account reference", value = "Pis account reference")
 public class PisAccountReference {
-
     @Id
+    @Column(name = "account_reference_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_account_reference_generator")
     @SequenceGenerator(name = "pis_account_reference_generator", sequenceName = "pis_account_reference_id_seq")
     private Long id;

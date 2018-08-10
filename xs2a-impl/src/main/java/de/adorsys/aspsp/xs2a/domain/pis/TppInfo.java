@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class TppInfo {
     @ApiModelProperty(value = "Registration number", required = true, example = "sepa-credit-transfers")
     private String registrationNumber;

@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -49,6 +50,7 @@ public class OauthScaPaymentServiceTest {
     private static final String WRONG_CREDITOR = "NOK";
     private static final String PAYMENT_ID = "123456789";
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final TppInfo TPP_INFO = new TppInfo();
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
 
 
@@ -83,7 +85,7 @@ public class OauthScaPaymentServiceTest {
         //Given
         List<SinglePayment> payments = getBulk(true, true);
         //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, ALLOWED_PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId().equals(PAYMENT_ID));
         assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RCVD));
@@ -95,7 +97,7 @@ public class OauthScaPaymentServiceTest {
         //Given
         List<SinglePayment> payments = getBulk(true, false);
         //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, ALLOWED_PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId() == null);
         assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
@@ -107,7 +109,7 @@ public class OauthScaPaymentServiceTest {
         //Given
         List<SinglePayment> payments = getBulk(false, false);
         //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, ALLOWED_PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId() == null && actualResponse.get(1).getPaymentId() == null);
         assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));

@@ -83,18 +83,18 @@ public class PISConsentMapper {
                    }).orElse(null);
     }
 
-    private PisTppInfo mapToPisTppInfo(TppInfo pisTppInfo) {
-        return Optional.ofNullable(pisTppInfo)
+    private PisTppInfo mapToPisTppInfo(CmsTppInfo tppInfo) {
+        return Optional.ofNullable(tppInfo)
                    .map(tin -> {
-                       PisTppInfo tppInfo = new PisTppInfo();
-                       tppInfo.setRegistrationNumber(tin.getRegistrationNumber());
-                       tppInfo.setTppName(tin.getTppName());
-                       tppInfo.setTppRole(tin.getTppRole());
-                       tppInfo.setNationalCompetentAuthority(tin.getNationalCompetentAuthority());
-                       tppInfo.setRedirectUri(tin.getRedirectUri());
-                       tppInfo.setNokRedirectUri(tin.getNokRedirectUri());
+                       PisTppInfo pisTppInfo = new PisTppInfo();
+                       pisTppInfo.setRegistrationNumber(tin.getRegistrationNumber());
+                       pisTppInfo.setTppName(tin.getTppName());
+                       pisTppInfo.setTppRole(tin.getTppRole());
+                       pisTppInfo.setNationalCompetentAuthority(tin.getNationalCompetentAuthority());
+                       pisTppInfo.setRedirectUri(tin.getRedirectUri());
+                       pisTppInfo.setNokRedirectUri(tin.getNokRedirectUri());
 
-                       return tppInfo;
+                       return pisTppInfo;
                    }).orElse(null);
     }
 
@@ -197,10 +197,10 @@ public class PISConsentMapper {
                    }).orElse(null);
     }
 
-    private TppInfo mapToTppInfo(PisTppInfo pisTppInfo) {
+    private CmsTppInfo mapToTppInfo(PisTppInfo pisTppInfo) {
         return Optional.ofNullable(pisTppInfo)
                    .map(tpp -> {
-                       TppInfo tppInfo = new TppInfo();
+                       CmsTppInfo tppInfo = new CmsTppInfo();
 
                        tppInfo.setRegistrationNumber(tpp.getRegistrationNumber());
                        tppInfo.setTppName(tpp.getTppName());

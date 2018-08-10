@@ -29,6 +29,7 @@ import javax.persistence.*;
 @ApiModel(description = "Remittance in pis", value = "PisRemittance")
 public class PisRemittance {
     @Id
+    @Column(name = "remittance_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_remittance_generator")
     @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq")
     private Long id;

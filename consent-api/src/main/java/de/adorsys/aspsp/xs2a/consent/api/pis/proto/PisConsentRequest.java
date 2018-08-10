@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.TppInfo;
+import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
@@ -39,5 +39,5 @@ public class PisConsentRequest {
     private PisPaymentService paymentService;
 
     @ApiModelProperty(value = "Tpp information", required = true)
-    private TppInfo tppInfo;
+    private CmsTppInfo tppInfo;
 }

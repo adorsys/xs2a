@@ -14,47 +14,28 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Data
-@Entity(name = "pis_tpp_info")
-@ApiModel(description = "Tpp info", value = "PisTppInfo")
-@NoArgsConstructor
-public class PisTppInfo {
-    @Id
-    @Column(name = "tpp_info_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_tpp_info_generator")
-    @SequenceGenerator(name = "pis_tpp_info_generator", sequenceName = "pis_tpp_info_id_seq")
-    private Long id;
-
-    @Column(name = "registration_number", nullable = false)
+public class CmsTppInfo {
     @ApiModelProperty(value = "Registration number", required = true, example = "1234_registrationNumber")
     private String registrationNumber;
 
-    @Column(name = "tpp_name", nullable = false)
     @ApiModelProperty(value = "Tpp name", required = true, example = "Tpp company")
     private String tppName;
 
-    @Column(name = "tpp_role", nullable = false)
     @ApiModelProperty(value = "Tpp role", required = true, example = "Tpp role")
     private String tppRole;
 
-    @Column(name = "national_competent_authority", nullable = false)
     @ApiModelProperty(value = "National competent authority", required = true, example = "National competent authority")
     private String nationalCompetentAuthority;
 
-    @Column(name = "redirect_uri", nullable = false)
     @ApiModelProperty(value = "Redirect URI", required = true, example = "Redirect URI")
     private String redirectUri;
 
-    @Column(name = "nok_redirect_uri", nullable = false)
     @ApiModelProperty(value = "Nok redirect URI", required = true, example = "Nok redirect URI")
     private String nokRedirectUri;
 }

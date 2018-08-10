@@ -74,16 +74,12 @@ public class PaymentService {
      * @param paymentProduct  The addressed payment product
      * @return Response containing information about created periodic payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String tppSignatureCertificate, String paymentProduct) {
         return periodicPayment.areValidExecutionAndPeriodDates()
-                   ? scaPaymentService.createPeriodicPayment(periodicPayment)
+                   ? scaPaymentService.createPeriodicPayment(periodicPayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct)
                          .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-                         .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                                     .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
-                                     .build())
-                   : ResponseObject.<PaymentInitialisationResponse>builder()
-                         .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))
-                         .build();
+                         .orElse(getPaymentFailedErrorResponse())
+                   : getExecutionDateInvalidErrorResponse();
     }
 
     /**
@@ -93,7 +89,7 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing information about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayment> payments, String paymentProduct) {
+    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayment> payments, String tppSignatureCertificate, String paymentProduct) {
         if (CollectionUtils.isEmpty(payments)) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
@@ -103,7 +99,7 @@ public class PaymentService {
         List<PaymentInitialisationResponse> invalidPayments = new ArrayList<>();
         for (SinglePayment payment : payments) {
             if (!payment.isValidExecutionDateAndTime()) {
-                log.warn("Initiate bulk payment error: {} ", EXECUTION_DATE_INVALID);
+                log.warn("Initiate bulk payment has an error: {} . Payment : {}", EXECUTION_DATE_INVALID, payment);
                 paymentMapper.mapToPaymentInitResponseFailedPayment(payment, EXECUTION_DATE_INVALID)
                     .map(invalidPayments::add);
             } else {
@@ -111,7 +107,7 @@ public class PaymentService {
             }
         }
         if (CollectionUtils.isNotEmpty(validPayments)) {
-            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments, paymentProduct);
+            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct);
             if (CollectionUtils.isNotEmpty(paymentResponses) && paymentResponses.stream()
                                                                     .anyMatch(pr -> pr.getTransactionStatus() != TransactionStatus.RJCT)) {
                 paymentResponses.addAll(invalidPayments);
@@ -130,16 +126,12 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return Response containing information about created single payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, String tppSignatureCertificate, String paymentProduct) {
         return singlePayment.isValidExecutionDateAndTime()
-                   ? scaPaymentService.createSinglePayment(singlePayment)
+                   ? scaPaymentService.createSinglePayment(singlePayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct)
                          .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-                         .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                                     .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED)))
-                                     .build())
-                   : ResponseObject.<PaymentInitialisationResponse>builder()
-                         .fail(new MessageError(new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))
-                         .build();
+                         .orElse(getPaymentFailedErrorResponse())
+                   : getExecutionDateInvalidErrorResponse();
     }
 
     /**
@@ -156,6 +148,21 @@ public class PaymentService {
         return payment.isPresent()
                    ? ResponseObject.builder().body(payment.get()).build()
                    : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build();
+    }
 
+    private ResponseObject<PaymentInitialisationResponse> getPaymentFailedErrorResponse() {
+        log.warn("Initiate payment has an error: {}", PAYMENT_FAILED);
+
+        return ResponseObject.<PaymentInitialisationResponse>builder()
+                   .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
+                   .build();
+    }
+
+    private ResponseObject<PaymentInitialisationResponse> getExecutionDateInvalidErrorResponse() {
+        log.warn("Initiate payment has an error: {}", EXECUTION_DATE_INVALID);
+
+        return ResponseObject.<PaymentInitialisationResponse>builder()
+                   .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))
+                   .build();
     }
 }

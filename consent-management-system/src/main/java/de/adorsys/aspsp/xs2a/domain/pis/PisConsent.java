@@ -46,8 +46,8 @@ public class PisConsent {
     @ApiModelProperty(value = "List of single payments ", required = true)
     private List<PisPaymentData> payments;
 
-    @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="tpp_info_id")
     @ApiModelProperty(value = "Information about TPP", required = true)
     private PisTppInfo pisTppInfo;
 

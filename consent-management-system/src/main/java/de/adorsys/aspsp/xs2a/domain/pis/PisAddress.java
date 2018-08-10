@@ -29,6 +29,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class PisAddress {
     @Id
+    @Column(name = "creditor_address_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_address_generator")
     @SequenceGenerator(name = "pis_address_generator", sequenceName = "pis_address_id_seq")
     private Long id;

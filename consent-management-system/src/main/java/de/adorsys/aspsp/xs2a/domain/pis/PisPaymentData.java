@@ -72,9 +72,9 @@ public class PisPaymentData {
     @ApiModelProperty(value = "Name of the creditor", required = true, example = "Telekom")
     private String creditorName;
 
-    @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor Address")
+    @JoinColumn(name="creditor_address_id")
     private PisAddress creditorAddress;
 
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
@@ -83,6 +83,7 @@ public class PisPaymentData {
     @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "remittance information structured")
+    @JoinColumn(name="remittance_id")
     private PisRemittance remittanceInformationStructured;
 
     @Column(name = "requested_execution_date", nullable = false)

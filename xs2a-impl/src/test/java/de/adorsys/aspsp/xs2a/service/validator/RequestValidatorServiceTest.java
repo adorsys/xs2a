@@ -206,6 +206,6 @@ public class RequestValidatorServiceTest {
     }
 
     private Object getPeriodicPaymentsControllerHandler() throws NoSuchMethodException {
-        return new HandlerMethod(periodicPaymentsController, "createPeriodicPayment", String.class, PeriodicPayment.class);
+        return new HandlerMethod(periodicPaymentsController, "createPeriodicPayment", String.class, String.class, PeriodicPayment.class);
     }
 }
