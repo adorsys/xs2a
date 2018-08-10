@@ -20,12 +20,18 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
+
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "spring.mail")
 public class EmailConfigurationProperties {
+    public static final String MAIL_SMTP_AUTH_PROPERTY = "mail.smtp.auth";
+    public static final String MAIL_SMTP_STARTTLS_ENABLED_PROPERTY = "mail.smtp.starttls.enable";
+
     private String host;
     private String port;
     private String password;
     private String username;
+    private Map<String, String> properties;
 }
