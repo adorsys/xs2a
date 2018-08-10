@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@Order(3)
 public class SignatureFilter implements Filter {
 
     @Autowired
