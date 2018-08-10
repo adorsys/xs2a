@@ -33,6 +33,7 @@ import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,7 @@ import java.util.Optional;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class PaymentService {
@@ -78,6 +80,7 @@ public class PaymentService {
     public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validatePeriodicPayment(periodicPayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
+            log.warn("Initiate periodic payment error: {} ", messageErrorCode.get().getName());
             return ResponseObject.<PaymentInitialisationResponse>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
                        .build();
@@ -108,6 +111,7 @@ public class PaymentService {
         for (SinglePayment s : payments) {
             Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(s, paymentProduct);
             if (messageErrorCode.isPresent()) {
+                log.warn("Initiate bulk payment error: {} ", messageErrorCode.get().getName());
                 paymentMapper.mapToPaymentInitResponseFailedPayment(s == null ? new SinglePayment() : s, messageErrorCode.get())
                     .map(invalidPayments::add);
             } else {
@@ -137,6 +141,7 @@ public class PaymentService {
     public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, String paymentProduct) {
         Optional<MessageErrorCode> messageErrorCode = paymentValidationService.validateSinglePayment(singlePayment, paymentProduct);
         if (messageErrorCode.isPresent()) {
+            log.warn("Initiate single payment error: {} ", messageErrorCode.get().getName());
             return ResponseObject.<PaymentInitialisationResponse>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, messageErrorCode.get())))
                        .build();

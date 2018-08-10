@@ -33,14 +33,14 @@ import java.util.Optional;
 @ApiModel(description = "Periodic Payment Initialisation Request", value = "Periodic Payment")
 public class PeriodicPayment extends SinglePayment {
 
-    @ApiModelProperty(name = "startDate", required = true, example = "2017-03-03")
+    @ApiModelProperty(name = "startDate", required = true, example = "2019-03-03")
     @FutureOrPresent
     private LocalDate startDate;
 
     @ApiModelProperty(name = "executionRule", required = false, example = "preceeding")
     private String executionRule;
 
-    @ApiModelProperty(name = "endDate", required = false, example = "2018-03-03")
+    @ApiModelProperty(name = "endDate", required = false, example = "2019-05-05")
     private LocalDate endDate;
 
     @ApiModelProperty(name = "frequency", required = true, example = "ANNUAL")

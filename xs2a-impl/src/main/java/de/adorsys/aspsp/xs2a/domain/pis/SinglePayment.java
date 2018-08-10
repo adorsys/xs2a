@@ -81,11 +81,11 @@ public class SinglePayment implements AccountReferenceCollector {
     @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "requested execution date", example = "2017-01-01")
+    @ApiModelProperty(value = "requested execution date", example = "2019-01-01")
     @FutureOrPresent
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "requested execution time", example = "2017-10-25T15:30:35.035")
+    @ApiModelProperty(value = "requested execution time", example = "2019-10-25T15:30:35.035")
     @FutureOrPresent
     // TODO add support of all types of DateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/148
     private LocalDateTime requestedExecutionTime;

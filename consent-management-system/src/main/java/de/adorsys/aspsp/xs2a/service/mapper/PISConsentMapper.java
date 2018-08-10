@@ -54,30 +54,33 @@ public class PISConsentMapper {
     }
 
     private PisPaymentData mapToPisPaymentData(PisPayment payment) {
-        PisPaymentData pisPaymentData = new PisPaymentData();
-        pisPaymentData.setPaymentId(payment.getPaymentId());
-        pisPaymentData.setEndToEndIdentification(payment.getEndToEndIdentification());
-        pisPaymentData.setDebtorAccount(mapToPisAccountReference(payment.getDebtorAccount()));
-        pisPaymentData.setUltimateDebtor(payment.getUltimateDebtor());
-        pisPaymentData.setAmount(payment.getAmount());
-        pisPaymentData.setCurrency(payment.getCurrency());
-        pisPaymentData.setCreditorAccount(mapToPisAccountReference(payment.getCreditorAccount()));
-        pisPaymentData.setCreditorAgent(payment.getCreditorAgent());
-        pisPaymentData.setCreditorName(payment.getCreditorName());
-        pisPaymentData.setCreditorAddress(mapToPisAddress(payment.getCreditorAddress()));
-        pisPaymentData.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        pisPaymentData.setRemittanceInformationStructured(mapToPisRemittance(payment.getRemittanceInformationStructured()));
-        pisPaymentData.setRequestedExecutionDate(payment.getRequestedExecutionDate());
-        pisPaymentData.setRequestedExecutionTime(payment.getRequestedExecutionTime());
-        pisPaymentData.setUltimateCreditor(payment.getUltimateCreditor());
-        pisPaymentData.setPurposeCode(payment.getPurposeCode());
-        pisPaymentData.setStartDate(payment.getStartDate());
-        pisPaymentData.setEndDate(payment.getEndDate());
-        pisPaymentData.setExecutionRule(payment.getExecutionRule());
-        pisPaymentData.setFrequency(payment.getFrequency());
-        pisPaymentData.setDayOfExecution(payment.getDayOfExecution());
+        return Optional.ofNullable(payment)
+                   .map(pm -> {
+                       PisPaymentData pisPaymentData = new PisPaymentData();
+                       pisPaymentData.setPaymentId(pm.getPaymentId());
+                       pisPaymentData.setEndToEndIdentification(pm.getEndToEndIdentification());
+                       pisPaymentData.setDebtorAccount(mapToPisAccountReference(pm.getDebtorAccount()));
+                       pisPaymentData.setUltimateDebtor(pm.getUltimateDebtor());
+                       pisPaymentData.setAmount(pm.getAmount());
+                       pisPaymentData.setCurrency(pm.getCurrency());
+                       pisPaymentData.setCreditorAccount(mapToPisAccountReference(pm.getCreditorAccount()));
+                       pisPaymentData.setCreditorAgent(pm.getCreditorAgent());
+                       pisPaymentData.setCreditorName(pm.getCreditorName());
+                       pisPaymentData.setCreditorAddress(mapToPisAddress(pm.getCreditorAddress()));
+                       pisPaymentData.setRemittanceInformationUnstructured(pm.getRemittanceInformationUnstructured());
+                       pisPaymentData.setRemittanceInformationStructured(mapToPisRemittance(pm.getRemittanceInformationStructured()));
+                       pisPaymentData.setRequestedExecutionDate(pm.getRequestedExecutionDate());
+                       pisPaymentData.setRequestedExecutionTime(pm.getRequestedExecutionTime());
+                       pisPaymentData.setUltimateCreditor(pm.getUltimateCreditor());
+                       pisPaymentData.setPurposeCode(pm.getPurposeCode());
+                       pisPaymentData.setStartDate(pm.getStartDate());
+                       pisPaymentData.setEndDate(pm.getEndDate());
+                       pisPaymentData.setExecutionRule(pm.getExecutionRule());
+                       pisPaymentData.setFrequency(pm.getFrequency());
+                       pisPaymentData.setDayOfExecution(pm.getDayOfExecution());
 
-        return pisPaymentData;
+                       return pisPaymentData;
+                   }).orElse(null);
     }
 
     private PisTppInfo mapToPisTppInfo(TppInfo pisTppInfo) {
@@ -117,30 +120,33 @@ public class PISConsentMapper {
     }
 
     private PisPayment mapToPisPayment(PisPaymentData payment) {
-        PisPayment pisPayment = new PisPayment();
-        pisPayment.setPaymentId(payment.getPaymentId());
-        pisPayment.setEndToEndIdentification(payment.getEndToEndIdentification());
-        pisPayment.setDebtorAccount(mapToCmsAccountReference(payment.getDebtorAccount()));
-        pisPayment.setUltimateDebtor(payment.getUltimateDebtor());
-        pisPayment.setCurrency(payment.getCurrency());
-        pisPayment.setAmount(payment.getAmount());
-        pisPayment.setCreditorAccount(mapToCmsAccountReference(payment.getCreditorAccount()));
-        pisPayment.setCreditorAgent(payment.getCreditorAgent());
-        pisPayment.setCreditorName(payment.getCreditorName());
-        pisPayment.setCreditorAddress(mapToCmsAddress(payment.getCreditorAddress()));
-        pisPayment.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        pisPayment.setRemittanceInformationStructured(mapToCmsRemittance(payment.getRemittanceInformationStructured()));
-        pisPayment.setRequestedExecutionDate(payment.getRequestedExecutionDate());
-        pisPayment.setRequestedExecutionTime(payment.getRequestedExecutionTime());
-        pisPayment.setUltimateCreditor(payment.getUltimateCreditor());
-        pisPayment.setPurposeCode(payment.getPurposeCode());
-        pisPayment.setStartDate(payment.getStartDate());
-        pisPayment.setEndDate(payment.getEndDate());
-        pisPayment.setExecutionRule(payment.getExecutionRule());
-        pisPayment.setFrequency(payment.getFrequency());
-        pisPayment.setDayOfExecution(payment.getDayOfExecution());
+        return Optional.ofNullable(payment)
+                   .map(pm -> {
+                       PisPayment pisPayment = new PisPayment();
+                       pisPayment.setPaymentId(pm.getPaymentId());
+                       pisPayment.setEndToEndIdentification(pm.getEndToEndIdentification());
+                       pisPayment.setDebtorAccount(mapToCmsAccountReference(pm.getDebtorAccount()));
+                       pisPayment.setUltimateDebtor(pm.getUltimateDebtor());
+                       pisPayment.setCurrency(pm.getCurrency());
+                       pisPayment.setAmount(pm.getAmount());
+                       pisPayment.setCreditorAccount(mapToCmsAccountReference(pm.getCreditorAccount()));
+                       pisPayment.setCreditorAgent(pm.getCreditorAgent());
+                       pisPayment.setCreditorName(pm.getCreditorName());
+                       pisPayment.setCreditorAddress(mapToCmsAddress(pm.getCreditorAddress()));
+                       pisPayment.setRemittanceInformationUnstructured(pm.getRemittanceInformationUnstructured());
+                       pisPayment.setRemittanceInformationStructured(mapToCmsRemittance(pm.getRemittanceInformationStructured()));
+                       pisPayment.setRequestedExecutionDate(pm.getRequestedExecutionDate());
+                       pisPayment.setRequestedExecutionTime(pm.getRequestedExecutionTime());
+                       pisPayment.setUltimateCreditor(pm.getUltimateCreditor());
+                       pisPayment.setPurposeCode(pm.getPurposeCode());
+                       pisPayment.setStartDate(pm.getStartDate());
+                       pisPayment.setEndDate(pm.getEndDate());
+                       pisPayment.setExecutionRule(pm.getExecutionRule());
+                       pisPayment.setFrequency(pm.getFrequency());
+                       pisPayment.setDayOfExecution(pm.getDayOfExecution());
 
-        return pisPayment;
+                       return pisPayment;
+                   }).orElse(null);
     }
 
     private PisRemittance mapToPisRemittance(CmsRemittance remittance) {
@@ -152,7 +158,7 @@ public class PISConsentMapper {
                        pisRemittance.setReferenceType(r.getReferenceType());
                        return pisRemittance;
                    })
-                   .orElse(new PisRemittance());
+                   .orElse(null);
     }
 
     private CmsRemittance mapToCmsRemittance(PisRemittance pisRemittance) {
@@ -164,16 +170,18 @@ public class PISConsentMapper {
                        remittance.setReferenceType(r.getReferenceType());
                        return remittance;
                    })
-                   .orElse(new CmsRemittance());
+                   .orElse(null);
     }
 
     private CmsAccountReference mapToCmsAccountReference(PisAccountReference pisAccountReference) {
-        return new CmsAccountReference(pisAccountReference.getIban(),
-            pisAccountReference.getBban(),
-            pisAccountReference.getPan(),
-            pisAccountReference.getMaskedPan(),
-            pisAccountReference.getMsisdn(),
-            pisAccountReference.getCurrency());
+        return Optional.ofNullable(pisAccountReference)
+                   .map(ref -> new CmsAccountReference(ref.getIban(),
+                       ref.getBban(),
+                       ref.getPan(),
+                       ref.getMaskedPan(),
+                       ref.getMsisdn(),
+                       ref.getCurrency())
+                   ).orElse(null);
     }
 
     private CmsAddress mapToCmsAddress(PisAddress pisAddress) {
@@ -186,42 +194,51 @@ public class PISConsentMapper {
                        cmsAddress.setPostalCode(adr.getPostalCode());
                        cmsAddress.setCountry(adr.getCountry());
                        return cmsAddress;
-                   }).orElse(new CmsAddress());
+                   }).orElse(null);
     }
 
     private TppInfo mapToTppInfo(PisTppInfo pisTppInfo) {
-        TppInfo tppInfo = new TppInfo();
+        return Optional.ofNullable(pisTppInfo)
+                   .map(tpp -> {
+                       TppInfo tppInfo = new TppInfo();
 
-        tppInfo.setRegistrationNumber(pisTppInfo.getRegistrationNumber());
-        tppInfo.setTppName(pisTppInfo.getTppName());
-        tppInfo.setTppRole(pisTppInfo.getTppRole());
-        tppInfo.setNationalCompetentAuthority(pisTppInfo.getNationalCompetentAuthority());
-        tppInfo.setRedirectUri(pisTppInfo.getRedirectUri());
-        tppInfo.setNokRedirectUri(pisTppInfo.getNokRedirectUri());
+                       tppInfo.setRegistrationNumber(tpp.getRegistrationNumber());
+                       tppInfo.setTppName(tpp.getTppName());
+                       tppInfo.setTppRole(tpp.getTppRole());
+                       tppInfo.setNationalCompetentAuthority(tpp.getNationalCompetentAuthority());
+                       tppInfo.setRedirectUri(tpp.getRedirectUri());
+                       tppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
+                       return tppInfo;
 
-        return tppInfo;
+                   }).orElse(null);
     }
 
     private PisAccountReference mapToPisAccountReference(CmsAccountReference cmsAccountReference) {
-        PisAccountReference pisAccountReference = new PisAccountReference();
-        pisAccountReference.setIban(cmsAccountReference.getIban());
-        pisAccountReference.setBban(cmsAccountReference.getBban());
-        pisAccountReference.setPan(cmsAccountReference.getPan());
-        pisAccountReference.setMaskedPan(cmsAccountReference.getMaskedPan());
-        pisAccountReference.setMsisdn(cmsAccountReference.getMsisdn());
-        pisAccountReference.setCurrency(cmsAccountReference.getCurrency());
+        return Optional.ofNullable(cmsAccountReference)
+                   .map(ref -> {
+                       PisAccountReference pisAccountReference = new PisAccountReference();
+                       pisAccountReference.setIban(cmsAccountReference.getIban());
+                       pisAccountReference.setBban(cmsAccountReference.getBban());
+                       pisAccountReference.setPan(cmsAccountReference.getPan());
+                       pisAccountReference.setMaskedPan(cmsAccountReference.getMaskedPan());
+                       pisAccountReference.setMsisdn(cmsAccountReference.getMsisdn());
+                       pisAccountReference.setCurrency(cmsAccountReference.getCurrency());
 
-        return pisAccountReference;
+                       return pisAccountReference;
+                   }).orElse(null);
     }
 
     private PisAddress mapToPisAddress(CmsAddress cmsAddress) {
-        PisAddress pisAddress = new PisAddress();
-        pisAddress.setStreet(cmsAddress.getStreet());
-        pisAddress.setBuildingNumber(cmsAddress.getBuildingNumber());
-        pisAddress.setCity(cmsAddress.getCity());
-        pisAddress.setPostalCode(cmsAddress.getPostalCode());
-        pisAddress.setCountry(cmsAddress.getCountry());
+        return Optional.ofNullable(cmsAddress)
+                   .map(adr -> {
+                       PisAddress pisAddress = new PisAddress();
+                       pisAddress.setStreet(adr.getStreet());
+                       pisAddress.setBuildingNumber(adr.getBuildingNumber());
+                       pisAddress.setCity(adr.getCity());
+                       pisAddress.setPostalCode(adr.getPostalCode());
+                       pisAddress.setCountry(adr.getCountry());
 
-        return pisAddress;
+                       return pisAddress;
+                   }).orElse(null);
     }
 }

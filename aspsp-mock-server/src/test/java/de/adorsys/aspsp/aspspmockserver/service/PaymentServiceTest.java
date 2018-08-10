@@ -85,9 +85,21 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void addPayment_Failure() {
+    public void addPayment_AmountsAreEqual() {
         //Given
         SpiSinglePayment expectedPayment = getSpiSinglePayment(100);
+
+        //When
+        Optional<SpiSinglePayment> actualPayment = paymentService.addPayment(expectedPayment);
+
+        //Then
+        assertThat(actualPayment).isNotNull();
+    }
+
+    @Test
+    public void addPayment_Failure() {
+        //Given
+        SpiSinglePayment expectedPayment = getSpiSinglePayment(101);
 
         //When
         Optional<SpiSinglePayment> actualPayment = paymentService.addPayment(expectedPayment);

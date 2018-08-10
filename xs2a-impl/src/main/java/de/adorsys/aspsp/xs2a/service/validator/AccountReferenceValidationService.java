@@ -8,15 +8,19 @@ import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountReferenceValidationService {
@@ -35,11 +39,30 @@ public class AccountReferenceValidationService {
     }
 
     private boolean isValidAccountReference(AccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
-        List<Boolean> list = supportedFields.stream()
-                                 .map(f -> f.isValid(reference))
-                                 .filter(Optional::isPresent)
-                                 .map(Optional::get)
-                                 .collect(Collectors.toList());
-        return list.contains(true) && !list.contains(false);
+        Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap = supportedFields.stream()
+                                                                                        .map(fld -> new Pair<>(fld, fld.isValid(reference)))
+                                                                                        .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        return areValidAllFields(validatedFieldsMap, reference);
+    }
+
+    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap, AccountReference reference) {
+
+        List<SupportedAccountReferenceField> validFields = getFilteredFields(validatedFieldsMap, true);
+        List<SupportedAccountReferenceField> invalidFields = getFilteredFields(validatedFieldsMap, false);
+
+        boolean areValid = !validFields.isEmpty() && invalidFields.isEmpty();
+
+        if (!areValid) {
+            invalidFields.forEach(err -> log.warn("Field {} is not valid in {} reference: ", err, reference));
+        }
+
+        return areValid;
+    }
+
+    private List<SupportedAccountReferenceField> getFilteredFields(Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap, boolean isValidFilter) {
+        return validatedFieldsMap.entrySet().stream()
+                   .filter(etr -> etr.getValue().isPresent() && etr.getValue().get() == isValidFilter)
+                   .map(Map.Entry::getKey)
+                   .collect(Collectors.toList());
     }
 }
