@@ -29,7 +29,7 @@ import lombok.Data;
 public class CreateConsentResp {
 
     @ApiModelProperty(value = "Authentication status of the consent", required = true)
-    private final ConsentStatus consentStatus;
+    private final String consentStatus;
 
     @ApiModelProperty(value = "Identification of the consent resource as it is used in the API structure", required = false)
     private final String consentId;

@@ -225,7 +225,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
-        assertThat(response.getBody()).isEqualTo(ConsentStatus.RECEIVED);
+        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.RECEIVED));
     }
 
     @Test

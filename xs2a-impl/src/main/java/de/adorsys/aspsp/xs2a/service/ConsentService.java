@@ -50,8 +50,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final AccountMapper accountMapper;
 
     /**
-     * @param request              body of create consent request carrying such parameters as AccountAccess, validity terms etc.
-     * @param psuId                String representing PSU identification at ASPSP
+     * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
+     * @param psuId   String representing PSU identification at ASPSP
      * @return CreateConsentResp representing the complete response to create consent request
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
      * account details or by getting account details from ASPSP by psuId and filling the appropriate fields in
@@ -76,7 +76,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                : null;
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(RECEIVED, consentId, null, null, null)).build()
+                   ? ResponseObject.<CreateConsentResp>builder().body(new CreateConsentResp(RECEIVED.getConsentStatus(), consentId, null, null, null)).build()
                    : ResponseObject.<CreateConsentResp>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
     }
 
@@ -85,10 +85,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * @return ConsentStatus
      * Returns status of requested consent
      */
-    public ResponseObject<ConsentStatus> getAccountConsentsStatusById(String consentId) {
+    public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
         return consentMapper.mapToConsentStatus(aisConsentService.getAccountConsentStatusById(consentId))
-                   .map(status -> ResponseObject.<ConsentStatus>builder().body(status).build())
-                   .orElse(ResponseObject.<ConsentStatus>builder()
+                   .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status)).build())
+                   .orElse(ResponseObject.<ConsentStatusResponse>builder()
                                .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
                                .build());
     }
@@ -196,7 +196,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private AccountAccess getAccessByPsuId(boolean isAllPSD2, String psuId) {
-        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountsByPsuId(psuId,  new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountsByPsuId(psuId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (CollectionUtils.isNotEmpty(refs)) {
             return isAllPSD2
                        ? new AccountAccess(refs, refs, refs, null, AccountAccessType.ALL_ACCOUNTS)
