@@ -26,14 +26,18 @@ import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 
 
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.*;
 
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -42,11 +46,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-
-import org.springframework.http.HttpEntity;
-
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -80,17 +79,39 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request$")
 
-    public void sendConsentRequest() {
+    public void sendConsentRequest()throws HttpClientErrorException, IOException {
         HttpEntity<CreateConsentReq> entity = getConsentRequestHttpEntity();
-        ResponseEntity<CreateConsentResponse> response = restTemplate.exchange(
-            context.getBaseUrl() + "/consents",
-            HttpMethod.POST,
-            entity,
-            CreateConsentResponse.class);
+        ResponseEntity<CreateConsentResponse> response;
+//            = restTemplate.exchange(
+//            context.getBaseUrl() + "/consents",
+//            HttpMethod.POST,
+//            entity,
+//            CreateConsentResponse.class);
 
-        context.setActualResponse(response);
+        try { restTemplate.exchange(
+                context.getBaseUrl() + "/consents",
+                HttpMethod.POST,
+                entity,
+                HashMap.class);
+        } catch (RestClientResponseException rex) {
+            handleRequestError(rex);
+        }
+
+
+
+   //     context.setActualResponse(response);
     }
 
+
+
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        ResponseEntity<CreateConsentResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+        context.setActualResponse(actualResponse);
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
+        context.setMessageError(messageError);
+    }
 
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
     public void checkResponseCode() {
@@ -111,6 +132,9 @@ public class ConsentRequestSteps {
         headers.add("Content-Type", "application/json");
         return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
     }
+
+
+
 
 
 }
