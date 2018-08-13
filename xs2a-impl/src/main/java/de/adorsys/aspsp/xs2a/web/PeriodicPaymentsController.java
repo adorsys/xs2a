@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -55,7 +56,7 @@ public class PeriodicPaymentsController {
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for periodic payments e.g. for a periodic SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers", required = true)
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
-        @RequestBody PeriodicPayment periodicPayment) {
+        @RequestBody @Valid PeriodicPayment periodicPayment) {
         Optional<MessageError> error = referenceValidationService.validateAccountReferences(periodicPayment.getAccountReferences());
         return responseMapper.created(
             error
