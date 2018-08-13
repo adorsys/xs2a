@@ -39,13 +39,14 @@ public class AccountReferenceValidationService {
     }
 
     private boolean isValidAccountReference(AccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
-        Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap = supportedFields.stream()
-                                                                                        .map(fld -> Pair.of(fld, fld.isValid(reference)))
-                                                                                        .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap = supportedFields.stream()
+                                                                              .map(fld -> Pair.of(fld, fld.isValid(reference)))
+                                                                              .filter(p -> p.getValue().isPresent())
+                                                                              .collect(Collectors.toMap(Pair::getKey, p -> p.getValue().get()));
         return areValidAllFields(validatedFieldsMap, reference);
     }
 
-    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap, AccountReference reference) {
+    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap, AccountReference reference) {
 
         List<SupportedAccountReferenceField> validFields = getFilteredFields(validatedFieldsMap, true);
         List<SupportedAccountReferenceField> invalidFields = getFilteredFields(validatedFieldsMap, false);
@@ -53,15 +54,15 @@ public class AccountReferenceValidationService {
         boolean areValid = !validFields.isEmpty() && invalidFields.isEmpty();
 
         if (!areValid) {
-            invalidFields.forEach(err -> log.warn("Field {} is not valid in {} reference: ", err, reference));
+            invalidFields.forEach(err -> log.warn("Field {} is not valid in reference: {}", err, reference));
         }
 
         return areValid;
     }
 
-    private List<SupportedAccountReferenceField> getFilteredFields(Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap, boolean isValidFilter) {
+    private List<SupportedAccountReferenceField> getFilteredFields(Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap, boolean isValidFilter) {
         return validatedFieldsMap.entrySet().stream()
-                   .filter(etr -> etr.getValue().isPresent() && etr.getValue().get() == isValidFilter)
+                   .filter(etr -> etr.getValue() == isValidFilter)
                    .map(Map.Entry::getKey)
                    .collect(Collectors.toList());
     }
