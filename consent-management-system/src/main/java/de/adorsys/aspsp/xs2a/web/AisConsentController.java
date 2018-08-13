@@ -18,8 +18,10 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.AISConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "ais/consent")
-@Api(value = "ais/consent", tags = "AIS, Consents", description = "Provides access to consent management system for AIS")
+@RequestMapping(path = "api/v1/ais/consent")
+@Api(value = "api/v1/ais/consent", tags = "AIS, Consents", description = "Provides access to consent management system for AIS")
 public class AisConsentController {
     private final AISConsentService aisConsentService;
 
@@ -39,9 +41,9 @@ public class AisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 204, message = "No Content")})
-    public ResponseEntity<String> createConsent(@RequestBody AisConsentRequest request) {
+    public ResponseEntity<CreateAisConsentResponse> createConsent(@RequestBody CreateAisConsentRequest request) {
         return aisConsentService.createConsent(request)
-                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                   .map(consentId -> new ResponseEntity<>(new CreateAisConsentResponse(consentId), HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
@@ -70,11 +72,11 @@ public class AisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<ConsentStatus> getConsentStatusById(
+    public ResponseEntity<ConsentStatusResponse> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getConsentStatusById(consentId)
-                   .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
+                   .map(status -> new ResponseEntity<>(new ConsentStatusResponse(status), HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
