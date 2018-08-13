@@ -42,7 +42,7 @@ import java.util.Set;
 public class SinglePayment implements AccountReferenceCollector {
 
     @Size(max = 35)
-    @ApiModelProperty(value = "end to end authentication", example = "RI-123456789")
+    @ApiModelProperty(value = "end to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
     @NotNull

@@ -32,7 +32,7 @@ public class PisPayment {
     @ApiModelProperty(value = "Payment Id", required = true, example = "32454656712432")
     private String paymentId;
 
-    @ApiModelProperty(value = "End to end authentication", example = "RI-123456789")
+    @ApiModelProperty(value = "End to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
     @ApiModelProperty(value = "Debtor account", required = true)

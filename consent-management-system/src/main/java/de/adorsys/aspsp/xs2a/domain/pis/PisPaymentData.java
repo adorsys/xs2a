@@ -39,7 +39,7 @@ public class PisPaymentData {
     private String paymentId;
 
     @Column(name = "end_to_end_identification")
-    @ApiModelProperty(value = "End to end authentication", example = "RI-123456789")
+    @ApiModelProperty(value = "End to end identification", example = "RI-123456789")
     private String endToEndIdentification;
 
     @PrimaryKeyJoinColumn
@@ -77,6 +77,7 @@ public class PisPaymentData {
     @JoinColumn(name="creditor_address_id")
     private PisAddress creditorAddress;
 
+    @Column(name = "remittance_information_unstructured")
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
@@ -114,7 +115,6 @@ public class PisPaymentData {
     @ApiModelProperty(name = "endDate", example = "2018-03-03")
     private LocalDate endDate;
 
-    @Column(name = "frequency")
     @ApiModelProperty(name = "frequency", example = "ANNUAL")
     private String frequency;
 

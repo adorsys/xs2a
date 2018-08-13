@@ -34,7 +34,6 @@ public class PisRemittance {
     @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq")
     private Long id;
 
-    @Column(name = "reference")
     @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
 

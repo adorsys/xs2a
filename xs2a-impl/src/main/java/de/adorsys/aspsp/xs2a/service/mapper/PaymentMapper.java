@@ -301,7 +301,7 @@ public class PaymentMapper {
 
             return objectMapper.readValue(decodedJson, TppInfo.class);
         } catch (Exception e) {
-            log.warn(" Error with converting TppInfo from certificate {}", tppSignatureCertificate);
+            log.warn("Error with converting TppInfo from certificate {}", tppSignatureCertificate);
             return null;
         }
     }

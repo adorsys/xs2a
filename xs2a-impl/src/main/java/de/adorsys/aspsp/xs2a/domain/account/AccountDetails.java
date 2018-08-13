@@ -49,7 +49,7 @@ public class AccountDetails {
     @Size(max = 35)
     private final String pan;
 
-    @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number.", example = "2356xxxxxx1234")
+    @ApiModelProperty(value = "MASKEDPAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxxxx1234")
     @Size(max = 35)
     private final String maskedPan;
 

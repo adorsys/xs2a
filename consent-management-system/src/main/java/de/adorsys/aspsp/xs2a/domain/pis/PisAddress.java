@@ -34,7 +34,6 @@ public class PisAddress {
     @SequenceGenerator(name = "pis_address_generator", sequenceName = "pis_address_id_seq")
     private Long id;
 
-    @Column(name = "street")
     @ApiModelProperty(value = "Street", example = "Herrnstraße")
     private String street;
 
@@ -42,7 +41,6 @@ public class PisAddress {
     @ApiModelProperty(value = "Building number", example = "123-34")
     private String buildingNumber;
 
-    @Column(name = "city")
     @ApiModelProperty(value = "City", example = "Nürnberg")
     private String city;
 
@@ -50,7 +48,6 @@ public class PisAddress {
     @ApiModelProperty(value = "Postal code", example = "90431")
     private String postalCode;
 
-    @Column(name = "country")
     @ApiModelProperty(value = "Country")
     private String country;
 }

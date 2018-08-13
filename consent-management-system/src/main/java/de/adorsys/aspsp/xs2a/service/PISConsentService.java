@@ -34,7 +34,7 @@ public class PISConsentService {
     private final PISConsentMapper pisConsentMapper;
 
     /**
-     * Provides creation payments
+     * Creates new pis consent with full information about payment
      *
      * @param request  Consists information about payments.
      * @return Response containing identifier of consent
@@ -57,7 +57,7 @@ public class PISConsentService {
     }
 
     /**
-     * Read full information of pis consent by consent identifier
+     * Reads full information of pis consent by consent identifier
      *
      * @param consentId String representation of pis consent identifier
      * @return Response containing full information about pis consent
@@ -68,9 +68,9 @@ public class PISConsentService {
     }
 
     /**
-     * Update pis consent status by consent identifier
+     * Updates pis consent status by consent identifier
      *
-     * @param consentId
+     * @param consentId String representation of pis consent identifier
      * @param status new consent status
      * @return Response containing result of status changing
      */
