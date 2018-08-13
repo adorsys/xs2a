@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.consent;
+package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import lombok.Value;
 
-public enum ConsentStatus {
-    RECEIVED("received"),
-    REJECTED("rejected"),
-    VALID("valid"),
-    REVOKED_BY_PSU("revoked by psu"),
-    EXPIRED("expired"),
-    TERMINATED_BY_TPP("terminated by tpp");
-
-    private String consentStatus;
-
-    @JsonCreator
-    ConsentStatus(String status) {
-        this.consentStatus = status;
-    }
-
-    public String getConsentStatus() {
-        return consentStatus;
-    }
+@Value
+@ApiModel(description = "Transactions Status response", value = "transactionStatus")
+public class TransactionStatusResponse {
+    private TransactionStatus transactionStatus;
 }
