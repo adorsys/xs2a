@@ -16,31 +16,27 @@
 
 package de.adorsys.aspsp.aspspmockserver.config.email;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import java.util.Map;
 import java.util.Properties;
 
+import static de.adorsys.aspsp.aspspmockserver.config.email.EmailConfigurationProperties.MAIL_SMTP_AUTH_PROPERTY;
+import static de.adorsys.aspsp.aspspmockserver.config.email.EmailConfigurationProperties.MAIL_SMTP_STARTTLS_ENABLED_PROPERTY;
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class EmailConfiguration {
-    @Autowired
-    private EmailConfigurationProperties emailConfigurationProperties;
-
-    //TODO Move to EmailConfigurationProperties: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/176
-    @Value("#{ new Boolean('${spring.mail.properties.mail.smtp.auth}') }")
-    private boolean auth;
-
-    @Value("#{ new Boolean('${spring.mail.properties.mail.smtp.starttls.enable}') }")
-    private boolean isStarttlsEnable;
+    private final EmailConfigurationProperties emailConfigurationProperties;
 
     @Bean
     public JavaMailSender javaMailSender() {
@@ -59,8 +55,12 @@ public class EmailConfiguration {
 
     private Properties buildMailProperties() {
         Properties props = new Properties();
-        props.put("mail.smtp.auth", auth);
-        props.put("mail.smtp.starttls.enable", isStarttlsEnable);
+
+        Map<String, String> properties = emailConfigurationProperties.getProperties();
+        props.put(MAIL_SMTP_AUTH_PROPERTY, Boolean.parseBoolean(properties.get(MAIL_SMTP_AUTH_PROPERTY)));
+        props.put(MAIL_SMTP_STARTTLS_ENABLED_PROPERTY,
+            Boolean.parseBoolean(properties.get(MAIL_SMTP_STARTTLS_ENABLED_PROPERTY)));
+
         return props;
     }
 
@@ -71,7 +71,10 @@ public class EmailConfiguration {
     }
 
     private boolean isAuthParametersExist() {
-        return !auth || isNotBlank(emailConfigurationProperties.getUsername()) &&
-                            isNotBlank(emailConfigurationProperties.getPassword());
+        Map<String, String> properties = emailConfigurationProperties.getProperties();
+        return MapUtils.isNotEmpty(properties)
+                   && !Boolean.parseBoolean(properties.get(MAIL_SMTP_AUTH_PROPERTY))
+                   || isNotBlank(emailConfigurationProperties.getUsername())
+                   && isNotBlank(emailConfigurationProperties.getPassword());
     }
 }
