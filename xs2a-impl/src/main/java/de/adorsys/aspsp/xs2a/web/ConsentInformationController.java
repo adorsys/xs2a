@@ -108,7 +108,7 @@ public class ConsentInformationController {
     @ApiOperation(value = " Delete information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),
-        @ApiResponse(code = 404, message = "Not Found")})
+        @ApiResponse(code = 403, message = "The Consent-ID cannot be matched by the ASPSP relative to the TPP.")})
     @DeleteMapping(path = "/{consent-id}")
     @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")
     public ResponseEntity<Void> deleteAccountConsent(
