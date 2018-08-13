@@ -34,5 +34,6 @@ public class RestException extends RuntimeException {
     public RestException(MessageErrorCode messageErrorCode) {
         this.messageErrorCode = messageErrorCode;
         this.httpStatus = HttpStatus.valueOf(messageErrorCode.getCode());
+        this.message = httpStatus.getReasonPhrase();
     }
 }
