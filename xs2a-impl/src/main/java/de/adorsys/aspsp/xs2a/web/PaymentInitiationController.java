@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Slf4j
@@ -64,7 +65,7 @@ public class PaymentInitiationController {
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for payments e.g. for a SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "singlePayment", required = true)
-        @RequestBody SinglePayment singlePayment) {
+        @RequestBody @Valid SinglePayment singlePayment) {
         Optional<MessageError> error = referenceValidationService.validateAccountReferences(singlePayment.getAccountReferences());
         return responseMapper.created(
             error
