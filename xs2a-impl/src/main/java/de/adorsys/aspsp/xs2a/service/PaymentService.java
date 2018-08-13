@@ -100,7 +100,7 @@ public class PaymentService {
         List<PaymentInitialisationResponse> invalidPayments = new ArrayList<>();
         for (SinglePayment payment : payments) {
             if (!payment.isValidExecutionDateAndTime()) {
-                log.warn("Initiate bulk payment has an error: {} . Payment : {}", EXECUTION_DATE_INVALID, payment);
+                log.warn("Bulk payment initiation has an error: {}. Payment : {}", EXECUTION_DATE_INVALID, payment);
                 paymentMapper.mapToPaymentInitResponseFailedPayment(payment, EXECUTION_DATE_INVALID)
                     .map(invalidPayments::add);
             } else {
@@ -152,7 +152,7 @@ public class PaymentService {
     }
 
     private ResponseObject<PaymentInitialisationResponse> getPaymentFailedErrorResponse() {
-        log.warn("Initiate payment has an error: {}", PAYMENT_FAILED);
+        log.warn("Payment initiation has an error: {}", PAYMENT_FAILED);
 
         return ResponseObject.<PaymentInitialisationResponse>builder()
                    .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, PAYMENT_FAILED)))
@@ -160,7 +160,7 @@ public class PaymentService {
     }
 
     private ResponseObject<PaymentInitialisationResponse> getExecutionDateInvalidErrorResponse() {
-        log.warn("Initiate payment has an error: {}", EXECUTION_DATE_INVALID);
+        log.warn("Payment initiation has an error: {}", EXECUTION_DATE_INVALID);
 
         return ResponseObject.<PaymentInitialisationResponse>builder()
                    .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))

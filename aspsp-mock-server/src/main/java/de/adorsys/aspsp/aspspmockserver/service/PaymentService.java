@@ -66,7 +66,7 @@ public class PaymentService {
             return Optional.ofNullable(paymentMapper.mapToSpiSinglePayment(saved));
         }
 
-        log.warn("Insufficient funds in order to payment {} on account {}", payment.getInstructedAmount(), payment.getDebtorAccount());
+        log.warn("Insufficient funds for paying {} on account {}", payment.getInstructedAmount(), payment.getDebtorAccount());
         return Optional.empty();
     }
 

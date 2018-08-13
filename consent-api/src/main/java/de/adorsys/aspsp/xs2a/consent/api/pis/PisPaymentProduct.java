@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
