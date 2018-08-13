@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,7 +34,8 @@ public class TppMessageInformation {
 	private MessageCategory category;
 
 	@ApiModelProperty(value = "Code", required = true)
-	private MessageErrorCode code;
+    @JsonProperty(value = "code")
+	private MessageErrorCode messageErrorCode;
 
     @ApiModelProperty(value = "Path")
     private String path;
@@ -42,9 +44,9 @@ public class TppMessageInformation {
     @Size(max = 512)
 	private String text;
 
-    public TppMessageInformation(MessageCategory category, MessageErrorCode code) {
+    public TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode) {
         this.category = category;
-        this.code = code;
+        this.messageErrorCode = messageErrorCode;
     }
 
     public TppMessageInformation path(String path){
