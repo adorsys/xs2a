@@ -45,11 +45,11 @@ public class AccountDetails {
     @ApiModelProperty(value = "BBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. ", example = "89370400440532013000")
     private final String bban;
 
-    @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements", example = "23456 5746 3217 1234")
+    @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements", example = "2356 5746 3217 1234")
     @Size(max = 35)
     private final String pan;
 
-    @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number.", example = "111122xxxxxx4444")
+    @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number.", example = "2356xxxxxx1234")
     @Size(max = 35)
     private final String maskedPan;
 

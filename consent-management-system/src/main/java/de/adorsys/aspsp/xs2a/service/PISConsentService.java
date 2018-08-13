@@ -33,22 +33,47 @@ public class PISConsentService {
     private final PisConsentRepository pisConsentRepository;
     private final PISConsentMapper pisConsentMapper;
 
+    /**
+     * Provides creation payments
+     *
+     * @param request  Consists information about payments.
+     * @return Response containing identifier of consent
+     */
     public Optional<String> createPaymentConsent(PisConsentRequest request) {
         return pisConsentMapper.mapToPisConsent(request)
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
+    /**
+     * Retrieves consent status from pis consent by consent identifier
+     *
+     * @param consentId  String representation of pis consent identifier
+     * @return Information about the status of a consent
+     */
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
 
+    /**
+     * Read full information of pis consent by consent identifier
+     *
+     * @param consentId String representation of pis consent identifier
+     * @return Response containing full information about pis consent
+     */
     public Optional<PisConsentResponse> getConsentById(String consentId) {
         return getPisConsentById(consentId)
                    .flatMap(pisConsentMapper::mapToPisConsentResponse);
     }
 
+    /**
+     * Update pis consent status by consent identifier
+     *
+     * @param consentId
+     * @param status new consent status
+     * @return Response containing result of status changing
+     */
     public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         return getPisConsentById(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))

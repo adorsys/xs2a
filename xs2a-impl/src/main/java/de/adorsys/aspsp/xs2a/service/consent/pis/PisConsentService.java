@@ -44,6 +44,7 @@ public class PisConsentService {
      *
      * @param singlePayment  Payment data which will be stored in Pis consent
      * @param paymentId      Payment identifier
+     * @param tppInfo        Information about tpp in order to store in cms
      * @param paymentProduct Payment product endpoint for payments e.g. for a SEPA Credit Transfer
      * @return String identifier of created PIS consent for single payment
      */
@@ -58,6 +59,8 @@ public class PisConsentService {
      * Sends a POST request to CMS to store created PIS consent for bulk payment
      *
      * @param paymentIdentifierMap Map of payments data which will be stored in Pis consent
+     * @param tppInfo        Information about tpp in order to store in cms
+     * @param paymentProduct Payment product endpoint for payments e.g. for a SEPA Credit Transfer
      * @return String identifier of created PIS consent for bulk payment
      */
     public String createPisConsentForBulkPaymentAndGetId(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, String paymentProduct) {
@@ -71,6 +74,9 @@ public class PisConsentService {
      * Sends a POST request to CMS to store created PIS consent for periodic payment
      *
      * @param periodicPayment Periodic payment data which will be stored in Pis consent
+     * @param paymentId      Payment identifier
+     * @param tppInfo        Information about tpp in order to store in cms
+     * @param paymentProduct Payment product endpoint for payments e.g. for a SEPA Credit Transfer
      * @return String identifier of created PIS consent periodic payment
      */
     public String createPisConsentForPeriodicPaymentAndGetId(PeriodicPayment periodicPayment, String paymentId, TppInfo tppInfo, String paymentProduct) {

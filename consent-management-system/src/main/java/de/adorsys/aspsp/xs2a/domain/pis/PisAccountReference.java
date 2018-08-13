@@ -42,11 +42,11 @@ public class PisAccountReference {
     private String bban;
 
     @Column(name = "pan")
-    @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements.", example = "23456 5746 3217 1234")
+    @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements.", example = "2356 5746 3217 1234")
     private String pan;
 
     @Column(name = "maskedPan")
-    @ApiModelProperty(value = "MASKEDPAN: Primary Account Number (PAN) of a card in a masked form.", example = "23456xxxxxx1234")
+    @ApiModelProperty(value = "MASKEDPAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxx1234")
     private String maskedPan;
 
     @Column(name = "msisdn")
