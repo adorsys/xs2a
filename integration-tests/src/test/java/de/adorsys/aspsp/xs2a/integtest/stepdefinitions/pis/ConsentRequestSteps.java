@@ -59,6 +59,7 @@ public class ConsentRequestSteps {
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
+
     @Autowired
     private Context<CreateConsentReq, HashMap, CreateConsentResp> context;
 
@@ -77,10 +78,9 @@ public class ConsentRequestSteps {
     }
 
     @When("^PSU sends the create consent request$")
+
     public void sendConsentRequest() {
-
         HttpEntity<CreateConsentReq> entity = getConsentRequestHttpEntity();
-
         ResponseEntity<CreateConsentResp> response = restTemplate.exchange(
             context.getBaseUrl() + "/consents",
             HttpMethod.POST,
@@ -96,6 +96,7 @@ public class ConsentRequestSteps {
 
         ResponseEntity<CreateConsentResp> actualResponse = context.getActualResponse();
         Map givenResponseBody = context.getTestData().getResponse().getBody();
+
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.get("consentStatus")));
