@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,7 +37,7 @@ public class PisConsentResponse {
     private PisPaymentProduct paymentProduct;
 
     @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
-    private PisPaymentService paymentService;
+    private PisPaymentType paymentService;
 
     @ApiModelProperty(value = "Tpp information", required = true)
     private CmsTppInfo tppInfo;

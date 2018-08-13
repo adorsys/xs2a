@@ -22,7 +22,7 @@ import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
 import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
@@ -47,7 +47,7 @@ public class PisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment, paymentId)));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
-        request.setPaymentService(PisPaymentService.PERIODIC);
+        request.setPaymentService(PisPaymentType.PERIODIC);
         request.setTppInfo(mapToTppInfo(tppInfo));
 
         return request;
@@ -57,7 +57,7 @@ public class PisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToPisPaymentForBulkPayment(paymentIdentifierMap));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
-        request.setPaymentService(PisPaymentService.BULK);
+        request.setPaymentService(PisPaymentType.BULK);
         request.setTppInfo(mapToTppInfo(tppInfo));
 
         return request;
@@ -74,7 +74,7 @@ public class PisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment, paymentId)));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
-        request.setPaymentService(PisPaymentService.SINGLE);
+        request.setPaymentService(PisPaymentType.SINGLE);
         request.setTppInfo(mapToTppInfo(tppInfo));
 
         return request;

@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,8 +35,8 @@ public class PisConsentRequest {
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
     private PisPaymentProduct paymentProduct;
 
-    @ApiModelProperty(value = "Payment service: bulk-payment, single-payment or periodic-payment.", required = true, example = "single-payment")
-    private PisPaymentService paymentService;
+    @ApiModelProperty(value = "Payment service: bulk, single or periodic.", required = true, example = "single")
+    private PisPaymentType paymentService;
 
     @ApiModelProperty(value = "Tpp information", required = true)
     private CmsTppInfo tppInfo;

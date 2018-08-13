@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.domain.pis;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentService;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -47,14 +47,14 @@ public class PisConsent {
     private List<PisPaymentData> payments;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="tpp_info_id")
+    @JoinColumn(name = "tpp_info_id")
     @ApiModelProperty(value = "Information about TPP", required = true)
     private PisTppInfo pisTppInfo;
 
     @Column(name = "pis_payment_service", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
-    private PisPaymentService pisPaymentService;
+    private PisPaymentType pisPaymentService;
 
     @Column(name = "pis_payment_product", nullable = false)
     @Enumerated(value = EnumType.STRING)
