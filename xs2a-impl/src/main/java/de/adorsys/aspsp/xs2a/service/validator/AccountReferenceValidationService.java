@@ -8,9 +8,9 @@ import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import javafx.util.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class AccountReferenceValidationService {
 
     private boolean isValidAccountReference(AccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
         Map<SupportedAccountReferenceField, Optional<Boolean>> validatedFieldsMap = supportedFields.stream()
-                                                                                        .map(fld -> new Pair<>(fld, fld.isValid(reference)))
+                                                                                        .map(fld -> Pair.of(fld, fld.isValid(reference)))
                                                                                         .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         return areValidAllFields(validatedFieldsMap, reference);
     }
