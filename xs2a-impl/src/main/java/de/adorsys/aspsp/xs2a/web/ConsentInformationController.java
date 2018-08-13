@@ -18,10 +18,7 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
-import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -48,7 +45,7 @@ public class ConsentInformationController {
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class),
+        @ApiResponse(code = 201, message = "OK", response = CreateConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping
     @ApiImplicitParams({
@@ -61,7 +58,7 @@ public class ConsentInformationController {
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
-    public ResponseEntity<CreateConsentResp> createAccountConsent(
+    public ResponseEntity<CreateConsentResponse> createAccountConsent(
         @RequestHeader(name = "psu-id", required = false) String psuId,
         @Valid @RequestBody CreateConsentReq createConsent) {
         Set<AccountReference> references = createConsent.getAccountReferences();
@@ -70,7 +67,7 @@ public class ConsentInformationController {
                                            : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
         return responseMapper.created(
             error
-                .map(e -> ResponseObject.<CreateConsentResp>builder().fail(e).build())
+                .map(e -> ResponseObject.<CreateConsentResponse>builder().fail(e).build())
                 .orElse(consentService.createAccountConsentsWithResponse(createConsent, psuId)));
     }
 
@@ -84,10 +81,10 @@ public class ConsentInformationController {
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
-    public ResponseEntity<ConsentStatus> getAccountConsentsStatusById(
+    public ResponseEntity<ConsentStatusResponse> getAccountConsentsStatusById(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created resource", required = true)
         @PathVariable("consent-id") String consentId) {
-        ResponseObject<ConsentStatus> response = consentService.getAccountConsentsStatusById(consentId);
+        ResponseObject<ConsentStatusResponse> response = consentService.getAccountConsentsStatusById(consentId);
         return responseMapper.ok(response);
     }
 

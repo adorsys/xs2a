@@ -26,10 +26,10 @@ import lombok.Data;
 @Data
 @ApiModel(description = "Response for the create account information consent request in the Account service")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateConsentResp {
+public class CreateConsentResponse {
 
     @ApiModelProperty(value = "Authentication status of the consent", required = true)
-    private final ConsentStatus consentStatus;
+    private final String consentStatus;
 
     @ApiModelProperty(value = "Identification of the consent resource as it is used in the API structure", required = false)
     private final String consentId;

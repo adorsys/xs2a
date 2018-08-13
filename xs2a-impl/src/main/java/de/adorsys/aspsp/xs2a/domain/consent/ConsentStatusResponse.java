@@ -16,24 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import lombok.Value;
 
-public enum ConsentStatus {
-    RECEIVED("received"),
-    REJECTED("rejected"),
-    VALID("valid"),
-    REVOKED_BY_PSU("revoked by psu"),
-    EXPIRED("expired"),
-    TERMINATED_BY_TPP("terminated by tpp");
-
+@Value
+@ApiModel(description = "Consent Status response", value = "consentStatus")
+public class ConsentStatusResponse {
     private String consentStatus;
 
-    @JsonCreator
-    ConsentStatus(String status) {
-        this.consentStatus = status;
-    }
-
-    public String getConsentStatus() {
-        return consentStatus;
+    public ConsentStatusResponse(ConsentStatus consentStatus) {
+        this.consentStatus = consentStatus.getConsentStatus();
     }
 }

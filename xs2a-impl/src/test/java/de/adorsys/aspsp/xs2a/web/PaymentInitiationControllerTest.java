@@ -19,10 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
@@ -82,9 +79,9 @@ public class PaymentInitiationControllerTest {
     @Before
     public void setUpPaymentServiceMock() throws IOException {
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
+            .thenReturn(ResponseObject.<TransactionStatusResponse>builder().body(new TransactionStatusResponse(TransactionStatus.ACCP)).build());
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+            .thenReturn(ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPaymentInitiation(any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
@@ -97,7 +94,7 @@ public class PaymentInitiationControllerTest {
         TransactionStatus expectedTransactionStatus = TransactionStatus.ACCP;
 
         //When:
-        ResponseEntity<TransactionStatus> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
+        ResponseEntity<TransactionStatusResponse> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
 
         //Then:
         HttpStatus actualHttpStatus = actualResponse.getStatusCode();
@@ -113,7 +110,7 @@ public class PaymentInitiationControllerTest {
         HttpStatus expectedHttpStatus = FORBIDDEN;
 
         //When:
-        ResponseEntity<TransactionStatus> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
+        ResponseEntity<TransactionStatusResponse> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), WRONG_PAYMENT_ID);
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedHttpStatus);
