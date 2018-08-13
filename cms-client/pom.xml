@@ -27,7 +27,7 @@
 
     <properties>
         <jackson.version>2.9.6</jackson.version>
-        <commons-logging>1.2</commons-logging>
+        <commons.logging.version>1.2</commons.logging.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>${commons-logging}</version>
+            <version>${commons.logging.version}</version>
         </dependency>
 
         <dependency>

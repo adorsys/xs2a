@@ -21,10 +21,10 @@ import org.apache.http.client.methods.HttpRequestBase;
 public interface HttpRequestBody {
 
     default <R> HttpRequestBase getHttpRequest(R requestBody) {
-        throw new IllegalArgumentException("Has to be implemented");
+        throw new UnsupportedOperationException("This method has to be overridden before usage");
     }
 
     default HttpRequestBase getHttpRequest() {
-        throw new IllegalArgumentException("Has to be implemented");
+        throw new UnsupportedOperationException("This method has to be overridden before usage");
     }
 }

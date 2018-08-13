@@ -53,7 +53,7 @@ public abstract class AbstractServiceInvoker {
         T requestBody = restRequestMethod.requestBody();
 
         HttpRequestBase requestBase = requestBody != null
-                                          ? httpMethod.getHttpRequest(restRequestMethod.requestBody())
+                                          ? httpMethod.getHttpRequest(requestBody)
                                           : httpMethod.getHttpRequest();
         requestBase.setConfig(requestConfig);
         requestBase.setURI(buildFullPath(restRequestMethod));

@@ -25,15 +25,15 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractRequestMethod<I, R> implements RestRequestMethod<I, R> {
+public abstract class AbstractRequestMethod<T, R> implements RestRequestMethod<T, R> {
     private final Class<R> responseClass;
-    private final I requestObject;
+    private final T requestObject;
     private final HttpMethod httpMethod;
     private final String path;
     private HttpUriParams uriParams;
 
     @SuppressWarnings("unchecked")
-    public AbstractRequestMethod(final I requestObject, final HttpMethod httpMethod, final String path) {
+    public AbstractRequestMethod(final T requestObject, final HttpMethod httpMethod, final String path) {
         ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
         responseClass = (Class<R>) genericSuperclass.getActualTypeArguments()[1];
         this.requestObject = requestObject;
@@ -41,7 +41,7 @@ public abstract class AbstractRequestMethod<I, R> implements RestRequestMethod<I
         this.path = path;
     }
 
-    public AbstractRequestMethod(final I requestObject, final HttpMethod httpMethod, final String path, HttpUriParams uriParams) {
+    public AbstractRequestMethod(final T requestObject, final HttpMethod httpMethod, final String path, HttpUriParams uriParams) {
         this(requestObject, httpMethod, path);
         this.uriParams = uriParams;
     }
@@ -57,7 +57,7 @@ public abstract class AbstractRequestMethod<I, R> implements RestRequestMethod<I
     }
 
     @Override
-    public I requestBody() {
+    public T requestBody() {
         return this.requestObject;
     }
 

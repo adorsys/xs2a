@@ -48,9 +48,9 @@ public final class ObjectMapperUtil {
 
     public static <T> Optional<String> toJson(final T object) {
         try {
-            return object != null
-                       ? Optional.ofNullable(mapper.writeValueAsString(object))
-                       : Optional.empty();
+            return object == null
+                       ? Optional.empty()
+                       : Optional.ofNullable(mapper.writeValueAsString(object));
         } catch (JsonProcessingException e) {
             logger.error("Can't convert object to json");
         }
@@ -59,9 +59,9 @@ public final class ObjectMapperUtil {
 
     public static <T> Optional<T> toObject(final String json, final Class<T> target) {
         try {
-            return json != null
-                       ? Optional.ofNullable(mapper.readValue(json, target))
-                       : Optional.empty();
+            return json == null
+                       ? Optional.empty()
+                       : Optional.ofNullable(mapper.readValue(json, target));
         } catch (IOException e) {
             logger.error("Can't convert json to object");
         }

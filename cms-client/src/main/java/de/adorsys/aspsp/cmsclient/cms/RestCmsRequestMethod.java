@@ -20,9 +20,9 @@ import de.adorsys.aspsp.cmsclient.core.AbstractRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 
-public class RestCmsRequestMethod <I, R> extends AbstractRequestMethod<I, R> {
+public class RestCmsRequestMethod <T, R> extends AbstractRequestMethod<T, R> {
 
-    protected RestCmsRequestMethod(final I requestObject, final HttpMethod httpMethod, final String methodPath) {
+    protected RestCmsRequestMethod(final T requestObject, final HttpMethod httpMethod, final String methodPath) {
         super(requestObject, httpMethod, methodPath);
     }
 
