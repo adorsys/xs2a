@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 
 
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 
@@ -79,29 +78,30 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request$")
 
-    public void sendConsentRequest()throws HttpClientErrorException, IOException {
+    public void sendConsentRequest() throws HttpClientErrorException, IOException {
         HttpEntity<CreateConsentReq> entity = getConsentRequestHttpEntity();
         ResponseEntity<CreateConsentResponse> response;
+        entity.getBody().setValidUntil(entity.getBody().getValidUntil().plusDays(7));
 //            = restTemplate.exchange(
 //            context.getBaseUrl() + "/consents",
 //            HttpMethod.POST,
 //            entity,
 //            CreateConsentResponse.class);
 
-        try { restTemplate.exchange(
+//        try {
+            response=restTemplate.exchange(
                 context.getBaseUrl() + "/consents",
                 HttpMethod.POST,
                 entity,
-                HashMap.class);
-        } catch (RestClientResponseException rex) {
-            handleRequestError(rex);
-        }
+                CreateConsentResponse.class);
+                context.setActualResponse(response);
+//        } catch (RestClientResponseException rex) {
+//            handleRequestError(rex);
+//        }
 
 
-
-   //     context.setActualResponse(response);
+            context.setActualResponse(response);
     }
-
 
 
     private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
@@ -132,9 +132,6 @@ public class ConsentRequestSteps {
         headers.add("Content-Type", "application/json");
         return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
     }
-
-
-
 
 
 }
