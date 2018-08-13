@@ -26,7 +26,7 @@ import lombok.Data;
 @Data
 @ApiModel(description = "Response for the create account information consent request in the Account service")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateConsentResp {
+public class CreateConsentResponse {
 
     @ApiModelProperty(value = "Authentication status of the consent", required = true)
     private final String consentStatus;

@@ -79,7 +79,7 @@ public class ConsentInformationControllerTest {
 
         //When:
         ResponseEntity responseEntity = consentInformationController.createAccountConsent(CORRECT_PSU_ID, consentRequest);
-        CreateConsentResp resp = (CreateConsentResp) responseEntity.getBody();
+        CreateConsentResponse resp = (CreateConsentResponse) responseEntity.getBody();
 
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -158,7 +158,7 @@ public class ConsentInformationControllerTest {
     private ResponseObject createConsentResponse(String consentId) {
         return isEmpty(consentId)
                    ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.builder().body(new CreateConsentResp(ConsentStatus.RECEIVED.getConsentStatus(), consentId, null, new Links(), null)).build();
+                   : ResponseObject.builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getConsentStatus(), consentId, null, new Links(), null)).build();
     }
 
     private ResponseObject getConsent(String consentId) {

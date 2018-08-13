@@ -45,7 +45,7 @@ public class ConsentInformationController {
 
     @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "OK", response = CreateConsentResp.class),
+        @ApiResponse(code = 201, message = "OK", response = CreateConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping
     @ApiImplicitParams({
@@ -58,7 +58,7 @@ public class ConsentInformationController {
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
-    public ResponseEntity<CreateConsentResp> createAccountConsent(
+    public ResponseEntity<CreateConsentResponse> createAccountConsent(
         @RequestHeader(name = "psu-id", required = false) String psuId,
         @Valid @RequestBody CreateConsentReq createConsent) {
         Set<AccountReference> references = createConsent.getAccountReferences();
@@ -67,7 +67,7 @@ public class ConsentInformationController {
                                            : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
         return responseMapper.created(
             error
-                .map(e -> ResponseObject.<CreateConsentResp>builder().fail(e).build())
+                .map(e -> ResponseObject.<CreateConsentResponse>builder().fail(e).build())
                 .orElse(consentService.createAccountConsentsWithResponse(createConsent, psuId)));
     }
 
