@@ -85,7 +85,7 @@ public enum MessageErrorCode {
     INTERNAL_SERVER_ERROR(500),
     UNAUTHORIZED(401);
 
-    private static Map<String, MessageErrorCode> container = new HashMap();
+    private static Map<String, MessageErrorCode> container = new HashMap<>();
 
     static {
         Arrays.stream(values())

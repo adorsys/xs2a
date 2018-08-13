@@ -14,33 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.cmsclient;
+package de.adorsys.aspsp.cmsclient.cms.model.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
+import de.adorsys.aspsp.cmsclient.core.HttpMethod;
+import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
 
-public class AccountInformationService {
+public class GetAisConsentMethod extends RestCmsRequestMethod<Void, AisAccountConsent> {
+    private static final String GET_AIS_CONSENT_BY_ID = "api/v1/ais/consent/{consent-id}";
 
-    public String createConsent(AisConsentRequest request) {
-        return "";
-    }
-
-    public void saveConsentActionLog(ConsentActionRequest request) {
-
-    }
-
-    public AisAccountConsent getConsentById(String consentId) {
-        return null;
-    }
-
-
-    public ConsentStatus getConsentStatusById() {
-        return null;
-    }
-
-
-    public void updateConsentStatus() {
+    public GetAisConsentMethod(HttpUriParams uriParams) {
+        super(HttpMethod.GET, GET_AIS_CONSENT_BY_ID, uriParams);
     }
 }
