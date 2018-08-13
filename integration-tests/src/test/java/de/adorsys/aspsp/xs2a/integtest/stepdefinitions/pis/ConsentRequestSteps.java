@@ -23,8 +23,9 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResp;
 
+
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -61,7 +62,7 @@ public class ConsentRequestSteps {
 
 
     @Autowired
-    private Context<CreateConsentReq, HashMap, CreateConsentResp> context;
+    private Context<CreateConsentReq, HashMap, CreateConsentResponse> context;
 
 
     @Autowired
@@ -81,11 +82,11 @@ public class ConsentRequestSteps {
 
     public void sendConsentRequest() {
         HttpEntity<CreateConsentReq> entity = getConsentRequestHttpEntity();
-        ResponseEntity<CreateConsentResp> response = restTemplate.exchange(
+        ResponseEntity<CreateConsentResponse> response = restTemplate.exchange(
             context.getBaseUrl() + "/consents",
             HttpMethod.POST,
             entity,
-            CreateConsentResp.class);
+            CreateConsentResponse.class);
 
         context.setActualResponse(response);
     }
@@ -94,7 +95,7 @@ public class ConsentRequestSteps {
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
     public void checkResponseCode() {
 
-        ResponseEntity<CreateConsentResp> actualResponse = context.getActualResponse();
+        ResponseEntity<CreateConsentResponse> actualResponse = context.getActualResponse();
         Map givenResponseBody = context.getTestData().getResponse().getBody();
 
 
