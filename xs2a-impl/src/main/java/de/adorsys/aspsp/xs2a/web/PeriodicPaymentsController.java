@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -57,7 +58,7 @@ public class PeriodicPaymentsController {
         @PathVariable("payment-product") String paymentProduct,
         @RequestHeader(name = "tpp-signature-certificate", required = false) String tppSignatureCertificate,
         @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
-        @RequestBody PeriodicPayment periodicPayment) {
+        @RequestBody @Valid PeriodicPayment periodicPayment) {
         Optional<MessageError> error = referenceValidationService.validateAccountReferences(periodicPayment.getAccountReferences());
         return responseMapper.created(
             error

@@ -139,9 +139,9 @@ public class ConsentServiceTest {
         );
 
         //When:
-        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, CORRECT_PSU_ID);
-        CreateConsentResp response = responseObj.getBody();
+        CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
@@ -154,9 +154,9 @@ public class ConsentServiceTest {
         );
 
         //When:
-        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, CORRECT_PSU_ID);
-        CreateConsentResp response = responseObj.getBody();
+        CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
@@ -169,9 +169,9 @@ public class ConsentServiceTest {
         );
 
         //When:
-        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, null);
-        CreateConsentResp response = responseObj.getBody();
+        CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
@@ -184,9 +184,9 @@ public class ConsentServiceTest {
         );
 
         //When:
-        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, null);
-        CreateConsentResp response = responseObj.getBody();
+        CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
@@ -199,9 +199,9 @@ public class ConsentServiceTest {
         );
 
         //When:
-        ResponseObject<CreateConsentResp> responseObj = consentService.createAccountConsentsWithResponse(
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, null);
-        CreateConsentResp response = responseObj.getBody();
+        CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
@@ -225,7 +225,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
-        assertThat(response.getBody()).isEqualTo(ConsentStatus.RECEIVED);
+        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.RECEIVED));
     }
 
     @Test

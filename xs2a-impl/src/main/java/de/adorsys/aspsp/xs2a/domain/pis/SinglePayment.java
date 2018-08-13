@@ -27,7 +27,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.FutureOrPresent;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,53 +41,58 @@ import java.util.Set;
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
 public class SinglePayment implements AccountReferenceCollector {
 
-    @ApiModelProperty(value = "end to end authentication", example = "RI-123456789")
     @Size(max = 35)
+    @ApiModelProperty(value = "end to end authentication", example = "RI-123456789")
     private String endToEndIdentification;
 
+    @NotNull
     @ApiModelProperty(value = "debtor account", required = true)
     private AccountReference debtorAccount;
 
-    @ApiModelProperty(value = "ultimate debtor", example = "Mueller")
     @Size(max = 70)
+    @ApiModelProperty(value = "ultimate debtor", example = "Mueller")
     private String ultimateDebtor;
 
+    @Valid
+    @NotNull
     @ApiModelProperty(value = "instructed amount", required = true)
     private Amount instructedAmount;
 
+    @NotNull
     @ApiModelProperty(value = "creditor account", required = true)
     private AccountReference creditorAccount;
 
     @ApiModelProperty(value = "creditor agent")
     private BICFI creditorAgent;
 
-    @ApiModelProperty(value = "creditor name", required = true, example = "Telekom")
+    @NotNull
     @Size(max = 70)
+    @ApiModelProperty(value = "creditor name", required = true, example = "Telekom")
     private String creditorName;
 
+    @Valid
     @ApiModelProperty(value = "creditor Address")
     private Address creditorAddress;
 
-    @ApiModelProperty(value = "ultimate creditor", example = "Telekom")
     @Size(max = 70)
+    @ApiModelProperty(value = "ultimate creditor", example = "Telekom")
     private String ultimateCreditor;
 
     @ApiModelProperty(value = "purpose code")
     private PurposeCode purposeCode;
 
-    @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     @Size(max = 140)
+    @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
+    @Valid
     @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "requested execution date", example = "2019-01-01")
-    @FutureOrPresent
+    @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "requested execution time", example = "2019-10-25T15:30:35.035Z")
-    @FutureOrPresent
+    @ApiModelProperty(value = "requested execution time", example = "2020-01-01T15:30:35.035Z")
     private LocalDateTime requestedExecutionTime;
 
     @JsonIgnore

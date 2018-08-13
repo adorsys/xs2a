@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
@@ -131,16 +128,16 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById() {
         //When
-        ResponseObject<TransactionStatus> response = paymentService.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(response.hasError()).isFalse();
-        assertThat(response.getBody()).isEqualTo(TransactionStatus.ACCP);
+        assertThat(response.getBody()).isEqualTo(new TransactionStatusResponse(TransactionStatus.ACCP));
     }
 
     @Test
     public void getPaymentStatusById_Failure() {
         //When
-        ResponseObject<TransactionStatus> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
