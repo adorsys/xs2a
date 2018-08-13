@@ -124,16 +124,16 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById() {
         //When
-        ResponseObject<TransactionStatusResp> response = paymentService.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(response.hasError()).isFalse();
-        assertThat(response.getBody()).isEqualTo(new TransactionStatusResp(TransactionStatus.ACCP));
+        assertThat(response.getBody()).isEqualTo(new TransactionStatusResponse(TransactionStatus.ACCP));
     }
 
     @Test
     public void getPaymentStatusById_Failure() {
         //When
-        ResponseObject<TransactionStatusResp> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
         //Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError().getTppMessage().getCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
