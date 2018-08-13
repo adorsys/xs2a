@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.config.rest.consent;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.exception.RestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 
@@ -25,6 +27,10 @@ import java.io.IOException;
 public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        throw new RestException(response.getStatusCode(), response.getStatusCode().getReasonPhrase());
+        HttpStatus statusCode = response.getStatusCode();
+        if (statusCode.value() == 404) {
+            throw new RestException(MessageErrorCode.CONSENT_UNKNOWN_403);
+        }
+        throw new RestException(statusCode, statusCode.getReasonPhrase());
     }
 }
