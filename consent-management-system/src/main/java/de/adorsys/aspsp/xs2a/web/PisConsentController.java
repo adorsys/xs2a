@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PISConsentService;
@@ -35,11 +36,11 @@ public class PisConsentController {
 
     @PostMapping(path = "/")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = String.class),
+        @ApiResponse(code = 200, message = "OK", response = CreatePisConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<String> createPaymentConsent(@RequestBody PisConsentRequest request) {
+    public ResponseEntity<CreatePisConsentResponse> createPaymentConsent(@RequestBody PisConsentRequest request) {
         return pisConsentService.createPaymentConsent(request)
-                   .map(consentId -> new ResponseEntity<>(consentId, HttpStatus.CREATED))
+                   .map(consentId -> new ResponseEntity<>(new CreatePisConsentResponse(consentId), HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
