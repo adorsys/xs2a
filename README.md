@@ -25,7 +25,7 @@ You can check your readiness for PSD2 Compliance and other information via [our 
 
 ## Features of adorsys/XS2A
 
-* **XS2A-impl** is an implemetation of PSD2 XS2A Interface of Berlin Group. All mandatory API endpoints defined in Berlin Group specification V1.0 are implemented.
+* **XS2A-impl** is an implemetation of PSD2 XS2A Interface of Berlin Group. All mandatory API endpoints defined in Berlin Group specification V1.0 are implemented. The latest version of Berlin Group specification used in the project is V1.1.
 
 * **Swagger documentation** is presented for all REST API modules: XS2A, ASPSP-Server, Consent Management System.
 
