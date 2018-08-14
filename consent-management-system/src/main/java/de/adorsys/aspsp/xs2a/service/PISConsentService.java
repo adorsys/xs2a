@@ -36,7 +36,7 @@ public class PISConsentService {
     /**
      * Creates new pis consent with full information about payment
      *
-     * @param request  Consists information about payments.
+     * @param request Consists information about payments.
      * @return Response containing identifier of consent
      */
     public Optional<String> createPaymentConsent(PisConsentRequest request) {
@@ -48,7 +48,7 @@ public class PISConsentService {
     /**
      * Retrieves consent status from pis consent by consent identifier
      *
-     * @param consentId  String representation of pis consent identifier
+     * @param consentId String representation of pis consent identifier
      * @return Information about the status of a consent
      */
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
@@ -71,7 +71,7 @@ public class PISConsentService {
      * Updates pis consent status by consent identifier
      *
      * @param consentId String representation of pis consent identifier
-     * @param status new consent status
+     * @param status    new consent status
      * @return Response containing result of status changing
      */
     public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {

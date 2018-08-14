@@ -36,7 +36,7 @@ public class PisConsentResponse {
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
     private PisPaymentProduct paymentProduct;
 
-    @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PisPaymentType paymentType;
 
     @ApiModelProperty(value = "Tpp information", required = true)
