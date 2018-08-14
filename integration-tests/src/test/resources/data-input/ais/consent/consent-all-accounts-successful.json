@@ -21,7 +21,7 @@
     "code": "201",
     "header": {},
     "body": {
-      "consentStatus": "RCVD"
+      "consentStatus": "received"
     }
   }
 }
