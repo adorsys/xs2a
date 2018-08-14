@@ -2,7 +2,8 @@
   "request": {
     "header": {
       "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-id": "aa11bb22-aaaa-0000-bbbb-aa11bb22cc33"
+      "psu-id": "aa11bb22-aaaa-0000-bbbb-aa11bb22cc33",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {
       "access": {
