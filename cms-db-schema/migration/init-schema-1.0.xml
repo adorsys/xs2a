@@ -58,7 +58,7 @@
             <column name="combined_service_indicator" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="consent_status" type="VARCHAR(255)">
+            <column name="consent_status" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
             <column name="consent_type" type="VARCHAR(5)">
