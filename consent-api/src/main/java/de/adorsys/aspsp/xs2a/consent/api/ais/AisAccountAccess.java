@@ -16,14 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
 import lombok.Value;
 
 import java.util.List;
 
 @Value
 public class AisAccountAccess {
-    private List<AccountReference> accounts;
-    private List<AccountReference> balances;
-    private List<AccountReference> transactions;
+    private List<CmsAccountReference> accounts;
+    private List<CmsAccountReference> balances;
+    private List<CmsAccountReference> transactions;
 }

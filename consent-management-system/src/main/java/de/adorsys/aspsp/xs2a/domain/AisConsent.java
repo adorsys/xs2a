@@ -57,7 +57,7 @@ public class AisConsent {
     private boolean combinedServiceIndicator;
 
     @Column(name = "request_date_time", nullable = false)
-    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-10-25T15:30:35.035")
+    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-10-25T15:30:35.035Z")
     private LocalDateTime requestDateTime;
 
     @Column(name = "last_action_date")

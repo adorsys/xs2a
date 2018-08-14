@@ -37,6 +37,7 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/bulk-payments/{payment-product}")
 @Api(value = "api/v1/consents", tags = "PISP, Bulk payment initiation", description = "Payment Initiation for Bulk Payments and Multiple Payments")
 public class BulkPaymentInitiationController {
+    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6ICJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6ICIxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
     private final AccountReferenceValidationService referenceValidationService;
@@ -51,10 +52,12 @@ public class BulkPaymentInitiationController {
         @ApiImplicitParam(name = "tpp-redirect-uri", value = "Uri of TPP", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = TPP_INFO, dataType = "String", paramType = "header")})
     public ResponseEntity<List<PaymentInitialisationResponse>> createBulkPaymentInitiation(
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for bulk payments e.g. for a bulk SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
         @PathVariable("payment-product") String paymentProduct,
+        @RequestHeader(name = "tpp-signature-certificate", required = false) String tppSignatureCertificate,
+        @ApiParam(name = "Bulk Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
         @RequestBody List<SinglePayment> payments) {
         for (SinglePayment payment : payments) {
             Optional<MessageError> error = referenceValidationService.validateAccountReferences(payment.getAccountReferences());
@@ -62,6 +65,6 @@ public class BulkPaymentInitiationController {
                 return responseMapper.created(ResponseObject.<List<PaymentInitialisationResponse>>builder().fail(error.get()).build());
             }
         }
-        return responseMapper.created(paymentService.createBulkPayments(payments, paymentProduct));
+        return responseMapper.created(paymentService.createBulkPayments(payments, tppSignatureCertificate, paymentProduct));
     }
 }

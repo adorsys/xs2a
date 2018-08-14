@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
@@ -43,10 +43,10 @@ import java.util.stream.Collectors;
 public class ConsentMapper {
     private final AccountMapper accountMapper;
 
-    public AisConsentRequest mapToAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
+    public CreateAisConsentRequest mapToAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
         return Optional.ofNullable(req)
                    .map(r -> {
-                       AisConsentRequest request = new AisConsentRequest();
+                       CreateAisConsentRequest request = new CreateAisConsentRequest();
                        request.setPsuId(psuId);
                        request.setTppId(tppId);
                        request.setFrequencyPerDay(r.getFrequencyPerDay());
@@ -77,7 +77,7 @@ public class ConsentMapper {
                        ac.getValidUntil(),
                        ac.getFrequencyPerDay(),
                        ac.getLastActionDate(),
-                       ConsentStatus.valueOf(ac.getSpiConsentStatus().name()),
+                       ConsentStatus.valueOf(ac.getConsentStatus().name()),
                        ac.isWithBalance(),
                        ac.isTppRedirectPreferred()))
                    .orElse(null);

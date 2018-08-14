@@ -37,7 +37,7 @@ public enum TransactionStatus {
         this.transactionStatus = transactionStatus;
     }
 
-    public String getTransactionStatus(){
+    public String getTransactionStatus() {
         return transactionStatus;
     }
 }

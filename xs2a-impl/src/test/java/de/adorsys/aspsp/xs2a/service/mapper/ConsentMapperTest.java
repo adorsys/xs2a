@@ -21,7 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
@@ -76,14 +76,14 @@ public class ConsentMapperTest {
         //Given:
         String aicConRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq donorRequest = jsonConverter.toObject(aicConRequestJson, CreateConsentReq.class).get();
-        AisConsentRequest expectedResult = getAisConsentReq(donorRequest, PSU_ID, TPP_ID);
+        CreateAisConsentRequest expectedResult = getAisConsentReq(donorRequest, PSU_ID, TPP_ID);
         //When:
-        AisConsentRequest mapedResult = consentMapper.mapToAisConsentRequest(donorRequest, PSU_ID, TPP_ID);
+        CreateAisConsentRequest mapedResult = consentMapper.mapToAisConsentRequest(donorRequest, PSU_ID, TPP_ID);
         assertThat(mapedResult).isEqualTo(expectedResult);
     }
 
-    private AisConsentRequest getAisConsentReq(CreateConsentReq consentReq, String psuId, String tppId) {
-        AisConsentRequest req = new AisConsentRequest();
+    private CreateAisConsentRequest getAisConsentReq(CreateConsentReq consentReq, String psuId, String tppId) {
+        CreateAisConsentRequest req = new CreateAisConsentRequest();
         req.setPsuId(psuId);
         req.setTppId(tppId);
         req.setCombinedServiceIndicator(consentReq.isCombinedServiceIndicator());

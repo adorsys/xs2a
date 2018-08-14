@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
 public class PeriodicPaymentsControllerTest {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
-    private static final String REDIRECT_LINK = "http://localhost:28080/view/payment/confirmation/";
+    private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
 
 
     @InjectMocks
@@ -71,7 +71,7 @@ public class PeriodicPaymentsControllerTest {
 
     @Before
     public void setUp() {
-        when(paymentService.initiatePeriodicPayment(any(), any())).thenReturn(readResponseObject());
+        when(paymentService.initiatePeriodicPayment(any(), any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(Optional.empty());
@@ -86,7 +86,7 @@ public class PeriodicPaymentsControllerTest {
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED);
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(), periodicPayment);
+        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(),"", periodicPayment);
 
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

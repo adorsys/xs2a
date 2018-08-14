@@ -2,28 +2,25 @@
   "request": {
     "header": {
       "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-ip-address": "192.168.0.26",
       "psu-id": "d9e71419-24e4-4c5a-8d93-fcc23153aaff"
     },
     "body": {
       "access": {
         "accounts": [],
         "allPsd2": "all-accounts",
-        "availableAccounts": "all-accounts",
         "balances": [],
         "transactions": []
       },
       "combinedServiceIndicator": false,
       "frequencyPerDay": 4,
       "recurringIndicator": false,
-      "validUntil": "2012-10-30"
+      "validUntil": "2018-10-30"
     }
   },
   "response": {
     "code": "201",
     "header": {},
     "body": {
-      "consentId": "",
       "consentStatus": "RCVD"
     }
   }

@@ -55,6 +55,7 @@ public class PaymentMapper {
         aspsp.setCreditorAccount(single.getCreditorAccount());
         aspsp.setCreditorAgent(single.getCreditorAgent());
         aspsp.setCreditorName(single.getCreditorName());
+        aspsp.setCreditorAddress(single.getCreditorAddress());
         aspsp.setUltimateCreditor(single.getUltimateCreditor());
         aspsp.setPurposeCode(single.getPurposeCode());
         aspsp.setRequestedExecutionDate(single.getRequestedExecutionDate());
@@ -77,6 +78,7 @@ public class PaymentMapper {
                        single.setCreditorAccount(aspsp.getCreditorAccount());
                        single.setCreditorAgent(aspsp.getCreditorAgent());
                        single.setCreditorName(aspsp.getCreditorName());
+                       aspsp.setCreditorAddress(single.getCreditorAddress());
                        single.setUltimateCreditor(aspsp.getUltimateCreditor());
                        single.setPurposeCode(aspsp.getPurposeCode());
                        single.setRequestedExecutionDate(aspsp.getRequestedExecutionDate());
