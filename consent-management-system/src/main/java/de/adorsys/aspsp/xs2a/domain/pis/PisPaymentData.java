@@ -81,7 +81,6 @@ public class PisPaymentData {
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
-    @PrimaryKeyJoinColumn
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "remittance information structured")
     @JoinColumn(name="remittance_id")
