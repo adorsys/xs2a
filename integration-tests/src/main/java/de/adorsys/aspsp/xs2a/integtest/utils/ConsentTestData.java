@@ -48,8 +48,8 @@ public class ConsentTestData {
 
 
     private AccountAccess createAccountAccessTestData(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions){
-        AccountAccess accountAccess = new AccountAccess(accounts, balances, transactions, null, null);
-        return accountAccess;
+        return new AccountAccess(accounts, balances, transactions, null, null);
+
     }
 
     private List<AccountReference> createAccountReferenceListTestData () {
