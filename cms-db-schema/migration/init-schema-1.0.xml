@@ -23,6 +23,30 @@
         <createSequence sequenceName="pis_consent_id_seq"/>
     </changeSet>
 
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-1">
+        <comment>Create sequence for pis account reference id.</comment>
+        <createSequence sequenceName="pis_account_reference_id_seq"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-2">
+        <comment>Create sequence for pis address id.</comment>
+        <createSequence sequenceName="pis_address_id_seq"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-3">
+        <comment>Create sequence for pis payment data id.</comment>
+        <createSequence sequenceName="pis_payment_data_id_seq"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-4">
+        <comment>Create sequence for pis remittance id.</comment>
+        <createSequence sequenceName="pis_remittance_id_seq"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-5">
+        <comment>Create sequence for pis tpp info id.</comment>
+        <createSequence sequenceName="pis_tpp_info_id_seq"/>
+    </changeSet>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-5">
         <comment>Create table ais_consent.</comment>
@@ -34,7 +58,7 @@
             <column name="combined_service_indicator" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="consent_status" type="VARCHAR(255)">
+            <column name="consent_status" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
             <column name="consent_type" type="VARCHAR(5)">
@@ -43,12 +67,14 @@
             <column name="expected_frequency_per_day" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
-            <column name="expire_date" type="BYTEA"/>
+            <column name="expire_date" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
             <column name="external_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
             <column name="last_action_date" type="BYTEA"/>
-            <column name="psu_id" type="VARCHAR(255)"/>
+            <column name="psu_id" type="VARCHAR(40)"/>
             <column name="recurring_indicator" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
@@ -70,7 +96,6 @@
         </createTable>
     </changeSet>
 
-
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-6">
         <comment>Create table ais_account.</comment>
 
@@ -90,7 +115,6 @@
                                  constraintName="consent_id_fkey" deferrable="false" initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="ais_consent"/>
     </changeSet>
-
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-7">
         <comment>Create table ais_account_access.</comment>
@@ -114,7 +138,6 @@
                                  referencedColumnNames="id" referencedTableName="ais_account"/>
     </changeSet>
 
-
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-8">
         <comment>Create table ais_consent_action.</comment>
 
@@ -128,7 +151,7 @@
             <column name="request_date" type="BYTEA">
                 <constraints nullable="false"/>
             </column>
-            <column name="requested_consent_id" type="VARCHAR(255)">
+            <column name="requested_consent_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
             <column name="tpp_id" type="VARCHAR(40)">
@@ -137,6 +160,33 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-6">
+        <comment>Create table pis_tpp_info.</comment>
+
+        <createTable tableName="pis_tpp_info">
+            <column name="tpp_info_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="registration_number" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tpp_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tpp_role" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="national_competent_authority" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="redirect_uri" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nok_redirect_uri" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-9">
         <comment>Create table pis_consent.</comment>
@@ -154,29 +204,149 @@
             <column name="external_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pis_consent_type" type="VARCHAR(16)">
+            <column name="payment_product" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
+            <column name="payment_type" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tpp_info_id" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="tpp_info_id" baseTableName="pis_consent"
+                                 constraintName="tpp_info_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="tpp_info_id" referencedTableName="pis_tpp_info"/>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-7">
+        <comment>Create table pis_account_reference.</comment>
+
+        <createTable tableName="pis_account_reference">
+            <column name="account_reference_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="iban" type="VARCHAR(30)"/>
+            <column name="bban" type="VARCHAR(30)"/>
+            <column name="pan" type="VARCHAR(19)"/>
+            <column name="masked_pan" type="VARCHAR(19)"/>
+            <column name="msisdn" type="VARCHAR(20)"/>
+            <column name="currency" type="VARCHAR(3)"/>
         </createTable>
     </changeSet>
 
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-8">
+        <comment>Create table pis_address.</comment>
+
+        <createTable tableName="pis_address">
+            <column name="address_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="street" type="VARCHAR(100)"/>
+            <column name="building_number" type="VARCHAR(20)"/>
+            <column name="city" type="VARCHAR(100)"/>
+            <column name="postal_code" type="VARCHAR(5)"/>
+            <column name="country" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-9">
+        <comment>Create table pis_remittance.</comment>
+
+        <createTable tableName="pis_remittance">
+            <column name="remittance_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="reference" type="VARCHAR(100)"/>
+            <column name="reference_type" type="VARCHAR(100)"/>
+            <column name="reference_issuer" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="msh@adorsys.com.ua" id="2018-08-14-10">
+        <comment>Create table pis_payment_data.</comment>
+
+        <createTable tableName="pis_payment_data">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="payment_id" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_to_end_identification" type="VARCHAR(20)"/>
+            <column name="debtor_account_account_reference_id" type="BIGINT"/>
+            <column name="ultimate_debtor" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="numeric(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creditor_account_account_reference_id" type="BIGINT"/>
+            <column name="creditor_agent" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creditor_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_id" type="BIGINT"/>
+            <column name="remittance_information_unstructured" type="VARCHAR(1000)"/>
+            <column name="remittance_id" type="BIGINT"/>
+            <column name="requested_execution_date" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requested_execution_time" type="BYTEA">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ultimate_creditor" type="VARCHAR(100)"/>
+            <column name="purpose_code" type="VARCHAR(10)"/>
+            <column name="start_date" type="BYTEA"/>
+            <column name="execution_rule" type="VARCHAR(50)"/>
+            <column name="end_date" type="BYTEA"/>
+            <column name="frequency" type="VARCHAR(25)"/>
+            <column name="day_of_execution" type="INTEGER"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="debtor_account_account_reference_id" baseTableName="pis_payment_data"
+                                 constraintName="debtor_account_account_reference_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="account_reference_id" referencedTableName="pis_account_reference"/>
+
+        <addForeignKeyConstraint baseColumnNames="creditor_account_account_reference_id" baseTableName="pis_payment_data"
+                                 constraintName="creditor_account_account_reference_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="account_reference_id" referencedTableName="pis_account_reference"/>
+
+        <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="pis_payment_data"
+                                 constraintName="address_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="address_id" referencedTableName="pis_address"/>
+
+        <addForeignKeyConstraint baseColumnNames="remittance_id" baseTableName="pis_payment_data"
+                                 constraintName="remittance_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="remittance_id" referencedTableName="pis_remittance"/>
+    </changeSet>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-10">
         <comment>Create table pis_payment.</comment>
 
-        <createTable tableName="pis_payment">
+        <createTable tableName="pis_consent_payments">
             <column name="pis_consent_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="payment_id" type="VARCHAR(255)">
+            <column name="payments_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseColumnNames="pis_consent_id" baseTableName="pis_payment"
-                                 constraintName="pis_consent_fkey" deferrable="false" initiallyDeferred="false"
+        <addForeignKeyConstraint baseColumnNames="pis_consent_id" baseTableName="pis_consent_payments"
+                                 constraintName="pis_consent_id_fkey" deferrable="false" initiallyDeferred="false"
                                  referencedColumnNames="id" referencedTableName="pis_consent"/>
 
+        <addForeignKeyConstraint baseColumnNames="payments_id" baseTableName="pis_consent_payments"
+                                 constraintName="payments_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="pis_payment_data"/>
+
+        <addUniqueConstraint columnNames="payments_id" constraintName="payment_id_unique"
+                             tableName="pis_consent_payments"/>
     </changeSet>
 
 </databaseChangeLog>

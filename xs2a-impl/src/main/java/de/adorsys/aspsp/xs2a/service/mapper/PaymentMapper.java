@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
@@ -31,18 +32,21 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 public class PaymentMapper {
-
+    private final ObjectMapper objectMapper;
     private final AccountMapper accountMapper;
 
     public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
@@ -68,12 +72,12 @@ public class PaymentMapper {
                        spiSinglePayment.setCreditorAccount(accountMapper.mapToSpiAccountReference(paymentRe.getCreditorAccount()));
 
                        spiSinglePayment.setCreditorAgent(Optional.ofNullable(paymentRe.getCreditorAgent())
-                                                              .map(BICFI::getCode).orElse(""));
+                                                             .map(BICFI::getCode).orElse(""));
                        spiSinglePayment.setCreditorName(paymentRe.getCreditorName());
                        spiSinglePayment.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
                        spiSinglePayment.setUltimateCreditor(paymentRe.getUltimateCreditor());
                        spiSinglePayment.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
-                                                            .map(PurposeCode::getCode).orElse(""));
+                                                           .map(PurposeCode::getCode).orElse(""));
                        spiSinglePayment.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
                        spiSinglePayment.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
@@ -219,7 +223,12 @@ public class PaymentMapper {
 
     private SpiAddress mapToSpiAddress(Address address) {
         return Optional.ofNullable(address)
-                   .map(a -> new SpiAddress(null, a.getStreet(), a.getBuildingNumber(), a.getCity(), a.getPostalCode(), a.getCountry().toString()))
+                   .map(a -> new SpiAddress(
+                       a.getStreet(),
+                       a.getBuildingNumber(),
+                       a.getCity(),
+                       a.getPostalCode(),
+                       Optional.ofNullable(a.getCountry()).map(CountryCode::getCode).orElse("")))
                    .orElse(null);
     }
 
@@ -285,4 +294,15 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
+    public TppInfo mapToTppInfo(String tppSignatureCertificate) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(tppSignatureCertificate);
+            String decodedJson = new String(decodedBytes);
+
+            return objectMapper.readValue(decodedJson, TppInfo.class);
+        } catch (Exception e) {
+            log.warn("Error with converting TppInfo from certificate {}", tppSignatureCertificate);
+            return null;
+        }
+    }
 }

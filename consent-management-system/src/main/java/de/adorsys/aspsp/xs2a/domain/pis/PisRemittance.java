@@ -19,23 +19,29 @@ package de.adorsys.aspsp.xs2a.domain.pis;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Size;
-
+import javax.persistence.*;
 
 @Data
-@ApiModel(description = "Remittance", value = "Remittance")
-public class Remittance {
+@Entity(name = "pis_remittance")
+@NoArgsConstructor
+@ApiModel(description = "Remittance in pis", value = "PisRemittance")
+public class PisRemittance {
+    @Id
+    @Column(name = "remittance_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_remittance_generator")
+    @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq")
+    private Long id;
 
-    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
-    @Size(max = 35)
+    @ApiModelProperty(value = "The actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
 
-    @ApiModelProperty(value = "reference type", example = "reference type")
-    @Size(max = 35)
+    @Column(name = "reference_type")
+    @ApiModelProperty(value = "Reference type", example = "reference type")
     private String referenceType;
 
-    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
-    @Size(max = 35)
+    @Column(name = "reference_issuer")
+    @ApiModelProperty(value = "Reference issuer", example = "reference issuer")
     private String referenceIssuer;
 }

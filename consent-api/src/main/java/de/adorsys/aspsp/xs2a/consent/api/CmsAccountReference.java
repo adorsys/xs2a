@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.account;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Currency;
-import java.util.Optional;
 
 @Data
-@ApiModel(description = "Account Reference", value = "AccountReference")
-public class AccountReference {
+@AllArgsConstructor
+@NoArgsConstructor
+public class CmsAccountReference {
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 
@@ -45,10 +45,7 @@ public class AccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
-    @JsonIgnore
-    public boolean matches(AccountReference otherReference) {
-        return Optional.ofNullable(otherReference.getCurrency())
-                   .map(cur -> iban.equals(otherReference.getIban()) && currency == cur)
-                   .orElse(iban.equals(otherReference.getIban()));
+    public CmsAccountReference(String iban, Currency currency) {
+        this(iban, "", "", "", "", currency);
     }
 }

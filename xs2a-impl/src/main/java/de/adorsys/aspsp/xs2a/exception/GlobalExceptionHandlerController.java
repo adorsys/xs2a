@@ -39,7 +39,7 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(value = {ValidationException.class})
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
-        log.warn("ValidationException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.warn("ValidationException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, MessageErrorCode.FORMAT_ERROR)), HttpStatus.BAD_REQUEST);
     }
 
@@ -57,7 +57,7 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(value = RestException.class)
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
-        log.warn("RestException handled in service: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
         return new ResponseEntity<>(new MessageError(new TppMessageInformation(ERROR, ex.getMessageErrorCode())
                                                          .text(ex.getMessage())), ex.getHttpStatus());

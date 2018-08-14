@@ -19,12 +19,15 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ScaPaymentService {
-    Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment);
-    List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments);
-    Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment);
+    Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct);
+
+    List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments, TppInfo tppInfo, String paymentProduct);
+
+    Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct);
 }

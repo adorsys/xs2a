@@ -14,15 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import lombok.Value;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-@Value
-public class PisAddress {
+@Data
+@ApiModel(description = "Address", value = "CmsAddress")
+public class CmsAddress {
+    @ApiModelProperty(value = "Street", example = "Herrnstraße")
     private String street;
+
+    @ApiModelProperty(value = "Building number", example = "123-34")
     private String buildingNumber;
+
+    @ApiModelProperty(value = "City", example = "Nürnberg")
     private String city;
+
+    @ApiModelProperty(value = "Postal code", example = "90431")
     private String postalCode;
+
+    @ApiModelProperty(value = "Country", example = "Germany")
     private String country;
 }

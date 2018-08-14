@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import lombok.Value;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
-@Value
-public class PisRemittance {
+@Data
+@ApiModel(description = "Remittance in cms", value = "CmsRemittance")
+public class CmsRemittance {
+    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
+
+    @ApiModelProperty(value = "reference type", example = "reference type")
     private String referenceType;
+
+    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
     private String referenceIssuer;
 }
