@@ -36,7 +36,7 @@ public class PisConsentResponse {
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
     private PisPaymentProduct paymentProduct;
 
-    @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
     private PisPaymentType paymentType;
 
     @ApiModelProperty(value = "Tpp information", required = true)
@@ -47,4 +47,7 @@ public class PisConsentResponse {
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
+
+    @ApiModelProperty(value = "ASPSP consent data", example = "zzzzzzzz")
+    private byte[] aspspConsentData;
 }
