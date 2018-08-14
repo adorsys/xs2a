@@ -19,8 +19,8 @@ Feature: Account Information Service
 
     Scenario Outline: Failed consent request creation (redirect)
         Given PSU wants to create a consent <consent-resource>
-        When PSU sends the create consent request
-        Then an error response code and the appropriate consent response data is delivered to the PSU
+        When PSU sends the create consent request with error
+        Then an error response code is displayed with the appropriate error response
         Examples:
             | consent-resource                           |
             | consent-all-psd2-no-psu-id.json            |
