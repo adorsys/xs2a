@@ -80,25 +80,13 @@ public class ConsentRequestSteps {
 
     public void sendConsentRequest() throws HttpClientErrorException, IOException {
         HttpEntity<CreateConsentReq> entity = getConsentRequestHttpEntity();
-        ResponseEntity<CreateConsentResponse> response;
         entity.getBody().setValidUntil(entity.getBody().getValidUntil().plusDays(7));
-//            = restTemplate.exchange(
-//            context.getBaseUrl() + "/consents",
-//            HttpMethod.POST,
-//            entity,
-//            CreateConsentResponse.class);
-
-//        try {
-            response=restTemplate.exchange(
+        ResponseEntity<CreateConsentResponse> response=restTemplate.exchange(
                 context.getBaseUrl() + "/consents",
                 HttpMethod.POST,
                 entity,
                 CreateConsentResponse.class);
                 context.setActualResponse(response);
-//        } catch (RestClientResponseException rex) {
-//            handleRequestError(rex);
-//        }
-
 
             context.setActualResponse(response);
     }
