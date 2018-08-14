@@ -19,12 +19,12 @@ package de.adorsys.aspsp.cmsclient.cms.model.ais;
 import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentStatusResponse;
 
-public class GetAisConsentMethod extends RestCmsRequestMethod<Void, AisAccountConsent> {
-    private static final String GET_AIS_CONSENT_BY_ID_URI = "api/v1/ais/consent/{consent-id}";
+public class GetConsentStatusByIdMethod extends RestCmsRequestMethod<Void, ConsentStatusResponse> {
+    private static final String GET_CONSENT_STATUS_BY_ID_URI = "api/v1/ais/consent/{consent-id}/status";
 
-    public GetAisConsentMethod(HttpUriParams uriParams) {
-        super(HttpMethod.GET, GET_AIS_CONSENT_BY_ID_URI, uriParams);
+    public GetConsentStatusByIdMethod(HttpUriParams uriParams) {
+        super(HttpMethod.GET, GET_CONSENT_STATUS_BY_ID_URI, uriParams);
     }
 }

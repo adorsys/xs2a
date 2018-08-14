@@ -17,11 +17,10 @@
 package de.adorsys.aspsp.cmsclient.sample;
 
 import de.adorsys.aspsp.cmsclient.cms.CmsServiceInvoker;
-import de.adorsys.aspsp.cmsclient.cms.model.ais.CreateAisConsentMethod;
-import de.adorsys.aspsp.cmsclient.cms.model.ais.GetAisConsentMethod;
+import de.adorsys.aspsp.cmsclient.cms.model.ais.*;
 import de.adorsys.aspsp.cmsclient.core.Configuration;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
-import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
@@ -42,22 +41,27 @@ public class CmsExecutor {
     private static final String CMS_BASE_URL = "http://localhost:38080";
     private static final int CONNECTION_TIMEOUT = 5000;
     private static final int CONNECTION_REQUEST_TIMEOUT = 5000;
+    private static String consentId = "Test consent id";
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         Configuration configuration = new Configuration(CMS_BASE_URL, CONNECTION_TIMEOUT, CONNECTION_REQUEST_TIMEOUT);
 
         CmsServiceInvoker cmsServiceInvoker = configuration.getRestServiceInvoker();
 
-        /* Create AIS consent */
-        String consentId = null;
-        Optional<CreateAisConsentResponse> createAisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreateAisConsentMethod(buildAisConsentRequest())));
-        if (createAisResponse.isPresent()) {
-            consentId = createAisResponse.get()
-                            .getConsentId();
-        }
-        logger.info("Consent ID: " + consentId);
+        createAisConsent(cmsServiceInvoker);
+        getAisConsentById(cmsServiceInvoker);
+        getConsentStatusById(cmsServiceInvoker);
+        saveConsentActionLog(cmsServiceInvoker);
+        updateConsentStatus(cmsServiceInvoker);
+    }
 
-        /* Get AisConsent by ID */
+    private static void createAisConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        Optional<CreateAisConsentResponse> createAisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreateAisConsentMethod(buildAisConsentRequest())));
+        createAisResponse.ifPresent(resp -> consentId = resp.getConsentId());
+        logger.info("Consent ID: " + consentId);
+    }
+
+    private static void getAisConsentById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
                                       .build();
@@ -65,15 +69,35 @@ public class CmsExecutor {
         aisAccountConsent.ifPresent(consent -> logger.info("Ais account consent status: " + consent.getConsentStatus()));
     }
 
+    private static void saveConsentActionLog(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        cmsServiceInvoker.invoke(new SaveConsentActionLogMethod(new ConsentActionRequest("tpp-id", consentId, ActionStatus.SUCCESS)));
+    }
+
+    private static void getConsentStatusById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .build();
+        Optional<ConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetConsentStatusByIdMethod(uriParams)));
+        consentStatusResponse.ifPresent(status -> logger.info("Status of the consent: " + status.getConsentStatus().name()));
+    }
+
+    private static void updateConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("status", ConsentStatus.REVOKED_BY_PSU.name())
+                                      .build();
+        cmsServiceInvoker.invoke(new UpdateConsentStatusMethod(uriParams));
+    }
+
     private static CreateAisConsentRequest buildAisConsentRequest() {
         CreateAisConsentRequest request = new CreateAisConsentRequest();
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
-        request.setFrequencyPerDay(5);
+        request.setFrequencyPerDay(10);
         request.setPsuId("psu-id-1");
         request.setRecurringIndicator(true);
         request.setTppId("tpp-id-1");
-        request.setValidUntil(LocalDate.now());
+        request.setValidUntil(LocalDate.of(2020, 12, 31));
         request.setTppRedirectPreferred(true);
         return request;
     }
