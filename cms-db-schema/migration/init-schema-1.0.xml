@@ -74,7 +74,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="last_action_date" type="BYTEA"/>
-            <column name="psu_id" type="VARCHAR(255)"/>
+            <column name="psu_id" type="VARCHAR(40)"/>
             <column name="recurring_indicator" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
@@ -151,7 +151,7 @@
             <column name="request_date" type="BYTEA">
                 <constraints nullable="false"/>
             </column>
-            <column name="requested_consent_id" type="VARCHAR(255)">
+            <column name="requested_consent_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
             <column name="tpp_id" type="VARCHAR(40)">
@@ -204,10 +204,10 @@
             <column name="external_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
-            <column name="payment_product" type="VARCHAR(255)">
+            <column name="payment_product" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
-            <column name="payment_type" type="VARCHAR(255)">
+            <column name="payment_type" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
             <column name="tpp_info_id" type="BIGINT"/>
@@ -269,7 +269,7 @@
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="payment_id" type="VARCHAR(255)">
+            <column name="payment_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
             <column name="end_to_end_identification" type="VARCHAR(20)"/>
@@ -291,7 +291,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="address_id" type="BIGINT"/>
-            <column name="remittance_information_unstructured" type="VARCHAR(255)"/>
+            <column name="remittance_information_unstructured" type="VARCHAR(1000)"/>
             <column name="remittance_id" type="BIGINT"/>
             <column name="requested_execution_date" type="BYTEA">
                 <constraints nullable="false"/>
