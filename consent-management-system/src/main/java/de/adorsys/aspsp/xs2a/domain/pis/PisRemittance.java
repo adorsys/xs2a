@@ -34,14 +34,14 @@ public class PisRemittance {
     @SequenceGenerator(name = "pis_remittance_generator", sequenceName = "pis_remittance_id_seq")
     private Long id;
 
-    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
+    @ApiModelProperty(value = "The actual reference", required = true, example = "Ref Number Merchant")
     private String reference;
 
     @Column(name = "reference_type")
-    @ApiModelProperty(value = "reference type", example = "reference type")
+    @ApiModelProperty(value = "Reference type", example = "reference type")
     private String referenceType;
 
     @Column(name = "reference_issuer")
-    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
+    @ApiModelProperty(value = "Reference issuer", example = "reference issuer")
     private String referenceIssuer;
 }

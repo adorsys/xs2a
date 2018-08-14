@@ -65,10 +65,10 @@ public class PisPayment {
     @ApiModelProperty(value = "remittance information structured")
     private CmsRemittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
+    @ApiModelProperty(value = "Requested execution date", required = true, example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035")
+    @ApiModelProperty(value = "Requested execution time", required = true, example = "2020-01-01T15:30:35.035Z")
     private LocalDateTime requestedExecutionTime;
 
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")
@@ -81,10 +81,10 @@ public class PisPayment {
      * Next fields are used in order to create periodic payment
      *
      */
-    @ApiModelProperty(name = "Start date", example = "2018-08-25T15:30:35.035")
+    @ApiModelProperty(name = "Start date", example = "2020-01-01")
     private LocalDate startDate;
 
-    @ApiModelProperty(name = "End date", example = "2019-10-25T15:30:35.035")
+    @ApiModelProperty(name = "End date", example = "2020-03-03")
     private LocalDate endDate;
 
     @ApiModelProperty(name = "Execution rule", example = "latest")

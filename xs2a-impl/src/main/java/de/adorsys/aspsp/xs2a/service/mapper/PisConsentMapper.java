@@ -47,7 +47,7 @@ public class PisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment, paymentId)));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
-        request.setPaymentService(PisPaymentType.PERIODIC);
+        request.setPaymentType(PisPaymentType.PERIODIC);
         request.setTppInfo(mapToTppInfo(tppInfo));
 
         return request;
@@ -57,7 +57,7 @@ public class PisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(mapToPisPaymentForBulkPayment(paymentIdentifierMap));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
-        request.setPaymentService(PisPaymentType.BULK);
+        request.setPaymentType(PisPaymentType.BULK);
         request.setTppInfo(mapToTppInfo(tppInfo));
 
         return request;
@@ -74,7 +74,7 @@ public class PisConsentMapper {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment, paymentId)));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
-        request.setPaymentService(PisPaymentType.SINGLE);
+        request.setPaymentType(PisPaymentType.SINGLE);
         request.setTppInfo(mapToTppInfo(tppInfo));
 
         return request;

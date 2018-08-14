@@ -32,7 +32,7 @@ import java.util.Currency;
 public class PisPaymentData {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_payment_data_generator")
-    @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "ppis_payment_data_id_seq")
+    @SequenceGenerator(name = "pis_payment_data_generator", sequenceName = "pis_payment_data_id_seq")
     private Long id;
 
     @Column(name = "payment_id", nullable = false)
@@ -74,7 +74,7 @@ public class PisPaymentData {
 
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor Address")
-    @JoinColumn(name="creditor_address_id")
+    @JoinColumn(name="address_id")
     private PisAddress creditorAddress;
 
     @Column(name = "remittance_information_unstructured")
@@ -88,11 +88,11 @@ public class PisPaymentData {
     private PisRemittance remittanceInformationStructured;
 
     @Column(name = "requested_execution_date", nullable = false)
-    @ApiModelProperty(value = "Requested execution date", required = true, example = "2017-01-01")
+    @ApiModelProperty(value = "Requested execution date", required = true, example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
     @Column(name = "requested_execution_time", nullable = false)
-    @ApiModelProperty(value = "Requested execution time", required = true, example = "2017-10-25T15:30:35.035")
+    @ApiModelProperty(value = "Requested execution time", required = true, example = "2020-01-01T15:30:35.035Z")
     private LocalDateTime requestedExecutionTime;
 
     @Column(name = "ultimate_creditor")
@@ -104,7 +104,7 @@ public class PisPaymentData {
     private String purposeCode;
 
     @Column(name = "start_date")
-    @ApiModelProperty(name = "startDate", example = "2017-10-25T15:30:35.035")
+    @ApiModelProperty(name = "startDate", example = "2020-01-01")
     private LocalDate startDate;
 
     @Column(name = "execution_rule")
@@ -112,7 +112,7 @@ public class PisPaymentData {
     private String executionRule;
 
     @Column(name = "end_date")
-    @ApiModelProperty(name = "endDate", example = "2018-03-03")
+    @ApiModelProperty(name = "endDate", example = "2020-03-03")
     private LocalDate endDate;
 
     @ApiModelProperty(name = "frequency", example = "ANNUAL")

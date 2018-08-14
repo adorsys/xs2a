@@ -39,7 +39,7 @@ public class PISConsentMapper {
                        consent.setExternalId(UUID.randomUUID().toString());
                        consent.setPayments(mapToPisPaymentDataList(pmt));
                        consent.setPisTppInfo(mapToPisTppInfo(request.getTppInfo()));
-                       consent.setPisPaymentService(request.getPaymentService());
+                       consent.setPisPaymentType(request.getPaymentType());
                        consent.setPisPaymentProduct(request.getPaymentProduct());
                        consent.setConsentType(ConsentType.PIS);
                        consent.setConsentStatus(ConsentStatus.RECEIVED);
@@ -105,7 +105,7 @@ public class PISConsentMapper {
                        response.setPayments(mapToPisPaymentList(pc.getPayments()));
                        response.setExternalId(pc.getExternalId());
                        response.setConsentStatus(pc.getConsentStatus());
-                       response.setPaymentService(pc.getPisPaymentService());
+                       response.setPaymentType(pc.getPisPaymentType());
                        response.setPaymentProduct(pc.getPisPaymentProduct());
                        response.setTppInfo(mapToTppInfo(pc.getPisTppInfo()));
 

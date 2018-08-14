@@ -37,7 +37,7 @@ public class PisConsentResponse {
     private PisPaymentProduct paymentProduct;
 
     @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
-    private PisPaymentType paymentService;
+    private PisPaymentType paymentType;
 
     @ApiModelProperty(value = "Tpp information", required = true)
     private CmsTppInfo tppInfo;

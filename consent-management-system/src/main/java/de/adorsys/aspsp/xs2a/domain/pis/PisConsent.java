@@ -51,12 +51,12 @@ public class PisConsent {
     @ApiModelProperty(value = "Information about TPP", required = true)
     private PisTppInfo pisTppInfo;
 
-    @Column(name = "pis_payment_service", nullable = false)
+    @Column(name = "payment_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Payment service: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
-    private PisPaymentType pisPaymentService;
+    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    private PisPaymentType pisPaymentType;
 
-    @Column(name = "pis_payment_product", nullable = false)
+    @Column(name = "payment_product", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
     private PisPaymentProduct pisPaymentProduct;
