@@ -1,0 +1,19 @@
+<div class="page">
+  <div class="page-inner">
+    <div class="container">
+      <h1 class="container__title">Tan Confirmation</h1>
+      <p class="container__text">We sent you a transaction authentication number(TAN). Please check your email and fulfill the field below.</p>
+      <div class="authentication">
+        <label class="authentication">
+          Tan
+        </label>
+        <input class="authentication input--text" type="text" name="tan" required>
+      </div>
+      <div class="alert alert-danger" role="alert" >Your TAN is incorrect. Please try again.</div>
+      <div class="buttons-small">
+        <button type="button" class="buttons-small btn--cancel" [routerLink]="['/tanconfirmationcanceled']">Cancel</button>
+        <button type="button" class="buttons-small btn--continue" [routerLink]="['/tanconfirmationsuccessful']">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>

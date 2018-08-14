@@ -118,5 +118,10 @@
       }
     }
   },
-  "defaultProject": "ui"
+  "defaultProject": "ui",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
