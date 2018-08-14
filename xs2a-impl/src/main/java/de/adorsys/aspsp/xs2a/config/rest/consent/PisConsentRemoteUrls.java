@@ -34,24 +34,6 @@ public class PisConsentRemoteUrls {
     }
 
     /**
-     * Returns URL-string to CMS endpoint that creates pis consent for bulk payment
-     *
-     * @return String
-     */
-    public String createPisBulkPaymentConsent() {
-        return consentServiceBaseUrl + "/pis/consent/bulk";
-    }
-
-    /**
-     * Returns URL-string to CMS endpoint that creates pis consent for periodic payment
-     *
-     * @return String
-     */
-    public String createPisPeriodicPaymentConsent() {
-        return consentServiceBaseUrl + "/pis/consent/periodic";
-    }
-
-    /**
      * Returns URL-string to CMS endpoint that updates pis consent status
      *
      * @return String

@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
+package de.adorsys.aspsp.cmsclient.cms.model.ais;
 
-import lombok.Value;
+import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
+import de.adorsys.aspsp.cmsclient.core.HttpMethod;
+import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 
-@Value
-public class PisConsentPeriodicPaymentRequest {
-    private String periodicPaymentId;
+public class UpdateConsentStatusMethod extends RestCmsRequestMethod<Void, Void> {
+    private static final String UPDATE_CONSENT_STATUS_URI = "api/v1/ais/consent/{consent-id}/status/{status}";
+
+    public UpdateConsentStatusMethod(HttpUriParams uriParams) {
+        super(HttpMethod.PUT, UPDATE_CONSENT_STATUS_URI, uriParams);
+    }
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
@@ -44,22 +44,22 @@ public class ConsentMapper {
     }
 
     private AisAccountAccess mapToAisAccountAccess(List<AisAccount> aisAccounts) {
-        return new AisAccountAccess(mapToAccountReference(aisAccounts, TypeAccess.ACCOUNT),
-            mapToAccountReference(aisAccounts, TypeAccess.BALANCE),
-            mapToAccountReference(aisAccounts, TypeAccess.TRANSACTION));
+        return new AisAccountAccess(mapToCmsAccountReference(aisAccounts, TypeAccess.ACCOUNT),
+            mapToCmsAccountReference(aisAccounts, TypeAccess.BALANCE),
+            mapToCmsAccountReference(aisAccounts, TypeAccess.TRANSACTION));
     }
 
-    private List<AccountReference> mapToAccountReference(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
+    private List<CmsAccountReference> mapToCmsAccountReference(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
         return aisAccounts.stream()
-                   .map(acc -> mapToAccountReference(acc, typeAccess))
+                   .map(acc -> mapToCmsAccountReference(acc, typeAccess))
                    .flatMap(Collection::stream)
                    .collect(Collectors.toList());
     }
 
-    private List<AccountReference> mapToAccountReference(AisAccount aisAccount, TypeAccess typeAccess) {
+    private List<CmsAccountReference> mapToCmsAccountReference(AisAccount aisAccount, TypeAccess typeAccess) {
         return aisAccount.getAccesses().stream()
                    .filter(ass -> ass.getTypeAccess() == typeAccess)
-                   .map(access -> new AccountReference(aisAccount.getIban(), access.getCurrency()))
+                   .map(access -> new CmsAccountReference(aisAccount.getIban(), access.getCurrency()))
                    .collect(Collectors.toList());
     }
 }

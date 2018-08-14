@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.domain.ConsentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.List;
 @Data
 @Entity(name = "pis_consent")
 @ApiModel(description = "Pis consent entity", value = "PisConsent")
+@NoArgsConstructor
 public class PisConsent {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_consent_generator")
@@ -38,15 +42,24 @@ public class PisConsent {
     @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
-    @ElementCollection
-    @CollectionTable(name = "pis_payment", joinColumns = @JoinColumn(name = "pis_consent_id"))
-    @ApiModelProperty(value = "List of payments ID", required = true)
-    private List<String> paymentId;
+    @OneToMany(cascade = CascadeType.ALL)
+    @ApiModelProperty(value = "List of single payments ", required = true)
+    private List<PisPaymentData> payments;
 
-    @Column(name = "pis_consent_type", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "tpp_info_id")
+    @ApiModelProperty(value = "Information about TPP", required = true)
+    private PisTppInfo pisTppInfo;
+
+    @Column(name = "payment_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the pis consent: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
-    private PisConsentType pisConsentType;
+    @ApiModelProperty(value = "Payment type: BULK, SINGLE or PERIODIC.", required = true, example = "SINGLE")
+    private PisPaymentType pisPaymentType;
+
+    @Column(name = "payment_product", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Payment product", required = true, example = "sepa-credit-transfers")
+    private PisPaymentProduct pisPaymentProduct;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

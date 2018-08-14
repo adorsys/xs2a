@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
+package de.adorsys.aspsp.cmsclient.cms.model.ais;
 
-import lombok.Value;
+import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
+import de.adorsys.aspsp.cmsclient.core.HttpMethod;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 
-import java.util.List;
+public class SaveConsentActionLogMethod extends RestCmsRequestMethod<ConsentActionRequest, Void> {
+    private static final String SAVE_CONSENT_ACTION_LOG_URI = "api/v1/ais/consent/action";
 
-@Value
-public class PisConsentBulkPaymentRequest {
-    private List<String> paymentIds;
+    public SaveConsentActionLogMethod(final ConsentActionRequest request) {
+        super(request, HttpMethod.POST, SAVE_CONSENT_ACTION_LOG_URI);
+    }
 }

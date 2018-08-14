@@ -71,7 +71,7 @@ public class PeriodicPaymentsControllerTest {
 
     @Before
     public void setUp() {
-        when(paymentService.initiatePeriodicPayment(any(), any())).thenReturn(readResponseObject());
+        when(paymentService.initiatePeriodicPayment(any(), any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(Optional.empty());
@@ -86,7 +86,7 @@ public class PeriodicPaymentsControllerTest {
         ResponseEntity<PaymentInitialisationResponse> expectedResult = new ResponseEntity<>(getPaymentInitializationResponse(), HttpStatus.CREATED);
 
         //When:
-        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(), periodicPayment);
+        ResponseEntity<PaymentInitialisationResponse> result = periodicPaymentsController.createPeriodicPayment(paymentProduct.getCode(),"", periodicPayment);
 
         //Then:
         assertThat(result.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

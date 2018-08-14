@@ -17,55 +17,63 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentType;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.aspsp.xs2a.domain.ConsentType;
-import de.adorsys.aspsp.xs2a.domain.PisConsent;
+import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
+import de.adorsys.aspsp.xs2a.service.mapper.PISConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PISConsentService {
     private final PisConsentRepository pisConsentRepository;
+    private final PISConsentMapper pisConsentMapper;
 
-    public Optional<String> createSinglePaymentConsent(PisConsentRequest request) {
-        return mapToPisConsent(request.getPaymentId())
+    /**
+     * Creates new pis consent with full information about payment
+     *
+     * @param request Consists information about payments.
+     * @return Response containing identifier of consent
+     */
+    public Optional<String> createPaymentConsent(PisConsentRequest request) {
+        return pisConsentMapper.mapToPisConsent(request)
                    .map(pisConsentRepository::save)
                    .map(PisConsent::getExternalId);
     }
 
-    public Optional<String> createBulkPaymentConsent(PisConsentBulkPaymentRequest request) {
-        return mapToBulkPaymentConsent(request.getPaymentIds())
-                   .map(pisConsentRepository::save)
-                   .map(PisConsent::getExternalId);
-    }
-
-    public Optional<String> createPeriodicPaymentConsent(PisConsentPeriodicPaymentRequest request) {
-        return mapToPeriodicPaymentConsent(request.getPeriodicPaymentId())
-                   .map(pisConsentRepository::save)
-                   .map(PisConsent::getExternalId);
-    }
-
+    /**
+     * Retrieves consent status from pis consent by consent identifier
+     *
+     * @param consentId String representation of pis consent identifier
+     * @return Information about the status of a consent
+     */
     public Optional<ConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
 
+    /**
+     * Reads full information of pis consent by consent identifier
+     *
+     * @param consentId String representation of pis consent identifier
+     * @return Response containing full information about pis consent
+     */
     public Optional<PisConsentResponse> getConsentById(String consentId) {
         return getPisConsentById(consentId)
-                   .flatMap(this::mapToPisConsentResponse);
+                   .flatMap(pisConsentMapper::mapToPisConsentResponse);
     }
 
+    /**
+     * Updates pis consent status by consent identifier
+     *
+     * @param consentId String representation of pis consent identifier
+     * @param status    new consent status
+     * @return Response containing result of status changing
+     */
     public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
         return getPisConsentById(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
@@ -80,52 +88,5 @@ public class PISConsentService {
     private PisConsent setStatusAndSaveConsent(PisConsent consent, ConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
-    }
-
-    private Optional<PisConsent> mapToBulkPaymentConsent(List<String> paymentIds) {
-        PisConsent consent = new PisConsent();
-        consent.setExternalId(UUID.randomUUID().toString());
-        consent.setPaymentId(paymentIds);
-        consent.setConsentType(ConsentType.PIS);
-        consent.setPisConsentType(PisConsentType.BULK);
-        consent.setConsentStatus(ConsentStatus.RECEIVED);
-
-        return Optional.of(consent);
-    }
-
-    private Optional<PisConsent> mapToPeriodicPaymentConsent(String periodicPaymentId) {
-        return Optional.ofNullable(periodicPaymentId)
-                   .map(pmt -> {
-                       PisConsent consent = new PisConsent();
-                       consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPaymentId(Collections.singletonList(pmt));
-                       consent.setConsentType(ConsentType.PIS);
-                       consent.setPisConsentType(PisConsentType.PERIODIC);
-                       consent.setConsentStatus(ConsentStatus.RECEIVED);
-                       return consent;
-                   });
-    }
-
-    private Optional<PisConsent> mapToPisConsent(String paymentId) {
-        return Optional.ofNullable(paymentId)
-                   .map(pmt -> {
-                       PisConsent consent = new PisConsent();
-                       consent.setExternalId(UUID.randomUUID().toString());
-                       consent.setPaymentId(Collections.singletonList(pmt));
-                       consent.setConsentType(ConsentType.PIS);
-                       consent.setPisConsentType(PisConsentType.SINGLE);
-                       consent.setConsentStatus(ConsentStatus.RECEIVED);
-                       return consent;
-                   });
-    }
-
-    private Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {
-        return Optional.ofNullable(pisConsent)
-                   .map(pc -> new PisConsentResponse(
-                       pc.getExternalId(),
-                       pc.getPisConsentType(),
-                       pc.getConsentStatus(),
-                       pc.getPaymentId())
-                   );
     }
 }

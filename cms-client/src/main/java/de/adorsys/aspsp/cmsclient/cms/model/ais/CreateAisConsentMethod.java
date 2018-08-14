@@ -22,9 +22,9 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 
 public class CreateAisConsentMethod extends RestCmsRequestMethod<CreateAisConsentRequest, CreateAisConsentResponse> {
-    private static final String CREATE_AIS_CONSENT = "api/v1/ais/consent/";
+    private static final String CREATE_AIS_CONSENT_URI = "api/v1/ais/consent/";
 
     public CreateAisConsentMethod(final CreateAisConsentRequest request) {
-        super(request, HttpMethod.POST, CREATE_AIS_CONSENT);
+        super(request, HttpMethod.POST, CREATE_AIS_CONSENT_URI);
     }
 }
