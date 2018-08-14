@@ -32,17 +32,17 @@ public class FailResponseAspect {
     private final MessageService messageService;
 
     @AfterReturning(pointcut = "execution(public * de.adorsys.aspsp.xs2a.service.*.*(..))", returning = "result")
-    public Object invokeAspect(Object result){
+    public Object invokeAspect(Object result) {
         return ResponseObject.class.isInstance(result)
-            ? enrichResponseObject(result)
-            : result;
+                   ? enrichResponseObject(result)
+                   : result;
     }
 
     private ResponseObject enrichResponseObject(Object result) {
-        ResponseObject response = (ResponseObject)result;
+        ResponseObject response = (ResponseObject) result;
         return response.hasError()
-            ? doEnrich(response)
-            : response;
+                   ? doEnrich(response)
+                   : response;
     }
 
     private ResponseObject doEnrich(ResponseObject response) {
@@ -51,7 +51,7 @@ public class FailResponseAspect {
         tppMessage.setText(messageService.getMessage(tppMessage.getMessageErrorCode().name()));
         error.addTppMessage(tppMessage);
         return ResponseObject.builder()
-            .fail(error)
-            .build();
+                   .fail(error)
+                   .build();
     }
 }
