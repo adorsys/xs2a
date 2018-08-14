@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.service.mapper.PISConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -81,7 +80,6 @@ public class PISConsentService {
                    .map(con -> con.getConsentStatus() == status);
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
     Optional<PisConsent> getPisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(pisConsentRepository::findByExternalId);

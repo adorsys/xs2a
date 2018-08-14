@@ -32,4 +32,5 @@ public class AisAccountConsent {
     private ConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
+    private byte[] aspspConsentData;
 }
