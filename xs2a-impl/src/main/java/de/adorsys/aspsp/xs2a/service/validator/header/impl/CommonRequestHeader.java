@@ -39,7 +39,6 @@ abstract class CommonRequestHeader implements RequestHeader {
     private UUID xRequestId;
 
     @ApiModelProperty(value = "The timestamp of the tpp request", required = true, example = "Sun, 11 Aug 2019 15:02:37 GMT")
-    @JsonProperty(value = "date")
     @NotNull
     private String date;
 
