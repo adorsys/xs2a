@@ -1,7 +1,8 @@
 {
   "request": {
     "header": {
-      "psu-ip-address": "192.168.0.26"
+      "psu-ip-address": "192.168.0.26",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {
       "creditorAccount": {
@@ -35,7 +36,7 @@
         "currency": "EUR"
       },
       "purposeCode": {
-        "code": "Telefonrechnung 10/2018"
+        "code": "rechnung"
       },
       "remittanceInformationStructured": {
         "reference": "Ref Number Merchant"

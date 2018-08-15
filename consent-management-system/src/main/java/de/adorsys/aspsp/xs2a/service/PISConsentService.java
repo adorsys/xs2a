@@ -80,7 +80,7 @@ public class PISConsentService {
                    .map(con -> con.getConsentStatus() == status);
     }
 
-    private Optional<PisConsent> getPisConsentById(String consentId) {
+    Optional<PisConsent> getPisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(pisConsentRepository::findByExternalId);
     }

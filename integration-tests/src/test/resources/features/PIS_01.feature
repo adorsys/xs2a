@@ -70,8 +70,8 @@ Feature: Payment Initiation Service
 #        Examples:
 #            | payment-product       | recurring-payment          |
 #            | sepa-credit-transfers | recPayInit-successful.json |
-
-
+#
+#
 #    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
 #        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment product <payment-product>
 #        When PSU sends the recurring payment initiating request

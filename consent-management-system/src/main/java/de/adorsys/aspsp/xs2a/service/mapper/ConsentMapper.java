@@ -40,7 +40,9 @@ public class ConsentMapper {
             consent.getUsageCounter(),
             consent.getLastActionDate(),
             consent.getConsentStatus(),
-            false, consent.isTppRedirectPreferred());
+            false,
+            consent.isTppRedirectPreferred(),
+            consent.getAspspConsentData());
     }
 
     private AisAccountAccess mapToAisAccountAccess(List<AisAccount> aisAccounts) {

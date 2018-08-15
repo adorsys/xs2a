@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import org.junit.Test;
@@ -44,6 +45,8 @@ public class HandlerInterceptorTest {
     private HandlerInterceptor handlerInterceptor;
     @Mock
     RequestValidatorService requestValidatorService;
+    @Mock
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private ConsentInformationController consentInformationController;
@@ -66,6 +69,7 @@ public class HandlerInterceptorTest {
     @Test
     public void shouldFail_preHandle_wrongRequest() throws Exception {
         when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(getErrorMap());
+        when(objectMapper.writeValueAsString(any())).thenReturn("400");
         //Given:
         HttpServletRequest wrongRequest = getWrongRequest();
         HttpServletResponse response = getResponse();
@@ -83,6 +87,7 @@ public class HandlerInterceptorTest {
     @Test
     public void shouldFail_preHandle_wrongRequestHeaderFormat() throws Exception {
         when(requestValidatorService.getRequestViolationMap(any(), any())).thenReturn(getErrorMap());
+        when(objectMapper.writeValueAsString(any())).thenReturn("400");
         //Given:
         HttpServletRequest wrongRequest = getWrongRequestWrongTppRequestIdFormat();
         HttpServletResponse response = getResponse();
