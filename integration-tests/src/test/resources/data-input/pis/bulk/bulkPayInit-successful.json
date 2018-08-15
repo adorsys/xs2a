@@ -31,7 +31,7 @@
           "currency": "EUR"
         },
         "purposeCode": {
-          "code": "Monatsmiete Mueller, Alexander"
+          "code": "Mueller"
         },
         "remittanceInformationStructured": {
           "reference": "Ref Number Merchant"
@@ -67,7 +67,7 @@
           "currency": "EUR"
         },
         "purposeCode": {
-          "code": "Abrechnung Strom 10/2018"
+          "code": "Strom"
         },
         "remittanceInformationStructured": {
           "reference": "Ref Number Merchant"
