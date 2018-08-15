@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.integtest.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
@@ -36,11 +39,13 @@ import java.util.List;
 @Component
 public class ConsentTestData {
 
-
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final AisConsentRemoteUrls remoteAisConsentUrls;
     private final ConsentMapper consentMapper;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     public ConsentTestData(RestTemplate consentRestTemplate, AisConsentRemoteUrls remoteAisConsentUrls, ConsentMapper consentMapper){
@@ -60,34 +65,44 @@ public class ConsentTestData {
             return consent;
         }
 
-    private String createConsent(CreateConsentReq request, String psuId, String tppId) {
-        return consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToAisConsentRequest(request, psuId, tppId), String.class).getBody();
-    }
+    private String createConsent(CreateConsentReq request, String psuId, String tppId) throws IOException {
+        String consentId = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToAisConsentRequest(request, psuId, tppId), String.class).getBody();
 
+        CreateAisConsentResponse consentResponse;
+        consentResponse = mapper.readValue(consentId, CreateAisConsentResponse.class);
+
+        return consentResponse.getConsentId();
+    }
 
     private AccountAccess createAccountAccessTestData(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions){
         return new AccountAccess(accounts, balances, transactions, null, null);
-
     }
 
     private List<AccountReference> createAccountReferenceListTestData () {
+        final String IBAN = "DE52500105173911841934";
+        final String CURRENCY = "EUR";
+
         AccountReference accountReference1 = new AccountReference();
-        accountReference1.setIban("DE52500105173911841934");
-        accountReference1.setCurrency(Currency.getInstance("EUR"));
+        accountReference1.setIban(IBAN);
+        accountReference1.setCurrency(Currency.getInstance(CURRENCY));
 
         return Collections.singletonList(accountReference1);
     }
 
-    public String createConsentTestData () {
+    public String createConsentTestData () throws IOException {
+        final String PSU_ID =  "d9e71419-24e4-4c5a-8d93-fcc23153aaff";
+        final String TTP_ID = "tpp01";
+        final int VALID_UNTIL = 30;
+
         List <AccountReference> accounts = createAccountReferenceListTestData();
         List <AccountReference> balances = createAccountReferenceListTestData();
         List <AccountReference> transactions = createAccountReferenceListTestData();
         AccountAccess accountAccess = createAccountAccessTestData(accounts, balances, transactions);
-        CreateConsentReq consentReq = getConsentReq(1, LocalDate.parse("2020-11-10"),false, accountAccess);
-        return createConsent(consentReq,"d9e71419-24e4-4c5a-8d93-fcc23153aaff", "tpp01" );
+        CreateConsentReq consentReq = getConsentReq(1, LocalDate.now().plusDays(VALID_UNTIL),false, accountAccess);
+        return createConsent(consentReq,PSU_ID, TTP_ID ) ;
     }
 
-    public void changeAccountConsentStatus (String consentId, SpiConsentStatus consentStatus) {
+    public void changeAccountConsentStatus (@NotNull String consentId, SpiConsentStatus consentStatus) {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, consentStatus.name());
     }
 }
