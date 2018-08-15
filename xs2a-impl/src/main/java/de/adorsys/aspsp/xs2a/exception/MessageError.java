@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.exception;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
@@ -59,6 +60,7 @@ public class MessageError {
     }
 
     // TODO task: add logic to resolve resulting MessageError https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/211
+    @JsonIgnore
     public TppMessageInformation getTppMessage() {
         return tppMessages.get(0);
     }
