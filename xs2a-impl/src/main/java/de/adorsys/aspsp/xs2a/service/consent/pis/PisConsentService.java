@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.consent.pis;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,8 +45,11 @@ public class PisConsentService {
     public String createPisConsentForSinglePaymentAndGetId(CreateConsentRequest createConsentRequest, String paymentId) {
         PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForSinglePayment(createConsentRequest, paymentId);
 
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, String.class);
-        return responseEntity.getBody();
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 
     /**

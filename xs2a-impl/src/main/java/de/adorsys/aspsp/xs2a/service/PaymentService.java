@@ -131,7 +131,7 @@ public class PaymentService {
         return singlePayment.isValidExecutionDateAndTime()
                    ? scaPaymentService.createSinglePayment(singlePayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct)
                          .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-                         .orElse(getPaymentFailedErrorResponse())
+                         .orElseGet(this::getPaymentFailedErrorResponse)
                    : getExecutionDateInvalidErrorResponse();
     }
 
