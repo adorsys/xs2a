@@ -1,0 +1,481 @@
+---
+timezone: Europe/Berlin
+
+keycloak:
+  enabled: false
+  replicas: 1
+
+  image:
+    name: docker.io/jboss/keycloak-openshift
+    tag: 4.2.1.Final
+    stream: false
+
+  storage:
+    size: 1Gi
+
+  route:
+    host: >-
+      {{ template "psd2.fullname" . }}-keycloak-{{ .Release.Namespace }}.cloud.adorsys.de
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+
+  resources:
+    limits:
+      memory: 500Mi
+  livenessProbe:
+    httpGet:
+      path: /auth/
+      port: http
+    initialDelaySeconds: 120
+    timeoutSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /auth/
+      port: http
+    initialDelaySeconds: 30
+    timeoutSeconds: 10
+    periodSeconds: 10
+    failureThreshold: 10
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+  env:
+    WILDFLY_LOGLEVEL: info
+    JAVA_OPTS: >-
+      -XX:+UnlockExperimentalVMOptions
+      -XX:+UseCGroupMemoryLimitForHeap
+      -Dsun.zip.disableMemoryMapping=true
+      -XX:MaxRAMFraction=1
+      -XX:+UseParallelGC
+      -XX:MinHeapFreeRatio=5
+      -XX:MaxHeapFreeRatio=10
+      -XX:GCTimeRatio=4
+      -XX:AdaptiveSizePolicyWeight=90
+
+  admin:
+    username: admin
+    password: admin
+
+  dbVendor: postgres
+
+  db:
+    image:
+      name: docker.io/centos/postgresql-96-centos7
+      tag: latest
+      stream: false
+
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: ~
+
+    deploymentAnnotations: {}
+    podAnnotations: {}
+    serviceAnnotations: {}
+
+    env: {}
+    secrets: {}
+
+    resources:
+      limits:
+        memory: 200Mi
+    livenessProbe:
+      exec:
+        command: [/usr/libexec/check-container, --live]
+      initialDelaySeconds: 120
+      timeoutSeconds: 10
+    readinessProbe:
+      exec:
+        command: [/usr/libexec/check-container]
+      initialDelaySeconds: 5
+      timeoutSeconds: 1
+
+    admin:
+      password: keycloak
+    user:
+      username: keycloak
+      password: keycloak
+
+    database:
+      name: keycloak
+
+    metrics:
+      enabled: false
+      resources:
+        requests:
+          memory: 250Mi
+          cpu: 100m
+      image:
+        name: docker.io/wrouesnel/postgres_exporter
+        tag: v0.4.6
+        stream: false
+
+    backup:
+      enabled: false
+      schedule: "0 1 * * *"
+      retention: 7
+      resources:
+        requests:
+          memory: 100Mi
+          cpu: 100m
+      persistence:
+        size: 10Gi
+        storageClass: ~
+
+  realms:
+    timp:
+      displayName: ADORSYS PSD2
+      registrationAllowed: true
+      smtpServer:
+        from: "realm@example.com"
+        host: '{{ template "psd2.fullname" . }}-mailout'
+      clients:
+        psd2:
+          secret: "{{ .Values.cms.secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+          standardFlowEnabled: true
+          implicitFlowEnabled: false
+          directAccessGrantsEnabled: true
+          serviceAccountsEnabled: true
+          authorizationServicesEnabled: true
+      users:
+        test:
+          firstName: Max
+          lastName: Mustermann
+          email: max@mustermann.de
+          credentials: [{ type: password, value: "TestPassword123" }]
+
+
+xs2a:
+  enabled: false
+  replicas: 1
+
+  image:
+    name: xs2a-integtests
+    tag: latest
+    stream: true
+
+  route:
+    host: ~
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+
+  env:
+    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-mock:8080
+    CONSENT_SERVICE_BASEURL: http:/{{ template "psd2.fullname" . }}-cms:8080/api/v1
+    ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp:8080/api/v1
+    skip_ssl_certificate_verification: true
+    KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
+    skip_ssl_certificate_verification: true
+    keycloak_username: "{{ .Values.keycloak.admin.username }}"
+    keycloak_password: "{{ .Values.keycloak.admin.password }}"
+    KEYCLOAK_CREDENTIALS_SECRET: "{{ .Values.cms.secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+
+  secrets:
+    existingSecret: example
+
+  existingSecret: ~
+
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 120
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 15
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+mock:
+  enabled: false
+  replicas: 1
+
+  image:
+    name: aspsp-mock-server
+    tag: latest
+    stream: true
+
+  route:
+      host: ~
+      tls:
+        insecureEdgeTerminationPolicy: Redirect
+        termination: edge
+
+  resources:
+    requests:
+      memory: 200Mi
+    limits:
+      memory: 400Mi
+
+  env:
+    SPRING_DATA_MONGODB_HOST: http://{{ template "psd2.fullname" . }}-mock-db
+    SPRING_DATA_MONGODB_PORT: "27017"
+    SPRING_DATA_MONGODB_DATABASE: spimock
+    KEYCLOAK_CREDENTIALS_SECRET: "{{ .Values.cms.secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+    KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
+    spring_mail_host: mailout
+    spring_mail_port: 25
+    spring_mail_properties_mail_smtp_auth: "false"
+    spring_mail_properties_mail_smtp_starttls_enable: "false"
+    spring_mail_properties_mail_from: dst@adorsys.com.ua
+    ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp:8080/api/v1
+    CONSENT_SERVICE_BASEURL: http:/{{ template "psd2.fullname" . }}-cms:8080/api/v1
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+# Not implemented @ mock
+#   because the java is too old.
+#  extraEnv: |
+#    - name: JAVA_OPTS
+#      value: >-
+#        -XX:+UnlockExperimentalVMOptions
+#        -XX:+UseCGroupMemoryLimitForHeap
+#        -Dsun.zip.disableMemoryMapping=true
+#        -XX:MaxRAMFraction=1
+#        -XX:+UseParallelGC
+#        -XX:MinHeapFreeRatio=5
+#        -XX:MaxHeapFreeRatio=10
+#        -XX:GCTimeRatio=4
+#        -XX:AdaptiveSizePolicyWeight=90
+  extraEnv: |
+    - name: JAVA_OPTS
+      value: "-XX:MaxRAM=350m"
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 30
+    timeoutSeconds: 1
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 3
+    timeoutSeconds: 1
+    periodSeconds: 10
+
+  db:
+    image:
+#      name: docker.io/centos/mongodb-36-centos7
+      name: docker.io/library/mongo
+      tag: 3.6
+
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: ~
+      mountPath: "/data/db"
+
+    deploymentAnnotations: {}
+    podAnnotations: {}
+    serviceAnnotations: {}
+
+    resources:
+      limits:
+        memory: 200Mi
+    livenessProbe:
+      initialDelaySeconds: 30
+      tcpSocket:
+        port: 27017
+      timeoutSeconds: 1
+    readinessProbe:
+      exec:
+#        command: ["/bin/sh", "-i", "-c", "mongo 127.0.0.1:27017/admin -u admin -p $MONGODB_ADMIN_PASSWORD --eval=\"quit()\""]
+        command: ["mongo", "--eval", "db.adminCommand('ping')"]
+      initialDelaySeconds: 3
+      timeoutSeconds: 1
+      failureThreshold: 10
+
+    admin:
+      password: root
+
+# Not implemented @ mock
+#    user:
+#      username: mockbanking
+#      password: mockbanking
+#
+#    database:
+#      name: mockbanking
+
+cms:
+  enabled: false
+  replicas: 1
+
+  image:
+    name: xs2a-aspsp-cms
+    tag: v1
+    stream: true
+
+  route:
+    host: ~
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+
+  env:
+    spring_datasource_url: "jdbc:postgresql://postgres-integ-cms/cms"
+    spring_jpa_properties_hibernate_default_schema: cms
+    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-mock:8080
+    ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp:8080/api/v1
+    skip_ssl_certificate_verification: true
+    KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
+    KEYCLOAK_CREDENTIALS_SECRET: ~
+    spring_datasource_username: ~
+    spring_datasource_password: ~
+    JAVA_OPTS: "-Xmx1024m"
+
+  secrets:
+    existingSecret: ~
+
+  extraEnv:
+
+
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 120
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 15
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+aspsp:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    name: xs2a-aspsp-profile
+    tag: latest
+    stream: true
+
+  route:
+    host: ~
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+
+  env:
+    SPRING_PROFILES_ACTIVE: debug_mode
+    BANK_PROFILE_PATH: /aspsp-profile-settings.yml/aspsp-profile-settings-integ.yml
+
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 120
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 15
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+##postgres:
+##  configs:
+##    POSTGRESQL_DATABASE: cms
+##    POSTGRESQL_PASSWORD: xs2acms
+##    POSTGRESQL_USER: aspspcms
+##    POSTGRESQL_ADMIN_PASSWORD: xs2acms
+##
+##keycloak:
+##  url: https://xs2a-idp-integ.cloud.adorsys.de
+##  db: postgres
+##    configs:
+##      POSTGRESQL_DATABASE: keycloak
+##      POSTGRESQL_PASSWORD: keycloak
+##      POSTGRESQL_USER: keycloak
+##      POSTGRESQL_ADMIN_PASSWORD: keycloak
+##
+
+mailout:
+  enabled: false
+  externalDomain: ~
+  image:
+    name: docker.io/jkroepke/openshift-mta
+    tag: latest
+    stream: false
+
+  revisionHistoryLimit: 10
+
+  env:
+      TZ: "Europe/Berlin"
+      SENDMAIL_DEFINE_SMART_HOST: "smtp.sendgrid.net:587"
+      SENDMAIL_DISABLE_SENDER_RDNS: "true"
+      SENDMAIL_ACCESS: "Connect:10 RELAY"
+      SENDMAIL_FORCE_TLS_VERIFY: "true"
+      SENDMAIL_ROOT_ALIAS: "/dev/null"
+      SENDMAIL_DEFINE_confPRIVACY_FLAGS: "public"
+      LIBLOGFAF_SENDTO: "/dev/tty"
+      SENDMAIL_DEFINE_confMIN_QUEUE_AGE: "10"
+      SENDMAIL_DEFINE_confSAFE_QUEUE: "false"
+      SENDMAIL_DEFINE_confREFUSE_LA: "0"
+      SENDMAIL_DEFINE_confQUEUE_LA: "0"
+
+  secrets:
+    SENDMAIL_SMART_HOST_USER: "testadorsys"
+    SENDMAIL_SMART_HOST_PASSWORD: "HF-sT4k_g6A5"
+
+  existingSecret: ~
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 150Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
+  readinessProbe:
+    exec:
+      command:
+      - /healthcheck.sh
+    initialDelaySeconds: 5
+  livenessProbe:
+    exec:
+      command:
+      - /healthcheck.sh
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}

@@ -1,0 +1,63 @@
+---
+{{ if .Values.xs2a.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.xs2a.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          "name":"{{- if .Values.xs2a.image.stream }}{{ .Values.xs2a.image.name }}:{{ default "latest" .Values.xs2a.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-xs2a:latest{{- end }}"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"xs2a\")].image"
+      }]]
+    checksum/secret: {{ include (print $.Template.BasePath "/xs2a/xs2a-secret.yaml") . | sha256sum }}
+  name: {{ template "psd2.fullname" . }}-xs2a
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: xs2a
+    app: xs2a
+spec:
+  serviceName: {{ template "psd2.fullname" . }}-xs2a
+  replicas: {{ .Values.xs2a.replicas }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      component: xs2a
+  template:
+    metadata:
+    {{- if .Values.xs2a.podAnnotations }}
+      annotations:
+{{ toYaml .Values.xs2a.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        component: xs2a
+    spec:
+      containers:
+        - name: xs2a
+          image: " "
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+{{- range $name, $value := .Values.xs2a.env }}
+{{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ tpl (toString $value) $ | quote }}
+{{- end }}
+{{- end }}
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
+
+          resources:
+{{ toYaml .Values.xs2a.resources | indent 12 }}
+          livenessProbe:
+{{ toYaml .Values.cms.livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.cms.readinessProbe | indent 12 }}
+{{- end }}

@@ -1,0 +1,24 @@
+{{ if .Values.xs2a.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.xs2a.serviceAnnotations }}
+   annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "psd2.fullname" . }}-xs2a
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: xs2a
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    component: xs2a
+{{- end }}

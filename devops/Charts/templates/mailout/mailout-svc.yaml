@@ -1,0 +1,24 @@
+{{- if .Values.mailout.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.mailout.serviceAnnotations }}
+   annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "psd2.fullname" . }}-mailout
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: mailout
+spec:
+  type: ClusterIP
+  ports:
+  - name: smtp
+    port: 25
+    protocol: TCP
+    targetPort: smtp
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    component: mailout
+{{- end }}

@@ -1,0 +1,25 @@
+{{ if .Values.aspsp.enabled }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "psd2.fullname" . }}-aspsp
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: aspsp
+spec:
+{{- if .Values.aspsp.route.host }}
+  host: {{ . | quote }}
+{{- end }}
+  port:
+    targetPort: http
+{{- with .Values.cms.route.tls }}
+  tls:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  to:
+    kind: Service
+    name: {{ template "psd2.fullname" . }}-aspsp
+    weight: 100
+    wildcardPolicy: None
+{{- end }}

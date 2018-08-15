@@ -1,0 +1,20 @@
+{{- if and .Values.keycloak.enabled .Values.keycloak.db.backup.enabled (eq .Values.keycloak.dbVendor "postgres") }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "psd2.fullname" . }}-keycloak-backup
+  labels:
+    {{ include "psd2.labels" . | indent 4 }}
+    component: keycloak-backup
+    app: {{ template "psd2.fullname" . }}-keycloak
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.keycloak.db.backup.persistence.size | quote }}
+{{- with .Values.keycloak.db.backup.persistence.storageClass }}
+  storageClassName: {{ . | quote }}
+{{- end }}
+{{- end }}

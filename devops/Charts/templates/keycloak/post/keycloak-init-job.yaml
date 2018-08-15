@@ -1,0 +1,53 @@
+{{- if .Values.keycloak.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade,post-rollback
+    "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+  name: {{ template "psd2.fullname" . }}-keycloak-init
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: keycloak-init
+    app: {{ template "psd2.fullname" . }}-keycloak
+spec:
+  template:
+    metadata:
+      annotations:
+        alpha.image.policy.openshift.io/resolve-names: '*'
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        component: keycloak-init
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: keycloak
+        image: "{{ template "psd2.fullname" . }}-keycloak:latest"
+        command: ["/scripts/init.sh"]
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 100m
+        env:
+        - name: KEYCLOAK_HOST
+          value: "http://{{ template "psd2.fullname" . }}-keycloak:8080"
+        - name: KEYCLOAK_USER
+          valueFrom:
+            secretKeyRef:
+              key: admin-username
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        - name: KEYCLOAK_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+      volumes:
+      - name: scripts
+        secret:
+          secretName: "{{ template "psd2.fullname" . }}-keycloak-init"
+          defaultMode: 0555
+{{- end }}

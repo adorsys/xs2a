@@ -1,0 +1,41 @@
+{{- if .Values.keycloak.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ template "psd2.fullname" . }}-keycloak-hs"
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: keycloak
+spec:
+  sessionAffinity: ClientIP
+  clusterIP: None
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    component: keycloak
+---
+apiVersion: v1
+kind: Service
+metadata:
+  {{- with .Values.keycloak.serviceAnnotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+  {{- end }}
+  name: "{{ template "psd2.fullname" . }}-keycloak"
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: keycloak
+spec:
+  sessionAffinity: ClientIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    component: keycloak
+{{- end }}

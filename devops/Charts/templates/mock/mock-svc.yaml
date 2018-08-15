@@ -1,0 +1,23 @@
+{{- if .Values.mock.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.mock.serviceAnnotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "psd2.fullname" . }}-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: mock
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    component: mock
+{{- end }}

@@ -1,0 +1,23 @@
+{{- if .Values.keycloak.enabled }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: "{{ template "psd2.fullname" . }}-keycloak"
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: keycloak
+spec:
+{{- if .Values.keycloak.route.host }}
+  host: "{{ tpl .Values.keycloak.route.host $ }}"
+{{- end }}
+  port:
+    targetPort: http
+{{- with .Values.keycloak.route.tls }}
+  tls:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  to:
+    kind: Service
+    name: {{ template "psd2.fullname" . }}-keycloak
+{{- end }}

@@ -1,0 +1,59 @@
+{{ if .Values.aspsp.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    {{- with .Values.aspsp.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
+  image.openshift.io/triggers: |
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          "name":"{{- if .Values.aspsp.image.stream }}{{ .Values.aspsp.image.name }}:{{ default "latest" .Values.aspsp.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspsp:latest{{- end }}"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"aspsp\")].image"
+      }]]
+  name: {{ template "psd2.fullname" . }}
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: aspsp
+    app: aspsp-profile
+spec:
+  serviceName: {{ template "psd2.fullname" . }}
+  replicas: {{ .Values.aspsp.replicaCount }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      component: aspsp
+  template:
+    metadata:
+    {{- if .Values.aspsp.podAnnotations }}
+      annotations:
+{{ toYaml .Values.aspsp.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        component: aspsp
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.aspsp.image.name }}:{{ .Values.aspsp.image.tag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+{{- range $name, $value := .Values.aspsp.env }}
+{{- if not (empty $value) }}
+            - name: {{ $name | quote }}
+              value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+            - name: TZ
+              value: {{ .Values.timezone | quote }}
+          resources:
+{{ toYaml .Values.aspsp.resources | indent 12 }}
+{{- end }}

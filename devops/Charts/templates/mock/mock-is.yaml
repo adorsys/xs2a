@@ -1,0 +1,38 @@
+{{- if and .Values.mock.enabled (not .Values.mock.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.mock.image.name }}:{{ .Values.mock.image.tag }}
+    referencePolicy:
+      type: Source
+{{- end }}
+{{- if .Values.mock.db.image.name }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-mock-db
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.mock.db.image.name }}:{{ .Values.mock.db.image.tag }}
+    referencePolicy:
+      type: Source
+{{- end }}

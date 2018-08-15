@@ -1,0 +1,25 @@
+{{- if .Values.mock.enabled }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "psd2.fullname" . }}-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: mock
+spec:
+  {{- if .Values.mock.route.host }}
+  host: {{ . | quote }}
+  {{- end }}
+  port:
+    targetPort: http
+{{- with .Values.mock.route.tls }}
+  tls:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  to:
+    kind: Service
+    name: {{ template "psd2.fullname" . }}-mock
+    weight: 100
+    wildcardPolicy: None
+{{- end }}

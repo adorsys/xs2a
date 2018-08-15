@@ -1,0 +1,13 @@
+apiVersion: v1
+appVersion: "1.0"
+tillerVersion: ~2.9.1
+description: xs2a Helm charts
+name: psd2
+version: 0.1.0
+sources:
+  - https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/devops/Charts
+maintainers:
+  - name: Yannick Siewe
+    email: ysi@adorsys.de
+  - name: Jan-Otto Kröpke
+    email: joe@adorsys.de

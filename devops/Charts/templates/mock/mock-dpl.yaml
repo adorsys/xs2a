@@ -1,0 +1,77 @@
+{{- if .Values.mock.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.mock.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind":"ImageStreamTag",
+          "name":"{{- if .Values.mock.image.stream }}{{ .Values.mock.image.stream }}:{{ default "latest" .Values.mock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mock:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.initContainers[?(@.name==\"mockserver\")].image"
+      }]
+    checksum/secret: {{ include (print $.Template.BasePath "/mock/mock-secrets.yaml") . | sha256sum }}
+  name: {{ template "psd2.fullname" . }}-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: mock
+    app: multibanking-mock
+spec:
+{{- with .Values.mock.strategy }}
+  strategy:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      component: mock
+  replicas: {{ default 1 .Values.mock.replicas }}
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        component: mock
+{{- with .Values.mock.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end}}
+    spec:
+      containers:
+      - name: mockserver
+        # redhat hack: invalid image to stop first unused deployment
+        image: " "
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+{{- range $name, $value := .Values.mock.env }}
+{{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+{{- end }}
+{{- end }}
+{{- with .Values.mock.extraEnv }}
+{{ tpl . $ | indent 8 }}
+{{- end }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+{{ toYaml .Values.mock.resources | indent 10 }}
+        livenessProbe:
+{{ toYaml .Values.mock.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.mock.readinessProbe | indent 10 }}
+        volumeMounts:
+        - mountPath: /opt/multibanking-mock/datas
+          name: data
+      volumes:
+      - name: data
+        emptyDir: {}
+{{- end }}

@@ -1,0 +1,61 @@
+{{- if and .Values.keycloak.enabled .Values.keycloak.db.backup.enabled (eq .Values.keycloak.dbVendor "postgres") }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "psd2.fullname" . }}-keycloak-backup
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: keycloak-backup
+    app: {{ template "psd2.fullname" . }}-keycloak
+spec:
+  schedule: "{{ .Values.keycloak.db.backup.schedule }}"
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          annotations:
+            alpha.image.policy.openshift.io/resolve-names: '*'
+          labels:
+{{ include "psd2.matchLabels" . | indent 12 }}
+            component: keycloak-backup
+        spec:
+          containers:
+          - name: backup
+            command: ["/scripts/backup.sh"]
+            image: "{{ template "psd2.fullname" . }}-keycloak-db:latest"
+            resources:
+{{ toYaml .Values.keycloak.db.backup.resources | indent 14 }}
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: backup
+              mountPath: /data
+            env:
+            - name: POSTGRESQL_HOST
+              value: {{ template "psd2.fullname" . }}-keycloak-db
+            - name: POSTGRESQL_USER
+              value: postgres
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: admin-password
+                  name: {{ template "psd2.fullname" . }}-keycloak-db
+            - name: POSTGRESQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: admin-password
+                  name: {{ template "psd2.fullname" . }}-keycloak-db
+          restartPolicy: OnFailure
+          volumes:
+          - name: scripts
+            configMap:
+              name: "{{ template "psd2.fullname" . }}-keycloak-backup-scripts"
+              defaultMode: 0555
+          - name: backup
+            persistentVolumeClaim:
+              claimName: {{ template "psd2.fullname" . }}-keycloak-backup
+{{- end }}

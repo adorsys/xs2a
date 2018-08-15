@@ -1,0 +1,25 @@
+{{ if .Values.xs2a.enabled }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "psd2.fullname" . }}-xs2a
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: xs2a
+spec:
+{{- if .Values.xs2a.route.host }}
+  host: {{ . | quote }}
+{{- end }}
+  port:
+    targetPort: http
+{{- with .Values.xs2a.route.tls }}
+  tls:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  to:
+    kind: Service
+    name: {{ template "psd2.fullname" . }}-xs2a
+    weight: 100
+    wildcardPolicy: None
+{{- end }}
