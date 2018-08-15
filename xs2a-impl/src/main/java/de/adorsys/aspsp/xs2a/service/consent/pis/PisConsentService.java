@@ -17,11 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.consent.pis;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,29 +39,27 @@ public class PisConsentService {
     /**
      * Sends a POST request to CMS to store created PIS consent for single payment
      *
-     * @param singlePayment  Payment data which will be stored in Pis consent
-     * @param paymentId      Payment identifier
-     * @param tppInfo        Information about tpp in order to store in cms
-     * @param paymentProduct Payment product endpoint for payments e.g. for a SEPA Credit Transfer
+     * @param createConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for single payment
      */
-    public String createPisConsentForSinglePaymentAndGetId(SinglePayment singlePayment, String paymentId, TppInfo tppInfo, String paymentProduct) {
-        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForSinglePayment(singlePayment, paymentId, tppInfo, paymentProduct);
+    public String createPisConsentForSinglePaymentAndGetId(CreateConsentRequest createConsentRequest, String paymentId) {
+        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForSinglePayment(createConsentRequest, paymentId);
 
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, String.class);
-        return responseEntity.getBody();
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 
     /**
      * Sends a POST request to CMS to store created PIS consent for bulk payment
      *
-     * @param paymentIdentifierMap Map of payments data which will be stored in Pis consent
-     * @param tppInfo        Information about tpp in order to store in cms
-     * @param paymentProduct Payment product endpoint for payments e.g. for a SEPA Credit Transfer
+     * @param createConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for bulk payment
      */
-    public String createPisConsentForBulkPaymentAndGetId(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, String paymentProduct) {
-        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForBulkPayment(paymentIdentifierMap, tppInfo, paymentProduct);
+    public String createPisConsentForBulkPaymentAndGetId(CreateConsentRequest createConsentRequest) {
+        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForBulkPayment(createConsentRequest);
 
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, String.class);
         return responseEntity.getBody();
@@ -73,14 +68,11 @@ public class PisConsentService {
     /**
      * Sends a POST request to CMS to store created PIS consent for periodic payment
      *
-     * @param periodicPayment Periodic payment data which will be stored in Pis consent
-     * @param paymentId      Payment identifier
-     * @param tppInfo        Information about tpp in order to store in cms
-     * @param paymentProduct Payment product endpoint for payments e.g. for a SEPA Credit Transfer
+     * @param createConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent periodic payment
      */
-    public String createPisConsentForPeriodicPaymentAndGetId(PeriodicPayment periodicPayment, String paymentId, TppInfo tppInfo, String paymentProduct) {
-        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForPeriodicPayment(periodicPayment, paymentId, tppInfo, paymentProduct);
+    public String createPisConsentForPeriodicPaymentAndGetId(CreateConsentRequest createConsentRequest, String paymentId) {
+        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForPeriodicPayment(createConsentRequest, paymentId);
 
         ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, String.class);
         return responseEntity.getBody();

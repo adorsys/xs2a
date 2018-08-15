@@ -127,7 +127,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService()));
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper()));
     }
 
     @Bean

@@ -40,4 +40,7 @@ public class PisConsentRequest {
 
     @ApiModelProperty(value = "Tpp information", required = true)
     private CmsTppInfo tppInfo;
+
+    @ApiModelProperty(value = "ASPSP consent data", example = "zzzzzzzz")
+    private byte[] aspspConsentData;
 }
