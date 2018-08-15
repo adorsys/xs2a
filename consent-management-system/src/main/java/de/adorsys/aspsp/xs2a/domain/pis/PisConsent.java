@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -70,4 +71,9 @@ public class PisConsent {
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
+
+    @Lob
+    @Column(name = "aspsp_consent_data")
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] aspspConsentData;
 }

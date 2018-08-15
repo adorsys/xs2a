@@ -75,6 +75,7 @@ public class AISConsentService {
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
+        consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
                    ? Optional.ofNullable(saved.getExternalId())
