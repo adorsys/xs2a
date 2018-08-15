@@ -75,7 +75,7 @@ public class PaymentInitiationController {
         return responseMapper.created(
             error
                 .map(e -> ResponseObject.<PaymentInitialisationResponse>builder().fail(e).build())
-                .orElse(paymentService.createPaymentInitiation(singlePayment, tppSignatureCertificate, paymentProduct)));
+                .orElseGet(() -> paymentService.createPaymentInitiation(singlePayment, tppSignatureCertificate, paymentProduct)));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

@@ -100,7 +100,7 @@ public class RequestValidatorService {
     Map<String, String> getPaymentTypeViolationMap(Object handler) {
         return Optional.ofNullable(classMap.get(((HandlerMethod) handler).getBeanType()))
                    .map(this::getViolationMapForPaymentType)
-                   .orElse(Collections.emptyMap());
+                   .orElseGet(Collections::emptyMap);
     }
 
     Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
@@ -149,14 +149,14 @@ public class RequestValidatorService {
         return Optional.ofNullable(pathVariableMap)
                    .map(mp -> mp.get(PAYMENT_PRODUCT_PATH_VAR))
                    .map(this::checkPaymentProductSupportAndGetViolationMap)
-                   .orElse(Collections.emptyMap());
+                   .orElseGet(Collections::emptyMap);
     }
 
     private Map<String, String> checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
         return Optional.ofNullable(paymentProduct)
                    .flatMap(PaymentProduct::getByCode)
                    .map(this::getViolationMapForPaymentProduct)
-                   .orElse(Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
+                   .orElseGet(() -> Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }
 
     private Map<String, String> getViolationMapForPaymentProduct(PaymentProduct paymentProduct) {
