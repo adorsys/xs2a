@@ -12,10 +12,12 @@
     "header": {},
     "body": {
       "transactionStatus": "RJCT",
-      "tppMessage": {
-        "category": "ERROR",
-        "code": "RESOURCE_UNKNOWN"
-      }
+      "tppMessages": [
+        {
+          "category": "ERROR",
+          "code": "CONSENT_UNKNOWN_400"
+        }
+      ]
     }
   }
 }
