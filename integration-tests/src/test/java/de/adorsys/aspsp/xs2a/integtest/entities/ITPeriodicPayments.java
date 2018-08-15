@@ -26,16 +26,12 @@ import java.time.LocalDate;
 import java.time.chrono.ChronoLocalDate;
 import java.util.Optional;
 
-
 @Data
 public class ITPeriodicPayments extends SinglePayment {
 
     private LocalDate startDate;
-
     private String executionRule;
-
     private LocalDate endDate;
-
     private String frequency;
 
     @Max(31)
