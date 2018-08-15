@@ -36,7 +36,9 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/periodic-payments/{payment-product}")
 @Api(value = "api/v1/periodic-payments/{payment-product}", tags = "PISP, Periodic Payments", description = "Orders for periodic payments")
 public class PeriodicPaymentsController {
-    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6ICJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6ICIxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
+    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6I" +
+                                               "CJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6IC" +
+                                               "IxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
     private final PaymentService paymentService;
     private final ResponseMapper responseMapper;
     private final AccountReferenceValidationService referenceValidationService;
@@ -52,7 +54,7 @@ public class PeriodicPaymentsController {
         @ApiImplicitParam(name = "tpp-redirect-uri", value = "http://example.com", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = TPP_INFO, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", defaultValue = TPP_INFO, dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPeriodicPayment(
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for periodic payments e.g. for a periodic SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers", required = true)
         @PathVariable("payment-product") String paymentProduct,

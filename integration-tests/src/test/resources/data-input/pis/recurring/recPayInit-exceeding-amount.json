@@ -37,7 +37,7 @@
         "currency": "EUR"
       },
       "purposeCode": {
-        "code": "Telefonrechnung 10/2018"
+        "code": "rechnung"
       },
       "remittanceInformationStructured": {
         "reference": "Ref Number Merchant"

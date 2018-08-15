@@ -34,6 +34,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -295,6 +296,10 @@ public class PaymentMapper {
     }
 
     public TppInfo mapToTppInfo(String tppSignatureCertificate) {
+        if (StringUtils.isBlank(tppSignatureCertificate)) {
+            return null;
+        }
+
         try {
             byte[] decodedBytes = Base64.getDecoder().decode(tppSignatureCertificate);
             String decodedJson = new String(decodedBytes);

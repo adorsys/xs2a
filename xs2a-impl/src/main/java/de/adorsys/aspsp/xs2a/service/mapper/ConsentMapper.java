@@ -25,10 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -43,19 +40,20 @@ import java.util.stream.Collectors;
 public class ConsentMapper {
     private final AccountMapper accountMapper;
 
-    public CreateAisConsentRequest mapToAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
+    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(req)
                    .map(r -> {
-                       CreateAisConsentRequest request = new CreateAisConsentRequest();
-                       request.setPsuId(psuId);
-                       request.setTppId(tppId);
-                       request.setFrequencyPerDay(r.getFrequencyPerDay());
-                       request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       request.setValidUntil(r.getValidUntil());
-                       request.setRecurringIndicator(r.isRecurringIndicator());
-                       request.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
+                       CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
+                       aisRequest.setPsuId(psuId);
+                       aisRequest.setTppId(tppId);
+                       aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
+                       aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
+                       aisRequest.setValidUntil(r.getValidUntil());
+                       aisRequest.setRecurringIndicator(r.isRecurringIndicator());
+                       aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
+                       aisRequest.setAspspConsentData(aspspConsentData.getAspspConsentData());
 
-                       return request;
+                       return aisRequest;
                    })
                    .orElse(null);
     }

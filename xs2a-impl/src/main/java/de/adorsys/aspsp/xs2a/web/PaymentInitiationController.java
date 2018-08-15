@@ -40,7 +40,9 @@ import java.util.Optional;
 @RequestMapping(path = "api/v1/payments/{payment-product}")
 @Api(value = "api/v1/payments/{payment-product}", tags = "PISP, Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
-    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6ICJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6ICIxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
+    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6I" +
+                                               "CJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6IC" +
+                                               "IxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
     private final AccountReferenceValidationService referenceValidationService;
@@ -62,7 +64,7 @@ public class PaymentInitiationController {
         @ApiImplicitParam(name = "tpp-redirect-uri", value = "Uri of TPP", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "A signature of the request by TPP", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = TPP_INFO, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", defaultValue = TPP_INFO, dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPaymentInitiation(
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for payments e.g. for a SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers")
         @PathVariable("payment-product") String paymentProduct,
@@ -73,7 +75,7 @@ public class PaymentInitiationController {
         return responseMapper.created(
             error
                 .map(e -> ResponseObject.<PaymentInitialisationResponse>builder().fail(e).build())
-                .orElse(paymentService.createPaymentInitiation(singlePayment, tppSignatureCertificate,  paymentProduct)));
+                .orElse(paymentService.createPaymentInitiation(singlePayment, tppSignatureCertificate, paymentProduct)));
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

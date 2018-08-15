@@ -29,6 +29,8 @@ import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.service.consent.pis.CreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -43,22 +45,31 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PisConsentMapper {
 
-    public PisConsentRequest mapToPisConsentRequestForPeriodicPayment(PeriodicPayment periodicPayment, String paymentId, TppInfo tppInfo, String paymentProduct) {
+    public PisConsentRequest mapToPisConsentRequestForPeriodicPayment(CreateConsentRequest createConsentRequest, String paymentId) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment, paymentId)));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
+        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createConsentRequest.getPeriodicPayment(), paymentId)));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(createConsentRequest.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.PERIODIC);
-        request.setTppInfo(mapToTppInfo(tppInfo));
+        request.setTppInfo(mapToTppInfo(createConsentRequest.getTppInfo()));
+        request.setAspspConsentData(
+            Optional.ofNullable(createConsentRequest.getAspspConsentData())
+                .map(AspspConsentData::getAspspConsentData)
+                .orElse(null));
 
         return request;
     }
 
-    public PisConsentRequest mapToPisConsentRequestForBulkPayment(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, String paymentProduct) {
+    public PisConsentRequest mapToPisConsentRequestForBulkPayment(CreateConsentRequest createConsentRequest) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(mapToPisPaymentForBulkPayment(paymentIdentifierMap));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
+        request.setPayments(mapToPisPaymentForBulkPayment(createConsentRequest.getPaymentIdentifierMap()));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(createConsentRequest.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.BULK);
-        request.setTppInfo(mapToTppInfo(tppInfo));
+        request.setTppInfo(mapToTppInfo(createConsentRequest.getTppInfo()));
+        request.setAspspConsentData(
+            Optional.ofNullable(createConsentRequest.getAspspConsentData())
+                .map(AspspConsentData::getAspspConsentData)
+                .orElse(null));
+
 
         return request;
     }
@@ -70,12 +81,16 @@ public class PisConsentMapper {
 
     }
 
-    public PisConsentRequest mapToPisConsentRequestForSinglePayment(SinglePayment singlePayment, String paymentId, TppInfo tppInfo, String paymentProduct) {
+    public PisConsentRequest mapToPisConsentRequestForSinglePayment(CreateConsentRequest createConsentRequest, String paymentId) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment, paymentId)));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
+        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createConsentRequest.getSinglePayment(), paymentId)));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(createConsentRequest.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.SINGLE);
-        request.setTppInfo(mapToTppInfo(tppInfo));
+        request.setTppInfo(mapToTppInfo(createConsentRequest.getTppInfo()));
+        request.setAspspConsentData(
+            Optional.ofNullable(createConsentRequest.getAspspConsentData())
+                .map(AspspConsentData::getAspspConsentData)
+                .orElse(null));
 
         return request;
     }
