@@ -49,6 +49,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @FeatureFileSteps
@@ -121,9 +122,22 @@ public class ConsentRequestSteps {
     }
 
     @Then("^an error response code is displayed with the appropriate error response$")
-    public void anErrorResponseCodeIsDisplayedWithTheAppropriateErrorResponse() throws Throwable {
-        // Write code here that turns the phrase above into concrete actions
-        throw new PendingException();
+    public void anErrorResponseCodeIsDisplayedWithTheAppropriateErrorResponse(){
+        ITMessageError givenErrorObject = context.getMessageError();
+        Map givenResponseBody = context.getTestData().getResponse().getBody();
+
+        HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
+        assertThat(context.getActualResponse().getStatusCode(), equalTo(httpStatus));
+
+        LinkedHashMap tppMessageContent = (LinkedHashMap) givenResponseBody.get("tppMessage");
+
+        // for cases when transactionStatus and tppMessage created after request
+        if (givenErrorObject.getTppMessage() != null) {
+            assertThat(givenErrorObject.getTransactionStatus().name(), equalTo(givenResponseBody.get("transactionStatus")));
+            assertThat(givenErrorObject.getTppMessage().getCategory().name(), equalTo(tppMessageContent.get("category")));
+            assertThat(givenErrorObject.getTppMessage().getCode().name(), equalTo(tppMessageContent.get("code")));
+        }
+
     }
 
 

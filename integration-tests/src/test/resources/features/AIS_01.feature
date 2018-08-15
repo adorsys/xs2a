@@ -25,18 +25,23 @@ Feature: Account Information Service
             | consent-resource                           |
             | consent-all-psd2-no-psu-id.json            |
             | consent-all-psd2-wrong-psu-id.json         |
-            | consent-all-psd2-wrong-value.json          |
+            #| consent-all-psd2-wrong-value.json          |
             | consent-dedicated-incorrect-iban.json      |
 
 #
 #    Scenario Outline: Successful consent status request (redirect)
-#        Given AISP wants to get the status of a consent <consent-resource>
+#        Given AISP wants to get the status of a consent <consent-id> and the data <consent-resource>
 #        When AISP requests consent status
 #        Then a successful response code and the appropriate consent status gets returned
 #        Examples:
-#            | consent-resource         |
-#            | consent-status-RCVD.json |
-#
+#            | consent-resource                       | consent-id    |
+#            | consent-status-expired.json            | to-be-defined |
+#            | consent-status-missing-consent-id.json | to-be-defined |
+#            | consent-status-received.json           | to-be-defined |
+#            | consent-status-rejected.json           | to-be-defined |
+#            | consent-status-revoked-by-psu.json     | to-be-defined |
+#            | consent-status-terminated-by-tpp.json  | to-be-defined |
+#            | consent-status-valid.json              | to-be-defined |
 #
 #    Scenario Outline: Successful consent request (redirect)
 #        Given PSU wants to get the content of a consent <consent-resource>
