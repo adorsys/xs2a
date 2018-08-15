@@ -10,7 +10,7 @@
     "header": {
     },
     "body": {
-      "consentStatus": "REVOKED_BY_PSU"
+      "consentStatus": "revoked_by_psu"
     }
   }
 }

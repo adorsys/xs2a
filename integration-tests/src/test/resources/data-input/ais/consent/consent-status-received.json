@@ -10,7 +10,7 @@
     "header": {
     },
     "body": {
-      "consentStatus": "RECEIVED"
+      "consentStatus": "received"
     }
   }
 }
