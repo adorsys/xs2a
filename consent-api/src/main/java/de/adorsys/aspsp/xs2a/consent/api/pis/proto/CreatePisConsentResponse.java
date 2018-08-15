@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.ais;
+package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.time.LocalDate;
-
-@Value
-public class AisAccountConsent {
-    private String id;
-    private AisAccountAccess access;
-    private boolean recurringIndicator;
-    private LocalDate validUntil;
-    private int frequencyPerDay;
-    private LocalDate lastActionDate;
-    private ConsentStatus consentStatus;
-    private boolean withBalance;
-    private boolean tppRedirectPreferred;
-    private byte[] aspspConsentData;
+@Data
+@AllArgsConstructor
+public class CreatePisConsentResponse {
+    private String consentId;
 }

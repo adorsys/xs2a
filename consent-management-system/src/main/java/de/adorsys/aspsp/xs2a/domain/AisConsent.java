@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -101,6 +102,11 @@ public class AisConsent {
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @ApiModelProperty(value = "List of accounts related to the consent", required = true)
     private List<AisAccount> accounts = new ArrayList<>();
+
+    @Lob
+    @Column(name = "aspsp_consent_data")
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] aspspConsentData;
 
     public void addAccounts(List<AisAccount> accounts) {
         accounts.forEach(this::addAccount);

@@ -55,6 +55,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
+            <column name="aspsp_consent_data" type="BYTEA"/>
             <column name="combined_service_indicator" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
@@ -195,6 +196,7 @@
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
+            <column name="aspsp_consent_data" type="BYTEA"/>
             <column name="consent_status" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
