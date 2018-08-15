@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.repository;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import org.springframework.data.repository.CrudRepository;
 
@@ -25,9 +25,9 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface AisConsentRepository extends CrudRepository<AisConsent, Long> {
-    List<AisConsent> findByConsentStatusIn(Set<ConsentStatus> statuses);
+    List<AisConsent> findByConsentStatusIn(Set<CmsConsentStatus> statuses);
 
     Optional<AisConsent> findByExternalId(String externalId);
 
-    Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<ConsentStatus> statuses);
+    Optional<AisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<CmsConsentStatus> statuses);
 }

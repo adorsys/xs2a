@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.schedule;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 
 @Slf4j
 @Component
@@ -64,9 +64,9 @@ public class ConsentScheduleTask {
         return consent;
     }
 
-    private ConsentStatus updateConsentStatus(AisConsent consent) {
+    private CmsConsentStatus updateConsentStatus(AisConsent consent) {
         return consent.isExpiredByDate()
-                   ? ConsentStatus.EXPIRED
+                   ? CmsConsentStatus.EXPIRED
                    : consent.getConsentStatus();
     }
 }
