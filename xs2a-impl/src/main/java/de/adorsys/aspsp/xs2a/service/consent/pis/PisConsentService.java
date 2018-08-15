@@ -22,7 +22,6 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -61,8 +60,11 @@ public class PisConsentService {
     public String createPisConsentForBulkPaymentAndGetId(CreateConsentRequest createConsentRequest) {
         PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForBulkPayment(createConsentRequest);
 
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, String.class);
-        return responseEntity.getBody();
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 
     /**
@@ -74,7 +76,10 @@ public class PisConsentService {
     public String createPisConsentForPeriodicPaymentAndGetId(CreateConsentRequest createConsentRequest, String paymentId) {
         PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForPeriodicPayment(createConsentRequest, paymentId);
 
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, String.class);
-        return responseEntity.getBody();
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 }
