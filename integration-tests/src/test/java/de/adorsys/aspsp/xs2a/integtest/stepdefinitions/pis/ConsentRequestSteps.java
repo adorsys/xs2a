@@ -65,7 +65,6 @@ public class ConsentRequestSteps {
 
         context.setTestData(data);
 
-        // TODO solve the date offset in a clean manner
         LocalDate validUntil = context.getTestData().getRequest().getBody().getValidUntil();
         context.getTestData().getRequest().getBody().setValidUntil(validUntil.plusDays(7));
     }
