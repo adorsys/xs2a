@@ -132,6 +132,7 @@ public class RequestValidatorService {
             requestHeaderMap.put(key, value);
         }
 
+        requestHeaderMap.putIfAbsent("date", "Sun, 11 Aug 2019 15:02:37 GMT");
         return requestHeaderMap;
     }
 
