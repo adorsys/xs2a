@@ -65,6 +65,6 @@ public class PeriodicPaymentsController {
         return responseMapper.created(
             error
                 .map(e -> ResponseObject.<PaymentInitialisationResponse>builder().fail(e).build())
-                .orElse(paymentService.initiatePeriodicPayment(periodicPayment, tppSignatureCertificate, paymentProduct)));
+                .orElseGet(() -> paymentService.initiatePeriodicPayment(periodicPayment, tppSignatureCertificate, paymentProduct)));
     }
 }

@@ -65,7 +65,7 @@ public class PaymentService {
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<TransactionStatusResponse>builder()
                                   .body(new TransactionStatusResponse(tr)).build())
-                   .orElse(ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+                   .orElseGet(() -> ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
 
     /**
@@ -79,7 +79,7 @@ public class PaymentService {
         return periodicPayment.areValidExecutionAndPeriodDates()
                    ? scaPaymentService.createPeriodicPayment(periodicPayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct)
                          .map(resp -> ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build())
-                         .orElse(getPaymentFailedErrorResponse())
+                         .orElseGet(() -> getPaymentFailedErrorResponse())
                    : getExecutionDateInvalidErrorResponse();
     }
 

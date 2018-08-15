@@ -68,7 +68,7 @@ public class ConsentInformationController {
         return responseMapper.created(
             error
                 .map(e -> ResponseObject.<CreateConsentResponse>builder().fail(e).build())
-                .orElse(consentService.createAccountConsentsWithResponse(createConsent, psuId)));
+                .orElseGet(() -> consentService.createAccountConsentsWithResponse(createConsent, psuId)));
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

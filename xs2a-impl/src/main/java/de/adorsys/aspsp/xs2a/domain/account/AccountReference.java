@@ -49,6 +49,6 @@ public class AccountReference {
     public boolean matches(AccountReference otherReference) {
         return Optional.ofNullable(otherReference.getCurrency())
                    .map(cur -> iban.equals(otherReference.getIban()) && currency == cur)
-                   .orElse(iban.equals(otherReference.getIban()));
+                   .orElseGet(() -> iban.equals(otherReference.getIban()));
     }
 }

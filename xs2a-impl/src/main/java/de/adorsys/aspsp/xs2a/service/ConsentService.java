@@ -88,9 +88,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
         return consentMapper.mapToConsentStatus(aisConsentService.getAccountConsentStatusById(consentId))
                    .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status)).build())
-                   .orElse(ResponseObject.<ConsentStatusResponse>builder()
-                               .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
-                               .build());
+                   .orElseGet(() -> ResponseObject.<ConsentStatusResponse>builder()
+                                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
+                                        .build());
     }
 
     /**
@@ -148,7 +148,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .map(list -> list.stream()
                                     .map(AccountReference::getIban)
                                     .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
+                   .orElseGet(Collections::emptySet);
     }
 
     private Boolean isNotEmptyAccess(AccountAccess access) {
@@ -172,7 +172,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private List<AccountReference> getFilteredReferencesByAccessReferences(List<AccountReference> requestedReferences, List<AccountReference> refs) {
         return Optional.ofNullable(requestedReferences)
                    .map(reqRefs -> getRequestedReferences(reqRefs, refs))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     private List<AccountReference> getAccountsForAccess(List<AccountReference> balances, List<AccountReference> transactions, List<AccountReference> accounts) {
@@ -187,7 +187,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return Optional.ofNullable(requestedRefs).map(rr -> rr.stream()
                                                                 .filter(r -> isContainedRefInRefsList(r, refs))
                                                                 .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     private boolean isContainedRefInRefsList(AccountReference referenceMatched, List<AccountReference> references) {

@@ -150,15 +150,15 @@ public class ConsentMapper {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
                                    .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
+                                   .orElseGet(Collections::emptyList));
 
         accessInfo.setBalances(Optional.ofNullable(access.getBalances())
                                    .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
+                                   .orElseGet(Collections::emptyList));
 
         accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
                                        .map(this::mapToListAccountInfo)
-                                       .orElse(Collections.emptyList()));
+                                       .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
                                             .map(AccountAccessType::name)

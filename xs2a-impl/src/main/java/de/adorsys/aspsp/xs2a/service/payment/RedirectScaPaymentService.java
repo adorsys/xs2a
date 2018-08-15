@@ -78,7 +78,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap = createBulkPaymentAndGetResponseMap(payments, aspspConsentData);
 
         return MapUtils.isNotEmpty(paymentIdentifierMap)
-                   ? createConsentForBulkPaymentAndExtendPaymentResponses(new CreateConsentRequest(paymentIdentifierMap, tppInfo, paymentProduct, aspspConsentData ))
+                   ? createConsentForBulkPaymentAndExtendPaymentResponses(new CreateConsentRequest(paymentIdentifierMap, tppInfo, paymentProduct, aspspConsentData))
                    : Collections.emptyList();
     }
 
@@ -131,7 +131,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
                    .map(iban -> responses.stream()
                                     .map(resp -> extendPaymentResponseFields(resp, iban, pisConsentId))
                                     .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     @Override

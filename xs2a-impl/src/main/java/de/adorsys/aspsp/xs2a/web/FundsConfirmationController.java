@@ -58,6 +58,6 @@ public class FundsConfirmationController {
         return responseMapper.ok(
             error
                 .map(e -> ResponseObject.<FundsConfirmationResponse>builder().fail(e).build())
-                .orElse(fundsConfirmationService.fundsConfirmation(request)));
+                .orElseGet(() -> fundsConfirmationService.fundsConfirmation(request)));
     }
 }
