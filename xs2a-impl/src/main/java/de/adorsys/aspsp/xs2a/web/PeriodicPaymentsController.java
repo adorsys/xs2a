@@ -19,17 +19,15 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -62,10 +60,10 @@ public class PeriodicPaymentsController {
         @RequestHeader(name = "tpp-signature-certificate", required = false) String tppSignatureCertificate,
         @ApiParam(name = "Periodic Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
         @RequestBody @Valid PeriodicPayment periodicPayment) {
-        Optional<MessageError> error = referenceValidationService.validateAccountReferences(periodicPayment.getAccountReferences());
-        return responseMapper.created(
-            error
-                .map(e -> ResponseObject.<PaymentInitialisationResponse>builder().fail(e).build())
-                .orElseGet(() -> paymentService.initiatePeriodicPayment(periodicPayment, tppSignatureCertificate, paymentProduct)));
+        ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(periodicPayment.getAccountReferences());
+        ResponseObject<PaymentInitialisationResponse> response = accountReferenceValidationResponse.hasError()
+                                                                     ? ResponseObject.<PaymentInitialisationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
+                                                                     : paymentService.initiatePeriodicPayment(periodicPayment, tppSignatureCertificate, paymentProduct);
+        return responseMapper.created(response);
     }
 }

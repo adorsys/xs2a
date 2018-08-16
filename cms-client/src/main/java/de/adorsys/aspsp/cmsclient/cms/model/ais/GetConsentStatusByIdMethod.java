@@ -19,9 +19,9 @@ package de.adorsys.aspsp.cmsclient.cms.model.ais;
 import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatusResponse;
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 
-public class GetConsentStatusByIdMethod extends RestCmsRequestMethod<Void, ConsentStatusResponse> {
+public class GetConsentStatusByIdMethod extends RestCmsRequestMethod<Void, AisConsentStatusResponse> {
     private static final String GET_CONSENT_STATUS_BY_ID_URI = "api/v1/ais/consent/{consent-id}/status";
 
     public GetConsentStatusByIdMethod(HttpUriParams uriParams) {
