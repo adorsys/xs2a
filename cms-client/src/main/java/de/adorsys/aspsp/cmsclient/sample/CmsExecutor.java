@@ -44,7 +44,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.Optional;
 
@@ -160,7 +159,7 @@ public class CmsExecutor {
 
     private static PisConsentRequest buildPisConsentRequest() {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(buildPisPayment()));
+        request.setPayments(singletonList(buildPisPayment()));
         request.setPaymentProduct(PisPaymentProduct.SCT);
         request.setPaymentType(PisPaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company", "Tpp role",
