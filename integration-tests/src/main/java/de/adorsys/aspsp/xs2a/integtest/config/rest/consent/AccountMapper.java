@@ -65,7 +65,7 @@ public class AccountMapper {
 
     public Optional<AccountReport> mapToAccountReport(List<SpiTransaction> spiTransactions) {
 
-        if (spiTransactions.isEmpty()) {
+        if (CollectionUtils.isEmpty(spiTransactions)) {
             return Optional.empty();
         }
 
@@ -96,7 +96,7 @@ public class AccountMapper {
                    .map(ref -> ref.stream()
                                    .map(this::mapToSpiAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
@@ -116,7 +116,7 @@ public class AccountMapper {
                    .map(ref -> ref.stream()
                                    .map(this::mapToAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     private Transactions mapToTransaction(SpiTransaction spiTransaction) {
@@ -151,7 +151,7 @@ public class AccountMapper {
                                    .map(this::mapToAccountDetails)
                                    .map(this::mapToAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     private List<Balance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
