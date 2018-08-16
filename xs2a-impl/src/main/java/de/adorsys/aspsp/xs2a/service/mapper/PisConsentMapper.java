@@ -196,7 +196,7 @@ public class PisConsentMapper {
                        cmsAddress.setPostalCode(adr.getPostalCode());
                        cmsAddress.setCountry(Optional.ofNullable(adr.getCountry().getCode()).orElse(""));
                        return cmsAddress;
-                   }).orElse(new CmsAddress());
+                   }).orElseGet(CmsAddress::new);
     }
 
     private CmsRemittance mapToCmsRemittance(Remittance remittance) {
@@ -208,6 +208,6 @@ public class PisConsentMapper {
                        cmsRemittance.setReferenceType(rm.getReferenceType());
                        return cmsRemittance;
                    })
-                   .orElse(new CmsRemittance());
+                   .orElseGet(CmsRemittance::new);
     }
 }

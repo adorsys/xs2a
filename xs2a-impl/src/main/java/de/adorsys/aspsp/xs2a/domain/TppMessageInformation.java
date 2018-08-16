@@ -22,12 +22,14 @@ import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Size;
 
 @Data
 @ApiModel(description = "Tpp Message Information", value = "TppMessageInformation")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(exclude = "text")
 public class TppMessageInformation {
 
 	@ApiModelProperty(value = "Category of the error, Only ”ERROR” or \"WARNING\" permitted", required = true, example = "Error")

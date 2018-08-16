@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -46,7 +46,7 @@ public class PisConsentResponse {
     private String externalId;
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP.", required = true, example = "VALID")
-    private ConsentStatus consentStatus;
+    private CmsConsentStatus consentStatus;
 
     @ApiModelProperty(value = "ASPSP consent data", example = "zzzzzzzz")
     private byte[] aspspConsentData;

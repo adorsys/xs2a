@@ -22,9 +22,9 @@ public enum ConsentStatus {
     RECEIVED("received"),
     REJECTED("rejected"),
     VALID("valid"),
-    REVOKED_BY_PSU("revoked by psu"),
+    REVOKED_BY_PSU("revokedByPsu"),
     EXPIRED("expired"),
-    TERMINATED_BY_TPP("terminated by tpp");
+    TERMINATED_BY_TPP("terminatedByTpp");
 
     private String consentStatus;
 
