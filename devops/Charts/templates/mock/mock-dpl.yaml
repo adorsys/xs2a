@@ -11,7 +11,7 @@ metadata:
       [{
         "from": {
           "kind":"ImageStreamTag",
-          "name":"{{- if .Values.mock.image.stream }}{{ .Values.mock.image.stream }}:{{ default "latest" .Values.mock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mock:latest{{- end }}"
+          "name":"{{- if .Values.mock.image.stream }}{{ .Values.mock.image.name }}:{{ default "latest" .Values.mock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mock:latest{{- end }}"
         },
         "fieldPath":"spec.template.spec.initContainers[?(@.name==\"mockserver\")].image"
       }]

@@ -14,7 +14,7 @@ metadata:
           "name":"{{- if .Values.xs2a.image.stream }}{{ .Values.xs2a.image.name }}:{{ default "latest" .Values.xs2a.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-xs2a:latest{{- end }}"
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"xs2a\")].image"
-      }]]
+      }]
     checksum/secret: {{ include (print $.Template.BasePath "/xs2a/xs2a-secret.yaml") . | sha256sum }}
   name: {{ template "psd2.fullname" . }}-xs2a
   labels:

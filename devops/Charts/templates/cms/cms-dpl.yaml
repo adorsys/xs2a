@@ -14,7 +14,7 @@ metadata:
           "name":"{{- if .Values.cms.image.stream }}{{ .Values.cms.image.name }}:{{ default "latest" .Values.cms.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cms:latest{{- end }}"
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"cms\")].image"
-      }]]
+      }]
     checksum/secret: {{ include (print $.Template.BasePath "/cms/cms-secret.yaml") . | sha256sum }}
   name: {{ template "psd2.fullname" . }}-cms
   labels:

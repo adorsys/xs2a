@@ -4,10 +4,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    {{- with .Values.aspsp.deploymentAnnotations }}
+{{- with .Values.aspsp.deploymentAnnotations }}
 {{ toYaml . | indent 4 }}
-    {{- end }}
-  image.openshift.io/triggers: |
+{{- end }}
     image.openshift.io/triggers: |
       [{
         "from": {
@@ -15,7 +14,7 @@ metadata:
           "name":"{{- if .Values.aspsp.image.stream }}{{ .Values.aspsp.image.name }}:{{ default "latest" .Values.aspsp.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspsp:latest{{- end }}"
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"aspsp\")].image"
-      }]]
+      }]
   name: {{ template "psd2.fullname" . }}
   labels:
 {{ include "psd2.labels" . | indent 4 }}
@@ -39,9 +38,8 @@ spec:
         component: aspsp
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: {{ .Values.aspsp.image.name }}:{{ .Values.aspsp.image.tag }}
-          imagePullPolicy: IfNotPresent
+        - name: aspsp
+          image: " "
           ports:
             - containerPort: 8080
               protocol: TCP
