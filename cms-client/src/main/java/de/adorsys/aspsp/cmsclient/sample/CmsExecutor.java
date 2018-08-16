@@ -181,7 +181,7 @@ public class CmsExecutor {
             "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
         payment.setCreditorAgent("Telekom");
         payment.setCreditorName("Telekom");
-        payment.setCreditorAddress(buildCmsAddress("Street", "123-34", "Berlin", "90431", "Germany"));
+        payment.setCreditorAddress(buildCmsAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "Germany"));
         payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
         payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
         payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
