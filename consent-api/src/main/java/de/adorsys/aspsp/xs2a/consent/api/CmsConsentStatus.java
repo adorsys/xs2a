@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.consent.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
-public class ConsentStatusResponse {
-    private ConsentStatus consentStatus;
+public enum CmsConsentStatus {
+    RECEIVED,
+    REJECTED,
+    VALID,
+    REVOKED_BY_PSU,
+    EXPIRED,
+    TERMINATED_BY_TPP
 }

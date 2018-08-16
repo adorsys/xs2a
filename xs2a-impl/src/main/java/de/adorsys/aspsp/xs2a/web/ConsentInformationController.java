@@ -19,10 +19,9 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -50,6 +48,7 @@ public class ConsentInformationController {
     @PostMapping
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "psu-id", value = "31d50f56-a543-3664-b345-b9a822ae98a7", paramType = "header"),
         @ApiImplicitParam(name = "psu-id-type", value = "Type of the PSU-ID", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "psu-corporate-id", value = "Might be mandated in the ASPSP’s documentation", dataType = "String", paramType = "header"),
@@ -62,13 +61,13 @@ public class ConsentInformationController {
         @RequestHeader(name = "psu-id", required = false) String psuId,
         @Valid @RequestBody CreateConsentReq createConsent) {
         Set<AccountReference> references = createConsent.getAccountReferences();
-        Optional<MessageError> error = references.isEmpty()
-                                           ? Optional.empty()
-                                           : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
+        ResponseObject accountReferenceValidationResponse = references.isEmpty()
+                                                                ? ResponseObject.builder().build()
+                                                                : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
         return responseMapper.created(
-            error
-                .map(e -> ResponseObject.<CreateConsentResponse>builder().fail(e).build())
-                .orElse(consentService.createAccountConsentsWithResponse(createConsent, psuId)));
+            accountReferenceValidationResponse.hasError()
+                ? ResponseObject.<CreateConsentResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
+                : consentService.createAccountConsentsWithResponse(createConsent, psuId));
     }
 
     @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -78,6 +77,7 @@ public class ConsentInformationController {
     @GetMapping(path = "/{consent-id}/status")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
@@ -95,6 +95,7 @@ public class ConsentInformationController {
     @GetMapping(path = "/{consent-id}")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
@@ -110,7 +111,9 @@ public class ConsentInformationController {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 403, message = "The Consent-ID cannot be matched by the ASPSP relative to the TPP.")})
     @DeleteMapping(path = "/{consent-id}")
-    @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
+        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<Void> deleteAccountConsent(
         @ApiParam(name = "consent-id", value = "The resource-id of consent to be deleted", required = true)
         @PathVariable("consent-id") String consentId) {

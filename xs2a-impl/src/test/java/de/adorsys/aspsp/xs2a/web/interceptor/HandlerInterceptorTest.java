@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
@@ -47,6 +48,8 @@ public class HandlerInterceptorTest {
     RequestValidatorService requestValidatorService;
     @Mock
     private ObjectMapper objectMapper;
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ConsentInformationController consentInformationController;

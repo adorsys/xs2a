@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -33,17 +34,20 @@ import java.io.IOException;
 import java.util.Map;
 
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
+import static java.util.Locale.forLanguageTag;
 
 @Slf4j
 @Component
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
     private final RequestValidatorService requestValidatorService;
     private final ObjectMapper objectMapper;
+    private final MessageSource messageSource;
 
     @Autowired
-    public HandlerInterceptor(RequestValidatorService requestValidatorService, ObjectMapper objectMapper) {
+    public HandlerInterceptor(RequestValidatorService requestValidatorService, ObjectMapper objectMapper, MessageSource messageSource) {
         this.requestValidatorService = requestValidatorService;
         this.objectMapper = objectMapper;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -63,11 +67,10 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
 
             log.debug("Handled error {}", messageCode.name() + ": " + firstError.getValue());
             response.resetBuffer();
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(messageCode.getCode());
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Type", "application/json");
-            response.getWriter().write(objectMapper.writeValueAsString(
-                new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, messageCode))));
+            response.getWriter().write(objectMapper.writeValueAsString(getMessageError(messageCode)));
             response.flushBuffer();
             return false;
         }
@@ -76,5 +79,12 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
     private MessageErrorCode getActualMessageErrorCode(String error) {
         return MessageErrorCode.getByName(error)
                    .orElse(MessageErrorCode.FORMAT_ERROR);
+    }
+
+    private MessageError getMessageError(MessageErrorCode errorCode) {
+        String message = messageSource.getMessage(errorCode.name(), null, forLanguageTag("en"));
+        TppMessageInformation messageInformation = new TppMessageInformation(ERROR, errorCode);
+        messageInformation.setText(message);
+        return new MessageError(TransactionStatus.RJCT, messageInformation);
     }
 }

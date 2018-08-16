@@ -251,7 +251,7 @@ public class PaymentMapper {
                        code.setCode(p);
                        return code;
                    })
-                   .orElse(new PurposeCode());
+                   .orElseGet(PurposeCode::new);
     }
 
     private Remittance mapToRemittance(SpiRemittance remittanceInformationStructured) {
@@ -263,7 +263,7 @@ public class PaymentMapper {
                        remittance.setReferenceType(r.getReferenceType());
                        return remittance;
                    })
-                   .orElse(new Remittance());
+                   .orElseGet(Remittance::new);
     }
 
     private Address mapToAddress(SpiAddress creditorAddress) {
@@ -279,7 +279,7 @@ public class PaymentMapper {
                        address.setBuildingNumber(a.getBuildingNumber());
                        return address;
                    })
-                   .orElse(new Address());
+                   .orElseGet(Address::new);
 
     }
 

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
@@ -51,7 +51,7 @@ public class PISConsentService {
      * @param consentId String representation of pis consent identifier
      * @return Information about the status of a consent
      */
-    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
         return getPisConsentById(consentId)
                    .map(PisConsent::getConsentStatus);
     }
@@ -74,7 +74,7 @@ public class PISConsentService {
      * @param status    new consent status
      * @return Response containing result of status changing
      */
-    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
         return getPisConsentById(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -85,7 +85,7 @@ public class PISConsentService {
                    .flatMap(pisConsentRepository::findByExternalId);
     }
 
-    private PisConsent setStatusAndSaveConsent(PisConsent consent, ConsentStatus status) {
+    private PisConsent setStatusAndSaveConsent(PisConsent consent, CmsConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
     }

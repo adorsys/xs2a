@@ -29,12 +29,13 @@ import static java.util.Locale.forLanguageTag;
 public class MessageService {
     private final MessageSource messageSource;
 
-    public String getMessage(String code){
-        try{
+    public String getMessage(String code) {
+        try {
             return messageSource.getMessage(code, null, forLanguageTag("en"));
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("Can't get message: {}", e.getMessage());
         }
         return null;
     }
 }
+

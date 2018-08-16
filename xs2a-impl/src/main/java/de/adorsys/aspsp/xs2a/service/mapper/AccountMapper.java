@@ -96,7 +96,7 @@ public class AccountMapper {
                    .map(ref -> ref.stream()
                                    .map(this::mapToSpiAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
@@ -116,7 +116,7 @@ public class AccountMapper {
                    .map(ref -> ref.stream()
                                    .map(this::mapToAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     private Transactions mapToTransaction(SpiTransaction spiTransaction) {
@@ -151,7 +151,7 @@ public class AccountMapper {
                                    .map(this::mapToAccountDetails)
                                    .map(this::mapToAccountReference)
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     private List<Balance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
@@ -166,7 +166,7 @@ public class AccountMapper {
 
     private AccountReference mapToAccountReference(AccountDetails details) {
         return Optional.ofNullable(details)
-                   .map(det-> getAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()))
+                   .map(det -> getAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()))
                    .orElse(null);
 
     }

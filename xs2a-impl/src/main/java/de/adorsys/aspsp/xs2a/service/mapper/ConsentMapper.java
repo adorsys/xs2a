@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
@@ -86,6 +87,11 @@ public class ConsentMapper {
                    .map(status -> ConsentStatus.valueOf(status.name()));
     }
 
+    public Optional<SpiConsentStatus> mapToSpiConsentStatus(CmsConsentStatus consentStatus) {
+        return Optional.ofNullable(consentStatus)
+                   .map(status -> SpiConsentStatus.valueOf(status.name()));
+    }
+
     public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
         ActionStatus actionStatus = ActionStatus.FAILURE_ACCOUNT;
         if (error == MessageErrorCode.ACCESS_EXCEEDED) {
@@ -150,15 +156,15 @@ public class ConsentMapper {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
                                    .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
+                                   .orElseGet(Collections::emptyList));
 
         accessInfo.setBalances(Optional.ofNullable(access.getBalances())
                                    .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
+                                   .orElseGet(Collections::emptyList));
 
         accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
                                        .map(this::mapToListAccountInfo)
-                                       .orElse(Collections.emptyList()));
+                                       .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
                                             .map(AccountAccessType::name)

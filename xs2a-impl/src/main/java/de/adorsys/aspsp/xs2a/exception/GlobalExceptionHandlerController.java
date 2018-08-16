@@ -19,7 +19,9 @@ package de.adorsys.aspsp.xs2a.exception;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -30,23 +32,30 @@ import org.springframework.web.method.HandlerMethod;
 
 import javax.validation.ValidationException;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandlerController {
+    private MessageService messageService;
+
+    @Autowired
+    public GlobalExceptionHandlerController(MessageService messageService) {
+        this.messageService = messageService;
+    }
 
     @ExceptionHandler(value = {ValidationException.class})
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
         log.warn("ValidationException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, MessageErrorCode.FORMAT_ERROR)), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getMessageError(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {HttpMessageNotReadableException.class})
     public ResponseEntity httpMessageException(HttpMessageNotReadableException ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception handled in Controller: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        return new ResponseEntity<>(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, MessageErrorCode.FORMAT_ERROR)), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getMessageError(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {Exception.class})
@@ -67,6 +76,12 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity requestBodyValidationException(MethodArgumentNotValidException ex, HandlerMethod handlerMethod) {
         log.warn("RequestBodyValidationException handled in controller: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
-        return new ResponseEntity<>(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, MessageErrorCode.FORMAT_ERROR)),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getMessageError(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+    }
+
+    private MessageError getMessageError(MessageErrorCode errorCode) {
+        TppMessageInformation messageInformation = new TppMessageInformation(ERROR, errorCode);
+        messageInformation.setText(messageService.getMessage(errorCode.name()));
+        return new MessageError(TransactionStatus.RJCT, messageInformation);
     }
 }

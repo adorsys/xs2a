@@ -117,7 +117,7 @@ public class ConsentMapperTest {
                                        return ai;
                                    })
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     @Test

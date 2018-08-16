@@ -155,19 +155,19 @@ public class ConsentInformationControllerTest {
     }
 
 
-    private ResponseObject createConsentResponse(String consentId) {
+    private ResponseObject<CreateConsentResponse> createConsentResponse(String consentId) {
         return isEmpty(consentId)
-                   ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getConsentStatus(), consentId, null, new Links(), null)).build();
+                   ? ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+                   : ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getConsentStatus(), consentId, null, new Links(), null)).build();
     }
 
-    private ResponseObject getConsent(String consentId) {
+    private ResponseObject<AccountConsent> getConsent(String consentId) {
         AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
                                             ? null
                                             : new AccountConsent(consentId, new AccountAccess(null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false);
         return isEmpty(accountConsent)
-                   ? ResponseObject.builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
-                   : ResponseObject.builder().body(accountConsent).build();
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+                   : ResponseObject.<AccountConsent>builder().body(accountConsent).build();
     }
 
     private CreateConsentReq getCreateConsentReq() {
