@@ -7,7 +7,7 @@ ENV JAVA_TOOL_OPTIONS -Xmx1024m
 
 WORKDIR /opt/xs2a-integtests
 
-COPY ./target/xs2a-integtests*jar /opt/aspsp-xs2a/xs2a-integtests.jar
+COPY ./target/xs2a-integtests*jar /opt/xs2a-integtests/xs2a-integtests.jar
 
 EXPOSE 8080
 
