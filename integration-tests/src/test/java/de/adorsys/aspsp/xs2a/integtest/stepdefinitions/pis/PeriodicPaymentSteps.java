@@ -43,6 +43,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -58,14 +60,13 @@ public class PeriodicPaymentSteps {
     private Context<ITPeriodicPayments, HashMap, PaymentInitialisationResponse> context;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper mapper;
 
     @And("^PSU wants to initiate a recurring payment (.*) using the payment product (.*)$")
-    public void loadTestDataForPeriodicPayment(String fileName, String paymentProduct) throws IOException {
+    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
-        File periodicPaymentJsonFile = new File("src/test/resources/data-input/pis/recurring/" + fileName);
 
-        TestData<ITPeriodicPayments, HashMap> data = objectMapper.readValue(periodicPaymentJsonFile, new TypeReference<TestData<ITPeriodicPayments, HashMap>>() {
+        TestData<ITPeriodicPayments, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8), new TypeReference<TestData<ITPeriodicPayments, HashMap>>() {
         });
 
         context.setTestData(data);
@@ -115,7 +116,7 @@ public class PeriodicPaymentSteps {
                 hce.getStatusCode());
             context.setActualResponse(actualResponse);
 
-            ITMessageError messageError = objectMapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
+            ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
             context.setMessageError(messageError);
         }
     }
