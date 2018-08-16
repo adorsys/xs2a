@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
@@ -47,13 +48,13 @@ public class PisConsentController {
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsConsentStatus.class),
+        @ApiResponse(code = 200, message = "OK", response = PisConsentStatusResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<CmsConsentStatus> getConsentStatusById(
+    public ResponseEntity<PisConsentStatusResponse> getConsentStatusById(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentStatusById(consentId)
-                   .map(status -> new ResponseEntity<>(status, HttpStatus.OK))
+                   .map(status -> new ResponseEntity<>(new PisConsentStatusResponse(status), HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 

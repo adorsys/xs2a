@@ -146,14 +146,14 @@ public class CmsExecutor {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
                                       .build();
-        Optional<ConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentStatusByIdMethod(uriParams)));
-        consentStatusResponse.ifPresent(status -> logger.info("Status of the consent: " + status.getConsentStatus().name()));
+        Optional<PisConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentStatusByIdMethod(uriParams)));
+        consentStatusResponse.ifPresent(response -> logger.info("Status of the consent: " + response.getConsentStatus().name()));
     }
 
     private static void updatePaymentConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
-                                      .addPathVariable("status", ConsentStatus.REVOKED_BY_PSU.name())
+                                      .addPathVariable("status", CmsConsentStatus.REVOKED_BY_PSU.name())
                                       .build();
         cmsServiceInvoker.invoke(new UpdatePaymentConsentStatusMethod(uriParams));
     }

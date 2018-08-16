@@ -19,9 +19,9 @@ package de.adorsys.aspsp.cmsclient.cms.model.pis;
 import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatusResponse;
+import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
 
-public class GetPaymentConsentStatusByIdMethod extends RestCmsRequestMethod<Void, ConsentStatusResponse> {
+public class GetPaymentConsentStatusByIdMethod extends RestCmsRequestMethod<Void, PisConsentStatusResponse> {
     private static final String GET_PAYMENT_CONSENT_STATUS_BY_ID_URI = "api/v1/pis/consent/{consent-id}/status";
 
     public GetPaymentConsentStatusByIdMethod(HttpUriParams uriParams) {
