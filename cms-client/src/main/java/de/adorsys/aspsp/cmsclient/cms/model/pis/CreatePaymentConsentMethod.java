@@ -18,10 +18,10 @@ package de.adorsys.aspsp.cmsclient.cms.model.pis;
 
 import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 
-public class CreatePaymentConsentMethod extends RestCmsRequestMethod<PisConsentRequest, PisConsentResponse> {
+public class CreatePaymentConsentMethod extends RestCmsRequestMethod<PisConsentRequest, CreatePisConsentResponse> {
     private static final String CREATE_PAYMENT_CONSENT_URI = "api/v1/pis/consent/";
 
     public CreatePaymentConsentMethod(final PisConsentRequest request) {
