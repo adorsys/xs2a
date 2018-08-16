@@ -18,6 +18,10 @@ package de.adorsys.aspsp.cmsclient.sample;
 
 import de.adorsys.aspsp.cmsclient.cms.CmsServiceInvoker;
 import de.adorsys.aspsp.cmsclient.cms.model.ais.*;
+import de.adorsys.aspsp.cmsclient.cms.model.pis.CreatePaymentConsentMethod;
+import de.adorsys.aspsp.cmsclient.cms.model.pis.GetPaymentConsentByIdMethod;
+import de.adorsys.aspsp.cmsclient.cms.model.pis.GetPaymentConsentStatusByIdMethod;
+import de.adorsys.aspsp.cmsclient.cms.model.pis.UpdatePaymentConsentStatusMethod;
 import de.adorsys.aspsp.cmsclient.core.Configuration;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 import de.adorsys.aspsp.xs2a.consent.api.*;
@@ -25,12 +29,22 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Currency;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -53,6 +67,11 @@ public class CmsExecutor {
         getConsentStatusById(cmsServiceInvoker);
         saveConsentActionLog(cmsServiceInvoker);
         updateConsentStatus(cmsServiceInvoker);
+
+        createPaymentConsent(cmsServiceInvoker);
+        getPaymentConsentById(cmsServiceInvoker);
+        getPaymentConsentStatusById(cmsServiceInvoker);
+        updatePaymentConsentStatus(cmsServiceInvoker);
     }
 
     private static void createAisConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
@@ -106,5 +125,106 @@ public class CmsExecutor {
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         info.setAccounts(singletonList(new AccountInfo("iban-1", "EUR")));
         return info;
+    }
+
+    private static void createPaymentConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        Optional<CreatePisConsentResponse> createPisResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new CreatePaymentConsentMethod(buildPisConsentRequest())));
+        createPisResponse.ifPresent(resp -> consentId = resp.getConsentId());
+        logger.info("Consent ID: " + consentId);
+    }
+
+    private static void getPaymentConsentById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .build();
+        Optional<PisConsentResponse> pisAccountConsent = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentByIdMethod(uriParams)));
+        pisAccountConsent.ifPresent(consent -> logger.info("Pis account consent status: " + consent.getConsentStatus()));
+    }
+
+    private static void getPaymentConsentStatusById(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .build();
+        Optional<PisConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentStatusByIdMethod(uriParams)));
+        consentStatusResponse.ifPresent(response -> logger.info("Status of the consent: " + response.getConsentStatus().name()));
+    }
+
+    private static void updatePaymentConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .addPathVariable("status", CmsConsentStatus.REVOKED_BY_PSU.name())
+                                      .build();
+        cmsServiceInvoker.invoke(new UpdatePaymentConsentStatusMethod(uriParams));
+    }
+
+    private static PisConsentRequest buildPisConsentRequest() {
+        PisConsentRequest request = new PisConsentRequest();
+        request.setPayments(singletonList(buildPisPayment()));
+        request.setPaymentProduct(PisPaymentProduct.SCT);
+        request.setPaymentType(PisPaymentType.SINGLE);
+        request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company", "Tpp role",
+            "National competent authority", "Redirect URI", "Nok redirect URI"));
+        request.setAspspConsentData("zzzzzzzz".getBytes());
+        return request;
+    }
+
+    private static PisPayment buildPisPayment() {
+        PisPayment payment = new PisPayment();
+        payment.setPaymentId("32454656712432");
+        payment.setEndToEndIdentification("RI-123456789");
+        payment.setDebtorAccount(new CmsAccountReference("DE89370400440532013000", "89370400440532010000",
+            "2356 5746 3217 1234", "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+        payment.setUltimateDebtor("Mueller");
+        payment.setCurrency(Currency.getInstance("EUR"));
+        payment.setAmount(BigDecimal.valueOf(1000));
+        payment.setCreditorAccount(new CmsAccountReference("DE89370400440532013000", "89370400440532010000", "2356 5746 3217 1234",
+            "2356xxxxxx1234", "+49(0)911 360698-0", Currency.getInstance("EUR")));
+        payment.setCreditorAgent("Telekom");
+        payment.setCreditorName("Telekom");
+        payment.setCreditorAddress(buildCmsAddress("Street", "123-34", "Berlin", "90431", "Germany"));
+        payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
+        payment.setRemittanceInformationStructured(buildCmsRemittance("Ref Number Merchant", "reference type", "reference issuer"));
+        payment.setRequestedExecutionDate(LocalDate.of(2020, 1, 1));
+        payment.setRequestedExecutionTime(LocalDateTime.parse("2020-01-01T15:30:35.035Z",
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+        payment.setUltimateCreditor("Telekom");
+        payment.setPurposeCode("BCENECEQ");
+        payment.setStartDate(LocalDate.of(2020, 1, 1));
+        payment.setEndDate(LocalDate.of(2020, 3, 3));
+        payment.setExecutionRule("latest");
+        payment.setFrequency("ANNUAL");
+        payment.setDayOfExecution(14);
+        return payment;
+    }
+
+    private static CmsAddress buildCmsAddress(String street, String buildingNumber, String city,
+                                              String postalCode, String country) {
+        CmsAddress address = new CmsAddress();
+        address.setStreet(street);
+        address.setBuildingNumber(buildingNumber);
+        address.setCity(city);
+        address.setPostalCode(postalCode);
+        address.setCountry(country);
+        return address;
+    }
+
+    private static CmsRemittance buildCmsRemittance(String reference, String referenceType, String referenceIssuer) {
+        CmsRemittance remittance = new CmsRemittance();
+        remittance.setReference(reference);
+        remittance.setReferenceType(referenceType);
+        remittance.setReferenceIssuer(referenceIssuer);
+        return remittance;
+    }
+
+    private static CmsTppInfo buildCmsTppInfo(String registrationNumber, String tppName, String tppRole,
+                                              String nationalCompetentAuthority, String redirectUri, String nokRedirectUri) {
+        CmsTppInfo tppInfo = new CmsTppInfo();
+        tppInfo.setRegistrationNumber(registrationNumber);
+        tppInfo.setTppName(tppName);
+        tppInfo.setTppRole(tppRole);
+        tppInfo.setNationalCompetentAuthority(nationalCompetentAuthority);
+        tppInfo.setRedirectUri(redirectUri);
+        tppInfo.setNokRedirectUri(nokRedirectUri);
+        return tppInfo;
     }
 }
