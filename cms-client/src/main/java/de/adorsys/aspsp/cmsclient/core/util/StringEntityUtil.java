@@ -20,7 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.entity.StringEntity;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Optional;
 
 public final class StringEntityUtil {
@@ -32,8 +33,8 @@ public final class StringEntityUtil {
         try {
             String asJson = ObjectMapperUtil.toJson(requestBody)
                                 .orElse("");
-            return Optional.of(new StringEntity(asJson));
-        } catch (UnsupportedEncodingException e) {
+            return Optional.of(new StringEntity(asJson, StandardCharsets.UTF_8));
+        } catch (UnsupportedCharsetException e) {
             logger.error("Can't convert object to StringEntity");
         }
         return Optional.empty();
