@@ -132,6 +132,12 @@
             <artifactId>hamcrest-all</artifactId>
             <version>${hamcrest.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.aspsp</groupId>
+            <artifactId>consent-api</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
