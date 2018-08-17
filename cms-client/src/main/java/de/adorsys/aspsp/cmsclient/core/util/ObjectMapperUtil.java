@@ -59,7 +59,7 @@ public final class ObjectMapperUtil {
 
     public static <T> Optional<T> toObject(final String json, final Class<T> target) {
         try {
-            return json == null
+            return json == null || json.equals("")
                        ? Optional.empty()
                        : Optional.ofNullable(mapper.readValue(json, target));
         } catch (IOException e) {

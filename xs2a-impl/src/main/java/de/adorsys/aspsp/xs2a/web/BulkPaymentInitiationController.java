@@ -20,17 +20,15 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -63,9 +61,9 @@ public class BulkPaymentInitiationController {
         @ApiParam(name = "Bulk Payment", value = "All data relevant for the corresponding payment product and necessary for execution of the standing order.", required = true)
         @RequestBody List<SinglePayment> payments) {
         for (SinglePayment payment : payments) {
-            Optional<MessageError> error = referenceValidationService.validateAccountReferences(payment.getAccountReferences());
-            if (error.isPresent()) {
-                return responseMapper.created(ResponseObject.<List<PaymentInitialisationResponse>>builder().fail(error.get()).build());
+            ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(payment.getAccountReferences());
+            if (accountReferenceValidationResponse.hasError()) {
+                return responseMapper.created(ResponseObject.<List<PaymentInitialisationResponse>>builder().fail(accountReferenceValidationResponse.getError()).build());
             }
         }
         return responseMapper.created(paymentService.createBulkPayments(payments, tppSignatureCertificate, paymentProduct));

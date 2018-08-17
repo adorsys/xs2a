@@ -21,7 +21,7 @@ Feature: Payment Initiation Service
         Examples:
             | payment-product               | single-payment                                 |
             | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
-            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
+            #| sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
             | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
             | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
             | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
@@ -62,34 +62,35 @@ Feature: Payment Initiation Service
     # Recurring Payments                                                                                               #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Payment initiation request for recurring payments (redirect)
-#        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment product <payment-product>
-#        When PSU sends the recurring payment initiating request
-#        Then a successful response code and the appropriate recurring payment response data
-#        And a redirect URL is delivered to the PSU
-#        Examples:
-#            | payment-product       | recurring-payment          |
-#            | sepa-credit-transfers | recPayInit-successful.json |
-#
-#
-#    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
-#        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment product <payment-product>
-#        When PSU sends the recurring payment initiating request
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#            | payment-product      | recurring-payment                           |
-#            | sepa-credit-transfer | recPayInit-incorrect-syntax.json            |
-#            | sepa-credit-trans    | recPayInit-incorrect-payment-product.json   |
-#            | sepa-credit-transfer | recPayInit-no-frequency.json                |
-#            | sepa-credit-transfer | recPayInit-not-defined-frequency.json       |
-#            | sepa-credit-transfer | recPayInit-no-request-id.json               |
-#            | sepa-credit-transfer | recPayInit-no-ip-address.json               |
-#            | sepa-credit-transfer | recPayInit-wrong-format-request-id.json     |
-#            | sepa-credit-transfer | recPayInit-wrong-format-psu-ip-address.json |
-#            | sepa-credit-transfer | recPayInit-exceeding-amount.json            |
-#            | sepa-credit-transfer | recPayInit-expired-exec-time.json           |
-#            | sepa-credit-transfer | recPayInit-start-date-in-past.json          |
-#            | sepa-credit-transfer | recPayInit-end-date-before-start-date.json  |
+    Scenario Outline: Payment initiation request for recurring payments (redirect)
+        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment product <payment-product>
+        When PSU sends the recurring payment initiating request
+        Then a successful response code and the appropriate recurring payment response data
+        And a redirect URL is delivered to the PSU
+        Examples:
+            | payment-product       | recurring-payment          |
+            | sepa-credit-transfers | recPayInit-successful.json |
+
+
+    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
+        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment product <payment-product>
+        When PSU sends the recurring payment initiating request with error
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | payment-product       | recurring-payment                           |
+            | sepa-credit-transfers | recPayInit-incorrect-syntax.json            |
+            #| sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
+            | sepa-credit-transfers | recPayInit-no-frequency.json                |
+            | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
+            | sepa-credit-transfers | recPayInit-no-request-id.json               |
+            | sepa-credit-transfers | recPayInit-no-ip-address.json               |
+            | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
+            | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
+            | sepa-credit-transfers | recPayInit-exceeding-amount.json            |
+            | sepa-credit-transfers | recPayInit-expired-exec-date.json           |
+            | sepa-credit-transfers | recPayInit-start-date-in-past.json          |
+            | sepa-credit-transfers | recPayInit-end-date-before-start-date.json  |
+
 
 
     ####################################################################################################################

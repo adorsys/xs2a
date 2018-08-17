@@ -1,21 +1,33 @@
-#Feature: Account Information Service
+Feature: Account Information Service
 #
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-#    Scenario Outline: Successful consent request creation (redirect)
-#        Given PSU wants to create a consent <consent-resource>
-#        When PSU sends the create consent request
-#        Then a successful response code and the appropriate consent response data is delivered to the PSU
-#        Examples:
-#            | consent-resource                           |
-#            | consent-dedicated-accounts-successful.json |
-#            | consent-all-psd2-accounts-successful.json  |
-#            | consent-all-accounts-successful.json       |
-#
+    Scenario Outline: Successful consent request creation (redirect)
+        Given PSU wants to create a consent <consent-resource>
+        When PSU sends the create consent request
+        Then a successful response code and the appropriate consent response data is delivered to the PSU
+        Examples:
+            | consent-resource                           |
+            | consent-dedicated-successful.json          |
+            | consent-all-psd2-accounts-successful.json  |
+            | consent-all-accounts-successful.json       |
+
 #    #TODO Errorful Request
+
+    Scenario Outline: Failed consent request creation (redirect)
+        Given PSU wants to create a consent <consent-resource>
+        When PSU sends the create consent request with error
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | consent-resource                           |
+            | consent-all-psd2-no-psu-id.json            |
+            | consent-all-psd2-wrong-psu-id.json         |
+            #| consent-all-psd2-wrong-value.json          |
+            | consent-dedicated-incorrect-iban.json      |
+
 #
 #    Scenario Outline: Successful consent status request (redirect)
 #        Given AISP wants to get the status of a consent <consent-id> and the data <consent-resource>

@@ -14,28 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.consent.api;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
+import lombok.Data;
 
-import static java.util.Locale.forLanguageTag;
-
-@Slf4j
-@Service
+@Data
 @AllArgsConstructor
-public class MessageService {
-    private final MessageSource messageSource;
-
-    public String getMessage(String code) {
-        try {
-            return messageSource.getMessage(code, null, forLanguageTag("en"));
-        } catch (Exception e) {
-            log.info("Can't get message: {}", e.getMessage());
-        }
-        return null;
-    }
+public class PisConsentStatusResponse {
+    private CmsConsentStatus consentStatus;
 }
-

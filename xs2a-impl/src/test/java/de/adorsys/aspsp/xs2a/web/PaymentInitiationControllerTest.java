@@ -23,12 +23,11 @@ import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +41,6 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Base64;
-import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
@@ -120,7 +118,7 @@ public class PaymentInitiationControllerTest {
     @Test
     public void createPaymentInitiation() throws IOException {
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
-        when(referenceValidationService.validateAccountReferences(readSinglePayment().getAccountReferences())).thenReturn(Optional.empty());
+        when(referenceValidationService.validateAccountReferences(readSinglePayment().getAccountReferences())).thenReturn(ResponseObject.builder().build());
         //Given
         PaymentProduct paymentProduct = PaymentProduct.SCT;
         SinglePayment payment = readSinglePayment();
