@@ -117,4 +117,11 @@ public class AspspProfileController {
     public ResponseEntity<List<SupportedAccountReferenceField>> getAccountReferenceFields() {
         return new ResponseEntity<>(aspspProfileService.getSupportedAccountReferenceFields(), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/consent-lifetime")
+    @ApiOperation(value = "Reads the value of a maximum lifetime of consent")
+    @ApiResponse(code = 200, message = "Ok", response = Integer.class)
+    public ResponseEntity<Integer> getConsentLifetime() {
+        return new ResponseEntity<>(aspspProfileService.getConsentLifetime(), HttpStatus.OK);
+    }
 }
