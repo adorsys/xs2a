@@ -91,6 +91,12 @@ public class ProfileConfiguration {
      */
     private List<SupportedAccountReferenceField> supportedAccountReferenceFields;
 
+    /**
+     * AllPsd2Support status: TRUE, FALSE
+     * Shows if ASPSP supports Global consents
+     */
+    private AllPsd2Support allPsd2Support;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.FUTURE_DATED);

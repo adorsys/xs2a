@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -216,5 +213,21 @@ public class AspspProfileService {
             fields.add(IBAN);
         }
         profileConfiguration.setSupportedAccountReferenceFields(fields);
+    }
+
+    /**
+     * Read AllPsd2Support status
+     */
+    public AllPsd2Support getAllPsd2Support() {
+        return profileConfiguration.getAllPsd2Support();
+    }
+
+    /**
+     * Update AllPsd2Support status
+     *
+     * @param allPsd2Support AllPsd2Support status to substitute existing one
+     */
+    public void updateAllPsd2Support(AllPsd2Support allPsd2Support) {
+        profileConfiguration.setAllPsd2Support(allPsd2Support);
     }
 }

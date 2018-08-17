@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -116,5 +113,12 @@ public class AspspProfileController {
     @ApiResponse(code = 200, message = "Ok", response = SupportedAccountReferenceField.class)
     public ResponseEntity<List<SupportedAccountReferenceField>> getAccountReferenceFields() {
         return new ResponseEntity<>(aspspProfileService.getSupportedAccountReferenceFields(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/all-psd2-support")
+    @ApiOperation(value = "Reads AllPsd2Support status, that is used to point if ASPSP supports Global consents")
+    @ApiResponse(code = 200, message = "Ok", response = AllPsd2Support.class)
+    public ResponseEntity<AllPsd2Support> getAllPsd2Support() {
+        return new ResponseEntity<>(aspspProfileService.getAllPsd2Support(), HttpStatus.OK);
     }
 }

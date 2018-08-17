@@ -16,15 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -152,6 +146,16 @@ public class AspspProfileUpdateController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateAccountReferenceFields(@RequestBody List<SupportedAccountReferenceField> referenceFields) {
         aspspProfileService.updateSupportedAccountReferenceFields(referenceFields);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/all-psd2-support")
+    @ApiOperation(value = "Updates AllPsd2Support status. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = AllPsd2Support.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateAllPsd2Support(@RequestBody AllPsd2Support allPsd2Support) {
+        aspspProfileService.updateAllPsd2Support(allPsd2Support);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
