@@ -152,9 +152,9 @@ public class AspspProfileUpdateController {
     @PutMapping(path = "/all-psd2-support")
     @ApiOperation(value = "Updates AllPsd2Support status. Only for DEBUG!")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Ok", response = AllPsd2Support.class),
+        @ApiResponse(code = 200, message = "Ok", response = Boolean.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateAllPsd2Support(@RequestBody AllPsd2Support allPsd2Support) {
+    public ResponseEntity<Void> updateAllPsd2Support(@RequestBody Boolean allPsd2Support) {
         aspspProfileService.updateAllPsd2Support(allPsd2Support);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -218,8 +218,8 @@ public class AspspProfileService {
     /**
      * Read AllPsd2Support status
      */
-    public AllPsd2Support getAllPsd2Support() {
-        return profileConfiguration.getAllPsd2Support();
+    public boolean isAllPsd2Support() {
+        return profileConfiguration.isAllPsd2Support();
     }
 
     /**
@@ -227,7 +227,7 @@ public class AspspProfileService {
      *
      * @param allPsd2Support AllPsd2Support status to substitute existing one
      */
-    public void updateAllPsd2Support(AllPsd2Support allPsd2Support) {
+    public void updateAllPsd2Support(boolean allPsd2Support) {
         profileConfiguration.setAllPsd2Support(allPsd2Support);
     }
 }

@@ -117,8 +117,8 @@ public class AspspProfileController {
 
     @GetMapping(path = "/all-psd2-support")
     @ApiOperation(value = "Reads AllPsd2Support status, that is used to point if ASPSP supports Global consents")
-    @ApiResponse(code = 200, message = "Ok", response = AllPsd2Support.class)
-    public ResponseEntity<AllPsd2Support> getAllPsd2Support() {
-        return new ResponseEntity<>(aspspProfileService.getAllPsd2Support(), HttpStatus.OK);
+    @ApiResponse(code = 200, message = "Ok", response = Boolean.class)
+    public ResponseEntity<Boolean> getAllPsd2Support() {
+        return new ResponseEntity<>(aspspProfileService.isAllPsd2Support(), HttpStatus.OK);
     }
 }
