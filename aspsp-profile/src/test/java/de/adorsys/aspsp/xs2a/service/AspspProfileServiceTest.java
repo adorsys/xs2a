@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.AllPsd2Support;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
@@ -30,9 +31,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.AllPsd2Support.FALSE;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +47,7 @@ public class AspspProfileServiceTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final AllPsd2Support ALL_PSD_2_SUPPORT = FALSE;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -76,6 +77,8 @@ public class AspspProfileServiceTest {
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
         when(profileConfiguration.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
+        when(profileConfiguration.getAllPsd2Support())
+            .thenReturn(ALL_PSD_2_SUPPORT);
     }
 
     @Test
@@ -166,6 +169,15 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(AVAILABLE_BOOKING_STATUSES);
+    }
+
+    @Test
+    public void getAllPsd2Support() {
+        //When:
+        AllPsd2Support actualResponse = aspspProfileService.getAllPsd2Support();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(ALL_PSD_2_SUPPORT);
     }
 
     private static List<String> getPaymentProducts() {

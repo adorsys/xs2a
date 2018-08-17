@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
+import de.adorsys.aspsp.xs2a.domain.AllPsd2Support;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
@@ -34,6 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.AllPsd2Support.*;
 import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
 import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
 import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
@@ -51,6 +53,7 @@ public class AspspProfileControllerTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final AllPsd2Support ALL_PSD_2_SUPPORT = FALSE;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -83,6 +86,8 @@ public class AspspProfileControllerTest {
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
         when(aspspProfileService.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
+        when(aspspProfileService.getAllPsd2Support())
+            .thenReturn(ALL_PSD_2_SUPPORT);
     }
 
     @Test
@@ -213,6 +218,19 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(AVAILABLE_BOOKING_STATUSES);
+    }
+
+    @Test
+    public void getAllPsd2Support() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<AllPsd2Support> actualResponse = aspspProfileController.getAllPsd2Support();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(ALL_PSD_2_SUPPORT);
     }
 
     private static List<String> getPaymentProducts() {
