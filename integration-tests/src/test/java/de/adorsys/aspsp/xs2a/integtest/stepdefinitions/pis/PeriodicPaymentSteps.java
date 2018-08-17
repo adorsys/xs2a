@@ -74,7 +74,8 @@ public class PeriodicPaymentSteps {
         context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(100));
     }
 
-    @When("^PSU sends the recurring payment initiating request$")
+    //TODO Uncomment after ISO DateTime format rework
+    /*@When("^PSU sends the recurring payment initiating request$")
     public void sendPeriodicPaymentInitiatingRequest() {
         HttpEntity<ITPeriodicPayments> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
@@ -86,7 +87,7 @@ public class PeriodicPaymentSteps {
             });
 
         context.setActualResponse(responseEntity);
-    }
+    }*/
 
     @Then("^a successful response code and the appropriate recurring payment response data")
     public void checkResponseCodeFromPeriodicPayment() {
