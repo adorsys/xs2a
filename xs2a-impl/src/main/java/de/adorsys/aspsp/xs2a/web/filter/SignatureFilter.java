@@ -1,5 +1,15 @@
 package de.adorsys.aspsp.xs2a.web.filter;
 
+import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
+import de.adorsys.psd2.validator.signature.TppSignatureValidator;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -8,25 +18,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
-import de.adorsys.psd2.validator.signature.TppSignatureValidator;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component

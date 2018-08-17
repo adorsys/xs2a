@@ -42,6 +42,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * The intent of this Class is to get the Qwac certificate from header, extract the information inside
+ * and set an Authentication Object with extracted data and roles,
+ * thus we can use a SecurityConfig extends WebSecurityConfigurerAdapter to filter path by role.
+ * And a SecurityUtil class have been implemented to get this TPP data everywhere.
+ */
 @Profile("default")
 @Component
 @Slf4j

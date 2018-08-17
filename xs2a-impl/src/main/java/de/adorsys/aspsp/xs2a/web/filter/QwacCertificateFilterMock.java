@@ -5,6 +5,11 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * The intend of this class is to return a mock certificate, when we don't want
+ * to enter manually everytime the qwac certificate in case of test.
+ * launch it with the "mockspi" profile.
+ */
 @Profile("mockspi")
 @Component
 public class QwacCertificateFilterMock extends QwacCertificateFilter {
