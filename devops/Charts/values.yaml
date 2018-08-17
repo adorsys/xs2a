@@ -404,22 +404,89 @@ aspsp:
   podAnnotations: {}
   serviceAnnotations: {}
 
-##postgres:
-##  configs:
-##    POSTGRESQL_DATABASE: cms
-##    POSTGRESQL_PASSWORD: xs2acms
-##    POSTGRESQL_USER: aspspcms
-##    POSTGRESQL_ADMIN_PASSWORD: xs2acms
-##
-##keycloak:
-##  url: https://xs2a-idp-integ.cloud.adorsys.de
-##  db: postgres
-##    configs:
-##      POSTGRESQL_DATABASE: keycloak
-##      POSTGRESQL_PASSWORD: keycloak
-##      POSTGRESQL_USER: keycloak
-##      POSTGRESQL_ADMIN_PASSWORD: keycloak
-##
+obank:
+  enabled: false
+  replicaCount: 1
+
+  image:
+    name: onlinebank
+    tag: latest
+    stream: true
+
+  route:
+    enabled: false
+    host: >-
+      {{ template "psd2.fullname" . }}-obank-{{ .Release.Namespace }}.cloud.adorsys.de
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+
+  env:
+    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-mock:8080
+    CONSENT_SERVICE_BASEURL: http:/{{ template "psd2.fullname" . }}-cms:8080/api/v1
+
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 120
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 15
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+
+uiapp:
+  enabled: false
+  replicaCount: 1
+
+  image:
+    name: uiapp
+    tag: latest
+    stream: true
+
+  route:
+    enabled: false
+    host: >-
+      {{ template "psd2.fullname" . }}-uiapp-{{ .Release.Namespace }}.cloud.adorsys.de
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+
+  env:
+##    example: ~
+
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 120
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 15
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
 
 mailout:
   enabled: false

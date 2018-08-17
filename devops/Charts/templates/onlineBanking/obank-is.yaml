@@ -1,12 +1,12 @@
-{{ if and .Values.cms.enabled (not .Values.cms.image.stream) }}
+{{ if and .Values.obank.enabled (not .Values.obank.image.stream) }}
 ---
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
-  name: {{ template "psd2.fullname" . }}-cms
+  name: {{ template "psd2.fullname" . }}-obank
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: OnlineBanking
 spec:
   lookupPolicy:
     local: false
@@ -14,7 +14,7 @@ spec:
     - name: latest
       from:
         kind: DockerImage
-        name: {{ .Values.cms.image.name }}:{{ .Values.cms.image.tag }}
+        name: {{ .Values.obank.image.name }}:{{ .Values.obank.image.tag }}
       referencePolicy:
           type: Source
 {{- end }}

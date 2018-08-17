@@ -1,45 +1,45 @@
-{{ if .Values.cms.enabled }}
+{{ if .Values.obank.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-{{- with .Values.cms.deploymentAnnotations }}
+{{- with .Values.obank.deploymentAnnotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
     image.openshift.io/triggers: |
       [{
         "from": {
           "kind": "ImageStreamTag",
-          "name":"{{- if .Values.cms.image.stream }}{{ .Values.cms.image.name }}:{{ default "latest" .Values.cms.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cms:latest{{- end }}"
+          "name":"{{- if .Values.obank.image.stream }}{{ .Values.obank.image.name }}:{{ default "latest" .Values.obank.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-obank:latest{{- end }}"
         },
-        "fieldPath": "spec.template.spec.containers[?(@.name==\"cms\")].image"
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"obank\")].image"
       }]
-    checksum/secret: {{ include (print $.Template.BasePath "/cms/ob-secret.yaml") . | sha256sum }}
-  name: {{ template "psd2.fullname" . }}-cms
+    checksum/secret: {{ include (print $.Template.BasePath "/obank/obank-secret.yaml") . | sha256sum }}
+  name: {{ template "psd2.fullname" . }}-obank
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
-    app: ConsentManagementSystem
+    component: OnlineBanking
+    app: OnlineBanking
 spec:
-  serviceName: {{ template "psd2.fullname" . }}-cms
-  replicas: {{ .Values.cms.replicas }}
+  serviceName: {{ template "psd2.fullname" . }}-obank
+  replicas: {{ .Values.obank.replicas }}
   selector:
     matchLabels:
 {{ include "psd2.matchLabels" . | indent 6 }}
-      component: ConsentManagementSystem
+      component: OnlineBanking
   template:
     metadata:
-    {{- if .Values.cms.podAnnotations }}
+    {{- if .Values.obank.podAnnotations }}
       annotations:
-{{ toYaml .Values.cms.podAnnotations | indent 8 }}
+{{ toYaml .Values.obank.podAnnotations | indent 8 }}
     {{- end }}
       labels:
 {{ include "psd2.matchLabels" . | indent 8 }}
-        component: ConsentManagementSystem
+        component: OnlineBanking
     spec:
       containers:
-        - name: cms
+        - name: obank
           image: " "
           ports:
             - containerPort: 8080
@@ -48,9 +48,9 @@ spec:
             - name: KEYCLOAK_CREDENTIALS_SECRET
               valueFrom:
                 secretKeyRef:
-                  key: cms
+                  key: obank
                   name: "{{ template "psd2.fullname" . }}-keycloak"
-{{- range $name, $value := .Values.cms.env }}
+{{- range $name, $value := .Values.obank.env }}
 {{- if not (empty $value) }}
             - name: {{ $name | quote }}
               value: {{ tpl (toString $value) $ | quote }}
@@ -62,5 +62,5 @@ spec:
             - name: TZ
               value: {{ .Values.timezone | quote }}
           resources:
-{{ toYaml .Values.cms.resources | indent 12 }}
+{{ toYaml .Values.obank.resources | indent 12 }}
 {{- end }}

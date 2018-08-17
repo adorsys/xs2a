@@ -1,45 +1,45 @@
-{{ if .Values.cms.enabled }}
+{{ if .Values.uiapp.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-{{- with .Values.cms.deploymentAnnotations }}
+{{- with .Values.uiapp.deploymentAnnotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
     image.openshift.io/triggers: |
       [{
         "from": {
           "kind": "ImageStreamTag",
-          "name":"{{- if .Values.cms.image.stream }}{{ .Values.cms.image.name }}:{{ default "latest" .Values.cms.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cms:latest{{- end }}"
+          "name":"{{- if .Values.uiapp.image.stream }}{{ .Values.uiapp.image.name }}:{{ default "latest" .Values.uiapp.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-uiapp:latest{{- end }}"
         },
-        "fieldPath": "spec.template.spec.containers[?(@.name==\"cms\")].image"
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"uiapp\")].image"
       }]
-    checksum/secret: {{ include (print $.Template.BasePath "/cms/ob-secret.yaml") . | sha256sum }}
-  name: {{ template "psd2.fullname" . }}-cms
+    checksum/secret: {{ include (print $.Template.BasePath "/uiapp/uiapp-secret.yaml") . | sha256sum }}
+  name: {{ template "psd2.fullname" . }}-uiapp
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
-    app: ConsentManagementSystem
+    component: uiapp
+    app: uiapp
 spec:
-  serviceName: {{ template "psd2.fullname" . }}-cms
-  replicas: {{ .Values.cms.replicas }}
+  serviceName: {{ template "psd2.fullname" . }}-uiapp
+  replicas: {{ .Values.uiapp.replicas }}
   selector:
     matchLabels:
 {{ include "psd2.matchLabels" . | indent 6 }}
-      component: ConsentManagementSystem
+      component: uiapp
   template:
     metadata:
-    {{- if .Values.cms.podAnnotations }}
+    {{- if .Values.uiapp.podAnnotations }}
       annotations:
-{{ toYaml .Values.cms.podAnnotations | indent 8 }}
+{{ toYaml .Values.uiapp.podAnnotations | indent 8 }}
     {{- end }}
       labels:
 {{ include "psd2.matchLabels" . | indent 8 }}
-        component: ConsentManagementSystem
+        component: uiapp
     spec:
       containers:
-        - name: cms
+        - name: uiapp
           image: " "
           ports:
             - containerPort: 8080
@@ -48,9 +48,9 @@ spec:
             - name: KEYCLOAK_CREDENTIALS_SECRET
               valueFrom:
                 secretKeyRef:
-                  key: cms
+                  key: uiapp
                   name: "{{ template "psd2.fullname" . }}-keycloak"
-{{- range $name, $value := .Values.cms.env }}
+{{- range $name, $value := .Values.uiapp.env }}
 {{- if not (empty $value) }}
             - name: {{ $name | quote }}
               value: {{ tpl (toString $value) $ | quote }}
@@ -62,5 +62,5 @@ spec:
             - name: TZ
               value: {{ .Values.timezone | quote }}
           resources:
-{{ toYaml .Values.cms.resources | indent 12 }}
+{{ toYaml .Values.uiapp.resources | indent 12 }}
 {{- end }}

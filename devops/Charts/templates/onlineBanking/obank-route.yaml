@@ -1,25 +1,25 @@
-{{ if and .Values.cms.enabled .Values.cms.route.enabled }}
+{{ if and .Values.obank.enabled .Values.obank.route.enabled }}
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "psd2.fullname" . }}-cms
+  name: {{ template "psd2.fullname" . }}-obank
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: OnlineBanking
 spec:
-{{- if .Values.cms.route.host }}
+{{- if .Values.obank.route.host }}
   host: {{ . | quote }}
 {{- end }}
   port:
     targetPort: http
-{{- with .Values.cms.route.tls }}
+{{- with .Values.obank.route.tls }}
   tls:
 {{ toYaml . | indent 4 }}
 {{- end }}
   to:
     kind: Service
-    name: {{ template "psd2.fullname" . }}-cms
+    name: {{ template "psd2.fullname" . }}-obank
     weight: 100
     wildcardPolicy: None
 {{- end }}

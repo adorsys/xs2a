@@ -1,16 +1,16 @@
-{{ if .Values.cms.enabled }}
+{{ if .Values.uiapp.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-{{- with .Values.cms.serviceAnnotations }}
+{{- with .Values.uiapp.serviceAnnotations }}
    annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
-  name: {{ template "psd2.fullname" . }}-cms
+  name: {{ template "psd2.fullname" . }}-uiapp
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: uiapp
 spec:
   type: ClusterIP
   ports:
@@ -20,5 +20,5 @@ spec:
       targetPort: 8080
   selector:
 {{ include "psd2.matchLabels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: uiapp
 {{- end }}

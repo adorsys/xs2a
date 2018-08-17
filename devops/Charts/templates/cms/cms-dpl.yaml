@@ -15,7 +15,7 @@ metadata:
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"cms\")].image"
       }]
-    checksum/secret: {{ include (print $.Template.BasePath "/cms/ob-secret.yaml") . | sha256sum }}
+    checksum/secret: {{ include (print $.Template.BasePath "/cms/obank-secret.yaml") . | sha256sum }}
   name: {{ template "psd2.fullname" . }}-cms
   labels:
 {{ include "psd2.labels" . | indent 4 }}

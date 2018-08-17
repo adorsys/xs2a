@@ -1,16 +1,16 @@
-{{ if .Values.cms.enabled }}
+{{ if .Values.obank.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-{{- with .Values.cms.serviceAnnotations }}
+{{- with .Values.obank.serviceAnnotations }}
    annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
-  name: {{ template "psd2.fullname" . }}-cms
+  name: {{ template "psd2.fullname" . }}-obank
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: OnlineBanking
 spec:
   type: ClusterIP
   ports:
@@ -20,5 +20,5 @@ spec:
       targetPort: 8080
   selector:
 {{ include "psd2.matchLabels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: OnlineBanking
 {{- end }}

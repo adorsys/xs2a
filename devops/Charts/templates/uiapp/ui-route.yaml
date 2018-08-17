@@ -1,25 +1,25 @@
-{{ if and .Values.cms.enabled .Values.cms.route.enabled }}
+{{ if and .Values.uiapp.enabled .Values.uiapp.route.enabled }}
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "psd2.fullname" . }}-cms
+  name: {{ template "psd2.fullname" . }}-uiapp
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: ConsentManagementSystem
+    component: uiapp
 spec:
-{{- if .Values.cms.route.host }}
+{{- if .Values.uiapp.route.host }}
   host: {{ . | quote }}
 {{- end }}
   port:
     targetPort: http
-{{- with .Values.cms.route.tls }}
+{{- with .Values.uiapp.route.tls }}
   tls:
 {{ toYaml . | indent 4 }}
 {{- end }}
   to:
     kind: Service
-    name: {{ template "psd2.fullname" . }}-cms
+    name: {{ template "psd2.fullname" . }}-uiapp
     weight: 100
     wildcardPolicy: None
 {{- end }}
