@@ -60,7 +60,8 @@ public class SinglePaymentSteps {
         context.setTestData(data);
     }
 
-    @When("^PSU sends the single payment initiating request$")
+    //TODO Uncomment after ISO DateTime format rework
+    /*@When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
         HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
 
@@ -71,7 +72,7 @@ public class SinglePaymentSteps {
             PaymentInitialisationResponse.class);
 
         context.setActualResponse(response);
-    }
+    }*/
 
     @Then("^a successful response code and the appropriate single payment response data$")
     public void checkResponseCode() {
