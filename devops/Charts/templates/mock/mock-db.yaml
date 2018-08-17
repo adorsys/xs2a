@@ -11,7 +11,7 @@ metadata:
       [{
         "from": {
           "kind":"ImageStreamTag",
-          "name":"{{- if .Values.mock.db.image.stream }}{{ .Values.mock.db.image.stream }}:{{ .Values.mock.db.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mock-db:latest{{- end }}"
+          "name":"{{- if .Values.mock.db.image.stream }}{{ .Values.mock.db.image.name }}:{{ .Values.mock.db.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mock-db:latest{{- end }}"
         },
         "fieldPath":"spec.template.spec.containers[?(@.name==\"mongo\")].image"
       }]

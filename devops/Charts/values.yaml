@@ -2,7 +2,7 @@
 timezone: Europe/Berlin
 
 keycloak:
-  enabled: true
+  enabled: false
   replicas: 1
 
   image:
@@ -48,20 +48,15 @@ keycloak:
 
   env:
     WILDFLY_LOGLEVEL: info
-    JAVA_OPTS: >-
-      -XX:+UnlockExperimentalVMOptions
-      -XX:+UseCGroupMemoryLimitForHeap
-      -Dsun.zip.disableMemoryMapping=true
-      -XX:MaxRAMFraction=1
-      -XX:+UseParallelGC
-      -XX:MinHeapFreeRatio=5
-      -XX:MaxHeapFreeRatio=10
-      -XX:GCTimeRatio=4
-      -XX:AdaptiveSizePolicyWeight=90
 
   admin:
     username: admin
     password: admin
+
+  secrets:
+    mock: 123456789
+    cms: 123456789
+    xs2a: 123456789
 
   dbVendor: postgres
 
@@ -130,30 +125,44 @@ keycloak:
         storageClass: ~
 
   realms:
-    timp:
+    psd2:
       displayName: ADORSYS PSD2
       registrationAllowed: true
       smtpServer:
         from: "realm@example.com"
         host: '{{ template "psd2.fullname" . }}-mailout'
       clients:
-        psd2:
-          secret: "{{ .Values.cms.secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+        aspsp-mock:
+          secret: "{{ .Values.keycloak.secrets.mock }}"
           standardFlowEnabled: true
           implicitFlowEnabled: false
           directAccessGrantsEnabled: true
-          serviceAccountsEnabled: true
-          authorizationServicesEnabled: true
+          serviceAccountsEnabled: false
+          authorizationServicesEnabled: false
+        consent-management:
+          secret: "{{ .Values.keycloak.secrets.cms }}"
+          standardFlowEnabled: true
+          implicitFlowEnabled: false
+          directAccessGrantsEnabled: true
+          serviceAccountsEnabled: false
+          authorizationServicesEnabled: false
+        xs2a-impl:
+          secret: "{{ .Values.keycloak.secrets.xs2a }}"
+          standardFlowEnabled: true
+          implicitFlowEnabled: false
+          directAccessGrantsEnabled: true
+          serviceAccountsEnabled: false
+          authorizationServicesEnabled: false
       users:
         test:
-          firstName: Max
-          lastName: Mustermann
-          email: max@mustermann.de
+          firstName: S
+          lastName: Shäefer
+          email: s.shäefer@testacount.de
           credentials: [{ type: password, value: "TestPassword123" }]
 
 
 xs2a:
-  enabled: true
+  enabled: false
   replicas: 1
 
   image:
@@ -176,7 +185,7 @@ xs2a:
     skip_ssl_certificate_verification: true
     keycloak_username: "{{ .Values.keycloak.admin.username }}"
     keycloak_password: "{{ .Values.keycloak.admin.password }}"
-    KEYCLOAK_CREDENTIALS_SECRET: "{{ .Values.cms.secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+    KEYCLOAK_CREDENTIALS_SECRET: ~
 
   secrets:
     existingSecret: example
@@ -205,7 +214,7 @@ xs2a:
   serviceAnnotations: {}
 
 mock:
-  enabled: true
+  enabled: false
   replicas: 1
 
   image:
@@ -214,10 +223,10 @@ mock:
     stream: true
 
   route:
-      host: ~
-      tls:
-        insecureEdgeTerminationPolicy: Redirect
-        termination: edge
+    host: ~
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
 
   resources:
     requests:
@@ -226,10 +235,10 @@ mock:
       memory: 400Mi
 
   env:
-    SPRING_DATA_MONGODB_HOST: http://{{ template "psd2.fullname" . }}-mock-db
-    SPRING_DATA_MONGODB_PORT: "27017"
+    SPRING_DATA_MONGODB_HOST: '{{ template "psd2.fullname" . }}-mock-db'
+    SPRING_DATA_MONGODB_PORT: 27017
     SPRING_DATA_MONGODB_DATABASE: spimock
-    KEYCLOAK_CREDENTIALS_SECRET: "{{ .Values.cms.secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+    KEYCLOAK_CREDENTIALS_SECRET: ~
     KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
     spring_mail_host: mailout
     spring_mail_port: 25
@@ -242,24 +251,6 @@ mock:
   deploymentAnnotations: {}
   podAnnotations: {}
   serviceAnnotations: {}
-
-# Not implemented @ mock
-#   because the java is too old.
-#  extraEnv: |
-#    - name: JAVA_OPTS
-#      value: >-
-#        -XX:+UnlockExperimentalVMOptions
-#        -XX:+UseCGroupMemoryLimitForHeap
-#        -Dsun.zip.disableMemoryMapping=true
-#        -XX:MaxRAMFraction=1
-#        -XX:+UseParallelGC
-#        -XX:MinHeapFreeRatio=5
-#        -XX:MaxHeapFreeRatio=10
-#        -XX:GCTimeRatio=4
-#        -XX:AdaptiveSizePolicyWeight=90
-  extraEnv: |
-    - name: JAVA_OPTS
-      value: "-XX:MaxRAM=350m"
 
   livenessProbe:
     httpGet:
@@ -320,7 +311,7 @@ mock:
 #      name: mockbanking
 
 cms:
-  enabled: true
+  enabled: false
   replicas: 1
 
   image:
@@ -329,27 +320,25 @@ cms:
     stream: true
 
   route:
+    enabled: true
     host: ~
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
 
   env:
-    spring_datasource_url: "jdbc:postgresql://postgres-integ-cms/cms"
+    spring_datasource_url: jdbc:postgresql://{{ template "psd2.fullname" . }}-keycloak-db/cms
     spring_jpa_properties_hibernate_default_schema: cms
     MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-mock:8080
     ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp:8080/api/v1
     skip_ssl_certificate_verification: true
-    KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
+    KEYCLOAK_AUTH_SERVER_URL: https://{{ tpl .Values.keycloak.route.host $ }}/auth
     KEYCLOAK_CREDENTIALS_SECRET: ~
-    spring_datasource_username: ~
-    spring_datasource_password: ~
-    JAVA_OPTS: "-Xmx500m"
+    spring_datasource_username: "{{ .Values.keycloak.admin.username }}"
+    spring_datasource_password: "{{ .Values.keycloak.admin.password }}"
 
   secrets:
     existingSecret: ~
-
-  extraEnv:
 
 
   resources:
@@ -374,7 +363,7 @@ cms:
   serviceAnnotations: {}
 
 aspsp:
-  enabled: true
+  enabled: false
   replicaCount: 1
 
   image:
@@ -383,7 +372,9 @@ aspsp:
     stream: true
 
   route:
-    host: ~
+    enabled: false
+    host: >-
+      {{ template "psd2.fullname" . }}-aspsp-{{ .Release.Namespace }}.cloud.adorsys.de
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -431,7 +422,7 @@ aspsp:
 ##
 
 mailout:
-  enabled: true
+  enabled: false
   externalDomain: ~
   image:
     name: docker.io/jkroepke/openshift-mta
@@ -479,3 +470,20 @@ mailout:
   deploymentAnnotations: {}
   podAnnotations: {}
   serviceAnnotations: {}
+
+#  Not implemented @ mock
+#  because the java is too old.
+extraEnv: |
+  - name: JAVA_TOOL_OPTIONS
+    value: ""
+  - name: JAVA_OPTS
+    value: >-
+      -XX:+UnlockExperimentalVMOptions
+      -XX:+UseCGroupMemoryLimitForHeap
+      -Dsun.zip.disableMemoryMapping=true
+      -XX:MaxRAMFraction=1
+      -XX:+UseParallelGC
+      -XX:MinHeapFreeRatio=5
+      -XX:MaxHeapFreeRatio=10
+      -XX:GCTimeRatio=4
+      -XX:AdaptiveSizePolicyWeight=90

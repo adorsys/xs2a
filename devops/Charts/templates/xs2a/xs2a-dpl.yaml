@@ -1,5 +1,5 @@
----
 {{ if .Values.xs2a.enabled }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,19 +45,22 @@ spec:
             - containerPort: 8080
               protocol: TCP
           env:
+            - name: KEYCLOAK_CREDENTIALS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: xs2a
+                  name: "{{ template "psd2.fullname" . }}-keycloak"
 {{- range $name, $value := .Values.xs2a.env }}
 {{- if not (empty $value) }}
-          - name: {{ $name | quote }}
-            value: {{ tpl (toString $value) $ | quote }}
+            - name: {{ $name | quote }}
+              value: {{ tpl (toString $value) $ | quote }}
 {{- end }}
 {{- end }}
-          - name: TZ
-            value: {{ .Values.timezone | quote }}
-
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 8 }}
+{{- end }}
+            - name: TZ
+              value: {{ .Values.timezone | quote }}
           resources:
 {{ toYaml .Values.xs2a.resources | indent 12 }}
-          livenessProbe:
-{{ toYaml .Values.cms.livenessProbe | indent 12 }}
-          readinessProbe:
-{{ toYaml .Values.cms.readinessProbe | indent 12 }}
 {{- end }}

@@ -49,13 +49,18 @@ spec:
         env:
         - name: TZ
           value: {{ .Values.timezone | quote }}
+        - name: KEYCLOAK_CREDENTIALS_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: mock
+              name: "{{ template "psd2.fullname" . }}-keycloak"
 {{- range $name, $value := .Values.mock.env }}
 {{- if not (empty $value) }}
         - name: {{ $name | quote }}
           value: {{ tpl (toString $value) $ | quote }}
 {{- end }}
 {{- end }}
-{{- with .Values.mock.extraEnv }}
+{{- with .Values.extraEnv }}
 {{ tpl . $ | indent 8 }}
 {{- end }}
         ports:

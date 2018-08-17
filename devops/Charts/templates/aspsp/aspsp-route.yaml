@@ -1,4 +1,4 @@
-{{ if .Values.aspsp.enabled }}
+{{ if and .Values.aspsp.enabled .Values.aspsp.route.enabled }}
 ---
 apiVersion: route.openshift.io/v1
 kind: Route

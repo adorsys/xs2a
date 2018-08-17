@@ -50,6 +50,9 @@ spec:
               value: {{ $value | quote }}
 {{- end }}
 {{- end }}
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 8 }}
+{{- end }}
             - name: TZ
               value: {{ .Values.timezone | quote }}
           resources:

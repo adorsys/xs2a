@@ -1,0 +1,20 @@
+{{ if and .Values.cms.enabled (not .Values.cms.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-cms
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    component: ConsentManagementSystem
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: {{ .Values.cms.image.name }}:{{ .Values.cms.image.tag }}
+      referencePolicy:
+          type: Source
+{{- end }}
