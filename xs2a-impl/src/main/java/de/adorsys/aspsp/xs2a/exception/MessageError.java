@@ -16,12 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.exception;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.*;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -31,14 +34,32 @@ public class MessageError {
     private TransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Tpp messages information of the Berlin Group XS2A Interface")
-    private TppMessageInformation tppMessage;
+    private Set<TppMessageInformation> tppMessages = new HashSet<>();
 
     public MessageError(TppMessageInformation tppMessage) {
         this(TransactionStatus.RJCT, tppMessage);
     }
 
+    public MessageError(List<TppMessageInformation> tppMessages) {
+        this(TransactionStatus.RJCT, tppMessages);
+    }
+
     public MessageError(TransactionStatus status, TppMessageInformation tppMessage) {
+        this(status, Collections.singletonList(tppMessage));
+    }
+
+    public MessageError(TransactionStatus status, List<TppMessageInformation> tppMessages) {
         this.transactionStatus = status;
-        this.tppMessage = tppMessage;
+        this.tppMessages.addAll(tppMessages);
+    }
+
+    public void addTppMessage(TppMessageInformation tppMessage) {
+        this.tppMessages.add(tppMessage);
+    }
+
+    // TODO task: add logic to resolve resulting MessageError https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/211
+    @JsonIgnore
+    public TppMessageInformation getTppMessage() {
+        return tppMessages.iterator().next();
     }
 }

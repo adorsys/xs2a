@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,8 +99,8 @@ public class AisConsentServiceTest {
         return aisConsent;
     }
 
-    private AisConsentRequest buildCorrectCreateAisConsentRequest() {
-        AisConsentRequest request = new AisConsentRequest();
+    private CreateAisConsentRequest buildCorrectCreateAisConsentRequest() {
+        CreateAisConsentRequest request = new CreateAisConsentRequest();
         request.setAccess(buildAccess());
         request.setCombinedServiceIndicator(true);
         request.setFrequencyPerDay(5);
@@ -119,7 +119,7 @@ public class AisConsentServiceTest {
     }
 
     private List<AccountInfo> buildAccountsInfo() {
-        return Arrays.asList(new AccountInfo("iban-1", "EUR"));
+        return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
     }
 
     private AisAccountConsent buildSpiAccountConsent() {
@@ -127,6 +127,6 @@ public class AisConsentServiceTest {
             null, false,
             null, 0,
             null, null,
-            false, false);
+            false, false, null);
     }
 }

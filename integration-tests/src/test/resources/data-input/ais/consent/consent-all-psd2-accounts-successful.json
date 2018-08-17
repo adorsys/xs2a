@@ -2,7 +2,8 @@
   "request": {
     "header": {
       "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-id": "d9e71419-24e4-4c5a-8d93-fcc23153aaff"
+      "psu-id": "d9e71419-24e4-4c5a-8d93-fcc23153aaff",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {
       "access": {
@@ -21,7 +22,8 @@
     "code": "201",
     "header": {},
     "body": {
-      "consentStatus": "RCVD"
+      "consentStatus": "received"
     }
   }
 }
+

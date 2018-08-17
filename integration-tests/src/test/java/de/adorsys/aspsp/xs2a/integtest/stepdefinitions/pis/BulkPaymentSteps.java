@@ -52,7 +52,8 @@ public class BulkPaymentSteps {
         context.setTestData(data);
     }
 
-    @When("^PSU sends the bulk payment initiating request$")
+    //TODO Uncomment after ISO DateTime format rework
+    /*@When("^PSU sends the bulk payment initiating request$")
     public void sendBulkPaymentInitiatingRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(context.getTestData().getRequest().getHeader());
@@ -67,7 +68,7 @@ public class BulkPaymentSteps {
             });
 
         context.setActualResponse(response);
-    }
+    }*/
 
     @Then("^a successful response code and the appropriate bulk payment response data$")
     public void checkResponseCodeBulkPayment() {

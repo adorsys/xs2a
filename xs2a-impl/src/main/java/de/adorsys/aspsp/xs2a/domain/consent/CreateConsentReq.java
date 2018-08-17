@@ -72,6 +72,6 @@ public class CreateConsentReq implements AccountReferenceCollector {
     @JsonIgnore
     private List<AccountReference> getReferenceList(List<AccountReference> reference) {
         return Optional.ofNullable(reference)
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 }

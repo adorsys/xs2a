@@ -16,19 +16,24 @@
 
 package de.adorsys.aspsp.xs2a.service.consent.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +52,13 @@ public class AisConsentService {
      * @return String representation of identifier of stored consent
      */
     public String createConsent(CreateConsentReq request, String psuId, String tppId) {
-        return consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToAisConsentRequest(request, psuId, tppId), String.class).getBody();
+        AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+
+        CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToCreateAisConsentRequest(request, psuId, tppId, aspspConsentData), CreateAisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createAisConsentResponse)
+                   .map(CreateAisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 
     /**
@@ -67,7 +78,9 @@ public class AisConsentService {
      * @return Response containing AIS Consent Status
      */
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
-        return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), SpiConsentStatus.class, consentId).getBody();
+        AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
+        return consentMapper.mapToSpiConsentStatus(response.getConsentStatus())
+                   .orElse(null);
     }
 
     /**
@@ -90,7 +103,7 @@ public class AisConsentService {
      */
     public void consentActionLog(String tppId, String consentId, boolean withBalance, TypeAccess access, ResponseObject response) {
         ActionStatus status = response.hasError()
-                                  ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getCode(), withBalance, access)
+                                  ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(), withBalance, access)
                                   : ActionStatus.SUCCESS;
 
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, status), Void.class);

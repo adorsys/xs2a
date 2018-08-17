@@ -17,16 +17,15 @@
 package de.adorsys.aspsp.xs2a.service.consent.pis;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentBulkPaymentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentPeriodicPaymentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,37 +33,53 @@ public class PisConsentService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;
+    private final PisConsentMapper pisConsentMapper;
 
     /**
      * Sends a POST request to CMS to store created PIS consent for single payment
      *
-     * @param singlePaymentId Payment id which will be stored in Pis consent
+     * @param createConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for single payment
      */
-    public String createPisConsentForSinglePaymentAndGetId(String singlePaymentId) {
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), new PisConsentRequest(singlePaymentId), String.class);
-        return responseEntity.getBody();
+    public String createPisConsentForSinglePaymentAndGetId(CreateConsentRequest createConsentRequest, String paymentId) {
+        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForSinglePayment(createConsentRequest, paymentId);
+
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 
     /**
      * Sends a POST request to CMS to store created PIS consent for bulk payment
      *
-     * @param paymentIds List of payment ids which will be stored in Pis consent
+     * @param createConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for bulk payment
      */
-    public String createPisConsentForBulkPaymentAndGetId(List<String> paymentIds) {
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisBulkPaymentConsent(), new PisConsentBulkPaymentRequest(paymentIds), String.class);
-        return responseEntity.getBody();
+    public String createPisConsentForBulkPaymentAndGetId(CreateConsentRequest createConsentRequest) {
+        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForBulkPayment(createConsentRequest);
+
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 
     /**
      * Sends a POST request to CMS to store created PIS consent for periodic payment
      *
-     * @param periodicPaymentId Periodic payment id which will be stored in Pis consent
+     * @param createConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent periodic payment
      */
-    public String createPisConsentForPeriodicPaymentAndGetId(String periodicPaymentId) {
-        ResponseEntity<String> responseEntity = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisPeriodicPaymentConsent(), new PisConsentPeriodicPaymentRequest(periodicPaymentId), String.class);
-        return responseEntity.getBody();
+    public String createPisConsentForPeriodicPaymentAndGetId(CreateConsentRequest createConsentRequest, String paymentId) {
+        PisConsentRequest request = pisConsentMapper.mapToPisConsentRequestForPeriodicPayment(createConsentRequest, paymentId);
+
+        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
+
+        return Optional.ofNullable(createPisConsentResponse)
+                   .map(CreatePisConsentResponse::getConsentId)
+                   .orElse(null);
     }
 }

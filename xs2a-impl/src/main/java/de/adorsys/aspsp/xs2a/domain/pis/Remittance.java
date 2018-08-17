@@ -31,11 +31,11 @@ public class Remittance {
     @Size(max = 35)
     private String reference;
 
-    @ApiModelProperty(value = "reference type")
+    @ApiModelProperty(value = "reference type", example = "reference type")
     @Size(max = 35)
     private String referenceType;
 
-    @ApiModelProperty(value = "reference issuer")
+    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
     @Size(max = 35)
     private String referenceIssuer;
 }

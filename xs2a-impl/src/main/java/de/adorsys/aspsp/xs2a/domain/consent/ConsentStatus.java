@@ -16,11 +16,24 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum ConsentStatus {
-    RECEIVED,
-    REJECTED,
-    VALID,
-    REVOKED_BY_PSU,
-    EXPIRED,
-    TERMINATED_BY_TPP;
+    RECEIVED("received"),
+    REJECTED("rejected"),
+    VALID("valid"),
+    REVOKED_BY_PSU("revokedByPsu"),
+    EXPIRED("expired"),
+    TERMINATED_BY_TPP("terminatedByTpp");
+
+    private String consentStatus;
+
+    @JsonCreator
+    ConsentStatus(String status) {
+        this.consentStatus = status;
+    }
+
+    public String getConsentStatus() {
+        return consentStatus;
+    }
 }

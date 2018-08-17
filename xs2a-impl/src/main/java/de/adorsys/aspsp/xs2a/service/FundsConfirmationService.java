@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
@@ -80,6 +80,6 @@ public class FundsConfirmationService {
                    .filter(Optional::isPresent)
                    .map(Optional::get)
                    .map(AccountDetails::getBalances)
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 }

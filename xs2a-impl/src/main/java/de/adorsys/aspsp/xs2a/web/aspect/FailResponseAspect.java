@@ -25,6 +25,8 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+
 @Aspect
 @Component
 @AllArgsConstructor
@@ -32,26 +34,26 @@ public class FailResponseAspect {
     private final MessageService messageService;
 
     @AfterReturning(pointcut = "execution(public * de.adorsys.aspsp.xs2a.service.*.*(..))", returning = "result")
-    public Object invokeAspect(Object result){
+    public Object invokeAspect(Object result) {
         return ResponseObject.class.isInstance(result)
-            ? enrichResponseObject(result)
-            : result;
+                   ? enrichResponseObject(result)
+                   : result;
     }
 
     private ResponseObject enrichResponseObject(Object result) {
-        ResponseObject response = (ResponseObject)result;
+        ResponseObject response = (ResponseObject) result;
         return response.hasError()
-            ? doEnrich(response)
-            : response;
+                   ? doEnrich(response)
+                   : response;
     }
 
     private ResponseObject doEnrich(ResponseObject response) {
         MessageError error = response.getError();
         TppMessageInformation tppMessage = error.getTppMessage();
-        tppMessage.setText(messageService.getMessage(tppMessage.getCode().name()));
-        error.setTppMessage(tppMessage);
+        tppMessage.setText(messageService.getMessage(tppMessage.getMessageErrorCode().name()));
+        error.setTppMessages(Collections.singleton(tppMessage));
         return ResponseObject.builder()
-            .fail(error)
-            .build();
+                   .fail(error)
+                   .build();
     }
 }

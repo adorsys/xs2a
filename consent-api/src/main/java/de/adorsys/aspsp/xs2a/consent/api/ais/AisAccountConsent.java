@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import lombok.Value;
 
 import java.time.LocalDate;
@@ -29,7 +29,8 @@ public class AisAccountConsent {
     private LocalDate validUntil;
     private int frequencyPerDay;
     private LocalDate lastActionDate;
-    private ConsentStatus consentStatus;
+    private CmsConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
+    private byte[] aspspConsentData;
 }

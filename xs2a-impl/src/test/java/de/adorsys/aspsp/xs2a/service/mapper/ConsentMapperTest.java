@@ -21,13 +21,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -55,6 +56,7 @@ public class ConsentMapperTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
     private final String PSU_ID = "12345";
     private final String TPP_ID = "This is a test TppId";
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
 
     @InjectMocks
     private ConsentMapper consentMapper;
@@ -76,14 +78,14 @@ public class ConsentMapperTest {
         //Given:
         String aicConRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq donorRequest = jsonConverter.toObject(aicConRequestJson, CreateConsentReq.class).get();
-        AisConsentRequest expectedResult = getAisConsentReq(donorRequest, PSU_ID, TPP_ID);
+        CreateAisConsentRequest expectedResult = getAisConsentReq(donorRequest, PSU_ID, TPP_ID, ASPSP_CONSENT_DATA);
         //When:
-        AisConsentRequest mapedResult = consentMapper.mapToAisConsentRequest(donorRequest, PSU_ID, TPP_ID);
+        CreateAisConsentRequest mapedResult = consentMapper.mapToCreateAisConsentRequest(donorRequest, PSU_ID, TPP_ID, ASPSP_CONSENT_DATA);
         assertThat(mapedResult).isEqualTo(expectedResult);
     }
 
-    private AisConsentRequest getAisConsentReq(CreateConsentReq consentReq, String psuId, String tppId) {
-        AisConsentRequest req = new AisConsentRequest();
+    private CreateAisConsentRequest getAisConsentReq(CreateConsentReq consentReq, String psuId, String tppId, AspspConsentData aspspConsentData) {
+        CreateAisConsentRequest req = new CreateAisConsentRequest();
         req.setPsuId(psuId);
         req.setTppId(tppId);
         req.setCombinedServiceIndicator(consentReq.isCombinedServiceIndicator());
@@ -91,6 +93,7 @@ public class ConsentMapperTest {
         req.setValidUntil(consentReq.getValidUntil());
         req.setTppRedirectPreferred(false);
         req.setFrequencyPerDay(consentReq.getFrequencyPerDay());
+        req.setAspspConsentData(aspspConsentData.getAspspConsentData());
         AisAccountAccessInfo info = new AisAccountAccessInfo();
 
         info.setAccounts(getAccountInfo(consentReq.getAccess().getAccounts()));
@@ -114,7 +117,7 @@ public class ConsentMapperTest {
                                        return ai;
                                    })
                                    .collect(Collectors.toList()))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
     @Test

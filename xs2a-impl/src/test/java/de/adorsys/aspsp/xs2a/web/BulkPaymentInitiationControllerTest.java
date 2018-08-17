@@ -26,7 +26,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.aspsp.xs2a.service.validator.AccountReferenceValidationService;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,10 +42,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,6 +55,7 @@ public class BulkPaymentInitiationControllerTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
     private final PaymentProduct PAYMENT_PRODUCT = PaymentProduct.SCT;
     private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
+    private static final String TPP_INFO = "";
 
     @InjectMocks
     private BulkPaymentInitiationController bulkPaymentInitiationController;
@@ -73,10 +74,10 @@ public class BulkPaymentInitiationControllerTest {
 
     @Before
     public void setUp() throws IOException {
-        when(paymentService.createBulkPayments(any(), any())).thenReturn(readResponseObject());
+        when(paymentService.createBulkPayments(any(), anyString(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
         when(responseMapper.created(any())).thenReturn(new ResponseEntity<>(readPaymentInitialisationResponse(), HttpStatus.CREATED));
-        when(referenceValidationService.validateAccountReferences(any())).thenReturn(Optional.empty());
+        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
     @Test
@@ -87,7 +88,7 @@ public class BulkPaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<List<PaymentInitialisationResponse>> actualResult = bulkPaymentInitiationController
-                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), payments);
+                                                                               .createBulkPaymentInitiation(PAYMENT_PRODUCT.getCode(), TPP_INFO, payments);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

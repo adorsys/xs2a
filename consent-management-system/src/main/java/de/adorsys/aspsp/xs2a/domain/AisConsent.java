@@ -16,11 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -28,7 +29,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.EXPIRED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
 
 @Data
 @ToString(exclude = "accounts")
@@ -79,7 +80,7 @@ public class AisConsent {
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
-    private ConsentStatus consentStatus;
+    private CmsConsentStatus consentStatus;
 
     @Column(name = "consent_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -101,6 +102,11 @@ public class AisConsent {
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
     @ApiModelProperty(value = "List of accounts related to the consent", required = true)
     private List<AisAccount> accounts = new ArrayList<>();
+
+    @Lob
+    @Column(name = "aspsp_consent_data")
+    @Type(type = "org.hibernate.type.BinaryType")
+    private byte[] aspspConsentData;
 
     public void addAccounts(List<AisAccount> accounts) {
         accounts.forEach(this::addAccount);

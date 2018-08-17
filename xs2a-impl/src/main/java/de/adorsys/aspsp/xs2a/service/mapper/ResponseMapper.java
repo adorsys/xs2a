@@ -52,6 +52,6 @@ public class ResponseMapper {
     }
 
     private ResponseEntity enrichError(MessageError error){
-         return new ResponseEntity<>(error, valueOf(error.getTppMessage().getCode().getCode()));
+         return new ResponseEntity<>(error, valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
     }
 }

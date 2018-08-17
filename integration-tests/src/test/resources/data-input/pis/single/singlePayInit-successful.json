@@ -2,7 +2,8 @@
   "request": {
     "header": {
       "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-ip-address": "192.168.0.26"
+      "psu-ip-address": "192.168.0.26",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {
       "creditorAccount": {
@@ -29,14 +30,14 @@
         "currency": "EUR"
       },
       "purposeCode": {
-        "code": "Monatsmiete Mueller, Alexander"
+        "code": "miete"
       },
       "remittanceInformationStructured": {
         "reference": "Ref Number Merchant"
       },
       "remittanceInformationUnstructured": "Ref. Number WBG-1222",
       "requestedExecutionDate": "2018-08-18",
-      "requestedExecutionTime": "2018-08-18T18:30:35.035",
+      "requestedExecutionTime": "2018-08-18T18:30:35.035Z",
       "ultimateCreditor": "WBG",
       "ultimateDebtor": "Alexander Mueller"
     }

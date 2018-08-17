@@ -18,17 +18,15 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -43,19 +41,20 @@ import java.util.stream.Collectors;
 public class ConsentMapper {
     private final AccountMapper accountMapper;
 
-    public AisConsentRequest mapToAisConsentRequest(CreateConsentReq req, String psuId, String tppId) {
+    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(req)
                    .map(r -> {
-                       AisConsentRequest request = new AisConsentRequest();
-                       request.setPsuId(psuId);
-                       request.setTppId(tppId);
-                       request.setFrequencyPerDay(r.getFrequencyPerDay());
-                       request.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       request.setValidUntil(r.getValidUntil());
-                       request.setRecurringIndicator(r.isRecurringIndicator());
-                       request.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
+                       CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
+                       aisRequest.setPsuId(psuId);
+                       aisRequest.setTppId(tppId);
+                       aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
+                       aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
+                       aisRequest.setValidUntil(r.getValidUntil());
+                       aisRequest.setRecurringIndicator(r.isRecurringIndicator());
+                       aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
+                       aisRequest.setAspspConsentData(aspspConsentData.getAspspConsentData());
 
-                       return request;
+                       return aisRequest;
                    })
                    .orElse(null);
     }
@@ -86,6 +85,11 @@ public class ConsentMapper {
     public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus) {
         return Optional.ofNullable(spiConsentStatus)
                    .map(status -> ConsentStatus.valueOf(status.name()));
+    }
+
+    public Optional<SpiConsentStatus> mapToSpiConsentStatus(CmsConsentStatus consentStatus) {
+        return Optional.ofNullable(consentStatus)
+                   .map(status -> SpiConsentStatus.valueOf(status.name()));
     }
 
     public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
@@ -152,15 +156,15 @@ public class ConsentMapper {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
                                    .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
+                                   .orElseGet(Collections::emptyList));
 
         accessInfo.setBalances(Optional.ofNullable(access.getBalances())
                                    .map(this::mapToListAccountInfo)
-                                   .orElse(Collections.emptyList()));
+                                   .orElseGet(Collections::emptyList));
 
         accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
                                        .map(this::mapToListAccountInfo)
-                                       .orElse(Collections.emptyList()));
+                                       .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
                                             .map(AccountAccessType::name)

@@ -127,7 +127,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService()));
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageSource()));
     }
 
     @Bean
@@ -189,7 +189,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     private SimpleModule getDateTimeDeserializerModule() {
         SimpleModule dateTimeModule = new SimpleModule();
-        dateTimeModule.addDeserializer(LocalDateTime.class, new DateTimeDeserializer(LocalDateTime.class));
+        dateTimeModule.addDeserializer(LocalDateTime.class, new DateTimeDeserializer());
         return dateTimeModule;
     }
 }

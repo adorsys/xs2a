@@ -19,10 +19,10 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.account.AccountHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
@@ -39,9 +39,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.EXPIRED;
-import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.ConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 
 @Service
@@ -59,7 +59,7 @@ public class AISConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> createConsent(AisConsentRequest request) {
+    public Optional<String> createConsent(CreateAisConsentRequest request) {
         int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
@@ -75,6 +75,7 @@ public class AISConsentService {
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
+        consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
                    ? Optional.ofNullable(saved.getExternalId())
@@ -102,7 +103,7 @@ public class AISConsentService {
      * @param consentId
      * @return ConsentStatus
      */
-    public Optional<ConsentStatus> getConsentStatusById(String consentId) {
+    public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
         return getAisConsentById(consentId)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(AisConsent::getConsentStatus);
@@ -115,7 +116,7 @@ public class AISConsentService {
      * @param status new consent status
      * @return Boolean
      */
-    public Optional<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
+    public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
@@ -198,7 +199,7 @@ public class AISConsentService {
         return consent;
     }
 
-    private AisConsent setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
+    private AisConsent setStatusAndSaveConsent(AisConsent consent, CmsConsentStatus status) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
