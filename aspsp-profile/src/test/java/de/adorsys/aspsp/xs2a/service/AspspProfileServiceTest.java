@@ -47,6 +47,7 @@ public class AspspProfileServiceTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final int CONSENT_LIFETIME = 0;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -76,6 +77,8 @@ public class AspspProfileServiceTest {
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
         when(profileConfiguration.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
+        when(profileConfiguration.getConsentLifetime())
+            .thenReturn(CONSENT_LIFETIME);
     }
 
     @Test
@@ -166,6 +169,15 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(AVAILABLE_BOOKING_STATUSES);
+    }
+
+    @Test
+    public void getConsentLifetime() {
+        //When:
+        int actualResponse = aspspProfileService.getConsentLifetime();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(CONSENT_LIFETIME);
     }
 
     private static List<String> getPaymentProducts() {
