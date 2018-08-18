@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web.filter;
 
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.TppRoleValidationService;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import lombok.extern.slf4j.Slf4j;
