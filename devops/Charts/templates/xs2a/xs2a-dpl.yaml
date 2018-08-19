@@ -15,11 +15,10 @@ metadata:
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"xs2a\")].image"
       }]
-    checksum/secret: {{ include (print $.Template.BasePath "/xs2a/xs2a-secret.yaml") . | sha256sum }}
   name: {{ template "psd2.fullname" . }}-xs2a
   labels:
 {{ include "psd2.labels" . | indent 4 }}
-    component: xs2a
+    component:
     app: xs2a
 spec:
   serviceName: {{ template "psd2.fullname" . }}-xs2a
@@ -42,25 +41,31 @@ spec:
         - name: xs2a
           image: " "
           ports:
-            - containerPort: 8080
-              protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
           env:
-            - name: KEYCLOAK_CREDENTIALS_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: xs2a
-                  name: "{{ template "psd2.fullname" . }}-keycloak"
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
+          - name: KEYCLOAK_CREDENTIALS_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: xs2a
+                name: "{{ template "psd2.fullname" . }}-keycloak"
 {{- range $name, $value := .Values.xs2a.env }}
 {{- if not (empty $value) }}
-            - name: {{ $name | quote }}
-              value: {{ tpl (toString $value) $ | quote }}
+          - name: {{ $name | quote }}
+            value: {{ tpl (toString $value) $ | quote }}
 {{- end }}
 {{- end }}
 {{- with .Values.extraEnv }}
-{{ tpl . $ | indent 8 }}
+{{ tpl . $ | indent 10 }}
 {{- end }}
-            - name: TZ
-              value: {{ .Values.timezone | quote }}
           resources:
 {{ toYaml .Values.xs2a.resources | indent 12 }}
-{{- end }}
+          volumeMounts:
+          - mountPath: /opt/aspsp-xs2a/logs
+            name: logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+{{- end  }}

@@ -15,7 +15,7 @@ metadata:
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"aspsp\")].image"
       }]
-  name: {{ template "psd2.fullname" . }}
+  name: {{ template "psd2.fullname" . }}-aspsp
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     component: aspsp
@@ -41,20 +41,20 @@ spec:
         - name: aspsp
           image: " "
           ports:
-            - containerPort: 8080
-              protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
           env:
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
 {{- range $name, $value := .Values.aspsp.env }}
 {{- if not (empty $value) }}
-            - name: {{ $name | quote }}
-              value: {{ $value | quote }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
 {{- end }}
 {{- end }}
 {{- with .Values.extraEnv }}
-{{ tpl . $ | indent 8 }}
+{{ tpl . $ | indent 10 }}
 {{- end }}
-            - name: TZ
-              value: {{ .Values.timezone | quote }}
           resources:
 {{ toYaml .Values.aspsp.resources | indent 12 }}
 {{- end }}

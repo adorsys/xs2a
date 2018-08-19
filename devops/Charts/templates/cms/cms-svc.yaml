@@ -17,7 +17,7 @@ spec:
     - name: http
       port: 8080
       protocol: TCP
-      targetPort: 8080
+      targetPort: 38080
   selector:
 {{ include "psd2.matchLabels" . | indent 4 }}
     component: ConsentManagementSystem

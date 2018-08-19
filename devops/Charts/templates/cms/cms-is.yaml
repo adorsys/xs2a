@@ -18,3 +18,41 @@ spec:
       referencePolicy:
           type: Source
 {{- end }}
+{{- if and .Values.cms.enabled (not .Values.cms.db.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-cms-db
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.cms.db.image.name }}:{{ .Values.cms.db.image.tag }}
+    referencePolicy:
+      type: Source
+{{- end }}
+{{- if and .Values.cms.db.metrics.enabled (not .Values.cms.db.metrics.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-cms-db-metrics
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.cms.db.metrics.image.name }}:{{ .Values.cms.db.metrics.image.tag }}
+    referencePolicy:
+      type: Source
+{{- end }}

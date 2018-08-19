@@ -8,9 +8,7 @@ metadata:
 {{ include "psd2.labels" . | indent 4 }}
     component: ConsentManagementSystem
 spec:
-{{- if .Values.cms.route.host }}
-  host: {{ . | quote }}
-{{- end }}
+  host: {{ tpl (required "cms.route.host must be defined" .Values.cms.route.host) . | quote }}
   port:
     targetPort: http
 {{- with .Values.cms.route.tls }}

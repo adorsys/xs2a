@@ -87,8 +87,8 @@ keycloak:
           secret: 9e61fd36-ee68-4573-a317-daf4d6b9bebd
       users:
         test:
-          firstName: S 
-          lastName: schäfer
-          email: s.schäfer@psd2test.de
+          firstName: test 
+          lastName: user
+          email: test.user@psd2test.de
           credentials: [{ type: password, value: "TEST" }]
 ```

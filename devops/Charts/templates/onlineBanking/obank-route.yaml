@@ -8,9 +8,7 @@ metadata:
 {{ include "psd2.labels" . | indent 4 }}
     component: OnlineBanking
 spec:
-{{- if .Values.obank.route.host }}
-  host: {{ . | quote }}
-{{- end }}
+  host: {{ tpl (required "obank.route.host must be defined" .Values.obank.route.host) . | quote }}
   port:
     targetPort: http
 {{- with .Values.obank.route.tls }}

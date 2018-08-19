@@ -8,9 +8,7 @@ metadata:
 {{ include "psd2.labels" . | indent 4 }}
     component: aspsp
 spec:
-{{- if .Values.aspsp.route.host }}
-  host: {{ . | quote }}
-{{- end }}
+  host: {{ tpl (required "aspsp.route.host must be defined" .Values.aspsp.route.host) . | quote }}
   port:
     targetPort: http
 {{- with .Values.cms.route.tls }}

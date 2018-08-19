@@ -2,7 +2,7 @@
 timezone: Europe/Berlin
 
 keycloak:
-  enabled: false
+  enabled: true
   replicas: 1
 
   image:
@@ -125,7 +125,7 @@ keycloak:
         storageClass: ~
 
   realms:
-    psd2:
+    xs2a:
       displayName: ADORSYS PSD2
       registrationAllowed: true
       smtpServer:
@@ -155,23 +155,24 @@ keycloak:
           authorizationServicesEnabled: false
       users:
         test:
-          firstName: S
-          lastName: Shäefer
-          email: s.shäefer@testacount.de
+          firstName: test
+          lastName: user
+          email: test.user@testacount.de
           credentials: [{ type: password, value: "TestPassword123" }]
 
 
 xs2a:
-  enabled: false
+  enabled: true
   replicas: 1
 
   image:
-    name: xs2a-integtests
-    tag: latest
+    name: aspsp-xs2a
+    tag: integ
     stream: true
 
   route:
-    host: ~
+    host: >-
+      {{ template "psd2.fullname" . }}-xs2a-{{ .Release.Namespace }}.cloud.adorsys.de
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -181,7 +182,7 @@ xs2a:
     CONSENT_SERVICE_BASEURL: http:/{{ template "psd2.fullname" . }}-cms:8080/api/v1
     ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp:8080/api/v1
     skip_ssl_certificate_verification: true
-    KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
+    KEYCLOAK_AUTH_SERVER_URL: "https://{{ .Values.keycloak.route.host }}/auth"
     skip_ssl_certificate_verification: true
     keycloak_username: "{{ .Values.keycloak.admin.username }}"
     keycloak_password: "{{ .Values.keycloak.admin.password }}"
@@ -214,16 +215,17 @@ xs2a:
   serviceAnnotations: {}
 
 mock:
-  enabled: false
+  enabled: true
   replicas: 1
 
   image:
     name: aspsp-mock-server
-    tag: latest
+    tag: integ
     stream: true
 
   route:
-    host: ~
+    host: >-
+      {{ template "psd2.fullname" . }}-mock-{{ .Release.Namespace }}.cloud.adorsys.de
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -239,8 +241,8 @@ mock:
     SPRING_DATA_MONGODB_PORT: 27017
     SPRING_DATA_MONGODB_DATABASE: spimock
     KEYCLOAK_CREDENTIALS_SECRET: ~
-    KEYCLOAK_AUTH_SERVER_URL: "https://{{ tpl .Values.keycloak.route.host $ }}/auth"
-    spring_mail_host: mailout
+    KEYCLOAK_AUTH_SERVER_URL: "https://{{ .Values.keycloak.route.host }}/auth"
+    spring_mail_host: http://{{ template "psd2.fullname" . }}-mailout
     spring_mail_port: 25
     spring_mail_properties_mail_smtp_auth: "false"
     spring_mail_properties_mail_smtp_starttls_enable: "false"
@@ -311,35 +313,35 @@ mock:
 #      name: mockbanking
 
 cms:
-  enabled: false
+  enabled: true
   replicas: 1
 
   image:
-    name: xs2a-aspsp-cms
-    tag: v1
+    name: xs2a-cnt-mgmnt
+    tag: integ
     stream: true
 
   route:
     enabled: true
-    host: ~
+    host: >-
+      {{ template "psd2.fullname" . }}-cms-{{ .Release.Namespace }}.cloud.adorsys.de
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
 
   env:
-    spring_datasource_url: jdbc:postgresql://{{ template "psd2.fullname" . }}-keycloak-db/cms
+    spring_datasource_url: jdbc:postgresql://{{ template "psd2.fullname" . }}-cms-db/cms
     spring_jpa_properties_hibernate_default_schema: cms
     MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-mock:8080
     ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp:8080/api/v1
     skip_ssl_certificate_verification: true
-    KEYCLOAK_AUTH_SERVER_URL: https://{{ tpl .Values.keycloak.route.host $ }}/auth
+    KEYCLOAK_AUTH_SERVER_URL: "https://{{ .Values.keycloak.route.host }}/auth"
     KEYCLOAK_CREDENTIALS_SECRET: ~
-    spring_datasource_username: "{{ .Values.keycloak.admin.username }}"
-    spring_datasource_password: "{{ .Values.keycloak.admin.password }}"
+    spring_datasource_username: "{{ .Values.cms.db.env.POSTGRESQL_PASSWORD }}"
+    spring_datasource_password: "{{ .Values.cms.db.env.POSTGRESQL_USER }}"
 
   secrets:
     existingSecret: ~
-
 
   resources:
     limits:
@@ -362,17 +364,79 @@ cms:
   podAnnotations: {}
   serviceAnnotations: {}
 
+  db:
+    image:
+      name: docker.io/centos/postgresql-96-centos7
+      tag: latest
+      stream: false
+
+    env:
+      POSTGRESQL_DATABASE: cms
+      POSTGRESQL_PASSWORD: xs2acms
+      POSTGRESQL_USER: aspspcms
+
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: ~
+
+    deploymentAnnotations: {}
+    podAnnotations: {}
+    serviceAnnotations: {}
+
+    env: {}
+    secrets: {}
+
+    resources:
+      limits:
+        memory: 200Mi
+    livenessProbe:
+      exec:
+        command: [/usr/libexec/check-container, --live]
+      initialDelaySeconds: 120
+      timeoutSeconds: 10
+    readinessProbe:
+      exec:
+        command: [/usr/libexec/check-container]
+      initialDelaySeconds: 5
+      timeoutSeconds: 1
+
+    metrics:
+      enabled: false
+      resources:
+        requests:
+          memory: 250Mi
+          cpu: 100m
+
+      image:
+        name: docker.io/wrouesnel/postgres_exporter
+        tag: v0.4.6
+        stream: false
+
+    backup:
+      enabled: false
+      schedule: "0 1 * * *"
+      retention: 7
+      resources:
+        requests:
+          memory: 100Mi
+          cpu: 100m
+
+      persistence:
+        size: 10Gi
+        storageClass: ~
+
 aspsp:
-  enabled: false
+  enabled: true
   replicaCount: 1
 
   image:
     name: xs2a-aspsp-profile
-    tag: latest
+    tag: integ
     stream: true
 
   route:
-    enabled: false
+    enabled: true
     host: >-
       {{ template "psd2.fullname" . }}-aspsp-{{ .Release.Namespace }}.cloud.adorsys.de
     tls:
@@ -489,8 +553,8 @@ uiapp:
   serviceAnnotations: {}
 
 mailout:
-  enabled: false
-  externalDomain: ~
+  enabled: true
+
   image:
     name: docker.io/jkroepke/openshift-mta
     tag: latest
@@ -541,8 +605,6 @@ mailout:
 #  Not implemented @ mock
 #  because the java is too old.
 extraEnv: |
-  - name: JAVA_TOOL_OPTIONS
-    value: ""
   - name: JAVA_OPTS
     value: >-
       -XX:+UnlockExperimentalVMOptions

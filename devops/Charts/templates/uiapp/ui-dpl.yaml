@@ -15,7 +15,6 @@ metadata:
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"uiapp\")].image"
       }]
-    checksum/secret: {{ include (print $.Template.BasePath "/uiapp/uiapp-secret.yaml") . | sha256sum }}
   name: {{ template "psd2.fullname" . }}-uiapp
   labels:
 {{ include "psd2.labels" . | indent 4 }}
@@ -45,19 +44,11 @@ spec:
             - containerPort: 8080
               protocol: TCP
           env:
-            - name: KEYCLOAK_CREDENTIALS_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: uiapp
-                  name: "{{ template "psd2.fullname" . }}-keycloak"
 {{- range $name, $value := .Values.uiapp.env }}
 {{- if not (empty $value) }}
             - name: {{ $name | quote }}
               value: {{ tpl (toString $value) $ | quote }}
 {{- end }}
-{{- end }}
-{{- with .Values.extraEnv }}
-{{ tpl . $ | indent 8 }}
 {{- end }}
             - name: TZ
               value: {{ .Values.timezone | quote }}

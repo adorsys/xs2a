@@ -8,9 +8,7 @@ metadata:
 {{ include "psd2.labels" . | indent 4 }}
     component: keycloak
 spec:
-{{- if .Values.keycloak.route.host }}
-  host: "{{ tpl .Values.keycloak.route.host $ }}"
-{{- end }}
+  host: {{ tpl (required "keycloak.route.host must be defined" .Values.keycloak.route.host) . | quote }}
   port:
     targetPort: http
 {{- with .Values.keycloak.route.tls }}

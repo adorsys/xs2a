@@ -15,7 +15,6 @@ metadata:
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"obank\")].image"
       }]
-    checksum/secret: {{ include (print $.Template.BasePath "/obank/obank-secret.yaml") . | sha256sum }}
   name: {{ template "psd2.fullname" . }}-obank
   labels:
 {{ include "psd2.labels" . | indent 4 }}
@@ -42,25 +41,20 @@ spec:
         - name: obank
           image: " "
           ports:
-            - containerPort: 8080
-              protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
           env:
-            - name: KEYCLOAK_CREDENTIALS_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: obank
-                  name: "{{ template "psd2.fullname" . }}-keycloak"
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
 {{- range $name, $value := .Values.obank.env }}
 {{- if not (empty $value) }}
-            - name: {{ $name | quote }}
-              value: {{ tpl (toString $value) $ | quote }}
+          - name: {{ $name | quote }}
+            value: {{ tpl (toString $value) $ | quote }}
 {{- end }}
 {{- end }}
 {{- with .Values.extraEnv }}
-{{ tpl . $ | indent 8 }}
+{{ tpl . $ | indent 10 }}
 {{- end }}
-            - name: TZ
-              value: {{ .Values.timezone | quote }}
           resources:
 {{ toYaml .Values.obank.resources | indent 12 }}
 {{- end }}

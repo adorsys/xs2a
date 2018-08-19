@@ -8,9 +8,7 @@ metadata:
 {{ include "psd2.labels" . | indent 4 }}
     component: xs2a
 spec:
-{{- if .Values.xs2a.route.host }}
-  host: {{ . | quote }}
-{{- end }}
+  host: {{ tpl (required "xs2a.route.host must be defined" .Values.xs2a.route.host) . | quote }}
   port:
     targetPort: http
 {{- with .Values.xs2a.route.tls }}
