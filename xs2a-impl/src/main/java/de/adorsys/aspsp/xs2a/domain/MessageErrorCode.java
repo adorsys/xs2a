@@ -69,17 +69,47 @@ public enum MessageErrorCode {
     SERVICE_BLOCKED(403),  //This service is not reachable for the addressed PSU due to a channel independent blocking by the ASPSP. Additional information might be given by the ASPSP
 
     //CONSENT_UNKNOWN: The consent-ID cannot be matched by the ASPSP relative to the TPP
-    CONSENT_UNKNOWN_403(403),  //403 - if path
-    CONSENT_UNKNOWN_400(400),  //400 - if payload
+    CONSENT_UNKNOWN_403(403) {
+        @Override
+        public String getName() {
+            return "CONSENT_UNKNOWN";
+        }
+    },  //403 - if path
+    CONSENT_UNKNOWN_400(400) {
+        @Override
+        public String getName() {
+            return "CONSENT_UNKNOWN";
+        }
+    },  //400 - if payload
 
     //RESOURCE_UNKNOWN_404: The addressed resource is unknown relative to the TPP
-    RESOURCE_UNKNOWN_404(404), // 404 - if account-id in path
-    RESOURCE_UNKNOWN_403(403), // 403 - if other resource in path
+    RESOURCE_UNKNOWN_404(404) {
+        @Override
+        public String getName() {
+            return "RESOURCE_UNKNOWN";
+        }
+    }, // 404 - if account-id in path
+    RESOURCE_UNKNOWN_403(403) {
+        @Override
+        public String getName() {
+            return "RESOURCE_UNKNOWN";
+        }
+    }, // 403 - if other resource in path
     RESOURCE_UNKNOWN_400(400), // 400 - if payload
 
     // RESOURCE_EXPIRED : The addressed resource is associated with the TPP but has expired, not addressable anymore
-    RESOURCE_EXPIRED_403(403), // 403 if path
-    RESOURCE_EXPIRED_400(400), // 400 if payload
+    RESOURCE_EXPIRED_403(403) {
+        @Override
+        public String getName() {
+            return "RESOURCE_EXPIRED";
+        }
+    }, // 403 if path
+    RESOURCE_EXPIRED_400(400) {
+        @Override
+        public String getName() {
+            return "RESOURCE_EXPIRED";
+        }
+    }, // 400 if payload
     PARAMETER_NOT_SUPPORTED(400),
     BEARER_TOKEN_EMPTY(400),
     INTERNAL_SERVER_ERROR(500),

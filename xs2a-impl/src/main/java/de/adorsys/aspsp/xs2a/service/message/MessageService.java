@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.message;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
 
 import static java.util.Locale.forLanguageTag;
@@ -32,7 +33,7 @@ public class MessageService {
     public String getMessage(String code) {
         try {
             return messageSource.getMessage(code, null, forLanguageTag("en"));
-        } catch (Exception e) {
+        } catch (NoSuchMessageException e) {
             log.info("Can't get message: {}", e.getMessage());
         }
         return null;

@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import lombok.extern.slf4j.Slf4j;
