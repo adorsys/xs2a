@@ -28,7 +28,7 @@ import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;

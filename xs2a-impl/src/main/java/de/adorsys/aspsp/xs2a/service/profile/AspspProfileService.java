@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;

@@ -1,12 +1,13 @@
 package de.adorsys.aspsp.xs2a.web.filter;
 
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.signature.TppSignatureValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Component
@@ -48,7 +50,7 @@ public class SignatureFilter implements Filter {
                 return;
             }
 
-            if(digestContainsErrors(httpRequest)) {
+            if (digestContainsErrors(httpRequest)) {
                 ((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST,
                     CertificateErrorMsgCode.FORMAT_ERROR.toString());
                 return;
@@ -90,6 +92,6 @@ public class SignatureFilter implements Filter {
 
     private Map<String, String> obtainRequestHeaders(HttpServletRequest request) {
         return Collections.list(request.getHeaderNames()).stream()
-                   .collect(Collectors.toMap(Function.identity(), request::getHeader));
+            .collect(Collectors.toMap(Function.identity(), request::getHeader));
     }
 }
