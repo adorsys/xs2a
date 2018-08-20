@@ -64,8 +64,18 @@ public enum MessageErrorCode {
     REQUESTED_FORMATS_INVALID(401),  //The requested formats in the Accept header entry are not matching the formats offered by the ASPSP.");
 
     //SERVICE_INVALID : The addressed service is not valid for the addressed resources or the submitted data
-    SERVICE_INVALID_401(401),  //401 - if payload
-    SERVICE_INVALID_405(405),  //405 -if http method
+    SERVICE_INVALID_401(401) {
+        @Override
+        public String getName() {
+            return "SERVICE_INVALID";
+        }
+    },  //401 - if payload
+    SERVICE_INVALID_405(405) {
+        @Override
+        public String getName() {
+            return "SERVICE_INVALID";
+        }
+    },  //405 -if http method
     SERVICE_BLOCKED(403),  //This service is not reachable for the addressed PSU due to a channel independent blocking by the ASPSP. Additional information might be given by the ASPSP
 
     //CONSENT_UNKNOWN: The consent-ID cannot be matched by the ASPSP relative to the TPP
@@ -95,7 +105,12 @@ public enum MessageErrorCode {
             return "RESOURCE_UNKNOWN";
         }
     }, // 403 - if other resource in path
-    RESOURCE_UNKNOWN_400(400), // 400 - if payload
+    RESOURCE_UNKNOWN_400(400) {
+        @Override
+        public String getName() {
+            return "RESOURCE_UNKNOWN";
+        }
+    }, // 400 - if payload
 
     // RESOURCE_EXPIRED : The addressed resource is associated with the TPP but has expired, not addressable anymore
     RESOURCE_EXPIRED_403(403) {
