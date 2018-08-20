@@ -13,6 +13,7 @@
 
     <properties>
         <springfox.version>2.9.2</springfox.version>
+        <pmd.skip>true</pmd.skip>
     </properties>
 
     <dependencies>
