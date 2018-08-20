@@ -82,6 +82,11 @@ public class ProfileConfiguration {
     private MulticurrencyAccountLevel multicurrencyAccountLevel;
 
     /**
+     * If "true" indicates that an ASPSP supports "Bank Offered Consent" consent model
+     */
+    private boolean bankOfferedConsentSupport;
+
+    /**
      * Booking statuses supported by ASPSP, such as Booked, Pending and Both
      */
     private List<BookingStatus> availableBookingStatuses;

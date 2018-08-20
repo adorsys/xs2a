@@ -80,6 +80,13 @@ public class AspspProfileController {
         return new ResponseEntity<>(aspspProfileService.isTppSignatureRequired(), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/bank-offered-consent-support")
+    @ApiOperation(value = "Reads if ASPSP support Bank Offered Consent model")
+    @ApiResponse(code = 200, message = "Ok", response = String.class)
+    public ResponseEntity<Boolean> getBankOfferedConsentSupport() {
+        return new ResponseEntity<>(aspspProfileService.isBankOfferedConsentSupport(), HttpStatus.OK);
+    }
+
     @GetMapping(path = "/redirect-url-to-aspsp-pis")
     @ApiOperation(value = "Reads Pis redirect url to aspsp")
     @ApiResponse(code = 200, message = "Ok", response = String.class)

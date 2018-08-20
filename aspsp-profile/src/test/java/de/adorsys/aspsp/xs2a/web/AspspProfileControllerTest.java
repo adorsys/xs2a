@@ -54,6 +54,7 @@ public class AspspProfileControllerTest {
     private static final int CONSENT_LIFETIME = 0;
     private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -92,6 +93,8 @@ public class AspspProfileControllerTest {
             .thenReturn(TRANSACTION_LIFETIME);
         when(aspspProfileService.isAllPsd2Support())
             .thenReturn(ALL_PSD_2_SUPPORT);
+        when(profileConfiguration.isBankOfferedConsentSupport())
+            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     @Test
@@ -261,6 +264,19 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(ALL_PSD_2_SUPPORT);
+    }
+
+    @Test
+    public void getBankOfferedConsentSupport() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Boolean> actualResponse = aspspProfileController.getBankOfferedConsentSupport();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     private static List<String> getPaymentProducts() {
