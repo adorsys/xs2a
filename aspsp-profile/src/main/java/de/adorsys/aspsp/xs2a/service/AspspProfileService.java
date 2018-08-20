@@ -67,6 +67,22 @@ public class AspspProfileService {
     }
 
     /**
+     * Reads if ASPSP support Bank Offered Consent model
+     */
+    public boolean isBankOfferedConsentSupport() {
+        return profileConfiguration.isBankOfferedConsentSupport();
+    }
+
+    /**
+     * Update BankOfferedConsentSupport status
+     *
+     * @param bankOfferedConsentSupport BankOfferedConsentSupport status to substitute existing one
+     */
+    public void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport) {
+        profileConfiguration.setBankOfferedConsentSupport(bankOfferedConsentSupport);
+    }
+
+    /**
      * Read List of available payment products
      */
     public List<String> getAvailablePaymentProducts() {
