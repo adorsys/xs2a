@@ -13,6 +13,7 @@ Provide access to next values:
  - aisRedirectUrlToAspsp
  - multicurrencyAccountLevel
  - availableBookingStatuses
+ - transaction lifetime
  
  To test getting data of ASPSP Profile need to make next steps:
  
@@ -38,3 +39,4 @@ Provide access to next values:
 
  * To get 'availableBookingStatuses' create Get request to URI 'http://your_host:port/aspsp-profile/available-booking-statuses'
 
+ * To get 'transaction lifetime' create Get request to URI 'http://your_host:port/aspsp-profile/transaction-lifetime'

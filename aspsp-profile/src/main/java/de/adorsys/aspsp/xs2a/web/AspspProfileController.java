@@ -124,4 +124,11 @@ public class AspspProfileController {
     public ResponseEntity<Integer> getConsentLifetime() {
         return new ResponseEntity<>(aspspProfileService.getConsentLifetime(), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/transaction-lifetime")
+    @ApiOperation(value = "Reads the value of a maximum lifetime of transaction")
+    @ApiResponse(code = 200, message = "Ok", response = Integer.class)
+    public ResponseEntity<Integer> getTransactionLifetime() {
+        return new ResponseEntity<>(aspspProfileService.getTransactionLifetime(), HttpStatus.OK);
+    }
 }

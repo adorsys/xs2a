@@ -12,3 +12,4 @@ setting:
  availableBookingStatuses: BOOKED, PENDING
  supportedAccountReferenceFields: MSISDN
  consentLifetime: 0
+ transactionLifetime: 0

@@ -48,6 +48,7 @@ public class AspspProfileServiceTest {
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final int CONSENT_LIFETIME = 0;
+    private static final int TRANSACTION_LIFETIME = 0;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -79,6 +80,8 @@ public class AspspProfileServiceTest {
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
         when(profileConfiguration.getConsentLifetime())
             .thenReturn(CONSENT_LIFETIME);
+        when(profileConfiguration.getTransactionLifetime())
+            .thenReturn(TRANSACTION_LIFETIME);
     }
 
     @Test
@@ -178,6 +181,15 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(CONSENT_LIFETIME);
+    }
+
+    @Test
+    public void getTransactionLifetime() {
+        //When:
+        int actualResponse = aspspProfileService.getTransactionLifetime();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(TRANSACTION_LIFETIME);
     }
 
     private static List<String> getPaymentProducts() {
