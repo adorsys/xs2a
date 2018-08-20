@@ -30,9 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +47,7 @@ public class AspspProfileServiceTest {
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final int CONSENT_LIFETIME = 0;
     private static final int TRANSACTION_LIFETIME = 0;
+    private static final boolean ALL_PSD_2_SUPPORT = false;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @InjectMocks
@@ -83,6 +82,8 @@ public class AspspProfileServiceTest {
             .thenReturn(CONSENT_LIFETIME);
         when(profileConfiguration.getTransactionLifetime())
             .thenReturn(TRANSACTION_LIFETIME);
+        when(profileConfiguration.isAllPsd2Support())
+            .thenReturn(ALL_PSD_2_SUPPORT);
         when(profileConfiguration.isBankOfferedConsentSupport())
             .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
@@ -193,6 +194,15 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(TRANSACTION_LIFETIME);
+    }
+
+    @Test
+    public void getAllPsd2Support() {
+        //When:
+        Boolean actualResponse = aspspProfileService.isAllPsd2Support();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(ALL_PSD_2_SUPPORT);
     }
 
     @Test

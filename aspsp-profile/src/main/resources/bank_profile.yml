@@ -14,3 +14,4 @@ setting:
  supportedAccountReferenceFields: MSISDN
  consentLifetime: 0
  transactionLifetime: 0
+ allPsd2Support: false
