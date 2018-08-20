@@ -105,6 +105,16 @@ public class AspspProfileUpdateController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping(path = "/bank-offered-consent-support")
+    @ApiOperation(value = "Updates bankOfferedConsentSupport status. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateBankOfferedConsentSupport(@RequestBody Boolean bankOfferedConsentSupport) {
+        aspspProfileService.updateBankOfferedConsentSupport(bankOfferedConsentSupport);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping(path = "/redirect-url-to-aspsp-pis")
     @ApiOperation(value = "Updates value of PIS redirect url to aspsp. Only for DEBUG!")
     @ApiResponses(value = {
