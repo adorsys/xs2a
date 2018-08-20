@@ -27,6 +27,7 @@
         <module>spi-api</module>
         <module>spi-mock</module>
         <module>aspsp-mock-server</module>
+        <module>xs2a-server-api</module>
         <module>xs2a-impl</module>
         <module>psd2-validator</module>
         <module>consent-management-system</module>
