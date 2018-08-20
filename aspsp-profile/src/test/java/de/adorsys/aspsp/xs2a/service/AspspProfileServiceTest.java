@@ -49,6 +49,7 @@ public class AspspProfileServiceTest {
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final int CONSENT_LIFETIME = 0;
     private static final int TRANSACTION_LIFETIME = 0;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -82,6 +83,8 @@ public class AspspProfileServiceTest {
             .thenReturn(CONSENT_LIFETIME);
         when(profileConfiguration.getTransactionLifetime())
             .thenReturn(TRANSACTION_LIFETIME);
+        when(profileConfiguration.isBankOfferedConsentSupport())
+            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     @Test
@@ -190,6 +193,15 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(TRANSACTION_LIFETIME);
+    }
+
+    @Test
+    public void isBankOfferedConsentSupport() {
+        //When
+        boolean actualResponse = aspspProfileService.isBankOfferedConsentSupport();
+
+        //Then
+        assertThat(actualResponse).isEqualTo(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     private static List<String> getPaymentProducts() {
