@@ -67,20 +67,17 @@ public class QwacCertificateFilter extends GenericFilterBean {
             String encodedTppQwacCert = getEncodedTppQwacCert(httpRequest);
 
             if (StringUtils.isNotBlank(encodedTppQwacCert)) {
-                TppCertificateData tppCertificateData;
-                try {
-                    tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
 
+                try {
+                    TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
                     HashMap<String, String> credential = new HashMap<>();
-                    credential.put("autorithyCountry", tppCertificateData.getPspAuthorityCountry());
-                    credential.put("autorithyId", tppCertificateData.getPspAuthorityId());
-                    credential.put("autorithyName", tppCertificateData.getPspAuthorityName());
-                    credential.put("autorizationNumber", tppCertificateData.getPspAuthorizationNumber());
+                    credential.put("authorityCountry", tppCertificateData.getPspAuthorityCountry());
+                    credential.put("authorityId", tppCertificateData.getPspAuthorityId());
+                    credential.put("authorityName", tppCertificateData.getPspAuthorityName());
+                    credential.put("authorizationNumber", tppCertificateData.getPspAuthorizationNumber());
                     credential.put("name", tppCertificateData.getPspName());
 
-                    List<GrantedAuthority> authorities;
-
-                    authorities = tppCertificateData.getPspRoles().stream()
+                    List<GrantedAuthority> authorities = tppCertificateData.getPspRoles().stream()
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                         .collect(Collectors.toList());
 

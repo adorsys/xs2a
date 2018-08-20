@@ -20,11 +20,11 @@ public class SecurityUtil {
 
                 TppCertificateData tppCertificateData = new TppCertificateData();
 
-                tppCertificateData.setPspAuthorityCountry(((Map<String, String>) credentials).get("autorithyCountry"));
-                tppCertificateData.setPspAuthorityId(((Map<String, String>) credentials).get("autorithyId"));
-                tppCertificateData.setPspAuthorityName(((Map<String, String>) credentials).get("autorithyName"));
+                tppCertificateData.setPspAuthorityCountry(((Map<String, String>) credentials).get("authorityCountry"));
+                tppCertificateData.setPspAuthorityId(((Map<String, String>) credentials).get("authorityId"));
+                tppCertificateData.setPspAuthorityName(((Map<String, String>) credentials).get("authorityName"));
                 tppCertificateData
-                    .setPspAuthorizationNumber(((Map<String, String>) credentials).get("autorizationNumber"));
+                    .setPspAuthorizationNumber(((Map<String, String>) credentials).get("authorizationNumber"));
                 tppCertificateData.setPspName(((Map<String, String>) credentials).get("name"));
 
                 return tppCertificateData;
