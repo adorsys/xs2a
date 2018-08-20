@@ -235,7 +235,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Read the limit of a maximum lifetime of consent
+     * Read the limit of a maximum lifetime of consent set in days
      */
     public int getConsentLifetime() {
         return profileConfiguration.getConsentLifetime();
