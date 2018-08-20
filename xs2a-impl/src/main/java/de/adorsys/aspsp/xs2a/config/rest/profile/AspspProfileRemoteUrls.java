@@ -105,4 +105,13 @@ public class AspspProfileRemoteUrls {
     public String getSupportedAccountReferenceFields() {
         return aspspProfileBaseUrl + "/aspsp-profile/supported-account-reference-fields";
     }
+
+    /**
+     * Returns URL-string to ASPSP profile get value of maximum consent lifetime
+     *
+     * @return String
+     */
+    public String getConsentLifetime() {
+        return aspspProfileBaseUrl + "/aspsp-profile/consent-lifetime";
+    }
 }

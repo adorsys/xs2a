@@ -97,7 +97,7 @@ public class ProfileConfiguration {
     private List<SupportedAccountReferenceField> supportedAccountReferenceFields;
 
     /**
-     * The limit of a maximum lifetime of consent
+     * The limit of a maximum lifetime of consent set in days
      */
     private int consentLifetime;
 
