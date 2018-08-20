@@ -45,7 +45,7 @@ public class AspspProfileServiceTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
-    private static final Boolean ALL_PSD_2_SUPPORT = Boolean.FALSE;
+    private static final boolean ALL_PSD_2_SUPPORT = false;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
