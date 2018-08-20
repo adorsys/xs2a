@@ -54,7 +54,8 @@ public class AccountController {
         @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
@@ -77,7 +78,8 @@ public class AccountController {
         @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<AccountDetails> readAccountDetails(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed", example = "11111-999999999")
@@ -102,7 +104,8 @@ public class AccountController {
         @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<List<Balance>> getBalances(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
@@ -125,7 +128,8 @@ public class AccountController {
         @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
                                                          @PathVariable(name = "account-id") String accountId,
                                                          @RequestHeader(name = "consent-id", required = false) String consentId,

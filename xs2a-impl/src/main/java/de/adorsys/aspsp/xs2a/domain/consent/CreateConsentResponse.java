@@ -39,7 +39,7 @@ public class CreateConsentResponse {
 
     @ApiModelProperty(value = "A list of hyperlinks to be recognized by Tpp", required = true)
     @JsonProperty("_links")
-    private final Links links;
+    private Links links = new Links();
 
     @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach", required = false)
     private final String psuMessage;

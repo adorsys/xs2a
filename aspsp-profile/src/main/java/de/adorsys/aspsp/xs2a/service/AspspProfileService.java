@@ -67,6 +67,22 @@ public class AspspProfileService {
     }
 
     /**
+     * Reads if ASPSP support Bank Offered Consent model
+     */
+    public boolean isBankOfferedConsentSupport() {
+        return profileConfiguration.isBankOfferedConsentSupport();
+    }
+
+    /**
+     * Update BankOfferedConsentSupport status
+     *
+     * @param bankOfferedConsentSupport BankOfferedConsentSupport status to substitute existing one
+     */
+    public void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport) {
+        profileConfiguration.setBankOfferedConsentSupport(bankOfferedConsentSupport);
+    }
+
+    /**
      * Read List of available payment products
      */
     public List<String> getAvailablePaymentProducts() {
@@ -232,5 +248,21 @@ public class AspspProfileService {
      */
     public void updateConsentLifetime(int consentLifetime) {
         profileConfiguration.setConsentLifetime(consentLifetime);
+    }
+
+    /**
+     * Read the limit of a maximum lifetime of transaction set in days
+     */
+    public int getTransactionLifetime() {
+        return profileConfiguration.getTransactionLifetime();
+    }
+
+    /**
+     * Update the value of a maximum lifetime of transaction set in days
+     *
+     * @param transactionLifetime the value of a maximum lifetime of transaction to substitute existing one
+     */
+    public void updateTransactionLifetime(int transactionLifetime) {
+        profileConfiguration.setTransactionLifetime(transactionLifetime);
     }
 }

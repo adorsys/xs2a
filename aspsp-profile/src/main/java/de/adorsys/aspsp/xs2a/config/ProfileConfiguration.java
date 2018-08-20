@@ -82,6 +82,11 @@ public class ProfileConfiguration {
     private MulticurrencyAccountLevel multicurrencyAccountLevel;
 
     /**
+     * If "true" indicates that an ASPSP supports "Bank Offered Consent" consent model
+     */
+    private boolean bankOfferedConsentSupport;
+
+    /**
      * Booking statuses supported by ASPSP, such as Booked, Pending and Both
      */
     private List<BookingStatus> availableBookingStatuses;
@@ -95,6 +100,11 @@ public class ProfileConfiguration {
      * The limit of a maximum lifetime of consent
      */
     private int consentLifetime;
+
+    /**
+     * The limit of a maximum lifetime of transaction set in days
+     */
+    private int transactionLifetime;
 
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default

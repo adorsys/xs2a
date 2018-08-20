@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class TppCertificateData {
 
-	private String pspAuthorzationNumber;
+	private String pspAuthorizationNumber;
 	
 	private List<TppRole> pspRoles;
 	

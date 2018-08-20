@@ -52,6 +52,8 @@ public class AspspProfileControllerTest {
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final int CONSENT_LIFETIME = 0;
+    private static final int TRANSACTION_LIFETIME = 0;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -86,6 +88,10 @@ public class AspspProfileControllerTest {
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
         when(profileConfiguration.getConsentLifetime())
             .thenReturn(CONSENT_LIFETIME);
+        when(profileConfiguration.getTransactionLifetime())
+            .thenReturn(TRANSACTION_LIFETIME);
+        when(profileConfiguration.isBankOfferedConsentSupport())
+            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     @Test
@@ -229,6 +235,32 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(CONSENT_LIFETIME);
+    }
+
+    @Test
+    public void getTransactionLifetime() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Integer> actualResponse = aspspProfileController.getTransactionLifetime();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(TRANSACTION_LIFETIME);
+    }
+
+    @Test
+    public void getBankOfferedConsentSupport() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Boolean> actualResponse = aspspProfileController.getBankOfferedConsentSupport();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     private static List<String> getPaymentProducts() {
