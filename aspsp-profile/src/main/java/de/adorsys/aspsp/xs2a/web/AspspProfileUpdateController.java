@@ -164,4 +164,14 @@ public class AspspProfileUpdateController {
         aspspProfileService.updateConsentLifetime(consentLifetime);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/transaction-lifetime")
+    @ApiOperation(value = "Updates the value of a maximum lifetime of transaction. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateTransactionLifetime(@RequestBody int transactionLifetime) {
+        aspspProfileService.updateTransactionLifetime(transactionLifetime);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

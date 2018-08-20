@@ -96,6 +96,11 @@ public class ProfileConfiguration {
      */
     private int consentLifetime;
 
+    /**
+     * The limit of a maximum lifetime of transaction set in days
+     */
+    private int transactionLifetime;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.FUTURE_DATED);
