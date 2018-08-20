@@ -115,6 +115,20 @@ public class AspspProfileController {
         return new ResponseEntity<>(aspspProfileService.getSupportedAccountReferenceFields(), HttpStatus.OK);
     }
 
+    @GetMapping(path = "/consent-lifetime")
+    @ApiOperation(value = "Reads the value of a maximum lifetime of consent")
+    @ApiResponse(code = 200, message = "Ok", response = Integer.class)
+    public ResponseEntity<Integer> getConsentLifetime() {
+        return new ResponseEntity<>(aspspProfileService.getConsentLifetime(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/transaction-lifetime")
+    @ApiOperation(value = "Reads the value of a maximum lifetime of transaction")
+    @ApiResponse(code = 200, message = "Ok", response = Integer.class)
+    public ResponseEntity<Integer> getTransactionLifetime() {
+        return new ResponseEntity<>(aspspProfileService.getTransactionLifetime(), HttpStatus.OK);
+    }
+
     @GetMapping(path = "/all-psd2-support")
     @ApiOperation(value = "Reads AllPsd2Support status, that is used to point if ASPSP supports Global consents")
     @ApiResponse(code = 200, message = "Ok", response = String.class)

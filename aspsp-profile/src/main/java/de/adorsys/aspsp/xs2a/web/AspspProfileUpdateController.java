@@ -149,6 +149,26 @@ public class AspspProfileUpdateController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping(path = "/consent-lifetime")
+    @ApiOperation(value = "Updates the value of a maximum lifetime of consent. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateConsentLifetime(@RequestBody int consentLifetime) {
+        aspspProfileService.updateConsentLifetime(consentLifetime);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/transaction-lifetime")
+    @ApiOperation(value = "Updates the value of a maximum lifetime of transaction. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateTransactionLifetime(@RequestBody int transactionLifetime) {
+        aspspProfileService.updateTransactionLifetime(transactionLifetime);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping(path = "/all-psd2-support")
     @ApiOperation(value = "Updates AllPsd2Support status. Only for DEBUG!")
     @ApiResponses(value = {

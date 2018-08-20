@@ -92,6 +92,16 @@ public class ProfileConfiguration {
     private List<SupportedAccountReferenceField> supportedAccountReferenceFields;
 
     /**
+     * The limit of a maximum lifetime of consent
+     */
+    private int consentLifetime;
+
+    /**
+     * The limit of a maximum lifetime of transaction set in days
+     */
+    private int transactionLifetime;
+
+    /**
      * AllPsd2Support status, that shows if ASPSP supports Global consents
      */
     private boolean allPsd2Support;

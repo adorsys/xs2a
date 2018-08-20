@@ -11,4 +11,6 @@ setting:
  multicurrencyAccountLevel: SUBACCOUNT
  availableBookingStatuses: BOOKED, PENDING
  supportedAccountReferenceFields: MSISDN
+ consentLifetime: 0
+ transactionLifetime: 0
  allPsd2Support: false

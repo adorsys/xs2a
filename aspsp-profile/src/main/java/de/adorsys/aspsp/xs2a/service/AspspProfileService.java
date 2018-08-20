@@ -216,6 +216,38 @@ public class AspspProfileService {
     }
 
     /**
+     * Read the limit of a maximum lifetime of consent
+     */
+    public int getConsentLifetime() {
+        return profileConfiguration.getConsentLifetime();
+    }
+
+    /**
+     * Update the value of a maximum lifetime of consent
+     *
+     * @param consentLifetime the value of a maximum lifetime of consent to substitute existing one
+     */
+    public void updateConsentLifetime(int consentLifetime) {
+        profileConfiguration.setConsentLifetime(consentLifetime);
+    }
+
+    /**
+     * Read the limit of a maximum lifetime of transaction set in days
+     */
+    public int getTransactionLifetime() {
+        return profileConfiguration.getTransactionLifetime();
+    }
+
+    /**
+     * Update the value of a maximum lifetime of transaction set in days
+     *
+     * @param transactionLifetime the value of a maximum lifetime of transaction to substitute existing one
+     */
+    public void updateTransactionLifetime(int transactionLifetime) {
+        profileConfiguration.setTransactionLifetime(transactionLifetime);
+    }
+
+    /**
      * Read AllPsd2Support status
      */
     public boolean isAllPsd2Support() {

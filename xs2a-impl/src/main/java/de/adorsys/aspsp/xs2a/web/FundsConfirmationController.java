@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,7 @@ import javax.validation.Valid;
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "api/v1/funds-confirmations")
+@Slf4j
 @Api(value = "api/v1/funds-confirmations", tags = "PIISP, Funds confirmation", description = "Provides access to the funds confirmation")
 public class FundsConfirmationController {
     private final FundsConfirmationService fundsConfirmationService;
@@ -51,12 +53,13 @@ public class FundsConfirmationController {
         @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header")})
     public ResponseEntity<FundsConfirmationResponse> fundConfirmation(@RequestBody @Valid FundsConfirmationRequest request) {
         ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(request.getAccountReferences());
         ResponseObject<FundsConfirmationResponse> response = accountReferenceValidationResponse.hasError()
-                                                                 ? ResponseObject.<FundsConfirmationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-                                                                 : fundsConfirmationService.fundsConfirmation(request);
+            ? ResponseObject.<FundsConfirmationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
+            : fundsConfirmationService.fundsConfirmation(request);
         return responseMapper.ok(response);
     }
 }

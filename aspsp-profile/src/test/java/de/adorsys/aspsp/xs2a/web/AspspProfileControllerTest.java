@@ -51,6 +51,8 @@ public class AspspProfileControllerTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final int CONSENT_LIFETIME = 0;
+    private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
 
     @Autowired
@@ -84,6 +86,10 @@ public class AspspProfileControllerTest {
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
         when(aspspProfileService.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
+        when(profileConfiguration.getConsentLifetime())
+            .thenReturn(CONSENT_LIFETIME);
+        when(profileConfiguration.getTransactionLifetime())
+            .thenReturn(TRANSACTION_LIFETIME);
         when(aspspProfileService.isAllPsd2Support())
             .thenReturn(ALL_PSD_2_SUPPORT);
     }
@@ -216,6 +222,32 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(AVAILABLE_BOOKING_STATUSES);
+    }
+
+    @Test
+    public void getConsentLifetime() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Integer> actualResponse = aspspProfileController.getConsentLifetime();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(CONSENT_LIFETIME);
+    }
+
+    @Test
+    public void getTransactionLifetime() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Integer> actualResponse = aspspProfileController.getTransactionLifetime();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(TRANSACTION_LIFETIME);
     }
 
     @Test
