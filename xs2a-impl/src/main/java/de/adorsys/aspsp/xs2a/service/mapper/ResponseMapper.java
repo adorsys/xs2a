@@ -47,11 +47,12 @@ public class ResponseMapper {
 
     private <T> ResponseEntity<T> getEntity(ResponseObject<T> response, HttpStatus status) {
         return response.hasError()
-            ? enrichError(response.getError())
+            ? createErrorResponse(response.getError())
             : new ResponseEntity<>(response.getBody(), status);
     }
 
-    private ResponseEntity enrichError(MessageError error){
+    public ResponseEntity createErrorResponse(MessageError error){
          return new ResponseEntity<>(error, valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
     }
+
 }
