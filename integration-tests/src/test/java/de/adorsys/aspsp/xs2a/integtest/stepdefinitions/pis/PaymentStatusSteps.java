@@ -24,7 +24,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
+//import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
