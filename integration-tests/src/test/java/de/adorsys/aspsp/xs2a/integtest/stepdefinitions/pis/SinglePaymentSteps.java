@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -5,18 +21,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import cucumber.api.java.en.When;
+import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationSctJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -27,9 +45,6 @@ import static org.hamcrest.Matchers.notNullValue;
 @FeatureFileSteps
 public class SinglePaymentSteps {
 
-    private static final long DAYS_OFFSET = 1L;
-    private static final long HOURS_OFFSET = 2L;
-
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
@@ -37,37 +52,35 @@ public class SinglePaymentSteps {
     @Autowired
     private Context<PaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
-
-
     @Autowired
     private ObjectMapper mapper;
 
     private String dataFileName;
 
-    @Given("^PSU wants to initiate a single payment (.*) using the payment product (.*)$")
-    public void loadTestData(String dataFileName, String paymentProduct) throws IOException {
+    @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
         this.dataFileName = dataFileName;
 
-        TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<SinglePayment, HashMap>>() {
+        TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
         });
 
         context.setTestData(data);
     }
 
-    //TODO Uncomment after ISO DateTime format rework
-    /*@When("^PSU sends the single payment initiating request$")
+    @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-        HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
+        HttpEntity<PaymentInitiationSctJson> entity = getSinglePaymentsHttpEntity();
 
-        ResponseEntity<PaymentInitialisationResponse> response = restTemplate.exchange(
-            context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
+        ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
             HttpMethod.POST,
             entity,
-            PaymentInitialisationResponse.class);
+            PaymentInitationRequestResponse201.class);
 
         context.setActualResponse(response);
-    }*/
+    }
 
     @Then("^a successful response code and the appropriate single payment response data$")
     public void checkResponseCode() {
@@ -84,43 +97,34 @@ public class SinglePaymentSteps {
     public void checkRedirectUrl() {
         ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
 
-        assertThat(actualResponse.getBody().getLinks(), notNullValue());
+        assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
     }
 
-//    @When("^PSU sends the single payment initiating request with error$")
-//    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
-//        HttpEntity<SinglePayment> entity = getSinglePaymentsHttpEntity();
-//        if (dataFileName.contains("expired-exec-date")) {
-//            makeDateAndTimeOffset(entity);
-//        }
-//
-//        try {
-//            restTemplate.exchange(
-//                context.getBaseUrl() + "/payments/" + context.getPaymentProduct(),
-//                HttpMethod.POST,
-//                entity,
-//                HashMap.class);
-//        } catch (RestClientResponseException rex) {
-//            handleRequestError(rex);
-//        }
-//    }
-//
-//    private void makeDateAndTimeOffset(HttpEntity<SinglePayment> entity) {
-//        LocalDate dateOffset = context.getTestData().getRequest().getBody().getRequestedExecutionDate().minusDays(DAYS_OFFSET);
-//        LocalDateTime dateTimeOffset = context.getTestData().getRequest().getBody().getRequestedExecutionTime().minusDays(DAYS_OFFSET).minusHours(HOURS_OFFSET);
-//        entity.getBody().setRequestedExecutionDate(dateOffset);
-//        entity.getBody().setRequestedExecutionTime(dateTimeOffset);
-//    }
-//
-//    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-//        ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-//        context.setActualResponse(actualResponse);
-//        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
-//        context.setMessageError(messageError);
-//    }
-//
+    @When("^PSU sends the single payment initiating request with error$")
+    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
+        HttpEntity<PaymentInitiationSctJson> entity = getSinglePaymentsHttpEntity();
+
+        try {
+            restTemplate.exchange(
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+                HttpMethod.POST,
+                entity,
+                PaymentInitiationSctJson.class);
+        } catch (RestClientResponseException rex) {
+            handleRequestError(rex);
+        }
+    }
+
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+        context.setActualResponse(actualResponse);
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
+        context.setMessageError(messageError);
+    }
+
+    //TODO: Uncomment after finding solution for mapping TppMessages
 //    @Then("^an error response code is displayed the appropriate error response$")
 //    public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
 //        ITMessageError givenErrorObject = context.getMessageError();
@@ -139,12 +143,12 @@ public class SinglePaymentSteps {
 //        }
 //    }
 
-//    private HttpEntity<SinglePayment> getSinglePaymentsHttpEntity() {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAll(context.getTestData().getRequest().getHeader());
-//        headers.add("Authorization", "Bearer " + context.getAccessToken());
-//        headers.add("Content-Type", "application/json");
-//
-//        return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
-//    }
+    private HttpEntity<PaymentInitiationSctJson> getSinglePaymentsHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAll(context.getTestData().getRequest().getHeader());
+        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
+
+        return new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
+    }
 }

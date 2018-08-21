@@ -19,6 +19,7 @@ public class Context<T, U> {
 
     private String scaApproach;
     private String paymentProduct;
+    private String paymentService;
     private String accessToken;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
