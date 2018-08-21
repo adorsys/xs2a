@@ -20,6 +20,7 @@ public class Context<T, U, R> {
     private String scaApproach;
     private String paymentProduct;
     private String accessToken;
+    private String paymentId;
     private TestData<T, U> testData;
     private ResponseEntity<R> actualResponse;
     private ITMessageError messageError;
