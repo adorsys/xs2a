@@ -53,6 +53,7 @@ public class AspspProfileControllerTest {
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final int CONSENT_LIFETIME = 0;
     private static final int TRANSACTION_LIFETIME = 0;
+    private static final boolean ALL_PSD_2_SUPPORT = false;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @Autowired
@@ -90,6 +91,8 @@ public class AspspProfileControllerTest {
             .thenReturn(CONSENT_LIFETIME);
         when(profileConfiguration.getTransactionLifetime())
             .thenReturn(TRANSACTION_LIFETIME);
+        when(aspspProfileService.isAllPsd2Support())
+            .thenReturn(ALL_PSD_2_SUPPORT);
         when(profileConfiguration.isBankOfferedConsentSupport())
             .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
@@ -248,6 +251,19 @@ public class AspspProfileControllerTest {
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(actualResponse.getBody()).isEqualTo(TRANSACTION_LIFETIME);
+    }
+
+    @Test
+    public void getAllPsd2Support() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        //When:
+        ResponseEntity<Boolean> actualResponse = aspspProfileController.getAllPsd2Support();
+
+        //Then:
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(ALL_PSD_2_SUPPORT);
     }
 
     @Test
