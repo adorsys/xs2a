@@ -30,9 +30,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +45,10 @@ public class AspspProfileServiceTest {
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final int CONSENT_LIFETIME = 0;
+    private static final int TRANSACTION_LIFETIME = 0;
+    private static final boolean ALL_PSD_2_SUPPORT = false;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -76,6 +78,14 @@ public class AspspProfileServiceTest {
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
         when(profileConfiguration.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
+        when(profileConfiguration.getConsentLifetime())
+            .thenReturn(CONSENT_LIFETIME);
+        when(profileConfiguration.getTransactionLifetime())
+            .thenReturn(TRANSACTION_LIFETIME);
+        when(profileConfiguration.isAllPsd2Support())
+            .thenReturn(ALL_PSD_2_SUPPORT);
+        when(profileConfiguration.isBankOfferedConsentSupport())
+            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     @Test
@@ -166,6 +176,42 @@ public class AspspProfileServiceTest {
 
         //Then:
         assertThat(actualResponse).isEqualTo(AVAILABLE_BOOKING_STATUSES);
+    }
+
+    @Test
+    public void getConsentLifetime() {
+        //When:
+        int actualResponse = aspspProfileService.getConsentLifetime();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(CONSENT_LIFETIME);
+    }
+
+    @Test
+    public void getTransactionLifetime() {
+        //When:
+        int actualResponse = aspspProfileService.getTransactionLifetime();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(TRANSACTION_LIFETIME);
+    }
+
+    @Test
+    public void getAllPsd2Support() {
+        //When:
+        Boolean actualResponse = aspspProfileService.isAllPsd2Support();
+
+        //Then:
+        assertThat(actualResponse).isEqualTo(ALL_PSD_2_SUPPORT);
+    }
+
+    @Test
+    public void isBankOfferedConsentSupport() {
+        //When
+        boolean actualResponse = aspspProfileService.isBankOfferedConsentSupport();
+
+        //Then
+        assertThat(actualResponse).isEqualTo(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     private static List<String> getPaymentProducts() {

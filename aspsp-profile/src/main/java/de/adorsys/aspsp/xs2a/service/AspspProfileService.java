@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +61,22 @@ public class AspspProfileService {
      */
     public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
         profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
+    }
+
+    /**
+     * Reads if ASPSP support Bank Offered Consent model
+     */
+    public boolean isBankOfferedConsentSupport() {
+        return profileConfiguration.isBankOfferedConsentSupport();
+    }
+
+    /**
+     * Update BankOfferedConsentSupport status
+     *
+     * @param bankOfferedConsentSupport BankOfferedConsentSupport status to substitute existing one
+     */
+    public void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport) {
+        profileConfiguration.setBankOfferedConsentSupport(bankOfferedConsentSupport);
     }
 
     /**
@@ -216,5 +229,53 @@ public class AspspProfileService {
             fields.add(IBAN);
         }
         profileConfiguration.setSupportedAccountReferenceFields(fields);
+    }
+
+    /**
+     * Read the limit of a maximum lifetime of consent set in days
+     */
+    public int getConsentLifetime() {
+        return profileConfiguration.getConsentLifetime();
+    }
+
+    /**
+     * Update the value of a maximum lifetime of consent
+     *
+     * @param consentLifetime the value of a maximum lifetime of consent to substitute existing one
+     */
+    public void updateConsentLifetime(int consentLifetime) {
+        profileConfiguration.setConsentLifetime(consentLifetime);
+    }
+
+    /**
+     * Read the limit of a maximum lifetime of transaction set in days
+     */
+    public int getTransactionLifetime() {
+        return profileConfiguration.getTransactionLifetime();
+    }
+
+    /**
+     * Update the value of a maximum lifetime of transaction set in days
+     *
+     * @param transactionLifetime the value of a maximum lifetime of transaction to substitute existing one
+     */
+    public void updateTransactionLifetime(int transactionLifetime) {
+        profileConfiguration.setTransactionLifetime(transactionLifetime);
+    }
+
+    /**
+     * Read AllPsd2Support status
+     */
+    public boolean isAllPsd2Support() {
+        return profileConfiguration.isAllPsd2Support();
+    }
+
+    /**
+     * Update AllPsd2Support status
+     *
+     * @param allPsd2Support AllPsd2Support status to substitute existing one
+     */
+    public void updateAllPsd2Support(boolean allPsd2Support) {
+        profileConfiguration.setAllPsd2Support(allPsd2Support);
     }
 }

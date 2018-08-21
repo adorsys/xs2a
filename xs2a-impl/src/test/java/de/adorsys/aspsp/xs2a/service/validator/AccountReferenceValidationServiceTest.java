@@ -4,7 +4,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

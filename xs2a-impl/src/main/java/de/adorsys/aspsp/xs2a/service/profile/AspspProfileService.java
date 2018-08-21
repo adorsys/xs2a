@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -137,6 +137,16 @@ public class AspspProfileService {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getSupportedAccountReferenceFields(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SupportedAccountReferenceField>>() {
             }).getBody();
+    }
+
+    /**
+     * Read value of maximum consent lifetime
+     *
+     * @return int value of maximum consent lifetime
+     */
+    public int getConsentLifetime() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getConsentLifetime(), HttpMethod.GET, null, Integer.class).getBody();
     }
 
     private List<String> readAvailablePaymentTypes() {

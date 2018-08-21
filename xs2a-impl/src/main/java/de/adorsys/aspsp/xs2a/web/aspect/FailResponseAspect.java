@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.MessageService;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -35,7 +35,7 @@ public class FailResponseAspect {
 
     @AfterReturning(pointcut = "execution(public * de.adorsys.aspsp.xs2a.service.*.*(..))", returning = "result")
     public Object invokeAspect(Object result) {
-        return ResponseObject.class.isInstance(result)
+        return result instanceof ResponseObject
                    ? enrichResponseObject(result)
                    : result;
     }

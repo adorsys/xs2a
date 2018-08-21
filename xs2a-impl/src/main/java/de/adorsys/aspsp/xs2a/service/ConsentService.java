@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -48,6 +49,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final AisConsentService aisConsentService;
     private final AccountSpi accountSpi;
     private final AccountMapper accountMapper;
+    private final AspspProfileService aspspProfileService;
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
@@ -58,25 +60,24 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
-        String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         CreateConsentReq checkedRequest = new CreateConsentReq();
-        if (isNotEmptyAccess(request.getAccess()) && request.getValidUntil().isAfter(LocalDate.now())) {
-            if (isAllAccountsRequest(request) && psuId != null) {
-                checkedRequest.setAccess(getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS == request.getAccess().getAllPsd2(), psuId));
-            } else {
-                checkedRequest.setAccess(getAccessByRequestedAccess(request.getAccess()));
+        if (isNotEmptyAccess(request.getAccess())) {
+            if (!isValidExpirationDate(request.getValidUntil())) {
+                return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
             }
+            checkedRequest.setAccess(getNecessaryAccess(request, psuId));
             checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
             checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
             checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
             checkedRequest.setValidUntil(request.getValidUntil());
         }
+        String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         String consentId = isNotEmptyAccess(checkedRequest.getAccess())
                                ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
                                : null;
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getConsentStatus(), consentId, null, null, null)).build()
+                   ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getConsentStatus(), consentId, null, null)).build()
                    : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
     }
 
@@ -141,6 +142,21 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getIban().equals(iban)
                                              && a.getCurrency() == currency);
+    }
+
+    private boolean isValidExpirationDate(LocalDate validUntil) {
+        int consentLifetime = Math.abs(aspspProfileService.getConsentLifetime());
+        return validUntil.isAfter(LocalDate.now()) && isValidConsentLifetime(consentLifetime, validUntil);
+    }
+
+    private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
+        return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
+    }
+
+    private AccountAccess getNecessaryAccess(CreateConsentReq request, String psuId) {
+        return isAllAccountsRequest(request) && psuId != null
+                   ? getAccessByPsuId(AccountAccessType.ALL_ACCOUNTS == request.getAccess().getAllPsd2(), psuId)
+                   : getAccessByRequestedAccess(request.getAccess());
     }
 
     private Set<String> getIbansFromAccountReference(List<AccountReference> references) {
