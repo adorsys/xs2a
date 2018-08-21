@@ -31,6 +31,7 @@ export class AisService {
       'x-request-id': environment.xRequestId,
       // 'date': date.toUTCString(),
     });
+    console.log("iio headers consent", headers);
     return this.httpClient.get<AccountConsent>(this.aspspServerUrl + '/api/v1/consents/' + consentId, {headers: headers})
       .pipe(
       map(data => {
@@ -45,8 +46,10 @@ export class AisService {
     const headers = new HttpHeaders( {
       'x-request-id': environment.xRequestId,
       // 'date': date.toUTCString(),
-      'consent-id': this.savedConsentId
+      'consent-id': this.savedConsentId,
+      'accept': 'application/json'
     });
+    console.log("iio", headers);
     return this.httpClient.get <any>(this.aspspServerUrl + '/api/v1/accounts', {headers: headers})
       .pipe(
         map( data =>{
