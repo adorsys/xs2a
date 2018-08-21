@@ -27,6 +27,8 @@ import de.adorsys.aspsp.xs2a.integtest.entities.ITPeriodicPayments;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import de.adorsys.psd2.model.PeriodicPaymentInitiationSctJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
@@ -56,7 +58,7 @@ public class PeriodicPaymentSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<ITPeriodicPayments, HashMap, PaymentInitialisationResponse> context;
+    private Context<PeriodicPaymentInitiationSctJson, HashMap, PaymentInitationRequestResponse201> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -65,7 +67,7 @@ public class PeriodicPaymentSteps {
     public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<ITPeriodicPayments, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8), new TypeReference<TestData<ITPeriodicPayments, HashMap>>() {
+        TestData<PeriodicPaymentInitiationSctJson, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8), new TypeReference<TestData<PeriodicPaymentInitiationSctJson, HashMap>>() {
         });
 
         context.setTestData(data);
@@ -75,24 +77,24 @@ public class PeriodicPaymentSteps {
     }
 
     //TODO Uncomment after ISO DateTime format rework
-    /*@When("^PSU sends the recurring payment initiating request$")
+    @When("^PSU sends the recurring payment initiating request$")
     public void sendPeriodicPaymentInitiatingRequest() {
-        HttpEntity<ITPeriodicPayments> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
-        ResponseEntity<PaymentInitialisationResponse> responseEntity = restTemplate.exchange(
+        ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
             context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
             HttpMethod.POST,
             entity,
-            new ParameterizedTypeReference<PaymentInitialisationResponse>() {
+            new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
             });
 
         context.setActualResponse(responseEntity);
-    }*/
+    }
 
     @Then("^a successful response code and the appropriate recurring payment response data")
     public void checkResponseCodeFromPeriodicPayment() {
         Map responseBody = context.getTestData().getResponse().getBody();
-        ResponseEntity<PaymentInitialisationResponse> responseEntity = context.getActualResponse();
+        ResponseEntity<PaymentInitationRequestResponse201> responseEntity = context.getActualResponse();
         HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
         assertThat(responseEntity.getStatusCode(), equalTo(expectedStatus));
         assertThat(responseEntity.getBody().getTransactionStatus().name(), equalTo(responseBody.get("transactionStatus")));
@@ -101,18 +103,18 @@ public class PeriodicPaymentSteps {
 
     @When("^PSU sends the recurring payment initiating request with error$")
     public void sendFalsePeriodicPaymentInitiatingRequest() throws IOException {
-        HttpEntity<ITPeriodicPayments> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
                 context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
-                new ParameterizedTypeReference<PaymentInitialisationResponse>() {
+                new ParameterizedTypeReference<PeriodicPaymentInitiationSctJson>() {
                 });
 
         } catch (HttpClientErrorException hce) {
-            ResponseEntity<PaymentInitialisationResponse> actualResponse = new ResponseEntity<>(
+            ResponseEntity<PaymentInitationRequestResponse201> actualResponse = new ResponseEntity<>(
                 hce.getStatusCode());
             context.setActualResponse(actualResponse);
 
