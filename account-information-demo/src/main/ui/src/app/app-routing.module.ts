@@ -12,13 +12,13 @@ import {ConsentConfirmationErrorComponent} from "./components/consent-confirmati
 
 
 const routes: Routes = [
-  { path: '', component: ConsentConfirmationPageComponent},
   { path: 'consentconfirmationerror', component: ConsentConfirmationErrorComponent },
   { path: 'consentconfirmationdenied', component: ConsentConfirmationDeniedComponent },
   { path: 'tanconfirmationpage', component: TanConfirmationPageComponent},
   { path: 'tanconfirmationcanceled', component: TanConfirmationCanceledComponent },
   { path: 'tanconfirmationerror', component: TanConfirmationErrorComponent },
   { path: 'tanconfirmationsuccessful', component: TanConfirmationSuccessfulComponent },
+  { path: ':consentId', component: ConsentConfirmationPageComponent},
 ];
 
 @NgModule({

@@ -20,7 +20,7 @@
       </ul>
       <div class="buttons-small">
         <button type="button" name="decision" value="revoked" class="buttons-small btn--cancel" [routerLink]="['/consentconfirmationdenied']">Cancel</button>
-        <button type="button" name="decision" value="confirmed" class="buttons-small btn--continue" [routerLink]="['/tanconfirmationpage']">Confirm</button>
+        <button (click)=onClickContinue() type="button" name="decision" value="confirmed" class="buttons-small btn--continue" [routerLink]="['/tanconfirmationpage']">Confirm</button>
       </div>
     </div>
   </div>
