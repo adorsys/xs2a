@@ -8,7 +8,7 @@
     "body": {
       "access": {
         "accounts": [],
-        "availableAccounts": "all-accounts",
+        "availableAccounts": "allAccounts",
         "balances": [],
         "transactions": []
       },

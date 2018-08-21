@@ -7,7 +7,7 @@
     "body": {
       "access": {
         "accounts": [],
-        "allPsd2": "all-accounts",
+        "allPsd2": "allAccounts",
         "balances": [],
         "transactions": []
       },

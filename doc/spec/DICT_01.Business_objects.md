@@ -177,8 +177,8 @@ If the response is JSON based, then the Name entry is used, to get a better read
 | accounts | Array of Account Reference | Optional | Is asking for detailed account information. If the array is empty, the TPP is asking for an accessible account list. This may be restricted in a PSU/ASPSP authorization dialogue. |
 | balances | Array of Account Reference | Optional | Is asking for balances of the addressed accounts. If the array is empty, the TPP is asking for the balances of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. |
 | transactions | Array of Account Reference | Optional | Is asking for transactions of the addressed accounts. If the array is empty, the TPP is asking for the transactions of all accessible account lists. This may be restricted in a PSU/ASPSP authorization dialogue. |
-| availableAccounts | String | [Optional] | Only the value "all-accounts" is admitted. |
-| allPsd2 | String | [Optional] | Only the value "all-accounts" is admitted. | 
+| availableAccounts | String | [Optional] | Only the values "allAccounts" and "allAccountsWithBalances" are admitted. |
+| allPsd2 | String | [Optional] | Only the values "allAccounts" and "allAccountsWithBalances" are admitted. | 
 
 
 ## DICT_01_13 Account Reference
