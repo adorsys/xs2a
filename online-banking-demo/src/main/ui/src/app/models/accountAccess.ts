@@ -21,11 +21,11 @@ export interface AccountAccess {
      */
     accounts?: Array<AccountReference>;
     /**
-     * only the value 'all-accounts' is admitted
+     * only the value 'allAccounts' is admitted
      */
     allPsd2?: AccountAccess.AllPsd2Enum;
     /**
-     * only the value 'all-accounts' is admitted
+     * only the value 'allAccounts' or 'allAccountsWithBalances' is admitted
      */
     availableAccounts?: AccountAccess.AvailableAccountsEnum;
     /**
@@ -38,12 +38,12 @@ export interface AccountAccess {
     transactions?: Array<AccountReference>;
 }
 export namespace AccountAccess {
-    export type AllPsd2Enum = 'all-accounts';
+    export type AllPsd2Enum = 'allAccounts';
     export const AllPsd2Enum = {
-        Accounts: 'all-accounts' as AllPsd2Enum
+        Accounts: 'allAccounts' as AllPsd2Enum
     }
-    export type AvailableAccountsEnum = 'all-accounts';
+    export type AvailableAccountsEnum = 'allAccounts';
     export const AvailableAccountsEnum = {
-        Accounts: 'all-accounts' as AvailableAccountsEnum
+        Accounts: 'allAccounts' as AvailableAccountsEnum
     }
 }

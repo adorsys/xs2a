@@ -22,11 +22,24 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 @ApiModel(description = "AccountAccess type", value = "AccountAccessType")
 public enum AccountAccessType {
-	ALL_ACCOUNTS("all-accounts");
+    ALL_ACCOUNTS("allAccounts"),
+    ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
 
-    @ApiModelProperty(value = "description", example = "all-accounts")
+    private static Map<String, AccountAccessType> container = new HashMap<>();
+
+    static {
+        Arrays.stream(values())
+            .forEach(aat -> container.put(aat.getDescription(), aat));
+    }
+
+    @ApiModelProperty(value = "description", example = "allAccounts")
     private String description;
 
     @JsonCreator
@@ -37,5 +50,9 @@ public enum AccountAccessType {
     @JsonValue
     public String getDescription() {
         return description;
+    }
+
+    public static Optional<AccountAccessType> getByDescription(String description) {
+        return Optional.ofNullable(container.get(description));
     }
 }
