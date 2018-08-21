@@ -66,7 +66,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                 return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
             }
 
-            if (isNotSupportOfGlobalConsentForAllPsd2(request)) {
+            if (isNotSupportGlobalConsentForAllPsd2(request)) {
                 return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
             }
 
@@ -243,7 +243,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .collect(Collectors.toSet());
     }
 
-    private boolean isNotSupportOfGlobalConsentForAllPsd2(CreateConsentReq request) {
+    private boolean isNotSupportGlobalConsentForAllPsd2(CreateConsentReq request) {
         return request.getAccess().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS &&
             CollectionUtils.isEmpty(request.getAccountReferences())
                    && !aspspProfileService.getAllPsd2Support();
