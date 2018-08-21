@@ -21,11 +21,11 @@ export interface AccountAccess {
      */
     accounts?: Array<AccountReference>;
     /**
-     * only the value 'allAccounts' or 'allAccountsWithBalances' is admitted
+     * only the value 'allAccounts' is admitted
      */
     allPsd2?: AccountAccess.AllPsd2Enum;
     /**
-     * only the value 'allAccounts' is admitted
+     * only the value 'allAccounts' or 'allAccountsWithBalances' is admitted
      */
     availableAccounts?: AccountAccess.AvailableAccountsEnum;
     /**
