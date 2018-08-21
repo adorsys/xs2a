@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.model.*;
@@ -57,6 +58,14 @@ public class ConsentModelMapper {
         return createConsentResponse;
     }
 
+    public ResponseObject mapToConsentInformationResponse200JsonResponseObject(ResponseObject<AccountConsent> accountConsentResponseObject) {
+        if (!accountConsentResponseObject.hasError()) {
+            return ResponseObject.builder().body(mapToConsentInformationResponse200Json(accountConsentResponseObject.getBody())).build();
+        }
+
+        return accountConsentResponseObject;
+    }
+
     private ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
         return Optional.ofNullable(createConsentResponse)
                    .map(cnst ->
@@ -66,6 +75,20 @@ public class ConsentModelMapper {
                                 .scaMethods(mapToScaMethodsOuter(cnst))
                                 ._links(objectMapper.convertValue(cnst.getLinks(), Map.class))
                                 .message(cnst.getPsuMessage())
+                   )
+                   .orElse(null);
+    }
+
+    private ConsentInformationResponse200Json mapToConsentInformationResponse200Json(AccountConsent accountConsent) {
+        return Optional.ofNullable(accountConsent)
+                   .map(consent ->
+                            new ConsentInformationResponse200Json()
+                                .access(mapToAccountAccessDomain(consent.getAccess()))
+                                .recurringIndicator(consent.isRecurringIndicator())
+                                .validUntil(consent.getValidUntil())
+                                .frequencyPerDay(consent.getFrequencyPerDay())
+                                .lastActionDate(consent.getLastActionDate())
+                                .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().name()))
                    )
                    .orElse(null);
     }
@@ -95,6 +118,23 @@ public class ConsentModelMapper {
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2())
                             ))
+                   .orElse(null);
+    }
+
+    private AccountAccess mapToAccountAccessDomain(de.adorsys.aspsp.xs2a.domain.consent.AccountAccess accountAccess) {
+        return Optional.ofNullable(accountAccess)
+                   .map(access -> {
+                           AccountAccess mappedAccountAccess = new AccountAccess();
+
+                           mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
+                           mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
+                           mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
+                           mappedAccountAccess.setAvailableAccounts(AccountAccess.AvailableAccountsEnum.fromValue(access.getAvailableAccounts().getDescription()));
+                           mappedAccountAccess.setAllPsd2(AccountAccess.AllPsd2Enum.fromValue(access.getAllPsd2().getDescription()));
+
+                           return mappedAccountAccess;
+                       }
+                   )
                    .orElse(null);
     }
 
