@@ -48,7 +48,7 @@ public class AccountController12 implements AccountApi {
     public ResponseEntity<?> getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentID, withBalance);
         if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToAccountList(responseObject), OK);
+            return new ResponseEntity<>(mapToAccountList(responseObject.getBody()), OK);
         } else {
             return responseMapper.createErrorResponse(responseObject.getError());
         }
@@ -58,7 +58,7 @@ public class AccountController12 implements AccountApi {
     public ResponseEntity<?> readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentID, accountId, withBalance);
         if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToAccountDetails(responseObject), OK);
+            return new ResponseEntity<>(mapToAccountDetails(responseObject.getBody()), OK);
         } else {
             return responseMapper.createErrorResponse(responseObject.getError());
         }
@@ -83,7 +83,7 @@ public class AccountController12 implements AccountApi {
     public ResponseEntity<?> getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<List<Balance>> responseObject = accountService.getBalances(consentID, accountId);
         if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToBalance(responseObject), OK);
+            return new ResponseEntity<>(mapToBalance(responseObject.getBody()), OK);
         } else {
             return responseMapper.createErrorResponse(responseObject.getError());
         }
@@ -94,7 +94,7 @@ public class AccountController12 implements AccountApi {
         ResponseObject<AccountReport> responseObject =
             accountService.getAccountReport(consentID, accountId, dateFrom, dateTo, null, false, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
         if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToAccountReport(responseObject), OK);
+            return new ResponseEntity<>(mapToAccountReport(responseObject.getBody()), OK);
         } else {
             return responseMapper.createErrorResponse(responseObject.getError());
         }
