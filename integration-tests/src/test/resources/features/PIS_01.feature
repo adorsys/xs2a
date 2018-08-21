@@ -98,14 +98,17 @@ Feature: Payment Initiation Service
     # Payment Status                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
+#    -> is not working until the url is adapted according to the new version of the specification
 #    Scenario Outline: Successful Payment Status Request
-#        Given PSU initiated a single payment with the payment-id <payment-id>
-#        And created a payment status request with of that payment
+#        Given Psu wants to request the payment status of a payment with payment-id <payment-id>
+#        And the set of data <payment-status>
 #        When PSU requests the status of the payment
-#        Then an appropriate response code and the status <payment-status> is delivered to the PSU
+#        Then an appropriate response code and the status is delivered to the PSU
 #        Examples:
 #            | payment-id                           | payment-status                |
-#            | 529e0507-7539-4a65-9b74-bdf87061e99b | paymentStatus-successful.json |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | paymentStatus-RCVD-successful.json |
+#            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | paymentStatus-PDNG-successful.json |
+#            | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | paymentStatus-RJCT-successful.json |
 
 #    Scenario Outline: Payment Status Request with not existing Payment-ID
 #        Given PSU created a payment status request with of a not existing payment-id <payment-id>
