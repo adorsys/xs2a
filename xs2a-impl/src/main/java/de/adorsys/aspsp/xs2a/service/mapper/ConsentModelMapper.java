@@ -71,16 +71,18 @@ public class ConsentModelMapper {
     }
 
     private ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
-        List<AuthenticationObject> authenticationObjects = Arrays.stream(createConsentResponse.getScaMethods())
-                                                               .map(au -> new AuthenticationObject()
-                                                                              .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().name()))
-                                                                              .authenticationVersion(au.getAuthenticationVersion())
-                                                                              .authenticationMethodId(au.getAuthenticationMethodId())
-                                                                              .name(au.getName())
-                                                                              .explanation(au.getExplanation()))
-                                                               .collect(Collectors.toList());
+        List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
+                                                  .map(arr -> Arrays.stream(createConsentResponse.getScaMethods())
+                                                                  .map(au -> new AuthenticationObject()
+                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().name()))
+                                                                                 .authenticationVersion(au.getAuthenticationVersion())
+                                                                                 .authenticationMethodId(au.getAuthenticationMethodId())
+                                                                                 .name(au.getName())
+                                                                                 .explanation(au.getExplanation()))
+                                                                  .collect(Collectors.toList()))
+                                                  .orElse(Collections.emptyList());
         ScaMethods scaMethods = new ScaMethods();
-        scaMethods.addAll(authenticationObjects);
+        scaMethods.addAll(authList);
 
         return scaMethods;
     }
@@ -119,25 +121,7 @@ public class ConsentModelMapper {
     }
 
     private AccountReference mapToAccountReferenceInner(Object reference) {
-
-        if (reference instanceof AccountReferenceIban) {
-            return getAccountReference(((AccountReferenceIban) reference).getIban(), null, null, null, null, getCurrencyByCode(((AccountReferenceIban) reference).getCurrency()));
-
-        } else if (reference instanceof AccountReferenceBban) {
-            return getAccountReference(null, ((AccountReferenceBban) reference).getBban(), null, null, null, getCurrencyByCode(((AccountReferenceBban) reference).getCurrency()));
-
-        } else if (reference instanceof AccountReferencePan) {
-            return getAccountReference(null, null, ((AccountReferencePan) reference).getPan(), null, null, getCurrencyByCode(((AccountReferencePan) reference).getCurrency()));
-
-        } else if (reference instanceof AccountReferenceMaskedPan) {
-            return getAccountReference(null, null, null, ((AccountReferenceMaskedPan) reference).getMaskedPan(), null, getCurrencyByCode(((AccountReferenceMaskedPan) reference).getCurrency()));
-
-        } else if (reference instanceof AccountReferenceMsisdn) {
-            return getAccountReference(null, null, null, null, ((AccountReferenceMsisdn) reference).getMsisdn(), getCurrencyByCode(((AccountReferenceMsisdn) reference).getCurrency()));
-
-        } else {
-            return null;
-        }
+        return objectMapper.convertValue(reference, AccountReference.class);
     }
 
     private AccountReference getAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
