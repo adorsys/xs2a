@@ -19,12 +19,12 @@
         "currency": "EUR",
         "iban": "DE15500105172295759744"
       },
-      "creditorAgent" : "test is an agent",
+      "creditorAgent" : "AAAADEBBXXX",
       "creditorName": "WBG",
       "creditorAddress": {
         "buildingNumber": "56",
         "city": "Nürnberg",
-        "country": "49",
+        "country": "DE",
         "postalCode": "90543",
         "street": "WBG Straße"
       },
