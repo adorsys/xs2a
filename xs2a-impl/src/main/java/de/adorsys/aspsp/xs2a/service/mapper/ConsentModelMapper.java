@@ -189,21 +189,4 @@ public class ConsentModelMapper {
     private AccountReference mapToAccountReferenceInner(Object reference) {
         return objectMapper.convertValue(reference, AccountReference.class);
     }
-
-    private AccountReference getAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
-        AccountReference reference = new AccountReference();
-        reference.setIban(iban);
-        reference.setBban(bban);
-        reference.setPan(pan);
-        reference.setMaskedPan(maskedPan);
-        reference.setMsisdn(msisdn);
-        reference.setCurrency(currency);
-        return reference;
-    }
-
-    private Currency getCurrencyByCode(String code) {
-        return Optional.ofNullable(code)
-                   .map(Currency::getInstance)
-                   .orElseGet(null);
-    }
 }
