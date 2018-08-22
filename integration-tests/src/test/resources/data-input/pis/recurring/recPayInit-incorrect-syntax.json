@@ -8,57 +8,39 @@
     "body": {
       "creditorAccount": {
         "currency": "EUR",
-        "iban": "DE15500105172295759744"
+        "iban": "DE50500105172339433267"
       },
       "creditorAddress": {
+        "street": "Breite Gasse",
         "buildingNumber": "34",
         "city": "Nürnberg",
-        "country": {
-          "code": "49"
-        },
         "postalCode": "90457",
-        "street": "Breite Gasse"
+        "country": "FR"
       },
-      "creditorAgent": {
-        "code": "BCENEVOD"
-      },
+      "creditorAgent": "BCENEVOD",
       "creditorName": "Vodafone",
-      "dayOfExecution": 14,
+      "dayOfExecution": "14",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE525001051739118419"
+        "iban": "DE525001051711841934"
       },
       "endDate": "2020-12-14",
       "endToEndIdentification": "VOD-123456789",
-      "executionRule": "latest",
+      "executionRule": "FOLLOWING",
       "frequency": "MONTHLY",
       "instructedAmount": {
-        "content": "44.99",
+        "amount": "44.99",
         "currency": "EUR"
       },
-      "purposeCode": {
-        "code": "rechnung"
-      },
-      "remittanceInformationStructured": {
-        "reference": "Ref Number Merchant"
-      },
       "remittanceInformationUnstructured": "Ref. Number Vodafone-1222",
-      "requestedExecutionDate": "2018-10-14",
-      "requestedExecutionTime": "2018-10-14T10:30:35.035",
-      "startDate": "2018-10-14",
-      "ultimateCreditor": "Vodafone",
-      "ultimateDebtor": "Alexander Mueller"
+      "startDate": "2018-10-14"
     }
   },
   "response": {
-    "code": "400",
+    "code": "201",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
-      "tppMessage": {
-        "category": "ERROR",
-        "code": "FORMAT_ERROR"
-      }
+      "transactionStatus": "RCVD"
     }
   }
 }
