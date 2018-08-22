@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.model.*;
@@ -55,6 +56,19 @@ public class ConsentModelMapper {
             return ResponseObject.builder().body(mapToConsentsResponse201(createConsentResponse.getBody())).build();
         }
         return createConsentResponse;
+    }
+
+    public ResponseObject mapToConsentStatusResponse200ResponseObject(ResponseObject<ConsentStatusResponse> consentStatusResponse) {
+        if (!consentStatusResponse.hasError()) {
+            return ResponseObject.builder().body(mapToConsentStatusResponse200(consentStatusResponse.getBody())).build();
+        }
+        return consentStatusResponse;
+    }
+
+    private ConsentStatusResponse200 mapToConsentStatusResponse200(ConsentStatusResponse consentStatusResponse) {
+        return Optional.ofNullable(consentStatusResponse)
+                   .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
+                   .orElse(null);
     }
 
     private ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
