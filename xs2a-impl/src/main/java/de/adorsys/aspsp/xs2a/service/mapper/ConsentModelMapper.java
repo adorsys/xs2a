@@ -88,7 +88,7 @@ public class ConsentModelMapper {
                                 .validUntil(consent.getValidUntil())
                                 .frequencyPerDay(consent.getFrequencyPerDay())
                                 .lastActionDate(consent.getLastActionDate())
-                                .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().name()))
+                                .consentStatus(ConsentStatus.fromValue(consent.getConsentStatus().getValue()))
                    )
                    .orElse(null);
     }
@@ -97,7 +97,7 @@ public class ConsentModelMapper {
         List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
                                                   .map(arr -> Arrays.stream(createConsentResponse.getScaMethods())
                                                                   .map(au -> new AuthenticationObject()
-                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().name()))
+                                                                                 .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().getDescription()))
                                                                                  .authenticationVersion(au.getAuthenticationVersion())
                                                                                  .authenticationMethodId(au.getAuthenticationMethodId())
                                                                                  .name(au.getName())
@@ -131,8 +131,20 @@ public class ConsentModelMapper {
                            mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
                            mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
                            mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
-                           mappedAccountAccess.setAvailableAccounts(AccountAccess.AvailableAccountsEnum.fromValue(access.getAvailableAccounts().getDescription()));
-                           mappedAccountAccess.setAllPsd2(AccountAccess.AllPsd2Enum.fromValue(access.getAllPsd2().getDescription()));
+                           mappedAccountAccess.setAvailableAccounts(
+                               AccountAccess.AvailableAccountsEnum.fromValue(
+                                   Optional.ofNullable(access.getAvailableAccounts())
+                                       .map(AccountAccessType::getDescription)
+                                       .orElse(null)
+                               )
+                           );
+                           mappedAccountAccess.setAllPsd2(
+                               AccountAccess.AllPsd2Enum.fromValue(
+                                   Optional.ofNullable(access.getAllPsd2())
+                                       .map(AccountAccessType::getDescription)
+                                       .orElse(null)
+                               )
+                           );
 
                            return mappedAccountAccess;
                        }

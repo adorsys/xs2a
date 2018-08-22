@@ -26,14 +26,14 @@ public enum ConsentStatus {
     EXPIRED("expired"),
     TERMINATED_BY_TPP("terminatedByTpp");
 
-    private String consentStatus;
+    private String value;
 
     @JsonCreator
     ConsentStatus(String status) {
-        this.consentStatus = status;
+        this.value = status;
     }
 
-    public String getConsentStatus() {
-        return consentStatus;
+    public String getValue() {
+        return value;
     }
 }
