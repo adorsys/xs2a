@@ -28,7 +28,6 @@ import de.adorsys.psd2.model.ConsentStatus;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class ConsentModelMapper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
