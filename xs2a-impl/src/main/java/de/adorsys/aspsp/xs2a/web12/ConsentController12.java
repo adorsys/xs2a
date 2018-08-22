@@ -16,13 +16,63 @@
 
 package de.adorsys.aspsp.xs2a.web12;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
+import de.adorsys.aspsp.xs2a.service.ConsentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentModelMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.ConsentApi;
+import de.adorsys.psd2.model.Consents;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
+import java.util.UUID;
+
+@Slf4j
 @RestController
 @AllArgsConstructor
+@Api(tags = "AISP, Consents version 1.2", description = "Provides access to the Psu Consents")
 public class ConsentController12 implements ConsentApi {
+    private final ConsentService consentService;
+    private final ResponseMapper responseMapper;
+    private final AccountReferenceValidationService referenceValidationService;
 
+    @Override
+    public ResponseEntity<?> createConsent(UUID xRequestID, Consents body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        CreateConsentReq createConsent = ConsentModelMapper.mapToCreateConsentReq(body);
 
+        Set<AccountReference> references = createConsent.getAccountReferences();
+        ResponseObject accountReferenceValidationResponse = references.isEmpty()
+                                                                ? ResponseObject.builder().build()
+                                                                : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
+
+        ResponseObject<CreateConsentResponse> createConsentResponse = accountReferenceValidationResponse.hasError()
+                                                                          ? ResponseObject.<CreateConsentResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
+                                                                          : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID);
+
+        return responseMapper.created(createConsentResponse, ConsentModelMapper::mapToConsentsResponse201);
+    }
+
+    @Override
+    public ResponseEntity<?> getConsentStatus(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return responseMapper.ok(consentService.getAccountConsentsStatusById(consentId), ConsentModelMapper::mapToConsentStatusResponse200);
+    }
+
+    @Override
+    public ResponseEntity<?> getConsentInformation(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return responseMapper.ok(consentService.getAccountConsentById(consentId), ConsentModelMapper::mapToConsentInformationResponse200Json);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteConsent(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        ResponseObject<Void> response = consentService.deleteAccountConsentsById(consentId);
+        return responseMapper.delete(response);
+    }
 }
