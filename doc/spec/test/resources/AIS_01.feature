@@ -15,7 +15,7 @@ Feature: Account Information Service
   Scenario: Consent request on account list of available accounts
     Given AISP wants to create a consent resource with data
       | access | recurringIndicator | validUntil | frequencyPerDay |
-      | availbale-accounts: all-accounts  | false | 2018-08-01 | 1 |
+      | availbale-accounts: allAccounts  | false | 2018-08-01 | 1 |
     And the redirect approach is used
     When AISP sends the create consent request
     Then a consent resource is created at the aspsp mock
@@ -39,7 +39,7 @@ Feature: Account Information Service
   Scenario: Consent request for access to all accounts for all PSD2 defined AIS
     Given AISP wants to create a consent resource with data
       | access | recurringIndicator | validUntil | frequencyPerDay |
-      | allPsd2: all-accounts | true | 2018-08-01 | 1 |
+      | allPsd2: allAccounts | true | 2018-08-01 | 1 |
     And the redirect approach is used
     When AISP sends the create consent request
     Then a consent resource is created at the aspsp mock

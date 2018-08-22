@@ -65,6 +65,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             if (!isValidExpirationDate(request.getValidUntil())) {
                 return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
             }
+
+            if (isNotSupportedGlobalConsentForAllPsd2(request)) {
+                return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
+            }
+
             checkedRequest.setAccess(getNecessaryAccess(request, psuId));
             checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
             checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
@@ -236,5 +241,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         )
                    .flatMap(Collection::stream)
                    .collect(Collectors.toSet());
+    }
+
+    private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
+        return request.getAccess().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS &&
+            CollectionUtils.isEmpty(request.getAccountReferences())
+                   && !aspspProfileService.getAllPsd2Support();
     }
 }

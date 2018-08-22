@@ -1,5 +1,5 @@
 {"access":
-{ "allPsd2": "all-accounts"},
+{ "allPsd2": "allAccounts"},
   "recurringIndicator": "false",
   "validUntil": "2017-07-11",
   "frequencyPerDay": "1"
