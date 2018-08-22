@@ -17,27 +17,22 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
-import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.psd2.model.AccountAccess;
+import de.adorsys.psd2.model.AuthenticationObject;
+import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import de.adorsys.psd2.model.ConsentStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Component
-@RequiredArgsConstructor
 public class ConsentModelMapper {
-    private final ObjectMapper objectMapper;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent) {
+    public static CreateConsentReq mapToCreateConsentReq(Consents consent) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
                        CreateConsentReq createAisConsentRequest = new CreateConsentReq();
@@ -52,48 +47,26 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public ResponseObject mapToConsentsResponse201ResponseObject(ResponseObject<CreateConsentResponse> createConsentResponse) {
-        if (!createConsentResponse.hasError()) {
-            return ResponseObject.builder().body(mapToConsentsResponse201(createConsentResponse.getBody())).build();
-        }
-        return createConsentResponse;
-    }
-
-    public ResponseObject mapToConsentStatusResponse200ResponseObject(ResponseObject<ConsentStatusResponse> consentStatusResponse) {
-        if (!consentStatusResponse.hasError()) {
-            return ResponseObject.builder().body(mapToConsentStatusResponse200(consentStatusResponse.getBody())).build();
-        }
-        return consentStatusResponse;
-    }
-
-    private ConsentStatusResponse200 mapToConsentStatusResponse200(ConsentStatusResponse consentStatusResponse) {
+    public static ConsentStatusResponse200 mapToConsentStatusResponse200(ConsentStatusResponse consentStatusResponse) {
         return Optional.ofNullable(consentStatusResponse)
                    .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
                    .orElse(null);
     }
 
-    public ResponseObject mapToConsentInformationResponse200JsonResponseObject(ResponseObject<AccountConsent> accountConsentResponseObject) {
-        if (!accountConsentResponseObject.hasError()) {
-            return ResponseObject.builder().body(mapToConsentInformationResponse200Json(accountConsentResponseObject.getBody())).build();
-        }
-
-        return accountConsentResponseObject;
-    }
-
-    private ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
+    public static ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
         return Optional.ofNullable(createConsentResponse)
                    .map(cnst ->
                             new ConsentsResponse201()
                                 .consentStatus(ConsentStatus.fromValue(cnst.getConsentStatus()))
                                 .consentId(cnst.getConsentId())
                                 .scaMethods(mapToScaMethodsOuter(cnst))
-                                ._links(objectMapper.convertValue(cnst.getLinks(), Map.class))
+                                ._links(OBJECT_MAPPER.convertValue(cnst.getLinks(), Map.class))
                                 .message(cnst.getPsuMessage())
                    )
                    .orElse(null);
     }
 
-    private ConsentInformationResponse200Json mapToConsentInformationResponse200Json(AccountConsent accountConsent) {
+    public static ConsentInformationResponse200Json mapToConsentInformationResponse200Json(AccountConsent accountConsent) {
         return Optional.ofNullable(accountConsent)
                    .map(consent ->
                             new ConsentInformationResponse200Json()
@@ -107,7 +80,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
+    private static ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
         List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
                                                   .map(arr -> Arrays.stream(createConsentResponse.getScaMethods())
                                                                   .map(au -> new AuthenticationObject()
@@ -124,7 +97,7 @@ public class ConsentModelMapper {
         return scaMethods;
     }
 
-    private de.adorsys.aspsp.xs2a.domain.consent.AccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
+    private static de.adorsys.aspsp.xs2a.domain.consent.AccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
                    .map(acs ->
                             new de.adorsys.aspsp.xs2a.domain.consent.AccountAccess(
@@ -137,7 +110,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private AccountAccess mapToAccountAccessDomain(de.adorsys.aspsp.xs2a.domain.consent.AccountAccess accountAccess) {
+    private static AccountAccess mapToAccountAccessDomain(de.adorsys.aspsp.xs2a.domain.consent.AccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
                    .map(access -> {
                            AccountAccess mappedAccountAccess = new AccountAccess();
@@ -166,27 +139,27 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
+    private static AccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElseGet(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
+    private static AccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
         return Optional.ofNullable(allPsd2Enum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElseGet(null);
     }
 
-    private List<AccountReference> mapToAccountReferencesInner(List<Object> references) {
+    private static List<AccountReference> mapToAccountReferencesInner(List<Object> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
-                                   .map(this::mapToAccountReferenceInner)
+                                   .map(ConsentModelMapper::mapToAccountReferenceInner)
                                    .collect(Collectors.toList()))
                    .orElseGet(Collections::emptyList);
     }
 
-    private AccountReference mapToAccountReferenceInner(Object reference) {
-        return objectMapper.convertValue(reference, AccountReference.class);
+    private static AccountReference mapToAccountReferenceInner(Object reference) {
+        return OBJECT_MAPPER.convertValue(reference, AccountReference.class);
     }
 }
