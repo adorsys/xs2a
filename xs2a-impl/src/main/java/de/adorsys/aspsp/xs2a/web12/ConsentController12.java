@@ -65,9 +65,7 @@ public class ConsentController12 implements ConsentApi {
 
     @Override
     public ResponseEntity<?> getConsentStatus(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-
         ResponseObject<ConsentStatusResponse> consentStatusResponse = consentService.getAccountConsentsStatusById(consentId);
-
         return responseMapper.ok(consentModelMapper.mapToConsentStatusResponse200ResponseObject(consentStatusResponse));
     }
 
