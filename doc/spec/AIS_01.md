@@ -319,7 +319,7 @@ Response Body:
 #### Consent Request on Account List or without Indication of Accounts
 
 ##### AIS_01_01_02 Consent Request on Account List of Available Accounts
-This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call only contains the "available-accounts" sub attribute within the "access" attribute with value "all-accounts".
+This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call only contains the "available-accounts" sub attribute within the "access" attribute with value "allAccounts".
 In this case the call creates an account information consent resource at the ASPSP to return a list of all available accounts. For this specific Consent Request, no assumptions are made for the SCA Approach by this specification.
 
 ##### AIS_01_01_03 Consent Request without Indication of Accounts
@@ -327,7 +327,7 @@ This function is supported by the same call as the Consent Request on Dedicated 
 The ASPSP will then agree bilaterally directly with the PSU on which accounts the requested access consent should be supported. The result can be retrieved by the TPP by using the GET Consent Request method. 
 
 ##### AIS_01_01_04 Consent Request for Access to all Accounts for all PSD2 defined AIS
-This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call contains the "allPsd2" sub attribute within the "access" attribute with the value "all-accounts".
+This function is supported by the same call as the Consent Request on Dedicated Accounts. The only difference is that the call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts".
 If this function is supported, it will imply a consent on all available accounts of the PSU on all PSD2 related account information services. For this specific Consent Request, no assumptions are made for the SCA Approach by this specification.
 
 ##### Example Consent on Account List of Available Accounts
@@ -344,7 +344,7 @@ If this function is supported, it will imply a consent on all available accounts
     Date:                   Sun, 06 Aug 2017 15:05:37 GMT
 
     {"access":
-       {"available-accounts": "all-accounts"}, 
+       {"available-accounts": "allAccounts"}, 
      "recurringIndicator": "false", 
      "validUntil": "2017-08-06",
      "frequencyPerDay": "1"

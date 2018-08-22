@@ -13,7 +13,10 @@ Provide access to next values:
  - aisRedirectUrlToAspsp
  - multicurrencyAccountLevel
  - availableBookingStatuses
+ - supportedAccountReferenceFields
+ - consent lifetime
  - transaction lifetime
+ - all psd2 support
  
  To test getting data of ASPSP Profile need to make next steps:
  
@@ -39,4 +42,10 @@ Provide access to next values:
 
  * To get 'availableBookingStatuses' create Get request to URI 'http://your_host:port/aspsp-profile/available-booking-statuses'
 
+ * To get 'supportedAccountReferenceFields' create Get request to URI 'http://your_host:port/aspsp-profile/supported-account-reference-fields'
+
+ * To get 'consent lifetime' create Get request to URI 'http://your_host:port/aspsp-profile/consent-lifetime'
+ 
  * To get 'transaction lifetime' create Get request to URI 'http://your_host:port/aspsp-profile/transaction-lifetime'
+ 
+ * To get 'all psd2 support' create Get request to URI 'http://your_host:port/aspsp-profile/all-psd2-support'
