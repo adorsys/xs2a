@@ -34,6 +34,12 @@
     <dependencies>
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
+            <artifactId>xs2a-server-api</artifactId>
+            <version>1.6-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.aspsp</groupId>
             <artifactId>consent-api</artifactId>
             <version>1.6-SNAPSHOT</version>
         </dependency>
@@ -95,7 +101,7 @@
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-config</artifactId>
 		</dependency>
-        
+
 
         <!--test-->
         <dependency>
