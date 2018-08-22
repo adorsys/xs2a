@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.web12;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
@@ -60,6 +61,14 @@ public class ConsentController12 implements ConsentApi {
                                                                           : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID);
 
         return responseMapper.created(consentModelMapper.mapToConsentsResponse201ResponseObject(createConsentResponse));
+    }
+
+    @Override
+    public ResponseEntity<?> getConsentStatus(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+
+        ResponseObject<ConsentStatusResponse> consentStatusResponse = consentService.getAccountConsentsStatusById(consentId);
+
+        return responseMapper.ok(consentModelMapper.mapToConsentStatusResponse200ResponseObject(consentStatusResponse));
     }
 
     @Override
