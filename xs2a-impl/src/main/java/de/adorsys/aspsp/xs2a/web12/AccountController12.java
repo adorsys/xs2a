@@ -16,26 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.web12;
 
-import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.AccountApi;
-import de.adorsys.psd2.model.TransactionDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-
-import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @AllArgsConstructor
@@ -46,26 +39,29 @@ public class AccountController12 implements AccountApi {
 
     @Override
     public ResponseEntity<?> getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentID, withBalance);
-        if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToAccountList(responseObject.getBody()), OK);
-        } else {
-            return responseMapper.createErrorResponse(responseObject.getError());
-        }
+        return responseMapper.ok(accountService.getAccountDetailsList(consentID, withBalance), AccountModelMapper::mapToAccountList);
     }
 
     @Override
     public ResponseEntity<?> readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentID, accountId, withBalance);
-        if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToAccountDetails(responseObject.getBody()), OK);
-        } else {
-            return responseMapper.createErrorResponse(responseObject.getError());
-        }
+        return responseMapper.ok(accountService.getAccountDetails(consentID, accountId, withBalance), AccountModelMapper::mapToAccountDetails);
+    }
+
+    @Override
+    public ResponseEntity<?> getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return responseMapper.ok(accountService.getBalances(consentID, accountId), AccountModelMapper::mapToBalance);
+    }
+
+    @Override
+    public ResponseEntity<?> getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        ResponseObject<AccountReport> responseObject =
+            accountService.getAccountReport(consentID, accountId, dateFrom, dateTo, null, false, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
+        return responseMapper.ok(responseObject, AccountModelMapper::mapToAccountReport);
     }
 
     @Override
     public ResponseEntity<?> getTransactionDetails(String accountId, String resourceId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        /*
         ResponseObject<AccountReport> responseObject =
             accountService.getAccountReport(consentID, accountId, null, null, resourceId, false, null, false, false);
         //TODO need better response for a single transaction
@@ -77,28 +73,7 @@ public class AccountController12 implements AccountApi {
         } else {
             return responseMapper.createErrorResponse(responseObject.getError());
         }
+        */
+        return null;
     }
-
-    @Override
-    public ResponseEntity<?> getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<List<Balance>> responseObject = accountService.getBalances(consentID, accountId);
-        if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToBalance(responseObject.getBody()), OK);
-        } else {
-            return responseMapper.createErrorResponse(responseObject.getError());
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<AccountReport> responseObject =
-            accountService.getAccountReport(consentID, accountId, dateFrom, dateTo, null, false, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
-        if (!responseObject.hasError()) {
-            return new ResponseEntity<>(mapToAccountReport(responseObject.getBody()), OK);
-        } else {
-            return responseMapper.createErrorResponse(responseObject.getError());
-        }
-    }
-
-
 }

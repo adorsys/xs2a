@@ -23,14 +23,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Function;
+
 import static org.springframework.http.HttpStatus.*;
 
 @Component
 @AllArgsConstructor
 public class ResponseMapper {
 
-    public ResponseEntity ok() {  //NOPMD short method name ok corresponds to status code
-        return ResponseEntity.ok().build();
+    public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
+        return getEntity(response, OK, mapper);
+    }
+
+    public <T, R> ResponseEntity<?> created(ResponseObject<T> response, Function<T, R> mapper) {
+        return getEntity(response, CREATED, mapper);
+    }
+
+    public <T, R> ResponseEntity<?> delete(ResponseObject<T> response, Function<T, R> mapper) {
+        return getEntity(response, NO_CONTENT, mapper);
     }
 
     public <T> ResponseEntity<T> ok(ResponseObject<T> response) { //NOPMD short method name ok corresponds to status code
@@ -40,19 +50,29 @@ public class ResponseMapper {
     public <T> ResponseEntity<T> created(ResponseObject<T> response) {
         return getEntity(response, CREATED);
     }
-
+    
     public <T> ResponseEntity<T> delete(ResponseObject<T> response) {
         return getEntity(response, NO_CONTENT);
     }
 
     private <T> ResponseEntity<T> getEntity(ResponseObject<T> response, HttpStatus status) {
+        return getEntity(response, status, null);
+    }
+
+    private <T, R> ResponseEntity getEntity(ResponseObject<T> response, HttpStatus status, Function<T, R> mapper) {
+        T body = response.getBody();
         return response.hasError()
-            ? createErrorResponse(response.getError())
-            : new ResponseEntity<>(response.getBody(), status);
+                   ? createErrorResponse(response.getError())
+                   : new ResponseEntity<>(getBody(body, mapper), status);
     }
 
-    public ResponseEntity createErrorResponse(MessageError error){
-         return new ResponseEntity<>(error, valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
+    private <T, R> Object getBody(T body, Function<T, R> mapper) {
+        return mapper == null
+                   ? body
+                   : mapper.apply(body);
     }
 
+    private ResponseEntity createErrorResponse(MessageError error) {
+        return new ResponseEntity<>(error, valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
+    }
 }

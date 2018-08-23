@@ -139,6 +139,26 @@ public class AspspProfileService {
             }).getBody();
     }
 
+    /**
+     * Read value of maximum consent lifetime
+     *
+     * @return int value of maximum consent lifetime
+     */
+    public int getConsentLifetime() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getConsentLifetime(), HttpMethod.GET, null, Integer.class).getBody();
+    }
+
+    /**
+     * Reads value of AllPsd2Support from ASPSP profile service
+     *
+     * @return true if ASPSP supports Global consents, false if doesn't
+     */
+    public Boolean getAllPsd2Support() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getAllPsd2Support(), HttpMethod.GET, null, Boolean.class).getBody();
+    }
+
     private List<String> readAvailablePaymentTypes() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
