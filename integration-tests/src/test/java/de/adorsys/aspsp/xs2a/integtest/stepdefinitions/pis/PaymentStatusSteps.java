@@ -24,7 +24,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-//import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
+import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -44,64 +44,59 @@ import static org.hamcrest.Matchers.equalTo;
 
 @FeatureFileSteps
 public class PaymentStatusSteps {
-//    errors because changes of context of another merge are needed
-//
-//    @Autowired
-//    @Qualifier("xs2a")
-//    private RestTemplate restTemplate;
-//
-//    @Autowired
-//    private Context< HashMap, PaymentInitiationStatusResponse200Json> context;
-//
-//    @Autowired
-//    private ObjectMapper mapper;
-//
-//    @Given("^Psu wants to request the payment status of a payment with payment-id (.*) by using the payment-service (.*)$")
-//    public void setPaymentParameters(String paymentId, String paymentService) {
-//        context.setPaymentId(paymentId);
-//        context.setPaymentService(paymentService);
-//    }
-//
-//    @And("^the set of data (.*)$")
-//    public void loadTestData(String dataFileName) throws IOException {
-//        TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
-//        });
-//
-//        context.setTestData(data);
-//    }
-//
-//    @When("^PSU requests the status of the payment$")
-//    public void sendPaymentStatusRequest() throws HttpClientErrorException {
-//        HttpEntity<HashMap> entity = getStatusHttpEntity();
-//
-//        ResponseEntity<PaymentInitiationStatusResponse200Json> response = restTemplate.exchange(
-//            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
-//            HttpMethod.GET,
-//            entity,
-//            PaymentInitiationStatusResponse200Json.class);
-//
-//        context.setActualResponse(response);
-//    }
-//
-//
-//
-//
-//    @Then("^an appropriate response code and the status is delivered to the PSU$")
-//    public void checkStatus() {
-//        ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse = context.getActualResponse();
-//        PaymentInitiationStatusResponse200Json givenResponseBody = context.getTestData().getResponse().getBody();
-//
-//        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-//        assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus().name()));
-//    }
-//
-//    private HttpEntity getStatusHttpEntity() {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAll(context.getTestData().getRequest().getHeader());
-//        headers.add("Authorization", "Bearer " + context.getAccessToken());
-//        headers.add("Content-Type", "application/json");
-//
-//        return new HttpEntity<>(null, headers);
-//    }
 
+    @Autowired
+    @Qualifier("xs2a")
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private Context< HashMap, PaymentInitiationStatusResponse200Json> context;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Given("^Psu wants to request the payment status of a payment with payment-id (.*) by using the payment-service (.*)$")
+    public void setPaymentParameters(String paymentId, String paymentService) {
+        context.setPaymentId(paymentId);
+        context.setPaymentService(paymentService);
+    }
+
+    @And("^the set of data (.*)$")
+    public void loadTestData(String dataFileName) throws IOException {
+        TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
+        });
+
+        context.setTestData(data);
+    }
+
+    @When("^PSU requests the status of the payment$")
+    public void sendPaymentStatusRequest() throws HttpClientErrorException {
+        HttpEntity<HashMap> entity = getStatusHttpEntity();
+
+        ResponseEntity<PaymentInitiationStatusResponse200Json> response = restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
+            HttpMethod.GET,
+            entity,
+            PaymentInitiationStatusResponse200Json.class);
+
+        context.setActualResponse(response);
+    }
+
+    @Then("^an appropriate response code and the status is delivered to the PSU$")
+    public void checkStatus() {
+        ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse = context.getActualResponse();
+        PaymentInitiationStatusResponse200Json givenResponseBody = context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+        assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus().name()));
+    }
+
+    private HttpEntity getStatusHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAll(context.getTestData().getRequest().getHeader());
+        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
+
+        return new HttpEntity<>(null, headers);
+    }
 }
