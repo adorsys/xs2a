@@ -55,9 +55,10 @@ public class SinglePaymentSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to initiate a single payment (.*) using the payment product (.*)$")
-    public void loadTestData(String dataFileName, String paymentProduct) throws IOException {
+    @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
 
         TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
         });
