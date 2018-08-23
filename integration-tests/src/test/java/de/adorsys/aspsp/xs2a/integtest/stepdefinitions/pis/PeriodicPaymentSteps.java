@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -106,7 +107,7 @@ public class PeriodicPaymentSteps {
                 context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
-                new ParameterizedTypeReference<PeriodicPaymentInitiationSctJson>() {
+                new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
                 });
 
         } catch (HttpClientErrorException hce) {

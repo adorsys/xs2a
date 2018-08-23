@@ -48,23 +48,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/de.adorsys.multibanking/xs2a-adapter -->
-        <dependency>
-            <groupId>de.adorsys.multibanking</groupId>
-            <artifactId>xs2a-adapter</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-
-
-        <!--
+<!--
 
                 <dependency>
                     <groupId>org.keycloak</groupId>
                     <artifactId>keycloak-spring-boot-starter</artifactId>
                     <version>${keycloak.version}</version>
                 </dependency>
-        -->
+-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
