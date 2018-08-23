@@ -21,16 +21,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -55,21 +61,22 @@ public class BulkPaymentSteps {
     public void loadTestDataBulkPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> data = mapper.readValue(resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8), new TypeReference<TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>>>() {
+        TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> data =
+            mapper.readValue(resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
+                new TypeReference<TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>>>() {
         });
 
         context.setTestData(data);
     }
 
-    //TODO Uncomment after ISO DateTime format rework
-    /*@When("^PSU sends the bulk payment initiating request$")
+    @When("^PSU sends the bulk payment initiating request$")
     public void sendBulkPaymentInitiatingRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(context.getTestData().getRequest().getHeader());
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
 
-        List<BulkPaymentInitiationSctJson> paymentsList = context.getTestData().getRequest().getBody();
+        BulkPaymentInitiationSctJson paymentsList = context.getTestData().getRequest().getBody();
 
         ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(
             context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
@@ -77,27 +84,35 @@ public class BulkPaymentSteps {
             });
 
         context.setActualResponse(response);
-    }*/
+    }
 
     @Then("^a successful response code and the appropriate bulk payment response data$")
-    public void checkResponseCodeBulkPayment() {
-        ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponse = context.getActualResponse();
+    public void checkResponseCodeBulkPayment() throws IllegalArgumentException {
+        ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponseList = context.getActualResponse();
         List<PaymentInitationRequestResponse201> givenResponseBody = context.getTestData().getResponse().getBody();
 
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
 
-        assertThat(actualResponse.getBody().get(0).getTransactionStatus().name(), equalTo(givenResponseBody.get(0).getTransactionStatus()));
-        assertThat(actualResponse.getStatusCode(), notNullValue());
+        assertThat(actualResponseList.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
 
-        assertThat(actualResponse.getBody().get(1).getTransactionStatus().name(), equalTo(givenResponseBody.get(1).getTransactionStatus()));
+        if(givenResponseBody.size() != actualResponseList.getBody().size()) {
+            throw new IllegalArgumentException("List of given response (" + givenResponseBody.size()+ ") has a different size than list of actual response("+ actualResponseList.getBody().size() + ")");
+        }
+        Iterator<PaymentInitationRequestResponse201> actualResponseIterator = actualResponseList.getBody().iterator();
+        Iterator<PaymentInitationRequestResponse201> givenResponseIterator = givenResponseBody.iterator();
+        while (actualResponseIterator.hasNext() && givenResponseIterator.hasNext()) {
+            PaymentInitationRequestResponse201 actualResponse = actualResponseIterator.next();
+            assertThat(actualResponse.getTransactionStatus(), equalTo(givenResponseIterator.next().getTransactionStatus()));
+            assertThat(actualResponse.getPaymentId(), notNullValue());
+        }
     }
 
     @And("^a redirect URL for every payment of the Bulk payment is delivered to the PSU$")
     public void checkRedirectUrlBulkPayment() {
         ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponse = context.getActualResponse();
 
-        assertThat(actualResponse.getBody().get(0).getLinks().get("scaRedirect"), notNullValue());
-        assertThat(actualResponse.getBody().get(1).getLinks().get("scaRedirect"), notNullValue());
+        actualResponse.getBody().forEach((paymentResponse) -> {
+            assertThat(paymentResponse.getLinks().get("scaRedirect"), notNullValue());
+        });
     }
 }
 
