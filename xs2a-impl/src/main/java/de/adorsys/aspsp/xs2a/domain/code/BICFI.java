@@ -30,4 +30,3 @@ public class BICFI {
     @ApiModelProperty(value = "BICFI code", example = "BCENECEQ")
     private String code;
 }
-
