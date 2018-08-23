@@ -36,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -64,7 +63,7 @@ public class BulkPaymentSteps {
         TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> data =
             mapper.readValue(resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
                 new TypeReference<TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>>>() {
-        });
+                });
 
         context.setTestData(data);
     }
@@ -94,15 +93,13 @@ public class BulkPaymentSteps {
 
         assertThat(actualResponseList.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
 
-        if(givenResponseBody.size() != actualResponseList.getBody().size()) {
-            throw new IllegalArgumentException("List of given response (" + givenResponseBody.size()+ ") has a different size than list of actual response("+ actualResponseList.getBody().size() + ")");
+        if (givenResponseBody.size() != actualResponseList.getBody().size()) {
+            throw new IllegalArgumentException("List of given response (" + givenResponseBody.size() + ") has a different size than list of actual response(" + actualResponseList.getBody().size() + ")");
         }
-        Iterator<PaymentInitationRequestResponse201> actualResponseIterator = actualResponseList.getBody().iterator();
-        Iterator<PaymentInitationRequestResponse201> givenResponseIterator = givenResponseBody.iterator();
-        while (actualResponseIterator.hasNext() && givenResponseIterator.hasNext()) {
-            PaymentInitationRequestResponse201 actualResponse = actualResponseIterator.next();
-            assertThat(actualResponse.getTransactionStatus(), equalTo(givenResponseIterator.next().getTransactionStatus()));
-            assertThat(actualResponse.getPaymentId(), notNullValue());
+
+        for (int i = 0; i < givenResponseBody.size(); ++i) {
+            assertThat(actualResponseList.getBody().get(i).getTransactionStatus(), equalTo(givenResponseBody.get(i).getTransactionStatus()));
+            assertThat(actualResponseList.getBody().get(i).getPaymentId(), notNullValue());
         }
     }
 
