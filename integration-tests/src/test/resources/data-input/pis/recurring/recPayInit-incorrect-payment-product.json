@@ -41,10 +41,13 @@
     "header": {},
     "body": {
       "transactionStatus": "RJCT",
-      "tppMessage": {
-        "category": "ERROR",
-        "code": "PRODUCT_UNKNOWN"
-      }
+      "tppMessages": [
+        {
+          "category": "ERROR",
+          "code": "PRODUCT_UNKNOWN",
+          "text": "additional text information of the ASPSP up to 512 characters"
+        }
+      ]
     }
   }
 }

@@ -40,10 +40,13 @@
     "header": {},
     "body": {
       "transactionStatus": "RJCT",
-      "tppMessage": {
-        "category": "ERROR",
-        "code": "FORMAT_ERROR"
-      }
+      "tppMessages": [
+        {
+          "category": "ERROR",
+          "code": "FORMAT_ERROR",
+          "text": "additional text information of the ASPSP up to 512 characters"
+        }
+      ]
     }
   }
 }
