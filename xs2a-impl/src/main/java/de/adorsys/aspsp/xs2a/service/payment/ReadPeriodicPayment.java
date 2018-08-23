@@ -26,8 +26,8 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
 @Service("periodic-payments")
 public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
     @Override
-    public PeriodicPayment getPayment(String paymentProduct, String paymentId) {
-        SpiPeriodicPayment periodicPayment = paymentSpi.getPeriodicPaymentById(paymentMapper.mapToSpiPaymentType(PERIODIC), paymentProduct, paymentId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+    public PeriodicPayment getPayment(String paymentId) {
+        SpiPeriodicPayment periodicPayment = paymentSpi.getPeriodicPaymentById(paymentMapper.mapToSpiPaymentType(PERIODIC), paymentId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return paymentMapper.mapToPeriodicPayment(periodicPayment);
     }
 }

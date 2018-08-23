@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatusResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
@@ -94,6 +95,10 @@ public class PaymentInitiationController {
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
         @PathVariable("paymentId") String paymentId) {
-        return responseMapper.ok(paymentService.getPaymentStatusById(paymentId, paymentProduct));
+        ResponseObject<TransactionStatus> status = paymentService.getPaymentStatusById(paymentId, PaymentType.SINGLE);
+
+        return responseMapper.ok(status.hasError()
+                                     ? ResponseObject.<TransactionStatusResponse>builder().fail(status.getError()).build()
+                                     : ResponseObject.<TransactionStatusResponse>builder().body(new TransactionStatusResponse(status.getBody())).build());
     }
 }

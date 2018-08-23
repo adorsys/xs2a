@@ -18,10 +18,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ReadSinglePayment;
@@ -30,6 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +66,7 @@ public class PaymentServiceTest {
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
     private static final TppInfo TPP_INFO = getTppInfo();
-    private static final String TPP_INFO_STR = "tpp info" ;
+    private static final String TPP_INFO_STR = "tpp info";
 
     private final PeriodicPayment PERIODIC_PAYMENT_OK = getPeriodicPayment(IBAN, AMOUNT);
     private final PeriodicPayment PERIODIC_PAYMENT_NOK_IBAN = getPeriodicPayment(WRONG_IBAN, AMOUNT);
@@ -102,9 +100,9 @@ public class PaymentServiceTest {
             .thenReturn(Optional.of(getPaymentResponse(RJCT, RESOURCE_UNKNOWN_400)));
 
         //Status by ID
-        when(paymentSpi.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
+        when(paymentSpi.getPaymentStatusById(PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(SpiTransactionStatus.ACCP, ASPSP_CONSENT_DATA));
-        when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT, ASPSP_CONSENT_DATA))
+        when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
 
         //ScaPayService
@@ -128,7 +126,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById() {
         //When
-        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE);
         //Then
         assertThat(response.hasError()).isFalse();
         assertThat(response.getBody()).isEqualTo(new TransactionStatusResponse(TransactionStatus.ACCP));
@@ -137,7 +135,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById_Failure() {
         //When
-        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<TransactionStatusResponse> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE);
         //Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
@@ -263,9 +261,9 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById() {
         when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(any(), anyString())).thenReturn(getSinglePayment(IBAN, "10"));
+        when(readSinglePayment.getPayment(anyString())).thenReturn(getSinglePayment(IBAN, "10"));
         //When
-        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, ALLOWED_PAYMENT_PRODUCT, PAYMENT_ID);
+        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, PAYMENT_ID);
         //Than
         assertThat(response.hasError()).isFalse();
         assertThat(response.getError()).isNull();
@@ -277,10 +275,10 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById_Failure_wrong_id() {
         when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(any(), anyString())).thenReturn(null);
+        when(readSinglePayment.getPayment(anyString())).thenReturn(null);
 
         //When
-        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, ALLOWED_PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
+        ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID);
         //Than
         assertThat(response.hasError()).isTrue();
         assertThat(response.getBody()).isNull();

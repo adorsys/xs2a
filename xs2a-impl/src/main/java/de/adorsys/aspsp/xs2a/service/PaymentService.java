@@ -19,11 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatusResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
@@ -46,7 +42,7 @@ import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class PaymentService {
+public class PaymentService<T> {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
     private final ScaPaymentService scaPaymentService;
@@ -55,17 +51,16 @@ public class PaymentService {
     /**
      * Retrieves payment status from ASPSP
      *
-     * @param paymentId      String representation of payment primary ASPSP identifier
-     * @param paymentProduct The addressed payment product
+     * @param paymentId   String representation of payment primary ASPSP identifier
+     * @param paymentType The addressed payment category Single, Periodic or Bulk
      * @return Information about the status of a payment
      */
-    public ResponseObject<TransactionStatusResponse> getPaymentStatusById(String paymentId, String paymentProduct) {
-        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentProduct, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); //
+    public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType) {
+        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); //
         // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return Optional.ofNullable(transactionStatus)
-                   .map(tr -> ResponseObject.<TransactionStatusResponse>builder()
-                                  .body(new TransactionStatusResponse(tr)).build())
-                   .orElseGet(() -> ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+                   .map(tr -> ResponseObject.<TransactionStatus>builder().body(tr).build())
+                   .orElseGet(() -> ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
 
     /**
@@ -138,14 +133,13 @@ public class PaymentService {
     /**
      * Retrieves payment from ASPSP by its ASPSP identifier, product and payment type
      *
-     * @param paymentType    type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of the payment
+     * @param paymentType type of payment (payments, bulk-payments, periodic-payments)
+     * @param paymentId   ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentProduct, String paymentId) {
+    public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentProduct, paymentId));
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId));
         return payment.isPresent()
                    ? ResponseObject.builder().body(payment.get()).build()
                    : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build();
@@ -165,5 +159,17 @@ public class PaymentService {
         return ResponseObject.<PaymentInitialisationResponse>builder()
                    .fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(ERROR, EXECUTION_DATE_INVALID)))
                    .build();
+    }
+
+    public ResponseObject<?> createPayment(T payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
+        ResponseObject<?> response = ResponseObject.builder().fail(new MessageError(PARAMETER_NOT_SUPPORTED)).build();
+        if (paymentType == PaymentType.SINGLE) {
+            response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.name());
+        } else if (paymentType == PaymentType.PERIODIC) {
+            response = initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.name());
+        } else if (paymentType == PaymentType.BULK) {
+            response = createBulkPayments((List<SinglePayment>) payment, tppSignatureCertificate, paymentProduct.name());
+        }
+        return response;
     }
 }

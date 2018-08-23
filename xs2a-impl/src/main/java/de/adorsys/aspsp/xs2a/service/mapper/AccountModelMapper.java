@@ -18,15 +18,14 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balance;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
-import de.adorsys.psd2.model.AccountList;
-import de.adorsys.psd2.model.BalanceList;
-import de.adorsys.psd2.model.BalanceType;
-import de.adorsys.psd2.model.ReadBalanceResponse200;
+import de.adorsys.psd2.model.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +38,6 @@ public final class AccountModelMapper {
             BeanUtils.copyProperties(accountDetails, detailsTarget);
             accountList.addAccountsItem(detailsTarget);
         });
-
         return accountList;
     }
 
@@ -72,7 +70,7 @@ public final class AccountModelMapper {
         de.adorsys.psd2.model.Balance target = new de.adorsys.psd2.model.Balance();
         BeanUtils.copyProperties(balance, target);
 
-        target.setBalanceAmount(mapToAmount(balance.getBalanceAmount()));
+        target.setBalanceAmount(mapToAmount12(balance.getBalanceAmount()));
         if (balance.getBalanceType() != null) {
             target.setBalanceType(BalanceType.fromValue(balance.getBalanceType().toString()));
         }
@@ -80,9 +78,8 @@ public final class AccountModelMapper {
         return target;
     }
 
-    private static de.adorsys.psd2.model.Amount mapToAmount(Amount amount) {
-        de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount();
-        amountTarget.setAmount(amount.getContent());
+    public static de.adorsys.psd2.model.Amount mapToAmount12(Amount amount) {
+        de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(amount.getContent());
         amountTarget.setCurrency(amount.getCurrency().getCurrencyCode());
         return amountTarget;
     }
@@ -92,5 +89,62 @@ public final class AccountModelMapper {
         BeanUtils.copyProperties(accountReport, target);
 
         return target;
+    }
+
+    public static <T> AccountReference mapToXs2aAccountReference(T reference) {
+        AccountReference xs2aReference = new AccountReference();
+        BeanUtils.copyProperties(reference, xs2aReference);
+        return xs2aReference;
+    }
+
+    public static <T> T mapToAccountReference12(AccountReference reference) {
+        T accountReference = null;
+
+        if (StringUtils.isNotBlank(reference.getIban())) {
+            accountReference = (T) new AccountReferenceIban().iban(reference.getIban());
+            ((AccountReferenceIban) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getBban())) {
+            accountReference = (T) new AccountReferenceBban().bban(reference.getBban());
+            ((AccountReferenceBban) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getPan())) {
+            accountReference = (T) new AccountReferencePan().pan(reference.getPan());
+            ((AccountReferencePan) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getMaskedPan())) {
+            accountReference = (T) new AccountReferenceMaskedPan().maskedPan(reference.getMaskedPan());
+            ((AccountReferenceMaskedPan) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getMsisdn())) {
+            accountReference = (T) new AccountReferenceMsisdn().msisdn(reference.getMsisdn());
+            ((AccountReferenceMsisdn) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        }
+        return accountReference;
+    }
+
+    public static Address mapToAddress12(de.adorsys.aspsp.xs2a.domain.address.Address address) {
+        Address targetAddress = new Address().street(address.getStreet());
+        targetAddress.setStreet(address.getStreet());
+        targetAddress.setBuildingNumber(address.getBuildingNumber());
+        targetAddress.setCity(address.getCity());
+        targetAddress.setPostalCode(address.getPostalCode());
+        targetAddress.setCountry(address.getCountry().getCode());
+        return targetAddress;
+    }
+
+    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
+        de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
+        targetAddress.setStreet(address.getStreet());
+        targetAddress.setBuildingNumber(address.getBuildingNumber());
+        targetAddress.setCity(address.getCity());
+        targetAddress.setPostalCode(address.getPostalCode());
+        de.adorsys.aspsp.xs2a.domain.address.CountryCode code = new de.adorsys.aspsp.xs2a.domain.address.CountryCode();
+        code.setCode(address.getCountry());
+        targetAddress.setCountry(code);
+        return targetAddress;
+    }
+
+    public static Amount mapToXs2aAmount(de.adorsys.psd2.model.Amount amount) {
+        Amount targetAmount = new Amount();
+        targetAmount.setContent(amount.getAmount());
+        targetAmount.setCurrency(Currency.getInstance(amount.getCurrency()));
+        return targetAmount;
     }
 }

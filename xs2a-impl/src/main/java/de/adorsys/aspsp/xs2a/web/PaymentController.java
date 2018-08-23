@@ -54,7 +54,8 @@ public class PaymentController {
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, dataType = "String", paramType = "header")})//NOPMD //Ip is required as description of the field
+        @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, dataType = "String", paramType = "header")})
+//NOPMD //Ip is required as description of the field
     public ResponseEntity getPaymentById(
         @ApiParam(name = "payment-service", value = "The addressed payment service", required = true, allowableValues = "payments, bulk-payments,periodic-payments")
         @PathVariable("payment-service") PaymentType paymentType,
@@ -62,6 +63,6 @@ public class PaymentController {
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b", required = true)
         @PathVariable("paymentId") String paymentId) {
-        return responseMapper.ok(paymentService.getPaymentById(paymentType, paymentProduct, paymentId));
+        return responseMapper.ok(paymentService.getPaymentById(paymentType, paymentId));
     }
 }
