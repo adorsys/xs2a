@@ -6,40 +6,29 @@
       "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {
-      "creditorAccount": {
-        "currency": "EUR",
-        "iban": "DE15500105172295759744"
-      },
-      "creditorAddress": {
-        "buildingNumber": "56",
-        "city": "Nürnberg",
-        "country": {
-          "code": "49"
-        },
-        "postalCode": "90543",
-        "street": "WBG Straße"
-      },
-      "creditorName": "WBG",
+      "endToEndIdentification": "WBG-123456789",
       "debtorAccount": {
         "currency": "EUR",
         "iban": "DE52500105173911841934"
       },
-      "endToEndIdentification": "WBG-123456789",
       "instructedAmount": {
-        "content": "520.00",
-        "currency": "EUR"
+        "currency": "EUR",
+        "amount": "520.00"
       },
-      "purposeCode": {
-        "code": "miete"
+      "creditorAccount": {
+        "currency": "EUR",
+        "iban": "DE15500105172295759744"
       },
-      "remittanceInformationStructured": {
-        "reference": "Ref Number Merchant"
+      "creditorAgent" : "AAAADEBBXXX",
+      "creditorName": "WBG",
+      "creditorAddress": {
+        "buildingNumber": "56",
+        "city": "Nürnberg",
+        "country": "DE",
+        "postalCode": "90543",
+        "street": "WBG Straße"
       },
-      "remittanceInformationUnstructured": "Ref. Number WBG-1222",
-      "requestedExecutionDate": "2018-08-18",
-      "requestedExecutionTime": "2018-08-18T18:30:35.035Z",
-      "ultimateCreditor": "WBG",
-      "ultimateDebtor": "Alexander Mueller"
+      "remittanceInformationUnstructured": "Ref. Number WBG-1222"
     }
   },
   "response": {
