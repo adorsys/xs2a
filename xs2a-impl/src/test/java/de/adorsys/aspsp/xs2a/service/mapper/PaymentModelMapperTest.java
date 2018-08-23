@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
@@ -51,9 +50,8 @@ public class PaymentModelMapperTest {
         de.adorsys.psd2.model.TransactionStatus[] statuses12 = de.adorsys.psd2.model.TransactionStatus.values();
         //When
         assertThat(xs2aStatuses.length).isEqualTo(statuses12.length);
-
         for (int i = 0; i < xs2aStatuses.length; i++) {
-            testTransactionStatus12(ResponseObject.<TransactionStatus>builder().body(xs2aStatuses[i]).build(), statuses12[i]);
+            testTransactionStatus12(xs2aStatuses[i], statuses12[i]);
         }
     }
 
@@ -118,7 +116,7 @@ public class PaymentModelMapperTest {
         return amount;
     }
 
-    private void testTransactionStatus12(ResponseObject<TransactionStatus> status, de.adorsys.psd2.model.TransactionStatus expected) {
+    private void testTransactionStatus12(TransactionStatus status, de.adorsys.psd2.model.TransactionStatus expected) {
         //When
         de.adorsys.psd2.model.TransactionStatus result = PaymentModelMapper.mapToTransactionStatus12(status);
         //Then

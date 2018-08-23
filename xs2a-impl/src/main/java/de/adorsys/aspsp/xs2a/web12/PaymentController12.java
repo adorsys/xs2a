@@ -23,11 +23,10 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.PaymentApi;
-import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +36,6 @@ import java.util.UUID;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapper.*;
-import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @AllArgsConstructor
@@ -57,9 +55,7 @@ public class PaymentController12 implements PaymentApi {
                                                          .orElseGet(() -> ResponseObject.<TransactionStatus>builder()
                                                                               .fail(new MessageError(FORMAT_ERROR)).build());
 
-        return response.hasError()
-                   ? responseMapper.createErrorResponse(response.getError())
-                   : new ResponseEntity<>(mapToTransactionStatus12(response), OK); //TODO Map errors
+        return responseMapper.ok(response, PaymentModelMapper::mapToTransactionStatus12);
     }
 
     @Override
@@ -74,8 +70,8 @@ public class PaymentController12 implements PaymentApi {
                                                               .fail(new MessageError(FORMAT_ERROR)).build());
 
         return response.hasError()
-                   ? responseMapper.createErrorResponse(response.getError())
-                   : new ResponseEntity<>(mapToGetPaymentResponse12(response, PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT), OK); //TODO Map errors & responses
+                   ? responseMapper.created(response)
+                   : responseMapper.created(ResponseObject.builder().body(mapToGetPaymentResponse12(response, PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
     }
 
     @Override
@@ -94,8 +90,8 @@ public class PaymentController12 implements PaymentApi {
                                                                             : ResponseObject.<PaymentInitialisationResponse>builder().fail(new MessageError(FORMAT_ERROR)).build();
 
         return serviceResponse.hasError()
-                   ? responseMapper.createErrorResponse(serviceResponse.getError())
-                   : new ResponseEntity<PaymentInitationRequestResponse201>(mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentType.get(), product.get()), HttpStatus.OK);
+                   ? responseMapper.created(serviceResponse)
+                   : responseMapper.created(ResponseObject.builder().body(mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentType.get(), product.get())).build());
     }
 
     @Override

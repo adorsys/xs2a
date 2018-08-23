@@ -56,8 +56,8 @@ public class PaymentService<T> {
      * @return Information about the status of a payment
      */
     public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType) {
-        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); //
-        // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload());
+        //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<TransactionStatus>builder().body(tr).build())
                    .orElseGet(() -> ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
@@ -85,9 +85,9 @@ public class PaymentService<T> {
      * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing information about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayment> payments, String tppSignatureCertificate, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> createBulkPayments(List<SinglePayment> payments, String tppSignatureCertificate, String paymentProduct) {
         if (CollectionUtils.isEmpty(payments)) {
-            return ResponseObject.<List<PaymentInitialisationResponse>>builder()
+            return ResponseObject.<PaymentInitialisationResponse>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR)))
                        .build();
         }
@@ -107,11 +107,11 @@ public class PaymentService<T> {
             if (CollectionUtils.isNotEmpty(paymentResponses) && paymentResponses.stream()
                                                                     .anyMatch(pr -> pr.getTransactionStatus() != TransactionStatus.RJCT)) {
                 paymentResponses.addAll(invalidPayments);
-                return ResponseObject.<List<PaymentInitialisationResponse>>builder()
-                           .body(paymentResponses).build();
+                return ResponseObject.<PaymentInitialisationResponse>builder()
+                           .body(paymentResponses.get(0)).build();//TODO Temporary fix should be updated along migration to 1.2
             }
         }
-        return ResponseObject.<List<PaymentInitialisationResponse>>builder()
+        return ResponseObject.<PaymentInitialisationResponse>builder()
                    .fail(new MessageError(new TppMessageInformation(ERROR, PAYMENT_FAILED))).build();
     }
 
@@ -161,8 +161,8 @@ public class PaymentService<T> {
                    .build();
     }
 
-    public ResponseObject<?> createPayment(T payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
-        ResponseObject<?> response = ResponseObject.builder().fail(new MessageError(PARAMETER_NOT_SUPPORTED)).build();
+    public ResponseObject<PaymentInitialisationResponse> createPayment(T payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
+        ResponseObject<PaymentInitialisationResponse> response = ResponseObject.<PaymentInitialisationResponse>builder().fail(new MessageError(PARAMETER_NOT_SUPPORTED)).build();//TODO wrong code here for sure to be updated
         if (paymentType == PaymentType.SINGLE) {
             response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.name());
         } else if (paymentType == PaymentType.PERIODIC) {
