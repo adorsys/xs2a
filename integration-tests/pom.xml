@@ -147,6 +147,12 @@
             <artifactId>consent-api</artifactId>
             <version>1.6-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.multibanking</groupId>
+            <artifactId>xs2a-adapter</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>

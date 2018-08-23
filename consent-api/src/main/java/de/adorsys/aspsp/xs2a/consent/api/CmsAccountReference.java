@@ -46,6 +46,6 @@ public class CmsAccountReference {
     private Currency currency;
 
     public CmsAccountReference(String iban, Currency currency) {
-        this(iban, "", "", "", "", currency);
+        this(iban, null, null, null, null, currency);
     }
 }

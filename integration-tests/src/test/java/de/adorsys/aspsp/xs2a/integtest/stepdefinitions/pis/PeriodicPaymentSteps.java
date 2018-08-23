@@ -39,8 +39,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -56,7 +54,7 @@ public class PeriodicPaymentSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<PeriodicPaymentInitiationSctJson, HashMap, PaymentInitationRequestResponse201> context;
+    private Context<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -65,7 +63,7 @@ public class PeriodicPaymentSteps {
     public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<PeriodicPaymentInitiationSctJson, HashMap> data = mapper.readValue(resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8), new TypeReference<TestData<PeriodicPaymentInitiationSctJson, HashMap>>() {
+        TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8), new TypeReference<TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
         });
 
         context.setTestData(data);
@@ -75,7 +73,7 @@ public class PeriodicPaymentSteps {
     }
 
     //TODO Uncomment after ISO DateTime format rework
-    @When("^PSU sends the recurring payment initiating request$")
+    /*@When("^PSU sends the recurring payment initiating request$")
     public void sendPeriodicPaymentInitiatingRequest() {
         HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
@@ -87,15 +85,15 @@ public class PeriodicPaymentSteps {
             });
 
         context.setActualResponse(responseEntity);
-    }
+    }*/
 
     @Then("^a successful response code and the appropriate recurring payment response data")
     public void checkResponseCodeFromPeriodicPayment() {
-        Map responseBody = context.getTestData().getResponse().getBody();
+        PaymentInitationRequestResponse201 responseBody = context.getTestData().getResponse().getBody();
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = context.getActualResponse();
         HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
         assertThat(responseEntity.getStatusCode(), equalTo(expectedStatus));
-        assertThat(responseEntity.getBody().getTransactionStatus().name(), equalTo(responseBody.get("transactionStatus")));
+        assertThat(responseEntity.getBody().getTransactionStatus().name(), equalTo(responseBody.getTransactionStatus()));
         assertThat(responseEntity.getBody().getPaymentId(), notNullValue());
     }
 

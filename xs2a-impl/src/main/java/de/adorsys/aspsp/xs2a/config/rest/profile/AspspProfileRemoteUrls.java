@@ -114,4 +114,13 @@ public class AspspProfileRemoteUrls {
     public String getConsentLifetime() {
         return aspspProfileBaseUrl + "/aspsp-profile/consent-lifetime";
     }
+
+    /**
+     * Returns URL-string in order to get AllPsd2Support
+     *
+     * @return String
+     */
+    public String getAllPsd2Support() {
+        return aspspProfileBaseUrl + "/aspsp-profile/all-psd2-support";
+    }
 }
