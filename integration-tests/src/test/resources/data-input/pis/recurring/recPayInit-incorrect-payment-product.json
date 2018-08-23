@@ -37,10 +37,14 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "404",
     "header": {},
     "body": {
-      "transactionStatus": "RCVD"
+      "transactionStatus": "RJCT",
+      "tppMessage": {
+        "category": "ERROR",
+        "code": "PRODUCT_UNKNOWN"
+      }
     }
   }
 }

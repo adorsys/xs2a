@@ -29,7 +29,7 @@
       "executionRule": "FOLLOWING",
       "frequency": "MONTHLY",
       "instructedAmount": {
-        "amount": "44.99",
+        "amount": "52000",
         "currency": "EUR"
       },
       "remittanceInformationUnstructured": "Ref. Number Vodafone-1222",
@@ -37,10 +37,14 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "RCVD"
+      "transactionStatus": "RJCT",
+      "tppMessage": {
+        "category": "ERROR",
+        "code": "EXECUTION_DATE_INVALID"
+      }
     }
   }
 }

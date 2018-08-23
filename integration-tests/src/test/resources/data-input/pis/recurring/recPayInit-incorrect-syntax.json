@@ -8,7 +8,7 @@
     "body": {
       "creditorAccount": {
         "currency": "EUR",
-        "iban": "DE50500105172339433267"
+        "iban": "DE15500105172295759744"
       },
       "creditorAddress": {
         "street": "Breite Gasse",
@@ -22,7 +22,7 @@
       "dayOfExecution": "14",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE525001051711841934"
+        "iban": "DE525001051739118419"
       },
       "endDate": "2020-12-14",
       "endToEndIdentification": "VOD-123456789",
@@ -37,10 +37,14 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "RCVD"
+      "transactionStatus": "RJCT",
+      "tppMessage": {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
+      }
     }
   }
 }
