@@ -25,6 +25,6 @@ public class ConsentStatusResponse {
     private String consentStatus;
 
     public ConsentStatusResponse(ConsentStatus consentStatus) {
-        this.consentStatus = consentStatus.getConsentStatus();
+        this.consentStatus = consentStatus.getValue();
     }
 }
