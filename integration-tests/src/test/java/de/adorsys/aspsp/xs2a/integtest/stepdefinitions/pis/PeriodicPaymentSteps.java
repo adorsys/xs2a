@@ -107,9 +107,6 @@ public class PeriodicPaymentSteps {
         HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
-        if (dataFileName.contains("expired-exec-date")) {
-            makeEndDateOffset(entity);
-        }
         if (dataFileName.contains("end-date-before-start-date")) {
             makeEndDateBeforeStartDate(entity);
         }
