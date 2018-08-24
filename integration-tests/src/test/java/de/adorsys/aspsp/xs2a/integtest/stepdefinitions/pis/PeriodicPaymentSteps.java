@@ -22,6 +22,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
+import de.adorsys.aspsp.xs2a.integtest.entities.ITPeriodicPayments;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -49,6 +50,8 @@ import static org.hamcrest.Matchers.notNullValue;
 @FeatureFileSteps
 public class PeriodicPaymentSteps {
 
+    private static final long DAYS_OFFSET = 100L;
+
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
@@ -59,23 +62,28 @@ public class PeriodicPaymentSteps {
     @Autowired
     private ObjectMapper mapper;
 
+    private String dataFileName;
+
     @And("^PSU wants to initiate a recurring payment (.*) using the payment product (.*)$")
     public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        this.dataFileName = dataFileName;
 
-        TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8), new TypeReference<TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
-        });
+        TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(
+            resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8),
+            new TypeReference<TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {});
 
         context.setTestData(data);
 
         //TODO to be solved in a good manner
-        context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(100));
+        context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
     }
 
     //TODO Uncomment after ISO DateTime format rework
     /*@When("^PSU sends the recurring payment initiating request$")
     public void sendPeriodicPaymentInitiatingRequest() {
-        HttpEntity<ITPeriodicPayments> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity<ITPeriodicPayments> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(),
+         context.getAccessToken());
 
         ResponseEntity<PaymentInitialisationResponse> responseEntity = restTemplate.exchange(
             context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
@@ -100,7 +108,15 @@ public class PeriodicPaymentSteps {
     //TODO: Find the right model class for the response (change PaymentInitiationRequestResponse201)
     @When("^PSU sends the recurring payment initiating request with error$")
     public void sendFalsePeriodicPaymentInitiatingRequest() throws IOException {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        if (dataFileName.contains("expired-exec-date")) {
+            makeEndDateOffset(entity);
+        }
+        if (dataFileName.contains("end-date-before-start-date")) {
+            makeEndDateBeforeStartDate(entity);
+        }
 
         try {
             restTemplate.exchange(
@@ -118,6 +134,14 @@ public class PeriodicPaymentSteps {
             ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
             context.setMessageError(messageError);
         }
+    }
+
+    private void makeEndDateOffset(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
+        entity.getBody().setEndDate(entity.getBody().getEndDate().plusDays(DAYS_OFFSET));
+    }
+
+    private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
+        entity.getBody().setEndDate(entity.getBody().getStartDate().minusDays(DAYS_OFFSET));
     }
 
     /*
