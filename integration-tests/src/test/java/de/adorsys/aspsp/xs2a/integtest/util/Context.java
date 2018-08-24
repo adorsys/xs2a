@@ -21,6 +21,7 @@ public class Context<T, U> {
     private String paymentProduct;
     private String paymentService;
     private String accessToken;
+    private String paymentId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
     private ITMessageError messageError;
