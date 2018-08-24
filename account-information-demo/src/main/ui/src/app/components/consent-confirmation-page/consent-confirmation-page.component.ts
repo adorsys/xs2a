@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AisService } from '../../service/ais.service';
-import { AccountConsent} from "../../model/aspsp/accountConsent";
-
+import { Account} from "../../model/aspsp/account";
+import {Observable} from 'rxjs';
+import {AccountConsent} from "../../model/aspsp/accountConsent";
 
 @Component({
   selector: 'app-consent-confirmation-page',
@@ -11,6 +12,9 @@ import { AccountConsent} from "../../model/aspsp/accountConsent";
 })
 export class ConsentConfirmationPageComponent implements OnInit {
   consentId: string;
+  Accounts$: Observable<Account[]>;
+  Consent$: Observable<AccountConsent>
+  TransactionLimit$: Observable<number>
 
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
@@ -19,10 +23,10 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.route.url
       .subscribe(params => { this.getConsentIdFromUrl(params) });
     this.aisService.saveConsentId(this.consentId);
-    this.aisService.getConsent(this.consentId)
-      .subscribe(data => console.log(data));
-    this.aisService.getAccounts()
-  .subscribe(data => console.log('accounts', data));
+    this.Consent$ = this.aisService.getConsent(this.consentId);
+    this.Accounts$ = this.aisService.getAccounts();
+    this.TransactionLimit$ = this.aisService.getTransactionLimit();
+
   }
 
   onClickContinue() {

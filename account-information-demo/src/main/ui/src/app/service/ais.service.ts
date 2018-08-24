@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import {AccountConsent} from "../model/aspsp/accountConsent";
 import {Account} from "../model/aspsp/account";
+import {AccountsResponse} from "../model/aspsp/AccountsResponse";
 
 
 @Injectable({
@@ -26,10 +27,10 @@ export class AisService {
 
   getConsent(consentId): Observable<AccountConsent> {
     console.log('iio url', this.aspspServerUrl);
-    // let date = new Date();
+    let date = new Date();
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      // 'date': date.toUTCString(),
+      'date': date.toUTCString(),
     });
     console.log("iio headers consent", headers);
     return this.httpClient.get<AccountConsent>(this.aspspServerUrl + '/api/v1/consents/' + consentId, {headers: headers})
@@ -41,22 +42,31 @@ export class AisService {
     );
   }
 
-  getAccounts(): Observable<any> {
-    // let date = new Date();
+  getAccounts(): Observable<Account[]> {
+    let date = new Date();
     const headers = new HttpHeaders( {
       'x-request-id': environment.xRequestId,
-      // 'date': date.toUTCString(),
+      'date': date.toUTCString(),
       'consent-id': this.savedConsentId,
       'accept': 'application/json'
     });
     console.log("iio", headers);
-    return this.httpClient.get <any>(this.aspspServerUrl + '/api/v1/accounts', {headers: headers})
+    return this.httpClient.get <AccountsResponse>(this.aspspServerUrl + '/api/v1/accounts?with-balance=true', {headers: headers})
       .pipe(
         map( data =>{
-          console.log('account iio', data);
-          return data;
+          return data.accountList;
         })
       );
+  }
+
+  getTransactionLimit(): Observable<number> {
+    return this.httpClient.get<number>('https://aspsp-profile-integ.cloud.adorsys.de/api/v1/transaction-lifetime')
+      .pipe(
+        map(data =>{
+          console.log('account iio', data);
+          return data;
+          })
+      )
   }
 }
 
