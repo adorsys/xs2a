@@ -21,17 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,22 +55,22 @@ public class BulkPaymentSteps {
     public void loadTestDataBulkPayment(String dataFileName, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
 
-        TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> data =
-            mapper.readValue(resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
-                new TypeReference<TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>>>() {
-                });
+        TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> data = mapper.readValue(
+            resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
+            new TypeReference<TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>>>() {});
 
         context.setTestData(data);
     }
 
-    @When("^PSU sends the bulk payment initiating request$")
+    //TODO Uncomment after ISO DateTime format rework
+    /*@When("^PSU sends the bulk payment initiating request$")
     public void sendBulkPaymentInitiatingRequest() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(context.getTestData().getRequest().getHeader());
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
 
-        BulkPaymentInitiationSctJson paymentsList = context.getTestData().getRequest().getBody();
+        List<BulkPaymentInitiationSctJson> paymentsList = context.getTestData().getRequest().getBody();
 
         ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(
             context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
@@ -83,7 +78,7 @@ public class BulkPaymentSteps {
             });
 
         context.setActualResponse(response);
-    }
+    }*/
 
     @Then("^a successful response code and the appropriate bulk payment response data$")
     public void checkResponseCodeBulkPayment() throws IllegalArgumentException {
