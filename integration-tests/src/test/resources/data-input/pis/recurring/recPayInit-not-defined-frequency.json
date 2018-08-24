@@ -24,7 +24,7 @@
         "currency": "EUR",
         "iban": "DE53500105177986437593"
       },
-      "endDate": "2020-12-14",
+      "endDate": "yyyy-mm-dd",
       "endToEndIdentification": "VOD-123456789",
       "executionRule": "FOLLOWING",
       "frequency": "EVERYWEEK",
@@ -33,7 +33,7 @@
         "currency": "EUR"
       },
       "remittanceInformationUnstructured": "Ref. Number Vodafone-1222",
-      "startDate": "2018-10-14"
+      "startDate": "yyyy-mm-dd"
     }
   },
   "response": {
