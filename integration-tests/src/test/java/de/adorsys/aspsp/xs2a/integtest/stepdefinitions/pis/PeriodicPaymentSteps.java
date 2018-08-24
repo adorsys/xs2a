@@ -73,8 +73,6 @@ public class PeriodicPaymentSteps {
             new TypeReference<TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {});
 
         context.setTestData(data);
-
-        //TODO to be solved in a good manner
         context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
     }
 
