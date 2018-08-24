@@ -1,0 +1,86 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "psu-ip-address": "192.168.0.26",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
+    },
+    "body": {
+      "batchBookingPreferred": "false",
+      "requestedExecutionDate": "yyyy-mm-dd",
+      "debtorAccount": {
+        "currency": "EUR",
+        "iban": "DE52500105173911841934"
+      },
+      "payments": [
+        {
+          "endToEndIdentification": "WBG-123456789",
+          "instructedAmount": {
+            "amount": "520.00",
+            "currency": "EUR"
+          },
+          "creditorAccount": {
+            "currency": "EUR",
+            "iban": "DE15500105172295759744"
+          },
+          "creditorAgent": "AAAADEBBXXX",
+          "creditorName": "WBG",
+          "creditorAddress": {
+            "buildingNumber": "56",
+            "city": "Nürnberg",
+            "country": "DE",
+            "postalCode": "90543",
+            "street": "WBG Straße"
+          },
+          "remittanceInformationUnstructured": "Ref. Number WBG-1234"
+        },
+        {
+          "endToEndIdentification": "RI-234567890",
+          "instructedAmount": {
+            "amount": "71.07",
+            "currency": "EUR"
+          },
+          "creditorAccount": {
+            "currency": "EUR",
+            "iban": "DE03500105172351985719"
+          },
+          "creditorAgent": "AAAADEBBXXX",
+          "creditorName": "Grünstrom",
+          "creditorAddress": {
+            "buildingNumber": "74",
+            "city": "Dresden",
+            "country": "DE",
+            "postalCode": "01067",
+            "street": "Kaisergasse"
+          },
+          "remittanceInformationUnstructured": "Ref. Number GRUENSTROM-2444"
+        }
+      ]
+    }
+  },
+  "response": {
+    "code": "404",
+    "header": {},
+    "body": [
+      {
+        "transactionStatus": "RJCT",
+        "tppMessages": [
+          {
+            "category": "ERROR",
+            "code": "PRODUCT_UNKNOWN"
+          }
+        ]
+      },
+      {
+        "transactionStatus": "RJCT",
+        "tppMessages": [
+          {
+            "category": "ERROR",
+            "code": "PRODUCT_UNKNOWN"
+          }
+        ]
+      }
+    ]
+  }
+}
+

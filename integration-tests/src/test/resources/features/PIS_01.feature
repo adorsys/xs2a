@@ -57,6 +57,22 @@ Feature: Payment Initiation Service
 #            | sepa-credit-transfers | bulkPayInit-successful.json |
 
 
+#    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
+#        Given PSU wants to initiate a multiple payments <recurring-payment> using the payment product <payment-product>
+#        When PSU sends the bulk payment initiating request with error
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | payment-product       | recurring-payment                            |
+#            | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
+#            | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
+#            | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
+#            | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
+#            | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
+#            | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
+#            | sepa-credit-transfers | bulkPayInit-exceeding-amount.json            |
+
+
+
     ####################################################################################################################
     #                                                                                                                  #
     # Recurring Payments                                                                                               #
