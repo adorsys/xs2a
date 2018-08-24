@@ -16,7 +16,7 @@
         {
           "endToEndIdentification": "WBG-123456789",
           "instructedAmount": {
-            "amount": "52000.00",
+            "amount": "520.00",
             "currency": "EUR"
           },
           "creditorAccount": {
@@ -63,22 +63,14 @@
     "header": {},
     "body": [
       {
-        "transactionStatus": "RJCT",
-        "tppMessages": [
-          {
-            "category": "ERROR",
-            "code": "PAYMENT_FAILED",
-            "text": "additional text information of the ASPSP up to 512 characters"
-          }
-        ]
+        "transactionStatus": "RCVD"
       },
       {
         "transactionStatus": "RJCT",
         "tppMessages": [
           {
             "category": "ERROR",
-            "code": "PAYMENT_FAILED",
-            "text": "additional text information of the ASPSP up to 512 characters"
+            "code": "PAYMENT_FAILED"
           }
         ]
       }
