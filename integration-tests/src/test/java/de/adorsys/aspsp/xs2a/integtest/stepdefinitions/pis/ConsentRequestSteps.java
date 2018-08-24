@@ -92,7 +92,7 @@ public class ConsentRequestSteps {
         assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.getConsentStatus()));
         assertThat(actualResponse.getBody().getConsentId(), notNullValue());
     }
-      //TODO: Uncomment when solution for Mapping TppMessages and mapping of error responses is found
+
     @When("^PSU sends the create consent request with error$")
     public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {
         HttpEntity<Consents> entity = PaymentUtils.getPaymentsHttpEntity(

@@ -79,10 +79,9 @@ public class PeriodicPaymentSteps {
     //TODO Uncomment after ISO DateTime format rework
     /*@When("^PSU sends the recurring payment initiating request$")
     public void sendPeriodicPaymentInitiatingRequest() {
-        HttpEntity<ITPeriodicPayments> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(),
-         context.getAccessToken());
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
-        ResponseEntity<PaymentInitialisationResponse> responseEntity = restTemplate.exchange(
+        ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
             context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
             HttpMethod.POST,
             entity,
