@@ -116,8 +116,7 @@ public class SinglePaymentSteps {
     }
 
     private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        context.setActualResponse(actualResponse);
+        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
         ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
         context.setMessageError(messageError);

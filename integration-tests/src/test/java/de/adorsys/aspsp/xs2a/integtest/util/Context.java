@@ -4,6 +4,7 @@ import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -25,4 +26,5 @@ public class Context<T, U> {
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
     private ITMessageError messageError;
+    private HttpStatus actualResponseStatus;
 }
