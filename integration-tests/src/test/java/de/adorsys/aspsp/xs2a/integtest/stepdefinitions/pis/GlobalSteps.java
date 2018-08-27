@@ -65,7 +65,7 @@ public class GlobalSteps {
         PaymentInitationRequestResponse201 givenResponseBody = (PaymentInitationRequestResponse201) context.getTestData().getResponse().getBody();
 
         HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
-        assertThat(context.getActualResponse().getStatusCode(), equalTo(httpStatus));
+        assertThat(context.getActualResponseStatus(), equalTo(httpStatus));
         assertThat(actualErrorObject.getTransactionStatus().toString(), equalTo(givenResponseBody.getTransactionStatus().toString()));
 
         TppMessages givenTppMessages = givenResponseBody.getTppMessages();

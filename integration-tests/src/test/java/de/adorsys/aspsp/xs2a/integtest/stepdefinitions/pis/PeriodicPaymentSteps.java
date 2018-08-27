@@ -120,9 +120,7 @@ public class PeriodicPaymentSteps {
                 });
 
         } catch (HttpClientErrorException hce) {
-            ResponseEntity<PaymentInitationRequestResponse201> actualResponse = new ResponseEntity<>(
-                hce.getStatusCode());
-            context.setActualResponse(actualResponse);
+            context.setActualResponseStatus(HttpStatus.valueOf(hce.getRawStatusCode()));
 
             ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
             context.setMessageError(messageError);
