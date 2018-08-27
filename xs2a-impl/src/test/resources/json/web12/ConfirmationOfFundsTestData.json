@@ -1,0 +1,16 @@
+{
+  "cardNumber": "12345",
+  "instructedAmount": {
+    "amount": "100.00",
+    "currency": "EUR"
+  },
+  "payee": "Check24",
+  "account": {
+    "bban": "1111111111",
+    "currency": "EUR",
+    "iban": "DE89370400440532013000",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "+49(0)911 360698-0",
+    "pan": "1111"
+  }
+}

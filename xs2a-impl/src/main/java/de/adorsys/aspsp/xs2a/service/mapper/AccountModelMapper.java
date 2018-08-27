@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
@@ -25,7 +24,6 @@ import de.adorsys.psd2.model.BalanceList;
 import de.adorsys.psd2.model.BalanceType;
 import de.adorsys.psd2.model.ReadBalanceResponse200;
 import org.springframework.beans.BeanUtils;
-
 import java.util.List;
 import java.util.Map;
 
@@ -71,19 +69,12 @@ public final class AccountModelMapper {
         de.adorsys.psd2.model.Balance target = new de.adorsys.psd2.model.Balance();
         BeanUtils.copyProperties(balance, target);
 
-        target.setBalanceAmount(mapToAmount(balance.getBalanceAmount()));
+        target.setBalanceAmount(AmountModelMapper.mapToAmount(balance.getBalanceAmount()));
         if (balance.getBalanceType() != null) {
             target.setBalanceType(BalanceType.fromValue(balance.getBalanceType().toString()));
         }
 
         return target;
-    }
-
-    private static de.adorsys.psd2.model.Amount mapToAmount(Amount amount) {
-        de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount();
-        amountTarget.setAmount(amount.getContent());
-        amountTarget.setCurrency(amount.getCurrency().getCurrencyCode());
-        return amountTarget;
     }
 
     public static de.adorsys.psd2.model.AccountReport mapToAccountReport(AccountReport accountReport) {
