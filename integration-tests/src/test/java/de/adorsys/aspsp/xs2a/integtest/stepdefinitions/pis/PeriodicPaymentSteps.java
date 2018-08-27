@@ -76,10 +76,10 @@ public class PeriodicPaymentSteps {
         context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
     }
 
-    //TODO Uncomment after ISO DateTime format rework
-    /*@When("^PSU sends the recurring payment initiating request$")
+    @When("^PSU sends the recurring payment initiating request$")
     public void sendPeriodicPaymentInitiatingRequest() {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
             context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
@@ -89,7 +89,7 @@ public class PeriodicPaymentSteps {
             });
 
         context.setActualResponse(responseEntity);
-    }*/
+    }
 
     @Then("^a successful response code and the appropriate recurring payment response data")
     public void checkResponseCodeFromPeriodicPayment() {
@@ -129,16 +129,7 @@ public class PeriodicPaymentSteps {
         }
     }
 
-    private void makeEndDateOffset(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
-        entity.getBody().setEndDate(entity.getBody().getEndDate().plusDays(DAYS_OFFSET));
-    }
-
     private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
         entity.getBody().setEndDate(entity.getBody().getStartDate().minusDays(DAYS_OFFSET));
     }
-
-    /*
-     * @Then("^an error response code is displayed the appropriate error response$")
-     * see SinglePaymentSteps.java
-     */
 }
