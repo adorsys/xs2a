@@ -36,6 +36,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class FundsConfirmationService {
     private final AccountService accountService;
+    private final AccountReferenceValidationService referenceValidationService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -44,12 +45,11 @@ public class FundsConfirmationService {
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
-        Boolean fundsAvailable = Optional.ofNullable(request)
-                                     .map(req -> isFundsAvailable(req.getPsuAccount(), req.getInstructedAmount()))
-                                     .orElse(false);
-
-        return ResponseObject.<FundsConfirmationResponse>builder()
-                   .body(new FundsConfirmationResponse(fundsAvailable)).build();
+            ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(request.getAccountReferences());
+            return accountReferenceValidationResponse.hasError()
+                       ? ResponseObject.<FundsConfirmationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
+                       : ResponseObject.<FundsConfirmationResponse>builder()
+                             .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
     }
 
     private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
