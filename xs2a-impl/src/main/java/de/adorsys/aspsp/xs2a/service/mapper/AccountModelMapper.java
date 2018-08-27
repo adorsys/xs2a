@@ -28,11 +28,11 @@ import de.adorsys.psd2.model.BalanceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public final class AccountModelMapper {
@@ -61,7 +61,7 @@ public final class AccountModelMapper {
         detailsTarget.setBalances(new BalanceList());
 
         accountDetails.getBalances().forEach(balance ->
-            detailsTarget.getBalances().add(mapToBalance(balance))
+                detailsTarget.getBalances().add(mapToBalance(balance))
         );
 
         detailsTarget.setLinks(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
