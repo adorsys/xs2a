@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -25,14 +25,15 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +48,8 @@ import java.util.*;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.mapToAccountDetails;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -76,11 +78,13 @@ public class AccountServiceTest {
     @Mock
     private ConsentService consentService;
     @Mock
-    private AisConsentService aisConsentService;
+    private ConsentSpi consentSpi;
     @Mock
     private AccountMapper accountMapper;
     @Mock
     private ValueValidatorService valueValidatorService;
+    @Mock
+    private ConsentMapper consentMapper;
 
     @Before
     public void setUp() {
@@ -92,7 +96,7 @@ public class AccountServiceTest {
         when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
         when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
         //AisReporting
-        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), anyBoolean(), any(TypeAccess.class), any(ResponseObject.class));
+        doNothing().when(consentSpi).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiAccountDetails(ACCOUNT_ID, IBAN), ASPSP_CONSENT_DATA));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));

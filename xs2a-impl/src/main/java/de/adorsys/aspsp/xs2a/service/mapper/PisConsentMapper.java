@@ -29,7 +29,7 @@ import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
-import de.adorsys.aspsp.xs2a.service.consent.pis.CreateConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

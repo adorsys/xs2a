@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpiCreateConsentRequest {
+public class SpiCreateConsentReq {
     private SpiAccountAccess access;
     private boolean recurringIndicator;
     private LocalDate validUntil;

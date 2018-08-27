@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
@@ -59,9 +58,9 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
+    public SpiCreateConsentReq mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
-                   .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
+                   .map(cr -> new SpiCreateConsentReq(mapToSpiAccountAccess(cr.getAccess()),
                        cr.isRecurringIndicator(), cr.getValidUntil(),
                        cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
                    .orElse(null);
@@ -85,11 +84,6 @@ public class ConsentMapper {
     public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus) {
         return Optional.ofNullable(spiConsentStatus)
                    .map(status -> ConsentStatus.valueOf(status.name()));
-    }
-
-    public Optional<SpiConsentStatus> mapToSpiConsentStatus(CmsConsentStatus consentStatus) {
-        return Optional.ofNullable(consentStatus)
-                   .map(status -> SpiConsentStatus.valueOf(status.name()));
     }
 
     public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {

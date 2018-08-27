@@ -28,7 +28,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -60,9 +60,9 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
+    public SpiCreateConsentReq mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
-                   .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
+                   .map(cr -> new SpiCreateConsentReq(mapToSpiAccountAccess(cr.getAccess()),
                        cr.isRecurringIndicator(), cr.getValidUntil(),
                        cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
                    .orElse(null);

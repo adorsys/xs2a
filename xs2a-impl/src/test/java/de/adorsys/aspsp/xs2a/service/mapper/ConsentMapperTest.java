@@ -29,7 +29,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentReq;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,10 +125,10 @@ public class ConsentMapperTest {
         //Given:
         String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq donorRequest = jsonConverter.toObject(aicRequestJson, CreateConsentReq.class).get();
-        SpiCreateConsentRequest expectedRequest = jsonConverter.toObject(aicRequestJson, SpiCreateConsentRequest.class).get();
+        SpiCreateConsentReq expectedRequest = jsonConverter.toObject(aicRequestJson, SpiCreateConsentReq.class).get();
 
         //When:
-        SpiCreateConsentRequest actualRequest = consentMapper.mapToSpiCreateConsentRequest(donorRequest);
+        SpiCreateConsentReq actualRequest = consentMapper.mapToSpiCreateConsentRequest(donorRequest);
 
         //Then:
         assertThat(actualRequest.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());

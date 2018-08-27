@@ -28,13 +28,14 @@ import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -163,7 +164,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ScaPaymentService scaPaymentService(PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
+    public ScaPaymentService scaPaymentService(ConsentSpi consentSpi, PaymentMapper paymentMapper, PaymentSpi paymentSpi, PisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = aspspProfileService.readScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthScaPaymentService(paymentMapper, paymentSpi);
@@ -172,7 +173,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         } else if (EMBEDDED == scaApproach) {
             return new EmbeddedScaPaymentService();
         }
-        return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+        return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
     }
 
     @Bean
