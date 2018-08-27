@@ -4,7 +4,7 @@
       <h1 class="container__title">Confirm new AIS request</h1>
       <p class="container__text">
         TTP has requested the following account information from your bank accounts. If you agree to us providing this specific information, then please click the Confirm button below.</p>
-      <ul class="container__list" *ngIf="Accounts$ | async as allAccounts">
+      <ul class="container__list" *ngIf="Accounts">
         <!--&#45;&#45; {{Account.iban}} &#45;&#45;-->
 
         <li>
@@ -12,7 +12,7 @@
            justify-content: space-between;
            width: 600px;
             padding: 0px;
-            list-style: none" *ngFor="let Account of allAccounts">
+            list-style: none" *ngFor="let Account of Accounts">
             <li><span>{{Account.iban}}</span></li>
             <!--TODO: Change currency format -->
             <li *ngFor="let Balance of Account.balances"><span>{{Balance.balanceAmount.content}} {{Balance.balanceAmount.currency}}</span></li>
@@ -36,7 +36,7 @@
       TPP will access your accounts till {{ Consent.validUntil }}
       </div>
       <div class="buttons-small">
-        <button type="button" name="decision" value="revoked" class="buttons-small btn--cancel" [routerLink]="['/consentconfirmationdenied']">Cancel</button>
+        <button (click)=onClickCancel() type="button" name="decision" value="revoked" class="buttons-small btn--cancel" [routerLink]="['/consentconfirmationdenied']">Cancel</button>
         <button (click)=onClickContinue() type="button" name="decision" value="confirmed" class="buttons-small btn--continue" [routerLink]="['/tanconfirmationpage']">Confirm</button>
       </div>
     </div>

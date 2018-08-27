@@ -12,9 +12,10 @@ import {AccountConsent} from "../../model/aspsp/accountConsent";
 })
 export class ConsentConfirmationPageComponent implements OnInit {
   consentId: string;
-  Accounts$: Observable<Account[]>;
+  Accounts: Account[];
   Consent$: Observable<AccountConsent>
   TransactionLimit$: Observable<number>
+
 
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
@@ -24,13 +25,23 @@ export class ConsentConfirmationPageComponent implements OnInit {
       .subscribe(params => { this.getConsentIdFromUrl(params) });
     this.aisService.saveConsentId(this.consentId);
     this.Consent$ = this.aisService.getConsent(this.consentId);
-    this.Accounts$ = this.aisService.getAccounts();
+    this.aisService.getAccounts()
+      .subscribe(data => {
+        this.Accounts = data;
+      });
     this.TransactionLimit$ = this.aisService.getTransactionLimit();
 
   }
 
   onClickContinue() {
+    this.aisService.generateTan(this.Accounts[0].iban)
+    this.aisService.updateConsentStatus('confirmed')
     this.router.navigate(['/tanconfirmation'], {queryParams: this.createQueryParams});
+  }
+
+  onClickCancel() {
+    this.aisService.updateConsentStatus('revoked')
+    this.router.navigate(['/consentconfirmationdenied'], {queryParams: this.createQueryParams});
   }
 
   getConsentIdFromUrl(params: UrlSegment[]) {

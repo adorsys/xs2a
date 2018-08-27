@@ -13,8 +13,7 @@ import {AccountsResponse} from "../model/aspsp/AccountsResponse";
 })
 export class AisService {
   aspspServerUrl = environment.aspspServerUrl;
-  savedConsentId : string;
-
+  savedConsentId: string;
 
 
   constructor(private httpClient: HttpClient) {
@@ -35,16 +34,16 @@ export class AisService {
     console.log("iio headers consent", headers);
     return this.httpClient.get<AccountConsent>(this.aspspServerUrl + '/api/v1/consents/' + consentId, {headers: headers})
       .pipe(
-      map(data => {
-        console.log(data);
-        return data;
-      })
-    );
+        map(data => {
+          console.log(data);
+          return data;
+        })
+      );
   }
 
   getAccounts(): Observable<Account[]> {
     let date = new Date();
-    const headers = new HttpHeaders( {
+    const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
       'date': date.toUTCString(),
       'consent-id': this.savedConsentId,
@@ -53,7 +52,7 @@ export class AisService {
     console.log("iio", headers);
     return this.httpClient.get <AccountsResponse>(this.aspspServerUrl + '/api/v1/accounts?with-balance=true', {headers: headers})
       .pipe(
-        map( data =>{
+        map(data => {
           return data.accountList;
         })
       );
@@ -62,12 +61,26 @@ export class AisService {
   getTransactionLimit(): Observable<number> {
     return this.httpClient.get<number>('https://aspsp-profile-integ.cloud.adorsys.de/api/v1/transaction-lifetime')
       .pipe(
-        map(data =>{
+        map(data => {
           console.log('account iio', data);
           return data;
-          })
+        })
       )
   }
+
+  generateTan(iban: string): Observable<string> {
+    return this.httpClient.post<string>(`${this.aspspServerUrl}/consent/confirmation/tan/${iban}`, {})
+  }
+
+  updateConsentStatus(consentStatus): any {
+    return this.httpClient.put(`${this.aspspServerUrl}/consent/confirmation/status/${this.savedConsentId}/${consentStatus}`, {})
+  }
+
+  // validateTan(tanNumber: number): Observable<number> {
+  //   const body = {
+  //     tanNumber: this.tanNumber,
+  //   }
+  //   return this.httpClient.post<number>(`${this.aspspServerUrl}/consent/confirmation/tan/validate`, {})
+  // }
+
 }
-
-
