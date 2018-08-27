@@ -5,7 +5,7 @@
   "scaMethods": [],
   "tppMessages": [],
   "_links": {
-     "scaRedirect":"http://localhost:28080/payment/confirmation/DE371234599999/932f8184-59dc-4fdb-848e-58b887b3ba02/OTMyZjgxODQtNTlkYy00ZmRiLTg0OGUtNThiODg3YjNiYTAy",
+     "scaRedirect":"http://localhost:28080/payment/confirmation/932f8184-59dc-4fdb-848e-58b887b3ba02/OTMyZjgxODQtNTlkYy00ZmRiLTg0OGUtNThiODg3YjNiYTAy",
      "updatePsuIdentification":"http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02",
      "updatePsuAuthentication":"http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02",
      "self":"http://localhost/api/v1/payments/sepa-credit-transfers/932f8184-59dc-4fdb-848e-58b887b3ba02",

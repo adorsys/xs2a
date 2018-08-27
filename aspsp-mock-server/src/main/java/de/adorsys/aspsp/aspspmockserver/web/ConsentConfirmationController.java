@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web.rest;
+package de.adorsys.aspsp.aspspmockserver.web;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

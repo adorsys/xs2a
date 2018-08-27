@@ -43,6 +43,7 @@ public class PaymentConfirmationServiceTest {
     private final String IBAN_2 = "DE987654321";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String WRONG_IBAN = "Wrong iban";
+    private static final String WRONG_NAME = "Wrong name";
     private static final String TAN_ID = "2d4b403b-f5f5-41c0-847f-b6abf1edb102";
     private static final String TAN_NUMBER = "123456";
     private static final String WRONG_TAN_NUMBER = "wrong tan number";
@@ -70,6 +71,8 @@ public class PaymentConfirmationServiceTest {
             .thenReturn(null);
         when(accountService.getPsuIdByIban(WRONG_IBAN))
             .thenReturn(Optional.empty());
+        when(accountService.getPsuIdByName(WRONG_NAME))
+            .thenReturn(Optional.empty());
         when(accountService.getPsuIdByIban(IBAN_1))
             .thenReturn(Optional.of(PSU_ID_1));
         when(accountService.getPsuIdByIban(IBAN_2))
@@ -83,9 +86,9 @@ public class PaymentConfirmationServiceTest {
     }
 
     @Test
-    public void generateAndSendTanForPsuByIban_Failure() {
+    public void generateAndSendTanForPsuByName_Failure() {
         //When
-        boolean actualResult = paymentConfirmationService.generateAndSendTanForPsuByIban(WRONG_IBAN);
+        boolean actualResult = paymentConfirmationService.generateAndSendTanForPsuByName(WRONG_NAME);
 
         //Then
         assertThat(actualResult).isFalse();
@@ -128,11 +131,11 @@ public class PaymentConfirmationServiceTest {
     }
 
     private Psu getPsu1() {
-        return new Psu(PSU_ID_1, "test1@gmail.com", null, null);
+        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null);
     }
 
     private Psu getPsu2() {
-        return new Psu(PSU_ID_2, "test2@gmail.com", null, null);
+        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null);
     }
 
     private Tan getUnusedTan() {

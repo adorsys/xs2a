@@ -16,34 +16,43 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class PsuService {
-    private PsuRepository psuRepository;
-
-    @Autowired
-    public PsuService(PsuRepository psuRepository) {
-        this.psuRepository = psuRepository;
-    }
+    private final PsuRepository psuRepository;
+    private final KeycloakService keycloakService;
 
     /**
-     * Checks psu for validity and saves it to DB
+     * Checks psu for validity saves it to DB and register it to Keycloak
      *
      * @param psu PSU to be saved
      * @return a string representation of ASPSP identifier for saved PSU
      */
     public String createPsuAndReturnId(Psu psu) {
-        return psu.isValid()
-                   ? psuRepository.save(psu).getId()
-                   : null;
+        if (!psu.isValid()) {
+            log.error("Psu: {} is invalid", psu.getName());
+            return null;
+        } else if (psuRepository.findPsuByName(psu.getName()).isPresent()) {
+            log.error("Psu with name: {} is already exist", psu.getName());
+            return null;
+        } else if (!keycloakService.registerClient(psu.getName(), psu.getPassword(), psu.getEmail())) {
+            log.error("Can't register Psu: {} in Keycloak", psu.getName());
+            return null;
+        }
+        return psuRepository.save(psu)
+                   .getId();
     }
 
     /**
@@ -94,7 +103,7 @@ public class PsuService {
     /**
      * Adds an allowed payment product to corresponding PSU`s list
      *
-     * @param psuId      String representation of ASPSP identifier for specific PSU
+     * @param psuId   String representation of ASPSP identifier for specific PSU
      * @param product String representation of product to be added
      */
     public void addAllowedProduct(String psuId, String product) {

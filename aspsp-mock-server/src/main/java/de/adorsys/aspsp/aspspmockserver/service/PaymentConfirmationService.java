@@ -55,11 +55,11 @@ public class PaymentConfirmationService {
     /**
      * Generates new Tan and sends it to psu's email for payment confirmation
      *
-     * @param iban Iban of Psu in order to get correct Psu and than get psu's email
+     * @param name of Psu in order to get correct Psu and than get psu's email
      * @return true if psu was found and new Tan was sent successfully, otherwise return false
      */
-    public boolean generateAndSendTanForPsuByIban(String iban) {
-        return accountService.getPsuIdByIban(iban)
+    public boolean generateAndSendTanForPsuByName(String name) {
+        return accountService.getPsuIdByName(name)
                    .map(this::generateAndSendTanForPsu)
                    .orElse(false);
     }
