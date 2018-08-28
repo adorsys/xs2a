@@ -22,15 +22,11 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 
 public class AccountServiceUtil {
-
-
     public static AccountDetails getAccountDetailNoBalances(AccountDetails detail) {
         return new AccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
             detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
-
-
 
     public static AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
         return new AccountReport(
@@ -39,6 +35,4 @@ public class AccountServiceUtil {
             bookingStatus == BookingStatus.PENDING || bookingStatus == BookingStatus.BOTH
                 ? report.getPending() : new Transactions[]{});
     }
-
-
 }
