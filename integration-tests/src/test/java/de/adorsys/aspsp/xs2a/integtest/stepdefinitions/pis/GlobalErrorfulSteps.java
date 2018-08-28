@@ -16,8 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+import cucumber.api.java.en.Then;
+import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+
 
 @FeatureFileSteps
 public class GlobalErrorfulSteps {
@@ -25,21 +35,21 @@ public class GlobalErrorfulSteps {
     @Autowired
     private Context context;
 
-//    @Then("^an error response code is displayed the appropriate error response$")
-//    public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-//        ITMessageError actualErrorObject = context.getMessageError();
-//        TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
-//
-//        HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
-//        assertThat(context.getActualResponseStatus(), equalTo(httpStatus));
-//
-//        TppMessages actualTppMessages = actualErrorObject.getTppMessages();
-//
-//        assertThat(actualTppMessages, is(equalTo(givenTppMessages)));
-//
-//        actualTppMessages.forEach ((msg) -> {
-//            assertThat(msg.getCategory().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCategory().toString()));
-//            assertThat(msg.getCode().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCode().toString()));
-//        });
-//    }
+    @Then("^an error response code is displayed the appropriate error response$")
+    public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
+        ITMessageError actualErrorObject = context.getMessageError();
+        TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
+
+        HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
+        assertThat(context.getActualResponseStatus(), equalTo(httpStatus));
+
+        TppMessages actualTppMessages = actualErrorObject.getTppMessages();
+
+        assertThat(actualTppMessages, is(equalTo(givenTppMessages)));
+
+        actualTppMessages.forEach ((msg) -> {
+            assertThat(msg.getCategory().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCategory().toString()));
+            assertThat(msg.getCode().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCode().toString()));
+        });
+    }
 }
