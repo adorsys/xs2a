@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.web.util;
+package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.BookingStatus;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-public class AccountServiceUtil {
-    public static AccountDetails getAccountDetailNoBalances(AccountDetails detail) {
+@Component
+@RequiredArgsConstructor
+public class AccountServiceMapper {
+
+    public AccountDetails getAccountDetailNoBalances(AccountDetails detail) {
         return new AccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
             detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
 
-    public static AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+    public AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
         return new AccountReport(
             bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
                 ? report.getBooked() : new Transactions[]{},

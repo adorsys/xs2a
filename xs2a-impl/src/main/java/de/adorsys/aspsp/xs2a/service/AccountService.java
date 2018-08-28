@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountServiceMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
@@ -35,7 +36,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
-import de.adorsys.aspsp.xs2a.web.util.AccountServiceUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -62,6 +62,7 @@ public class AccountService {
     private final ConsentService consentService;
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
+    private final AccountServiceMapper accountServiceMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
@@ -117,7 +118,7 @@ public class AccountService {
         if (isValid) {
             builder = withBalance
                           ? builder.body(accountDetails)
-                          : builder.body(AccountServiceUtil.getAccountDetailNoBalances(accountDetails));
+                          : builder.body(accountServiceMapper.getAccountDetailNoBalances(accountDetails));
         } else {
             builder = builder
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
@@ -219,7 +220,7 @@ public class AccountService {
 
     private List<AccountDetails> getAccountDetailsNoBalances(List<AccountDetails> details) {
         return details.stream()
-                   .map(AccountServiceUtil::getAccountDetailNoBalances)
+                   .map(accountServiceMapper::getAccountDetailNoBalances)
                    .collect(Collectors.toList());
     }
 
@@ -229,7 +230,7 @@ public class AccountService {
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
-                         .map(r -> AccountServiceUtil.filterByBookingStatus(r, bookingStatus));
+                         .map(r -> accountServiceMapper.filterByBookingStatus(r, bookingStatus));
 
     }
 
