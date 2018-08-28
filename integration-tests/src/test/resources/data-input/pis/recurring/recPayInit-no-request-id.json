@@ -39,7 +39,6 @@
     "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "",
       "tppMessages": [
         {
           "category": "ERROR",

@@ -43,7 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @FeatureFileSteps
-public class PaymentStatusSteps {
+public class PaymentStatusSuccessfulSteps {
 
     @Autowired
     @Qualifier("xs2a")

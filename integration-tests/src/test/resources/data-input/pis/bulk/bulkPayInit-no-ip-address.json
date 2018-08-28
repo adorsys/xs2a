@@ -62,7 +62,6 @@
     "header": {},
     "body": [
       {
-        "transactionStatus": "",
         "tppMessages": [
           {
             "category": "ERROR",
@@ -71,7 +70,6 @@
         ]
       },
       {
-        "transactionStatus": "",
         "tppMessages": [
           {
             "category": "ERROR",
