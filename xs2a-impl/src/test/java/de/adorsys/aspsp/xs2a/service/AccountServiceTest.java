@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountServiceMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
@@ -86,8 +85,6 @@ public class AccountServiceTest {
     private ValueValidatorService valueValidatorService;
     @Mock
     private ConsentMapper consentMapper;
-    @Mock
-    private AccountServiceMapper accountServiceMapper;
 
     @Before
     public void setUp() {
@@ -125,9 +122,9 @@ public class AccountServiceTest {
         when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiTransaction()), ASPSP_CONSENT_DATA));
 
         //AccountServiceMapping
-        when(accountServiceMapper.getAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID, IBAN));
-        when(accountServiceMapper.getAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID_1, IBAN_1));
-        when(accountServiceMapper.filterByBookingStatus(getReport(), BookingStatus.BOTH)).thenReturn(getReport());
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID, IBAN));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID_1, IBAN_1));
+       // when(accountService.filterByBookingStatus(getReport(), BookingStatus.BOTH)).thenReturn(getReport());
     }
 
     //Get Account By AccountId

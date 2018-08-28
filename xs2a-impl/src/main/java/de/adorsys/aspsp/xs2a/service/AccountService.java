@@ -18,19 +18,14 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
-import de.adorsys.aspsp.xs2a.domain.Balance;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountServiceMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
-import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -62,7 +57,6 @@ public class AccountService {
     private final ConsentService consentService;
     private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
-    private final AccountServiceMapper accountServiceMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
@@ -118,7 +112,7 @@ public class AccountService {
         if (isValid) {
             builder = withBalance
                           ? builder.body(accountDetails)
-                          : builder.body(accountServiceMapper.getAccountDetailNoBalances(accountDetails));
+                          : builder.body(accountMapper.mapToAccountDetailNoBalances(accountDetails));
         } else {
             builder = builder
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
@@ -205,7 +199,7 @@ public class AccountService {
         List<AccountDetails> details = getAccountDetailsFromReferences(references);
         return withBalance
                    ? details
-                   : getAccountDetailsNoBalances(details);
+                   : accountMapper.mapToAccountDetailsListNoBalances(details);
     }
 
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
@@ -218,25 +212,18 @@ public class AccountService {
                          .collect(Collectors.toList());
     }
 
-    private List<AccountDetails> getAccountDetailsNoBalances(List<AccountDetails> details) {
-        return details.stream()
-                   .map(accountServiceMapper::getAccountDetailNoBalances)
-                   .collect(Collectors.toList());
-    }
-
 
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
-                         .map(r -> accountServiceMapper.filterByBookingStatus(r, bookingStatus));
+                         .map(r -> filterByBookingStatus(r, bookingStatus));
 
     }
 
-
     private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
-        validateAccountIdTransactionId(accountId, transactionId);
+        validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
         Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return accountMapper.mapToAccountReport(transaction
@@ -247,7 +234,7 @@ public class AccountService {
     private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
-        validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
+        validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
@@ -261,28 +248,17 @@ public class AccountService {
                    .map(accountMapper::mapToAccountDetails);
     }
 
-    // Validation
-    private void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setDateFrom(dateFrom);
-        fieldValidator.setDateTo(dateTo);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
-    }
-
-    private void validateAccountIdTransactionId(String accountId, String transactionId) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setTransactionId(transactionId);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
-    }
-
-
     private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
         return response.hasError()
                    ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(), withBalance, access)
                    : ActionStatus.SUCCESS;
+    }
+
+    public AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+        return new AccountReport(
+            bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
+                ? report.getBooked() : new Transactions[]{},
+            bookingStatus == BookingStatus.PENDING || bookingStatus == BookingStatus.BOTH
+                ? report.getPending() : new Transactions[]{});
     }
 }

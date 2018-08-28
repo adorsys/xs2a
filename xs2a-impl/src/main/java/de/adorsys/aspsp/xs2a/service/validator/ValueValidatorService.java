@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import javax.validation.Validator;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,24 @@ public class ValueValidatorService {
     @Autowired
     public ValueValidatorService(Validator validator) {
         this.validator = validator;
+    }
+
+    // Validation
+    public void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setDateFrom(dateFrom);
+        fieldValidator.setDateTo(dateTo);
+
+        validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
+    }
+
+    public void validateAccountIdTransactionId(String accountId, String transactionId) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setTransactionId(transactionId);
+
+        validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
     }
 
     public void validate(Object obj, Class<?>... groups) {
