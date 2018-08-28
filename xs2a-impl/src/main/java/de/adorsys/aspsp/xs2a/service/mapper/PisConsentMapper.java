@@ -29,7 +29,7 @@ import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -45,28 +45,28 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PisConsentMapper {
 
-    public PisConsentRequest mapToPisConsentRequestForPeriodicPayment(CreateConsentRequest createConsentRequest, String paymentId) {
+    public PisConsentRequest mapToPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData, String paymentId) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createConsentRequest.getPeriodicPayment(), paymentId)));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createConsentRequest.getPaymentProduct()).orElse(null));
+        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment(), paymentId)));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.PERIODIC);
-        request.setTppInfo(mapToTppInfo(createConsentRequest.getTppInfo()));
+        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         request.setAspspConsentData(
-            Optional.ofNullable(createConsentRequest.getAspspConsentData())
+            Optional.ofNullable(createPisConsentData.getAspspConsentData())
                 .map(AspspConsentData::getAspspConsentData)
                 .orElse(null));
 
         return request;
     }
 
-    public PisConsentRequest mapToPisConsentRequestForBulkPayment(CreateConsentRequest createConsentRequest) {
+    public PisConsentRequest mapToPisConsentRequestForBulkPayment(CreatePisConsentData createPisConsentData) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(mapToPisPaymentForBulkPayment(createConsentRequest.getPaymentIdentifierMap()));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createConsentRequest.getPaymentProduct()).orElse(null));
+        request.setPayments(mapToPisPaymentForBulkPayment(createPisConsentData.getPaymentIdentifierMap()));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.BULK);
-        request.setTppInfo(mapToTppInfo(createConsentRequest.getTppInfo()));
+        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         request.setAspspConsentData(
-            Optional.ofNullable(createConsentRequest.getAspspConsentData())
+            Optional.ofNullable(createPisConsentData.getAspspConsentData())
                 .map(AspspConsentData::getAspspConsentData)
                 .orElse(null));
 
@@ -81,14 +81,14 @@ public class PisConsentMapper {
 
     }
 
-    public PisConsentRequest mapToPisConsentRequestForSinglePayment(CreateConsentRequest createConsentRequest, String paymentId) {
+    public PisConsentRequest mapToPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData, String paymentId) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createConsentRequest.getSinglePayment(), paymentId)));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createConsentRequest.getPaymentProduct()).orElse(null));
+        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createPisConsentData.getSinglePayment(), paymentId)));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.SINGLE);
-        request.setTppInfo(mapToTppInfo(createConsentRequest.getTppInfo()));
+        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         request.setAspspConsentData(
-            Optional.ofNullable(createConsentRequest.getAspspConsentData())
+            Optional.ofNullable(createPisConsentData.getAspspConsentData())
                 .map(AspspConsentData::getAspspConsentData)
                 .orElse(null));
 
