@@ -20,7 +20,9 @@ import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
+import de.adorsys.aspsp.xs2a.repository.AisAccountRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import org.junit.Before;
@@ -32,12 +34,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -53,10 +59,14 @@ public class AisConsentServiceTest {
     private ConsentMapper consentMapper;
     @Mock
     private AisConsentRepository aisConsentRepository;
+    @Mock
+    private AisAccountRepository aisAccountRepository;
+
 
     private AisConsent aisConsent;
     private final long CONSENT_ID = 1;
     private final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
 
     @Before
     public void setUp() {
@@ -89,6 +99,20 @@ public class AisConsentServiceTest {
         // Assert
         assertTrue(externalId.isPresent());
         assertThat(externalId.get(), is(equalTo(aisConsent.getExternalId())));
+    }
+
+    @Test
+    public void updateAccountAccessById(){
+        // When
+        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        when(aisAccountRepository.save(any(AisAccount.class))).thenReturn(new AisAccount());
+        // Then
+        Optional<String> consentid = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID, buildCorrectCreateAisConsentRequest());
+        Optional<String> consentid_notExist = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID_NOT_EXIST, buildCorrectCreateAisConsentRequest());
+        // Assert
+        assertTrue(consentid.isPresent());
+        assertFalse(consentid_notExist.isPresent());
     }
 
     private AisConsent buildConsent() {

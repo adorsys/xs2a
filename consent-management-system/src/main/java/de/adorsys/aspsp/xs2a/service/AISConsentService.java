@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
+import de.adorsys.aspsp.xs2a.repository.AisAccountRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
@@ -51,6 +52,7 @@ public class AISConsentService {
     private final AisConsentActionRepository aisConsentActionRepository;
     private final ConsentMapper consentMapper;
     private final AspspProfileService profileService;
+    private final AisAccountRepository aisAccountRepository;
 
     /**
      * Create AIS consent
@@ -204,4 +206,29 @@ public class AISConsentService {
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
     }
+
+    public Optional<String> updateAccountAccessById(String consentId, CreateAisConsentRequest request) {
+
+        return getActualAisConsent(consentId)
+                   .map(consent -> {
+                       readAccounts(request.getAccess()).stream().forEach(aisAccountRequest -> updateAccountAccess(consent, aisAccountRequest));
+                       return consent.getExternalId();
+                   });
+    }
+
+    private void updateAccountAccess(AisConsent consent, AisAccount aisAccountRequest) {
+        Optional<AisAccount> aisAccountConsentFindByIban = consent.getAccounts().stream().filter(ac -> ac.getIban().equals(aisAccountRequest.getIban())).findFirst();
+        AisAccount aisAccountUpdate;
+        if (!aisAccountConsentFindByIban.isPresent()) {
+            aisAccountRequest.setConsent(consent);
+            aisAccountUpdate = aisAccountRequest;
+        } else {
+            aisAccountUpdate = aisAccountConsentFindByIban.get();
+            List<AccountAccess> accesses = aisAccountUpdate.getAccesses();
+            accesses.clear();
+            accesses.addAll(aisAccountRequest.getAccesses());
+        }
+        aisAccountRepository.save(aisAccountUpdate);
+    }
+
 }
