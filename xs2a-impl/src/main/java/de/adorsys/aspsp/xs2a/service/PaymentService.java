@@ -139,7 +139,7 @@ public class PaymentService<T> {
      */
     public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
-        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId));
+        Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId,"TMP")); //NOT USED IN 1.2
         return payment.isPresent()
                    ? ResponseObject.builder().body(payment.get()).build()
                    : ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build();
@@ -164,11 +164,11 @@ public class PaymentService<T> {
     public ResponseObject<PaymentInitialisationResponse> createPayment(T payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
         ResponseObject<PaymentInitialisationResponse> response = ResponseObject.<PaymentInitialisationResponse>builder().fail(new MessageError(PARAMETER_NOT_SUPPORTED)).build();//TODO wrong code here for sure to be updated
         if (paymentType == PaymentType.SINGLE) {
-            response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.name());
+            response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         } else if (paymentType == PaymentType.PERIODIC) {
-            response = initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.name());
+            response = initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         } else if (paymentType == PaymentType.BULK) {
-            response = createBulkPayments((List<SinglePayment>) payment, tppSignatureCertificate, paymentProduct.name());
+            response = createBulkPayments((List<SinglePayment>) payment, tppSignatureCertificate, paymentProduct.getCode());
         }
         return response;
     }

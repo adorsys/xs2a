@@ -70,8 +70,8 @@ public class PaymentController12 implements PaymentApi {
                                                               .fail(new MessageError(FORMAT_ERROR)).build());
 
         return response.hasError()
-                   ? responseMapper.created(response)
-                   : responseMapper.created(ResponseObject.builder().body(mapToGetPaymentResponse12(response, PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
+                   ? responseMapper.ok(response)
+                   : responseMapper.ok(ResponseObject.builder().body(mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
     }
 
     @Override
@@ -85,9 +85,9 @@ public class PaymentController12 implements PaymentApi {
                                              String psUGeoLocation) {
         Optional<PaymentProduct> product = PaymentProduct.getByCode(paymentProduct);
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
-        ResponseObject<PaymentInitialisationResponse> serviceResponse = product.isPresent() && paymentType.isPresent()
-                                                                            ? xs2aPaymentService.createPayment(mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), new String(tpPSignatureCertificate, StandardCharsets.UTF_8))
-                                                                            : ResponseObject.<PaymentInitialisationResponse>builder().fail(new MessageError(FORMAT_ERROR)).build();
+        String cert = new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8);
+        ResponseObject<PaymentInitialisationResponse> serviceResponse =
+            xs2aPaymentService.createPayment(mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), cert);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)

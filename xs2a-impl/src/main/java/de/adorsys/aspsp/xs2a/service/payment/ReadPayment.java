@@ -26,5 +26,5 @@ public abstract class ReadPayment<T> {
     @Autowired
     protected PaymentMapper paymentMapper;
 
-    public abstract T getPayment(String paymentId);
+    public abstract T getPayment(String paymentId, String paymentProduct);
 }

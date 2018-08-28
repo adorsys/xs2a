@@ -28,6 +28,7 @@ import org.springframework.beans.BeanUtils;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public final class AccountModelMapper {
 
@@ -79,9 +80,18 @@ public final class AccountModelMapper {
     }
 
     public static de.adorsys.psd2.model.Amount mapToAmount12(Amount amount) {
-        de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(amount.getContent());
-        amountTarget.setCurrency(amount.getCurrency().getCurrencyCode());
-        return amountTarget;
+        return Optional.ofNullable(amount)
+                   .map(a -> {
+                       de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(a.getContent());
+                       amountTarget.setCurrency(getCurrencyCodeString(a.getCurrency()));
+                       return amountTarget;
+                   }).orElse(null);
+    }
+
+    private static String getCurrencyCodeString(Currency currency) {
+        return Optional.ofNullable(currency)
+                   .map(Currency::getCurrencyCode)
+                   .orElse(null);
     }
 
     public static de.adorsys.psd2.model.AccountReport mapToAccountReport(AccountReport accountReport) {

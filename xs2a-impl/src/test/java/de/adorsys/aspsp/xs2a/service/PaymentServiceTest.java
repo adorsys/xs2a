@@ -264,7 +264,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById() {
         when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString())).thenReturn(getSinglePayment(IBAN, "10"));
+        when(readSinglePayment.getPayment(anyString(),anyString())).thenReturn(getSinglePayment(IBAN, "10"));
         //When
         ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, PAYMENT_ID);
         //Than
@@ -278,7 +278,7 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentById_Failure_wrong_id() {
         when(readPaymentFactory.getService((any()))).thenReturn(readSinglePayment);
-        when(readSinglePayment.getPayment(anyString())).thenReturn(null);
+        when(readSinglePayment.getPayment(anyString(), anyString())).thenReturn(null);
 
         //When
         ResponseObject<Object> response = paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID);
