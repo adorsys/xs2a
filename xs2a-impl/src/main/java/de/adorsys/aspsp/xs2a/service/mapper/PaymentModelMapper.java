@@ -16,6 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.address.CountryCode;
@@ -23,6 +31,7 @@ import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.psd2.model.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,6 +42,18 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
 
 public final class PaymentModelMapper<T, R> {
+    private static final ObjectMapper mapper = new ObjectMapper();
+    static {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JavaTimeModule());
+        mapper.registerModule(new ParameterNamesModule());
+    }
+
+
+
     public static TransactionStatus mapToTransactionStatus12(de.adorsys.aspsp.xs2a.domain.TransactionStatus responseObject) {
         return TransactionStatus.valueOf(responseObject.name());
     }
@@ -54,52 +75,104 @@ public final class PaymentModelMapper<T, R> {
 
     public static <T, R> T mapToXs2aPayment(R payment, PaymentType type, PaymentProduct product) {
         if (type == SINGLE) {
-            SinglePayment targetPayment = new SinglePayment();
-            Map<String, Object> paymentRequest = (LinkedHashMap<String, Object>) payment;
-
-            targetPayment.setEndToEndIdentification(Optional.ofNullable(paymentRequest.get("endToEndIdentification"))
-                                                        .map(Object::toString)
-                                                        .orElse(null));
-            targetPayment.setDebtorAccount(Optional.ofNullable(paymentRequest.get("debtorAccount"))
-                                               .map(PaymentModelMapper::mapToXs2aAccountReference)
-                                               .orElse(new AccountReference()));
-            targetPayment.setUltimateDebtor(""); //TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            targetPayment.setInstructedAmount(Optional.ofNullable(paymentRequest.get("instructedAmount"))
-                                                  .map(PaymentModelMapper::mapToXs2aAmount)
-                                                  .orElse(new de.adorsys.aspsp.xs2a.domain.Amount()));
-            targetPayment.setCreditorAccount(Optional.ofNullable(paymentRequest.get("creditorAccount"))
-                                                 .map(PaymentModelMapper::mapToXs2aAccountReference)
-                                                 .orElse(new AccountReference()));
-            targetPayment.setCreditorAgent(Optional.ofNullable(paymentRequest.get("creditorAgent"))
-                                               .map(Object::toString)
-                                               .map(PaymentModelMapper::mapToXs2aBICFI)
-                                               .orElse(new BICFI()));
-            targetPayment.setCreditorName(Optional.ofNullable(paymentRequest.get("creditorName"))
-                                              .map(Object::toString)
-                                              .orElse(null));
-            targetPayment.setCreditorAddress(Optional.ofNullable(paymentRequest.get("creditorAddress"))
-                                                 .map(PaymentModelMapper::mapToXs2aAddress)
-                                                 .orElse(new Address()));
-            targetPayment.setUltimateCreditor(Optional.ofNullable(paymentRequest.get("creditorName"))
-                                                  .map(Object::toString)
-                                                  .orElse(null));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            targetPayment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode("N/A"));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            targetPayment.setRemittanceInformationUnstructured(Optional.ofNullable(paymentRequest.get("remittanceInformationUnstructured"))
-                                                                   .map(Object::toString)
-                                                                   .orElse(null));
-            targetPayment.setRemittanceInformationStructured(new Remittance()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            targetPayment.setRequestedExecutionDate(LocalDate.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            targetPayment.setRequestedExecutionTime(LocalDateTime.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+            SinglePayment targetPayment = mapToXs2aSinglePayment((LinkedHashMap<String, Object>) payment);
             return (T) targetPayment;
         } else if (type == PERIODIC) {
-            PeriodicPayment targetPayment = new PeriodicPayment();
-
+            PeriodicPayment targetPayment = mapToXs2aPeriodicPayment((LinkedHashMap<String, Object>) payment);
             return (T) targetPayment;
         } else {
-            List<SinglePayment> targetPayment = new ArrayList<>();
 
+            String s = null;
+            try {
+                s = mapper.writeValueAsString(payment);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            BulkPaymentInitiationSctJson bulk = null;
+            try {
+                bulk = mapper.readValue(s,BulkPaymentInitiationSctJson.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            List < SinglePayment > targetPayment = mapToXs2aBulkPayment(bulk);
             return (T) targetPayment;
         }
+    }
+
+    private static SinglePayment mapToXs2aSinglePayment(Map<String, Object> paymentRequest) {
+        SinglePayment singlePayment = new SinglePayment();
+
+        singlePayment.setEndToEndIdentification(Optional.ofNullable(paymentRequest.get("endToEndIdentification"))
+                                                    .map(Object::toString)
+                                                    .orElse(null));
+        singlePayment.setDebtorAccount(Optional.ofNullable(paymentRequest.get("debtorAccount"))
+                                           .map(PaymentModelMapper::mapToXs2aAccountReference)
+                                           .orElse(new AccountReference()));
+        singlePayment.setUltimateDebtor(""); //TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        singlePayment.setInstructedAmount(Optional.ofNullable(paymentRequest.get("instructedAmount"))
+                                              .map(PaymentModelMapper::mapToXs2aAmount)
+                                              .orElse(new de.adorsys.aspsp.xs2a.domain.Amount()));
+        singlePayment.setCreditorAccount(Optional.ofNullable(paymentRequest.get("creditorAccount"))
+                                             .map(PaymentModelMapper::mapToXs2aAccountReference)
+                                             .orElse(new AccountReference()));
+        singlePayment.setCreditorAgent(Optional.ofNullable(paymentRequest.get("creditorAgent"))
+                                           .map(Object::toString)
+                                           .map(PaymentModelMapper::mapToXs2aBICFI)
+                                           .orElse(new BICFI()));
+        singlePayment.setCreditorName(Optional.ofNullable(paymentRequest.get("creditorName"))
+                                          .map(Object::toString)
+                                          .orElse(null));
+        singlePayment.setCreditorAddress(Optional.ofNullable(paymentRequest.get("creditorAddress"))
+                                             .map(PaymentModelMapper::mapToXs2aAddress)
+                                             .orElse(new Address()));
+        singlePayment.setUltimateCreditor(Optional.ofNullable(paymentRequest.get("creditorName"))
+                                              .map(Object::toString)
+                                              .orElse(null));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        singlePayment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode("N/A"));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        singlePayment.setRemittanceInformationUnstructured(Optional.ofNullable(paymentRequest.get("remittanceInformationUnstructured"))
+                                                               .map(Object::toString)
+                                                               .orElse(null));
+        singlePayment.setRemittanceInformationStructured(new Remittance()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        singlePayment.setRequestedExecutionDate(LocalDate.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        singlePayment.setRequestedExecutionTime(LocalDateTime.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        return singlePayment;
+    }
+
+    private static PeriodicPayment mapToXs2aPeriodicPayment(LinkedHashMap<String, Object> paymentRequest) {
+        PeriodicPayment payment = (PeriodicPayment) mapToXs2aSinglePayment(paymentRequest);
+
+        payment.setStartDate(parseDate(Optional.ofNullable(paymentRequest.get("startDate"))));
+        payment.setExecutionRule(Optional.ofNullable(paymentRequest.get("executionRule"))
+                                     .map(Object::toString)
+                                     .orElse(null));
+        payment.setEndDate(parseDate(Optional.ofNullable(paymentRequest.get("endDate"))));
+        payment.setFrequency(Optional.ofNullable(paymentRequest.get("frequency"))
+                                 .map(Object::toString)
+                                 .map(de.adorsys.aspsp.xs2a.domain.code.FrequencyCode::valueOf)
+                                 .orElse(null));
+        payment.setDayOfExecution(Optional.ofNullable(paymentRequest.get("dayOfExecution"))
+                                      .map(Object::toString)
+                                      .map(Integer::parseInt)
+                                      .orElse(null));
+        return payment;
+    }
+
+    private static List<SinglePayment> mapToXs2aBulkPayment(BulkPaymentInitiationSctJson/*LinkedHashMap<String, Object>*/ paymentRequest) {
+
+       /* Boolean batchBookingPreferred = null;
+        LocalDate requestedExecutionDate = parseDate(Optional.ofNullable(paymentRequest.get("requestedExecutionDate")));
+        AccountReference debtorAccount = mapToXs2aAccountReference(Optional.ofNullable(paymentRequest.get("debtorAccount")).orElse(null));
+        List<BulkPaymentInitiationSctJson> pmnt = (List<BulkPaymentInitiationSctJson>) Optional.ofNullable(paymentRequest.get("payments")).orElse(Collections.emptyList());
+        List<HashMap<String,Object>> payments = (List<HashMap<String, Object>>) Optional.ofNullable(paymentRequest.get("payments")).orElse(Collections.emptyList());*/
+
+        return null;
+    }
+
+    private static LocalDate parseDate(Optional<Object> object) {
+        return object
+                   .map(Object::toString)
+                   .map(LocalDate::parse)
+                   .orElse(null);
     }
 
     public static BICFI mapToXs2aBICFI(String creditorAgent) {
