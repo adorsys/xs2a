@@ -75,7 +75,7 @@ public class AccountController12 implements AccountApi {
         @ApiResponse(code = 500, message = "Internal Server Error"),
         @ApiResponse(code = 503, message = "Service Unavailable")})
     @RequestMapping(value = "/v1/accounts/{account-id}/transactions",
-        produces = {"application/json", "application/xml", "application/text"},
+        produces = {"application/json", "application/xml"},
         method = RequestMethod.GET)
     @Override
     public ResponseEntity<?> _getTransactionList(@ApiParam(value = "This identification is denoting the addressed account.  The account-id is retrieved by using a \"Read Account List\" call.  The account-id is the \"id\" attribute of the account structure.  Its value is constant at least throughout the lifecycle of a given consent. ", required = true) @PathVariable("account-id") String accountId, @NotNull @ApiParam(value = "Permitted codes are    * \"booked\",   * \"pending\" and    * \"both\" \"booked\" shall be supported by the ASPSP. To support the \"pending\" and \"both\" feature is optional for the ASPSP,  Error code if not supported in the online banking frontend ", required = true, allowableValues = "booked, pending, both") @Valid @RequestParam(value = "bookingStatus", required = true) String bookingStatus,
