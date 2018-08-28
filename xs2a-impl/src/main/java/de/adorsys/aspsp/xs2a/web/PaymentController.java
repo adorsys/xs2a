@@ -52,7 +52,7 @@ public class PaymentController {
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header"),
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "digest", value = "digest of the payload request", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "psu-ip-address", value = "192.168.0.26", required = true, dataType = "String", paramType = "header")})
 //NOPMD //Ip is required as description of the field
