@@ -44,8 +44,7 @@
       "tppMessages": [
         {
           "category": "ERROR",
-          "code": "DATE_INVALID",
-          "text": "additional text information of the ASPSP up to 512 characters"
+          "code": "DATE_INVALID"
         }
       ]
     }

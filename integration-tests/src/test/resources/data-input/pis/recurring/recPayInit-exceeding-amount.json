@@ -44,8 +44,7 @@
       "tppMessages": [
         {
           "category": "ERROR",
-          "code": "PAYMENT_FAILED",
-          "text": "additional text information of the ASPSP up to 512 characters"
+          "code": "PAYMENT_FAILED"
         }
       ]
     }

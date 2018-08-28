@@ -44,8 +44,7 @@
       "tppMessages": [
         {
           "category": "ERROR",
-          "code": "FORMAT_ERROR",
-          "text": "additional text information of the ASPSP up to 512 characters"
+          "code": "FORMAT_ERROR"
         }
       ]
     }
