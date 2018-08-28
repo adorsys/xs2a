@@ -39,7 +39,7 @@
     "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
+      "transactionStatus": "",
       "tppMessages": [
         {
           "category": "ERROR",

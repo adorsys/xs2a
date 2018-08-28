@@ -63,7 +63,7 @@
     "header": {},
     "body": [
       {
-        "transactionStatus": "RJCT",
+        "transactionStatus": "",
         "tppMessages": [
           {
             "category": "ERROR",
@@ -72,7 +72,7 @@
         ]
       },
       {
-        "transactionStatus": "RJCT",
+        "transactionStatus": "",
         "tppMessages": [
           {
             "category": "ERROR",

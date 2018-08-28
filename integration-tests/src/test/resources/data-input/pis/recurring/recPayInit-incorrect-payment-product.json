@@ -40,7 +40,7 @@
     "code": "404",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
+      "transactionStatus": "",
       "tppMessages": [
         {
           "category": "ERROR",

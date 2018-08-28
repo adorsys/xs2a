@@ -72,7 +72,7 @@
         ]
       },
       {
-        "transactionStatus": "RJCT",
+        "transactionStatus": "",
         "tppMessages": [
           {
             "category": "ERROR",
