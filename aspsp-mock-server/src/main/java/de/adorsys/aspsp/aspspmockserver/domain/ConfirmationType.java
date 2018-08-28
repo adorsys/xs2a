@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.repository;
+package de.adorsys.aspsp.aspspmockserver.domain;
 
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
-import org.springframework.context.annotation.Profile;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
-import java.util.List;
-
-@Profile({"mongo", "fongo"})
-public interface TanRepository extends MongoRepository<Tan, String> {
-    List<Tan> findByPsuIdAndTanStatus(String psuId, TanStatus tanStatus);
+public enum ConfirmationType {
+    PAYMENT,
+    CONSENT
 }

@@ -16,20 +16,20 @@
 
 package de.adorsys.aspsp.aspspmockserver.domain;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class PaymentConfirmation {
+public class Confirmation {
+    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
-    private String consentId;
-    private String paymentId;
-    private String tanNumber;
 
-    public PaymentConfirmation(String iban, String consentId, String paymentId) {
-        this.iban = iban;
-        this.consentId = consentId;
-        this.paymentId = paymentId;
-    }
+    @ApiModelProperty(value = "Identification resource of the given consent", example = "6d4b403b-f5f5-41c0-847f-b6abf1edb102")
+    private String consentId;
+
+    @ApiModelProperty(value = "Identification resource of the created payment", example = "6d4b403b-f5f5-41c0-847f-b6abf1edb102")
+    private String paymentId;
+
+    @ApiModelProperty(value = "A transaction authentication number (TAN) is used by online banking services as a form of single use one-time passwords", example = "sR111a")
+    private String tanNumber;
 }
