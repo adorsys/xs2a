@@ -49,14 +49,11 @@ public final class AccountModelMapper {
         de.adorsys.psd2.model.AccountDetails detailsTarget = new de.adorsys.psd2.model.AccountDetails();
         BeanUtils.copyProperties(accountDetails, detailsTarget);
 
-
+        // TODO fill missing values: product status usage details
+        // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
         detailsTarget.resourceId(accountDetails.getId())
             .currency(Optional.ofNullable(accountDetails.getCurrency()).map(c -> c.getCurrencyCode()).orElse(null))
-//                    .product(accountDetails.get???) TODO fill value
             .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType()).map(c -> c.name()).orElse(null));
-//                    .status(accountDetails.get???) TODO fill value
-//                    .usage(accountDetails.get???) TODO fill value
-//                    .details(accountDetails.get???) TODO fill value
 
         detailsTarget.setBalances(new BalanceList());
 
@@ -134,8 +131,8 @@ public final class AccountModelMapper {
         transactionDetails.setCreditorAccount(createAccountObject(transactions.getCreditorAccount()));
         transactionDetails.setDebtorAccount(createAccountObject(transactions.getDebtorAccount()));
 
-//        transactionDetails.setEntryReference(t.get???); TODO fill value
-//        transactionDetails.setCheckId(t.get???); TODO fill value
+        // TODO fill missing values: entryReference checkId exchangeRate proprietaryBankTransactionCode links
+        // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
 
         if (transactions.getAmount() != null) {
             Amount amount = transactions.getAmount();
@@ -144,7 +141,6 @@ public final class AccountModelMapper {
             );
         }
 
-//        transactionDetails.setExchangeRate(t.get???); TODO fill value
         try {
             transactionDetails.setPurposeCode(PurposeCode.valueOf(transactions.getPurposeCode().getCode()));
         } catch (IllegalArgumentException e) {
@@ -153,8 +149,6 @@ public final class AccountModelMapper {
         if (transactions.getBankTransactionCodeCode() != null) {
             transactionDetails.setBankTransactionCode(transactions.getBankTransactionCodeCode().getCode());
         }
-//        transactionDetails.setProprietaryBankTransactionCode(t.get???); TODO fill value
-//        transactionDetails.setLinks(t.get???); TODO fill value
 
         return transactionDetails;
     }
