@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.domain.PaymentConfirmation;
+import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentConfirmationService;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
-import de.adorsys.aspsp.aspspmockserver.web.util.ApiError;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
