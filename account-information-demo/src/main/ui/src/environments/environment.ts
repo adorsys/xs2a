@@ -17,7 +17,7 @@ export const environment = {
   apis: { dota: 'https://api.opendota.com/api' },
   aspspServerUrl: 'http://localhost:8080',
   mockServerUrl: 'http://localhost:28080',
-  profileServerUrl: 'http://localhost:38080',
+  profileServerUrl: 'http://localhost:48080/api/v1/aspsp-profile',
   keycloak: keycloakConfig,
   xRequestId: '2f77a125-aa7a-45c0-b414-cea25a116035',
   tppQwacCertificate: 'qwac certificate'

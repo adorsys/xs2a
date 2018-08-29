@@ -13,9 +13,10 @@ import {AccountsResponse} from "../model/aspsp/AccountsResponse";
 })
 export class AisService {
   aspspServerUrl = environment.aspspServerUrl;
-  mockServerUrl = environment.aspspServerUrl;
+  mockServerUrl = environment.mockServerUrl;
   profileServerUrl = environment.profileServerUrl;
   savedConsentId: string;
+  savedIban: string;
 
 
 
@@ -24,6 +25,10 @@ export class AisService {
 
   saveConsentId(consentId) {
     this.savedConsentId = consentId;
+  }
+
+  saveIban(iban) {
+    this.savedIban = iban;
   }
 
 
@@ -64,30 +69,32 @@ export class AisService {
   }
 
   getTransactionLimit(): Observable<number> {
-    // TODO: Activate when CORS issue is resolved
-    // return this.httpClient.get<number>(`${this.profileServerUrl}/api/v1/transaction-lifetime`)
-    //   .pipe(
-    //     map(data => {
-    //       console.log('account iio', data);
-    //       return data;
-    //     })
-    //   )
-    return of(5)
+    //TODO: Activate when CORS issue is resolved
+    return this.httpClient.get<number>(`${this.profileServerUrl}`)
+      .pipe(
+        map(data => {
+          console.log('account iio', data);
+          return data;
+        })
+      )
   }
 
-  generateTan(iban: string): Observable<string> {
-    return this.httpClient.post<string>(`${this.mockServerUrl}/consent/confirmation/tan/${iban}`, {})
+  generateTan(): Observable<string> {
+    return this.httpClient.post<string>(`${this.mockServerUrl}/consent/confirmation/ais/${this.savedIban}`, {})
   }
 
   updateConsentStatus(consentStatus): any {
-    return this.httpClient.put(`${this.aspspServerUrl}/consent/confirmation/status/${this.savedConsentId}/${consentStatus}`, {})
+    return this.httpClient.put(`${this.mockServerUrl}/consent/confirmation/ais/${this.savedConsentId}/${consentStatus}`, {})
   }
 
   validateTan(tan: string): Observable<string> {
     const body = {
       tanNumber: tan,
+      consentId: this.savedConsentId,
+      iban: this.savedIban,
+
     };
-    return this.httpClient.post<string>(`${this.aspspServerUrl}/consent/confirmation/tan/validate`, {})
+    return this.httpClient.post<string>(`${this.mockServerUrl}/consent/confirmation/ais`, body)
   }
 
 }

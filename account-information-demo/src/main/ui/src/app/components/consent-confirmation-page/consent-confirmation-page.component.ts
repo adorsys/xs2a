@@ -15,6 +15,7 @@ export class ConsentConfirmationPageComponent implements OnInit {
   Accounts: Account[];
   Consent$: Observable<AccountConsent>
   TransactionLimit$: Observable<number>
+  iban: string;
 
 
 
@@ -27,6 +28,7 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.Consent$ = this.aisService.getConsent(this.consentId);
     this.aisService.getAccounts()
       .subscribe(data => {
+        this.iban= data[0].iban;
         this.Accounts = data;
       });
     this.TransactionLimit$ = this.aisService.getTransactionLimit();
@@ -34,7 +36,8 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   onClickContinue() {
-    this.aisService.generateTan(this.Accounts[0].iban).subscribe();
+    this.aisService.saveIban(this.iban);
+    this.aisService.generateTan().subscribe();
     this.aisService.updateConsentStatus('confirmed');
     this.router.navigate(['/tanconfirmation'], {queryParams: this.createQueryParams});
   }
