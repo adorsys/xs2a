@@ -29,12 +29,19 @@ public class Tan {
     private String psuId;
     private String tanNumber;
     private TanStatus tanStatus;
+    private int numberOfAttempts;
 
-    public Tan(){}
+    public Tan() {
+    }
 
     public Tan(String psuId, String tanNumber) {
         this.psuId = psuId;
         this.tanNumber = tanNumber;
         this.tanStatus = TanStatus.UNUSED;
+        this.numberOfAttempts = 0;
+    }
+
+    public void incrementNumberOfAttempts() {
+        this.numberOfAttempts++;
     }
 }

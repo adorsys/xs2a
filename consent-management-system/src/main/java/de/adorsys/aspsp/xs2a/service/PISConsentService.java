@@ -25,7 +25,11 @@ import de.adorsys.aspsp.xs2a.service.mapper.PISConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
 import java.util.Optional;
+
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
@@ -75,12 +79,12 @@ public class PISConsentService {
      * @return Response containing result of status changing
      */
     public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
-        return getPisConsentById(consentId)
+        return getActualPisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
                    .map(con -> con.getConsentStatus() == status);
     }
 
-    Optional<PisConsent> getPisConsentById(String consentId) {
+    private Optional<PisConsent> getPisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(pisConsentRepository::findByExternalId);
     }
@@ -88,5 +92,10 @@ public class PISConsentService {
     private PisConsent setStatusAndSaveConsent(PisConsent consent, CmsConsentStatus status) {
         consent.setConsentStatus(status);
         return pisConsentRepository.save(consent);
+    }
+
+    private Optional<PisConsent> getActualPisConsent(String consentId) {
+        return Optional.ofNullable(consentId)
+                   .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
     }
 }

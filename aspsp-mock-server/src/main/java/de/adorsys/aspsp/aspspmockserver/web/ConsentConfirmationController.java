@@ -16,33 +16,52 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
+import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
+import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
+import de.adorsys.aspsp.aspspmockserver.service.ConsentService;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(path = "/consent/confirmation")
+@RequestMapping(path = "/consent/confirmation/ais")
 @Api(tags = "Consent confirmation for online banking", description = "Provides access to consent confirmation for online banking")
 public class ConsentConfirmationController {
 
-    @Value("${onlinebanking-mock-webapp.baseurl}")
-    private String onlineBankingMockWebappUrl;
+    private final TanConfirmationService tanConfirmationService;
+    private final ConsentService consentService;
 
-    @GetMapping(path = "/{consent-id}")
-    @ApiOperation(value = "Redirects to online banking consent confirmation page")
-    public void showConfirmationPage(@PathVariable("consent-id") String consentId,
-                                     HttpServletResponse response) throws IOException {
-        UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                                          .path("/{consentId}").buildAndExpand(consentId);
+    @PostMapping(path = "/{iban}")
+    @ApiOperation(value = "Generates TAN for ais consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 400, message = "Bad request")
+    })
+    public ResponseEntity generateAndSendTan(@PathVariable("iban") String iban) {
+        return tanConfirmationService.generateAndSendTanForPsuByIban(iban)
+                   ? ResponseEntity.ok().build()
+                   : ResponseEntity.badRequest().build();
+    }
 
-        response.sendRedirect(onlineBankingMockWebappUrl + uriComponents.toUriString());
+    @PostMapping
+    @ApiOperation(value = "Validates TAN for consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Success"),
+        @ApiResponse(code = 400, message = "Bad request")
+    })
+    public ResponseEntity confirmTan(@RequestBody Confirmation confirmation) {
+        return tanConfirmationService.confirmTan(confirmation.getIban(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.CONSENT);
+    }
+
+    @PutMapping(path = "/{consent-id}/{status}")
+    @ApiOperation(value = "Update ais consent status of the corresponding consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    public ResponseEntity<Void> updateAisConsentStatus(@PathVariable("consent-id") String consentId,
+                                                       @PathVariable("status") SpiConsentStatus status) {
+        consentService.updateAisConsentStatus(consentId, status);
+        return ResponseEntity.ok().build();
     }
 }

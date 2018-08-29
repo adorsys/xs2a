@@ -22,10 +22,12 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +43,8 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
+import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -53,12 +57,14 @@ public class FundsConfirmationServiceTest {
 
     private final Currency EUR = Currency.getInstance("EUR");
     private final String AMOUNT_1600 = "1600.00";
+    private final MessageError FORMAT_MESSAGE_ERROR = new MessageError(new TppMessageInformation(ERROR, FORMAT_ERROR));
 
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private JsonConverter jsonConverter = new JsonConverter(objectMapper);
-
+    @Mock
+    private AccountReferenceValidationService referenceValidationService;
     @Mock
     private AccountService accountService;
 
@@ -66,6 +72,7 @@ public class FundsConfirmationServiceTest {
     public void setUp() throws IOException {
         when(accountService.getAccountDetailsByAccountReference(any(AccountReference.class)))
             .thenReturn(Optional.of(new AccountDetails(null, null, null, null, null, null, null, null, null, null, null, getBalances())));
+        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
     @Test
@@ -93,7 +100,7 @@ public class FundsConfirmationServiceTest {
         assertThat(actualResponse.getBody().isFundsAvailable()).isEqualTo(false);
     }
 
-    @Test
+    //@Test - excluded from testing because request validating in de.adorsys.psd2.api.FundsConfirmationApi
     public void fundsConfirmation_reqIsNull() {
         //Given:
         FundsConfirmationRequest request = null;
@@ -102,7 +109,8 @@ public class FundsConfirmationServiceTest {
         ResponseObject<FundsConfirmationResponse> actualResponse = fundsConfirmationService.fundsConfirmation(request);
 
         //Then
-        assertThat(actualResponse.getBody().isFundsAvailable()).isEqualTo(false);
+        assertThat(actualResponse.getBody()).isEqualTo(null);
+        assertThat(actualResponse.getError()).isEqualTo(FORMAT_MESSAGE_ERROR);
     }
 
     private FundsConfirmationRequest readFundsConfirmationRequest() throws IOException {

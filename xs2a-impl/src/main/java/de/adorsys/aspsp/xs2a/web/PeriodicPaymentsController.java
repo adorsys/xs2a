@@ -54,7 +54,7 @@ public class PeriodicPaymentsController {
         @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", dataType = "String", paramType = "header")})
+        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<PaymentInitialisationResponse> createPeriodicPayment(
         @ApiParam(name = "payment-product", value = "The addressed payment product endpoint for periodic payments e.g. for a periodic SEPA Credit Transfers", allowableValues = "sepa-credit-transfers, target-2-payments,instant-sepa-credit-transfers, cross-border-credit-transfers", required = true)
         @PathVariable("payment-product") String paymentProduct,

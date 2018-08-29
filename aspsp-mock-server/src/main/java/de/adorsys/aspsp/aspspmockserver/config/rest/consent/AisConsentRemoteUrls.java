@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.repository;
+package de.adorsys.aspsp.aspspmockserver.config.rest.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.Set;
+@Component
+public class AisConsentRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
 
-public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
-    Optional<PisConsent> findByExternalId(String externalId);
-    Optional<PisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<CmsConsentStatus> statuses);
+    /**
+     * Returns URL-string to CMS endpoint that updates ais consent status
+     *
+     * @return String
+     */
+    public String updateAisConsentStatus() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
+    }
 }
