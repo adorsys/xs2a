@@ -31,13 +31,12 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
         Links links = new Links();
         links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getIban() + "/" + body.getPisConsentId() + "/" + encodedPaymentId);
-        links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setStatus(linkTo(controller, paymentProduct).slash("status").toString());
+        links.setSelf(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+        links.setStatus(linkTo(controller, paymentProduct).slash(encodedPaymentId).slash("status").toString());
         return links;
     }
-
 }
 
 
