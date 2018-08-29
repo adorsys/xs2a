@@ -44,8 +44,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -55,7 +53,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
@@ -78,16 +75,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
         registry.addResourceHandler("/webjars/**")
             .addResourceLocations("classpath:/META-INF/resources/webjars/");
-    }
-
-    // todo  make integration tests for check json-response from controller https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/114
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
-        jsonConverter.setObjectMapper(objectMapper());
-
-        converters.add(jsonConverter);
-        super.configureMessageConverters(converters);
     }
 
     @Bean
