@@ -33,9 +33,11 @@
   "response": {
     "code": "400",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "PAYMENT_FAILED"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "PAYMENT_FAILED"
+      }
+    ]
   }
 }
