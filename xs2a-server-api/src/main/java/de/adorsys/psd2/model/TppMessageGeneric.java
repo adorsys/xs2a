@@ -82,7 +82,7 @@ public class TppMessageGeneric {
      * @return path
      **/
     @ApiModelProperty
-    public String   getPath() {
+    public String getPath() {
         return path;
     }
 
