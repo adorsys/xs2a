@@ -38,12 +38,11 @@ export class ConsentConfirmationPageComponent implements OnInit {
   onClickContinue() {
     this.aisService.saveIban(this.iban);
     this.aisService.generateTan().subscribe();
-    this.aisService.updateConsentStatus('confirmed');
     this.router.navigate(['/tanconfirmation'], {queryParams: this.createQueryParams});
   }
 
   onClickCancel() {
-    this.aisService.updateConsentStatus('revoked')
+    this.aisService.updateConsentStatus('REVOKED_BY_PSU').subscribe();
     this.router.navigate(['/consentconfirmationdenied'], {queryParams: this.createQueryParams});
   }
 

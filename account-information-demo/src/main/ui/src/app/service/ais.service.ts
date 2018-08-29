@@ -81,7 +81,7 @@ export class AisService {
     return this.httpClient.post<string>(`${this.mockServerUrl}/consent/confirmation/ais/${this.savedIban}`, {})
   }
 
-  updateConsentStatus(consentStatus): any {
+  updateConsentStatus(consentStatus): Observable<any> {
     return this.httpClient.put(`${this.mockServerUrl}/consent/confirmation/ais/${this.savedConsentId}/${consentStatus}`, {})
   }
 

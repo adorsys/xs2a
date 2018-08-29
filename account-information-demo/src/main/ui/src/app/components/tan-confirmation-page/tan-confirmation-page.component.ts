@@ -10,40 +10,24 @@ import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
   styleUrls: ['./tan-confirmation-page.component.scss']
 })
 export class TanConfirmationPageComponent implements OnInit {
-  Consent$: Observable<AccountConsent>
-  consentId: string;
   tan: string;
 
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
 
   ngOnInit() {
-    this.route.url
-      .subscribe(params => { this.getConsentIdFromUrl(params) });
-    this.aisService.saveConsentId(this.consentId);
-    this.Consent$ = this.aisService.getConsent(this.consentId);
   }
-
 
   onClickContinue() {
     this.aisService.validateTan(this.tan)
       .subscribe(
         success => {
-          this.router.navigate(['/tanconfirmationsuccessful'], { queryParams: this.createQueryParams() });
+          this.router.navigate(['/tanconfirmationsuccessful']);
         },
         error => {
           this.router.navigate(['/tanconfirmationerror'])
         }
-      )
-  }
-
-  getConsentIdFromUrl(params: UrlSegment[]) {
-    this.consentId = params[0].toString()
-  }
-
-  createQueryParams() {
-    return {
-      consentId: this.consentId,
-    }
+      );
+    this.aisService.updateConsentStatus('VALID').subscribe();
   }
 }
