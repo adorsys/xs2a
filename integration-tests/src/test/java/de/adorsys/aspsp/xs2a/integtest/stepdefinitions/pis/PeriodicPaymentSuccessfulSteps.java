@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -34,7 +33,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -47,7 +45,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
-public class PeriodicPaymentSteps {
+public class PeriodicPaymentSuccessfulSteps {
 
     private static final long DAYS_OFFSET = 100L;
 
@@ -61,13 +59,11 @@ public class PeriodicPaymentSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    private String dataFileName;
 
     @And("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
-        this.dataFileName = dataFileName;
 
         TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(
             resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8),
@@ -78,7 +74,7 @@ public class PeriodicPaymentSteps {
     }
 
     @When("^PSU sends the recurring payment initiating request$")
-    public void sendPeriodicPaymentInitiatingRequest() {
+    public void sendSuccessfulPeriodicPaymentInitiatingRequest() {
         HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
@@ -93,7 +89,7 @@ public class PeriodicPaymentSteps {
     }
 
     @Then("^a successful response code and the appropriate recurring payment response data")
-    public void checkResponseCodeFromPeriodicPayment() {
+    public void checkSuccessfulResponseCodeFromPeriodicPayment() {
         PaymentInitationRequestResponse201 responseBody = context.getTestData().getResponse().getBody();
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = context.getActualResponse();
         HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
@@ -107,27 +103,14 @@ public class PeriodicPaymentSteps {
         HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
-        if (dataFileName.contains("end-date-before-start-date")) {
-            makeEndDateBeforeStartDate(entity);
-        }
+        ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
+            context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
+            HttpMethod.POST,
+            entity,
+            new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
+            });
 
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
-                HttpMethod.POST,
-                entity,
-                new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
-                });
+        context.setActualResponse(responseEntity);
 
-        } catch (HttpClientErrorException hce) {
-            context.setActualResponseStatus(HttpStatus.valueOf(hce.getRawStatusCode()));
-
-            ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
-            context.setMessageError(messageError);
-        }
-    }
-
-    private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
-        entity.getBody().setEndDate(entity.getBody().getStartDate().minusDays(DAYS_OFFSET));
     }
 }

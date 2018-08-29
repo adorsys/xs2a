@@ -12,34 +12,23 @@ Feature: Payment Initiation Service
 #        And a redirect URL is delivered to the PSU
 #        Examples:
 #            | payment-service | payment-product       | single-payment                |
-#            | single-payment  | sepa-credit-transfers | singlePayInit-successful.json |
-
+#            | payments        | sepa-credit-transfers | singlePayInit-successful.json |
+#
 #    Scenario Outline: Failed payment initiation request for single payments (redirect)
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+#        Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the single payment initiating request with error
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
-#            | payment-service | payment-product               | single-payment                                 |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
-#            | single-payment  | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-exceeding-amount.json            |
-#            | single-payment  | sepa-credit-transfers         | singlePayInit-expired-exec-date.json           |
-#            | single-payment  | instant-sepa-credit-transfers| singlePayInit-unavailable-product-for-psu.json |
-
-
-
-#    Scenario Outline: Successful payment initiation request for single payments (oauth)
-#        Given PSU request access token for oauth approach
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the single payment initiating request
-#        Then a successful response code and the appropriate single payment response data
-#        Examples:
-#            | payment-service         | payment-product       | single-payment                 |
-#            | single-payment          | sepa-credit-transfers | singlePayInit-successful.json  |
+#            | payment-service     | payment-product               | single-payment                                 |
+#            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
+#            | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
+#            | payments            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
+#            | payments            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
+#            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
+#            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
+#            | payments            | sepa-credit-transfers         | singlePayInit-exceeding-amount.json            |
+#            | payments            | sepa-credit-transfers         | singlePayInit-expired-exec-date.json           |
+#            | payments            | instant-sepa-credit-transfers | singlePayInit-unavailable-product-for-psu.json |
 
 
     ####################################################################################################################
@@ -83,12 +72,13 @@ Feature: Payment Initiation Service
 #        Then a successful response code and the appropriate recurring payment response data
 #        And a redirect URL is delivered to the PSU
 #        Examples:
-#            | payment-service | payment-product       | recurring-payment          |
-#            | periodic-payment| sepa-credit-transfers | recPayInit-successful.json |
 
-
+#            | payment-product       | recurring-payment          |
+#            | sepa-credit-transfers | recPayInit-successful.json |
+#
+#
 #    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
-#        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
+#        Given PSU initiates an errorful recurring payment <recurring-payment> using the payment product <payment-product>
 #        When PSU sends the recurring payment initiating request with error
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
@@ -122,11 +112,12 @@ Feature: Payment Initiation Service
 #            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
 #            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments        | paymentStatus-PDNG-successful.json |
 #            | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | payments        | paymentStatus-RJCT-successful.json |
-
+#
 #    Scenario Outline: Payment Status Request with not existing Payment-ID
-#        Given PSU created a payment status request with of a not existing payment-id <payment-id>
-#        When PSU requests the status of the payment
-#        Then an appropriate response code and the status <payment-status> is delivered to the PSU
+#        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
+#        And the set of data for the errorful test <payment-status>
+#        When PSU requests the status of the payment without an existing payment-id
+#        Then an error response code is displayed the appropriate error response
 #        Examples:
-#            | payment-id                           | payment-status                     |
-#            | 529e0507-7539-4a65-9b74-bdf87061e99b | paymentStatus-not-existing-id.json |
+#            | payment-id                           | payment-service      | payment-status                     |
+#            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |

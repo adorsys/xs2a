@@ -34,11 +34,12 @@
     "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
-      "tppMessages": [{
-        "category": "ERROR",
-        "code": "PAYMENT_FAILED"
-      }]
+      "tppMessages": [
+        {
+          "category": "ERROR",
+          "code": "PAYMENT_FAILED"
+        }
+      ]
     }
   }
 }

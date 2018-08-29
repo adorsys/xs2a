@@ -21,7 +21,7 @@
     "code": "400",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
+      "transactionStatus": "",
       "tppMessage": {
         "category": "ERROR",
         "code": "RESOURCE_UNKNOWN_400"

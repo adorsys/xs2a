@@ -20,13 +20,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
+import de.adorsys.psd2.model.PaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -45,23 +48,24 @@ public class BulkPaymentWithErrorSteps {
 
     @When("^PSU sends the bulk payment initiating request with error$")
     public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-        headers.add("Content-Type", "application/json");
+        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         try {
-            ResponseEntity<TppMessages> response = restTemplate.exchange(
-                context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
-                HttpMethod.POST, new HttpEntity<>(context.getTestData().getRequest().getBody(), headers), new ParameterizedTypeReference<TppMessages>() {
-                });
-
-            context.setActualResponse(response);
-        } catch (HttpClientErrorException hce) {
-            context.setActualResponseStatus(HttpStatus.valueOf(hce.getRawStatusCode()));
-
-            ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
-            context.setMessageError(messageError);
+            restTemplate.exchange(
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+                HttpMethod.POST,
+                entity,
+                TppMessages.class);
+        } catch (RestClientResponseException rex) {
+            handleRequestError(rex);
         }
+    }
+
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+        ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
+        context.setMessageError(messageError);
     }
 }

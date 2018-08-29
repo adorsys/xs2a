@@ -1,13 +1,8 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
-import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
-import de.adorsys.psd2.model.TppMessageGeneric;
-import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
@@ -23,7 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 @FeatureFileSteps
-public class GlobalSteps {
+public class GlobalSuccessfulSteps {
     @Autowired
     private Context context;
 
@@ -59,24 +54,5 @@ public class GlobalSteps {
         context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
     }
 
-    @Then("^an error response code is displayed the appropriate error response$")
-    public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-        ITMessageError actualErrorObject = context.getMessageError();
-        PaymentInitationRequestResponse201 givenResponseBody = (PaymentInitationRequestResponse201) context.getTestData().getResponse().getBody();
 
-        HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
-        assertThat(context.getActualResponseStatus(), equalTo(httpStatus));
-        assertThat(actualErrorObject.getTransactionStatus().toString(), equalTo(givenResponseBody.getTransactionStatus().toString()));
-
-        TppMessages givenTppMessages = givenResponseBody.getTppMessages();
-
-        TppMessages actualTppMessages = actualErrorObject.getTppMessages();
-
-        assertThat(actualTppMessages, is(equalTo(givenTppMessages)));
-
-        actualTppMessages.forEach ((msg) -> {
-            assertThat(msg.getCategory().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCategory().toString()));
-            assertThat(msg.getCode().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCode().toString()));
-        });
-    }
 }
