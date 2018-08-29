@@ -40,12 +40,8 @@
     "code": "400",
     "header": {},
     "body": {
-      "tppMessages": [
-        {
-          "category": "ERROR",
-          "code": "START_DATE_INVALID"
-        }
-      ]
+      "category": "ERROR",
+      "code": "START_DATE_INVALID"
     }
   }
 }

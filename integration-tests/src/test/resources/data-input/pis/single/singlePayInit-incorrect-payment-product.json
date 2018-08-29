@@ -34,10 +34,8 @@
     "code": "404",
     "header": {},
     "body": {
-      "tppMessages": [{
-        "category": "ERROR",
-        "code": "PRODUCT_UNKNOWN"
-      }]
+      "category": "ERROR",
+      "code": "PRODUCT_UNKNOWN"
     }
   }
 }

@@ -34,12 +34,8 @@
     "code": "400",
     "header": {},
     "body": {
-      "tppMessages": [
-        {
-          "category": "ERROR",
-          "code": "PAYMENT_FAILED"
-        }
-      ]
+      "category": "ERROR",
+      "code": "PAYMENT_FAILED"
     }
   }
 }

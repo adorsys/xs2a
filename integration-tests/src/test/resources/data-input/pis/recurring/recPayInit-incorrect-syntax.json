@@ -22,7 +22,7 @@
       "dayOfExecution": "14",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE525001051739118419"
+        "iban": "DE52500105173911841934"
       },
       "endDate": "yyyy-mm-dd",
       "endToEndIdentification": "VOD-123456789",
@@ -40,12 +40,8 @@
     "code": "400",
     "header": {},
     "body": {
-      "tppMessages": [
-        {
-          "category": "ERROR",
-          "code": "FORMAT_ERROR"
-        }
-      ]
+      "category": "ERROR",
+      "code": "FORMAT_ERROR"
     }
   }
 }
