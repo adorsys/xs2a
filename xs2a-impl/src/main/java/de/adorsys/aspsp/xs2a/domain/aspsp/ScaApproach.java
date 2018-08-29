@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.domain.aspsp;
 
 public enum ScaApproach {
     REDIRECT,
