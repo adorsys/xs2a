@@ -26,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/consent/confirmation/ais")
@@ -35,19 +37,19 @@ public class ConsentConfirmationController {
     private final TanConfirmationService tanConfirmationService;
     private final ConsentService consentService;
 
-    @PostMapping(path = "/{iban}")
+    @PostMapping
     @ApiOperation(value = "Generates TAN for ais consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity generateAndSendTan(@PathVariable("iban") String iban) {
-        return tanConfirmationService.generateAndSendTanForPsuByIban(iban)
+    public ResponseEntity generateAndSendTan(Principal principal) {
+        return tanConfirmationService.generateAndSendTanForPsuByName(principal.getName())
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
 
-    @PostMapping
+    @PutMapping
     @ApiOperation(value = "Validates TAN for consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),

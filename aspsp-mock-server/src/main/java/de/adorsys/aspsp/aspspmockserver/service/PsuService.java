@@ -35,7 +35,7 @@ public class PsuService {
     private final KeycloakService keycloakService;
 
     /**
-     * Checks psu for validity saves it to DB and register it to Keycloak
+     * Checks psu for validity, saves it to DB and register it to Keycloak
      *
      * @param psu PSU to be saved
      * @return a string representation of ASPSP identifier for saved PSU

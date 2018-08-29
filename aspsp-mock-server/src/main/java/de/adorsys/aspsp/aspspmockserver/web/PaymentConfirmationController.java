@@ -39,19 +39,19 @@ public class PaymentConfirmationController {
     private final TanConfirmationService tanConfirmationService;
     private final PaymentService paymentService;
 
-    @PostMapping(path = "/{iban}")
+    @PostMapping
     @ApiOperation(value = "Generates TAN for pis consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity generateAndSendTan(@PathVariable("iban") String iban, Principal principal) {
-        return tanConfirmationService.generateAndSendTanForPsuByName(principal.getName());
+    public ResponseEntity generateAndSendTan(Principal principal) {
+        return tanConfirmationService.generateAndSendTanForPsuByName(principal.getName())
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
 
-    @PostMapping
+    @PutMapping
     @ApiOperation(value = "Confirm TAN", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
