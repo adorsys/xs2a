@@ -26,42 +26,6 @@ public class AspspProfileRemoteUrls {
     private String aspspProfileBaseUrl;
 
     /**
-     * Returns URL-string in order to get list of available payment products
-     *
-     * @return String
-     */
-    public String getAvailablePaymentProducts() {
-        return aspspProfileBaseUrl + "/aspsp-profile/available-payment-products";
-    }
-
-    /**
-     * Returns URL-string in order to get list of available payment types
-     *
-     * @return String
-     */
-    public String getAvailablePaymentTypes() {
-        return aspspProfileBaseUrl + "/aspsp-profile/available-payment-types";
-    }
-
-    /**
-     * Returns URL-string in order to get frequency per day
-     *
-     * @return String
-     */
-    public String getFrequencyPerDay() {
-        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
-    }
-
-    /**
-     * Returns URL-string in order to get combined service indicator
-     *
-     * @return String
-     */
-    public String getCombinedServiceIndicator() {
-        return aspspProfileBaseUrl + "/aspsp-profile/combined-service-indicator";
-    }
-
-    /**
      * Returns URL-string in order to get sca approach
      *
      * @return String
@@ -75,52 +39,7 @@ public class AspspProfileRemoteUrls {
      *
      * @return String
      */
-    public String getTppSignatureRequired() {
-        return aspspProfileBaseUrl + "/aspsp-profile/tpp-signature-required";
-    }
-
-    /**
-     * Returns URL-string in order to get PIS redirectUrlToAspsp
-     *
-     * @return String
-     */
-    public String getPisRedirectUrlToAspsp() {
-        return aspspProfileBaseUrl + "/aspsp-profile/redirect-url-to-aspsp-pis";
-    }
-
-    /**
-     * Returns URL-string in order to get AIS redirectUrlToAspsp
-     *
-     * @return String
-     */
-    public String getAisRedirectUrlToAspsp() {
-        return aspspProfileBaseUrl + "/aspsp-profile/redirect-url-to-aspsp-ais";
-    }
-
-    /**
-     * Returns URL-string to ASPSP profile get list of supported AccountReference fields
-     *
-     * @return String
-     */
-    public String getSupportedAccountReferenceFields() {
-        return aspspProfileBaseUrl + "/aspsp-profile/supported-account-reference-fields";
-    }
-
-    /**
-     * Returns URL-string to ASPSP profile get value of maximum consent lifetime
-     *
-     * @return String
-     */
-    public String getConsentLifetime() {
-        return aspspProfileBaseUrl + "/aspsp-profile/consent-lifetime";
-    }
-
-    /**
-     * Returns URL-string in order to get AllPsd2Support
-     *
-     * @return String
-     */
-    public String getAllPsd2Support() {
-        return aspspProfileBaseUrl + "/aspsp-profile/all-psd2-support";
+    public String getAspspSettings() {
+        return aspspProfileBaseUrl + "/aspsp-profile";
     }
 }

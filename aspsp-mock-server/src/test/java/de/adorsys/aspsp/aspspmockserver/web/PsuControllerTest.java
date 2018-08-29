@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
-import de.adorsys.aspsp.aspspmockserver.web.rest.PsuController;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import org.junit.Before;
@@ -42,6 +41,8 @@ public class PsuControllerTest {
     private static final String PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String E_MAIL = "info@adorsys.ua";
+    private static final String PSU_NAME = "aspsp";
+    private static final String PSU_PASSWORD = "zzz";
     private static final String WRONG_E_MAIL = "wrong e-mail";
     private static final Currency EUR = Currency.getInstance("EUR");
     private static final String ACCOUNT_ID = "ACCOUNT1-0000-0000-0000-a000q000000t";
@@ -161,7 +162,7 @@ public class PsuControllerTest {
     }
 
     private Psu getPsu(String psuId, String email, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(PSU_ID, email, details, products);
+        return new Psu(PSU_ID, email, PSU_NAME, PSU_PASSWORD, details, products);
     }
 
     private List<SpiAccountDetails> getDetails(boolean isEmpty) {

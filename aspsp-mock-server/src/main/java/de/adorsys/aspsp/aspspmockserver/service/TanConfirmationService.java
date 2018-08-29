@@ -17,9 +17,9 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
+import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.aspsp.aspspmockserver.web.util.ApiError;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import freemarker.template.Configuration;
@@ -65,11 +65,11 @@ public class TanConfirmationService {
     /**
      * Generates new Tan and sends it to psu's email for payment confirmation
      *
-     * @param iban Iban of Psu in order to get correct Psu and than get psu's email
+     * @param name of Psu in order to get correct Psu and than get psu's email
      * @return true if psu was found and new Tan was sent successfully, otherwise return false
      */
-    public boolean generateAndSendTanForPsuByIban(String iban) {
-        return accountService.getPsuIdByIban(iban)
+    public boolean generateAndSendTanForPsuByName(String name) {
+        return accountService.getPsuIdByName(name)
                    .map(this::generateAndSendTanForPsu)
                    .orElse(false);
     }

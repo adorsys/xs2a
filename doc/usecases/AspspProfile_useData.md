@@ -22,30 +22,7 @@ Provide access to next values:
  
  * Run ASPSP-profile service.
  
- * To get 'frequency per day' create Get request to URI 'http://your_host:port/aspsp-profile/frequency-per-day'  
+ * To get 'aspsp settings', which includes all the settings described above except 'sca approach', create Get request to URI 'http://your_host:port/aspsp-profile'  
  
- * To get 'combined service indicator' create Get request to URI 'http://your_host:port/aspsp-profile/combined-service-indicator"'
- 
- * To get 'available payment products' create Get request to URI 'http://your_host:port/aspsp-profile/available-payment-products'
- 
- * To get 'available payment types' create Get request to URI 'http://your_host:port/aspsp-profile/available-payment-types'
-  
  * To get 'sca approach' create Get request to URI 'http://your_host:port/aspsp-profile/sca-approach'
  
- * To get 'tppSignatureRequired' create Get request to URI 'http://your_host:port/aspsp-profile/tpp-signature-required'
-
- * To get 'pisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-pis'
-
- * To get 'aisRedirectUrlToAspsp' create Get request to URI 'http://your_host:port/aspsp-profile/redirect-url-to-aspsp-ais'
- 
- * To get 'multicurrencyAccountLevel' create Get request to URI 'http://your_host:port/aspsp-profile/multicurrency-account-level'
-
- * To get 'availableBookingStatuses' create Get request to URI 'http://your_host:port/aspsp-profile/available-booking-statuses'
-
- * To get 'supportedAccountReferenceFields' create Get request to URI 'http://your_host:port/aspsp-profile/supported-account-reference-fields'
-
- * To get 'consent lifetime' create Get request to URI 'http://your_host:port/aspsp-profile/consent-lifetime'
- 
- * To get 'transaction lifetime' create Get request to URI 'http://your_host:port/aspsp-profile/transaction-lifetime'
- 
- * To get 'all psd2 support' create Get request to URI 'http://your_host:port/aspsp-profile/all-psd2-support'

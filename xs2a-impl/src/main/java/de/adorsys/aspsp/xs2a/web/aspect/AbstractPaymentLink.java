@@ -30,14 +30,13 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         String encodedPaymentId = Base64.getEncoder().encodeToString(body.getPaymentId().getBytes());
 
         Links links = new Links();
-        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getIban() + "/" + body.getPisConsentId() + "/" + encodedPaymentId);
-        links.setSelf(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(body.getPaymentId()).toString());
-        links.setStatus(linkTo(controller, paymentProduct).slash("status").toString());
+        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
+        links.setSelf(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+        links.setStatus(linkTo(controller, paymentProduct).slash(encodedPaymentId).slash("status").toString());
         return links;
     }
-
 }
 
 
