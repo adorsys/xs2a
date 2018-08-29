@@ -17,12 +17,10 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import cucumber.api.java.en.Then;
-import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -37,13 +35,11 @@ public class GlobalErrorfulSteps {
 
     @Then("^an error response code is displayed the appropriate error response$")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-        ITMessageError actualErrorObject = context.getMessageError();
+        TppMessages actualTppMessages = context.getTppmessage();
         TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
 
         HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
         assertThat(context.getActualResponseStatus(), equalTo(httpStatus));
-
-        TppMessages actualTppMessages = actualErrorObject.getTppMessages();
 
         assertThat(actualTppMessages, is(equalTo(givenTppMessages)));
 

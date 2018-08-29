@@ -21,15 +21,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -109,10 +112,9 @@ public class ConsentRequestSteps {
     }
 
     private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        ResponseEntity<ConsentsResponse201> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        context.setActualResponse(actualResponse);
+        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
-        context.setMessageError(messageError);
+        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
+        context.setTppmessage(tppMessages);
     }
 }

@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
-import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -98,8 +97,8 @@ public class PeriodicPaymentErrorfulSteps {
     private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
         context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
-        context.setMessageError(messageError);
+        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
+        context.setTppmessage(tppMessages);
     }
 
     private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
