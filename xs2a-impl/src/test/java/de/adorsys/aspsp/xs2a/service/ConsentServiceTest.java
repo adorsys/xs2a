@@ -120,6 +120,19 @@ public class ConsentServiceTest {
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
             .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), CORRECT_PSU_ID, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID))
+            .thenReturn(CONSENT_ID);
+
 
         //GetAccDetails
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiDetailsList(), ASPSP_CONSENT_DATA));
