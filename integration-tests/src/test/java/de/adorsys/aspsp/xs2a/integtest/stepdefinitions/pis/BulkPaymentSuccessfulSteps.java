@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
-public class BulkPaymentSteps {
+public class BulkPaymentSuccessfulSteps {
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;

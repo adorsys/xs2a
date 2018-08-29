@@ -41,7 +41,7 @@ import java.util.List;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class BulkPaymentWithErrorSteps {
+public class BulkPaymentErrorfulSteps {
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
