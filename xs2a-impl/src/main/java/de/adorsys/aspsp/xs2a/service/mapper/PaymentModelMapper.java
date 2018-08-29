@@ -147,7 +147,7 @@ public class PaymentModelMapper {
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
             paymentResponse.setDebtorAccount(mapToAccountReference12(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setInstructedAmount(mapToAmount12(xs2aPayment.getInstructedAmount()));
+            paymentResponse.setInstructedAmount(mapToAmount(xs2aPayment.getInstructedAmount()));
             paymentResponse.setCreditorAccount(mapToAccountReference12(xs2aPayment.getCreditorAccount()));
             paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent().getCode());
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
@@ -161,7 +161,7 @@ public class PaymentModelMapper {
 
             paymentResponse.setEndToEndIdentification(xs2aPayment.getEndToEndIdentification());
             paymentResponse.setDebtorAccount(mapToAccountReference12(xs2aPayment.getDebtorAccount()));
-            paymentResponse.setInstructedAmount(mapToAmount12(xs2aPayment.getInstructedAmount()));
+            paymentResponse.setInstructedAmount(mapToAmount(xs2aPayment.getInstructedAmount()));
             paymentResponse.setCreditorAccount(mapToAccountReference12(xs2aPayment.getCreditorAccount()));
             paymentResponse.setCreditorAgent(xs2aPayment.getCreditorAgent().getCode());
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
@@ -197,7 +197,7 @@ public class PaymentModelMapper {
     private static PaymentInitiationTarget2Json mapToBulkPart12(SinglePayment payment) {
         PaymentInitiationTarget2Json bulkPart = new PaymentInitiationTarget2Json().endToEndIdentification(payment.getEndToEndIdentification());
         bulkPart.setDebtorAccount(mapToAccountReference12(payment.getDebtorAccount()));
-        bulkPart.setInstructedAmount(mapToAmount12(payment.getInstructedAmount()));
+        bulkPart.setInstructedAmount(mapToAmount(payment.getInstructedAmount()));
         bulkPart.setCreditorAccount(mapToAccountReference12(payment.getCreditorAccount()));
         bulkPart.setCreditorAgent(payment.getCreditorAgent().getCode());
         bulkPart.setCreditorName(payment.getCreditorName());
@@ -216,7 +216,7 @@ public class PaymentModelMapper {
             PaymentInitialisationResponse specificResponse = (PaymentInitialisationResponse) response;
             response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
             response201.setPaymentId(specificResponse.getPaymentId());
-            response201.setTransactionFees(mapToAmount12(specificResponse.getTransactionFees()));
+            response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
             response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
             response201.setScaMethods(null); //TODO Fix Auth methods mapping
             response201.setChosenScaMethod(null); //TODO add to xs2a domain obj https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243

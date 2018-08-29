@@ -25,7 +25,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
-import javax.validation.Valid;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -98,28 +97,13 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static de.adorsys.psd2.model.Amount mapToAmount12(Amount amount) {
-        return Optional.ofNullable(amount)
-                   .map(a -> {
-                       de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(a.getContent());
-                       amountTarget.setCurrency(getCurrencyCodeString(a.getCurrency()));
-                       return amountTarget;
-                   }).orElse(null);
-    }
-
-    private static String getCurrencyCodeString(Currency currency) {
-        return Optional.ofNullable(currency)
-                   .map(Currency::getCurrencyCode)
-                   .orElse(null);
-    }
-
-    private static de.adorsys.psd2.model.Amount mapToAmount(Amount amount) {
-        return new de.adorsys.psd2.model.Amount()
+    public static Amount mapToAmount(de.adorsys.aspsp.xs2a.domain.Amount amount) {
+        return new Amount()
                    .amount(amount.getContent())
                    .currency(amount.getCurrency().getCurrencyCode());
     }
 
-    public static de.adorsys.psd2.model.AccountReport mapToAccountReport(AccountReport accountReport) {
+    public static AccountReport mapToAccountReport(de.adorsys.aspsp.xs2a.domain.account.AccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
                                                           .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
@@ -192,7 +176,7 @@ public final class AccountModelMapper {
         return targetAddress;
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(@Valid Address address) {
+    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
         return Optional.ofNullable(address)
                    .map(a -> {
                        de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
@@ -208,15 +192,15 @@ public final class AccountModelMapper {
                    .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
     }
 
-    public static Amount mapToXs2aAmount(@Valid de.adorsys.psd2.model.Amount amount) {
+    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       Amount targetAmount = new Amount();
+                       de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
                        targetAmount.setContent(a.getAmount());
                        targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
                        return targetAmount;
                    })
-                   .orElse(new Amount());
+                   .orElse(new de.adorsys.aspsp.xs2a.domain.Amount());
 
     }
 
