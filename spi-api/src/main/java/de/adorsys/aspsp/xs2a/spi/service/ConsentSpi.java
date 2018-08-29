@@ -17,20 +17,20 @@
 package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
 
 public interface ConsentSpi {
 
     /**
      * Sends a POST request to CMS to store created AISconsent
      *
-     * @param createAisConsentRequest Provides transporting data when creating an consent
+     * @param spiCreateAisConsentRequest Provides transporting data when creating an consent
      * @return String representation of identifier of stored consent
      */
-    String createConsent(CreateAisConsentRequest createAisConsentRequest);
+    String createConsent(SpiCreateAisConsentRequest spiCreateAisConsentRequest);
 
     /**
      * Requests CMS to retrieve AIS consent by its identifier
@@ -67,24 +67,24 @@ public interface ConsentSpi {
     /**
      * Sends a POST request to CMS to store created PIS consent for single payment
      *
-     * @param pisConsentRequest Provides transporting data when creating an consent
+     * @param spiPisConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for single payment
      */
-    String createPisConsentForSinglePaymentAndGetId(PisConsentRequest pisConsentRequest);
+    String createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
 
     /**
      * Sends a POST request to CMS to store created PIS consent for bulk payment
      *
-     * @param pisConsentRequest Provides transporting data when creating an consent
+     * @param spiPisConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for bulk payment
      */
-    String createPisConsentForBulkPaymentAndGetId(PisConsentRequest pisConsentRequest);
+    String createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
 
     /**
      * Sends a POST request to CMS to store created PIS consent for periodic payment
      *
-     * @param pisConsentRequest Provides transporting data when creating an consent
+     * @param spiPisConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent periodic payment
      */
-    String createPisConsentForPeriodicPaymentAndGetId(PisConsentRequest pisConsentRequest);
+    String createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
 }

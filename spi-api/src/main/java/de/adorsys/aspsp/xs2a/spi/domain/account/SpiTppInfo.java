@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent;
+package de.adorsys.aspsp.xs2a.spi.domain.account;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class SpiCreateConsentReq {
-    private SpiAccountAccess access;
-    private boolean recurringIndicator;
-    private LocalDate validUntil;
-    private int frequencyPerDay;
-    private boolean combinedServiceIndicator;
+public class SpiTppInfo {
+    private String registrationNumber;
+    private String tppName;
+    private String tppRole;
+    private String nationalCompetentAuthority;
+    private String redirectUri;
+    private String nokRedirectUri;
 }

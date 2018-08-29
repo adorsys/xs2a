@@ -16,19 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTppInfo;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.util.Map;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class SpiCreateConsentReq {
-    private SpiAccountAccess access;
-    private boolean recurringIndicator;
-    private LocalDate validUntil;
-    private int frequencyPerDay;
-    private boolean combinedServiceIndicator;
+public class SpiCreatePisConsentData {
+    private SpiSinglePayment singlePayment;
+    private Map<SpiSinglePayment, SpiPaymentInitialisationResponse> paymentIdentifierMap;
+    private SpiPeriodicPayment periodicPayment;
+    private SpiTppInfo tppInfo;
+    private String paymentProduct;
+    private AspspConsentData aspspConsentData;
 }

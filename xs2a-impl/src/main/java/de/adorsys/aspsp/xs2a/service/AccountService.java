@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -56,7 +56,7 @@ public class AccountService {
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final ConsentSpi consentSpi;
-    private final ConsentMapper consentMapper;
+    private final AisConsentMapper consentMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
@@ -80,7 +80,7 @@ public class AccountService {
                                                                          : ResponseObject.<Map<String, List<AccountDetails>>>builder()
                                                                                .body(Collections.singletonMap("accountList", accountDetails)).build();
 
-        consentSpi.consentActionLog(TPP_ID, consentId, this.createActionStatus(withBalance, TypeAccess.ACCOUNT, response));
+        consentSpi.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, response));
         return response;
     }
 
@@ -118,7 +118,7 @@ public class AccountService {
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
 
-        consentSpi.consentActionLog(TPP_ID, consentId, this.createActionStatus(withBalance, TypeAccess.ACCOUNT, builder.build()));
+        consentSpi.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, builder.build()));
         return builder.build();
     }
 
@@ -146,7 +146,7 @@ public class AccountService {
                                                      : ResponseObject.<List<Balance>>builder()
                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        consentSpi.consentActionLog(TPP_ID, consentId, this.createActionStatus(false, TypeAccess.BALANCE, response));
+        consentSpi.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.BALANCE, response));
         return response;
     }
 
@@ -188,7 +188,7 @@ public class AccountService {
                                                      : ResponseObject.<AccountReport>builder()
                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        consentSpi.consentActionLog(TPP_ID, consentId, this.createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
+        consentSpi.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
     }
 

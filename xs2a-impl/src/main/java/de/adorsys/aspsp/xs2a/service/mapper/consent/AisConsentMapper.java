@@ -14,40 +14,33 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper;
+package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ConsentMapper {
+public class AisConsentMapper {
     private final AccountMapper accountMapper;
 
-    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
+    public SpiCreateAisConsentRequest mapToSpiCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(req)
                    .map(r -> {
-                       CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
+                       SpiCreateAisConsentRequest aisRequest = new SpiCreateAisConsentRequest();
                        aisRequest.setPsuId(psuId);
                        aisRequest.setTppId(tppId);
                        aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
-                       aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
+                       aisRequest.setAccess(mapToSpiAccountAccess(req.getAccess()));
                        aisRequest.setValidUntil(r.getValidUntil());
                        aisRequest.setRecurringIndicator(r.isRecurringIndicator());
                        aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
@@ -104,7 +97,6 @@ public class ConsentMapper {
         return actionStatus;
     }
 
-    //Domain
     private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
@@ -124,7 +116,6 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    //Spi
     private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa -> {
@@ -144,44 +135,5 @@ public class ConsentMapper {
                    .map(at -> SpiAccountAccessType.valueOf(at.name()))
                    .orElse(null);
 
-    }
-
-    private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
-        AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
-        accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
-
-        accessInfo.setBalances(Optional.ofNullable(access.getBalances())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
-
-        accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
-                                       .map(this::mapToListAccountInfo)
-                                       .orElseGet(Collections::emptyList));
-
-        accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
-                                            .map(AccountAccessType::name)
-                                            .orElse(null));
-        accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
-                                  .map(AccountAccessType::name)
-                                  .orElse(null));
-
-        return accessInfo;
-    }
-
-    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
-        return refs.stream()
-                   .map(this::mapToAccountInfo)
-                   .collect(Collectors.toList());
-    }
-
-    private AccountInfo mapToAccountInfo(AccountReference ref) {
-        AccountInfo info = new AccountInfo();
-        info.setIban(ref.getIban());
-        info.setCurrency(Optional.ofNullable(ref.getCurrency())
-                             .map(Currency::getCurrencyCode)
-                             .orElse(null));
-        return info;
     }
 }

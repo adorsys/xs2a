@@ -40,7 +40,6 @@ public class ValueValidatorService {
         this.validator = validator;
     }
 
-    // Validation
     public void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
         ValidationGroup fieldValidator = new ValidationGroup();
         fieldValidator.setAccountId(accountId);
