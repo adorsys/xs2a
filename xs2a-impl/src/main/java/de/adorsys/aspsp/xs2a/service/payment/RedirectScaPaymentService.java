@@ -50,15 +50,16 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     private final PaymentSpi paymentSpi;
 
     @Override
-    public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
+    public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
         AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
-        return createPeriodicPaymentAndGetResponse(periodicPayment, aspspConsentData)
-                   .filter(pmt -> pmt.getTransactionStatus() != TransactionStatus.RJCT)
-                   .map(resp -> createConsentForPeriodicPaymentAndExtendPaymentResponse(new CreateConsentRequest(periodicPayment, tppInfo, paymentProduct, aspspConsentData), resp));
+        PaymentInitialisationResponse response = createPeriodicPaymentAndGetResponse(periodicPayment, aspspConsentData);
+        return response.getTransactionStatus() != TransactionStatus.RJCT
+                   ? createConsentForPeriodicPaymentAndExtendPaymentResponse(new CreateConsentRequest(periodicPayment, tppInfo, paymentProduct, aspspConsentData), response)
+                   : response;
     }
 
-    private Optional<PaymentInitialisationResponse> createPeriodicPaymentAndGetResponse(PeriodicPayment periodicPayment, AspspConsentData aspspConsentData) {
+    private PaymentInitialisationResponse createPeriodicPaymentAndGetResponse(PeriodicPayment periodicPayment, AspspConsentData aspspConsentData) {
         SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(periodicPayment);
         return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, aspspConsentData).getPayload());
     }
@@ -86,8 +87,8 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         HashMap<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap = new HashMap<>();
 
         for (SinglePayment payment : payments) {
-            Optional<PaymentInitialisationResponse> paymentInitialisationResponse = createSinglePaymentAndGetResponse(payment, aspspConsentData);
-            paymentInitialisationResponse.ifPresent(resp -> paymentIdentifierMap.put(payment, resp));
+            PaymentInitialisationResponse paymentInitialisationResponse = createSinglePaymentAndGetResponse(payment, aspspConsentData);
+            paymentIdentifierMap.put(payment, paymentInitialisationResponse);
         }
 
         paymentIdentifierMap.forEach((sp, resp) -> {
@@ -106,8 +107,6 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
         List<PaymentInitialisationResponse> paymentResponses = spiPaymentInitiations.stream()
                                                                    .map(paymentMapper::mapToPaymentInitializationResponse)
-                                                                   .filter(Optional::isPresent)
-                                                                   .map(Optional::get)
                                                                    .collect(Collectors.toList());
 
         for (PaymentInitialisationResponse resp : paymentResponses) {
@@ -135,15 +134,16 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
+    public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
         AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
-        return createSinglePaymentAndGetResponse(singlePayment, aspspConsentData)
-                   .filter(resp -> resp.getTransactionStatus() != TransactionStatus.RJCT)
-                   .map(resp -> createConsentForSinglePaymentAndExtendPaymentResponse(new CreateConsentRequest(singlePayment, tppInfo, paymentProduct, aspspConsentData), resp));
+        PaymentInitialisationResponse response = createSinglePaymentAndGetResponse(singlePayment, aspspConsentData);
+        return response.getTransactionStatus() != TransactionStatus.RJCT
+                   ? createConsentForSinglePaymentAndExtendPaymentResponse(new CreateConsentRequest(singlePayment, tppInfo, paymentProduct, aspspConsentData), response)
+                   : response;
     }
 
-    private Optional<PaymentInitialisationResponse> createSinglePaymentAndGetResponse(SinglePayment singlePayment, AspspConsentData aspspConsentData) {
+    private PaymentInitialisationResponse createSinglePaymentAndGetResponse(SinglePayment singlePayment, AspspConsentData aspspConsentData) {
         SpiSinglePayment spiSinglePayment = paymentMapper.mapToSpiSinglePayment(singlePayment);
         SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayment, aspspConsentData).getPayload();
         return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);

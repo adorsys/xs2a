@@ -18,8 +18,6 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
@@ -84,16 +82,16 @@ public class PaymentModelMapperTest {
 
     @Test
     public void mapToXs2aPayment_Single_success() {
-        //Given:
+        //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
+        //When
         SinglePayment result = mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
-        System.out.println(result.toString());
-
+        //Then
         assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
         assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getDebtorAccount().getIban()).isEqualTo(IBAN);
         assertThat(result.getDebtorAccount().getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
-        assertThat(result.getUltimateDebtor()).isNotNull();
+        assertThat(result.getUltimateDebtor()).isNull();
         assertThat(result.getInstructedAmount()).isNotNull();
         assertThat(result.getCreditorAccount()).isNotNull();
         assertThat(result.getCreditorAgent()).isNotNull();
@@ -116,10 +114,8 @@ public class PaymentModelMapperTest {
         System.out.println(result.toString());
 
         assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
-        assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getDebtorAccount().getIban()).isEqualTo(null);
-        assertThat(result.getDebtorAccount().getCurrency()).isEqualTo(null);
-        assertThat(result.getUltimateDebtor()).isNotNull();
+        assertThat(result.getDebtorAccount()).isNull();
+        assertThat(result.getUltimateDebtor()).isNull();
         assertThat(result.getInstructedAmount()).isNotNull();
         assertThat(result.getCreditorAccount()).isNotNull();
         assertThat(result.getCreditorAgent()).isNotNull();
@@ -129,39 +125,16 @@ public class PaymentModelMapperTest {
         assertThat(result.getRemittanceInformationStructured()).isNotNull();
         assertThat(result.getUltimateCreditor()).isNotBlank();
         assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
-        assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getRequestedExecutionDate()).isNotNull();
         assertThat(result.getRequestedExecutionTime()).isNotNull();
     }
-
+/*
     @Test
     public void mapToCurrency() {
         //When
         Currency result = PaymentModelMapper.mapToCurrency(CURRENCY);
         //Then
         assertThat(result).isEqualTo(Currency.getInstance(CURRENCY));
-    }
-
-    @Test
-    public void mapToXs2aAmount() {
-        //Given
-        Object request = getAmount12(true, true);
-        //When
-        Amount amount = PaymentModelMapper.mapToXs2aAmount(request);
-        //Then
-        assertThat(StringUtils.isNotBlank(amount.getContent())).isTrue();
-        assertThat(amount.getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
-    }
-
-    @Test
-    public void mapToXs2aAmount_null_should_not_fail() {
-        //Given
-        Object request = getAmount12(false, false);
-        //When
-        Amount amount = PaymentModelMapper.mapToXs2aAmount(request);
-        //Then
-        assertThat(StringUtils.isNotBlank(amount.getContent())).isFalse();
-        assertThat(amount.getCurrency()).isNull();
     }
 
     @Test
@@ -213,7 +186,7 @@ public class PaymentModelMapperTest {
         //Then
         assertThat(StringUtils.isNotBlank(result.getIban())).isFalse();
         assertThat(result.getCurrency()).isNull();
-    }
+    }*/
 
     @Test
     public void mapToXs2aBICFI() {
@@ -312,6 +285,4 @@ public class PaymentModelMapperTest {
         amount.setCurrency(EUR);
         return amount;
     }
-
-
 }

@@ -78,10 +78,10 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static de.adorsys.psd2.model.Amount mapToAmount12(de.adorsys.aspsp.xs2a.domain.Amount amount) {
+    public static Amount mapToAmount12(de.adorsys.aspsp.xs2a.domain.Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(a.getContent());
+                       Amount amountTarget = new Amount().amount(a.getContent());
                        amountTarget.setCurrency(getCurrencyCodeString(a.getCurrency()));
                        return amountTarget;
                    }).orElse(null);
@@ -98,12 +98,6 @@ public final class AccountModelMapper {
         BeanUtils.copyProperties(accountReport, target);
 
         return target;
-    }
-
-    public static <T> AccountReference mapToXs2aAccountReference(T reference) {
-        AccountReference xs2aReference = new AccountReference();
-        BeanUtils.copyProperties(reference, xs2aReference);
-        return xs2aReference;
     }
 
     public static <T> T mapToAccountReference12(AccountReference reference) {
@@ -139,21 +133,30 @@ public final class AccountModelMapper {
     }
 
     public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
-        de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
-        targetAddress.setStreet(address.getStreet());
-        targetAddress.setBuildingNumber(address.getBuildingNumber());
-        targetAddress.setCity(address.getCity());
-        targetAddress.setPostalCode(address.getPostalCode());
-        de.adorsys.aspsp.xs2a.domain.address.CountryCode code = new de.adorsys.aspsp.xs2a.domain.address.CountryCode();
-        code.setCode(address.getCountry());
-        targetAddress.setCountry(code);
-        return targetAddress;
+        return Optional.ofNullable(address)
+                   .map(a -> {
+                       de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
+                       targetAddress.setStreet(a.getStreet());
+                       targetAddress.setBuildingNumber(a.getBuildingNumber());
+                       targetAddress.setCity(a.getCity());
+                       targetAddress.setPostalCode(a.getPostalCode());
+                       de.adorsys.aspsp.xs2a.domain.address.CountryCode code = new de.adorsys.aspsp.xs2a.domain.address.CountryCode();
+                       code.setCode(a.getCountry());
+                       targetAddress.setCountry(code);
+                       return targetAddress;
+                   })
+                   .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(de.adorsys.psd2.model.Amount amount) {
-        de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
-        targetAmount.setContent(amount.getAmount());
-        targetAmount.setCurrency(Currency.getInstance(amount.getCurrency()));
-        return targetAmount;
+    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
+        return Optional.ofNullable(amount)
+                   .map(a -> {
+                       de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
+                       targetAmount.setContent(a.getAmount());
+                       targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
+                       return targetAmount;
+                   })
+                   .orElse(new de.adorsys.aspsp.xs2a.domain.Amount());
+
     }
 }

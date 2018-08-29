@@ -126,7 +126,7 @@ public class PaymentMapper {
                    }).orElse(null);
     }
 
-    public Optional<PaymentInitialisationResponse> mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
+    public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
         return Optional.ofNullable(response)
                    .map(pir -> {
                        PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
@@ -140,18 +140,16 @@ public class PaymentMapper {
                        initialisationResponse.setTppMessages(mapToMessageCodes(pir.getTppMessages()));
                        initialisationResponse.setLinks(new Links());
                        return initialisationResponse;
-                   });
+                   }).orElse(new PaymentInitialisationResponse());
     }
 
-    public Optional<PaymentInitialisationResponse> mapToPaymentInitResponseFailedPayment(SinglePayment payment, MessageErrorCode error) {
-        return Optional.ofNullable(payment)
-                   .map(p -> {
+    public PaymentInitialisationResponse mapToPaymentInitResponseFailedPayment(SinglePayment payment, MessageErrorCode error) {
+                       log.warn("Bulk payment initiation has an error: {}. Payment : {}",error, payment);
                        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
                        response.setTransactionStatus(TransactionStatus.RJCT);
-                       response.setPaymentId(p.getEndToEndIdentification());
+                       response.setPaymentId(payment.getEndToEndIdentification());
                        response.setTppMessages(new MessageErrorCode[]{error});
                        return response;
-                   });
     }
 
     public SpiPaymentType mapToSpiPaymentType(PaymentType paymentType) {

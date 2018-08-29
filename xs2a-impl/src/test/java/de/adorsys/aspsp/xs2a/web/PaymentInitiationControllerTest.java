@@ -79,9 +79,9 @@ public class PaymentInitiationControllerTest {
     @Before
     public void setUpPaymentServiceMock() throws IOException {
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE))
-            .thenReturn(ResponseObject.<TransactionStatusResponse>builder().body(new TransactionStatusResponse(TransactionStatus.ACCP)).build());
+            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE))
-            .thenReturn(ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPaymentInitiation(any(), any(), any())).thenReturn(readResponseObject());
         when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }

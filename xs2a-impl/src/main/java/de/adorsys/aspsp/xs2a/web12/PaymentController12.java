@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.web12;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -86,7 +85,7 @@ public class PaymentController12 implements PaymentApi {
         Optional<PaymentProduct> product = PaymentProduct.getByCode(paymentProduct);
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         String cert = new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8);
-        ResponseObject<PaymentInitialisationResponse> serviceResponse =
+        ResponseObject serviceResponse =
             xs2aPaymentService.createPayment(mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), cert);
 
         return serviceResponse.hasError()
