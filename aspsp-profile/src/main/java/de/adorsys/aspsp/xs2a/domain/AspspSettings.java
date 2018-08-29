@@ -26,6 +26,7 @@ public class AspspSettings {
     private boolean combinedServiceIndicator;
     private List<String> availablePaymentProducts;
     private List<String> availablePaymentTypes;
+    private ScaApproach scaApproach;
     private boolean tppSignatureRequired;
     private String pisRedirectUrlToAspsp;
     private String aisRedirectUrlToAspsp;
