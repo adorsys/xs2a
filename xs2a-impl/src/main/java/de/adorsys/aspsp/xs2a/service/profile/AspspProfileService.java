@@ -18,12 +18,13 @@ package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.aspsp.AspspSettings;
+import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -46,7 +47,7 @@ public class AspspProfileService {
      * @return List of payment products supported by current ASPSP
      */
     public List<PaymentProduct> getAvailablePaymentProducts() {
-        return Optional.ofNullable(readAvailablePaymentProducts())
+        return Optional.ofNullable(readAspspSettings().getAvailablePaymentProducts())
                    .map(list -> list.stream()
                                     .map(PaymentProduct::getByCode)
                                     .filter(Optional::isPresent)
@@ -61,13 +62,23 @@ public class AspspProfileService {
      * @return List of payment types allowed by ASPSP
      */
     public List<PisPaymentType> getAvailablePaymentTypes() {
-        return Optional.ofNullable(readAvailablePaymentTypes())
-                   .map(list -> list.stream()
-                                    .map(PisPaymentType::getByValue)
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
+        List<String> availablePaymentTypes = readAvailablePaymentTypes();
+
+        return CollectionUtils.isEmpty(availablePaymentTypes)
+                   ? Collections.emptyList()
+                   : getPisPaymentTypes(availablePaymentTypes);
+    }
+
+    private List<String> readAvailablePaymentTypes() {
+        return readAspspSettings().getAvailablePaymentTypes();
+    }
+
+    private List<PisPaymentType> getPisPaymentTypes(List<String> availablePaymentTypes) {
+        return availablePaymentTypes.stream()
+                   .map(PisPaymentType::getByValue)
+                   .filter(Optional::isPresent)
+                   .map(Optional::get)
+                   .collect(Collectors.toList());
     }
 
     /**
@@ -79,12 +90,6 @@ public class AspspProfileService {
         ScaApproach scaApproach = readScaApproach();
         return scaApproach == ScaApproach.REDIRECT
                    || scaApproach == ScaApproach.DECOUPLED;
-    }
-
-    private List<String> readAvailablePaymentProducts() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAvailablePaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
-            }).getBody();
     }
 
     /**
@@ -103,10 +108,8 @@ public class AspspProfileService {
      * @return 'true' if tpp signature is required, 'false' if not
      */
     public Boolean getTppSignatureRequired() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getTppSignatureRequired(), HttpMethod.GET, null, Boolean.class).getBody();
+        return readAspspSettings().isTppSignatureRequired();
     }
-
 
     /**
      * Read get PIS redirect url to aspsp from ASPSP profile service
@@ -114,8 +117,7 @@ public class AspspProfileService {
      * @return Url in order to redirect SCA approach
      */
     public String getPisRedirectUrlToAspsp() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getPisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
+        return readAspspSettings().getPisRedirectUrlToAspsp();
     }
 
     /**
@@ -124,8 +126,7 @@ public class AspspProfileService {
      * @return Url in order to redirect SCA approach
      */
     public String getAisRedirectUrlToAspsp() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAisRedirectUrlToAspsp(), HttpMethod.GET, null, String.class).getBody();
+        return readAspspSettings().getAisRedirectUrlToAspsp();
     }
 
     /**
@@ -134,9 +135,7 @@ public class AspspProfileService {
      * @return List of supported fields
      */
     public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getSupportedAccountReferenceFields(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SupportedAccountReferenceField>>() {
-            }).getBody();
+        return readAspspSettings().getSupportedAccountReferenceFields();
     }
 
     /**
@@ -145,8 +144,7 @@ public class AspspProfileService {
      * @return int value of maximum consent lifetime
      */
     public int getConsentLifetime() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getConsentLifetime(), HttpMethod.GET, null, Integer.class).getBody();
+        return readAspspSettings().getConsentLifetime();
     }
 
     /**
@@ -155,13 +153,11 @@ public class AspspProfileService {
      * @return true if ASPSP supports Global consents, false if doesn't
      */
     public Boolean getAllPsd2Support() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAllPsd2Support(), HttpMethod.GET, null, Boolean.class).getBody();
+        return readAspspSettings().isAllPsd2Support();
     }
 
-    private List<String> readAvailablePaymentTypes() {
+    private AspspSettings readAspspSettings() {
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAvailablePaymentTypes(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
-            }).getBody();
+            aspspProfileRemoteUrls.getAspspSettings(), HttpMethod.GET, null, AspspSettings.class).getBody();
     }
 }

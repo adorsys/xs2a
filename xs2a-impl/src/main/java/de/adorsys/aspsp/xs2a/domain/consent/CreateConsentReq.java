@@ -42,7 +42,7 @@ public class CreateConsentReq implements AccountReferenceCollector {
     @NotNull
     private boolean recurringIndicator;
 
-    @ApiModelProperty(value = "This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2017-10-30")
+    @ApiModelProperty(value = "This parameter is requesting a valid until date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2019-10-30")
     @NotNull
     private LocalDate validUntil;
 

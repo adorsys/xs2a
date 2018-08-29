@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest;
+package de.adorsys.aspsp.aspspmockserver.config.rest.consent;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ASPSPProfileRemoteUrls {
-
-    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
-    private String aspspProfileBaseUrl;
+public class AisConsentRemoteUrls {
+    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    private String consentServiceBaseUrl;
 
     /**
-     * Returns URL-string in order to get aspsp settings
+     * Returns URL-string to CMS endpoint that updates ais consent status
      *
      * @return String
      */
-    public String getAspspSettingsUrl() {
-        return aspspProfileBaseUrl + "/aspsp-profile";
+    public String updateAisConsentStatus() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/status/{status}";
     }
 }
