@@ -16,6 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public enum BalanceType {
     CLOSING_BOOKED("closingBooked"),
     EXPECTED("expected"),
@@ -25,12 +31,24 @@ public enum BalanceType {
     FORWARD_AVAILABLE("forwardAvailable");
 
     private String value;
+    private final static Map<String, BalanceType> container = new HashMap<>();
 
     BalanceType(String value) {
         this.value = value;
     }
 
+    static {
+        for (BalanceType type : values()) {
+            container.put(type.getValue(), type);
+        }
+    }
+
     public String getValue() {
         return value;
+    }
+
+    @JsonIgnore
+    public static Optional<BalanceType> getByValue(String name) {
+        return Optional.ofNullable(container.get(name));
     }
 }
