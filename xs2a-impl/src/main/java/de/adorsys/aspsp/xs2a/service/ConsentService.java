@@ -245,7 +245,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
         return request.getAccess().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS &&
-            CollectionUtils.isEmpty(request.getAccountReferences())
+                   CollectionUtils.isEmpty(request.getAccountReferences())
                    && !aspspProfileService.getAllPsd2Support();
     }
 }

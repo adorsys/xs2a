@@ -17,14 +17,11 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.time.ZoneId;
@@ -36,33 +33,44 @@ import java.util.stream.Collectors;
 public final class AccountModelMapper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static AccountList mapToAccountList(Map<String, List<AccountDetails>> accountDetailsList) {
-        List<de.adorsys.psd2.model.AccountDetails> details = accountDetailsList.values().stream()
-                                                                 .flatMap(accountDetails -> accountDetails.stream().map(AccountModelMapper::mapToAccountDetails))
-                                                                 .collect(Collectors.toList());
+    public static AccountList mapToAccountList(Map<String, List<de.adorsys.aspsp.xs2a.domain.account.AccountDetails>> accountDetailsList) {
+        List<AccountDetails> details = accountDetailsList.values().stream()
+                                           .flatMap(ad -> ad.stream().map(AccountModelMapper::mapToAccountDetails))
+                                           .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
-    public static de.adorsys.psd2.model.AccountDetails mapToAccountDetails(AccountDetails accountDetails) {
-        de.adorsys.psd2.model.AccountDetails target = new de.adorsys.psd2.model.AccountDetails();
+    public static AccountDetails mapToAccountDetails(de.adorsys.aspsp.xs2a.domain.account.AccountDetails accountDetails) {
+        AccountDetails target = new AccountDetails();
         BeanUtils.copyProperties(accountDetails, target);
 
         // TODO fill missing values: product status usage details
         // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
         target.resourceId(accountDetails.getId())
             .currency(accountDetails.getCurrency().getCurrencyCode())
-            .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType()).map(Enum::name).orElse(null));
-
-        BalanceList balances = new BalanceList();
-
-        accountDetails.getBalances().forEach(balance -> balances.add(mapToBalance(balance)));
-
+            .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType())
+                                 .map(Enum::name)
+                                 .orElse(null));
         return target
-                   .balances(balances)
+                   .balances(mapToBalanceList(accountDetails.getBalances()))
                    ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
     }
 
-    public static ReadBalanceResponse200 mapToBalance(List<Balance> balances) {
+    private static BalanceList mapToBalanceList(List<de.adorsys.aspsp.xs2a.domain.Balance> balances) {
+        BalanceList balanceList = null;
+
+        if (CollectionUtils.isNotEmpty(balances)) {
+            balanceList = new BalanceList();
+
+            balanceList.addAll(balances.stream()
+                                   .map(AccountModelMapper::mapToBalance)
+                                   .collect(Collectors.toList()));
+        }
+
+        return balanceList;
+    }
+
+    public static ReadBalanceResponse200 mapToBalance(List<de.adorsys.aspsp.xs2a.domain.Balance> balances) {
         BalanceList balancesResponse = new BalanceList();
         balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
 
@@ -70,11 +78,11 @@ public final class AccountModelMapper {
                    .balances(balancesResponse);
     }
 
-    public static de.adorsys.psd2.model.Balance mapToBalance(Balance balance) {
-        de.adorsys.psd2.model.Balance target = new de.adorsys.psd2.model.Balance();
+    public static Balance mapToBalance(de.adorsys.aspsp.xs2a.domain.Balance balance) {
+        Balance target = new Balance();
         BeanUtils.copyProperties(balance, target);
 
-        target.setBalanceAmount(mapToAmount(balance.getBalanceAmount()));
+        target.setBalanceAmount(AmountModelMapper.mapToAmount(balance.getBalanceAmount()));
 
         Optional.ofNullable(balance.getBalanceType())
             .ifPresent(balanceType -> target.setBalanceType(BalanceType.fromValue(balanceType.getValue())));
@@ -88,13 +96,7 @@ public final class AccountModelMapper {
         return target;
     }
 
-    private static de.adorsys.psd2.model.Amount mapToAmount(Amount amount) {
-        return new de.adorsys.psd2.model.Amount()
-                   .amount(amount.getContent())
-                   .currency(amount.getCurrency().getCurrencyCode());
-    }
-
-    public static de.adorsys.psd2.model.AccountReport mapToAccountReport(AccountReport accountReport) {
+    public static AccountReport mapToAccountReport(de.adorsys.aspsp.xs2a.domain.account.AccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
                                                           .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
@@ -107,7 +109,7 @@ public final class AccountModelMapper {
                                                            .orElse(new ArrayList<>());
         pending.addAll(pendingTransactions);
 
-        return new de.adorsys.psd2.model.AccountReport()
+        return new AccountReport()
                    .booked(booked)
                    .pending(pending)
                    ._links(OBJECT_MAPPER.convertValue(accountReport.getLinks(), Map.class));
@@ -123,7 +125,7 @@ public final class AccountModelMapper {
         // TODO fill missing values: entryReference checkId exchangeRate proprietaryBankTransactionCode links
         // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
         Optional.ofNullable(transactions.getAmount())
-            .ifPresent(amount -> target.setTransactionAmount(mapToAmount(amount)));
+            .ifPresent(amount -> target.setTransactionAmount(AmountModelMapper.mapToAmount(amount)));
 
         target.setPurposeCode(PurposeCode.fromValue(Optional.ofNullable(transactions.getPurposeCode())
                                                         .map(de.adorsys.aspsp.xs2a.domain.code.PurposeCode::getCode)
