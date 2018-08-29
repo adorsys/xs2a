@@ -90,7 +90,7 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static de.adorsys.psd2.model.Amount mapToAmount12(de.adorsys.aspsp.xs2a.domain.Amount amount) {
+    public static de.adorsys.psd2.model.Amount mapToAmount12(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(a.getContent());
@@ -200,15 +200,15 @@ public final class AccountModelMapper {
                    .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(@Valid de.adorsys.psd2.model.Amount amount) {
+    public static Amount mapToXs2aAmount(@Valid de.adorsys.psd2.model.Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
+                       Amount targetAmount = new Amount();
                        targetAmount.setContent(a.getAmount());
                        targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
                        return targetAmount;
                    })
-                   .orElse(new de.adorsys.aspsp.xs2a.domain.Amount());
+                   .orElse(new Amount());
 
     }
 
