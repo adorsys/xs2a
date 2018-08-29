@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import javax.validation.Validator;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +40,27 @@ public class ValueValidatorService {
         this.validator = validator;
     }
 
+    public void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setDateFrom(dateFrom);
+        fieldValidator.setDateTo(dateTo);
+
+        validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
+    }
+
+    public void validateAccountIdTransactionId(String accountId, String transactionId) {
+        ValidationGroup fieldValidator = new ValidationGroup();
+        fieldValidator.setAccountId(accountId);
+        fieldValidator.setTransactionId(transactionId);
+
+        validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
+    }
+
     public void validate(Object obj, Class<?>... groups) {
         final List<String> violations = validator.validate(obj, groups).stream()
-                                        .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
-                                        .collect(Collectors.toList());
+                                            .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
+                                            .collect(Collectors.toList());
 
         if (!violations.isEmpty()) {
             LOGGER.debug(violations.toString());

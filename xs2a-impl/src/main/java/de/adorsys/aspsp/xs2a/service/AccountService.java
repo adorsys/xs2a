@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.validator.ValidationGroup;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -109,7 +108,7 @@ public class AccountService {
         if (isValid) {
             builder = withBalance
                           ? builder.body(accountDetails)
-                          : builder.body(getAccountDetailNoBalances(accountDetails));
+                          : builder.body(accountMapper.mapToAccountDetailNoBalances(accountDetails));
         } else {
             builder = builder
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
@@ -233,7 +232,7 @@ public class AccountService {
      * Checks if all transactions are related to accounts set in AccountConsent Transactions section
      *
      * @param consentId     String representing an AccountConsent identification
-     * @param accountId     String representing a PSU`s Account at ASPSP
+     * @param accountId     String representing a PSU`s Account at
      * @param transactionId String representing the ASPSP identification of transaction
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
@@ -269,7 +268,7 @@ public class AccountService {
         List<AccountDetails> details = getAccountDetailsFromReferences(references);
         return withBalance
                    ? details
-                   : getAccountDetailsNoBalances(details);
+                   : accountMapper.mapTotAccountDetailsNoBalances(details);
     }
 
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
@@ -282,25 +281,12 @@ public class AccountService {
                          .collect(Collectors.toList());
     }
 
-    private List<AccountDetails> getAccountDetailsNoBalances(List<AccountDetails> details) {
-        return details.stream()
-                   .map(this::getAccountDetailNoBalances)
-                   .collect(Collectors.toList());
-    }
-
-    private AccountDetails getAccountDetailNoBalances(AccountDetails detail) {
-        return new AccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
-            detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
-            detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
-    }
-
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
                          .map(r -> filterByBookingStatus(r, bookingStatus));
-
     }
 
     private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
@@ -312,7 +298,7 @@ public class AccountService {
     }
 
     private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
-        validateAccountIdTransactionId(accountId, transactionId);
+        validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
         Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return accountMapper.mapToAccountReport(transaction
@@ -323,7 +309,7 @@ public class AccountService {
     private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
-        validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
+        validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
         return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
@@ -335,28 +321,5 @@ public class AccountService {
                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
                                           .findFirst())
                    .map(accountMapper::mapToAccountDetails);
-    }
-
-    // Validation
-    private void validateAccountIdPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setDateFrom(dateFrom);
-        fieldValidator.setDateTo(dateTo);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndPeriodIsValid.class);
-    }
-
-    private void validateAccountIdTransactionId(String accountId, String transactionId) {
-        ValidationGroup fieldValidator = new ValidationGroup();
-        fieldValidator.setAccountId(accountId);
-        fieldValidator.setTransactionId(transactionId);
-
-        validatorService.validate(fieldValidator, ValidationGroup.AccountIdAndTransactionIdIsValid.class);
-    }
-
-    public boolean isInvalidPaymentProductForPsu(AccountReference reference, String paymentProduct) {
-        return !accountSpi.readPsuAllowedPaymentProductList(accountMapper.mapToSpiAccountReference(reference), new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload() // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-                    .contains(paymentProduct);
     }
 }
