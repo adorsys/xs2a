@@ -34,8 +34,8 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   onClickContinue() {
-    this.aisService.generateTan(this.Accounts[0].iban)
-    this.aisService.updateConsentStatus('confirmed')
+    this.aisService.generateTan(this.Accounts[0].iban).subscribe();
+    this.aisService.updateConsentStatus('confirmed');
     this.router.navigate(['/tanconfirmation'], {queryParams: this.createQueryParams});
   }
 

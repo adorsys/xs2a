@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import {AccountConsent} from "../model/aspsp/accountConsent";
@@ -13,6 +13,8 @@ import {AccountsResponse} from "../model/aspsp/AccountsResponse";
 })
 export class AisService {
   aspspServerUrl = environment.aspspServerUrl;
+  mockServerUrl = environment.aspspServerUrl;
+  profileServerUrl = environment.profileServerUrl;
   savedConsentId: string;
 
 
@@ -31,6 +33,7 @@ export class AisService {
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
       'date': date.toUTCString(),
+      'tpp-qwac-certificate': environment.tppQwacCertificate,
     });
     console.log("iio headers consent", headers);
     return this.httpClient.get<AccountConsent>(this.aspspServerUrl + '/api/v1/consents/' + consentId, {headers: headers})
@@ -48,6 +51,7 @@ export class AisService {
       'x-request-id': environment.xRequestId,
       'date': date.toUTCString(),
       'consent-id': this.savedConsentId,
+      'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
     });
     console.log("iio", headers);
@@ -60,17 +64,19 @@ export class AisService {
   }
 
   getTransactionLimit(): Observable<number> {
-    return this.httpClient.get<number>('https://aspsp-profile-integ.cloud.adorsys.de/api/v1/transaction-lifetime')
-      .pipe(
-        map(data => {
-          console.log('account iio', data);
-          return data;
-        })
-      )
+    // TODO: Activate when CORS issue is resolved
+    // return this.httpClient.get<number>(`${this.profileServerUrl}/api/v1/transaction-lifetime`)
+    //   .pipe(
+    //     map(data => {
+    //       console.log('account iio', data);
+    //       return data;
+    //     })
+    //   )
+    return of(5)
   }
 
   generateTan(iban: string): Observable<string> {
-    return this.httpClient.post<string>(`${this.aspspServerUrl}/consent/confirmation/tan/${iban}`, {})
+    return this.httpClient.post<string>(`${this.mockServerUrl}/consent/confirmation/tan/${iban}`, {})
   }
 
   updateConsentStatus(consentStatus): any {
@@ -80,7 +86,7 @@ export class AisService {
   validateTan(tan: string): Observable<string> {
     const body = {
       tanNumber: tan,
-    }
+    };
     return this.httpClient.post<string>(`${this.aspspServerUrl}/consent/confirmation/tan/validate`, {})
   }
 
