@@ -49,7 +49,7 @@ public class PaymentStatusErrorfulSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context< HashMap, TppMessages> context;
+    private Context<HashMap, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;

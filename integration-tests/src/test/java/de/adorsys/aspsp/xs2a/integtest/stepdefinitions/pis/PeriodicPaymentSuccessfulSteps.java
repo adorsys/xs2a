@@ -59,7 +59,6 @@ public class PeriodicPaymentSuccessfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-
     @And("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
         context.setPaymentProduct(paymentProduct);
@@ -111,6 +110,5 @@ public class PeriodicPaymentSuccessfulSteps {
             });
 
         context.setActualResponse(responseEntity);
-
     }
 }

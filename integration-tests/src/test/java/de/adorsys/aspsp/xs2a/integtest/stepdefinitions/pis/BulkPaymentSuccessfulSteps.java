@@ -86,7 +86,6 @@ public class BulkPaymentSuccessfulSteps {
         ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponseList = context.getActualResponse();
         List<PaymentInitationRequestResponse201> givenResponseBody = context.getTestData().getResponse().getBody();
 
-
         assertThat(actualResponseList.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
 
         if (givenResponseBody.size() != actualResponseList.getBody().size()) {

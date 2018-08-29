@@ -11,11 +11,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import java.util.HashMap;
+import java.util.Objects;
 
 @FeatureFileSteps
 public class GlobalSuccessfulSteps {
@@ -53,6 +50,4 @@ public class GlobalSuccessfulSteps {
         context.setScaApproach("oauth");
         context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
     }
-
-
 }

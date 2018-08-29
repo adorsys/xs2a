@@ -71,7 +71,6 @@ public class PeriodicPaymentErrorfulSteps {
         context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
     }
 
-    //TODO: Find the right model class for the response (change PaymentInitiationRequestResponse201)
     @When("^PSU sends the recurring payment initiating request with error$")
     public void sendFalsePeriodicPaymentInitiatingRequest() throws IOException {
         HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
