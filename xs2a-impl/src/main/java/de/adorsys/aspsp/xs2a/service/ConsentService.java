@@ -61,6 +61,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
         CreateConsentReq checkedRequest = new CreateConsentReq();
+        if (isNotBankOfferConsentSupported(request)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
+        }
         if (isNotEmptyAccess(request.getAccess())) {
             if (!isValidExpirationDate(request.getValidUntil())) {
                 return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
@@ -247,5 +250,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return request.getAccess().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS &&
             CollectionUtils.isEmpty(request.getAccountReferences())
                    && !aspspProfileService.getAllPsd2Support();
+    }
+
+    private boolean isNotBankOfferConsentSupported(CreateConsentReq request) {
+        return !aspspProfileService.isBankOfferedConsentSupported()
+                   && !isNotEmptyAccess(request.getAccess());
     }
 }
