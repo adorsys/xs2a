@@ -16,16 +16,11 @@
 
 package de.adorsys.aspsp.aspspmockserver.exception;
 
-import lombok.Getter;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 
-@Getter
+@Value
 public class AspspRestException extends RuntimeException {
     private HttpStatus httpStatus;
     private String message;
-
-    public AspspRestException(HttpStatus httpStatus, String message) {
-        this.httpStatus = httpStatus;
-        this.message = message;
-    }
 }
