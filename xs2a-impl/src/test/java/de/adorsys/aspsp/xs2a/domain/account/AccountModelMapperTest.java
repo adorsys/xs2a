@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
-
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balance;
@@ -25,16 +24,13 @@ import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.psd2.model.*;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
+import static org.junit.Assert.*;
 
 public class AccountModelMapperTest {
 
@@ -43,87 +39,163 @@ public class AccountModelMapperTest {
         Balance balance = createBalance();
 
         de.adorsys.psd2.model.Balance result = mapToBalance(balance);
+        assertNotNull(result);
 
-        Assert.assertEquals(balance.getBalanceAmount().getContent(), result.getBalanceAmount().getAmount());
-        Assert.assertEquals(balance.getBalanceAmount().getCurrency().getCurrencyCode(), result.getBalanceAmount().getCurrency());
-        Assert.assertEquals(balance.getBalanceType().name(), result.getBalanceType().name());
-        List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(balance.getLastChangeDateTime()); //TODO remove when OffsetDateTime is in xs2a
-        Assert.assertEquals(balance.getLastChangeDateTime(), result.getLastChangeDateTime().atZoneSameInstant(validOffsets.get(0)).toLocalDateTime());
-        Assert.assertEquals(balance.getLastCommittedTransaction(), result.getLastCommittedTransaction());
-        Assert.assertEquals(balance.getReferenceDate(), result.getReferenceDate());
+        Amount expectedBalanceAmount = balance.getBalanceAmount();
+        de.adorsys.psd2.model.Amount actualBalanceAmount = result.getBalanceAmount();
+        assertNotNull(expectedBalanceAmount);
+
+        assertEquals(expectedBalanceAmount.getContent(), actualBalanceAmount.getAmount());
+        assertEquals(expectedBalanceAmount.getCurrency().getCurrencyCode(), actualBalanceAmount.getCurrency());
+        assertEquals(balance.getBalanceType().name(), result.getBalanceType().name());
+
+        LocalDateTime expectedLastChangeDateTime = balance.getLastChangeDateTime();
+        assertNotNull(expectedLastChangeDateTime);
+
+        OffsetDateTime actualLastChangeDateTime = result.getLastChangeDateTime();
+        assertNotNull(actualLastChangeDateTime);
+
+        List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(expectedLastChangeDateTime); //TODO remove when OffsetDateTime is in xs2a
+        assertEquals(expectedLastChangeDateTime, actualLastChangeDateTime.atZoneSameInstant(validOffsets.get(0)).toLocalDateTime());
+        assertEquals(balance.getLastCommittedTransaction(), result.getLastCommittedTransaction());
+        assertEquals(balance.getReferenceDate(), result.getReferenceDate());
     }
 
     @Test
     public void testMapToAccountList() {
-        List<AccountDetails> list = new ArrayList<>();
+        List<AccountDetails> accountDetailsList = new ArrayList<>();
         Balance inputBalance = createBalance();
 
-        list.add(new AccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", new ArrayList<Balance>()));
-        list.add(new AccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", Arrays.asList(inputBalance)));
+        accountDetailsList.add(new AccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", new ArrayList<Balance>()));
+        accountDetailsList.add(new AccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", Arrays.asList(inputBalance)));
         AccountDetails accountDetails = new AccountDetails("y1", "y2", "y3", "y4", "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CURRENT_ACCOUNT, "y11", new ArrayList<Balance>());
         accountDetails.setLinks(createLinks());
-        list.add(accountDetails);
-        Map<String, List<AccountDetails>> map = Collections.singletonMap("TEST", list);
-        AccountList result = mapToAccountList(map);
+        accountDetailsList.add(accountDetails);
+        Map<String, List<AccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
 
-        de.adorsys.psd2.model.AccountDetails account = result.getAccounts().get(1);
-        Assert.assertEquals("x2", account.getIban());
-        de.adorsys.psd2.model.Balance balance = account.getBalances().get(0);
-        Assert.assertEquals("4711", balance.getLastCommittedTransaction());
-        Assert.assertEquals("EUR", balance.getBalanceAmount().getCurrency());
-        Assert.assertEquals("1000", balance.getBalanceAmount().getAmount());
-        List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(inputBalance.getLastChangeDateTime()); //TODO remove when OffsetDateTime is in xs2a
-        Assert.assertEquals(inputBalance.getLastChangeDateTime(), balance.getLastChangeDateTime().atZoneSameInstant(validOffsets.get(0)).toLocalDateTime());
+        AccountList result = mapToAccountList(accountDetailsMap);
+        assertNotNull(result);
 
-        de.adorsys.psd2.model.AccountDetails account2 = result.getAccounts().get(2);
-        Map<String, String> linksMap = account2.getLinks();
-        Assert.assertEquals("http://scaOAuth.xx", linksMap.get("scaOAuth"));
-        Assert.assertEquals("http://linkToStatus.xx", linksMap.get("status"));
-        Assert.assertEquals("http://linkToSelf.xx", linksMap.get("self"));
+        List<de.adorsys.psd2.model.AccountDetails> accounts = result.getAccounts();
+        assertNotNull(accounts);
+
+        de.adorsys.psd2.model.AccountDetails secondAccount = accounts.get(1);
+        assertNotNull(secondAccount);
+
+        assertEquals("x2", secondAccount.getIban());
+
+        BalanceList balances = secondAccount.getBalances();
+        assertNotNull(balances);
+
+        de.adorsys.psd2.model.Balance balance = balances.get(0);
+        assertNotNull(balance);
+
+        assertEquals("4711", balance.getLastCommittedTransaction());
+
+        de.adorsys.psd2.model.Amount balanceAmount = balance.getBalanceAmount();
+        assertNotNull(balanceAmount);
+
+        assertEquals("EUR", balanceAmount.getCurrency());
+        assertEquals("1000", balanceAmount.getAmount());
+
+        LocalDateTime expectedLastChangeDateTime = inputBalance.getLastChangeDateTime();
+        assertNotNull(expectedLastChangeDateTime);
+
+        OffsetDateTime actualLastChangeDateTime = balance.getLastChangeDateTime();
+        assertNotNull(actualLastChangeDateTime);
+
+        List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(expectedLastChangeDateTime); //TODO remove when OffsetDateTime is in xs2a
+        assertEquals(expectedLastChangeDateTime, actualLastChangeDateTime.atZoneSameInstant(validOffsets.get(0)).toLocalDateTime());
+
+        de.adorsys.psd2.model.AccountDetails thirdAccount = accounts.get(2);
+        assertNotNull(thirdAccount);
+
+        Map links = thirdAccount.getLinks();
+        assertNotNull(links);
+
+        assertEquals("http://scaOAuth.xx", links.get("scaOAuth"));
+        assertEquals("http://linkToStatus.xx", links.get("status"));
+        assertEquals("http://linkToSelf.xx", links.get("self"));
     }
 
     @Test
     public void testMapToTransaction() {
         Transactions transactions = createTransactions();
         TransactionDetails transactionDetails = mapToTransaction(transactions);
+        assertNotNull(transactionDetails);
 
         Amount amount = transactions.getAmount();
         de.adorsys.psd2.model.Amount amountTarget = transactionDetails.getTransactionAmount();
+        assertNotNull(amountTarget);
 
-        Assert.assertNotNull(amountTarget);
+        assertEquals(amount.getContent(), amountTarget.getAmount());
+        assertEquals(amount.getCurrency().getCurrencyCode(), amountTarget.getCurrency());
 
-        Assert.assertEquals(amount.getContent(), amountTarget.getAmount());
-        Assert.assertEquals(amount.getCurrency().getCurrencyCode(), amountTarget.getCurrency());
-        Assert.assertEquals(transactions.getBankTransactionCodeCode().getCode(), transactionDetails.getBankTransactionCode());
-        Assert.assertEquals(transactions.getBookingDate(), transactionDetails.getBookingDate());
-        Assert.assertEquals(transactions.getCreditorAccount().getIban(), ((AccountReferenceIban)transactionDetails.getCreditorAccount()).getIban());
-        Assert.assertEquals(transactions.getCreditorAccount().getCurrency().getCurrencyCode(), ((AccountReferenceIban)transactionDetails.getCreditorAccount()).getCurrency());
-        Assert.assertEquals(transactions.getCreditorId(), transactionDetails.getCreditorId());
-        Assert.assertEquals(transactions.getCreditorName(), transactionDetails.getCreditorName());
-        Assert.assertEquals(transactions.getDebtorAccount().getIban(), ((AccountReferenceIban)transactionDetails.getDebtorAccount()).getIban());
-        Assert.assertEquals(transactions.getDebtorAccount().getCurrency().getCurrencyCode(), ((AccountReferenceIban) transactionDetails.getDebtorAccount()).getCurrency());
-        Assert.assertEquals(transactions.getPurposeCode().getCode(), transactionDetails.getPurposeCode().name());
-        Assert.assertEquals(transactions.getRemittanceInformationStructured(), transactionDetails.getRemittanceInformationStructured());
-        Assert.assertEquals(transactions.getRemittanceInformationUnstructured(), transactionDetails.getRemittanceInformationUnstructured());
-        Assert.assertEquals(transactions.getTransactionId(), transactionDetails.getTransactionId());
-        Assert.assertEquals(transactions.getUltimateCreditor(), transactionDetails.getUltimateCreditor());
-        Assert.assertEquals(transactions.getUltimateDebtor(), transactionDetails.getUltimateDebtor());
-        Assert.assertEquals(transactions.getValueDate(), transactionDetails.getValueDate());
+        BankTransactionCode bankTransactionCodeCode = transactions.getBankTransactionCodeCode();
+        assertNotNull(bankTransactionCodeCode);
+
+        assertEquals(bankTransactionCodeCode.getCode(), transactionDetails.getBankTransactionCode());
+        assertEquals(transactions.getBookingDate(), transactionDetails.getBookingDate());
+
+        AccountReference expectedCreditorAccount = transactions.getCreditorAccount();
+        assertNotNull(expectedCreditorAccount);
+
+        AccountReferenceIban actualCreditorAccount = (AccountReferenceIban) transactionDetails.getCreditorAccount();
+        assertNotNull(actualCreditorAccount);
+
+        assertEquals(expectedCreditorAccount.getIban(), actualCreditorAccount.getIban());
+        assertEquals(expectedCreditorAccount.getCurrency().getCurrencyCode(), actualCreditorAccount.getCurrency());
+        assertEquals(transactions.getCreditorId(), transactionDetails.getCreditorId());
+        assertEquals(transactions.getCreditorName(), transactionDetails.getCreditorName());
+
+        AccountReference expectedDebtorAccount = transactions.getDebtorAccount();
+        assertNotNull(expectedDebtorAccount);
+
+        AccountReferenceIban actualDebtorAccount = (AccountReferenceIban) transactionDetails.getDebtorAccount();
+        assertNotNull(actualDebtorAccount);
+
+        assertEquals(expectedDebtorAccount.getIban(), actualDebtorAccount.getIban());
+        assertEquals(expectedDebtorAccount.getCurrency().getCurrencyCode(), actualDebtorAccount.getCurrency());
+
+        PurposeCode expectedPurposeCode = transactions.getPurposeCode();
+        assertNotNull(expectedPurposeCode);
+
+        de.adorsys.psd2.model.PurposeCode actualPurposeCode = transactionDetails.getPurposeCode();
+        assertNotNull(actualPurposeCode);
+
+        assertEquals(expectedPurposeCode.getCode(), actualPurposeCode.name());
+        assertEquals(transactions.getRemittanceInformationStructured(), transactionDetails.getRemittanceInformationStructured());
+        assertEquals(transactions.getRemittanceInformationUnstructured(), transactionDetails.getRemittanceInformationUnstructured());
+        assertEquals(transactions.getTransactionId(), transactionDetails.getTransactionId());
+        assertEquals(transactions.getUltimateCreditor(), transactionDetails.getUltimateCreditor());
+        assertEquals(transactions.getUltimateDebtor(), transactionDetails.getUltimateDebtor());
+        assertEquals(transactions.getValueDate(), transactionDetails.getValueDate());
     }
 
     @Test
     public void testMapToAccountReport() {
-        Transactions [] tx = { createTransactions(), createTransactions(), createTransactions()};
-        Transactions [] tx1 = { createTransactions(), createTransactions()};
-        AccountReport accountReport = new AccountReport(tx, tx1);
+        Transactions [] bookedTransactions = { createTransactions(), createTransactions(), createTransactions()};
+        Transactions [] pendingTransactions = { createTransactions(), createTransactions()};
+        AccountReport accountReport = new AccountReport(bookedTransactions, pendingTransactions);
         accountReport.setLinks(createLinks());
 
-        de.adorsys.psd2.model.AccountReport accountReport1 = mapToAccountReport(accountReport);
+        de.adorsys.psd2.model.AccountReport result = mapToAccountReport(accountReport);
+        assertNotNull(result);
+
         //transactions mapping tested in testMapToTransaction
-        Assert.assertEquals(accountReport.getBooked().length, accountReport1.getBooked().size());
-        Assert.assertEquals(accountReport.getPending().length, accountReport1.getPending().size());
-        Assert.assertEquals(accountReport.getLinks().getScaOAuth(), accountReport1.getLinks().get("scaOAuth"));
-        Assert.assertEquals(3, accountReport1.getLinks().size());
+        assertEquals(accountReport.getBooked().length, result.getBooked().size());
+
+        Transactions[] expectedPending = accountReport.getPending();
+        assertNotNull(expectedPending);
+
+        TransactionList actualPending = result.getPending();
+        assertNotNull(actualPending);
+
+        assertEquals(expectedPending.length, actualPending.size());
+
+        Map links = result.getLinks();
+        assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
+        assertEquals(3, links.size());
     }
 
     private Balance createBalance() {

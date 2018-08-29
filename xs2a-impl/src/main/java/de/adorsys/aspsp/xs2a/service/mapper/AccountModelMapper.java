@@ -17,18 +17,16 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.model.BalanceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -40,42 +38,36 @@ public final class AccountModelMapper {
 
     public static AccountList mapToAccountList(Map<String, List<AccountDetails>> accountDetailsList) {
         List<de.adorsys.psd2.model.AccountDetails> details = accountDetailsList.values().stream()
-            .flatMap(al -> al.stream().map(AccountModelMapper::mapToAccountDetails))
-            .collect(Collectors.toList());
+                                                                 .flatMap(accountDetails -> accountDetails.stream().map(AccountModelMapper::mapToAccountDetails))
+                                                                 .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
     public static de.adorsys.psd2.model.AccountDetails mapToAccountDetails(AccountDetails accountDetails) {
-        de.adorsys.psd2.model.AccountDetails detailsTarget = new de.adorsys.psd2.model.AccountDetails();
-        BeanUtils.copyProperties(accountDetails, detailsTarget);
+        de.adorsys.psd2.model.AccountDetails target = new de.adorsys.psd2.model.AccountDetails();
+        BeanUtils.copyProperties(accountDetails, target);
 
         // TODO fill missing values: product status usage details
         // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
-        detailsTarget.resourceId(accountDetails.getId())
-            .currency(Optional.ofNullable(accountDetails.getCurrency()).map(c -> c.getCurrencyCode()).orElse(null))
-            .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType()).map(c -> c.name()).orElse(null));
+        target.resourceId(accountDetails.getId())
+            .currency(accountDetails.getCurrency().getCurrencyCode())
+            .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType()).map(Enum::name).orElse(null));
 
-        detailsTarget.setBalances(new BalanceList());
+        BalanceList balances = new BalanceList();
 
-        accountDetails.getBalances().forEach(balance ->
-                detailsTarget.getBalances().add(mapToBalance(balance))
-        );
+        accountDetails.getBalances().forEach(balance -> balances.add(mapToBalance(balance)));
 
-        detailsTarget.setLinks(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
-
-        return detailsTarget;
+        return target
+                   .balances(balances)
+                   ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
     }
 
     public static ReadBalanceResponse200 mapToBalance(List<Balance> balances) {
-        ReadBalanceResponse200 response = new ReadBalanceResponse200();
         BalanceList balancesResponse = new BalanceList();
-        response.setBalances(balancesResponse);
+        balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
 
-        balances.forEach(balance ->
-            response.getBalances().add(mapToBalance(balance))
-        );
-
-        return response;
+        return new ReadBalanceResponse200()
+                   .balances(balancesResponse);
     }
 
     public static de.adorsys.psd2.model.Balance mapToBalance(Balance balance) {
@@ -83,123 +75,100 @@ public final class AccountModelMapper {
         BeanUtils.copyProperties(balance, target);
 
         target.setBalanceAmount(mapToAmount(balance.getBalanceAmount()));
-        if (balance.getBalanceType() != null) {
-            target.setBalanceType(mapBalanceType(balance.getBalanceType()));
-        }
-        LocalDateTime ldt = balance.getLastChangeDateTime();
-        if (ldt != null) {
-            List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(ldt);
-            target.setLastChangeDateTime(ldt.atOffset(validOffsets.get(0)));
-        }
+
+        Optional.ofNullable(balance.getBalanceType())
+            .ifPresent(balanceType -> target.setBalanceType(BalanceType.fromValue(balanceType.getValue())));
+
+        Optional.ofNullable(balance.getLastChangeDateTime())
+            .ifPresent(lastChangeDateTime -> {
+                List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(lastChangeDateTime);
+                target.setLastChangeDateTime(lastChangeDateTime.atOffset(validOffsets.get(0)));
+            });
+
         return target;
     }
 
     private static de.adorsys.psd2.model.Amount mapToAmount(Amount amount) {
-        de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount();
-        amountTarget.setAmount(amount.getContent());
-        amountTarget.setCurrency(amount.getCurrency().getCurrencyCode());
-        return amountTarget;
+        return new de.adorsys.psd2.model.Amount()
+                   .amount(amount.getContent())
+                   .currency(amount.getCurrency().getCurrencyCode());
     }
 
     public static de.adorsys.psd2.model.AccountReport mapToAccountReport(AccountReport accountReport) {
-        de.adorsys.psd2.model.AccountReport target = new de.adorsys.psd2.model.AccountReport();
-
         TransactionList booked = new TransactionList();
-        List<TransactionDetails> list = Optional.ofNullable(accountReport.getBooked())
-            .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
-            .orElse(Collections.EMPTY_LIST);
-        booked.addAll(list);
-        target.setBooked(booked);
+        List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
+                                                          .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
+                                                          .orElse(new ArrayList<>());
+        booked.addAll(bookedTransactions);
 
         TransactionList pending = new TransactionList();
-        List<TransactionDetails> list2 = Optional.ofNullable(accountReport.getPending())
-            .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
-            .orElse(Collections.EMPTY_LIST);
-        pending.addAll(list2);
-        target.setPending(pending);
+        List<TransactionDetails> pendingTransactions = Optional.ofNullable(accountReport.getPending())
+                                                           .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
+                                                           .orElse(new ArrayList<>());
+        pending.addAll(pendingTransactions);
 
-        target.setLinks(OBJECT_MAPPER.convertValue(accountReport.getLinks(), Map.class));
+        return new de.adorsys.psd2.model.AccountReport()
+                   .booked(booked)
+                   .pending(pending)
+                   ._links(OBJECT_MAPPER.convertValue(accountReport.getLinks(), Map.class));
+    }
+
+    public static TransactionDetails mapToTransaction(Transactions transactions) {
+        TransactionDetails target = new TransactionDetails();
+        BeanUtils.copyProperties(transactions, target);
+
+        //transform Account info
+        target.setCreditorAccount(createAccountObject(transactions.getCreditorAccount()));
+        target.setDebtorAccount(createAccountObject(transactions.getDebtorAccount()));
+
+        // TODO fill missing values: entryReference checkId exchangeRate proprietaryBankTransactionCode links
+        // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
+        Optional.ofNullable(transactions.getAmount())
+            .ifPresent(amount -> target.setTransactionAmount(mapToAmount(amount)));
+
+        target.setPurposeCode(PurposeCode.fromValue(Optional.ofNullable(transactions.getPurposeCode())
+                                                        .map(de.adorsys.aspsp.xs2a.domain.code.PurposeCode::getCode)
+                                                        .orElse(null)));
+
+        Optional.ofNullable(transactions.getBankTransactionCodeCode())
+            .ifPresent(transactionCode -> target.setBankTransactionCode(transactionCode.getCode()));
 
         return target;
     }
 
-    public static TransactionDetails mapToTransaction(Transactions transactions) {
-        TransactionDetails transactionDetails = new TransactionDetails();
-        BeanUtils.copyProperties(transactions, transactionDetails);
-
-        //transform Account info
-        transactionDetails.setCreditorAccount(createAccountObject(transactions.getCreditorAccount()));
-        transactionDetails.setDebtorAccount(createAccountObject(transactions.getDebtorAccount()));
-
-        // TODO fill missing values: entryReference checkId exchangeRate proprietaryBankTransactionCode links
-        // https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/248
-
-        if (transactions.getAmount() != null) {
-            Amount amount = transactions.getAmount();
-            transactionDetails.setTransactionAmount(
-                new de.adorsys.psd2.model.Amount().amount(amount.getContent()).currency(amount.getCurrency().getCurrencyCode())
-            );
-        }
-
-        try {
-            transactionDetails.setPurposeCode(PurposeCode.valueOf(transactions.getPurposeCode().getCode()));
-        } catch (IllegalArgumentException e) {
-            log.error("Exception in mapping transaction purpose code", e);
-        }
-        if (transactions.getBankTransactionCodeCode() != null) {
-            transactionDetails.setBankTransactionCode(transactions.getBankTransactionCodeCode().getCode());
-        }
-
-        return transactionDetails;
-    }
-
     private static Object createAccountObject(AccountReference accountReference) {
-        if (accountReference == null) {
-            return null;
-        }
+        return Optional.ofNullable(accountReference)
+                   .map(account -> {
+                       if (account.getIban() != null) {
+                           return new AccountReferenceIban()
+                                      .iban(accountReference.getIban())
+                                      .currency(getCurrencyFromAccountReference(accountReference));
+                       } else if (account.getBban() != null) {
+                           return new AccountReferenceBban()
+                                      .bban(accountReference.getBban())
+                                      .currency(getCurrencyFromAccountReference(accountReference));
+                       } else if (account.getPan() != null) {
+                           return new AccountReferencePan()
+                                      .pan(accountReference.getPan())
+                                      .currency(getCurrencyFromAccountReference(accountReference));
+                       } else if (account.getMsisdn() != null) {
+                           return new AccountReferenceMsisdn()
+                                      .msisdn(accountReference.getMsisdn())
+                                      .currency(getCurrencyFromAccountReference(accountReference));
+                       } else if (account.getMaskedPan() != null) {
+                           return new AccountReferenceMaskedPan()
+                                      .maskedPan(accountReference.getMaskedPan())
+                                      .currency(getCurrencyFromAccountReference(accountReference));
+                       }
 
-        // Iban, Bban, MaskedPan, Msisdn, Pan
-        if (accountReference.getIban() != null) {
-            return new AccountReferenceIban()
-                .iban(accountReference.getIban())
-                .currency(Optional.ofNullable(accountReference.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
-        } else if (accountReference.getBban() != null) {
-            return new AccountReferenceBban()
-                .bban(accountReference.getBban())
-                .currency(Optional.ofNullable(accountReference.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
-        } else if (accountReference.getMaskedPan() != null) {
-            return new AccountReferenceMaskedPan()
-                .maskedPan(accountReference.getMaskedPan())
-                .currency(Optional.ofNullable(accountReference.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
-        } else if (accountReference.getMsisdn() != null) {
-            return new AccountReferenceMsisdn()
-                .msisdn(accountReference.getMsisdn())
-                .currency(Optional.ofNullable(accountReference.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
-        } else if (accountReference.getPan() != null) {
-            return new AccountReferencePan()
-                .pan(accountReference.getPan())
-                .currency(Optional.ofNullable(accountReference.getCurrency()).map(Currency::getCurrencyCode).orElse(null));
-        }
-
-        return null;
+                       return null;
+                   })
+                   .orElse(null);
     }
 
-    private static BalanceType mapBalanceType(de.adorsys.aspsp.xs2a.domain.BalanceType balanceType) {
-        switch (balanceType) {
-            case CLOSING_BOOKED:
-                return BalanceType.CLOSINGBOOKED;
-            case EXPECTED:
-                return BalanceType.EXPECTED;
-            case AUTHORISED:
-                return BalanceType.AUTHORISED;
-            case OPENING_BOOKED:
-                return BalanceType.OPENINGBOOKED;
-            case INTERIM_AVAILABLE:
-                return BalanceType.INTERIMAVAILABLE;
-            case FORWARD_AVAILABLE:
-                return BalanceType.FORWARDAVAILABLE;
-            default:
-                return null;
-        }
+    private static String getCurrencyFromAccountReference(AccountReference accountReference) {
+        return Optional.ofNullable(accountReference.getCurrency())
+                   .map(Currency::getCurrencyCode)
+                   .orElse(null);
     }
 }

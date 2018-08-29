@@ -17,10 +17,20 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 public enum BalanceType {
-    CLOSING_BOOKED,
-    EXPECTED,
-    AUTHORISED,
-    OPENING_BOOKED,
-    INTERIM_AVAILABLE,
-    FORWARD_AVAILABLE
+    CLOSING_BOOKED("closingBooked"),
+    EXPECTED("expected"),
+    AUTHORISED("authorised"),
+    OPENING_BOOKED("openingBooked"),
+    INTERIM_AVAILABLE("interimAvailable"),
+    FORWARD_AVAILABLE("forwardAvailable");
+
+    private String value;
+
+    BalanceType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
