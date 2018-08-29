@@ -17,6 +17,7 @@ Provide access to next values:
  - consent lifetime
  - transaction lifetime
  - all psd2 support
+ - bank offered consent support
  
  To test getting data of ASPSP Profile need to make next steps:
  
