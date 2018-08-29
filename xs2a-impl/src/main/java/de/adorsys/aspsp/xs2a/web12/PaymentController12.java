@@ -34,13 +34,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
-import static de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapper.*;
 
 @RestController
 @AllArgsConstructor
 public class PaymentController12 implements PaymentApi {
     private final PaymentService xs2aPaymentService;
     private final ResponseMapper responseMapper;
+    private final PaymentModelMapper paymentModelMapper;
 
     @Override
     public ResponseEntity<?> getPaymentInitiationStatus(String paymentService, String paymentId, UUID xRequestID, String digest,
@@ -70,7 +70,7 @@ public class PaymentController12 implements PaymentApi {
 
         return response.hasError()
                    ? responseMapper.ok(response)
-                   : responseMapper.ok(ResponseObject.builder().body(mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
+                   : responseMapper.ok(ResponseObject.builder().body(paymentModelMapper.mapToGetPaymentResponse12(response.getBody(), PaymentType.getByValue(paymentService).get(), PaymentProduct.SCT)).build());
     }
 
     @Override
@@ -86,11 +86,11 @@ public class PaymentController12 implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         String cert = new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), cert);
+            xs2aPaymentService.createPayment(paymentModelMapper.mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), cert);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)
-                   : responseMapper.created(ResponseObject.builder().body(mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentType.get(), product.get())).build());
+                   : responseMapper.created(ResponseObject.builder().body(paymentModelMapper.mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentType.get(), product.get())).build());
     }
 
     @Override

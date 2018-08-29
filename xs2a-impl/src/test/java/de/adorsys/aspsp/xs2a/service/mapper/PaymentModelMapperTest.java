@@ -16,27 +16,29 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
-import de.adorsys.psd2.model.TppMessageCategory;
-import de.adorsys.psd2.model.TppMessageGeneric;
-import de.adorsys.psd2.model.TppMessages;
+import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.psd2.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Currency;
 import java.util.LinkedHashMap;
 
-import static de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapper.mapToXs2aPayment;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentModelMapperTest {
@@ -49,6 +51,15 @@ public class PaymentModelMapperTest {
     private static final String MSG_TEXT = "Some error message";
     private static final String IBAN = "DE1234567890";
     private static final String CURRENCY = "EUR";
+
+    @InjectMocks
+    PaymentModelMapper paymentModelMapper;
+
+    @Mock
+    ValueValidatorService validatorService;
+
+    @Mock
+    ObjectMapper objectMapper;
 
     @Test
     public void mapToTransactionStatus12() {
@@ -75,23 +86,25 @@ public class PaymentModelMapperTest {
         PaymentInitialisationResponse givenResponse = getXs2aPaymentResponse();
         PaymentInitationRequestResponse201 expectedResponse = getPaymentResponse12();
         //When
-        PaymentInitationRequestResponse201 result = PaymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, PaymentType.SINGLE, PaymentProduct.SCT);
+        PaymentInitationRequestResponse201 result = paymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, PaymentType.SINGLE, PaymentProduct.SCT);
         //Then
         assertThat(result).isEqualTo(expectedResponse);
     }
 
     @Test
     public void mapToXs2aPayment_Single_success() {
+        when(objectMapper.convertValue(getSinglePayment(true, true, true, true, true, true, true), PaymentInitiationSctJson.class)).thenReturn(getSinglePayment12(true, true, true, true, true, true, true));
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), AccountReference.class)).thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
         //When
-        SinglePayment result = mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
+        SinglePayment result = paymentModelMapper.mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
         //Then
         assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
         assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getDebtorAccount().getIban()).isEqualTo(IBAN);
         assertThat(result.getDebtorAccount().getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
-        assertThat(result.getUltimateDebtor()).isNull();
+        assertThat(result.getUltimateDebtor()).isNotNull();
         assertThat(result.getInstructedAmount()).isNotNull();
         assertThat(result.getCreditorAccount()).isNotNull();
         assertThat(result.getCreditorAgent()).isNotNull();
@@ -107,93 +120,11 @@ public class PaymentModelMapperTest {
     }
 
     @Test
-    public void mapToXs2aPayment_Single_null() {
-        //Given:
-        Object payment = getSinglePayment(false, false, false, false, false, false, false);
-        SinglePayment result = mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
-        System.out.println(result.toString());
-
-        assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
-        assertThat(result.getDebtorAccount()).isNull();
-        assertThat(result.getUltimateDebtor()).isNull();
-        assertThat(result.getInstructedAmount()).isNotNull();
-        assertThat(result.getCreditorAccount()).isNotNull();
-        assertThat(result.getCreditorAgent()).isNotNull();
-        assertThat(StringUtils.isNotBlank(result.getCreditorName())).isFalse();
-        assertThat(result.getCreditorAddress()).isNotNull();
-        assertThat(result.getPurposeCode()).isNotNull();
-        assertThat(result.getRemittanceInformationStructured()).isNotNull();
-        assertThat(result.getUltimateCreditor()).isNotBlank();
-        assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
-        assertThat(result.getRequestedExecutionDate()).isNotNull();
-        assertThat(result.getRequestedExecutionTime()).isNotNull();
-    }
-/*
-    @Test
-    public void mapToCurrency() {
-        //When
-        Currency result = PaymentModelMapper.mapToCurrency(CURRENCY);
-        //Then
-        assertThat(result).isEqualTo(Currency.getInstance(CURRENCY));
-    }
-
-    @Test
-    public void mapToXs2aAddress() {
-        //Given
-        Object address = getAddress12(true, true, true, true, true);
-        //When
-        Address result = PaymentModelMapper.mapToXs2aAddress(address);
-        //Then
-        assertThat(result.getStreet()).isNotBlank();
-        assertThat(result.getBuildingNumber()).isNotBlank();
-        assertThat(result.getCity()).isNotBlank();
-        assertThat(result.getCountry()).isNotNull();
-        assertThat(result.getPostalCode()).isNotBlank();
-    }
-
-    @Test
-    public void mapToXs2aAddress_all_null_dont_fall() {
-        //Given
-        Object address = getAddress12(false, false, false, false, false);
-        //When
-        Address result = PaymentModelMapper.mapToXs2aAddress(address);
-        //Then
-        System.out.println(result.toString());
-        assertThat(StringUtils.isNotBlank(result.getStreet())).isFalse();
-        assertThat(result.getBuildingNumber()).isNotBlank();
-        assertThat(result.getCity()).isNotBlank();
-        assertThat(result.getCountry()).isNotNull();
-        assertThat(result.getPostalCode()).isNotBlank();
-    }
-
-    @Test
-    public void mapToXs2aAccountReference() {
-        //Given
-        Object request = getAccountReference12(true, true);
-        //When
-        AccountReference result = PaymentModelMapper.mapToXs2aAccountReference(request);
-        //Then
-        assertThat(StringUtils.isNotBlank(result.getIban())).isTrue();
-        assertThat(result.getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
-    }
-
-    @Test
-    public void mapToXs2aAccountReference_null_should_not_fail() {
-        //Given
-        Object request = getAccountReference12(false, false);
-        //When
-        AccountReference result = PaymentModelMapper.mapToXs2aAccountReference(request);
-        //Then
-        assertThat(StringUtils.isNotBlank(result.getIban())).isFalse();
-        assertThat(result.getCurrency()).isNull();
-    }*/
-
-    @Test
     public void mapToXs2aBICFI() {
         //Given
         String bicfi = "Some test data";
         //When
-        BICFI result = PaymentModelMapper.mapToXs2aBICFI(bicfi);
+        BICFI result = paymentModelMapper.mapToXs2aBICFI(bicfi);
         //Then
         assertThat(result.getCode()).isEqualTo(bicfi);
     }
@@ -202,17 +133,30 @@ public class PaymentModelMapperTest {
     private LinkedHashMap<String, Object> getSinglePayment(boolean id, boolean acc, boolean amount, boolean agent, boolean creditorName, boolean credAddres, boolean remitance) {
         LinkedHashMap<String, Object> payment = new LinkedHashMap<>();
         payment.put("endToEndIdentification", id ? PAYMENT_ID : null);
-        payment.put("debtorAccount", acc ? getAccountReference12(true, true) : null);
-        payment.put("instructedAmount", amount ? getAmount12(true, true) : null);
-        payment.put("creditorAccount", getAccountReference12(true, true));
+        payment.put("debtorAccount", acc ? getAccountReference12Map(true, true) : null);
+        payment.put("instructedAmount", amount ? getAmountMap12(true, true) : null);
+        payment.put("creditorAccount", getAccountReference12Map(true, true));
         payment.put("creditorAgent", agent ? "Agent" : null);
         payment.put("creditorName", creditorName ? "CreditorName" : null);
-        payment.put("creditorAddress", credAddres ? getAddress12(true, true, true, true, true) : null);
+        payment.put("creditorAddress", credAddres ? getAddress12Map(true, true, true, true, true) : null);
         payment.put("remittanceInformationUnstructured", remitance ? "some pmnt info" : null);
         return payment;
     }
 
-    private LinkedHashMap<String, Object> getAddress12(boolean code, boolean str, boolean bld, boolean city, boolean country) {
+    private PaymentInitiationSctJson getSinglePayment12(boolean id, boolean acc, boolean amount, boolean agent, boolean creditorName, boolean credAddres, boolean remitance) {
+        PaymentInitiationSctJson payment = new PaymentInitiationSctJson();
+        payment.setEndToEndIdentification(id ? PAYMENT_ID : null);
+        payment.setDebtorAccount(acc ? getAccountReference12Map(true, true) : null);
+        payment.setInstructedAmount(amount ? getAmount12(true, true) : null);
+        payment.setCreditorAccount(getAccountReference12Map(true, true));
+        payment.setCreditorAgent(agent ? "Agent" : null);
+        payment.setCreditorName(creditorName ? "CreditorName" : null);
+        payment.setCreditorAddress(credAddres ? getAddress12(true, true, true, true, true) : null);
+        payment.setRemittanceInformationUnstructured(remitance ? "some pmnt info" : null);
+        return payment;
+    }
+
+    private LinkedHashMap<String, Object> getAddress12Map(boolean code, boolean str, boolean bld, boolean city, boolean country) {
         LinkedHashMap<String, Object> address = new LinkedHashMap<>();
         address.put("postalCode", code ? "PostalCode" : null);
         address.put("city", city ? "Kiev" : null);
@@ -222,17 +166,41 @@ public class PaymentModelMapperTest {
         return address;
     }
 
-    private LinkedHashMap<String, Object> getAmount12(boolean currency, boolean toPay) {
+    private Address getAddress12(boolean code, boolean str, boolean bld, boolean city, boolean country) {
+        Address address = new Address();
+        address.setPostalCode(code ? "PostalCode" : null);
+        address.setCity(city ? "Kiev" : null);
+        address.setBuildingNumber(bld ? "8" : null);
+        address.setStreet(str ? "Esplanadnaya" : null);
+        address.setCountry(country ? "Ukraine" : null);
+        return address;
+    }
+
+    private LinkedHashMap<String, Object> getAmountMap12(boolean currency, boolean toPay) {
         LinkedHashMap<String, Object> instructedAmount = new LinkedHashMap<>();
         instructedAmount.put("currency", currency ? "EUR" : null);
         instructedAmount.put("amount", toPay ? "123456" : null);
         return instructedAmount;
     }
 
-    private LinkedHashMap<String, Object> getAccountReference12(boolean iban, boolean currency) {
+    private de.adorsys.psd2.model.Amount getAmount12(boolean currency, boolean toPay) {
+        de.adorsys.psd2.model.Amount instructedAmount = new de.adorsys.psd2.model.Amount();
+        instructedAmount.setCurrency(currency ? "EUR" : null);
+        instructedAmount.setAmount(toPay ? "123456" : null);
+        return instructedAmount;
+    }
+
+    private LinkedHashMap<String, Object> getAccountReference12Map(boolean iban, boolean currency) {
         LinkedHashMap<String, Object> ref = new LinkedHashMap<>();
         ref.put("iban", iban ? IBAN : null);
         ref.put("currency", currency ? CURRENCY : null);
+        return ref;
+    }
+
+    private AccountReference getAccountReference(boolean iban, boolean currency) {
+        AccountReference ref = new AccountReference();
+        ref.setIban(iban ? IBAN : null);
+        ref.setCurrency(currency ? Currency.getInstance(CURRENCY) : null);
         return ref;
     }
 

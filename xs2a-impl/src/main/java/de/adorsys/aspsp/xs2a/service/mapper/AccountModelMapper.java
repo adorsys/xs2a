@@ -24,6 +24,7 @@ import de.adorsys.psd2.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.Valid;
 import java.util.Currency;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +133,7 @@ public final class AccountModelMapper {
         return targetAddress;
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
+    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(@Valid Address address) {
         return Optional.ofNullable(address)
                    .map(a -> {
                        de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
@@ -148,7 +149,7 @@ public final class AccountModelMapper {
                    .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
+    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(@Valid Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();

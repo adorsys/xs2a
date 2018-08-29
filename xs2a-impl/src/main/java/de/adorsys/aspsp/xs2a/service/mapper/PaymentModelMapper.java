@@ -16,123 +16,132 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.model.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
 
-public final class PaymentModelMapper {
-    private static final ObjectMapper mapper = new ObjectMapper();
+@Component
+@RequiredArgsConstructor
+public class PaymentModelMapper {
+    private final ObjectMapper mapper;
+    private final ValueValidatorService validationService;
 
-    static {
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.registerModule(new Jdk8Module());
-        mapper.registerModule(new JavaTimeModule());
-        mapper.registerModule(new ParameterNamesModule());
-    }
-
-    public static <T> T mapToXs2aPayment(Object payment, PaymentType type, PaymentProduct product) {
+    public <T> T mapToXs2aPayment(Object payment, PaymentType type, PaymentProduct product) {
         if (type == SINGLE) {
             PaymentInitiationSctJson single = mapper.convertValue(payment, PaymentInitiationSctJson.class);
+            validationService.validate(single);
             return (T) mapToXs2aSinglePayment(single);
 
         } else if (type == PERIODIC) {
             PeriodicPaymentInitiationSctJson periodic = mapper.convertValue(payment, PeriodicPaymentInitiationSctJson.class);
+            validationService.validate(periodic);
             return (T) mapToXs2aPeriodicPayment(periodic);
         } else {
             BulkPaymentInitiationSctJson bulk = mapper.convertValue(payment, BulkPaymentInitiationSctJson.class);
+            validationService.validate(bulk);
             return (T) mapToXs2aBulkPayment(bulk);
         }
     }
 
-    private static SinglePayment mapToXs2aSinglePayment(@Valid PaymentInitiationSctJson paymentRequest) {
-        SinglePayment singlePayment = new SinglePayment();
+    private SinglePayment mapToXs2aSinglePayment(PaymentInitiationSctJson paymentRequest) {
+        SinglePayment payment = new SinglePayment();
 
-        singlePayment.setEndToEndIdentification(paymentRequest.getEndToEndIdentification());
-        singlePayment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
-        singlePayment.setUltimateDebtor(null); //TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-        singlePayment.setInstructedAmount(mapToXs2aAmount(paymentRequest.getInstructedAmount()));
-        singlePayment.setCreditorAccount(mapToXs2aAccountReference(paymentRequest.getCreditorAccount()));
-        singlePayment.setCreditorAgent(mapToXs2aBICFI(paymentRequest.getCreditorAgent()));
-        singlePayment.setCreditorName(paymentRequest.getCreditorName());
-        singlePayment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
-        singlePayment.setUltimateCreditor(paymentRequest.getCreditorName());  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-        singlePayment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode("N/A"));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-        singlePayment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
-        singlePayment.setRemittanceInformationStructured(new Remittance()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-        singlePayment.setRequestedExecutionDate(LocalDate.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-        singlePayment.setRequestedExecutionTime(LocalDateTime.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-        return singlePayment;
+        payment.setEndToEndIdentification(paymentRequest.getEndToEndIdentification());
+        payment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
+        payment.setUltimateDebtor("NOT SUPPORTED"); //TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setInstructedAmount(mapToXs2aAmount(paymentRequest.getInstructedAmount()));
+        payment.setCreditorAccount(mapToXs2aAccountReference(paymentRequest.getCreditorAccount()));
+        payment.setCreditorAgent(mapToXs2aBICFI(paymentRequest.getCreditorAgent()));
+        payment.setCreditorName(paymentRequest.getCreditorName());
+        payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
+        payment.setUltimateCreditor(paymentRequest.getCreditorName());  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode("N/A"));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
+        payment.setRemittanceInformationStructured(new Remittance()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setRequestedExecutionDate(LocalDate.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setRequestedExecutionTime(LocalDateTime.now().plusHours(1)); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        return payment;
     }
 
-    private static AccountReference mapToXs2aAccountReference(Object reference12) {
+    private AccountReference mapToXs2aAccountReference(Object reference12) {
         return mapper.convertValue(reference12, AccountReference.class);
     }
 
-    private static PeriodicPayment mapToXs2aPeriodicPayment(@Valid PeriodicPaymentInitiationSctJson paymentRequest) {
-        PeriodicPayment payment = (PeriodicPayment) mapToXs2aSinglePayment(mapper.convertValue(paymentRequest, PaymentInitiationSctJson.class));
+    private PeriodicPayment mapToXs2aPeriodicPayment(PeriodicPaymentInitiationSctJson paymentRequest) {
+        PeriodicPayment payment = new PeriodicPayment();
+
+        payment.setEndToEndIdentification(paymentRequest.getEndToEndIdentification());
+        payment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
+        payment.setUltimateDebtor("NOT SUPPORTED"); //TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setInstructedAmount(mapToXs2aAmount(paymentRequest.getInstructedAmount()));
+        payment.setCreditorAccount(mapToXs2aAccountReference(paymentRequest.getCreditorAccount()));
+        payment.setCreditorAgent(mapToXs2aBICFI(paymentRequest.getCreditorAgent()));
+        payment.setCreditorName(paymentRequest.getCreditorName());
+        payment.setCreditorAddress(mapToXs2aAddress(paymentRequest.getCreditorAddress()));
+        payment.setUltimateCreditor(paymentRequest.getCreditorName());  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode("N/A"));  //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
+        payment.setRemittanceInformationStructured(new Remittance()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setRequestedExecutionDate(LocalDate.now()); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+        payment.setRequestedExecutionTime(LocalDateTime.now().plusHours(1)); //TODO check for presence in new SPEC https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
 
         payment.setStartDate(paymentRequest.getStartDate());
-        payment.setExecutionRule(paymentRequest.getExecutionRule().toString());
+        payment.setExecutionRule(Optional.ofNullable(paymentRequest.getExecutionRule()).map(ExecutionRule::toString).orElse(null));
         payment.setEndDate(paymentRequest.getEndDate());
         payment.setFrequency(mapToXs2aFrequencyCode(paymentRequest.getFrequency()));
         payment.setDayOfExecution(Integer.parseInt(paymentRequest.getDayOfExecution().toString()));
         return payment;
     }
 
-    private static de.adorsys.aspsp.xs2a.domain.code.FrequencyCode mapToXs2aFrequencyCode(@Valid FrequencyCode frequency) {
+    private de.adorsys.aspsp.xs2a.domain.code.FrequencyCode mapToXs2aFrequencyCode(FrequencyCode frequency) {
         return de.adorsys.aspsp.xs2a.domain.code.FrequencyCode.valueOf(frequency.name());
     }
 
-    private static List<SinglePayment> mapToXs2aBulkPayment(@Valid BulkPaymentInitiationSctJson paymentRequest) {
+    private List<SinglePayment> mapToXs2aBulkPayment(BulkPaymentInitiationSctJson paymentRequest) {
         return paymentRequest.getPayments().stream()
                    .map(p -> {
-                       SinglePayment xs2aPayment = new SinglePayment();
-                       xs2aPayment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
-                       xs2aPayment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
-                       xs2aPayment.setEndToEndIdentification(p.getEndToEndIdentification());
-                       xs2aPayment.setUltimateDebtor(null);
-                       xs2aPayment.setInstructedAmount(mapToXs2aAmount(p.getInstructedAmount()));
-                       xs2aPayment.setCreditorAccount(mapToXs2aAccountReference(p.getCreditorAccount()));
-                       xs2aPayment.setCreditorAgent(mapToXs2aBICFI(p.getCreditorAgent()));
-                       xs2aPayment.setCreditorName(p.getCreditorName());
-                       xs2aPayment.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
-                       xs2aPayment.setUltimateCreditor(null);
-                       xs2aPayment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode(null));
-                       xs2aPayment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
-                       xs2aPayment.setRemittanceInformationStructured(new Remittance());//TODO
-                       xs2aPayment.setRequestedExecutionTime(null);//TODO
-                       return xs2aPayment;
+                       SinglePayment payment = new SinglePayment();
+                       payment.setDebtorAccount(mapToXs2aAccountReference(paymentRequest.getDebtorAccount()));
+                       payment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
+                       payment.setEndToEndIdentification(p.getEndToEndIdentification());
+                       payment.setUltimateDebtor("NOT SUPPORTED"); //TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+                       payment.setInstructedAmount(mapToXs2aAmount(p.getInstructedAmount()));
+                       payment.setCreditorAccount(mapToXs2aAccountReference(p.getCreditorAccount()));
+                       payment.setCreditorAgent(mapToXs2aBICFI(p.getCreditorAgent()));
+                       payment.setCreditorName(p.getCreditorName());
+                       payment.setCreditorAddress(mapToXs2aAddress(p.getCreditorAddress()));
+                       payment.setUltimateCreditor(null);
+                       payment.setPurposeCode(new de.adorsys.aspsp.xs2a.domain.code.PurposeCode(null));
+                       payment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
+                       payment.setRemittanceInformationStructured(new Remittance());//TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+                       payment.setRequestedExecutionTime(LocalDateTime.now().plusHours(1));//TODO check for presence in new SPEC  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+                       return payment;
                    }).collect(Collectors.toList());
 
     }
 
-    public static BICFI mapToXs2aBICFI(String creditorAgent) {
+    public BICFI mapToXs2aBICFI(String creditorAgent) {
         BICFI bicfi = new BICFI();
         bicfi.setCode(creditorAgent);
         return bicfi;
     }
 
-    public static <T, R> T mapToGetPaymentResponse12(R payment, PaymentType type, PaymentProduct product) {
+    public <T, R> T mapToGetPaymentResponse12(R payment, PaymentType type, PaymentProduct product) {
         if (type == SINGLE) {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
@@ -179,7 +188,7 @@ public final class PaymentModelMapper {
         }
     }
 
-    private static List<PaymentInitiationTarget2Json> mapToBulkPartList12(List<SinglePayment> payments) {
+    private List<PaymentInitiationTarget2Json> mapToBulkPartList12(List<SinglePayment> payments) {
         return payments.stream()
                    .map(PaymentModelMapper::mapToBulkPart12)
                    .collect(Collectors.toList());
@@ -201,7 +210,7 @@ public final class PaymentModelMapper {
         return TransactionStatus.valueOf(responseObject.name());
     }
 
-    public static <T, R> R mapToPaymentInitiationResponse12(T response, PaymentType type, PaymentProduct product) {
+    public <T, R> R mapToPaymentInitiationResponse12(T response, PaymentType type, PaymentProduct product) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         if (type == SINGLE || type == PERIODIC) {
             PaymentInitialisationResponse specificResponse = (PaymentInitialisationResponse) response;
@@ -219,7 +228,7 @@ public final class PaymentModelMapper {
         } else {
             List<PaymentInitialisationResponse> specificResponse = (List<PaymentInitialisationResponse>) response;
             return (R) specificResponse.stream()
-                           .map(r -> mapToGetPaymentResponse12(r, SINGLE, product))
+                           .map(r -> mapToPaymentInitiationResponse12(r, SINGLE, product))
                            .collect(Collectors.toList());
         }
     }
