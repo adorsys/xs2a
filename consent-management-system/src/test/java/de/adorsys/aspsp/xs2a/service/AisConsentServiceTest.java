@@ -33,10 +33,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
@@ -47,6 +44,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,16 +102,44 @@ public class AisConsentServiceTest {
 
     @Test
     public void updateAccountAccessById(){
+        CreateAisConsentRequest createAisConsentRequest = buildCorrectCreateAisConsentRequest();
+
         // When
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
-        when(aisAccountRepository.save(any(AisAccount.class))).thenReturn(new AisAccount());
+        when(aisAccountRepository.save(any(AisAccount.class))).then(invocationOnMock -> invocationOnMock.getArgumentAt(0, AisAccount.class));
+
         // Then
-        Optional<String> consentid = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID, buildCorrectCreateAisConsentRequest());
-        Optional<String> consentid_notExist = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID_NOT_EXIST, buildCorrectCreateAisConsentRequest());
+        AisAccountAccessInfo info = new AisAccountAccessInfo();
+        info.setAccounts(Arrays.asList(
+            new AccountInfo("iban-1", "EUR"),
+            new AccountInfo("iban-1", "USD")
+        ));
+        createAisConsentRequest.setAccess(info);
+        Optional<String> consentId = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID, createAisConsentRequest);
         // Assert
-        assertTrue(consentid.isPresent());
-        assertFalse(consentid_notExist.isPresent());
+        verify(aisAccountRepository, times(1)).save(any(AisAccount.class));
+        assertTrue(consentId.isPresent());
+
+        // Then
+        info = new AisAccountAccessInfo();
+        info.setAccounts(Arrays.asList(
+            new AccountInfo("iban-1", "EUR"),
+            new AccountInfo("iban-2", "USD"),
+            new AccountInfo("iban-2", "EUR"),
+            new AccountInfo("iban-3", "USD")
+        ));
+        createAisConsentRequest.setAccess(info);
+        consentId = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID, createAisConsentRequest);
+        // Assert
+        verify(aisAccountRepository, times(4)).save(any(AisAccount.class));
+        assertTrue(consentId.isPresent());
+
+        // Then
+        Optional<String> consentId_notExist = aisConsentService.updateAccountAccessById(EXTERNAL_CONSENT_ID_NOT_EXIST, buildCorrectCreateAisConsentRequest());
+        // Assert
+        verify(aisAccountRepository, times(4)).save(any(AisAccount.class));
+        assertFalse(consentId_notExist.isPresent());
     }
 
     private AisConsent buildConsent() {
