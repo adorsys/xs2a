@@ -16,23 +16,29 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
+import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
-import de.adorsys.psd2.model.PaymentInitiationSctJson;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 import java.io.IOException;
+import java.util.List;
+
+import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
 public class BulkPaymentWithErrorSteps {
@@ -46,26 +52,37 @@ public class BulkPaymentWithErrorSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @When("^PSU sends the bulk payment initiating request with error$")
-    public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
+    @Given("^PSU initiates errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataWithErrorBulkPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
+        context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
 
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-                HttpMethod.POST,
-                entity,
-                TppMessages.class);
-        } catch (RestClientResponseException rex) {
-            handleRequestError(rex);
-        }
+        TestData<BulkPaymentInitiationSctJson, TppMessages> data = mapper.readValue(
+            resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
+            new TypeReference<TestData<BulkPaymentInitiationSctJson, TppMessages>>() {});
+
+        context.setTestData(data);
     }
 
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
-        context.setMessageError(messageError);
+    @When("^PSU sends the bulk payment initiating request with error$")
+    public void sendBulkPaymentInitiatingRequest() throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAll(context.getTestData().getRequest().getHeader());
+        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
+
+        try {
+            ResponseEntity<TppMessages> response = restTemplate.exchange(
+                context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct() + context.getPaymentService(),
+                HttpMethod.POST, new HttpEntity<>(context.getTestData().getRequest().getBody(), headers), new ParameterizedTypeReference<TppMessages>() {
+                });
+
+            context.setActualResponse(response);
+        } catch (HttpClientErrorException hce) {
+            context.setActualResponseStatus(HttpStatus.valueOf(hce.getRawStatusCode()));
+
+            ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
+            context.setMessageError(messageError);
+        }
     }
 }
