@@ -25,14 +25,10 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import javax.validation.Valid;
-import java.util.Currency;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -94,10 +90,10 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static Amount mapToAmount12(de.adorsys.aspsp.xs2a.domain.Amount amount) {
+    public static de.adorsys.psd2.model.Amount mapToAmount12(de.adorsys.aspsp.xs2a.domain.Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       Amount amountTarget = new Amount().amount(a.getContent());
+                       de.adorsys.psd2.model.Amount amountTarget = new de.adorsys.psd2.model.Amount().amount(a.getContent());
                        amountTarget.setCurrency(getCurrencyCodeString(a.getCurrency()));
                        return amountTarget;
                    }).orElse(null);
@@ -204,7 +200,7 @@ public final class AccountModelMapper {
                    .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(@Valid Amount amount) {
+    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(@Valid de.adorsys.psd2.model.Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
