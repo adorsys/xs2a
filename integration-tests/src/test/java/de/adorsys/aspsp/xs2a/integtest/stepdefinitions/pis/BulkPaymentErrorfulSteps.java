@@ -24,20 +24,17 @@ import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
-import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 
 import java.io.IOException;
-import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
@@ -78,11 +75,15 @@ public class BulkPaymentErrorfulSteps {
                 });
 
             context.setActualResponse(response);
-        } catch (HttpClientErrorException hce) {
-            context.setActualResponseStatus(HttpStatus.valueOf(hce.getRawStatusCode()));
-
-            ITMessageError messageError = mapper.readValue(hce.getResponseBodyAsString(), ITMessageError.class);
-            context.setMessageError(messageError);
+        } catch (RestClientResponseException restclientResponseException) {
+            handleRequestError(restclientResponseException);
         }
+    }
+
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+        ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
+        context.setMessageError(messageError);
     }
 }
