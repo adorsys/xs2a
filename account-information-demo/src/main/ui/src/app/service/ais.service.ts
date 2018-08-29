@@ -16,6 +16,7 @@ export class AisService {
   savedConsentId: string;
 
 
+
   constructor(private httpClient: HttpClient) {
   }
 
@@ -76,11 +77,11 @@ export class AisService {
     return this.httpClient.put(`${this.aspspServerUrl}/consent/confirmation/status/${this.savedConsentId}/${consentStatus}`, {})
   }
 
-  // validateTan(tanNumber: number): Observable<number> {
-  //   const body = {
-  //     tanNumber: this.tanNumber,
-  //   }
-  //   return this.httpClient.post<number>(`${this.aspspServerUrl}/consent/confirmation/tan/validate`, {})
-  // }
+  validateTan(tan: string): Observable<string> {
+    const body = {
+      tanNumber: tan,
+    }
+    return this.httpClient.post<string>(`${this.aspspServerUrl}/consent/confirmation/tan/validate`, {})
+  }
 
 }

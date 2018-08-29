@@ -7,12 +7,12 @@
         <label class="authentication">
           Tan
         </label>
-        <input class="authentication input--text" type="text" name="tan" required>
+        <input class="authentication input--text" type="text" name="tan" [(ngModel)]="tan" required>
       </div>
       <div class="alert alert-danger" role="alert" >Your TAN is incorrect. Please try again.</div>
       <div class="buttons-small">
-        <button type="button" class="buttons-small btn--cancel" [routerLink]="['/tanconfirmationcanceled']">Cancel</button>
-        <button type="button" class="buttons-small btn--continue" [routerLink]="['/tanconfirmationsuccessful']">Confirm</button>
+        <button (click)=onClickCancel() type="button" class="buttons-small btn--cancel" [routerLink]="['/tanconfirmationcanceled']">Cancel</button>
+        <button (click)=onClickContinue() type="button" class="buttons-small btn--continue" [routerLink]="['/tanconfirmationsuccessful']">Confirm</button>
       </div>
     </div>
   </div>

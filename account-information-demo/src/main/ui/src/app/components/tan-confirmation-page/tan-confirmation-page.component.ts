@@ -12,6 +12,8 @@ import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
 export class TanConfirmationPageComponent implements OnInit {
   Consent$: Observable<AccountConsent>
   consentId: string;
+  tan: string;
+
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
 
@@ -22,8 +24,17 @@ export class TanConfirmationPageComponent implements OnInit {
     this.Consent$ = this.aisService.getConsent(this.consentId);
   }
 
+
   onClickContinue() {
-    this.router.navigate(['/tanconfirmationsuccessful'], {queryParams: this.createQueryParams});
+    this.aisService.validateTan(this.tan)
+      .subscribe(
+        success => {
+          this.router.navigate(['/tanconfirmationsuccessful'], { queryParams: this.createQueryParams() });
+        },
+        error => {
+          this.router.navigate(['/tanconfirmationerror'])
+        }
+      )
   }
 
   getConsentIdFromUrl(params: UrlSegment[]) {

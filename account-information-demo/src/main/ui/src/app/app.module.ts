@@ -16,7 +16,7 @@ import { KeycloakAngularModule, KeycloakService } from '../../node_modules/keycl
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { registerLocaleData } from '@angular/common'
-import localeDE from '@angular/common/locales/de'
+import localeDE from '@angular/common/locales/de';
 
 registerLocaleData(localeDE)
 

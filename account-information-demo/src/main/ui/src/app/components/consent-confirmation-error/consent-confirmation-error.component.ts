@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
 @Component({
   selector: 'app-consent-confirmation-error',
@@ -8,7 +7,7 @@ import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 })
 export class ConsentConfirmationErrorComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private router: Router){ }
+  constructor(){ }
 
   ngOnInit() {
   }

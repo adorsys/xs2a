@@ -123,10 +123,5 @@
     "@schematics/angular:component": {
       "styleext": "scss"
     }
-  },
-//  "defaults": {
-//    "serve": {
-//      "port": 4201
-//    }
-//  }
+  }
 }
