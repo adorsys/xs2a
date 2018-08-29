@@ -62,20 +62,12 @@
     "header": {},
     "body": [
       {
-        "tppMessages": [
-          {
-            "category": "ERROR",
-            "code": "FORMAT_ERROR"
-          }
-        ]
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
       },
       {
-        "tppMessages": [
-          {
-            "category": "ERROR",
-            "code": "FORMAT_ERROR"
-          }
-        ]
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
       }
     ]
   }

@@ -63,20 +63,12 @@
     "header": {},
     "body": [
       {
-        "tppMessages": [
-          {
-            "category": "ERROR",
-            "code": "PRODUCT_UNKNOWN"
-          }
-        ]
+        "category": "ERROR",
+        "code": "PRODUCT_UNKNOWN"
       },
       {
-        "tppMessages": [
-          {
-            "category": "ERROR",
-            "code": "PRODUCT_UNKNOWN"
-          }
-        ]
+        "category": "ERROR",
+        "code": "PRODUCT_UNKNOWN"
       }
     ]
   }
