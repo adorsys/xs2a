@@ -63,9 +63,10 @@ public class PeriodicPaymentSteps {
 
     private String dataFileName;
 
-    @And("^PSU wants to initiate a recurring payment (.*) using the payment product (.*)$")
-    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct) throws IOException {
+    @And("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
         this.dataFileName = dataFileName;
 
         TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(
@@ -101,7 +102,6 @@ public class PeriodicPaymentSteps {
         assertThat(responseEntity.getBody().getPaymentId(), notNullValue());
     }
 
-    //TODO: Find the right model class for the response (change PaymentInitiationRequestResponse201)
     @When("^PSU sends the recurring payment initiating request with error$")
     public void sendFalsePeriodicPaymentInitiatingRequest() throws IOException {
         HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(

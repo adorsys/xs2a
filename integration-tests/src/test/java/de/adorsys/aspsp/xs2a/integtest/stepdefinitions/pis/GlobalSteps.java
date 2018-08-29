@@ -70,7 +70,7 @@ public class GlobalSteps {
 
         TppMessages givenTppMessages = givenResponseBody.getTppMessages();
 
-        Set<TppMessageGeneric> actualTppMessages = actualErrorObject.getTppMessages();
+        TppMessages actualTppMessages = actualErrorObject.getTppMessages();
 
         assertThat(actualTppMessages, is(equalTo(givenTppMessages)));
 
