@@ -117,7 +117,6 @@ public final class AccountModelMapper {
         TransactionDetails target = new TransactionDetails();
         BeanUtils.copyProperties(transactions, target);
 
-        //transform Account info
         target.setCreditorAccount(createAccountObject(transactions.getCreditorAccount()));
         target.setDebtorAccount(createAccountObject(transactions.getDebtorAccount()));
 
