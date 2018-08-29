@@ -79,7 +79,7 @@ public class BulkPaymentSuccessfulSteps {
         BulkPaymentInitiationSctJson paymentsList = context.getTestData().getRequest().getBody();
 
         ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(
-            context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct(),
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
             HttpMethod.POST, new HttpEntity<>(paymentsList, headers), new ParameterizedTypeReference<List<PaymentInitationRequestResponse201>>() {
             });
 

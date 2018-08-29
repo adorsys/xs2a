@@ -69,7 +69,7 @@ public class BulkPaymentErrorfulSteps {
 
         try {
             ResponseEntity<TppMessages> response = restTemplate.exchange(
-                context.getBaseUrl() + "/bulk-payments/" + context.getPaymentProduct() + context.getPaymentService(),
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
                 HttpMethod.POST, new HttpEntity<>(context.getTestData().getRequest().getBody(), headers), new ParameterizedTypeReference<TppMessages>() {
                 });
 
