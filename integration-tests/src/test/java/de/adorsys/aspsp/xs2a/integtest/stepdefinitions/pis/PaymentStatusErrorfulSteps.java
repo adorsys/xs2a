@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
-import de.adorsys.aspsp.xs2a.integtest.entities.ITMessageError;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
@@ -50,7 +49,7 @@ public class PaymentStatusErrorfulSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context< HashMap, TppMessages> context;
+    private Context<HashMap, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -87,8 +86,8 @@ public class PaymentStatusErrorfulSteps {
     private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
         context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        ITMessageError messageError = mapper.readValue(responseBodyAsString, ITMessageError.class);
-        context.setMessageError(messageError);
+        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
+        context.setTppmessage(tppMessages);
     }
 
     private HttpEntity getStatusHttpEntity() {
