@@ -202,7 +202,7 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public List<AccountDetails> mapTotAccountDetailsNoBalances(List<AccountDetails> details) {
+    public List<AccountDetails> mapToAccountDetailsNoBalances(List<AccountDetails> details) {
         return details.stream()
                    .map(this::mapToAccountDetailNoBalances)
                    .collect(Collectors.toList());

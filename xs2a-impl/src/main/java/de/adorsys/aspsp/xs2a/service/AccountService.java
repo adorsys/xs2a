@@ -268,7 +268,7 @@ public class AccountService {
         List<AccountDetails> details = getAccountDetailsFromReferences(references);
         return withBalance
                    ? details
-                   : accountMapper.mapTotAccountDetailsNoBalances(details);
+                   : accountMapper.mapToAccountDetailsNoBalances(details);
     }
 
     private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
