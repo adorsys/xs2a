@@ -39,9 +39,11 @@
   "response": {
     "code": "400",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "START_DATE_INVALID"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "START_DATE_INVALID"
+      }
+    ]
   }
 }
