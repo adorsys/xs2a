@@ -17,9 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,11 +26,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
+import static de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField.IBAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -42,12 +40,17 @@ public class AspspProfileServiceTest {
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
+    private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
     private static final int CONSENT_LIFETIME = 0;
+    private static final int TRANSACTION_LIFETIME = 0;
+    private static final boolean ALL_PSD_2_SUPPORT = false;
+    private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -65,10 +68,10 @@ public class AspspProfileServiceTest {
             .thenReturn(AVAILABLE_PAYMENT_PRODUCTS);
         when(profileConfiguration.getAvailablePaymentTypes())
             .thenReturn(AVAILABLE_PAYMENT_TYPES);
+        when(profileConfiguration.isTppSignatureRequired())
+            .thenReturn(TPP_SIGNATURE_REQUIRED);
         when(profileConfiguration.getScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(profileConfiguration.isTppSignatureRequired())
-            .thenReturn(true);
         when(profileConfiguration.getPisRedirectUrlToAspsp())
             .thenReturn(PIS_REDIRECT_LINK);
         when(profileConfiguration.getAisRedirectUrlToAspsp())
@@ -77,44 +80,25 @@ public class AspspProfileServiceTest {
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
         when(profileConfiguration.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
+        when(profileConfiguration.getSupportedAccountReferenceFields())
+            .thenReturn(SUPPORTED_ACCOUNT_REFERENCE_FIELDS);
         when(profileConfiguration.getConsentLifetime())
             .thenReturn(CONSENT_LIFETIME);
+        when(profileConfiguration.getTransactionLifetime())
+            .thenReturn(TRANSACTION_LIFETIME);
+        when(profileConfiguration.isAllPsd2Support())
+            .thenReturn(ALL_PSD_2_SUPPORT);
+        when(profileConfiguration.isBankOfferedConsentSupport())
+            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     @Test
-    public void getFrequencyPerDay() {
+    public void getAspspSettings() {
         //When:
-        int actualResponse = aspspProfileService.getFrequencyPerDay();
+        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
 
         //Then:
-        assertThat(actualResponse).isEqualTo(FREQUENCY_PER_DAY);
-    }
-
-    @Test
-    public void getCombinedServiceIndicator() {
-        //When:
-        boolean actualResponse = aspspProfileService.isCombinedServiceIndicator();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(COMBINED_SERVICE_INDICATOR);
-    }
-
-    @Test
-    public void getAvailablePaymentProducts() {
-        //When:
-        List<String> actualResponse = aspspProfileService.getAvailablePaymentProducts();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(AVAILABLE_PAYMENT_PRODUCTS);
-    }
-
-    @Test
-    public void getAvailablePaymentTypes() {
-        //When:
-        List<String> actualResponse = aspspProfileService.getAvailablePaymentTypes();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(AVAILABLE_PAYMENT_TYPES);
+        assertThat(actualResponse).isEqualTo(buildAspspSettings());
     }
 
     @Test
@@ -126,58 +110,27 @@ public class AspspProfileServiceTest {
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 
-    @Test
-    public void isTppSignatureRequired() {
-        //When:
-        boolean actualResponse = aspspProfileService.isTppSignatureRequired();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(true);
+    private static AspspSettings buildAspspSettings() {
+        return new AspspSettings(
+            FREQUENCY_PER_DAY,
+            COMBINED_SERVICE_INDICATOR,
+            AVAILABLE_PAYMENT_PRODUCTS,
+            AVAILABLE_PAYMENT_TYPES,
+            SCA_APPROACH,
+            TPP_SIGNATURE_REQUIRED,
+            PIS_REDIRECT_LINK,
+            AIS_REDIRECT_LINK,
+            MULTICURRENCY_ACCOUNT_LEVEL,
+            BANK_OFFERED_CONSENT_SUPPORT,
+            AVAILABLE_BOOKING_STATUSES,
+            SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
+            CONSENT_LIFETIME,
+            TRANSACTION_LIFETIME,
+            ALL_PSD_2_SUPPORT);
     }
 
-    @Test
-    public void getPisRedirectUrlToAspsp() {
-        //When:
-        String actualResponse = aspspProfileService.getPisRedirectUrlToAspsp();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(PIS_REDIRECT_LINK);
-    }
-
-    @Test
-    public void getAisRedirectUrlToAspsp() {
-        //When:
-        String actualResponse = aspspProfileService.getAisRedirectUrlToAspsp();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(AIS_REDIRECT_LINK);
-    }
-
-    @Test
-    public void getMulticurrencyAccountLevel() {
-        //When:
-        MulticurrencyAccountLevel actualResponse = aspspProfileService.getMulticurrencyAccountLevel();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(MULTICURRENCY_ACCOUNT_LEVEL);
-    }
-
-    @Test
-    public void getAvailableBookingStatuses() {
-        //When:
-        List<BookingStatus> actualResponse = aspspProfileService.getAvailableBookingStatuses();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(AVAILABLE_BOOKING_STATUSES);
-    }
-
-    @Test
-    public void getConsentLifetime() {
-        //When:
-        int actualResponse = aspspProfileService.getConsentLifetime();
-
-        //Then:
-        assertThat(actualResponse).isEqualTo(CONSENT_LIFETIME);
+    private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
+        return Collections.singletonList(IBAN);
     }
 
     private static List<String> getPaymentProducts() {

@@ -24,7 +24,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
@@ -58,7 +58,7 @@ public class PaymentInitiationControllerTest {
     private static final Charset UTF_8 = Charset.forName("utf-8");
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "Really wrong id";
-    private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
+    private static final String REDIRECT_LINK = "http://localhost:4200/consent/confirmation/pis";
 
     @InjectMocks
     private PaymentInitiationController paymentInitiationController;
@@ -82,7 +82,6 @@ public class PaymentInitiationControllerTest {
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
             .thenReturn(ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPaymentInitiation(any(), any(), any())).thenReturn(readResponseObject());
-        when(aspspProfileService.getPisRedirectUrlToAspsp()).thenReturn(REDIRECT_LINK);
     }
 
     @Test
@@ -133,18 +132,17 @@ public class PaymentInitiationControllerTest {
         assertThat(actualResult.getBody()).isEqualTo(expectedResult.getBody());
     }
 
-    private ResponseObject readResponseObject() throws IOException {
+    private ResponseObject<PaymentInitialisationResponse> readResponseObject() throws IOException {
         PaymentInitialisationResponse resp = readPaymentInitialisationResponse();
-        return ResponseObject.builder().body(resp).build();
+        return ResponseObject.<PaymentInitialisationResponse>builder().body(resp).build();
     }
 
     private PaymentInitialisationResponse readPaymentInitialisationResponse() throws IOException {
         PaymentInitialisationResponse resp = jsonConverter.toObject(IOUtils.resourceToString(CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
-        resp.setIban("DE371234599999");
         resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
         Links links = new Links();
         String encodedPaymentId = Base64.getEncoder().encodeToString(resp.getPaymentId().getBytes());
-        links.setScaRedirect(REDIRECT_LINK + resp.getIban() + "/" + resp.getPisConsentId() + "/" + encodedPaymentId);
+        links.setScaRedirect(REDIRECT_LINK + "/" + resp.getPisConsentId() + "/" + encodedPaymentId);
 
         return resp;
     }

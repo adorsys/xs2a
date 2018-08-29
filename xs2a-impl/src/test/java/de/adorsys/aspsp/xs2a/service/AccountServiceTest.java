@@ -45,6 +45,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.mapToAccountDetails;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doNothing;
@@ -88,6 +89,9 @@ public class AccountServiceTest {
         //AccountMapping
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID, IBAN));
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1, IBAN_1));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
+        when(accountMapper.mapToAccountDetailsNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
+            .thenReturn(Arrays.asList(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN), getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1)));
         when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
         when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
         //AisReporting
@@ -132,6 +136,8 @@ public class AccountServiceTest {
     public void getAccountDetailsByAccountId_WB_Success() {
         //When:
         ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, ACCOUNT_ID, true);
+
+        de.adorsys.psd2.model.AccountDetails details = mapToAccountDetails(response.getBody());
 
         //Then:
         assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);
@@ -344,8 +350,23 @@ public class AccountServiceTest {
             getBalancesList());
     }
 
+    private AccountDetails getAccountDetailsNoBalance(String accountId, String iban) {
+        return new AccountDetails(
+            accountId,
+            iban,
+            "zz22",
+            null,
+            null,
+            null,
+            CURRENCY,
+            "David Muller",
+            null,
+            null,
+            null,
+            null);
+    }
+
     private List<Balance> getBalancesList() {
-        Balance balances = new Balance();
         Balance sb = new Balance();
         Amount amount = new Amount();
         amount.setCurrency(CURRENCY);

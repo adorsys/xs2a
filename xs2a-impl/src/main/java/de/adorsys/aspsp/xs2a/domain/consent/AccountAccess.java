@@ -38,10 +38,10 @@ public class AccountAccess {
     @ApiModelProperty(value = "transactions of the addressed accounts", required = false)
     private List<AccountReference> transactions;
 
-    @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
+    @ApiModelProperty(value = "only the value 'allAccounts' or 'allAccountsWithBalances' is admitted", example = "allAccounts", required = false)
     private AccountAccessType availableAccounts;
 
-    @ApiModelProperty(value = "only the value 'all-accounts' is admitted", example = "all-accounts", required = false)
+    @ApiModelProperty(value = "only the value 'allAccounts' is admitted", example = "allAccounts", required = false)
     private AccountAccessType allPsd2;
 
     @JsonIgnore

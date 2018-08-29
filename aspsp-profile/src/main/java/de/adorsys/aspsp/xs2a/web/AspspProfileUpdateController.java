@@ -16,15 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -105,6 +99,16 @@ public class AspspProfileUpdateController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping(path = "/bank-offered-consent-support")
+    @ApiOperation(value = "Updates bankOfferedConsentSupport status. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateBankOfferedConsentSupport(@RequestBody Boolean bankOfferedConsentSupport) {
+        aspspProfileService.updateBankOfferedConsentSupport(bankOfferedConsentSupport);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PutMapping(path = "/redirect-url-to-aspsp-pis")
     @ApiOperation(value = "Updates value of PIS redirect url to aspsp. Only for DEBUG!")
     @ApiResponses(value = {
@@ -162,6 +166,26 @@ public class AspspProfileUpdateController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<Void> updateConsentLifetime(@RequestBody int consentLifetime) {
         aspspProfileService.updateConsentLifetime(consentLifetime);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/transaction-lifetime")
+    @ApiOperation(value = "Updates the value of a maximum lifetime of transaction. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateTransactionLifetime(@RequestBody int transactionLifetime) {
+        aspspProfileService.updateTransactionLifetime(transactionLifetime);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/all-psd2-support")
+    @ApiOperation(value = "Updates AllPsd2Support status. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = Boolean.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateAllPsd2Support(@RequestBody Boolean allPsd2Support) {
+        aspspProfileService.updateAllPsd2Support(allPsd2Support);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

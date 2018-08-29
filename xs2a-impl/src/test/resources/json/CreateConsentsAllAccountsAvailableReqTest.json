@@ -1,5 +1,5 @@
 {"access":
-{"availableAccounts": "all-accounts"},
+{"availableAccounts": "allAccounts"},
   "recurringIndicator": "false",
   "validUntil": "2017-08-06",
   "frequencyPerDay": "1"

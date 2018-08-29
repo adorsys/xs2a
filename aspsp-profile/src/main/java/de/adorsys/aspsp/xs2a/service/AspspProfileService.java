@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +32,39 @@ public class AspspProfileService {
     private final ProfileConfiguration profileConfiguration;
 
     /**
-     * Read frequency per day
+     * Reads all aspsp settings (frequency per day, combined service indicator, available payment products, available payment types,
+     * is tpp signature required, PIS redirect URL, AIS redirect URL, multicurrency account level, is bank offered consent supported,
+     * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime and allPsd2 support)
+     * except SCA approach
+     *
+     * @return aspsp specific settings method which is stored in profile
      */
-    public int getFrequencyPerDay() {
-        return profileConfiguration.getFrequencyPerDay();
+    public AspspSettings getAspspSettings() {
+        return new AspspSettings(
+            profileConfiguration.getFrequencyPerDay(),
+            profileConfiguration.isCombinedServiceIndicator(),
+            profileConfiguration.getAvailablePaymentProducts(),
+            profileConfiguration.getAvailablePaymentTypes(),
+            profileConfiguration.getScaApproach(),
+            profileConfiguration.isTppSignatureRequired(),
+            profileConfiguration.getPisRedirectUrlToAspsp(),
+            profileConfiguration.getAisRedirectUrlToAspsp(),
+            profileConfiguration.getMulticurrencyAccountLevel(),
+            profileConfiguration.isBankOfferedConsentSupport(),
+            profileConfiguration.getAvailableBookingStatuses(),
+            profileConfiguration.getSupportedAccountReferenceFields(),
+            profileConfiguration.getConsentLifetime(),
+            profileConfiguration.getTransactionLifetime(),
+            profileConfiguration.isAllPsd2Support());
+    }
+
+    /**
+     * Reads sca approach method
+     *
+     * @return sca approach method which is stored in profile
+     */
+    public ScaApproach getScaApproach() {
+        return profileConfiguration.getScaApproach();
     }
 
     /**
@@ -51,13 +77,6 @@ public class AspspProfileService {
     }
 
     /**
-     * Read combined service indicator
-     */
-    public boolean isCombinedServiceIndicator() {
-        return profileConfiguration.isCombinedServiceIndicator();
-    }
-
-    /**
      * Update combined service indicator
      *
      * @param combinedServiceIndicator the new value of combinedServiceIndicator
@@ -67,10 +86,12 @@ public class AspspProfileService {
     }
 
     /**
-     * Read List of available payment products
+     * Update BankOfferedConsentSupport status
+     *
+     * @param bankOfferedConsentSupport BankOfferedConsentSupport status to substitute existing one
      */
-    public List<String> getAvailablePaymentProducts() {
-        return profileConfiguration.getAvailablePaymentProducts();
+    public void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport) {
+        profileConfiguration.setBankOfferedConsentSupport(bankOfferedConsentSupport);
     }
 
     /**
@@ -83,28 +104,12 @@ public class AspspProfileService {
     }
 
     /**
-     * Read List of available payment types
-     */
-    public List<String> getAvailablePaymentTypes() {
-        return profileConfiguration.getAvailablePaymentTypes();
-    }
-
-    /**
      * Update available payment availablePaymentTypes
      *
      * @param availablePaymentTypes List of payment type values
      */
     public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
         profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
-    }
-
-    /**
-     * Read sca approach method
-     *
-     * @return sca approach method which is stored in profile
-     */
-    public ScaApproach getScaApproach() {
-        return profileConfiguration.getScaApproach();
     }
 
     /**
@@ -117,26 +122,12 @@ public class AspspProfileService {
     }
 
     /**
-     * Read if tpp signature is required or not
-     */
-    public boolean isTppSignatureRequired() {
-        return profileConfiguration.isTppSignatureRequired();
-    }
-
-    /**
      * Update if tpp signature is required or not
      *
      * @param tppSignatureRequired the new value of tppSignatureRequired
      */
     public void updateTppSignatureRequired(boolean tppSignatureRequired) {
         profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
-    }
-
-    /**
-     * Read Pis redirect url to Aspsp
-     */
-    public String getPisRedirectUrlToAspsp() {
-        return profileConfiguration.getPisRedirectUrlToAspsp();
     }
 
     /**
@@ -149,13 +140,6 @@ public class AspspProfileService {
     }
 
     /**
-     * Read Ais redirect url to Aspsp
-     */
-    public String getAisRedirectUrlToAspsp() {
-        return profileConfiguration.getAisRedirectUrlToAspsp();
-    }
-
-    /**
      * Update Ais redirect url to aspsp
      *
      * @param redirectUrlToAspsp the new value of Ais redirectUrlToAspsp
@@ -165,26 +149,12 @@ public class AspspProfileService {
     }
 
     /**
-     * Read supported multicurrency account levels
-     */
-    public MulticurrencyAccountLevel getMulticurrencyAccountLevel() {
-        return profileConfiguration.getMulticurrencyAccountLevel();
-    }
-
-    /**
      * Update value of supported multicurrency account levels
      *
      * @param multicurrencyAccountLevel new value of supported multicurrency account levels
      */
     public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
         profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
-    }
-
-    /**
-     * Read list of available booking statuses
-     */
-    public List<BookingStatus> getAvailableBookingStatuses() {
-        return profileConfiguration.getAvailableBookingStatuses();
     }
 
     /**
@@ -200,13 +170,6 @@ public class AspspProfileService {
     }
 
     /**
-     * Read List of Account Reference Fields supported by ASPSP
-     */
-    public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
-        return profileConfiguration.getSupportedAccountReferenceFields();
-    }
-
-    /**
      * Update list of ASPSP supported Account Reference fields
      *
      * @param fields list of supported fields to substitute existing one
@@ -219,18 +182,29 @@ public class AspspProfileService {
     }
 
     /**
-     * Read the limit of a maximum lifetime of consent
-     */
-    public int getConsentLifetime() {
-        return profileConfiguration.getConsentLifetime();
-    }
-
-    /**
      * Update the value of a maximum lifetime of consent
      *
      * @param consentLifetime the value of a maximum lifetime of consent to substitute existing one
      */
     public void updateConsentLifetime(int consentLifetime) {
         profileConfiguration.setConsentLifetime(consentLifetime);
+    }
+
+    /**
+     * Update the value of a maximum lifetime of transaction set in days
+     *
+     * @param transactionLifetime the value of a maximum lifetime of transaction to substitute existing one
+     */
+    public void updateTransactionLifetime(int transactionLifetime) {
+        profileConfiguration.setTransactionLifetime(transactionLifetime);
+    }
+
+    /**
+     * Update AllPsd2Support status
+     *
+     * @param allPsd2Support AllPsd2Support status to substitute existing one
+     */
+    public void updateAllPsd2Support(boolean allPsd2Support) {
+        profileConfiguration.setAllPsd2Support(allPsd2Support);
     }
 }

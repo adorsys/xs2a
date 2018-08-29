@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-public class Context<T, U, R> {
+public class Context<T, U> {
 
     @Value("${xs2a.baseUrl}")
     private String baseUrl;
@@ -19,8 +19,9 @@ public class Context<T, U, R> {
 
     private String scaApproach;
     private String paymentProduct;
+    private String paymentService;
     private String accessToken;
     private TestData<T, U> testData;
-    private ResponseEntity<R> actualResponse;
+    private ResponseEntity<U> actualResponse;
     private ITMessageError messageError;
 }

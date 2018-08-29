@@ -26,11 +26,11 @@ public class ASPSPProfileRemoteUrls {
     private String aspspProfileBaseUrl;
 
     /**
-     * Returns URL-string in order to get frequency per day
+     * Returns URL-string in order to get aspsp settings
      *
      * @return String
      */
-    public String getFrequencyPerDay() {
-        return aspspProfileBaseUrl + "/aspsp-profile/frequency-per-day";
+    public String getAspspSettingsUrl() {
+        return aspspProfileBaseUrl + "/aspsp-profile";
     }
 }

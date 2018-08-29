@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public abstract class AbstractLinkAspect<T> {
                                    .getActualTypeArguments()[0]
                                    .getTypeName();
             return (Class<T>) Class.forName(className);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");
         }
     }

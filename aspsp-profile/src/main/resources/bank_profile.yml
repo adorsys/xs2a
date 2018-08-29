@@ -6,9 +6,12 @@ setting:
  availablePaymentTypes: bulk, periodic, delayed
  scaApproach: REDIRECT
  tppSignatureRequired: false
- pisRedirectUrlToAspsp: http://localhost:28080/payment/confirmation/
- aisRedirectUrlToAspsp: http://localhost:28080/
+ bankOfferedConsentSupport: false
+ pisRedirectUrlToAspsp: http://localhost:4200/
+ aisRedirectUrlToAspsp: http://localhost:4200/
  multicurrencyAccountLevel: SUBACCOUNT
  availableBookingStatuses: BOOKED, PENDING
  supportedAccountReferenceFields: MSISDN
  consentLifetime: 0
+ transactionLifetime: 0
+ allPsd2Support: false

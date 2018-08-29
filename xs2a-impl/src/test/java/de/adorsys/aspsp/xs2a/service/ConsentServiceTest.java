@@ -17,13 +17,17 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
@@ -75,6 +79,8 @@ public class ConsentServiceTest {
     AccountMapper accountMapper;
     @Mock
     ConsentMapper consentMapper;
+    @Mock
+    AspspProfileService aspspProfileService;
 
     @Before
     public void setUp() {
@@ -129,6 +135,16 @@ public class ConsentServiceTest {
         when(aisConsentService.getAccountConsentStatusById(WRONG_CONSENT_ID))
             .thenReturn(null);
         doNothing().when(aisConsentService).revokeConsent(anyString());
+
+        when(aspspProfileService.getConsentLifetime())
+            .thenReturn(0);
+
+        when(aspspProfileService.getAllPsd2Support())
+            .thenReturn(true);
+
+        when(aspspProfileService.isBankOfferedConsentSupported())
+            .thenReturn(false);
+
     }
 
     @Test
@@ -159,6 +175,32 @@ public class ConsentServiceTest {
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentsWithResponse_Failure_ByPSU_AllPSD2() {
+        //Given:
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
+        );
+
+        //When:
+        when(aspspProfileService.getAllPsd2Support())
+            .thenReturn(false);
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, CORRECT_PSU_ID);
+
+        MessageError messageError = responseObj.getError();
+
+        //Then:
+        assertThat(messageError).isNotNull();
+        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+
+        TppMessageInformation tppMessage = messageError.getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
     }
 
     @Test
@@ -268,6 +310,28 @@ public class ConsentServiceTest {
         //Than:
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
+
+    @Test
+    public void createAccountConsentWithResponse_Failure_ByPSU_BankOfferedConsent() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, CORRECT_PSU_ID);
+        MessageError messageError = responseObj.getError();
+
+        //Then
+        assertThat(messageError).isNotNull();
+        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+
+        TppMessageInformation tppMessage = messageError.getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
+    }
+
 
     /**
      * Basic test AccountDetails used in all cases

@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 public class PeriodicPaymentsControllerTest {
     private final String PERIODIC_PAYMENT_DATA = "/json/PeriodicPaymentTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
-    private static final String REDIRECT_LINK = "http://localhost:28080/payment/confirmation/";
+    private static final String REDIRECT_LINK = "http://localhost:4200/consent/confirmation/pis";
 
 
     @InjectMocks
@@ -107,7 +107,6 @@ public class PeriodicPaymentsControllerTest {
         resp.setTransactionStatus(TransactionStatus.ACCP);
         resp.setPaymentId("352397d6-a9f2-4914-8549-d127c02660ba");
         resp.setPisConsentId("f33e9b14-56b8-4f3b-b2fd-87884a4a24b9");
-        resp.setIban("DE89370400440532013000");
         resp.setLinks(new Links());
         return resp;
     }
