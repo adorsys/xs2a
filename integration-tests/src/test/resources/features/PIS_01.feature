@@ -45,7 +45,7 @@ Feature: Payment Initiation Service
 
 
 #    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
-#        Given PSU initiates errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
+#        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the bulk payment initiating request with error
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
@@ -76,7 +76,7 @@ Feature: Payment Initiation Service
 #
 #
 #    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
-#        Given PSU initiates an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
+#        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the recurring payment initiating request with error
 #        Then an error response code is displayed the appropriate error response
 #        Examples:

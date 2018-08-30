@@ -58,8 +58,8 @@ public class PeriodicPaymentErrorfulSteps {
 
     private String dataFileName;
 
-    @And("^PSU initiates an errorful recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
+    @And("^PSU loads an errorful recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataForErrorfulPeriodicPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
         this.dataFileName = dataFileName;

@@ -51,8 +51,8 @@ public class BulkPaymentErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU initiates errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataWithErrorBulkPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
+    @Given("^PSU loads errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataForErrorfulBulkPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
