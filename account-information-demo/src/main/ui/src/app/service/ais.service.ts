@@ -38,7 +38,7 @@ export class AisService {
       'x-request-id': environment.xRequestId,
       'tpp-qwac-certificate': environment.tppQwacCertificate,
     });
-    return this.httpClient.get<AccountConsent>(`${this.GET_CONSENT_URL}/consentId` , {headers: headers})
+    return this.httpClient.get<AccountConsent>(`${this.GET_CONSENT_URL}/${consentId}` , {headers: headers})
       .pipe(
         map(data => {
           console.log(data);
