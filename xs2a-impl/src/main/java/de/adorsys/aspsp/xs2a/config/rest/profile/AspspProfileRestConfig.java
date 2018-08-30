@@ -20,8 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -34,8 +33,7 @@ public class AspspProfileRestConfig {
     @Bean(name = "aspspProfileRestTemplate")
     public RestTemplate aspspProfileRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
-        rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        rest.getMessageConverters().add(new StringHttpMessageConverter());
+        rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));
         rest.setErrorHandler(new AspspProfileRestErrorHandler());
         return rest;
     }
