@@ -66,7 +66,7 @@ public class PaymentServiceTest {
     private static final String EXCESSIVE_AMOUNT = "10000";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
     private static final TppInfo TPP_INFO = getTppInfo();
     private static final String TPP_INFO_STR = "tpp info";
 

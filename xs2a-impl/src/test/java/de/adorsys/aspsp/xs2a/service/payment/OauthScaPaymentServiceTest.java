@@ -50,7 +50,7 @@ public class OauthScaPaymentServiceTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TppInfo TPP_INFO = new TppInfo();
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
 
     @InjectMocks

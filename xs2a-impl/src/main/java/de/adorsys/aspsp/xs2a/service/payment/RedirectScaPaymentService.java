@@ -36,7 +36,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
@@ -50,7 +53,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
         PaymentInitialisationResponse response = createPeriodicPaymentAndGetResponse(periodicPayment, aspspConsentData);
         return response.getTransactionStatus() != TransactionStatus.RJCT
@@ -72,7 +75,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap = createBulkPaymentAndGetResponseMap(payments, aspspConsentData);
 
         return MapUtils.isNotEmpty(paymentIdentifierMap)
@@ -100,7 +103,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     private List<PaymentInitialisationResponse> createBulkPaymentAndGetResponse(List<SinglePayment> payments) {  // NOPMD return when we make storing payment info with payment ID
         List<SpiSinglePayment> spiPayments = paymentMapper.mapToSpiSinglePaymentList(payments);
-        List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiPayments, new AspspConsentData()).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
         List<PaymentInitialisationResponse> paymentResponses = spiPaymentInitiations.stream()
                                                                    .map(paymentMapper::mapToPaymentInitializationResponse)
@@ -127,7 +130,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
         PaymentInitialisationResponse response = createSinglePaymentAndGetResponse(singlePayment, aspspConsentData);
         return response.getTransactionStatus() != TransactionStatus.RJCT

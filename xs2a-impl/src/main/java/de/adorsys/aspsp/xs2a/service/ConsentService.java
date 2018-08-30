@@ -182,7 +182,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         Set<String> ibansFromAccess = getIbansFromAccess(requestedAccess);
         List<SpiAccountDetails> accountDetailsList = accountSpi.readAccountDetailsByIbans(
             ibansFromAccess,
-            new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload();
+            new AspspConsentData()).getPayload();
         List<AccountReference> aspspReferences = accountMapper.mapToAccountReferencesFromDetails(accountDetailsList); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         List<AccountReference> balances = getFilteredReferencesByAccessReferences(requestedAccess.getBalances(), aspspReferences);
         List<AccountReference> transaction = getRequestedReferences(requestedAccess.getTransactions(), aspspReferences);
@@ -217,7 +217,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private AccountAccess getAccessByPsuId(boolean isAllPSD2, String psuId) {
-        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountsByPsuId(psuId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        List<AccountReference> refs = accountMapper.mapToAccountReferencesFromDetails(accountSpi.readAccountsByPsuId(psuId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (CollectionUtils.isNotEmpty(refs)) {
             return isAllPSD2
                        ? new AccountAccess(refs, refs, refs, null, AccountAccessType.ALL_ACCOUNTS)

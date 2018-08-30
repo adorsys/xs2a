@@ -27,7 +27,7 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 public class ReadSinglePayment extends ReadPayment<SinglePayment> {
     @Override
     public SinglePayment getPayment(String paymentId, String paymentProduct) {
-        SpiSinglePayment singlePayment = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiSinglePayment singlePayment = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, new AspspConsentData()).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return paymentMapper.mapToSinglePayment(singlePayment);
     }
 }
