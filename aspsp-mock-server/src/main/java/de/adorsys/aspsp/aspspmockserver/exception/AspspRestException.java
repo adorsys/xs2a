@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.aspspmockserver.exception;
 
-public enum ScaApproach {
-    REDIRECT,
-    OAUTH,
-    DECOUPLED,
-    EMBEDDED
+import lombok.Value;
+import org.springframework.http.HttpStatus;
+
+@Value
+public class AspspRestException extends RuntimeException {
+    private HttpStatus httpStatus;
+    private String message;
 }

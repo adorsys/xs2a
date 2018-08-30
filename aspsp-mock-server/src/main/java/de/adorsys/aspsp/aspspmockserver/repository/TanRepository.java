@@ -25,6 +25,5 @@ import java.util.List;
 
 @Profile({"mongo", "fongo"})
 public interface TanRepository extends MongoRepository<Tan, String> {
-
     List<Tan> findByPsuIdAndTanStatus(String psuId, TanStatus tanStatus);
 }

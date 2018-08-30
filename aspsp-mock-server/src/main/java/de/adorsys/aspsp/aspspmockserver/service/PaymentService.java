@@ -28,7 +28,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ import static de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType.*;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     @Qualifier("consentRestTemplate")
@@ -127,6 +127,12 @@ public class PaymentService {
     }
 
     //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
+    /**
+     * Updates status of PIS consent
+     *
+     * @param consentId Consent primary identifier
+     * @param consentStatus New status of the PIS consent
+     */
     public void updatePaymentConsentStatus(@NotNull String consentId, SpiConsentStatus consentStatus) {
         consentRestTemplate.put(remotePisConsentUrls.updatePisConsentStatus(), null, consentId, consentStatus.name());
     }

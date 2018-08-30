@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.web.rest;
+package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.FutureBookingsService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
