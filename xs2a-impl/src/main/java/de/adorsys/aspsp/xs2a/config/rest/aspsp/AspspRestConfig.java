@@ -15,15 +15,17 @@
  */
 package de.adorsys.aspsp.xs2a.config.rest.aspsp;
 
-import de.adorsys.aspsp.xs2a.config.rest.BearerTokenInterceptor;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
+import de.adorsys.aspsp.xs2a.config.rest.BearerTokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -41,8 +43,7 @@ public class AspspRestConfig {
     @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public RestTemplate restTemplate(){
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
-        rest.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        rest.getMessageConverters().add(new StringHttpMessageConverter());
+        rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));
         rest.getInterceptors().add(new BearerTokenInterceptor(bearerToken.getToken()));
         rest.setErrorHandler(new AspspRestErrorHandler());
         return rest;
