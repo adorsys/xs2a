@@ -28,6 +28,9 @@ import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
+
+import de.adorsys.aspsp.xs2a.service.authorization.*;
+import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
@@ -35,6 +38,7 @@ import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -142,7 +146,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             accessToken = keycloakInvokerService.obtainAccessToken();
         }
         return Optional.ofNullable(accessToken)
-                   .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     private String obtainAccessTokenFromHeader(HttpServletRequest request) {
@@ -160,6 +164,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             return new EmbeddedScaPaymentService();
         }
         return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+    }
+
+    @Bean
+    public AisAuthorizationService authorizationService(AccountSpi accountSpi) {
+        ScaApproach scaApproach = aspspProfileService.readScaApproach();
+        if (OAUTH == scaApproach) {
+            return new OauthAisAuthorizationService();
+        } else if (DECOUPLED == scaApproach) {
+            return new DecoupledAisAuthorizationService();
+        } else if (EMBEDDED == scaApproach) {
+            return new EmbeddedAisAuthorizationService(accountSpi);
+        }
+        return new RedirectAisAuthorizationService();
     }
 
     @Bean

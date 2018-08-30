@@ -19,15 +19,20 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.ConsentStatus;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 public class ConsentModelMapper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -41,7 +46,6 @@ public class ConsentModelMapper {
                 createAisConsentRequest.setValidUntil(cnst.getValidUntil());
                 createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
                 createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
-
                 return createAisConsentRequest;
             })
             .orElse(null);
@@ -51,6 +55,24 @@ public class ConsentModelMapper {
         return Optional.ofNullable(consentStatusResponse)
             .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
             .orElse(null);
+    }
+
+    public static StartScaprocessResponse mapToStartScaprocessResponse(CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
+        return Optional.ofNullable(createConsentAuthorizationResponse)
+            .map(csar -> {
+                StartScaprocessResponse response = new StartScaprocessResponse().scaStatus(createConsentAuthorizationResponse.getScaStatus())
+                    ._links(new HashMap());
+
+                ControllerLinkBuilder link = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));
+                response.getLinks().put(csar.getResponseLinkType().toString(), link.toString());
+
+                return response;
+            })
+            .orElse(null);
+    }
+
+    public static UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
+        return new UpdatePsuAuthenticationResponse();
     }
 
     public static ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
@@ -161,5 +183,32 @@ public class ConsentModelMapper {
 
     private static AccountReference mapToAccountReferenceInner(Object reference) {
         return OBJECT_MAPPER.convertValue(reference, AccountReference.class);
+    }
+
+    public static UpdateConsentPsuDataReq mapToUpdatePsuData(String psuId, String consentId, String authorizationId, HashMap body) {
+        UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
+        updatePsuData.setPsuId(psuId);
+        updatePsuData.setConsentId(consentId);
+        updatePsuData.setAuthenticationMethodId(authorizationId);
+
+        if (body.size() > 0) {
+            Optional.ofNullable(body.get("psuData"))
+                .map(o -> (LinkedHashMap<String, String>) o)
+                .ifPresent(psuData -> {
+                    updatePsuData.setPassword(psuData.get("password"));
+                });
+
+            Optional.ofNullable(body.get("authenticationMethodId"))
+                .map(o -> (String) o)
+                .ifPresent(authenticationMethodId -> updatePsuData.setAuthenticationMethodId(authenticationMethodId));
+
+            Optional.ofNullable(body.get("scaAuthenticationData"))
+                .map(o -> (String) o)
+                .ifPresent(scaAuthenticationData -> updatePsuData.setScaAuthenticationData(scaAuthenticationData));
+        } else {
+            updatePsuData.setUpdatePsuIdentification(true);
+        }
+
+        return updatePsuData;
     }
 }

@@ -21,13 +21,19 @@ import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -42,6 +48,8 @@ public class AisConsentService {
     private final RestTemplate consentRestTemplate;
     private final AisConsentRemoteUrls remoteAisConsentUrls;
     private final ConsentMapper consentMapper;
+    private final AisConsentService aisConsentService;
+    private final AisAuthorizationService authorizationService;
 
     /**
      * Sends a POST request to CMS to store created AISconsent
@@ -57,8 +65,11 @@ public class AisConsentService {
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToCreateAisConsentRequest(request, psuId, tppId, aspspConsentData), CreateAisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createAisConsentResponse)
-                   .map(CreateAisConsentResponse::getConsentId)
-                   .orElse(null);
+            .map(CreateAisConsentResponse::getConsentId)
+            .orElse(null);
+    }
+
+    public void updateConsent(SpiAccountConsent consent) {
     }
 
     /**
@@ -80,7 +91,7 @@ public class AisConsentService {
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
         AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
         return consentMapper.mapToSpiConsentStatus(response.getConsentStatus())
-                   .orElse(null);
+            .orElse(null);
     }
 
     /**
@@ -103,9 +114,50 @@ public class AisConsentService {
      */
     public void consentActionLog(String tppId, String consentId, boolean withBalance, TypeAccess access, ResponseObject response) {
         ActionStatus status = response.hasError()
-                                  ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(), withBalance, access)
-                                  : ActionStatus.SUCCESS;
+            ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(), withBalance, access)
+            : ActionStatus.SUCCESS;
 
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, status), Void.class);
     }
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    public String createConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
+        CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
+            consentMapper.mapToAisConsentAuthorization(scaStatus), CreateAisConsentAuthorizationResponse.class, consentId).getBody();
+
+        return Optional.ofNullable(response)
+            .map(CreateAisConsentAuthorizationResponse::getAuthorizationId)
+            .orElse(null);
+    }
+
+    /**
+     * Requests CMS to retrieve AIS consent authorization by its identifier
+     *
+     * @param authorizationId String representation of identifier of stored consent authorization
+     * @return Response containing AIS Consent Authorization
+     */
+    public SpiAccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId) {
+        return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), SpiAccountConsentAuthorization.class, authorizationId).getBody();
+    }
+
+    /**
+     * Sends a PUT request to CMS to update created AIS consent authorization
+     *
+     * @param updatePsuData Consent psu data
+     */
+    public UpdateConsentPsuDataResponse updateConsentAuthorization(UpdateConsentPsuDataReq updatePsuData, SpiAccountConsentAuthorization consentAuthorization) {
+        return Optional.ofNullable(authorizationService.updateConsentPsuData(updatePsuData, consentAuthorization))
+            .map(response -> {
+                consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(),
+                    consentMapper.mapToAisConsentAuthorization(response), CreateAisConsentAuthorizationResponse.class);
+                return response;
+            })
+            .orElse(null);
+    }
 }
+

@@ -16,11 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -43,53 +41,78 @@ public class ConsentMapper {
 
     public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(req)
-                   .map(r -> {
-                       CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
-                       aisRequest.setPsuId(psuId);
-                       aisRequest.setTppId(tppId);
-                       aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
-                       aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       aisRequest.setValidUntil(r.getValidUntil());
-                       aisRequest.setRecurringIndicator(r.isRecurringIndicator());
-                       aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
-                       aisRequest.setAspspConsentData(aspspConsentData.getAspspConsentData());
+            .map(r -> {
+                CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
+                aisRequest.setPsuId(psuId);
+                aisRequest.setTppId(tppId);
+                aisRequest.setFrequencyPerDay(r.getFrequencyPerDay());
+                aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
+                aisRequest.setValidUntil(r.getValidUntil());
+                aisRequest.setRecurringIndicator(r.isRecurringIndicator());
+                aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
+                aisRequest.setAspspConsentData(aspspConsentData.getAspspConsentData());
 
-                       return aisRequest;
-                   })
-                   .orElse(null);
+                return aisRequest;
+            })
+            .orElse(null);
     }
 
     public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
         return Optional.ofNullable(consentReq)
-                   .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
-                       cr.isRecurringIndicator(), cr.getValidUntil(),
-                       cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
-                   .orElse(null);
+            .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
+                cr.isRecurringIndicator(), cr.getValidUntil(),
+                cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
+            .orElse(null);
     }
 
     public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
-                   .map(ac -> new AccountConsent(
-                       ac.getId(),
-                       mapToAccountAccess(ac.getAccess()),
-                       ac.isRecurringIndicator(),
-                       ac.getValidUntil(),
-                       ac.getFrequencyPerDay(),
-                       ac.getLastActionDate(),
-                       ConsentStatus.valueOf(ac.getConsentStatus().name()),
-                       ac.isWithBalance(),
-                       ac.isTppRedirectPreferred()))
-                   .orElse(null);
+            .map(ac -> new AccountConsent(
+                ac.getId(),
+                mapToAccountAccess(ac.getAccess()),
+                ac.isRecurringIndicator(),
+                ac.getValidUntil(),
+                ac.getFrequencyPerDay(),
+                ac.getLastActionDate(),
+                ConsentStatus.valueOf(ac.getConsentStatus().name()),
+                ac.isWithBalance(),
+                ac.isTppRedirectPreferred()))
+            .orElse(null);
     }
 
     public Optional<ConsentStatus> mapToConsentStatus(SpiConsentStatus spiConsentStatus) {
         return Optional.ofNullable(spiConsentStatus)
-                   .map(status -> ConsentStatus.valueOf(status.name()));
+            .map(status -> ConsentStatus.valueOf(status.name()));
     }
 
     public Optional<SpiConsentStatus> mapToSpiConsentStatus(CmsConsentStatus consentStatus) {
         return Optional.ofNullable(consentStatus)
-                   .map(status -> SpiConsentStatus.valueOf(status.name()));
+            .map(status -> SpiConsentStatus.valueOf(status.name()));
+    }
+
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(SpiScaStatus scaStatus) {
+        return Optional.ofNullable(scaStatus)
+            .map(r -> {
+                AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                consentAuthorization.setScaStatus(CmsScaStatus.valueOf(scaStatus.name()));
+                return consentAuthorization;
+            })
+            .orElse(null);
+    }
+
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(UpdateConsentPsuDataResponse updateConsentPsuDataResponse) {
+        return Optional.ofNullable(updateConsentPsuDataResponse)
+            .map(r -> {
+                AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                consentAuthorization.setPsuId(updateConsentPsuDataResponse.getPsuId());
+                consentAuthorization.setScaStatus(CmsScaStatus.valueOf(updateConsentPsuDataResponse.getScaStatus().name()));
+                consentAuthorization.setPassword(updateConsentPsuDataResponse.getPassword());
+                consentAuthorization.setAuthenticationMethodId(updateConsentPsuDataResponse.getAuthenticationMethodId());
+                consentAuthorization.setScaAuthenticationData(updateConsentPsuDataResponse.getScaAuthenticationData());
+
+                return consentAuthorization;
+            })
+            .orElse(null);
     }
 
     public ActionStatus mapActionStatusError(MessageErrorCode error, boolean withBalance, TypeAccess access) {
@@ -113,81 +136,81 @@ public class ConsentMapper {
     //Domain
     private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
-                   .map(aa ->
-                            new AccountAccess(
-                                accountMapper.mapToAccountReferences(aa.getAccounts()),
-                                accountMapper.mapToAccountReferences(aa.getBalances()),
-                                accountMapper.mapToAccountReferences(aa.getTransactions()),
-                                mapToAccountAccessType(aa.getAvailableAccounts()),
-                                mapToAccountAccessType(aa.getAllPsd2()))
-                   )
-                   .orElse(null);
+            .map(aa ->
+                new AccountAccess(
+                    accountMapper.mapToAccountReferences(aa.getAccounts()),
+                    accountMapper.mapToAccountReferences(aa.getBalances()),
+                    accountMapper.mapToAccountReferences(aa.getTransactions()),
+                    mapToAccountAccessType(aa.getAvailableAccounts()),
+                    mapToAccountAccessType(aa.getAllPsd2()))
+            )
+            .orElse(null);
     }
 
     private AccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
         return Optional.ofNullable(accessType)
-                   .map(at -> AccountAccessType.valueOf(at.name()))
-                   .orElse(null);
+            .map(at -> AccountAccessType.valueOf(at.name()))
+            .orElse(null);
     }
 
     //Spi
     private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
         return Optional.ofNullable(access)
-                   .map(aa -> {
-                       SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
-                       spiAccountAccess.setAccounts(accountMapper.mapToSpiAccountReferences(aa.getAccounts()));
-                       spiAccountAccess.setBalances(accountMapper.mapToSpiAccountReferences(aa.getBalances()));
-                       spiAccountAccess.setTransactions(accountMapper.mapToSpiAccountReferences(aa.getTransactions()));
-                       spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
-                       spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
-                       return spiAccountAccess;
-                   })
-                   .orElse(null);
+            .map(aa -> {
+                SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
+                spiAccountAccess.setAccounts(accountMapper.mapToSpiAccountReferences(aa.getAccounts()));
+                spiAccountAccess.setBalances(accountMapper.mapToSpiAccountReferences(aa.getBalances()));
+                spiAccountAccess.setTransactions(accountMapper.mapToSpiAccountReferences(aa.getTransactions()));
+                spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
+                spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
+                return spiAccountAccess;
+            })
+            .orElse(null);
     }
 
     private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
         return Optional.ofNullable(accessType)
-                   .map(at -> SpiAccountAccessType.valueOf(at.name()))
-                   .orElse(null);
+            .map(at -> SpiAccountAccessType.valueOf(at.name()))
+            .orElse(null);
 
     }
 
     private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
+            .map(this::mapToListAccountInfo)
+            .orElseGet(Collections::emptyList));
 
         accessInfo.setBalances(Optional.ofNullable(access.getBalances())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
+            .map(this::mapToListAccountInfo)
+            .orElseGet(Collections::emptyList));
 
         accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
-                                       .map(this::mapToListAccountInfo)
-                                       .orElseGet(Collections::emptyList));
+            .map(this::mapToListAccountInfo)
+            .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
-                                            .map(AccountAccessType::name)
-                                            .orElse(null));
+            .map(AccountAccessType::name)
+            .orElse(null));
         accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
-                                  .map(AccountAccessType::name)
-                                  .orElse(null));
+            .map(AccountAccessType::name)
+            .orElse(null));
 
         return accessInfo;
     }
 
     private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
         return refs.stream()
-                   .map(this::mapToAccountInfo)
-                   .collect(Collectors.toList());
+            .map(this::mapToAccountInfo)
+            .collect(Collectors.toList());
     }
 
     private AccountInfo mapToAccountInfo(AccountReference ref) {
         AccountInfo info = new AccountInfo();
         info.setIban(ref.getIban());
         info.setCurrency(Optional.ofNullable(ref.getCurrency())
-                             .map(Currency::getCurrencyCode)
-                             .orElse(null));
+            .map(Currency::getCurrencyCode)
+            .orElse(null));
         return info;
     }
 }
