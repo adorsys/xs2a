@@ -48,7 +48,6 @@ public class AisConsentService {
     private final RestTemplate consentRestTemplate;
     private final AisConsentRemoteUrls remoteAisConsentUrls;
     private final ConsentMapper consentMapper;
-    private final AisConsentService aisConsentService;
     private final AisAuthorizationService authorizationService;
 
     /**
