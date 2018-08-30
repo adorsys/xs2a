@@ -63,9 +63,6 @@
     "header": {},
     "body": [
       {
-        "transactionStatus": "RCVD"
-      },
-      {
         "category": "ERROR",
         "code": "PAYMENT_FAILED"
       }
