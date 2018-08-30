@@ -67,6 +67,20 @@ public class AisConsentController {
                    .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
+    @PutMapping(path = "/{consent-id}")
+    @ApiOperation(value = "Update AccountAccess in the consent identified by given consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<CreateAisConsentResponse> updateAccountAccessByConsentId(
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @RequestBody CreateAisConsentRequest request) {
+        return aisConsentService.updateAccountAccessByConsentId(consentId, request)
+                   .map(consentIdUpdated -> new ResponseEntity<>(new CreateAisConsentResponse(consentIdUpdated), HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping(path = "/{consent-id}/status")
     @ApiOperation(value = "Can check the status of an account information consent resource.")
     @ApiResponses(value = {
@@ -95,17 +109,5 @@ public class AisConsentController {
                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "/{consent-id}")
-    @ApiOperation(value = "Update AccountAccess in the consent identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreateAisConsentResponse> updateAccountAccessById(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @RequestBody CreateAisConsentRequest request) {
-        return aisConsentService.updateAccountAccessById(consentId, request)
-                   .map(conId -> new ResponseEntity<>(new CreateAisConsentResponse(conId), HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+
 }

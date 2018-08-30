@@ -207,28 +207,15 @@ public class AISConsentService {
         return aisConsentRepository.save(consent);
     }
 
-    public Optional<String> updateAccountAccessById(String consentId, CreateAisConsentRequest request) {
+    @Transactional
+    public Optional<String> updateAccountAccessByConsentId(String consentId, CreateAisConsentRequest request) {
+        List<AisAccount> aisAccounts = readAccounts(request.getAccess());
         return getActualAisConsent(consentId)
                    .map(consent -> {
-                       Map<String, AisAccount> aisAccountHolder = consent.getAccounts().stream().collect(Collectors.toMap(o -> o.getIban(), o -> o));
-                       readAccounts(request.getAccess()).forEach(aisAccountRequest -> updateAccountAccess(consent, aisAccountRequest, aisAccountHolder));
+                       consent.fillAccounts(aisAccounts);
+                       aisAccountRepository.save(aisAccounts);
+                       aisConsentRepository.save(consent);
                        return consent.getExternalId();
                    });
     }
-
-    private void updateAccountAccess(AisConsent consent, AisAccount aisAccountRequest, Map<String, AisAccount> aisAccountHolder) {
-        Optional<AisAccount> aisAccountConsentFindByIban = Optional.ofNullable(aisAccountHolder.get(aisAccountRequest.getIban()));
-        AisAccount aisAccountUpdate;
-        if (!aisAccountConsentFindByIban.isPresent()) {
-            aisAccountRequest.setConsent(consent);
-            aisAccountUpdate = aisAccountRequest;
-        } else {
-            aisAccountUpdate = aisAccountConsentFindByIban.get();
-            List<AccountAccess> accesses = aisAccountUpdate.getAccesses();
-            accesses.clear();
-            accesses.addAll(aisAccountRequest.getAccesses());
-        }
-        aisAccountRepository.save(aisAccountUpdate);
-    }
-
 }

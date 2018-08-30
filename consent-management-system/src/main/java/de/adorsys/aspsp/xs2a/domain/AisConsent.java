@@ -112,6 +112,11 @@ public class AisConsent {
         accounts.forEach(this::addAccount);
     }
 
+    public void fillAccounts(List<AisAccount> accounts) {
+        this.accounts.clear();
+        addAccounts(accounts);
+    }
+
     public boolean isExpiredByDate() {
         return LocalDate.now().compareTo(expireDate) >= 0;
     }
