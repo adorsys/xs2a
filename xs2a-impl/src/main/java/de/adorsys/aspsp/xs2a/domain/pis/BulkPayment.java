@@ -34,7 +34,7 @@ public class BulkPayment {
     @ApiModelProperty(value = "debtor account", required = true)
     private AccountReference debtorAccount;
     @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
-    LocalDate requestedExecutionDate;
+    private LocalDate requestedExecutionDate;
     @ApiModelProperty(value = "The Bulk Entry Type is a type which follows the JSON formats for the supported products for single payments, see Section 11.1, excluding the data elements\n" +
                                   "\uF0B7 debtorAccount,\n" +
                                   "\uF0B7 requestedExecutionDate,\n" +
