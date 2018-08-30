@@ -49,14 +49,14 @@ Feature: Payment Initiation Service
 #        When PSU sends the bulk payment initiating request with error
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
-#          |  payment-service              | payment-product       | bulk-payment                            |
-#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
-#          |  bulk-payments                 | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
-#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
-#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
-#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
-#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
-#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-exceeding-amount.json            |
+#          |  payment-service  | payment-product       | bulk-payment                                 |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
+#          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-exceeding-amount.json            |
 
 
     ####################################################################################################################
