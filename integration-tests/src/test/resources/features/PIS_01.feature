@@ -43,7 +43,7 @@ Feature: Payment Initiation Service
 #        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
 #        Examples:
 #            | payment-service  | payment-product       | bulk-payment                |
-#            | bulk-payment     | sepa-credit-transfers | bulkPayInit-successful.json |
+#            | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
 
 
 #    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
@@ -52,13 +52,13 @@ Feature: Payment Initiation Service
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
 #          |  payment-service              | payment-product       | bulk-payment                            |
-#          |  bulk-payment                 | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
-#          |  bulk-payment                 | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
-#          |  bulk-payment                 | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
-#          |  bulk-payment                 | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
-#          |  bulk-payment                 | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
-#          |  bulk-payment                 | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
-#          |  bulk-payment                 | sepa-credit-transfers | bulkPayInit-exceeding-amount.json            |
+#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
+#          |  bulk-payments                 | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
+#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
+#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
+#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
+#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
+#          |  bulk-payments                 | sepa-credit-transfers | bulkPayInit-exceeding-amount.json            |
 
 
     ####################################################################################################################
@@ -73,27 +73,27 @@ Feature: Payment Initiation Service
 #        And a redirect URL is delivered to the PSU
 #        Examples:
 
-#            | payment-product       | recurring-payment          |
-#            | sepa-credit-transfers | recPayInit-successful.json |
+#           | payment-service   | payment-product       | recurring-payment          |
+#           | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
 #
 #
 #    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
-#        Given PSU initiates an errorful recurring payment <recurring-payment> using the payment product <payment-product>
+#        Given PSU initiates an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the recurring payment initiating request with error
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
-#            | payment-service  | payment-product       | recurring-payment                           |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-incorrect-syntax.json            |
-#            #| periodic-payment | sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-no-frequency.json                |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-no-request-id.json               |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-no-ip-address.json               |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-exceeding-amount.json            |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-start-date-in-past.json          |
-#            | periodic-payment | sepa-credit-transfers | recPayInit-end-date-before-start-date.json  |
+#            | payment-service   | payment-product       | recurring-payment                           |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-incorrect-syntax.json            |
+#            #| periodic-payments | sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-no-frequency.json                |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-no-request-id.json               |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-exceeding-amount.json            |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-start-date-in-past.json          |
+#            | periodic-payments | sepa-credit-transfers | recPayInit-end-date-before-start-date.json  |
 
 
     ####################################################################################################################

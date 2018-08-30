@@ -22,12 +22,15 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -62,18 +65,14 @@ public class BulkPaymentErrorfulSteps {
 
     @When("^PSU sends the bulk payment initiating request with error$")
     public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-        headers.add("Content-Type", "application/json");
+        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         try {
-            ResponseEntity<TppMessages> response = restTemplate.exchange(
+            restTemplate.exchange(
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-                HttpMethod.POST, new HttpEntity<>(context.getTestData().getRequest().getBody(), headers), new ParameterizedTypeReference<TppMessages>() {
+                HttpMethod.POST, new HttpEntity<>(entity), new ParameterizedTypeReference<TppMessages>() {
                 });
-
-            context.setActualResponse(response);
         } catch (RestClientResponseException restclientResponseException) {
             handleRequestError(restclientResponseException);
         }

@@ -58,9 +58,10 @@ public class PeriodicPaymentErrorfulSteps {
 
     private String dataFileName;
 
-    @And("^PSU initiates an errorful recurring payment (.*) using the payment product (.*)$")
-    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct) throws IOException {
+    @And("^PSU initiates an errorful recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
         this.dataFileName = dataFileName;
 
         TestData<PeriodicPaymentInitiationSctJson, TppMessages> data = mapper.readValue(
@@ -82,7 +83,7 @@ public class PeriodicPaymentErrorfulSteps {
 
         try {
             restTemplate.exchange(
-                context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
                 new ParameterizedTypeReference<TppMessages>() {
