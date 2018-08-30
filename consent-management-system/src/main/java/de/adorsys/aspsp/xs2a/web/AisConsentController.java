@@ -109,5 +109,17 @@ public class AisConsentController {
                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-
+    @PutMapping(path = "/{consent-id}/update")
+    @ApiOperation(value = "Update consent identified by given consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<CreateAisConsentResponse> updateConsent(
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @RequestBody CreateAisConsentRequest request) {
+        return aisConsentService.updateConsent(request, consentId)
+                   .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

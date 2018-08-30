@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest;
+package de.adorsys.aspsp.aspspmockserver.domain;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-@Component
-public class ASPSPProfileRemoteUrls {
-
-    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
-    private String aspspProfileBaseUrl;
-
-    /**
-     * Returns URL-string in order to get aspsp settings
-     *
-     * @return String
-     */
-    public String getAspspSettingsUrl() {
-        return aspspProfileBaseUrl + "/aspsp-profile";
-    }
+public enum ConfirmationType {
+    PAYMENT,
+    CONSENT
 }

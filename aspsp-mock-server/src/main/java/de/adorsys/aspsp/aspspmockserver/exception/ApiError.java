@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.domain;
+package de.adorsys.aspsp.aspspmockserver.exception;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
+import org.springframework.http.HttpStatus;
 
-@Data
-@NoArgsConstructor
-public class PaymentConfirmation {
-    private String iban;
-    private String consentId;
-    private String paymentId;
-    private String tanNumber;
-
-    public PaymentConfirmation(String iban, String consentId, String paymentId) {
-        this.iban = iban;
-        this.consentId = consentId;
-        this.paymentId = paymentId;
-    }
+@Value
+public class ApiError {
+    private HttpStatus status;
+    private String message;
+    private String error;
 }

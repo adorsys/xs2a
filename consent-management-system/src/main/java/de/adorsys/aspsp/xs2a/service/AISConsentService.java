@@ -62,22 +62,8 @@ public class AISConsentService {
      */
     @Transactional
     public Optional<String> createConsent(CreateAisConsentRequest request) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
-        AisConsent consent = new AisConsent();
+        AisConsent consent = createConsentFromRequest(request);
         consent.setExternalId(UUID.randomUUID().toString());
-        consent.setConsentStatus(RECEIVED);
-        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
-        consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
-        consent.setUsageCounter(minFrequencyPerDay);
-        consent.setRequestDateTime(LocalDateTime.now());
-        consent.setExpireDate(request.getValidUntil());
-        consent.setPsuId(request.getPsuId());
-        consent.setTppId(request.getTppId());
-        consent.addAccounts(readAccounts(request.getAccess()));
-        consent.setRecurringIndicator(request.isRecurringIndicator());
-        consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
-        consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
-        consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
                    ? Optional.ofNullable(saved.getExternalId())
@@ -115,7 +101,7 @@ public class AISConsentService {
      * Update consent status by id
      *
      * @param consentId
-     * @param status new consent status
+     * @param status    new consent status
      * @return Boolean
      */
     public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
@@ -148,6 +134,54 @@ public class AISConsentService {
         logConsentAction(request.getConsentId(), resolveConsentActionStatus(request, consent), request.getTppId());
     }
 
+    /**
+     * Update AIS consent
+     *
+     * @param request   needed parameters for updating AIS consent
+     * @param consentId id of the consent to be updated
+     * @return String consent id
+     */
+    @Transactional
+    public Optional<String> updateConsent(CreateAisConsentRequest request, String consentId) {
+        return aisConsentRepository.findByExternalId(consentId)
+                   .map(consent -> updateAisConsent(consent, request, consentId));
+    }
+
+    private String updateAisConsent(AisConsent consent, CreateAisConsentRequest request, String consentId) {
+        aisConsentRepository.delete(consent);
+        return createConsentWithConsentId(request, consentId);
+    }
+
+    private String createConsentWithConsentId(CreateAisConsentRequest request, String consentId) {
+        AisConsent consent = createConsentFromRequest(request);
+        consent.setExternalId(consentId);
+
+        AisConsent saved = aisConsentRepository.save(consent);
+        return saved.getId() != null
+                   ? saved.getExternalId()
+                   : null;
+    }
+
+    private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
+        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        AisConsent consent = new AisConsent();
+        consent.setConsentStatus(RECEIVED);
+        consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
+        consent.setTppFrequencyPerDay(request.getFrequencyPerDay());
+        consent.setUsageCounter(minFrequencyPerDay);
+        consent.setRequestDateTime(LocalDateTime.now());
+        consent.setExpireDate(request.getValidUntil());
+        consent.setPsuId(request.getPsuId());
+        consent.setTppId(request.getTppId());
+        consent.addAccounts(readAccounts(request.getAccess()));
+        consent.setRecurringIndicator(request.isRecurringIndicator());
+        consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
+        consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
+        consent.setAspspConsentData(request.getAspspConsentData());
+
+        return consent;
+    }
+
     private void checkAndUpdateConsentParameter(Optional<AisConsent> consent) {
         if (consent.isPresent()) {
             AisConsent aisConsent = consent.get();
@@ -163,7 +197,7 @@ public class AISConsentService {
     }
 
     private void updateAisConsentCounter(AisConsent consent) {
-        if(consent.hasUsagesAvailable()){
+        if (consent.hasUsagesAvailable()) {
             int usageCounter = consent.getUsageCounter();
             int newUsageCounter = --usageCounter;
             consent.setUsageCounter(newUsageCounter);
