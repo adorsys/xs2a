@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {AccountConsent} from "../../model/aspsp/accountConsent";
-import {Observable} from "rxjs/index";
-import {AisService} from "../../service/ais.service";
-import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
+import {AisService} from '../../service/ais.service';
+import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 
 @Component({
   selector: 'app-tan-confirmation-page',
@@ -11,7 +9,6 @@ import {ActivatedRoute, Router, UrlSegment} from "@angular/router";
 })
 export class TanConfirmationPageComponent implements OnInit {
   tan: string;
-
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
 
@@ -25,7 +22,7 @@ export class TanConfirmationPageComponent implements OnInit {
           this.router.navigate(['/tanconfirmationsuccessful']);
         },
         error => {
-          this.router.navigate(['/tanconfirmationerror'])
+          this.router.navigate(['/tanconfirmationerror']);
         }
       );
     this.aisService.updateConsentStatus('VALID').subscribe();

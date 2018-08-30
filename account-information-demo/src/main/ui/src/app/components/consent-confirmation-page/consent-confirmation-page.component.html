@@ -5,8 +5,8 @@
       <h1 class="container__title">Confirm new AIS request</h1>
       <p class="container__text">
         TTP has requested the following account information from your bank accounts. If you agree to us providing this specific information, then please click the Confirm button below.</p>
-      <ul class="container__list" *ngIf="Accounts">
-          <ul class="container__account" *ngFor="let Account of Accounts">
+      <ul class="container__list" *ngIf="accounts">
+          <ul class="container__account" *ngFor="let Account of accounts">
             <li><span>{{Account.iban}}</span></li>
             <!--TODO: Change currency format -->
             <li *ngFor="let Balance of Account.balances"><span>{{Balance.balanceAmount.content}} {{Balance.balanceAmount.currency}}</span></li>
@@ -15,9 +15,11 @@
           <li>Your Accounts Name and Number</li>
           <li>Your Accounts Balance</li>
         </ul>
-        <ul>Your Account Transcations for the last {{TransactionLimit$ | async}} months
-          <li>incoming and outgoing Transactions</li>
-        </ul>
+        <div *ngIf="profile$ | async as profile">
+          <ul>Your Account Transcations for the last {{profile.transactionLifetime}} months
+            <li>incoming and outgoing Transactions</li>
+          </ul>
+        </div>
         <ul>Your Account Features and Benefits:
           <li>The Type of Accounts you have</li>
           <li>The Fees, Charges and Interests you pay</li>
@@ -27,7 +29,7 @@
           <li>Your standing Orders</li>
         </ul>
       </ul>
-      <div *ngIf="Consent$ | async as Consent">
+      <div *ngIf="consent$ | async as Consent">
         <!--TODO: Change date format -->
       TPP will access your accounts till {{ Consent.validUntil }}
       </div>

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AisService } from '../../service/ais.service';
-import { Account} from "../../model/aspsp/account";
+import { Account} from '../../model/aspsp/account';
 import {Observable} from 'rxjs';
-import {AccountConsent} from "../../model/aspsp/accountConsent";
+import {AccountConsent} from '../../model/aspsp/accountConsent';
+import {AspspSettings} from '../../model/profile/aspspSettings';
 
 @Component({
   selector: 'app-consent-confirmation-page',
@@ -12,27 +13,24 @@ import {AccountConsent} from "../../model/aspsp/accountConsent";
 })
 export class ConsentConfirmationPageComponent implements OnInit {
   consentId: string;
-  Accounts: Account[];
-  Consent$: Observable<AccountConsent>
-  TransactionLimit$: Observable<number>
+  accounts: Account[];
+  consent$: Observable<AccountConsent>;
+  profile$: Observable<AspspSettings>;
   iban: string;
-
-
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
 
   ngOnInit() {
     this.route.url
-      .subscribe(params => { this.getConsentIdFromUrl(params) });
+      .subscribe(params => { this.getConsentIdFromUrl(params); });
     this.aisService.saveConsentId(this.consentId);
-    this.Consent$ = this.aisService.getConsent(this.consentId);
+    this.consent$ = this.aisService.getConsent(this.consentId);
     this.aisService.getAccounts()
       .subscribe(data => {
-        this.iban= data[0].iban;
-        this.Accounts = data;
+        this.iban = data[0].iban;
+        this.accounts = data;
       });
-    this.TransactionLimit$ = this.aisService.getTransactionLimit();
-
+    this.profile$ = this.aisService.getProfile();
   }
 
   onClickContinue() {
@@ -47,12 +45,12 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   getConsentIdFromUrl(params: UrlSegment[]) {
-    this.consentId = params[0].toString()
+    this.consentId = params[0].toString();
   }
 
   createQueryParams() {
     return {
       consentId: this.consentId,
-    }
+    };
   }
 }
