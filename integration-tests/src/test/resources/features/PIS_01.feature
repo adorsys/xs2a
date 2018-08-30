@@ -27,8 +27,6 @@ Feature: Payment Initiation Service
 #            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
 #            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
 #            | payments            | sepa-credit-transfers         | singlePayInit-exceeding-amount.json            |
-#            | payments            | sepa-credit-transfers         | singlePayInit-expired-exec-date.json           |
-#            | payments            | instant-sepa-credit-transfers | singlePayInit-unavailable-product-for-psu.json |
 
 
     ####################################################################################################################
