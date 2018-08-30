@@ -23,12 +23,12 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -60,7 +60,7 @@ public class PaymentStatusErrorfulSteps {
         context.setPaymentService(paymentService);
     }
 
-    @And("^the set of data for the errorful test (.*)$")
+    @And("^the errorful set of data (.*)$")
     public void loadTestDataErrorful(String dataFileName) throws IOException {
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
         });
@@ -70,7 +70,7 @@ public class PaymentStatusErrorfulSteps {
 
     @When("^PSU requests the status of the payment without an existing payment-id$")
     public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
-        HttpEntity<HashMap> entity = getStatusHttpEntity();
+        HttpEntity<HashMap> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
@@ -78,7 +78,7 @@ public class PaymentStatusErrorfulSteps {
                 HttpMethod.GET,
                 entity,
                 TppMessages.class);
-        } catch (RestClientResponseException rex){
+        } catch (RestClientResponseException rex) {
             handleRequestError(rex);
         }
     }
@@ -88,14 +88,5 @@ public class PaymentStatusErrorfulSteps {
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
         TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
         context.setTppmessage(tppMessages);
-    }
-
-    private HttpEntity getStatusHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-        headers.add("Content-Type", "application/json");
-
-        return new HttpEntity<>(null, headers);
     }
 }

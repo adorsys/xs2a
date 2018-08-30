@@ -57,7 +57,9 @@ public class SinglePaymentErrorfulSteps {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        TestData<PaymentInitiationSctJson, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<PaymentInitiationSctJson, TppMessages>>() {
+        TestData<PaymentInitiationSctJson, TppMessages> data = mapper.readValue(resourceToString(
+            "/data-input/pis/single/" + dataFileName, UTF_8),
+            new TypeReference<TestData<PaymentInitiationSctJson, TppMessages>>() {
         });
 
         context.setTestData(data);
@@ -65,7 +67,7 @@ public class SinglePaymentErrorfulSteps {
 
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
-        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {

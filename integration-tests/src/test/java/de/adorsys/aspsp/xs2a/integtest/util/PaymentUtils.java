@@ -22,7 +22,7 @@ import org.springframework.http.HttpHeaders;
 
 public class PaymentUtils {
 
-    public static HttpEntity getPaymentsHttpEntity(Request request, String token) {
+    public static HttpEntity getHttpEntity(Request request, String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setAll(request.getHeader());
         headers.add("Authorization", "Bearer " + token);

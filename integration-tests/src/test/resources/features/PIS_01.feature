@@ -43,7 +43,6 @@ Feature: Payment Initiation Service
 #            | payment-service  | payment-product       | bulk-payment                |
 #            | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
 #
-#
 #    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
 #        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the bulk payment initiating request with error
@@ -71,10 +70,8 @@ Feature: Payment Initiation Service
 #        Then a successful response code and the appropriate recurring payment response data
 #        And a redirect URL is delivered to the PSU
 #        Examples:
-#
 #           | payment-service   | payment-product       | recurring-payment          |
 #           | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
-#
 #
 #    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
 #        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
@@ -100,7 +97,6 @@ Feature: Payment Initiation Service
     # Payment Status                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
-#    -> is not working until the url is adapted according to the new version of the specification
 #    Scenario Outline: Successful Payment Status Request
 #        Given Psu wants to request the payment status of a payment with payment-id <payment-id> by using the payment-service <payment-service>
 #        And the set of data <payment-status>
@@ -114,7 +110,7 @@ Feature: Payment Initiation Service
 #
 #    Scenario Outline: Payment Status Request with not existing Payment-ID
 #        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
-#        And the set of data for the errorful test <payment-status>
+#        And the errorful set of data <payment-status>
 #        When PSU requests the status of the payment without an existing payment-id
 #        Then an error response code is displayed the appropriate error response
 #        Examples:

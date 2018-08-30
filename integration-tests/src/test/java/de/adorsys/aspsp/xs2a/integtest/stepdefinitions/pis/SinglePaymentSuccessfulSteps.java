@@ -60,15 +60,17 @@ public class SinglePaymentSuccessfulSteps {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString("/data-input/pis/single/" + dataFileName, UTF_8), new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
-        });
+        TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString(
+            "/data-input/pis/single/" + dataFileName, UTF_8),
+            new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
+            });
 
         context.setTestData(data);
     }
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(

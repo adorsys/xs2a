@@ -24,13 +24,13 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -68,19 +68,14 @@ public class BulkPaymentSuccessfulSteps {
         context.setTestData(data);
     }
 
-
     @When("^PSU sends the bulk payment initiating request$")
     public void sendBulkPaymentInitiatingRequest() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-        headers.add("Content-Type", "application/json");
-
-        BulkPaymentInitiationSctJson paymentsList = context.getTestData().getRequest().getBody();
+        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-            HttpMethod.POST, new HttpEntity<>(paymentsList, headers), new ParameterizedTypeReference<List<PaymentInitationRequestResponse201>>() {
+            HttpMethod.POST, new HttpEntity<>(entity), new ParameterizedTypeReference<List<PaymentInitationRequestResponse201>>() {
             });
 
         context.setActualResponse(response);
@@ -110,4 +105,3 @@ public class BulkPaymentSuccessfulSteps {
         });
     }
 }
-

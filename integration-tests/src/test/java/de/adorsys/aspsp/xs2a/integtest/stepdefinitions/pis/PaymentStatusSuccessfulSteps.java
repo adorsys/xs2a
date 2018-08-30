@@ -24,11 +24,11 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -50,7 +50,7 @@ public class PaymentStatusSuccessfulSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context< HashMap, PaymentInitiationStatusResponse200Json> context;
+    private Context<HashMap, PaymentInitiationStatusResponse200Json> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -63,7 +63,9 @@ public class PaymentStatusSuccessfulSteps {
 
     @And("^the set of data (.*)$")
     public void loadTestData(String dataFileName) throws IOException {
-        TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
+        TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString(
+            "/data-input/pis/status/" + dataFileName, UTF_8),
+            new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
         });
 
         context.setTestData(data);
@@ -71,7 +73,7 @@ public class PaymentStatusSuccessfulSteps {
 
     @When("^PSU requests the status of the payment$")
     public void sendPaymentStatusRequest() throws HttpClientErrorException {
-        HttpEntity<HashMap> entity = getStatusHttpEntity();
+        HttpEntity<HashMap> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitiationStatusResponse200Json> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
@@ -89,14 +91,5 @@ public class PaymentStatusSuccessfulSteps {
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus().name()));
-    }
-
-    private HttpEntity getStatusHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-        headers.add("Content-Type", "application/json");
-
-        return new HttpEntity<>(null, headers);
     }
 }

@@ -74,7 +74,7 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request$")
     public void sendConsentRequest() throws HttpClientErrorException {
-        HttpEntity<Consents> entity = PaymentUtils.getPaymentsHttpEntity(context.getTestData().getRequest(),
+        HttpEntity<Consents> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
             context.getAccessToken());
 
         ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
@@ -98,7 +98,7 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request with error$")
     public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {
-        HttpEntity<Consents> entity = PaymentUtils.getPaymentsHttpEntity(
+        HttpEntity<Consents> entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
         try {
             restTemplate.exchange(

@@ -60,7 +60,7 @@ public class PeriodicPaymentSuccessfulSteps {
     private ObjectMapper mapper;
 
     @And("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataForSuccessfulPeriodicPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
+    public void loadTestDataForSuccessfulPeriodicPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
@@ -74,7 +74,7 @@ public class PeriodicPaymentSuccessfulSteps {
 
     @When("^PSU sends the recurring payment initiating request$")
     public void sendSuccessfulPeriodicPaymentInitiatingRequest() {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
@@ -92,6 +92,7 @@ public class PeriodicPaymentSuccessfulSteps {
         PaymentInitationRequestResponse201 responseBody = context.getTestData().getResponse().getBody();
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = context.getActualResponse();
         HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
+
         assertThat(responseEntity.getStatusCode(), equalTo(expectedStatus));
         assertThat(responseEntity.getBody().getTransactionStatus().name(), equalTo(responseBody.getTransactionStatus()));
         assertThat(responseEntity.getBody().getPaymentId(), notNullValue());

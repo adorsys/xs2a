@@ -52,7 +52,7 @@ public class BulkPaymentErrorfulSteps {
     private ObjectMapper mapper;
 
     @Given("^PSU loads errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataForErrorfulBulkPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
+    public void loadTestDataForErrorfulBulkPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
@@ -65,7 +65,7 @@ public class BulkPaymentErrorfulSteps {
 
     @When("^PSU sends the bulk payment initiating request with error$")
     public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {

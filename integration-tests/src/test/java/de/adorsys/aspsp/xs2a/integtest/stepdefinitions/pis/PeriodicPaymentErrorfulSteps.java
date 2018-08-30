@@ -66,7 +66,8 @@ public class PeriodicPaymentErrorfulSteps {
 
         TestData<PeriodicPaymentInitiationSctJson, TppMessages> data = mapper.readValue(
             resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8),
-            new TypeReference<TestData<PeriodicPaymentInitiationSctJson, TppMessages>>() {});
+            new TypeReference<TestData<PeriodicPaymentInitiationSctJson, TppMessages>>() {
+            });
 
         context.setTestData(data);
         context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
@@ -74,7 +75,7 @@ public class PeriodicPaymentErrorfulSteps {
 
     @When("^PSU sends the recurring payment initiating request with error$")
     public void sendFalsePeriodicPaymentInitiatingRequest() throws IOException {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
+        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         if (dataFileName.contains("end-date-before-start-date")) {

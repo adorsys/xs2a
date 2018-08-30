@@ -10,13 +10,8 @@
     "code": "404",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
-      "tppMessages": [
-        {
-          "category": "ERROR",
-          "code": "PRODUCT_UNKNOWN"
-        }
-      ]
+      "category": "ERROR",
+      "code": "PRODUCT_UNKNOWN"
     }
   }
 }
