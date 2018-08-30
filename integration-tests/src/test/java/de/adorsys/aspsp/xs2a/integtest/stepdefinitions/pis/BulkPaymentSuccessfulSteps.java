@@ -56,7 +56,7 @@ public class BulkPaymentSuccessfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to initiate a multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
+    @Given("^PSU wants to initiate multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestDataBulkPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);

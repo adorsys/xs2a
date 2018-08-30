@@ -70,7 +70,7 @@ Feature: Payment Initiation Service
 #        Then a successful response code and the appropriate recurring payment response data
 #        And a redirect URL is delivered to the PSU
 #        Examples:
-
+#
 #           | payment-service   | payment-product       | recurring-payment          |
 #           | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
 #
