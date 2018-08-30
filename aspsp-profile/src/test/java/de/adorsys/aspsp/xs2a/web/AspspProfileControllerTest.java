@@ -44,7 +44,6 @@ public class AspspProfileControllerTest {
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
-    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
@@ -102,7 +101,6 @@ public class AspspProfileControllerTest {
             COMBINED_SERVICE_INDICATOR,
             AVAILABLE_PAYMENT_PRODUCTS,
             AVAILABLE_PAYMENT_TYPES,
-            SCA_APPROACH,
             TPP_SIGNATURE_REQUIRED,
             PIS_REDIRECT_LINK,
             AIS_REDIRECT_LINK,
