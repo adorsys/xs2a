@@ -60,7 +60,7 @@ public class PeriodicPaymentSuccessfulSteps {
     private ObjectMapper mapper;
 
     @And("^PSU wants to initiate a recurring payment (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataForPeriodicPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
+    public void loadTestDataForSuccessfulPeriodicPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
@@ -95,20 +95,5 @@ public class PeriodicPaymentSuccessfulSteps {
         assertThat(responseEntity.getStatusCode(), equalTo(expectedStatus));
         assertThat(responseEntity.getBody().getTransactionStatus().name(), equalTo(responseBody.getTransactionStatus()));
         assertThat(responseEntity.getBody().getPaymentId(), notNullValue());
-    }
-
-    @When("^PSU sends the recurring payment initiating request with error$")
-    public void sendFalsePeriodicPaymentInitiatingRequest() throws IOException {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getPaymentsHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
-            context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
-            HttpMethod.POST,
-            entity,
-            new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
-            });
-
-        context.setActualResponse(responseEntity);
     }
 }
