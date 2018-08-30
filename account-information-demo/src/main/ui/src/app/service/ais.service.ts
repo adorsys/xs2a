@@ -37,7 +37,6 @@ export class AisService {
     let date = new Date();
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      'date': date.toUTCString(),
       'tpp-qwac-certificate': environment.tppQwacCertificate,
     });
     console.log("iio headers consent", headers);
@@ -54,7 +53,6 @@ export class AisService {
     let date = new Date();
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      'date': date.toUTCString(),
       'consent-id': this.savedConsentId,
       'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
