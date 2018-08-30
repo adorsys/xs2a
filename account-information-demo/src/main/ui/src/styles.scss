@@ -68,19 +68,36 @@
     width: 750px;
   }
 
+  &__account{
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    padding: 0px;
+    list-style: none;
+  }
+
+  &__account span{
+    font-weight: 400;
+    color: #333333f0;
+    font-size: 20px;
+  }
+
   &__list {
     display: block;
     align-items: center;
-    line-height: 60px;
+    line-height: 40px;
     font-size: 20px;
     list-style-type: none;
     padding-bottom: 20px;
     padding-top: 20px;
-    font-weight: 200;
+    font-weight: 400;
+    color: #333333f0;
+
   }
 
-  &__list span{
-    font-weight: 400;
+  &__list li{
+    font-weight: 100;
+    font-size: 18px;
     color: #333333f0;
   }
 
