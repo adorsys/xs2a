@@ -93,7 +93,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Read sca approach from ASPSP profile service
+     * Reads sca approach from ASPSP profile service
      *
      * @return Available SCA approach for tpp
      */
@@ -112,7 +112,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Read get PIS redirect url to aspsp from ASPSP profile service
+     * Reads get PIS redirect url to aspsp from ASPSP profile service
      *
      * @return Url in order to redirect SCA approach
      */
@@ -121,7 +121,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Read get AIS redirect url to aspsp from ASPSP profile service
+     * Reads get AIS redirect url to aspsp from ASPSP profile service
      *
      * @return Url in order to redirect SCA approach
      */
@@ -139,7 +139,7 @@ public class AspspProfileService {
     }
 
     /**
-     * Read value of maximum consent lifetime
+     * Reads value of maximum consent lifetime
      *
      * @return int value of maximum consent lifetime
      */
@@ -154,6 +154,10 @@ public class AspspProfileService {
      */
     public Boolean getAllPsd2Support() {
         return readAspspSettings().isAllPsd2Support();
+    }
+
+    public boolean isBankOfferedConsentSupported() {
+        return readAspspSettings().isBankOfferedConsentSupport();
     }
 
     private AspspSettings readAspspSettings() {

@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
@@ -33,9 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
 import static de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField.IBAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -47,6 +44,7 @@ public class AspspProfileControllerTest {
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
+    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
@@ -104,6 +102,7 @@ public class AspspProfileControllerTest {
             COMBINED_SERVICE_INDICATOR,
             AVAILABLE_PAYMENT_PRODUCTS,
             AVAILABLE_PAYMENT_TYPES,
+            SCA_APPROACH,
             TPP_SIGNATURE_REQUIRED,
             PIS_REDIRECT_LINK,
             AIS_REDIRECT_LINK,
