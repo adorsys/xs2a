@@ -16,15 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-/*import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
-import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;*/
-//import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-
 import com.google.common.collect.Lists;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
