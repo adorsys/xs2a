@@ -36,7 +36,7 @@ public class CreateConsentReq implements AccountReferenceCollector {
 
     @ApiModelProperty(value = "Requested access services.", required = true)
     @NotNull
-    private AccountAccess access;
+    private Xs2aAccountAccess access;
 
     @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true)
     @NotNull

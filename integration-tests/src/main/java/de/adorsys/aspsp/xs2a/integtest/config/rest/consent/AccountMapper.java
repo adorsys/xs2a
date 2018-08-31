@@ -17,11 +17,11 @@
 package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
@@ -32,9 +32,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class AccountMapper {
-    public AccountDetails mapToAccountDetails(SpiAccountDetails accountDetails) {
+    public Xs2aAccountDetails mapToAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
-                   .map(ad -> new AccountDetails(
+                   .map(ad -> new Xs2aAccountDetails(
                            ad.getId(),
                            ad.getIban(),
                            ad.getBban(),
@@ -52,10 +52,10 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public Amount mapToAmount(SpiAmount spiAmount) {
+    public Xs2aAmount mapToAmount(SpiAmount spiAmount) {
         return Optional.ofNullable(spiAmount)
                    .map(a -> {
-                       Amount amount = new Amount();
+                       Xs2aAmount amount = new Xs2aAmount();
                        amount.setContent(a.getContent().toString());
                        amount.setCurrency(a.getCurrency());
                        return amount;
@@ -63,7 +63,7 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public Optional<AccountReport> mapToAccountReport(List<SpiTransaction> spiTransactions) {
+    public Optional<Xs2aAccountReport> mapToAccountReport(List<SpiTransaction> spiTransactions) {
 
         if (CollectionUtils.isEmpty(spiTransactions)) {
             return Optional.empty();
@@ -81,7 +81,7 @@ public class AccountMapper {
                                      .map(this::mapToTransaction)
                                      .toArray(Transactions[]::new);
 
-        return Optional.of(new AccountReport(booked, pending));
+        return Optional.of(new Xs2aAccountReport(booked, pending));
     }
 
     public AccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
@@ -136,7 +136,7 @@ public class AccountMapper {
                        transactions.setUltimateDebtor(t.getUltimateDebtor());
                        transactions.setEndToEndId(t.getEndToEndId());
                        transactions.setMandateId(t.getMandateId());
-                       transactions.setPurposeCode(new PurposeCode(t.getPurposeCode()));
+                       transactions.setPurposeCode(new Xs2aPurposeCode(t.getPurposeCode()));
                        transactions.setTransactionId(t.getTransactionId());
                        transactions.setRemittanceInformationStructured(t.getRemittanceInformationStructured());
                        transactions.setRemittanceInformationUnstructured(t.getRemittanceInformationUnstructured());
@@ -154,7 +154,7 @@ public class AccountMapper {
                    .orElseGet(Collections::emptyList);
     }
 
-    private List<Balance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
+    private List<Xs2aBalance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
             return new ArrayList<>();
         }
@@ -164,7 +164,7 @@ public class AccountMapper {
                    .collect(Collectors.toList());
     }
 
-    private AccountReference mapToAccountReference(AccountDetails details) {
+    private AccountReference mapToAccountReference(Xs2aAccountDetails details) {
         return Optional.ofNullable(details)
                    .map(det-> getAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()))
                    .orElse(null);
@@ -188,10 +188,10 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    private Balance mapToBalance(SpiAccountBalance spiAccountBalance) {
+    private Xs2aBalance mapToBalance(SpiAccountBalance spiAccountBalance) {
         return Optional.ofNullable(spiAccountBalance)
                    .map(b -> {
-                       Balance balance = new Balance();
+                       Xs2aBalance balance = new Xs2aBalance();
                        balance.setBalanceAmount(mapToAmount(spiAccountBalance.getSpiBalanceAmount()));
                        balance.setBalanceType(BalanceType.valueOf(spiAccountBalance.getSpiBalanceType().name()));
                        balance.setLastChangeDateTime(spiAccountBalance.getLastChangeDateTime());

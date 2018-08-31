@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -55,7 +55,7 @@ public class Transactions {
     private LocalDate valueDate;
 
     @ApiModelProperty(value = "Amount", required = true)
-    private Amount amount;
+    private Xs2aAmount amount;
 
     @ApiModelProperty(value = "Name of the Creditor if a debited transaction", example = "John Miles")
     @Size(max = 70)
@@ -87,7 +87,7 @@ public class Transactions {
     private String remittanceInformationStructured;
 
     @ApiModelProperty(value = "Purpose code")
-    private PurposeCode purposeCode;
+    private Xs2aPurposeCode purposeCode;
 
     @ApiModelProperty(value = "Bank transaction code as used by the ASPSP in ISO20022 related formats.")
     private BankTransactionCode bankTransactionCodeCode;

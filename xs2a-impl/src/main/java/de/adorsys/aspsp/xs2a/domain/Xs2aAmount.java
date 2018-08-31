@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.code;
+package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotNull;
+import java.util.Currency;
 
 @Data
-@ApiModel(description = "PurposeCode", value = "Purpose code")
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PurposeCode {
+@ApiModel(description = "Amount information", value = "Amount")
+public class Xs2aAmount {
 
-    // todo documentation doesn't have any definition. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/40
-    @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
-    private String code;
+	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
+    @NotNull
+    private Currency currency;
+
+	@ApiModelProperty(value = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
+    @NotNull
+    private String content;
 }

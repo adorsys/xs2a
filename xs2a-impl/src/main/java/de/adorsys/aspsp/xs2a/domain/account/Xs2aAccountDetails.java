@@ -18,7 +18,7 @@
 package de.adorsys.aspsp.xs2a.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import io.swagger.annotations.ApiModel;
@@ -32,7 +32,7 @@ import java.util.List;
 
 @Data
 @ApiModel(description = "SpiAccountDetails information", value = "SpiAccountDetails")
-public class AccountDetails {
+public class Xs2aAccountDetails {
 
     @ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required = true, example = "3dc3d5b3-7023-4848-9853-f5400a64e80f")
     @Size(max = 35)
@@ -75,7 +75,7 @@ public class AccountDetails {
     private final String bic;
 
     @ApiModelProperty(value = "Balances")
-    private final List<Balance> balances;
+    private final List<Xs2aBalance> balances;
 
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")

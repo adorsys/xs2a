@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -52,18 +52,18 @@ public class FundsConfirmationService {
                              .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
     }
 
-    private boolean isFundsAvailable(AccountReference accountReference, Amount requiredAmount) {
-        List<Balance> balances = getAccountBalancesByAccountReference(accountReference);
+    private boolean isFundsAvailable(AccountReference accountReference, Xs2aAmount requiredAmount) {
+        List<Xs2aBalance> balances = getAccountBalancesByAccountReference(accountReference);
 
         return balances.stream()
                    .filter(bal -> BalanceType.INTERIM_AVAILABLE == bal.getBalanceType())
                    .findFirst()
-                   .map(Balance::getBalanceAmount)
+                   .map(Xs2aBalance::getBalanceAmount)
                    .map(am -> isRequiredAmountEnough(requiredAmount, am))
                    .orElse(false);
     }
 
-    private boolean isRequiredAmountEnough(Amount requiredAmount, Amount availableAmount) {
+    private boolean isRequiredAmountEnough(Xs2aAmount requiredAmount, Xs2aAmount availableAmount) {
         return convertToBigDecimal(availableAmount.getContent()).compareTo(convertToBigDecimal(requiredAmount.getContent())) >= 0 &&
                    availableAmount.getCurrency() == requiredAmount.getCurrency();
     }
@@ -74,12 +74,12 @@ public class FundsConfirmationService {
                    .orElse(BigDecimal.ZERO);
     }
 
-    private List<Balance> getAccountBalancesByAccountReference(AccountReference reference) {
+    private List<Xs2aBalance> getAccountBalancesByAccountReference(AccountReference reference) {
         return Optional.ofNullable(reference)
                    .map(accountService::getAccountDetailsByAccountReference)
                    .filter(Optional::isPresent)
                    .map(Optional::get)
-                   .map(AccountDetails::getBalances)
+                   .map(Xs2aAccountDetails::getBalances)
                    .orElseGet(Collections::emptyList);
     }
 }

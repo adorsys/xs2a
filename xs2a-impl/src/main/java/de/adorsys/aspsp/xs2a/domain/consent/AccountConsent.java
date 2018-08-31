@@ -37,7 +37,7 @@ public class AccountConsent {
     private final String id;
 
     @ApiModelProperty(value = "Access", required = true)
-    private final AccountAccess access;
+    private final Xs2aAccountAccess access;
 
     @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for one access to the account data", required = true)
     private final boolean recurringIndicator;

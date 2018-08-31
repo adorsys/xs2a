@@ -18,10 +18,10 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -106,7 +106,7 @@ public class AccountServiceTest {
         //getAccountDetailsByAccountId_Failure_wrongAccount
         when(accountSpi.readAccountDetails(WRONG_ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
         //getAccountDetailsByAccountId_Failure_wrongConsent
-        when(consentService.getValidatedConsent(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<AccountAccess>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build());
+        when(consentService.getValidatedConsent(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<Xs2aAccountAccess>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_403))).build());
 
         //getAccountDetailsListByConsent_Success
         when(accountSpi.readAccountDetailsByIban(IBAN, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiAccountDetails(ACCOUNT_ID, IBAN)), ASPSP_CONSENT_DATA));
@@ -125,7 +125,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsByAccountId_WoB_Success() {
         //When:
-        ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WOB, ACCOUNT_ID, false);
+        ResponseObject<Xs2aAccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WOB, ACCOUNT_ID, false);
 
         //Then:
         assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);
@@ -135,7 +135,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsByAccountId_WB_Success() {
         //When:
-        ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, ACCOUNT_ID, true);
+        ResponseObject<Xs2aAccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, ACCOUNT_ID, true);
 
         de.adorsys.psd2.model.AccountDetails details = mapToAccountDetails(response.getBody());
 
@@ -147,7 +147,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsByAccountId_Failure_wrongAccount() {
         //When:
-        ResponseObject<AccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, WRONG_ACCOUNT_ID, true);
+        ResponseObject<Xs2aAccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, WRONG_ACCOUNT_ID, true);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -158,7 +158,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsByAccountId_Failure_wrongConsent() {
         //When:
-        ResponseObject<AccountDetails> response = accountService.getAccountDetails(WRONG_CONSENT_ID, ACCOUNT_ID, true);
+        ResponseObject<Xs2aAccountDetails> response = accountService.getAccountDetails(WRONG_CONSENT_ID, ACCOUNT_ID, true);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -170,7 +170,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsListByConsent_Success_WOB() {
         //When:
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WOB, false);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WOB, false);
 
         //Then:
         assertThat(response.getBody().get("accountList").get(0).getId()).isEqualTo(ACCOUNT_ID);
@@ -184,7 +184,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsListByConsent_Success_WB() {
         //When:
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WB, true);
 
         //Then:
         assertThat(response.getBody().get("accountList").get(0).getId()).isEqualTo(ACCOUNT_ID);
@@ -198,7 +198,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountDetailsListByConsent_Failure_Wrong_Consent() {
         //When:
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(WRONG_CONSENT_ID, false);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = accountService.getAccountDetailsList(WRONG_CONSENT_ID, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -210,7 +210,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Success_Consent_WB() {
         //When:
-        ResponseObject<List<Balance>> response = accountService.getBalances(CONSENT_ID_WB, ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(CONSENT_ID_WB, ACCOUNT_ID);
 
         //Then:
         assertThat(response.getBody()).isEqualTo(getBalancesList());
@@ -219,7 +219,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Consent_WOB() {
         //When:
-        ResponseObject<List<Balance>> response = accountService.getBalances(CONSENT_ID_WOB, ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(CONSENT_ID_WOB, ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -230,7 +230,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Wrong_Consent() {
         //When:
-        ResponseObject<List<Balance>> response = accountService.getBalances(WRONG_CONSENT_ID, ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(WRONG_CONSENT_ID, ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -241,7 +241,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Wrong_Account() {
         //When:
-        ResponseObject<List<Balance>> response = accountService.getBalances(CONSENT_ID_WB, WRONG_ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(CONSENT_ID_WB, WRONG_ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -253,7 +253,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_Success() {
         //When:
-        ResponseObject<AccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
+        ResponseObject<Xs2aAccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.getError()).isEqualTo(null);
@@ -284,7 +284,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Success() {
         //When:
-        ResponseObject<AccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
+        ResponseObject<Xs2aAccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.getError()).isEqualTo(null);
@@ -314,16 +314,16 @@ public class AccountServiceTest {
     }
 
     //Test Stuff
-    private ResponseObject<AccountAccess> getAccessResponse(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return ResponseObject.<AccountAccess>builder().body(getAccessForMock(accounts, balances, transactions, allAccounts, allPsd2)).build();
+    private ResponseObject<Xs2aAccountAccess> getAccessResponse(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+        return ResponseObject.<Xs2aAccountAccess>builder().body(getAccessForMock(accounts, balances, transactions, allAccounts, allPsd2)).build();
     }
 
-    private AccountAccess getAccessForMock(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new AccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
+    private Xs2aAccountAccess getAccessForMock(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
     }
 
     private AccountReference getAccountReference() {
-        AccountDetails details = getAccountDetails(ACCOUNT_ID, IBAN);
+        Xs2aAccountDetails details = getAccountDetails(ACCOUNT_ID, IBAN);
         AccountReference rf = new AccountReference();
         rf.setCurrency(details.getCurrency());
         rf.setIban(details.getIban());
@@ -334,8 +334,8 @@ public class AccountServiceTest {
         return rf;
     }
 
-    private AccountDetails getAccountDetails(String accountId, String iban) {
-        return new AccountDetails(
+    private Xs2aAccountDetails getAccountDetails(String accountId, String iban) {
+        return new Xs2aAccountDetails(
             accountId,
             iban,
             "zz22",
@@ -350,8 +350,8 @@ public class AccountServiceTest {
             getBalancesList());
     }
 
-    private AccountDetails getAccountDetailsNoBalance(String accountId, String iban) {
-        return new AccountDetails(
+    private Xs2aAccountDetails getAccountDetailsNoBalance(String accountId, String iban) {
+        return new Xs2aAccountDetails(
             accountId,
             iban,
             "zz22",
@@ -366,9 +366,9 @@ public class AccountServiceTest {
             null);
     }
 
-    private List<Balance> getBalancesList() {
-        Balance sb = new Balance();
-        Amount amount = new Amount();
+    private List<Xs2aBalance> getBalancesList() {
+        Xs2aBalance sb = new Xs2aBalance();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
         amount.setContent("1000");
         sb.setBalanceAmount(amount);
@@ -407,7 +407,7 @@ public class AccountServiceTest {
         transaction.setBookingDate(DATE);
         transaction.setValueDate(DATE);
         transaction.setCreditorAccount(getAccountReference());
-        Amount amount = new Amount();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setContent("1000");
         amount.setCurrency(CURRENCY);
         transaction.setAmount(amount);
@@ -439,7 +439,7 @@ public class AccountServiceTest {
         return reference;
     }
 
-    private AccountReport getReport() {
-        return new AccountReport(new Transactions[]{getTransaction()}, new Transactions[]{});
+    private Xs2aAccountReport getReport() {
+        return new Xs2aAccountReport(new Transactions[]{getTransaction()}, new Transactions[]{});
     }
 }

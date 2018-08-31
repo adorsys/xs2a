@@ -28,10 +28,10 @@ import java.time.LocalDateTime;
 @Data
 @ApiModel(description = "Balance Information", value = "Balance")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Balance {
+public class Xs2aBalance {
 
     @ApiModelProperty(value = "balance amount", required = true)
-    private Amount balanceAmount;
+    private Xs2aAmount balanceAmount;
 
     @ApiModelProperty(value = "balance type", required = true)
     private BalanceType balanceType;

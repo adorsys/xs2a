@@ -302,7 +302,7 @@ public class PaymentServiceTest {
     private SinglePayment getSinglePayment(String iban, String amountToPay) {
         SinglePayment singlePayments = new SinglePayment();
         singlePayments.setEndToEndIdentification(PAYMENT_ID);
-        Amount amount = new Amount();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
         amount.setContent(amountToPay);
         singlePayments.setInstructedAmount(amount);
@@ -327,7 +327,7 @@ public class PaymentServiceTest {
 
     private PeriodicPayment getPeriodicPayment(String iban, String amountToPay) {
         PeriodicPayment payment = new PeriodicPayment();
-        Amount amount = new Amount();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
         amount.setContent(amountToPay);
         payment.setInstructedAmount(amount);

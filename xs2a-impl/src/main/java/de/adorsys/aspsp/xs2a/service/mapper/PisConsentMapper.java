@@ -27,7 +27,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Address;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.pis.CreateConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -133,7 +133,7 @@ public class PisConsentMapper {
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                                                     .map(PurposeCode::getCode).orElse(""));
+                                                     .map(Xs2aPurposeCode::getCode).orElse(""));
 
                        return pisPayment;
 
@@ -162,7 +162,7 @@ public class PisConsentMapper {
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                                                     .map(PurposeCode::getCode).orElse(""));
+                                                     .map(Xs2aPurposeCode::getCode).orElse(""));
                        pisPayment.setStartDate(pmt.getStartDate());
                        pisPayment.setEndDate(pmt.getEndDate());
                        pisPayment.setExecutionRule(pmt.getExecutionRule());

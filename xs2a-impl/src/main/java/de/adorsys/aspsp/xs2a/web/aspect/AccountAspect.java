@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.AllArgsConstructor;
@@ -41,33 +41,33 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.readAccountDetails(..)) && args(consentId, accountId, withBalance, ..)", returning = "result")
-    public ResponseEntity<AccountDetails> invokeReadAccountDetailsAspect(ResponseEntity<AccountDetails> result, String consentId, String accountId, boolean withBalance) {
+    public ResponseEntity<Xs2aAccountDetails> invokeReadAccountDetailsAspect(ResponseEntity<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
         if (!hasError(result)) {
-            AccountDetails body = result.getBody();
+            Xs2aAccountDetails body = result.getBody();
             body.setLinks(buildLinksForAccountDetails(body, withBalance));
         }
         return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getAccounts(..)) && args(consentId, withBalance, ..)", returning = "result")
-    public ResponseEntity<Map<String, List<AccountDetails>>> invokeGetAccountsAspect(ResponseEntity<Map<String, List<AccountDetails>>> result, String consentId, boolean withBalance) {
+    public ResponseEntity<Map<String, List<Xs2aAccountDetails>>> invokeGetAccountsAspect(ResponseEntity<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
         if (!hasError(result)) {
-            Map<String, List<AccountDetails>> body = result.getBody();
+            Map<String, List<Xs2aAccountDetails>> body = result.getBody();
             setLinksToAccountsMap(body, withBalance);
         }
         return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getTransactions(..)) && args(accountId,..)", returning = "result")
-    public ResponseEntity<AccountReport> invokeGetTransactionsAspect(ResponseEntity<AccountReport> result, String accountId) {
+    public ResponseEntity<Xs2aAccountReport> invokeGetTransactionsAspect(ResponseEntity<Xs2aAccountReport> result, String accountId) {
         if (!hasError(result)) {
-            AccountReport body = result.getBody();
+            Xs2aAccountReport body = result.getBody();
             body.setLinks(buildLinksForAccountReport(body, accountId));
         }
         return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
 
-    private Links buildLinksForAccountDetails(AccountDetails accountDetails, boolean withBalance) {
+    private Links buildLinksForAccountDetails(Xs2aAccountDetails accountDetails, boolean withBalance) {
         Class controller = getController();
 
         Links links = new Links();
@@ -79,7 +79,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return links;
     }
 
-    private Links buildLinksForAccountReport(AccountReport accountReport, String accountId) {
+    private Links buildLinksForAccountReport(Xs2aAccountReport accountReport, String accountId) {
         Class controller = getController();
 
         Links links = new Links();
@@ -95,18 +95,18 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return links;
     }
 
-    private Map<String, List<AccountDetails>> setLinksToAccountsMap(Map<String, List<AccountDetails>> map, boolean withBalance) {
+    private Map<String, List<Xs2aAccountDetails>> setLinksToAccountsMap(Map<String, List<Xs2aAccountDetails>> map, boolean withBalance) {
         map.entrySet().forEach(list -> updateAccountLinks(list.getValue(), withBalance));
         return map;
     }
 
-    private List<AccountDetails> updateAccountLinks(List<AccountDetails> accountDetailsList, boolean withBalance) {
+    private List<Xs2aAccountDetails> updateAccountLinks(List<Xs2aAccountDetails> accountDetailsList, boolean withBalance) {
         return accountDetailsList.stream()
                    .map(acc -> setLinksToAccount(acc, withBalance))
                    .collect(Collectors.toList());
     }
 
-    private AccountDetails setLinksToAccount(AccountDetails accountDetails, boolean withBalance) {
+    private Xs2aAccountDetails setLinksToAccount(Xs2aAccountDetails accountDetails, boolean withBalance) {
         accountDetails.setLinks(buildLinksForAccountDetails(accountDetails, withBalance));
         return accountDetails;
     }

@@ -18,7 +18,11 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,14 +37,14 @@ import java.util.stream.Collectors;
 public final class AccountModelMapper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static AccountList mapToAccountList(Map<String, List<de.adorsys.aspsp.xs2a.domain.account.AccountDetails>> accountDetailsList) {
+    public static AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
         List<AccountDetails> details = accountDetailsList.values().stream()
                                            .flatMap(ad -> ad.stream().map(AccountModelMapper::mapToAccountDetails))
                                            .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
-    public static AccountDetails mapToAccountDetails(de.adorsys.aspsp.xs2a.domain.account.AccountDetails accountDetails) {
+    public static AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
         AccountDetails target = new AccountDetails();
         BeanUtils.copyProperties(accountDetails, target);
 
@@ -56,7 +60,7 @@ public final class AccountModelMapper {
                    ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
     }
 
-    private static BalanceList mapToBalanceList(List<de.adorsys.aspsp.xs2a.domain.Balance> balances) {
+    private static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
         BalanceList balanceList = null;
 
         if (CollectionUtils.isNotEmpty(balances)) {
@@ -70,7 +74,7 @@ public final class AccountModelMapper {
         return balanceList;
     }
 
-    public static ReadBalanceResponse200 mapToBalance(List<de.adorsys.aspsp.xs2a.domain.Balance> balances) {
+    public static ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {
         BalanceList balancesResponse = new BalanceList();
         balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
 
@@ -78,7 +82,7 @@ public final class AccountModelMapper {
                    .balances(balancesResponse);
     }
 
-    public static Balance mapToBalance(de.adorsys.aspsp.xs2a.domain.Balance balance) {
+    public static Balance mapToBalance(Xs2aBalance balance) {
         Balance target = new Balance();
         BeanUtils.copyProperties(balance, target);
 
@@ -96,7 +100,7 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static AccountReport mapToAccountReport(de.adorsys.aspsp.xs2a.domain.account.AccountReport accountReport) {
+    public static AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
                                                           .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
@@ -128,7 +132,7 @@ public final class AccountModelMapper {
             .ifPresent(amount -> target.setTransactionAmount(AmountModelMapper.mapToAmount(amount)));
 
         target.setPurposeCode(PurposeCode.fromValue(Optional.ofNullable(transactions.getPurposeCode())
-                                                        .map(de.adorsys.aspsp.xs2a.domain.code.PurposeCode::getCode)
+                                                        .map(Xs2aPurposeCode::getCode)
                                                         .orElse(null)));
 
         Optional.ofNullable(transactions.getBankTransactionCodeCode())
