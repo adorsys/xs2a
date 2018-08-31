@@ -54,7 +54,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
-        if (isValidBankOfferConsent(request)) {
+        if (isInvalidBankOfferConsent(request)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
@@ -158,7 +158,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    && !aspspProfileService.getAllPsd2Support();
     }
 
-    private boolean isValidBankOfferConsent(CreateConsentReq request) {
+    private boolean isInvalidBankOfferConsent(CreateConsentReq request) {
         return !aspspProfileService.isBankOfferedConsentSupported()
                    && !isNotEmptyAccess(request.getAccess());
     }
