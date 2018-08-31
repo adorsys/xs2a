@@ -8,17 +8,20 @@ import { ConsentConfirmationDeniedComponent } from './components/consent-confirm
 import { AppAuthGuard } from './app.authguard';
 import {TanConfirmationSuccessfulComponent} from "./components/tan-confirmation-successful/tan-confirmation-successful.component";
 import {ConsentConfirmationErrorComponent} from "./components/consent-confirmation-error/consent-confirmation-error.component";
+import {HelpPageComponent} from "./components/help-page/help-page.component";
 
 
 
 const routes: Routes = [
+  { path: '', component: HelpPageComponent},
+  { path: ':consentId', component: ConsentConfirmationPageComponent},
   { path: 'consentconfirmationerror', component: ConsentConfirmationErrorComponent },
   { path: 'consentconfirmationdenied', component: ConsentConfirmationDeniedComponent },
   { path: 'tanconfirmation', component: TanConfirmationPageComponent},
   { path: 'tanconfirmationcanceled', component: TanConfirmationCanceledComponent },
   { path: 'tanconfirmationerror', component: TanConfirmationErrorComponent },
   { path: 'tanconfirmationsuccessful', component: TanConfirmationSuccessfulComponent },
-  { path: ':consentId', component: ConsentConfirmationPageComponent},
+
 ];
 
 @NgModule({
