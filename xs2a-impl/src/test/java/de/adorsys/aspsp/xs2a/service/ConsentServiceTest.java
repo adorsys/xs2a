@@ -120,6 +120,23 @@ public class ConsentServiceTest {
         when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
             Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
             .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), CORRECT_PSU_ID, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), CORRECT_PSU_ID, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID))
+            .thenReturn(CONSENT_ID);
+
+
         //GetAccDetails
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiDetailsList(), ASPSP_CONSENT_DATA));
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(WRONG_IBAN)), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.emptyList(), ASPSP_CONSENT_DATA));
@@ -142,12 +159,12 @@ public class ConsentServiceTest {
             .thenReturn(true);
 
         when(aspspProfileService.isBankOfferedConsentSupported())
-            .thenReturn(false);
+            .thenReturn(true);
 
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByPSU_AllAccounts() {
+    public void createAccountConsentsWithResponse_Success_AllAccounts() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
@@ -162,7 +179,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByPSU_AllPSD2() {
+    public void createAccountConsentsWithResponse_Success_AllPSD2() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
@@ -177,7 +194,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Failure_ByPSU_AllPSD2() {
+    public void createAccountConsentsWithResponse_Failure_AllPSD2() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
@@ -216,6 +233,7 @@ public class ConsentServiceTest {
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
+
     @Test
     public void createAccountConsentsWithResponse_Success_ByAccess_Balances() {
         //Given:
@@ -310,11 +328,30 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentWithResponse_Failure_ByPSU_BankOfferedConsent() {
+    public void createAccountConsentWithResponse_Success_BankOfferedConsent() {
         //Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
         );
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, CORRECT_PSU_ID);
+        CreateConsentResponse response = responseObj.getBody();
+
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentWithResponse_Failure_BankOfferedConsent() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        //When
+        when(aspspProfileService.isBankOfferedConsentSupported())
+            .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, CORRECT_PSU_ID);
@@ -329,7 +366,6 @@ public class ConsentServiceTest {
         assertThat(tppMessage).isNotNull();
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
     }
-
 
     /**
      * Basic test AccountDetails used in all cases
