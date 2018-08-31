@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -37,9 +36,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 
@@ -74,11 +73,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         SpiCreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(request, psuId, tppId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes()));
-
-        String consentId = isNotEmptyAccess(checkedRequest.getAccess())
-                               ? consentSpi.createConsent(createAisConsentRequest)
-                               : null;
-        String consentId = aisConsentService.createConsent(request, psuId, tppId);
+        String consentId = consentSpi.createConsent(createAisConsentRequest);
 
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
