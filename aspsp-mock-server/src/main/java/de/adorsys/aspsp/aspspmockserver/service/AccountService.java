@@ -87,6 +87,11 @@ public class AccountService {
                    .map(Psu::getId);
     }
 
+    Optional<String> getPsuIdByName(String name) {
+        return psuRepository.findPsuByName(name)
+                   .map(Psu::getId);
+    }
+
     /**
      * Returns a list of balances for account represented by its primary ASPSP identifier
      *

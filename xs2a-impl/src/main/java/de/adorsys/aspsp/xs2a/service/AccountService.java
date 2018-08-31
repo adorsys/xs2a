@@ -192,6 +192,80 @@ public class AccountService {
         return response;
     }
 
+    /**
+     * Gets AccountReport with Booked/Pending or both transactions dependent on request.
+     * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
+     * Checks if all transactions are related to accounts set in AccountConsent Transactions section
+     *
+     * @param consentId     String representing an AccountConsent identification
+     * @param accountId     String representing a PSU`s Account at ASPSP
+     * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
+     * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set to current date)
+     * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
+     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
+     * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
+     */
+    public ResponseObject<AccountReport> getAccountReportByPeriod(String consentId, String accountId, LocalDate dateFrom,
+                                                                  LocalDate dateTo, BookingStatus bookingStatus, boolean withBalance) {
+        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+        if (allowedAccountData.hasError()) {
+            return ResponseObject.<AccountReport>builder()
+                       .fail(allowedAccountData.getError()).build();
+        }
+
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        if (accountDetails == null) {
+            return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+        }
+
+        boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
+        Optional<AccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo)
+                                             .map(r -> filterByBookingStatus(r, bookingStatus));
+
+        ResponseObject<AccountReport> response = isValid && report.isPresent()
+                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
+                                                     : ResponseObject.<AccountReport>builder()
+                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+
+        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.TRANSACTION, response);
+        return response;
+    }
+
+    /**
+     * Gets AccountReport with Booked/Pending or both transactions dependent on request.
+     * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
+     * Checks if all transactions are related to accounts set in AccountConsent Transactions section
+     *
+     * @param consentId     String representing an AccountConsent identification
+     * @param accountId     String representing a PSU`s Account at
+     * @param transactionId String representing the ASPSP identification of transaction
+     * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
+     */
+    public ResponseObject<AccountReport> getAccountReportByTransactionId(String consentId, String accountId,
+                                                                         String transactionId) {
+        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+        if (allowedAccountData.hasError()) {
+            return ResponseObject.<AccountReport>builder()
+                       .fail(allowedAccountData.getError()).build();
+        }
+
+        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        if (accountDetails == null) {
+            return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+        }
+
+        boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
+        Optional<AccountReport> report = getAccountReportByTransaction(transactionId, accountId);
+
+        ResponseObject<AccountReport> response = isValid && report.isPresent()
+                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
+                                                     : ResponseObject.<AccountReport>builder()
+                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+
+        aisConsentService.consentActionLog(TPP_ID, consentId, false, TypeAccess.TRANSACTION, response);
+        return response;
+    }
+
     private List<AccountDetails> getAccountDetailsFromReferences(boolean withBalance, AccountAccess accountAccess) {
         List<AccountReference> references = withBalance
                                                 ? accountAccess.getBalances()
@@ -219,7 +293,6 @@ public class AccountService {
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
                          .map(r -> filterByBookingStatus(r, bookingStatus));
-
     }
 
     private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {

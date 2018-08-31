@@ -16,13 +16,30 @@
 
 package de.adorsys.aspsp.xs2a.web12;
 
+import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
+import de.adorsys.aspsp.xs2a.service.mapper.FundsConfirmationModelMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.FundsConfirmationApi;
+import de.adorsys.psd2.model.ConfirmationOfFunds;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.UUID;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
+@Api(tags = "PIISP, Funds confirmation 1.2", description = "Provides access to the funds confirmation")
 public class FundsConfirmationController12 implements FundsConfirmationApi {
 
+    private final ResponseMapper responseMapper;
+    private final FundsConfirmationService fundsConfirmationService;
 
+    @Override
+    public ResponseEntity<?> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
+        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(FundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
+
+    }
 }

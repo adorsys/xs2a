@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
-import de.adorsys.aspsp.xs2a.domain.MulticurrencyAccountLevel;
-import de.adorsys.aspsp.xs2a.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,11 +29,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
+import static de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField.IBAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -47,10 +44,12 @@ public class AspspProfileControllerTest {
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
+    private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
+    private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
     private static final int CONSENT_LIFETIME = 0;
     private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
@@ -62,91 +61,25 @@ public class AspspProfileControllerTest {
     @MockBean
     private AspspProfileService aspspProfileService;
 
-    @MockBean
-    private ProfileConfiguration profileConfiguration;
-
     @Before
     public void setUpAccountServiceMock() {
-        when(aspspProfileService.getFrequencyPerDay())
-            .thenReturn(FREQUENCY_PER_DAY);
-        when(aspspProfileService.isCombinedServiceIndicator())
-            .thenReturn(COMBINED_SERVICE_INDICATOR);
-        when(aspspProfileService.getAvailablePaymentProducts())
-            .thenReturn(AVAILABLE_PAYMENT_PRODUCTS);
-        when(aspspProfileService.getAvailablePaymentTypes())
-            .thenReturn(AVAILABLE_PAYMENT_TYPES);
+        when(aspspProfileService.getAspspSettings())
+            .thenReturn(buildAspspSettings());
         when(aspspProfileService.getScaApproach())
             .thenReturn(ScaApproach.REDIRECT);
-        when(aspspProfileService.isTppSignatureRequired())
-            .thenReturn(true);
-        when(aspspProfileService.getPisRedirectUrlToAspsp())
-            .thenReturn(PIS_REDIRECT_LINK);
-        when(aspspProfileService.getAisRedirectUrlToAspsp())
-            .thenReturn(AIS_REDIRECT_LINK);
-        when(aspspProfileService.getMulticurrencyAccountLevel())
-            .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
-        when(aspspProfileService.getAvailableBookingStatuses())
-            .thenReturn(AVAILABLE_BOOKING_STATUSES);
-        when(profileConfiguration.getConsentLifetime())
-            .thenReturn(CONSENT_LIFETIME);
-        when(profileConfiguration.getTransactionLifetime())
-            .thenReturn(TRANSACTION_LIFETIME);
-        when(aspspProfileService.isAllPsd2Support())
-            .thenReturn(ALL_PSD_2_SUPPORT);
-        when(profileConfiguration.isBankOfferedConsentSupport())
-            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
     }
 
     @Test
-    public void getFrequencyPerDay() {
+    public void getAspspSettings() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<Integer> actualResponse = aspspProfileController.getFrequencyPerDay();
+        ResponseEntity<AspspSettings> actualResponse = aspspProfileController.getAspspSettings();
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(FREQUENCY_PER_DAY);
-    }
-
-    @Test
-    public void getCombinedServiceIndicator() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<Boolean> actualResponse = aspspProfileController.getCombinedServiceIndicator();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(COMBINED_SERVICE_INDICATOR);
-    }
-
-    @Test
-    public void getAvailablePaymentProducts() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<List<String>> actualResponse = aspspProfileController.getAvailablePaymentProducts();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(AVAILABLE_PAYMENT_PRODUCTS);
-    }
-
-    @Test
-    public void getAvailablePaymentTypes() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<List<String>> actualResponse = aspspProfileController.getAvailablePaymentTypes();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(AVAILABLE_PAYMENT_TYPES);
+        assertThat(actualResponse.getBody()).isEqualTo(buildAspspSettings());
     }
 
     @Test
@@ -162,121 +95,26 @@ public class AspspProfileControllerTest {
         assertThat(actualResponse.getBody()).isEqualTo(ScaApproach.REDIRECT);
     }
 
-    @Test
-    public void getTppSignatureRequired() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<Boolean> actualResponse = aspspProfileController.getTppSignatureRequired();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(true);
+    private static AspspSettings buildAspspSettings() {
+        return new AspspSettings(
+            FREQUENCY_PER_DAY,
+            COMBINED_SERVICE_INDICATOR,
+            AVAILABLE_PAYMENT_PRODUCTS,
+            AVAILABLE_PAYMENT_TYPES,
+            TPP_SIGNATURE_REQUIRED,
+            PIS_REDIRECT_LINK,
+            AIS_REDIRECT_LINK,
+            MULTICURRENCY_ACCOUNT_LEVEL,
+            BANK_OFFERED_CONSENT_SUPPORT,
+            AVAILABLE_BOOKING_STATUSES,
+            SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
+            CONSENT_LIFETIME,
+            TRANSACTION_LIFETIME,
+            ALL_PSD_2_SUPPORT);
     }
 
-    @Test
-    public void getPisRedirectUrlToAspsp() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<String> actualResponse = aspspProfileController.getPisRedirectUrlToAspsp();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(PIS_REDIRECT_LINK);
-    }
-
-    @Test
-    public void getAisRedirectUrlToAspsp() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<String> actualResponse = aspspProfileController.getAisRedirectUrlToAspsp();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(AIS_REDIRECT_LINK);
-    }
-
-    @Test
-    public void getMulticurrencyAccountLevel() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<MulticurrencyAccountLevel> actualResponse = aspspProfileController.getMulticurrencyAccountLevel();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(MULTICURRENCY_ACCOUNT_LEVEL);
-    }
-
-    @Test
-    public void getAvailableBookingStatuses() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<List<BookingStatus>> actualResponse = aspspProfileController.getAvailableBookingStatuses();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(AVAILABLE_BOOKING_STATUSES);
-    }
-
-    @Test
-    public void getConsentLifetime() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<Integer> actualResponse = aspspProfileController.getConsentLifetime();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(CONSENT_LIFETIME);
-    }
-
-    @Test
-    public void getTransactionLifetime() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<Integer> actualResponse = aspspProfileController.getTransactionLifetime();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(TRANSACTION_LIFETIME);
-    }
-
-    @Test
-    public void getAllPsd2Support() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<Boolean> actualResponse = aspspProfileController.getAllPsd2Support();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(ALL_PSD_2_SUPPORT);
-    }
-
-    @Test
-    public void getBankOfferedConsentSupport() {
-        //Given:
-        HttpStatus expectedStatusCode = HttpStatus.OK;
-
-        //When:
-        ResponseEntity<Boolean> actualResponse = aspspProfileController.getBankOfferedConsentSupport();
-
-        //Then:
-        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResponse.getBody()).isEqualTo(BANK_OFFERED_CONSENT_SUPPORT);
+    private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
+        return Collections.singletonList(IBAN);
     }
 
     private static List<String> getPaymentProducts() {

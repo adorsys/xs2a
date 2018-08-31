@@ -105,6 +105,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://consent-management-postgres/consent
       - SPRING_DATASOURCE_USERNAME=cms
       - SPRING_DATASOURCE_PASSWORD=cms
+      - ASPSP_PROFILE_BASEURL=http://aspsp-profile:8080/api/v1
       - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
       - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_CMS_CLIENT_SECRET}"
     depends_on:
@@ -115,6 +116,8 @@ services:
     volumes:
       - consent-management-data:/var/lib/pgsql/data
     restart: on-failure
+    ports:
+      - "5432:5432"
     networks:
       - xs2a-net
     environment:
@@ -124,22 +127,3 @@ services:
       - POSTGRESQL_PASSWORD=cms
     expose:
       - 5432
-
-  xs2a-service:
-    build:
-      context: xs2a-impl
-      dockerfile: Dockerfile
-    restart: on-failure
-    ports:
-      - "8080:8080"
-    networks:
-      - xs2a-net
-    environment:
-      - JAVA_TOOL_OPTIONS="-Xmx512M"
-      - SPRING_PROFILES_ACTIVE=mockspi
-      - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
-      - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_SERVICE_CLIENT_SECRET}"
-      - CONSENT_SERVICE_BASEURL=http://consent-management:8080/api/v1
-      - ASPSP_PROFILE_BASEURL=http://aspsp-profile:8080/api/v1
-      - KEYCLOAK_USERNAME=aspsp
-      - KEYCLOAK_PASSWORD=zzz

@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import com.google.common.collect.Lists;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
@@ -71,9 +70,11 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         String pisConsentId = consentSpi.createPisConsentForPeriodicPaymentAndGetId(request);
         String iban = createPisConsentData.getPeriodicPayment().getDebtorAccount().getIban();
 
+    private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(CreateConsentRequest createConsentRequest, PaymentInitialisationResponse response) {
+        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(createConsentRequest, response.getPaymentId());
         return StringUtils.isBlank(pisConsentId)
                    ? null
-                   : extendPaymentResponseFields(response, iban, pisConsentId);
+                   : extendPaymentResponseFields(response, pisConsentId);
     }
 
     @Override
@@ -137,6 +138,12 @@ public class RedirectScaPaymentService implements ScaPaymentService {
                                     .map(resp -> extendPaymentResponseFields(resp, iban, pisConsentId))
                                     .collect(Collectors.toList()))
                    .orElseGet(Collections::emptyList);
+    private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(CreateConsentRequest createConsentRequest) {
+        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(createConsentRequest);
+        List<PaymentInitialisationResponse> responses = Lists.newArrayList(createConsentRequest.getPaymentIdentifierMap().values());
+        return responses.stream()
+                   .map(resp -> extendPaymentResponseFields(resp, pisConsentId))
+                   .collect(Collectors.toList());
     }
 
     @Override
@@ -160,19 +167,15 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         String pisConsentId = consentSpi.createPisConsentForSinglePaymentAndGetId(request);
         String iban = createPisConsentData.getSinglePayment().getDebtorAccount().getIban();
 
+    private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(CreateConsentRequest createConsentRequest, PaymentInitialisationResponse response) {
+        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(createConsentRequest, response.getPaymentId());
         return StringUtils.isBlank(pisConsentId)
                    ? null
-                   : extendPaymentResponseFields(response, iban, pisConsentId);
+                   : extendPaymentResponseFields(response, pisConsentId);
     }
 
-    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, String iban, String pisConsentId) {
+    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, String pisConsentId) {
         response.setPisConsentId(pisConsentId);
-        response.setIban(iban);
         return response;
-    }
-
-    private Optional<String> getDebtorIbanFromPayments(List<SinglePayment> payments) {
-        return Optional.ofNullable(payments.get(0).getDebtorAccount())
-                   .map(AccountReference::getIban);
     }
 }

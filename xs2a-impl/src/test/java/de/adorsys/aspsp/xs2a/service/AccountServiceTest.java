@@ -93,6 +93,9 @@ public class AccountServiceTest {
         //AccountMapping
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID, IBAN));
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1, IBAN_1));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
+        when(accountMapper.mapToAccountDetailsNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
+            .thenReturn(Arrays.asList(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN), getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1)));
         when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
         when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
         when(accountMapper.mapToAccountDetailsListNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1)))).thenReturn(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1)));
@@ -172,7 +175,7 @@ public class AccountServiceTest {
     }
 
     //Get AccountsList By Consent
-   /* @Test
+    @Test
     public void getAccountDetailsListByConsent_Success_WOB() {
         //When:
         ResponseObject<Map<String, List<AccountDetails>>> response = accountService.getAccountDetailsList(CONSENT_ID_WOB, false);
@@ -184,7 +187,7 @@ public class AccountServiceTest {
         assertThat(response.getBody().get("accountList").get(1).getBalances()).isEqualTo(null);
         assertThat(response.getBody().get("accountList").get(0).getLinks()).isEqualTo(new Links());
         assertThat(response.getBody().get("accountList").get(1).getLinks()).isEqualTo(new Links());
-    }*/
+    }
 
     @Test
     public void getAccountDetailsListByConsent_Success_WB() {
@@ -356,6 +359,22 @@ public class AccountServiceTest {
     }
 
     private AccountDetails getAccountDetailsNoBalances(String accountId, String iban) {
+        return new AccountDetails(
+            accountId,
+            iban,
+            "zz22",
+            null,
+            null,
+            null,
+            CURRENCY,
+            "David Muller",
+            null,
+            null,
+            null,
+            null);
+    }
+
+    private AccountDetails getAccountDetailsNoBalance(String accountId, String iban) {
         return new AccountDetails(
             accountId,
             iban,

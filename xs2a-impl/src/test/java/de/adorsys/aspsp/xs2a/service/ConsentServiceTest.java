@@ -141,6 +141,10 @@ public class ConsentServiceTest {
 
         when(aspspProfileService.getAllPsd2Support())
             .thenReturn(true);
+
+        when(aspspProfileService.isBankOfferedConsentSupported())
+            .thenReturn(false);
+
     }
 
     /*@Test
@@ -306,6 +310,28 @@ public class ConsentServiceTest {
         //Than:
         assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
     }
+
+    @Test
+    public void createAccountConsentWithResponse_Failure_ByPSU_BankOfferedConsent() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, CORRECT_PSU_ID);
+        MessageError messageError = responseObj.getError();
+
+        //Then
+        assertThat(messageError).isNotNull();
+        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+
+        TppMessageInformation tppMessage = messageError.getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
+    }
+
 
     /**
      * Basic test AccountDetails used in all cases

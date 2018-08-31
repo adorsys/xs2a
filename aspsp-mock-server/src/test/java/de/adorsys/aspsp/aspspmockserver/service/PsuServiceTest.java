@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
@@ -38,6 +39,9 @@ public class PsuServiceTest {
     private static final String PSU_ID_1 = "zz99999-9999-9999-9999-999999999999";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String E_MAIL = "info@adorsys.ua";
+    private static final String PSU_NAME = "aspsp";
+    private static final String NONEXISTEN_PSU_NAME = "nonexisten";
+    private static final String PASSWORD = "zzz";
     private static final String WRONG_E_MAIL = "wrong e-mail";
     private static final Currency EUR = Currency.getInstance("EUR");
     private static final String ACCOUNT_ID = "ACCOUNT1-0000-0000-0000-a000q000000t";
@@ -50,20 +54,26 @@ public class PsuServiceTest {
 
     @Mock
     private PsuRepository psuRepository;
+    @Mock
+    private KeycloakService keycloakService;
 
     @Before
     public void setUp() {
         //findAll
-        when(psuRepository.findAll()).thenReturn(Collections.singletonList(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts())));
+        when(psuRepository.findAll()).thenReturn(Collections.singletonList(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProducts())));
 
         //findOne
-        when(psuRepository.findOne(PSU_ID)).thenReturn(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts()));
-        when(psuRepository.findOne(PSU_ID_1)).thenReturn(getPsu(PSU_ID_1, E_MAIL, getDetails(false), getProducts()));
+        when(psuRepository.findOne(PSU_ID)).thenReturn(getPsu(PSU_ID, E_MAIL, PSU_NAME,  getDetails(false), getProducts()));
+        when(psuRepository.findOne(PSU_ID_1)).thenReturn(getPsu(PSU_ID_1, E_MAIL, PSU_NAME, getDetails(false), getProducts()));
         when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
 
         //findByIban
-        when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN)).thenReturn(Optional.of(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts())));
+        when(psuRepository.findPsuByAccountDetailsList_Iban(IBAN)).thenReturn(Optional.of(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProducts())));
         when(psuRepository.findPsuByAccountDetailsList_Iban(WRONG_IBAN)).thenReturn(Optional.empty());
+
+        // find Psu by name
+        when(psuRepository.findPsuByName(NONEXISTEN_PSU_NAME)).thenReturn(Optional.empty());
+        when(keycloakService.registerClient(NONEXISTEN_PSU_NAME, PASSWORD, E_MAIL)).thenReturn(true);
 
         //exists
         when(psuRepository.exists(PSU_ID)).thenReturn(true);
@@ -71,18 +81,20 @@ public class PsuServiceTest {
         doNothing().when(psuRepository).delete(PSU_ID);
 
         //save
-        when(psuRepository.save(getPsu(null, E_MAIL, getDetails(false), getProducts())))
-            .thenReturn(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts()));
-        when(psuRepository.save(getPsu(PSU_ID, E_MAIL, getDetails(false), getProductsExt())))
-            .thenReturn(getPsu(PSU_ID, E_MAIL, getDetails(false), getProductsExt()));
-        when(psuRepository.save(getPsu(PSU_ID_1, E_MAIL, getDetails(true), getProductsExt())))
-            .thenReturn(getPsu(PSU_ID_1, E_MAIL, getDetails(false), getProducts()));
+        when(psuRepository.save(getPsu(null, E_MAIL, PSU_NAME, getDetails(false), getProducts())))
+            .thenReturn(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProducts()));
+        when(psuRepository.save(getPsu(null, E_MAIL, NONEXISTEN_PSU_NAME, getDetails(false), getProducts())))
+            .thenReturn(getPsu(PSU_ID, E_MAIL, NONEXISTEN_PSU_NAME, getDetails(false), getProducts()));
+        when(psuRepository.save(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProductsExt())))
+            .thenReturn(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProductsExt()));
+        when(psuRepository.save(getPsu(PSU_ID_1, E_MAIL, PSU_NAME, getDetails(true), getProductsExt())))
+            .thenReturn(getPsu(PSU_ID_1, E_MAIL, PSU_NAME, getDetails(false), getProducts()));
     }
 
     @Test
     public void createPsu_Success() {
         //When
-        String actualResult = psuService.createPsuAndReturnId(getPsu(null, E_MAIL, getDetails(false), getProducts()));
+        String actualResult = psuService.createPsuAndReturnId(getPsu(null, E_MAIL, NONEXISTEN_PSU_NAME, getDetails(false), getProducts()));
 
         //Then
         assertThat(actualResult).isEqualTo(PSU_ID);
@@ -90,7 +102,7 @@ public class PsuServiceTest {
 
     @Test
     public void createPsu_Failure_wrong_email() {
-        String actualResult = psuService.createPsuAndReturnId(getPsu(null, WRONG_E_MAIL, getDetails(false), getProducts()));
+        String actualResult = psuService.createPsuAndReturnId(getPsu(null, WRONG_E_MAIL, PSU_NAME, getDetails(false), getProducts()));
 
         //Then
         assertThat(actualResult).isEqualTo(null);
@@ -98,7 +110,7 @@ public class PsuServiceTest {
 
     @Test
     public void createPsu_Failure_emptyDetails() {
-        String actualResult = psuService.createPsuAndReturnId(getPsu(null, E_MAIL, getDetails(true), getProducts()));
+        String actualResult = psuService.createPsuAndReturnId(getPsu(null, E_MAIL, PSU_NAME, getDetails(true), getProducts()));
 
         //Then
         assertThat(actualResult).isEqualTo(null);
@@ -106,7 +118,7 @@ public class PsuServiceTest {
 
     @Test
     public void createPsu_Failure_emptyProducts() {
-        String actualResult = psuService.createPsuAndReturnId(getPsu(null, E_MAIL, getDetails(false), Collections.emptyList()));
+        String actualResult = psuService.createPsuAndReturnId(getPsu(null, E_MAIL, PSU_NAME, getDetails(false), Collections.emptyList()));
 
         //Then
         assertThat(actualResult).isEqualTo(null);
@@ -118,7 +130,7 @@ public class PsuServiceTest {
         List<Psu> actualResult = psuService.getAllPsuList();
 
         //Then
-        assertThat(actualResult).isEqualTo(Collections.singletonList(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts())));
+        assertThat(actualResult).isEqualTo(Collections.singletonList(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProducts())));
     }
 
     @Test
@@ -197,8 +209,8 @@ public class PsuServiceTest {
         return products;
     }
 
-    private Psu getPsu(String psuId, String email, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(psuId, email, details, products);
+    private Psu getPsu(String psuId, String email, String name, List<SpiAccountDetails> details, List<String> products) {
+        return new Psu(psuId, email, name, PASSWORD, details, products);
     }
 
     private List<SpiAccountDetails> getDetails(boolean isEmpty) {

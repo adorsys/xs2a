@@ -64,9 +64,6 @@ public class PaymentInitialisationResponse {
     private boolean tppRedirectPreferred;
 
     @JsonIgnore
-    private String iban;
-
-    @JsonIgnore
     private String pisConsentId;
 }
 

@@ -59,8 +59,8 @@ public class ValueValidatorService {
 
     public void validate(Object obj, Class<?>... groups) {
         final List<String> violations = validator.validate(obj, groups).stream()
-                                        .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
-                                        .collect(Collectors.toList());
+                                            .map(vl -> vl.getPropertyPath().toString() + " : " + vl.getMessage())
+                                            .collect(Collectors.toList());
 
         if (!violations.isEmpty()) {
             LOGGER.debug(violations.toString());
