@@ -116,7 +116,6 @@ public class AspspProfileServiceTest {
             COMBINED_SERVICE_INDICATOR,
             AVAILABLE_PAYMENT_PRODUCTS,
             AVAILABLE_PAYMENT_TYPES,
-            SCA_APPROACH,
             TPP_SIGNATURE_REQUIRED,
             PIS_REDIRECT_LINK,
             AIS_REDIRECT_LINK,

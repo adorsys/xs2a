@@ -45,7 +45,6 @@ public class AspspProfileService {
             profileConfiguration.isCombinedServiceIndicator(),
             profileConfiguration.getAvailablePaymentProducts(),
             profileConfiguration.getAvailablePaymentTypes(),
-            profileConfiguration.getScaApproach(),
             profileConfiguration.isTppSignatureRequired(),
             profileConfiguration.getPisRedirectUrlToAspsp(),
             profileConfiguration.getAisRedirectUrlToAspsp(),
