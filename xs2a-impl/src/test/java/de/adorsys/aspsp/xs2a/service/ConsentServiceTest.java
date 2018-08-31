@@ -164,7 +164,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByPSU_AllAccounts() {
+    public void createAccountConsentsWithResponse_Success_AllAccounts() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)
@@ -179,7 +179,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Success_ByPSU_AllPSD2() {
+    public void createAccountConsentsWithResponse_Success_AllPSD2() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
@@ -194,7 +194,7 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentsWithResponse_Failure_ByPSU_AllPSD2() {
+    public void createAccountConsentsWithResponse_Failure_AllPSD2() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)
