@@ -34,10 +34,10 @@ public class SpiConsentRestConfig {
 
     @Bean
     @Qualifier("spiConsentRestTemplate")
-    public RestTemplate consentRestTemplate(){
+    public RestTemplate consentRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));
-        rest.setErrorHandler(new ConsentRestErrorHandler());
+        rest.setErrorHandler(new SpiConsentRestErrorHandler());
         return rest;
     }
 

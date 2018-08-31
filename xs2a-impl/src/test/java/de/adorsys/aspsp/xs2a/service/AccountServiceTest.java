@@ -93,12 +93,10 @@ public class AccountServiceTest {
         //AccountMapping
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID, IBAN));
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1, IBAN_1));
-        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
-        when(accountMapper.mapToAccountDetailsNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
+        when(accountMapper.mapToAccountDetailsListNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
             .thenReturn(Arrays.asList(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN), getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1)));
         when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
         when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
-        when(accountMapper.mapToAccountDetailsListNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1)))).thenReturn(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1)));
         when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID, IBAN));
         when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID_1, IBAN_1));
         when(accountMapper.mapToAccountDetailNoBalances(null)).thenReturn(null);

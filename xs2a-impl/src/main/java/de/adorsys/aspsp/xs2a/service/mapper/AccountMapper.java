@@ -213,18 +213,4 @@ public class AccountMapper {
             detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
             detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
     }
-
-
-
-    public List<AccountDetails> mapToAccountDetailsNoBalances(List<AccountDetails> details) {
-        return details.stream()
-                   .map(this::mapToAccountDetailNoBalances)
-                   .collect(Collectors.toList());
-    }
-
-    public AccountDetails mapToAccountDetailNoBalances(AccountDetails detail) {
-        return new AccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
-            detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
-            detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
-    }
 }

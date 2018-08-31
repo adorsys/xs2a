@@ -28,7 +28,6 @@ import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
-import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
@@ -60,7 +59,7 @@ import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.ScaApproach.*;
+import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration

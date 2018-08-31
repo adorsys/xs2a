@@ -227,7 +227,7 @@ public class AccountService {
                                                      : ResponseObject.<AccountReport>builder()
                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.TRANSACTION, response);
+        consentSpi.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
     }
 
@@ -262,7 +262,7 @@ public class AccountService {
                                                      : ResponseObject.<AccountReport>builder()
                                                            .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, false, TypeAccess.TRANSACTION, response);
+        consentSpi.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.TRANSACTION, response));
         return response;
     }
 

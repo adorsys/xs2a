@@ -19,11 +19,11 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import com.google.common.collect.Lists;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -68,10 +68,6 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
         SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForPeriodicPayment(createPisConsentData);
         String pisConsentId = consentSpi.createPisConsentForPeriodicPaymentAndGetId(request);
-        String iban = createPisConsentData.getPeriodicPayment().getDebtorAccount().getIban();
-
-    private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(CreateConsentRequest createConsentRequest, PaymentInitialisationResponse response) {
-        String pisConsentId = pisConsentService.createPisConsentForPeriodicPaymentAndGetId(createConsentRequest, response.getPaymentId());
         return StringUtils.isBlank(pisConsentId)
                    ? null
                    : extendPaymentResponseFields(response, pisConsentId);
@@ -130,20 +126,11 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForBulkPayment(createPisConsentData);
         String pisConsentId = consentSpi.createPisConsentForBulkPaymentAndGetId(request);
 
-        List<SinglePayment> singlePayments = Lists.newArrayList(createPisConsentData.getPaymentIdentifierMap().keySet());
         List<PaymentInitialisationResponse> responses = Lists.newArrayList(createPisConsentData.getPaymentIdentifierMap().values());
-
-        return getDebtorIbanFromPayments(singlePayments)
-                   .map(iban -> responses.stream()
-                                    .map(resp -> extendPaymentResponseFields(resp, iban, pisConsentId))
-                                    .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
-    private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(CreateConsentRequest createConsentRequest) {
-        String pisConsentId = pisConsentService.createPisConsentForBulkPaymentAndGetId(createConsentRequest);
-        List<PaymentInitialisationResponse> responses = Lists.newArrayList(createConsentRequest.getPaymentIdentifierMap().values());
         return responses.stream()
                    .map(resp -> extendPaymentResponseFields(resp, pisConsentId))
                    .collect(Collectors.toList());
+
     }
 
     @Override
@@ -163,12 +150,8 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
         SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForSinglePayment(createPisConsentData);
-
         String pisConsentId = consentSpi.createPisConsentForSinglePaymentAndGetId(request);
-        String iban = createPisConsentData.getSinglePayment().getDebtorAccount().getIban();
 
-    private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(CreateConsentRequest createConsentRequest, PaymentInitialisationResponse response) {
-        String pisConsentId = pisConsentService.createPisConsentForSinglePaymentAndGetId(createConsentRequest, response.getPaymentId());
         return StringUtils.isBlank(pisConsentId)
                    ? null
                    : extendPaymentResponseFields(response, pisConsentId);
