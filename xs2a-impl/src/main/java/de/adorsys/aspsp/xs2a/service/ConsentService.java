@@ -57,19 +57,17 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         if (isNotBankOfferConsentSupported(request)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
-        if (isNotEmptyAccess(request.getAccess())) {
-            if (!isValidExpirationDate(request.getValidUntil())) {
-                return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
-            }
-
-            if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-                return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
-            }
+        if (!isValidExpirationDate(request.getValidUntil())) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
         }
+
+        if (isNotSupportedGlobalConsentForAllPsd2(request)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
+        }
+
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
-        String consentId = isNotEmptyAccess(request.getAccess())
-                               ? aisConsentService.createConsent(request, psuId, tppId)
-                               : null;
+        String consentId = aisConsentService.createConsent(request, psuId, tppId);
+
         //TODO v1.1 Add balances support
         return !StringUtils.isBlank(consentId)
                    ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null)).build()
