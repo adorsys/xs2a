@@ -127,6 +127,9 @@ public class ConsentServiceTest {
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), CORRECT_PSU_ID, TPP_ID))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), CORRECT_PSU_ID, TPP_ID))
+            .thenReturn(CONSENT_ID);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
             .thenReturn(CONSENT_ID);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
@@ -156,7 +159,7 @@ public class ConsentServiceTest {
             .thenReturn(true);
 
         when(aspspProfileService.isBankOfferedConsentSupported())
-            .thenReturn(false);
+            .thenReturn(true);
 
     }
 
@@ -325,11 +328,30 @@ public class ConsentServiceTest {
     }
 
     @Test
-    public void createAccountConsentWithResponse_Failure_ByPSU_BankOfferedConsent() {
+    public void createAccountConsentWithResponse_Success_BankOfferedConsent() {
         //Given
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
         );
+
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
+            req, CORRECT_PSU_ID);
+        CreateConsentResponse response = responseObj.getBody();
+
+        //Then:
+        assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
+    }
+
+    @Test
+    public void createAccountConsentWithResponse_Failure_BankOfferedConsent() {
+        //Given
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)
+        );
+
+        //When
+        when(aspspProfileService.isBankOfferedConsentSupported())
+            .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, CORRECT_PSU_ID);
@@ -344,7 +366,6 @@ public class ConsentServiceTest {
         assertThat(tppMessage).isNotNull();
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
     }
-
 
     /**
      * Basic test AccountDetails used in all cases
