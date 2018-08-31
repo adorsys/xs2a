@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -107,6 +108,11 @@ public class AisConsent {
     @Column(name = "aspsp_consent_data")
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] aspspConsentData;
+
+    @Column(name = "ais_consent_request_type")
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the consent request for AIS consents: bank offered consent or consent on dedicated accounts.")
+    private AisConsentRequestType aisConsentRequestType;
 
     public void addAccounts(List<AisAccount> accounts) {
         accounts.forEach(this::addAccount);

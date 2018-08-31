@@ -48,7 +48,7 @@
         <createSequence sequenceName="pis_tpp_info_id_seq"/>
     </changeSet>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-5">
+    <changeSet author="mpo@adorsys.com.ua" id="2018-08-31-1">
         <comment>Create table ais_consent.</comment>
 
         <createTable tableName="ais_consent">
@@ -94,6 +94,7 @@
             <column name="usage_counter" type="INTEGER">
                 <constraints nullable="false"/>
             </column>
+            <column name="ais_consent_request_type" type="VARCHAR(18)"/>
         </createTable>
     </changeSet>
 

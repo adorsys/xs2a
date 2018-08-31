@@ -18,19 +18,18 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.AccountAccess;
-import de.adorsys.aspsp.xs2a.domain.AisAccount;
-import de.adorsys.aspsp.xs2a.domain.AisConsent;
-import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -176,6 +175,11 @@ public class AISConsentService {
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         consent.setAspspConsentData(request.getAspspConsentData());
+        if (StringUtils.isNotBlank(request.getAccess().getAvailableAccounts())) {
+            consent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
+        } else {
+            consent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
+        }
 
         return consent;
     }
