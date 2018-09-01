@@ -16,18 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.account.AccountHolder;
+import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
-import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
-import de.adorsys.aspsp.xs2a.repository.AisAccountRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
@@ -37,12 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
 import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 
 @Service
@@ -52,7 +50,6 @@ public class AISConsentService {
     private final AisConsentActionRepository aisConsentActionRepository;
     private final ConsentMapper consentMapper;
     private final AspspProfileService profileService;
-    private final AisAccountRepository aisAccountRepository;
 
     /**
      * Create AIS consent
@@ -70,19 +67,12 @@ public class AISConsentService {
                    : Optional.empty();
     }
 
-    private List<AisAccount> readAccounts(AisAccountAccessInfo access) {
-        AccountHolder holder = new AccountHolder();
+    private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
+        AccountAccessHolder holder = new AccountAccessHolder();
         holder.fillAccess(access.getAccounts(), ACCOUNT);
         holder.fillAccess(access.getBalances(), BALANCE);
         holder.fillAccess(access.getTransactions(), TRANSACTION);
-        return buildAccounts(holder.getAccountAccesses());
-    }
-
-    private List<AisAccount> buildAccounts(Map<String, Set<AccountAccess>> accountAccesses) {
-        return accountAccesses
-                   .entrySet().stream()
-                   .map(e -> new AisAccount(e.getKey(), e.getValue()))
-                   .collect(Collectors.toList());
+        return holder.getAccountAccesses();
     }
 
     /**
@@ -129,8 +119,10 @@ public class AISConsentService {
      */
     @Transactional
     public void checkConsentAndSaveActionLog(ConsentActionRequest request) {
-        Optional<AisConsent> consent = getAisConsentById(request.getConsentId());
-        checkAndUpdateConsentParameter(consent);
+        AisConsent consent = getAisConsentById(request.getConsentId())
+                                 .orElse(null);
+        checkAndUpdateOnExpiration(consent);
+        updateAisConsentCounter(consent);
         logConsentAction(request.getConsentId(), resolveConsentActionStatus(request, consent), request.getTppId());
     }
 
@@ -173,7 +165,7 @@ public class AISConsentService {
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
-        consent.addAccounts(readAccounts(request.getAccess()));
+        consent.addAccountAccess(readAccountAccess(request.getAccess()));
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
@@ -182,22 +174,14 @@ public class AISConsentService {
         return consent;
     }
 
-    private void checkAndUpdateConsentParameter(Optional<AisConsent> consent) {
-        if (consent.isPresent()) {
-            AisConsent aisConsent = consent.get();
-            checkAndUpdateOnExpiration(aisConsent);
-            updateAisConsentCounter(aisConsent);
-        }
-    }
-
-    private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, Optional<AisConsent> consent) {
-        return consent.isPresent()
-                   ? request.getActionStatus()
-                   : ActionStatus.BAD_PAYLOAD;
+    private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, AisConsent consent) {
+        return consent == null
+                   ? ActionStatus.BAD_PAYLOAD
+                   : request.getActionStatus();
     }
 
     private void updateAisConsentCounter(AisConsent consent) {
-        if (consent.hasUsagesAvailable()) {
+        if (consent != null && consent.hasUsagesAvailable()) {
             int usageCounter = consent.getUsageCounter();
             int newUsageCounter = --usageCounter;
             consent.setUsageCounter(newUsageCounter);
@@ -226,7 +210,7 @@ public class AISConsentService {
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (consent.isExpiredByDate() && consent.isStatusNotExpired()) {
+        if (consent != null && consent.isExpiredByDate() && consent.isStatusNotExpired()) {
             consent.setConsentStatus(EXPIRED);
             consent.setExpireDate(LocalDate.now());
             consent.setLastActionDate(LocalDate.now());
@@ -242,14 +226,12 @@ public class AISConsentService {
     }
 
     @Transactional
-    public Optional<String> updateAccountAccessByConsentId(String consentId, CreateAisConsentRequest request) {
-        List<AisAccount> aisAccounts = readAccounts(request.getAccess());
+    public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
         return getActualAisConsent(consentId)
                    .map(consent -> {
-                       consent.fillAccounts(aisAccounts);
-                       aisAccountRepository.save(aisAccounts);
-                       aisConsentRepository.save(consent);
-                       return consent.getExternalId();
+                       consent.addAccountAccess(readAccountAccess(request.getAccess()));
+                       return aisConsentRepository.save(consent)
+                                  .getExternalId();
                    });
     }
 }
