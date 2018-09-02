@@ -252,6 +252,7 @@ public class AISConsentService {
                 consentAuthorization.setExternalId(UUID.randomUUID().toString());
                 consentAuthorization.setScaStatus(request.getScaStatus());
                 consentAuthorization.setConsent(aisConsent);
+                consentAuthorization.setPsuId(request.getPsuId());
                 return Optional.of(aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId());
             })
             .orElseGet(() -> Optional.empty());

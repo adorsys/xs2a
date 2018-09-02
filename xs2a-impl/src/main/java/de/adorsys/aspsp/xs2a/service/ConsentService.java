@@ -263,7 +263,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         String authorizationId = aisConsentService.createConsentAuthorization(consentId, SpiScaStatus.valueOf(response.getScaStatus().toString()));
         return Optional.ofNullable(authorizationId)
             .map(s -> {
-                response.setAuthorizationId(authorizationId);
+                response.setAuthorizationId(s);
                 return ResponseObject.<CreateConsentAuthorizationResponse>builder().body(response).build();
             })
             .orElseGet(() -> ResponseObject.<CreateConsentAuthorizationResponse>builder()
