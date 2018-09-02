@@ -16,15 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import org.springframework.data.annotation.Id;
+
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-
-import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
