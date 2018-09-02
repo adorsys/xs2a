@@ -105,6 +105,18 @@ public class ConsentServiceTest {
 
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), getReferenceList(), getReferenceList(), false, true)), CORRECT_PSU_ID, TPP_ID))
             .thenReturn(CONSENT_ID);
+        
+        // fixing test #createAccountConsentsWithResponse_Success_ByPSU_AllAccounts
+        // Using a matching consent request.
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID))
+        .thenReturn(CONSENT_ID);
+        
+        // fixing test #createAccountConsentsWithResponse_Success_ByPSU_AllPSD2
+        // Using a matching consent request.
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), CORRECT_PSU_ID, TPP_ID))
+        .thenReturn(CONSENT_ID);
+
+
         //ByAccess
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), null, TPP_ID))
             .thenReturn(CONSENT_ID);
@@ -120,6 +132,18 @@ public class ConsentServiceTest {
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
             .thenReturn(CONSENT_ID);
+        
+        // fixing test #createAccountConsentsWithResponse_Success_ByAccess_Balances
+        // Using a matching consent request.
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+        		Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID))
+                .thenReturn(CONSENT_ID);
+        
+        // fixing test #createAccountConsentsWithResponse_Success_ByAccess_Balances_Transactions
+        // Using a matching consent request.
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+        		Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID))
+                .thenReturn(CONSENT_ID);
 
         //GetAccDetails
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(CORRECT_IBAN, CORRECT_IBAN_1)), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiDetailsList(), ASPSP_CONSENT_DATA));
