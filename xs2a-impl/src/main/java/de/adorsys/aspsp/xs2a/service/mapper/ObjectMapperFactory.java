@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
  *
  */
 public class ObjectMapperFactory {
-    private static ObjectMapper OBJECT_MAPPER;
+    private static final ObjectMapper OBJECT_MAPPER;
 
     static {
         ObjectMapper objectMapper = new ObjectMapper();
