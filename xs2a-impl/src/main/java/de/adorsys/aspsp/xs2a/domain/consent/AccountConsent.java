@@ -16,21 +16,20 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
 
 import java.time.LocalDate;
 import java.util.EnumSet;
 
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.VALID;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 @Data
 @ApiModel(description = "Response for the get account information consent request by consent Id")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountConsent {
     @ApiModelProperty(value = "ID of the corresponding consent object as returned by an Account Information Consent Request", required = true)
     @JsonIgnore

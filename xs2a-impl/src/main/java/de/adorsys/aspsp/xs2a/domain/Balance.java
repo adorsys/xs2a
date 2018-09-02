@@ -16,18 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import javax.validation.constraints.Size;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Data
 @ApiModel(description = "Balance Information", value = "Balance")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Balance {
 
     @ApiModelProperty(value = "balance amount", required = true)

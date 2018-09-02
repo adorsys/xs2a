@@ -16,22 +16,43 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.Transactions;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.psd2.model.*;
-import lombok.extern.slf4j.Slf4j;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Currency;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.psd2.model.AccountDetails;
+import de.adorsys.psd2.model.AccountList;
+import de.adorsys.psd2.model.AccountReferenceBban;
+import de.adorsys.psd2.model.AccountReferenceIban;
+import de.adorsys.psd2.model.AccountReferenceMaskedPan;
+import de.adorsys.psd2.model.AccountReferenceMsisdn;
+import de.adorsys.psd2.model.AccountReferencePan;
+import de.adorsys.psd2.model.AccountReport;
+import de.adorsys.psd2.model.Balance;
+import de.adorsys.psd2.model.BalanceList;
+import de.adorsys.psd2.model.BalanceType;
+import de.adorsys.psd2.model.PurposeCode;
+import de.adorsys.psd2.model.ReadBalanceResponse200;
+import de.adorsys.psd2.model.TransactionDetails;
+import de.adorsys.psd2.model.TransactionList;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class AccountModelMapper {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.instance();
 
     public static AccountList mapToAccountList(Map<String, List<de.adorsys.aspsp.xs2a.domain.account.AccountDetails>> accountDetailsList) {
         List<AccountDetails> details = accountDetailsList.values().stream()
@@ -40,7 +61,7 @@ public final class AccountModelMapper {
         return new AccountList().accounts(details);
     }
 
-    public static AccountDetails mapToAccountDetails(de.adorsys.aspsp.xs2a.domain.account.AccountDetails accountDetails) {
+	public static AccountDetails mapToAccountDetails(de.adorsys.aspsp.xs2a.domain.account.AccountDetails accountDetails) {
         AccountDetails target = new AccountDetails();
         BeanUtils.copyProperties(accountDetails, target);
 

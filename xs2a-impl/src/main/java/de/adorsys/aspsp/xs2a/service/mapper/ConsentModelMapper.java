@@ -16,26 +16,48 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatusResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.AuthenticationType;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.ConsentInformationResponse200Json;
 import de.adorsys.psd2.model.ConsentStatus;
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import de.adorsys.psd2.model.ConsentStatusResponse200;
+import de.adorsys.psd2.model.Consents;
+import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
 
 public class ConsentModelMapper {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.instance();
 
     public static CreateConsentReq mapToCreateConsentReq(Consents consent) {
         return Optional.ofNullable(consent)

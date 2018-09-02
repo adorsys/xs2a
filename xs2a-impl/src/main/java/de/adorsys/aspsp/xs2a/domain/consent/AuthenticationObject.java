@@ -17,16 +17,14 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.Size;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
-
 @Data
 @ApiModel(description = "Authentication object", value = "AuthenticationObject")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationObject {
 
 	@ApiModelProperty(value = "Type of the authentication method", required = true)

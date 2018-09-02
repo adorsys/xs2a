@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 public enum ConsentAuthorizationResponseLinkType {
-    startAuthorisationWithPsuIdentfication,
-    startAuthorisationWithPsuAuthentication,
-    startAuthorisationWithAuthentciationMethodSelection,
-    startAuthorisationWithTransactionAuthorisation
+    START_AUTHORISATION_WITH_PSU_IDENTFICATION,
+    START_AUTHORISATION_WITH_PSU_AUTHENTICATION,
+    START_AUTHORISATION_WITH_AUTHENTCIATION_METHOD_SELECTION,
+    START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION
 }

@@ -16,19 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.service.validator.header.impl;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.adorsys.aspsp.xs2a.spi.domain.ContentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @ApiModel(description = "Payment initiation request header", value = "PaymentInitiationRequestHeader")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentInitiationRequestHeader extends CommonRequestHeader {
 

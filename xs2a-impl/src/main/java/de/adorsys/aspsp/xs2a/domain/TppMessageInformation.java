@@ -16,19 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.Size;
-
 @Data
 @ApiModel(description = "Tpp Message Information", value = "TppMessageInformation")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(exclude = "text")
 public class TppMessageInformation {
 

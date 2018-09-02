@@ -17,15 +17,14 @@
 package de.adorsys.aspsp.xs2a.service.validator.header.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
 @ApiModel(description = "Consent request header", value = "ConsentRequestHeader")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsentRequestHeader extends CommonRequestHeader {
 

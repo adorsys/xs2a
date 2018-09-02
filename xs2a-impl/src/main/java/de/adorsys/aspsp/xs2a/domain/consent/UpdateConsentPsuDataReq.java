@@ -16,11 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateConsentPsuDataReq {
 
     private String psuId;

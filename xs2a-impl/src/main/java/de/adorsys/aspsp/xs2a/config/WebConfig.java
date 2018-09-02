@@ -16,31 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
-import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
-import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
-import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
+import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.OAUTH;
+import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.REDIRECT;
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
-import de.adorsys.aspsp.xs2a.service.authorization.*;
-import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.*;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validation;
+import javax.validation.Validator;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.MessageSource;
@@ -55,14 +40,33 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
+import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
+import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
+import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.authorization.DecoupledAisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.authorization.EmbeddedAisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.authorization.OauthAisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.authorization.RedirectAisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.service.mapper.ObjectMapperFactory;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.payment.DecoupedScaPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.EmbeddedScaPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.OauthScaPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
+import de.adorsys.aspsp.xs2a.service.payment.RedirectScaPaymentService;
+import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
+import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
@@ -94,15 +98,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        objectMapper.registerModule(getDateTimeDeserializerModule());
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.registerModule(new Jdk8Module()); // add support for Optionals
-        objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
-        objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
-        return objectMapper;
+    	return ObjectMapperFactory.instance();
     }
 
     @Bean
@@ -154,28 +150,30 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ScaPaymentService scaPaymentService(PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
-        ScaApproach scaApproach = aspspProfileService.readScaApproach();
-        if (OAUTH == scaApproach) {
+    	switch (aspspProfileService.readScaApproach()) {
+		case OAUTH:
             return new OauthScaPaymentService(paymentMapper, paymentSpi);
-        } else if (DECOUPLED == scaApproach) {
+		case DECOUPLED:
             return new DecoupedScaPaymentService();
-        } else if (EMBEDDED == scaApproach) {
+		case EMBEDDED:
             return new EmbeddedScaPaymentService();
-        }
-        return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+		default:
+	        return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+		}
     }
 
     @Bean
     public AisAuthorizationService authorizationService(AccountSpi accountSpi) {
-        ScaApproach scaApproach = aspspProfileService.readScaApproach();
-        if (OAUTH == scaApproach) {
-            return new OauthAisAuthorizationService();
-        } else if (DECOUPLED == scaApproach) {
-            return new DecoupledAisAuthorizationService();
-        } else if (EMBEDDED == scaApproach) {
-            return new EmbeddedAisAuthorizationService(accountSpi);
-        }
-        return new RedirectAisAuthorizationService();
+    	switch (aspspProfileService.readScaApproach()) {
+		case OAUTH:
+			return new OauthAisAuthorizationService();
+		case DECOUPLED:
+			return new DecoupledAisAuthorizationService();
+		case EMBEDDED:
+			return new EmbeddedAisAuthorizationService(accountSpi);
+		default:
+			return new RedirectAisAuthorizationService();
+		}
     }
 
     @Bean
@@ -190,10 +188,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addConverter(new PaymentTypeEnumConverter());
     }
 
-    private SimpleModule getDateTimeDeserializerModule() {
-        SimpleModule dateTimeModule = new SimpleModule();
-        dateTimeModule.addDeserializer(LocalDateTime.class, new DateTimeDeserializer());
-        return dateTimeModule;
-    }
 }
 
