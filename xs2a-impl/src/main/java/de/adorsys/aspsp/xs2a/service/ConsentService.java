@@ -38,7 +38,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,25 +68,24 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
-        if (isNotBankOfferConsentSupported(request)) {
+        if (isInvalidBankOfferConsent(request)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
-        CreateConsentReq checkedRequest = new CreateConsentReq();
-        if (isNotEmptyAccess(request.getAccess())) {
-            if (!isValidExpirationDate(request.getValidUntil())) {
-                return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
-            }
-
-            if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-                return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
-            }
-
-            checkedRequest.setAccess(request.getAccess());
-            checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
-            checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
-            checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
-            checkedRequest.setValidUntil(request.getValidUntil());
+        if (!isValidExpirationDate(request.getValidUntil())) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
         }
+
+        if (isNotSupportedGlobalConsentForAllPsd2(request)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
+        }
+
+        CreateConsentReq checkedRequest = new CreateConsentReq();
+        checkedRequest.setAccess(request.getAccess());
+        checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
+        checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
+        checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
+        checkedRequest.setValidUntil(request.getValidUntil());
+
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         String consentId = isNotEmptyAccess(checkedRequest.getAccess())
             ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
@@ -286,7 +290,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                 .build());
     }
 
-    private boolean isNotBankOfferConsentSupported(CreateConsentReq request) {
+    private boolean isInvalidBankOfferConsent(CreateConsentReq request) {
         return !aspspProfileService.isBankOfferedConsentSupported()
             && !isNotEmptyAccess(request.getAccess());
     }
