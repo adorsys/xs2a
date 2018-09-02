@@ -64,7 +64,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
         if (checkScaMethod(updatePsuData, response, consentAuthorization)) {return response;}
 
-        if (checkScaAuthenticationData(updatePsuData, response, consentAuthorization)) {return response;}
+        if (checkScaAuthenticationData(updatePsuData, response)) {return response;}
 
         return response;
 
@@ -109,7 +109,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         return false;
     }
 
-    private boolean checkScaAuthenticationData(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, SpiAccountConsentAuthorization spiAuthorization) {
+    private boolean checkScaAuthenticationData(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response) {
         if (updatePsuData.getScaAuthenticationData() != null) {
             response.setScaAuthenticationData(updatePsuData.getScaAuthenticationData());
             response.setScaStatus(ScaStatus.STARTED);
