@@ -58,13 +58,13 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, SpiAccountConsentAuthorization consentAuthorization) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
 
-        if (checkPsuIdentification(updatePsuData, response)) return response;
+        if (checkPsuIdentification(updatePsuData, response)) {return response;}
 
-        if (checkPsuAuthentication(updatePsuData, response, consentAuthorization)) return response;
+        if (checkPsuAuthentication(updatePsuData, response, consentAuthorization)) {return response;}
 
-        if (checkScaMethod(updatePsuData, response, consentAuthorization)) return response;
+        if (checkScaMethod(updatePsuData, response, consentAuthorization)) {return response;}
 
-        if (checkScaAuthenticationData(updatePsuData, response, consentAuthorization)) return response;
+        if (checkScaAuthenticationData(updatePsuData, response, consentAuthorization)) {return response;}
 
         return response;
 

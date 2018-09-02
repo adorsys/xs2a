@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import lombok.Data;
 
 @Data

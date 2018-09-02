@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization;
 
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;

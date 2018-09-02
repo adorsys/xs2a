@@ -185,13 +185,13 @@ public class ConsentModelMapper {
         return OBJECT_MAPPER.convertValue(reference, AccountReference.class);
     }
 
-    public static UpdateConsentPsuDataReq mapToUpdatePsuData(String psuId, String consentId, String authorizationId, HashMap body) {
+    public static UpdateConsentPsuDataReq mapToUpdatePsuData(String psuId, String consentId, String authorizationId, Map body) {
         UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
         updatePsuData.setPsuId(psuId);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthenticationMethodId(authorizationId);
 
-        if (body.size() > 0) {
+        if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
                 .ifPresent(psuData -> {
