@@ -22,7 +22,6 @@ import java.time.LocalDate;
 
 @Data
 public class SpiCreateAisConsentRequest {
-
     private String psuId;
     private String tppId;
     private int frequencyPerDay;
