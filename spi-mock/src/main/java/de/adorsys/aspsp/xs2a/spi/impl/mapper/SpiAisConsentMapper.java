@@ -62,15 +62,15 @@ public class SpiAisConsentMapper {
     private AisAccountAccessInfo mapToCmsAisAccountAccessInfo(SpiAccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
-                                   .map(this::mapToListAccountInfo)
+                                   .map(this::mapToListCmsAccountInfo)
                                    .orElseGet(Collections::emptyList));
 
         accessInfo.setBalances(Optional.ofNullable(access.getBalances())
-                                   .map(this::mapToListAccountInfo)
+                                   .map(this::mapToListCmsAccountInfo)
                                    .orElseGet(Collections::emptyList));
 
         accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
-                                       .map(this::mapToListAccountInfo)
+                                       .map(this::mapToListCmsAccountInfo)
                                        .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
@@ -83,13 +83,13 @@ public class SpiAisConsentMapper {
         return accessInfo;
     }
 
-    private List<AccountInfo> mapToListAccountInfo(List<SpiAccountReference> refs) {
+    private List<AccountInfo> mapToListCmsAccountInfo(List<SpiAccountReference> refs) {
         return refs.stream()
-                   .map(this::mapToAccountInfo)
+                   .map(this::mapToCmsAccountInfo)
                    .collect(Collectors.toList());
     }
 
-    private AccountInfo mapToAccountInfo(SpiAccountReference ref) {
+    private AccountInfo mapToCmsAccountInfo(SpiAccountReference ref) {
         AccountInfo info = new AccountInfo();
         info.setIban(ref.getIban());
         info.setCurrency(Optional.ofNullable(ref.getCurrency())
