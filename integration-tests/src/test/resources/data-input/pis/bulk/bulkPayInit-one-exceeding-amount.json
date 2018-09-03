@@ -37,7 +37,7 @@
         {
           "endToEndIdentification": "RI-234567890",
           "instructedAmount": {
-            "amount": "71.07",
+            "amount": "52000.00",
             "currency": "EUR"
           },
           "creditorAccount": {
@@ -59,14 +59,12 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": [
       {
-        "transactionStatus": "RCVD"
-      },
-      {
-        "transactionStatus": "RCVD"
+        "category": "ERROR",
+        "code": "PAYMENT_FAILED"
       }
     ]
   }

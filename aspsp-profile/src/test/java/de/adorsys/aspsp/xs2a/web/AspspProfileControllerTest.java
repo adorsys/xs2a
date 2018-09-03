@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.service.AspspProfileService;
 import org.junit.Before;
@@ -33,9 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOTH;
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.PENDING;
+import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
 import static de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField.IBAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

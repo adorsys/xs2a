@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
@@ -117,16 +116,6 @@ public class PaymentModelMapperTest {
         assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getRequestedExecutionDate()).isNotNull();
         assertThat(result.getRequestedExecutionTime()).isNotNull();
-    }
-
-    @Test
-    public void mapToXs2aBICFI() {
-        //Given
-        String bicfi = "Some test data";
-        //When
-        BICFI result = paymentModelMapper.mapToXs2aBICFI(bicfi);
-        //Then
-        assertThat(result.getCode()).isEqualTo(bicfi);
     }
 
     //Static test data

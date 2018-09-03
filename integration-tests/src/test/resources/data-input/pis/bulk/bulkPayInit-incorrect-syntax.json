@@ -59,14 +59,16 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": [
       {
-        "transactionStatus": "RCVD"
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
       },
       {
-        "transactionStatus": "RCVD"
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
       }
     ]
   }

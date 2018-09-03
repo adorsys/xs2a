@@ -135,7 +135,7 @@ public class PaymentModelMapper {
 
     }
 
-    public BICFI mapToXs2aBICFI(String creditorAgent) {
+    private BICFI mapToXs2aBICFI(String creditorAgent) {
         BICFI bicfi = new BICFI();
         bicfi.setCode(creditorAgent);
         return bicfi;
