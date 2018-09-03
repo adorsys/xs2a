@@ -42,29 +42,37 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
 
         return Optional.ofNullable(psuId)
-            .map(s -> {
-                response.setScaStatus(ScaStatus.PSUIDENTIFIED);
-                response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
-                return response;
-            })
-            .orElseGet(() -> {
-                response.setScaStatus(ScaStatus.RECEIVED);
-                response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTFICATION);
-                return response;
-            });
+                   .map(s -> {
+                       response.setScaStatus(ScaStatus.PSUIDENTIFIED);
+                       response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+                       return response;
+                   })
+                   .orElseGet(() -> {
+                       response.setScaStatus(ScaStatus.RECEIVED);
+                       response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTFICATION);
+                       return response;
+                   });
     }
 
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, SpiAccountConsentAuthorization consentAuthorization) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
 
-        if (checkPsuIdentification(updatePsuData, response)) {return response;}
+        if (checkPsuIdentification(updatePsuData, response)) {
+            return response;
+        }
 
-        if (checkPsuAuthentication(updatePsuData, response, consentAuthorization)) {return response;}
+        if (checkPsuAuthentication(updatePsuData, response, consentAuthorization)) {
+            return response;
+        }
 
-        if (checkScaMethod(updatePsuData, response, consentAuthorization)) {return response;}
+        if (checkScaMethod(updatePsuData, response, consentAuthorization)) {
+            return response;
+        }
 
-        if (checkScaAuthenticationData(updatePsuData, response)) {return response;}
+        if (checkScaAuthenticationData(updatePsuData, response)) {
+            return response;
+        }
 
         return response;
 
