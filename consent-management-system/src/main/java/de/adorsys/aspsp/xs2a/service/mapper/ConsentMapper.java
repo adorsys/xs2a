@@ -20,11 +20,10 @@ import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.domain.AisAccount;
+import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,7 @@ public class ConsentMapper {
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
         return new AisAccountConsent(
             consent.getId().toString(),
-            mapToAisAccountAccess(consent.getAccounts()),
+            mapToAisAccountAccess(consent.getAccesses()),
             consent.isRecurringIndicator(),
             consent.getExpireDate(),
             consent.getUsageCounter(),
@@ -45,23 +44,16 @@ public class ConsentMapper {
             consent.getAspspConsentData());
     }
 
-    private AisAccountAccess mapToAisAccountAccess(List<AisAccount> aisAccounts) {
-        return new AisAccountAccess(mapToCmsAccountReference(aisAccounts, TypeAccess.ACCOUNT),
-            mapToCmsAccountReference(aisAccounts, TypeAccess.BALANCE),
-            mapToCmsAccountReference(aisAccounts, TypeAccess.TRANSACTION));
+    private AisAccountAccess mapToAisAccountAccess(List<AccountAccess> accountAccesses) {
+        return new AisAccountAccess(mapToCmsAccountReference(accountAccesses, TypeAccess.ACCOUNT),
+            mapToCmsAccountReference(accountAccesses, TypeAccess.BALANCE),
+            mapToCmsAccountReference(accountAccesses, TypeAccess.TRANSACTION));
     }
 
-    private List<CmsAccountReference> mapToCmsAccountReference(List<AisAccount> aisAccounts, TypeAccess typeAccess) {
+    private List<CmsAccountReference> mapToCmsAccountReference(List<AccountAccess> aisAccounts, TypeAccess typeAccess) {
         return aisAccounts.stream()
-                   .map(acc -> mapToCmsAccountReference(acc, typeAccess))
-                   .flatMap(Collection::stream)
-                   .collect(Collectors.toList());
-    }
-
-    private List<CmsAccountReference> mapToCmsAccountReference(AisAccount aisAccount, TypeAccess typeAccess) {
-        return aisAccount.getAccesses().stream()
                    .filter(ass -> ass.getTypeAccess() == typeAccess)
-                   .map(access -> new CmsAccountReference(aisAccount.getIban(), access.getCurrency()))
+                   .map(access -> new CmsAccountReference(access.getIban(), access.getCurrency()))
                    .collect(Collectors.toList());
     }
 }
