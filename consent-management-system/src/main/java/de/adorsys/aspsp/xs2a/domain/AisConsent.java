@@ -111,6 +111,11 @@ public class AisConsent {
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] aspspConsentData;
 
+    @Column(name = "ais_consent_request_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the consent request: BANK_OFFERED or DEDICATED_ACCOUNTS.", example = "BANK_OFFERED")
+    private AisConsentRequestType aisConsentRequestType;
+
     public List<AccountAccess> getAccesses(){
         return new ArrayList<>(accesses);
     }
