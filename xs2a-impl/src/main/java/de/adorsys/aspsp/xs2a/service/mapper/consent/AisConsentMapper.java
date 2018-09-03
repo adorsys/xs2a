@@ -51,14 +51,6 @@ public class AisConsentMapper {
                    .orElse(null);
     }
 
-    public SpiCreateConsentReq mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
-        return Optional.ofNullable(consentReq)
-                   .map(cr -> new SpiCreateConsentReq(mapToSpiAccountAccess(cr.getAccess()),
-                       cr.isRecurringIndicator(), cr.getValidUntil(),
-                       cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
-                   .orElse(null);
-    }
-
     public AccountConsent mapToAccountConsent(SpiAccountConsent spiAccountConsent) {
         return Optional.ofNullable(spiAccountConsent)
                    .map(ac -> new AccountConsent(
