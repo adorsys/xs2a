@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.consent;
+package de.adorsys.aspsp.xs2a.spi.config.rest.consent;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.exception.RestException;
@@ -24,7 +24,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 
 import java.io.IOException;
 
-public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
+public class SpiConsentRestErrorHandler extends DefaultResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
         HttpStatus statusCode = response.getStatusCode();

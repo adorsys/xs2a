@@ -19,17 +19,15 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +39,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -50,7 +49,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ConsentMapperTest {
+public class AisConsentMapperTest {
     private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private final String SPI_ACCOUNT_CONSENT_REQ_JSON_PATH = "/json/MapGetAccountConsentTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
@@ -59,7 +58,7 @@ public class ConsentMapperTest {
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     @InjectMocks
-    private ConsentMapper consentMapper;
+    private AisConsentMapper aisConsentMapper;
 
     @Mock
     private AccountMapper accountMapper;
@@ -74,61 +73,14 @@ public class ConsentMapperTest {
     }
 
     @Test
-    public void mapToAisConsentRequest() throws IOException {
-        //Given:
-        String aicConRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
-        CreateConsentReq donorRequest = jsonConverter.toObject(aicConRequestJson, CreateConsentReq.class).get();
-        CreateAisConsentRequest expectedResult = getAisConsentReq(donorRequest, PSU_ID, TPP_ID, ASPSP_CONSENT_DATA);
-        //When:
-        CreateAisConsentRequest mapedResult = consentMapper.mapToCreateAisConsentRequest(donorRequest, PSU_ID, TPP_ID, ASPSP_CONSENT_DATA);
-        assertThat(mapedResult).isEqualTo(expectedResult);
-    }
-
-    private CreateAisConsentRequest getAisConsentReq(CreateConsentReq consentReq, String psuId, String tppId, AspspConsentData aspspConsentData) {
-        CreateAisConsentRequest req = new CreateAisConsentRequest();
-        req.setPsuId(psuId);
-        req.setTppId(tppId);
-        req.setCombinedServiceIndicator(consentReq.isCombinedServiceIndicator());
-        req.setRecurringIndicator(consentReq.isRecurringIndicator());
-        req.setValidUntil(consentReq.getValidUntil());
-        req.setTppRedirectPreferred(false);
-        req.setFrequencyPerDay(consentReq.getFrequencyPerDay());
-        req.setAspspConsentData(aspspConsentData.getAspspConsentData());
-        AisAccountAccessInfo info = new AisAccountAccessInfo();
-
-        info.setAccounts(getAccountInfo(consentReq.getAccess().getAccounts()));
-        info.setBalances(getAccountInfo(consentReq.getAccess().getBalances()));
-        info.setTransactions(getAccountInfo(consentReq.getAccess().getTransactions()));
-        info.setAvailableAccounts(Optional.ofNullable(req.getAccess()).map(AisAccountAccessInfo::getAvailableAccounts).orElse(null));
-        info.setAllPsd2(Optional.ofNullable(req.getAccess()).map(AisAccountAccessInfo::getAllPsd2).orElse(null));
-        req.setAccess(info);
-
-        return req;
-    }
-
-    private List<AccountInfo> getAccountInfo(List<AccountReference> references) {
-
-        return Optional.ofNullable(references)
-                   .map(ref -> ref.stream()
-                                   .map(ar -> {
-                                       AccountInfo ai = new AccountInfo();
-                                       ai.setIban(ar.getIban());
-                                       ai.setCurrency(getCurrency(ar));
-                                       return ai;
-                                   })
-                                   .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
-    }
-
-    @Test
-    public void mapSpiCreateConsentRequest() throws IOException {
+    public void mapToSpiCreateAisConsentRequest() throws IOException {
         //Given:
         String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq donorRequest = jsonConverter.toObject(aicRequestJson, CreateConsentReq.class).get();
-        SpiCreateConsentRequest expectedRequest = jsonConverter.toObject(aicRequestJson, SpiCreateConsentRequest.class).get();
+        SpiCreateAisConsentRequest expectedRequest = jsonConverter.toObject(aicRequestJson, SpiCreateAisConsentRequest.class).get();
 
         //When:
-        SpiCreateConsentRequest actualRequest = consentMapper.mapToSpiCreateConsentRequest(donorRequest);
+        SpiCreateAisConsentRequest actualRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(donorRequest, PSU_ID, TPP_ID, ASPSP_CONSENT_DATA);
 
         //Then:
         assertThat(actualRequest.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
@@ -138,7 +90,7 @@ public class ConsentMapperTest {
     }
 
     @Test
-    public void mapGetAccountConsent() throws IOException {
+    public void mapToAccountConsent() throws IOException {
 
         //Given:
         String accountConsentJson = IOUtils.resourceToString(SPI_ACCOUNT_CONSENT_REQ_JSON_PATH, UTF_8);
@@ -146,7 +98,7 @@ public class ConsentMapperTest {
 
         //When:
         assertNotNull(donorAccountConsent);
-        AccountConsent actualAccountConsent = consentMapper.mapToAccountConsent(donorAccountConsent);
+        AccountConsent actualAccountConsent = aisConsentMapper.mapToAccountConsent(donorAccountConsent);
 
         //Then:
         assertThat(actualAccountConsent.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
@@ -161,12 +113,6 @@ public class ConsentMapperTest {
         assertThat(actualAccountConsent.getFrequencyPerDay()).isEqualTo(4);
         assertThat(actualAccountConsent.getLastActionDate()).isEqualTo(LocalDate.parse("2017-11-01"));
         assertThat(actualAccountConsent.getConsentStatus()).isEqualTo(ConsentStatus.VALID);
-    }
-
-    private String getCurrency(AccountReference reference) {
-        return Optional.ofNullable(reference.getCurrency())
-                   .map(Currency::getCurrencyCode)
-                   .orElse(null);
     }
 
     private List<AccountReference> getReferences() {
@@ -198,5 +144,4 @@ public class ConsentMapperTest {
     private SpiAccountReference getSpiReference(String iban, Currency currency, String masked) {
         return new SpiAccountReference(iban, null, null, masked, null, currency);
     }
-
 }

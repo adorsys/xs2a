@@ -28,7 +28,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateConsentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -57,14 +56,6 @@ public class ConsentMapper {
 
                        return request;
                    })
-                   .orElse(null);
-    }
-
-    public SpiCreateConsentRequest mapToSpiCreateConsentRequest(CreateConsentReq consentReq) {
-        return Optional.ofNullable(consentReq)
-                   .map(cr -> new SpiCreateConsentRequest(mapToSpiAccountAccess(cr.getAccess()),
-                       cr.isRecurringIndicator(), cr.getValidUntil(),
-                       cr.getFrequencyPerDay(), cr.isCombinedServiceIndicator()))
                    .orElse(null);
     }
 
@@ -127,27 +118,6 @@ public class ConsentMapper {
     }
 
     //Spi
-    private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
-        return Optional.ofNullable(access)
-                   .map(aa -> {
-                       SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
-                       spiAccountAccess.setAccounts(accountMapper.mapToSpiAccountReferences(aa.getAccounts()));
-                       spiAccountAccess.setBalances(accountMapper.mapToSpiAccountReferences(aa.getBalances()));
-                       spiAccountAccess.setTransactions(accountMapper.mapToSpiAccountReferences(aa.getTransactions()));
-                       spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
-                       spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
-                       return spiAccountAccess;
-                   })
-                   .orElse(null);
-    }
-
-    private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
-        return Optional.ofNullable(accessType)
-                   .map(at -> SpiAccountAccessType.valueOf(at.name()))
-                   .orElse(null);
-
-    }
-
     private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
@@ -159,8 +129,8 @@ public class ConsentMapper {
                                    .orElseGet(Collections::emptyList));
 
         accessInfo.setTransactions(Optional.ofNullable(access.getTransactions())
-                                   .map(this::mapToListAccountInfo)
-                                   .orElseGet(Collections::emptyList));
+                                       .map(this::mapToListAccountInfo)
+                                       .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
                                             .map(AccountAccessType::name)
