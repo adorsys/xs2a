@@ -56,9 +56,9 @@ public class PaymentControllerTest {
 
     @Before
     public void setUp() {
-        when(paymentService.getPaymentById(SINGLE, PAYMENT_PRODUCT, CORRECT_PAYMENT_ID))
+        when(paymentService.getPaymentById(SINGLE, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.builder().body(getPayment()).build());
-        when(paymentService.getPaymentById(SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID))
+        when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
 
 

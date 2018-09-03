@@ -34,7 +34,7 @@ public enum PaymentProduct {
 
     private String code;
 
-    private static Map<String, PaymentProduct> container = new HashMap();
+    private static Map<String, PaymentProduct> container = new HashMap<>();
 
     static {
         Arrays.stream(values())
@@ -51,7 +51,7 @@ public enum PaymentProduct {
         return code;
     }
 
-    public static Optional<PaymentProduct> getByCode(String code){
+    public static Optional<PaymentProduct> getByCode(String code) {
         return Optional.ofNullable(container.get(code));
     }
 }

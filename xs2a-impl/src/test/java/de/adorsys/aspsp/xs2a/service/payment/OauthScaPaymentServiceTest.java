@@ -37,7 +37,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 import static junit.framework.TestCase.assertNotNull;
@@ -51,7 +50,7 @@ public class OauthScaPaymentServiceTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TppInfo TPP_INFO = new TppInfo();
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
 
     @InjectMocks
@@ -125,7 +124,7 @@ public class OauthScaPaymentServiceTest {
         return Arrays.asList(getPayment(firstOk), getPayment(secondOk));
     }
 
-    private Optional<PaymentInitialisationResponse> getResp(boolean paymentPassed) {
+    private PaymentInitialisationResponse getResp(boolean paymentPassed) {
         PaymentInitialisationResponse response = new PaymentInitialisationResponse();
         if (paymentPassed) {
             response.setPaymentId(PAYMENT_ID);
@@ -134,7 +133,7 @@ public class OauthScaPaymentServiceTest {
             response.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
             response.setTransactionStatus(TransactionStatus.RJCT);
         }
-        return Optional.of(response);
+        return response;
     }
 
     private List<SpiPaymentInitialisationResponse> getSpiRespList(boolean firstOk, boolean secondOk) {

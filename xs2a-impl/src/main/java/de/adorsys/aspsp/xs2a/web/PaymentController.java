@@ -62,6 +62,6 @@ public class PaymentController {
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b", required = true)
         @PathVariable("paymentId") String paymentId) {
-        return responseMapper.ok(paymentService.getPaymentById(paymentType, paymentProduct, paymentId));
+        return responseMapper.ok(paymentService.getPaymentById(paymentType, paymentId));
     }
 }
