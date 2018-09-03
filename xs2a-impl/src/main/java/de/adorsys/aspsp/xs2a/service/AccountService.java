@@ -328,9 +328,9 @@ public class AccountService {
 
     private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
         return new AccountReport(
-            bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
+            EnumSet.of(BookingStatus.BOOKED, BookingStatus.BOTH).contains(bookingStatus)
                 ? report.getBooked() : new Transactions[]{},
-            bookingStatus == BookingStatus.PENDING || bookingStatus == BookingStatus.BOTH
+            EnumSet.of(BookingStatus.PENDING, BookingStatus.BOTH).contains(bookingStatus)
                 ? report.getPending() : new Transactions[]{});
     }
 }
