@@ -60,7 +60,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
         PaymentInitialisationResponse response = createPeriodicPaymentAndGetResponse(periodicPayment, aspspConsentData);
         return response.getTransactionStatus() != TransactionStatus.RJCT
-                   ? createConsentForPeriodicPaymentAndExtendPaymentResponse(new CreateConsentRequest(periodicPayment, tppInfo, paymentProduct, aspspConsentData), response)
+                   ? createConsentForPeriodicPaymentAndExtendPaymentResponse(new CreatePisConsentData(periodicPayment, tppInfo, paymentProduct, aspspConsentData), response)
                    : response;
     }
 
@@ -140,7 +140,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
         PaymentInitialisationResponse response = createSinglePaymentAndGetResponse(singlePayment, aspspConsentData);
         return response.getTransactionStatus() != TransactionStatus.RJCT
-                   ? createConsentForSinglePaymentAndExtendPaymentResponse(new CreateConsentRequest(singlePayment, tppInfo, paymentProduct, aspspConsentData), response)
+                   ? createConsentForSinglePaymentAndExtendPaymentResponse(new CreatePisConsentData(singlePayment, tppInfo, paymentProduct, aspspConsentData), response)
                    : response;
     }
 
