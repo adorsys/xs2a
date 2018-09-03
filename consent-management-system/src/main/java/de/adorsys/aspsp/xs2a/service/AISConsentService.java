@@ -16,27 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
-import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.ACCOUNT;
-import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.BALANCE;
-import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.TRANSACTION;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import de.adorsys.aspsp.xs2a.account.AccountHolder;
+import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
@@ -96,14 +76,7 @@ public class AISConsentService {
         holder.fillAccess(access.getAccounts(), ACCOUNT);
         holder.fillAccess(access.getBalances(), BALANCE);
         holder.fillAccess(access.getTransactions(), TRANSACTION);
-        return buildAccounts(holder.getAccountAccesses());
-    }
-
-    private List<AisAccount> buildAccounts(Map<String, Set<AccountAccess>> accountAccesses) {
-        return accountAccesses
-                   .entrySet().stream()
-                   .map(e -> new AisAccount(e.getKey(), e.getValue()))
-                   .collect(Collectors.toList());
+        return holder.getAccountAccesses();
     }
 
     /**
@@ -276,14 +249,14 @@ public class AISConsentService {
     @Transactional
     public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
         return aisConsentRepository.findByExternalId(consentId)
-            .map(aisConsent -> {
-                AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
-                consentAuthorization.setExternalId(UUID.randomUUID().toString());
-                consentAuthorization.setScaStatus(request.getScaStatus());
-                consentAuthorization.setConsent(aisConsent);
-                consentAuthorization.setPsuId(request.getPsuId());
-                return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
-            });
+                   .map(aisConsent -> {
+                       AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
+                       consentAuthorization.setExternalId(UUID.randomUUID().toString());
+                       consentAuthorization.setScaStatus(request.getScaStatus());
+                       consentAuthorization.setConsent(aisConsent);
+                       consentAuthorization.setPsuId(request.getPsuId());
+                       return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
+                   });
     }
 
     /**
@@ -296,12 +269,12 @@ public class AISConsentService {
     @Transactional
     public Optional<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest consentAuthorization) {
         return aisConsentAuthorizationRepository.findByExternalId(authorizationId)
-            .map(conAuth -> {
-            	conAuth.setScaStatus(consentAuthorization.getScaStatus());
-            	conAuth.setPassword(consentAuthorization.getPassword());
-            	conAuth.setAuthenticationMethodId(consentAuthorization.getAuthenticationMethodId());
-            	conAuth.setScaAuthenticationData(consentAuthorization.getScaAuthenticationData());
-                return aisConsentAuthorizationRepository.save(conAuth).getExternalId() != null;
-            });
+                   .map(conAuth -> {
+                       conAuth.setScaStatus(consentAuthorization.getScaStatus());
+                       conAuth.setPassword(consentAuthorization.getPassword());
+                       conAuth.setAuthenticationMethodId(consentAuthorization.getAuthenticationMethodId());
+                       conAuth.setScaAuthenticationData(consentAuthorization.getScaAuthenticationData());
+                       return aisConsentAuthorizationRepository.save(conAuth).getExternalId() != null;
+                   });
     }
 }

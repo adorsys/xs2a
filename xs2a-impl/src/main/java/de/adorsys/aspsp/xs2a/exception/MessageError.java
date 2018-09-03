@@ -16,15 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.exception;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;

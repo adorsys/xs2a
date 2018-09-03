@@ -16,38 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.psd2.model.AccountDetails;
-import de.adorsys.psd2.model.AccountList;
-import de.adorsys.psd2.model.AccountReferenceBban;
-import de.adorsys.psd2.model.AccountReferenceIban;
-import de.adorsys.psd2.model.AccountReferenceMaskedPan;
-import de.adorsys.psd2.model.AccountReferenceMsisdn;
-import de.adorsys.psd2.model.AccountReferencePan;
-import de.adorsys.psd2.model.AccountReport;
-import de.adorsys.psd2.model.Balance;
-import de.adorsys.psd2.model.BalanceList;
-import de.adorsys.psd2.model.BalanceType;
-import de.adorsys.psd2.model.PurposeCode;
-import de.adorsys.psd2.model.ReadBalanceResponse200;
-import de.adorsys.psd2.model.TransactionDetails;
-import de.adorsys.psd2.model.TransactionList;
+import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
