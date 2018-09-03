@@ -19,13 +19,11 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
@@ -44,7 +42,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 
 @Service
