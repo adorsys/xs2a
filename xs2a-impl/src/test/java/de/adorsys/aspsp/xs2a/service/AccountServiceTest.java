@@ -66,7 +66,7 @@ public class AccountServiceTest {
     private final String WRONG_CONSENT_ID = "Wromg consent id";
     private final String TRANSACTION_ID = "0001";
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     @InjectMocks
     private AccountService accountService;
