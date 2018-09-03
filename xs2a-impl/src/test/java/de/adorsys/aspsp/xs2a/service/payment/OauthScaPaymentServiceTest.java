@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
@@ -87,7 +87,7 @@ public class OauthScaPaymentServiceTest {
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId().equals(PAYMENT_ID));
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RCVD));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD));
         assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages() == null);
     }
 
@@ -99,7 +99,7 @@ public class OauthScaPaymentServiceTest {
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId() == null);
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
         assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages()[0] == PAYMENT_FAILED);
     }
 
@@ -111,7 +111,7 @@ public class OauthScaPaymentServiceTest {
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId() == null && actualResponse.get(1).getPaymentId() == null);
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
         assertTrue(actualResponse.get(0).getTppMessages()[0] == PAYMENT_FAILED && actualResponse.get(1).getTppMessages()[0] == PAYMENT_FAILED);
     }
 
@@ -128,10 +128,10 @@ public class OauthScaPaymentServiceTest {
         PaymentInitialisationResponse response = new PaymentInitialisationResponse();
         if (paymentPassed) {
             response.setPaymentId(PAYMENT_ID);
-            response.setTransactionStatus(TransactionStatus.RCVD);
+            response.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         } else {
             response.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
-            response.setTransactionStatus(TransactionStatus.RJCT);
+            response.setTransactionStatus(Xs2aTransactionStatus.RJCT);
         }
         return response;
     }

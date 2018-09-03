@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
@@ -72,7 +72,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @Valid
     @ApiModelProperty(value = "creditor Address")
-    private Address creditorAddress;
+    private Xs2aAddress creditorAddress;
 
     @Size(max = 70)
     @ApiModelProperty(value = "ultimate creditor", example = "Telekom")

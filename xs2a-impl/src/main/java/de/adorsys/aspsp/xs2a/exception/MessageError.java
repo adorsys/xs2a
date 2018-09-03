@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -35,30 +35,30 @@ import java.util.Set;
 public class MessageError {
     @JsonUnwrapped
     @ApiModelProperty(value = "Transaction status", example = "Rejected")
-    private TransactionStatus transactionStatus;
+    private Xs2aTransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Tpp messages information of the Berlin Group XS2A Interface")
     private Set<TppMessageInformation> tppMessages = new HashSet<>();
 
     public MessageError(TppMessageInformation tppMessage) {
-        this(TransactionStatus.RJCT, tppMessage);
+        this(Xs2aTransactionStatus.RJCT, tppMessage);
     }
 
     public MessageError(List<TppMessageInformation> tppMessages) {
-        this(TransactionStatus.RJCT, tppMessages);
+        this(Xs2aTransactionStatus.RJCT, tppMessages);
     }
 
-    public MessageError(TransactionStatus status, TppMessageInformation tppMessage) {
+    public MessageError(Xs2aTransactionStatus status, TppMessageInformation tppMessage) {
         this(status, Collections.singletonList(tppMessage));
     }
 
-    public MessageError(TransactionStatus status, List<TppMessageInformation> tppMessages) {
+    public MessageError(Xs2aTransactionStatus status, List<TppMessageInformation> tppMessages) {
         this.transactionStatus = status;
         this.tppMessages.addAll(tppMessages);
     }
 
     public MessageError(MessageErrorCode errorCode) {
-        this(TransactionStatus.RJCT, Collections.singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode)));
+        this(Xs2aTransactionStatus.RJCT, Collections.singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode)));
     }
 
     public void addTppMessage(TppMessageInformation tppMessage) {

@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
@@ -186,7 +186,7 @@ public class PisConsentMapper {
                    ).orElse(null);
     }
 
-    private CmsAddress mapToCmsAddress(Address address) {
+    private CmsAddress mapToCmsAddress(Xs2aAddress address) {
         return Optional.ofNullable(address)
                    .map(adr -> {
                        CmsAddress cmsAddress = new CmsAddress();

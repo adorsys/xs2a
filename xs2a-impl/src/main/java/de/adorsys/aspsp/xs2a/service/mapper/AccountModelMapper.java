@@ -18,14 +18,18 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.time.ZoneId;
@@ -163,7 +167,7 @@ public final class AccountModelMapper {
         return accountReference;
     }
 
-    public static Address mapToAddress12(de.adorsys.aspsp.xs2a.domain.address.Address address) {
+    public static Address mapToAddress12(Xs2aAddress address) {
         Address targetAddress = new Address().street(address.getStreet());
         targetAddress.setStreet(address.getStreet());
         targetAddress.setBuildingNumber(address.getBuildingNumber());
@@ -173,31 +177,31 @@ public final class AccountModelMapper {
         return targetAddress;
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
+    public static Xs2aAddress mapToXs2aAddress(Address address) {
         return Optional.ofNullable(address)
                    .map(a -> {
-                       de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
+                       Xs2aAddress targetAddress = new Xs2aAddress();
                        targetAddress.setStreet(a.getStreet());
                        targetAddress.setBuildingNumber(a.getBuildingNumber());
                        targetAddress.setCity(a.getCity());
                        targetAddress.setPostalCode(a.getPostalCode());
-                       de.adorsys.aspsp.xs2a.domain.address.CountryCode code = new de.adorsys.aspsp.xs2a.domain.address.CountryCode();
+                       Xs2aCountryCode code = new Xs2aCountryCode();
                        code.setCode(a.getCountry());
                        targetAddress.setCountry(code);
                        return targetAddress;
                    })
-                   .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
+                   .orElse(new Xs2aAddress());
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
+    public static Xs2aAmount mapToXs2aAmount(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
+                       Xs2aAmount targetAmount = new Xs2aAmount();
                        targetAmount.setContent(a.getAmount());
                        targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
                        return targetAmount;
                    })
-                   .orElse(new de.adorsys.aspsp.xs2a.domain.Amount());
+                   .orElse(new Xs2aAmount());
 
     }
 

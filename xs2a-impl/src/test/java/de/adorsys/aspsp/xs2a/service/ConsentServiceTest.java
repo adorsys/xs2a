@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -211,7 +211,7 @@ public class ConsentServiceTest {
 
         //Then:
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(messageError.getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 
@@ -275,7 +275,7 @@ public class ConsentServiceTest {
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
             req, CORRECT_PSU_ID);
         //Then:
-        assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -291,7 +291,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID);
         //Then:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -308,7 +308,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -324,7 +324,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -359,7 +359,7 @@ public class ConsentServiceTest {
 
         //Then
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(messageError.getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 

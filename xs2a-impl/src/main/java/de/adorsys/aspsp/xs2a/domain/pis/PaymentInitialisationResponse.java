@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.AuthenticationObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -36,7 +36,7 @@ public class PaymentInitialisationResponse {
 
     @JsonUnwrapped
     @ApiModelProperty(value = "The transaction status is filled with value of the ISO20022 data table", required = true, example = "ACCP")
-    private TransactionStatus transactionStatus;
+    private Xs2aTransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Resource identification of the generated payment initiation resource.", required = true, example = "qwer3456tzui7890")
     private String paymentId;
