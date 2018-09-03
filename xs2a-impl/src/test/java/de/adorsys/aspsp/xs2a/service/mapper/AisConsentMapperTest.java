@@ -57,7 +57,7 @@ public class AisConsentMapperTest {
     private final Charset UTF_8 = Charset.forName("utf-8");
     private final String PSU_ID = "12345";
     private final String TPP_ID = "This is a test TppId";
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     @InjectMocks
     private AisConsentMapper aisConsentMapper;

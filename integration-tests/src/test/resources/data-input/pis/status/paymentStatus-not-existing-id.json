@@ -2,7 +2,6 @@
   "request": {
     "header": {
       "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
-      "psu-ip-address": "192.168.0.26",
       "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {}
@@ -11,11 +10,8 @@
     "code": "404",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
-      "tppMessage": {
-        "category": "ERROR",
-        "code": "RESOURCE_UNKNOWN"
-      }
+      "category": "ERROR",
+      "code": "PRODUCT_UNKNOWN"
     }
   }
 }

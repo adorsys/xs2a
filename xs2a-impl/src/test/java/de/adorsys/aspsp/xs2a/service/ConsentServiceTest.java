@@ -67,7 +67,7 @@ public class ConsentServiceTest {
     private final Currency CURRENCY = Currency.getInstance("EUR");
     private final Currency CURRENCY_2 = Currency.getInstance("USD");
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     @InjectMocks
     private ConsentService consentService;
