@@ -25,8 +25,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.*;
 
 @Value
-public class AccountHolder {
-    private final Map<String, Set<AccountAccess>> accountAccesses = new HashMap<>();
+public class AccountAccessHolder {
+    private final Set<AccountAccess> accountAccesses = new HashSet<>();
 
     public void fillAccess(List<AccountInfo> info, TypeAccess typeAccess) {
         if (CollectionUtils.isNotEmpty(info)) {
@@ -43,10 +43,9 @@ public class AccountHolder {
     }
 
     private void addAccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
-        accountAccesses.putIfAbsent(iban, new HashSet<>());
-        accountAccesses.get(iban).add(new AccountAccess(currency, typeAccess));
+        accountAccesses.add(new AccountAccess(iban, currency, typeAccess));
         if (EnumSet.of(TypeAccess.BALANCE, TypeAccess.TRANSACTION).contains(typeAccess)) {
-            accountAccesses.get(iban).add(new AccountAccess(currency, TypeAccess.ACCOUNT));
+            accountAccesses.add(new AccountAccess(iban, currency, TypeAccess.ACCOUNT));
         }
     }
 }

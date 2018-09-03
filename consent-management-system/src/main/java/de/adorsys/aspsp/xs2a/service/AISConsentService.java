@@ -45,7 +45,6 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
-import de.adorsys.aspsp.xs2a.domain.AisAccount;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAuthorization;
@@ -54,6 +53,18 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentAuthorizationRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
+import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 
 @Service
 @RequiredArgsConstructor
@@ -76,12 +87,12 @@ public class AISConsentService {
         consent.setExternalId(UUID.randomUUID().toString());
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
-            ? Optional.ofNullable(saved.getExternalId())
-            : Optional.empty();
+                   ? Optional.ofNullable(saved.getExternalId())
+                   : Optional.empty();
     }
 
-    private List<AisAccount> readAccounts(AisAccountAccessInfo access) {
-        AccountHolder holder = new AccountHolder();
+    private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
+        AccountAccessHolder holder = new AccountAccessHolder();
         holder.fillAccess(access.getAccounts(), ACCOUNT);
         holder.fillAccess(access.getBalances(), BALANCE);
         holder.fillAccess(access.getTransactions(), TRANSACTION);
@@ -90,9 +101,9 @@ public class AISConsentService {
 
     private List<AisAccount> buildAccounts(Map<String, Set<AccountAccess>> accountAccesses) {
         return accountAccesses
-            .entrySet().stream()
-            .map(e -> new AisAccount(e.getKey(), e.getValue()))
-            .collect(Collectors.toList());
+                   .entrySet().stream()
+                   .map(e -> new AisAccount(e.getKey(), e.getValue()))
+                   .collect(Collectors.toList());
     }
 
     /**
@@ -103,8 +114,8 @@ public class AISConsentService {
      */
     public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
         return getAisConsentById(consentId)
-            .map(this::checkAndUpdateOnExpiration)
-            .map(AisConsent::getConsentStatus);
+                   .map(this::checkAndUpdateOnExpiration)
+                   .map(AisConsent::getConsentStatus);
     }
 
     /**
@@ -116,8 +127,8 @@ public class AISConsentService {
      */
     public Optional<Boolean> updateConsentStatusById(String consentId, CmsConsentStatus status) {
         return getActualAisConsent(consentId)
-            .map(con -> setStatusAndSaveConsent(con, status))
-            .map(con -> con.getConsentStatus() == status);
+                   .map(con -> setStatusAndSaveConsent(con, status))
+                   .map(con -> con.getConsentStatus() == status);
     }
 
     /**
@@ -128,8 +139,8 @@ public class AISConsentService {
      */
     public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
         return getAisConsentById(consentId)
-            .map(this::checkAndUpdateOnExpiration)
-            .map(consentMapper::mapToAisAccountConsent);
+                   .map(this::checkAndUpdateOnExpiration)
+                   .map(consentMapper::mapToAisAccountConsent);
     }
 
     /**
@@ -139,8 +150,10 @@ public class AISConsentService {
      */
     @Transactional
     public void checkConsentAndSaveActionLog(ConsentActionRequest request) {
-        Optional<AisConsent> consent = getAisConsentById(request.getConsentId());
-        checkAndUpdateConsentParameter(consent);
+        AisConsent consent = getAisConsentById(request.getConsentId())
+                                 .orElse(null);
+        checkAndUpdateOnExpiration(consent);
+        updateAisConsentCounter(consent);
         logConsentAction(request.getConsentId(), resolveConsentActionStatus(request, consent), request.getTppId());
     }
 
@@ -154,7 +167,7 @@ public class AISConsentService {
     @Transactional
     public Optional<String> updateConsent(CreateAisConsentRequest request, String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
-            .map(consent -> updateAisConsent(consent, request, consentId));
+                   .map(consent -> updateAisConsent(consent, request, consentId));
     }
 
     private String updateAisConsent(AisConsent consent, CreateAisConsentRequest request, String consentId) {
@@ -168,8 +181,8 @@ public class AISConsentService {
 
         AisConsent saved = aisConsentRepository.save(consent);
         return saved.getId() != null
-            ? saved.getExternalId()
-            : null;
+                   ? saved.getExternalId()
+                   : null;
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
@@ -183,7 +196,7 @@ public class AISConsentService {
         consent.setExpireDate(request.getValidUntil());
         consent.setPsuId(request.getPsuId());
         consent.setTppId(request.getTppId());
-        consent.addAccounts(readAccounts(request.getAccess()));
+        consent.addAccountAccess(readAccountAccess(request.getAccess()));
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
@@ -192,22 +205,14 @@ public class AISConsentService {
         return consent;
     }
 
-    private void checkAndUpdateConsentParameter(Optional<AisConsent> consent) {
-        if (consent.isPresent()) {
-            AisConsent aisConsent = consent.get();
-            checkAndUpdateOnExpiration(aisConsent);
-            updateAisConsentCounter(aisConsent);
-        }
-    }
-
-    private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, Optional<AisConsent> consent) {
-        return consent.isPresent()
-            ? request.getActionStatus()
-            : ActionStatus.BAD_PAYLOAD;
+    private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, AisConsent consent) {
+        return consent == null
+                   ? ActionStatus.BAD_PAYLOAD
+                   : request.getActionStatus();
     }
 
     private void updateAisConsentCounter(AisConsent consent) {
-        if (consent.hasUsagesAvailable()) {
+        if (consent != null && consent.hasUsagesAvailable()) {
             int usageCounter = consent.getUsageCounter();
             int newUsageCounter = --usageCounter;
             consent.setUsageCounter(newUsageCounter);
@@ -227,16 +232,16 @@ public class AISConsentService {
 
     private Optional<AisConsent> getActualAisConsent(String consentId) {
         return Optional.ofNullable(consentId)
-            .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+                   .flatMap(c -> aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
     }
 
     private Optional<AisConsent> getAisConsentById(String consentId) {
         return Optional.ofNullable(consentId)
-            .flatMap(aisConsentRepository::findByExternalId);
+                   .flatMap(aisConsentRepository::findByExternalId);
     }
 
     private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (consent.isExpiredByDate() && consent.isStatusNotExpired()) {
+        if (consent != null && consent.isExpiredByDate() && consent.isStatusNotExpired()) {
             consent.setConsentStatus(EXPIRED);
             consent.setExpireDate(LocalDate.now());
             consent.setLastActionDate(LocalDate.now());
@@ -249,6 +254,16 @@ public class AISConsentService {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
+    }
+
+    @Transactional
+    public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
+        return getActualAisConsent(consentId)
+                   .map(consent -> {
+                       consent.addAccountAccess(readAccountAccess(request.getAccess()));
+                       return aisConsentRepository.save(consent)
+                                  .getExternalId();
+                   });
     }
 
     /**
@@ -287,6 +302,6 @@ public class AISConsentService {
             	conAuth.setAuthenticationMethodId(consentAuthorization.getAuthenticationMethodId());
             	conAuth.setScaAuthenticationData(consentAuthorization.getScaAuthenticationData());
                 return aisConsentAuthorizationRepository.save(conAuth).getExternalId() != null;
-            });        
+            });
     }
 }

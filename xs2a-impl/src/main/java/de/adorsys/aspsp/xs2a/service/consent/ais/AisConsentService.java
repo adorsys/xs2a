@@ -59,7 +59,7 @@ public class AisConsentService {
      * @return String representation of identifier of stored consent
      */
     public String createConsent(CreateConsentReq request, String psuId, String tppId) {
-        AspspConsentData aspspConsentData = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+        AspspConsentData aspspConsentData = new AspspConsentData();
 
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), consentMapper.mapToCreateAisConsentRequest(request, psuId, tppId, aspspConsentData), CreateAisConsentResponse.class).getBody();
 

@@ -8,11 +8,6 @@
         <createSequence sequenceName="ais_consent_id_seq"/>
     </changeSet>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-2">
-        <comment>Create sequence for ais account id.</comment>
-        <createSequence sequenceName="ais_account_id_seq"/>
-    </changeSet>
-
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-3">
         <comment>Create sequence for ais consent action id.</comment>
         <createSequence sequenceName="ais_consent_action_id_seq"/>
@@ -98,30 +93,10 @@
     </changeSet>
 
     <changeSet author="pru@adorsys.com.ua" id="2018-07-24-6">
-        <comment>Create table ais_account.</comment>
-
-        <createTable tableName="ais_account">
-            <column name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="iban" type="VARCHAR(34)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="consent_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="ais_account"
-                                 constraintName="consent_id_fkey" deferrable="false" initiallyDeferred="false"
-                                 referencedColumnNames="id" referencedTableName="ais_consent"/>
-    </changeSet>
-
-    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-7">
         <comment>Create table ais_account_access.</comment>
 
         <createTable tableName="ais_account_access">
-            <column name="account_id" type="BIGINT">
+            <column name="consent_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="currency" type="VARCHAR(3)">
@@ -130,17 +105,19 @@
             <column name="type_access" type="VARCHAR(15)">
                 <constraints nullable="false"/>
             </column>
+            <column name="iban" type="VARCHAR(34)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
-        <addPrimaryKey columnNames="account_id, currency, type_access" constraintName="ais_account_access_pkey"
-                       tableName="ais_account_access"/>
+        <addPrimaryKey columnNames="consent_id, currency, type_access, iban" constraintName="ais_account_access_pkey" tableName="ais_account_access"/>
 
-        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="ais_account_access"
-                                 constraintName="account_id_fkey" deferrable="false" initiallyDeferred="false"
-                                 referencedColumnNames="id" referencedTableName="ais_account"/>
+        <addForeignKeyConstraint baseColumnNames="consent_id" baseTableName="ais_account_access"
+                                 constraintName="consent_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 referencedColumnNames="id" referencedTableName="ais_consent"/>
     </changeSet>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-8">
+    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-7">
         <comment>Create table ais_consent_action.</comment>
 
         <createTable tableName="ais_consent_action">
