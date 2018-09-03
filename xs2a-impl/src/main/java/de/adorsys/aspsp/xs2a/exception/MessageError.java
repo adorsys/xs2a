@@ -19,12 +19,16 @@ package de.adorsys.aspsp.xs2a.exception;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -51,6 +55,10 @@ public class MessageError {
     public MessageError(TransactionStatus status, List<TppMessageInformation> tppMessages) {
         this.transactionStatus = status;
         this.tppMessages.addAll(tppMessages);
+    }
+
+    public MessageError(MessageErrorCode errorCode) {
+        this(TransactionStatus.RJCT, Collections.singletonList(new TppMessageInformation(MessageCategory.ERROR, errorCode)));
     }
 
     public void addTppMessage(TppMessageInformation tppMessage) {

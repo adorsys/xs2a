@@ -31,6 +31,10 @@ import java.util.Currency;
 @Embeddable
 @ApiModel(description = "Account access", value = "AccountAccess")
 public class AccountAccess {
+    @Column(name = "iban", nullable = false, length = 34)
+    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", required = true, example = "DE2310010010123456789")
+    private String iban;
+
     @Column(name = "currency", length = 3)
     @ApiModelProperty(value = "Currency Type", required = true, example = "EUR")
     private Currency currency;
@@ -40,9 +44,11 @@ public class AccountAccess {
     @ApiModelProperty(value = "Types of given accesses: account, balance, transaction, payment", required = true, example = "ACCOUNT")
     private TypeAccess typeAccess;
 
-    public AccountAccess(){}
+    public AccountAccess() {
+    }
 
-    public AccountAccess(Currency currency, TypeAccess typeAccess){
+    public AccountAccess(String iban, Currency currency, TypeAccess typeAccess) {
+        this.iban = iban;
         this.currency = currency;
         this.typeAccess = typeAccess;
     }
