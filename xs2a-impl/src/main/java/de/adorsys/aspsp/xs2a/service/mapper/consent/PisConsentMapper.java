@@ -16,18 +16,24 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import com.google.common.collect.Lists;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTppInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -35,9 +41,11 @@ public class PisConsentMapper {
 
     private final PaymentMapper paymentMapper;
 
-    public SpiPisConsentRequest mapToSpiPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData) {
+    public SpiPisConsentRequest mapToSpiPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData, String paymentId) {
         SpiPisConsentRequest request = new SpiPisConsentRequest();
-        request.setPayments(Arrays.asList(paymentMapper.mapToSpiSinglePayment(createPisConsentData.getSinglePayment())));
+        SpiSinglePayment spiSinglePayment = paymentMapper.mapToSpiSinglePayment(createPisConsentData.getSinglePayment());
+        spiSinglePayment.setPaymentId(paymentId);
+        request.setPayments(Arrays.asList(spiSinglePayment));
         request.setPaymentProduct(createPisConsentData.getPaymentProduct());
         request.setPaymentType(SpiPaymentType.SINGLE);
         request.setTppInfo(mapToSpiTppInfo(createPisConsentData.getTppInfo()));
@@ -48,7 +56,7 @@ public class PisConsentMapper {
 
     public SpiPisConsentRequest mapToSpiPisConsentRequestForBulkPayment(CreatePisConsentData createPisConsentData) {
         SpiPisConsentRequest request = new SpiPisConsentRequest();
-        request.setPayments(paymentMapper.mapToSpiSinglePaymentList(Lists.newArrayList(createPisConsentData.getPaymentIdentifierMap().keySet())));
+        request.setPayments(mapToSpiSinglePaymentList(createPisConsentData.getPaymentIdentifierMap()));
         request.setPaymentProduct(createPisConsentData.getPaymentProduct());
         request.setPaymentType(SpiPaymentType.BULK);
         request.setTppInfo(mapToSpiTppInfo(createPisConsentData.getTppInfo()));
@@ -57,9 +65,21 @@ public class PisConsentMapper {
         return request;
     }
 
-    public SpiPisConsentRequest mapToSpiPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData) {
+    private List<SpiSinglePayment> mapToSpiSinglePaymentList(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap) {
+        return paymentIdentifierMap.entrySet().stream()
+                   .map(etr -> {
+                       SpiSinglePayment spiSinglePayment = paymentMapper.mapToSpiSinglePayment(etr.getKey());
+                       spiSinglePayment.setPaymentId(etr.getValue().getPaymentId());
+                       return spiSinglePayment;
+                   })
+                   .collect(Collectors.toList());
+    }
+
+    public SpiPisConsentRequest mapToSpiPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData, String paymentId) {
         SpiPisConsentRequest request = new SpiPisConsentRequest();
-        request.setPayments(Arrays.asList(paymentMapper.mapToSpiPeriodicPayment(createPisConsentData.getPeriodicPayment())));
+        SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(createPisConsentData.getPeriodicPayment());
+        spiPeriodicPayment.setPaymentId(paymentId);
+        request.setPayments(Arrays.asList(spiPeriodicPayment));
         request.setPaymentProduct(createPisConsentData.getPaymentProduct());
         request.setPaymentType(SpiPaymentType.PERIODIC);
         request.setTppInfo(mapToSpiTppInfo(createPisConsentData.getTppInfo()));

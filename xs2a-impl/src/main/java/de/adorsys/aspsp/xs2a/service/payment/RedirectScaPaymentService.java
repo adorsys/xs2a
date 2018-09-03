@@ -66,7 +66,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
-        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForPeriodicPayment(createPisConsentData);
+        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForPeriodicPayment(createPisConsentData, response.getPaymentId());
         String pisConsentId = consentSpi.createPisConsentForPeriodicPaymentAndGetId(request);
         return StringUtils.isBlank(pisConsentId)
                    ? null
@@ -144,12 +144,12 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     private Optional<PaymentInitialisationResponse> createSinglePaymentAndGetResponse(SinglePayment singlePayment, AspspConsentData aspspConsentData) {
         SpiSinglePayment spiSinglePayment = paymentMapper.mapToSpiSinglePayment(singlePayment);
-        SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayment, aspspConsentData).getPayload();
-        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
+        SpiPaymentInitialisationResponse spiSinglePaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayment, aspspConsentData).getPayload();
+        return paymentMapper.mapToPaymentInitializationResponse(spiSinglePaymentResp);
     }
 
     private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
-        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForSinglePayment(createPisConsentData);
+        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForSinglePayment(createPisConsentData, response.getPaymentId());
         String pisConsentId = consentSpi.createPisConsentForSinglePaymentAndGetId(request);
 
         return StringUtils.isBlank(pisConsentId)
