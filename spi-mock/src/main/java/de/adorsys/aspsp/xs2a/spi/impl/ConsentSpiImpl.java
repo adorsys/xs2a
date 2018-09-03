@@ -23,21 +23,26 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.config.consent.SpiAisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.config.consent.SpiPisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
 import de.adorsys.aspsp.xs2a.spi.impl.mapper.SpiAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.impl.mapper.SpiPisConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -49,12 +54,19 @@ public class ConsentSpiImpl implements ConsentSpi {
     private final SpiPisConsentRemoteUrls remotePisConsentUrls;
     private final SpiAisConsentMapper aisConsentMapper;
     private final SpiPisConsentMapper pisConsentMapper;
+    private final AccountSpi accountSpi;
+    private final AccountMapper accountMapper;
+
 
     /**
      * For detailed description see {@link ConsentSpi#createConsent(SpiCreateAisConsentRequest)}
      */
     @Override
     public String createConsent(SpiCreateAisConsentRequest spiCreateAisConsentRequest) {
+        if (isDirectAccessRequest(spiCreateAisConsentRequest) && isInvalidSpiAccountAccessRequest(spiCreateAisConsentRequest.getAccess())) {
+            return null;
+        }
+
         CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCmsCreateAisConsentRequest(spiCreateAisConsentRequest);
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), createAisConsentRequest, CreateAisConsentResponse.class).getBody();
 
@@ -134,5 +146,40 @@ public class ConsentSpiImpl implements ConsentSpi {
         return Optional.ofNullable(createPisConsentResponse)
                    .map(CreatePisConsentResponse::getConsentId)
                    .orElse(null);
+    }
+
+
+    private boolean isDirectAccessRequest(SpiCreateAisConsentRequest spiCreateAisConsentRequest) {
+        SpiAccountAccess spiAccountAccess = spiCreateAisConsentRequest.getAccess();
+        return CollectionUtils.isNotEmpty(spiAccountAccess.getBalances())
+                   || CollectionUtils.isNotEmpty(spiAccountAccess.getAccounts())
+                   || CollectionUtils.isNotEmpty(spiAccountAccess.getTransactions());
+    }
+
+    private boolean isInvalidSpiAccountAccessRequest(SpiAccountAccess requestedAccess) {
+        Set<String> ibansFromAccess = getIbansFromAccess(requestedAccess);
+        List<SpiAccountDetails> accountDetailsList = accountSpi.readAccountDetailsByIbans(
+            ibansFromAccess,
+            new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload();
+
+        return CollectionUtils.isEmpty(accountDetailsList);
+    }
+
+    private Set<String> getIbansFromAccess(SpiAccountAccess access) {
+        return Stream.of(
+            getIbansFromAccountReference(access.getAccounts()),
+            getIbansFromAccountReference(access.getBalances()),
+            getIbansFromAccountReference(access.getTransactions())
+        )
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toSet());
+    }
+
+    private Set<String> getIbansFromAccountReference(List<SpiAccountReference> references) {
+        return Optional.ofNullable(references)
+                   .map(list -> list.stream()
+                                    .map(SpiAccountReference::getIban)
+                                    .collect(Collectors.toSet()))
+                   .orElseGet(Collections::emptySet);
     }
 }
