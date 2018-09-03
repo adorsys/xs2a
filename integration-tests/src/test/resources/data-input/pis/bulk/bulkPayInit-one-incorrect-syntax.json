@@ -10,7 +10,7 @@
       "requestedExecutionDate": "yyyy-mm-dd",
       "debtorAccount": {
         "currency": "EUR",
-        "iban": "DE52500105173911841934"
+        "iban": "DE525001051739118419"
       },
       "payments": [
         {
@@ -59,14 +59,16 @@
     }
   },
   "response": {
-    "code": "201",
+    "code": "400",
     "header": {},
     "body": [
       {
-        "transactionStatus": "RCVD"
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
       },
       {
-        "transactionStatus": "RCVD"
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
       }
     ]
   }
