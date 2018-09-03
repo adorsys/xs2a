@@ -89,7 +89,7 @@ public class SinglePaymentSuccessfulSteps {
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
 
-        assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus()));
+        assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
         assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
     }
 

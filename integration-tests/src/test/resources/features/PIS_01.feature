@@ -5,14 +5,14 @@ Feature: Payment Initiation Service
     # Single Payment                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Successful payment initiation request for single payments (redirect)
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the single payment initiating request
-#        Then a successful response code and the appropriate single payment response data
-#        And a redirect URL is delivered to the PSU
-#        Examples:
-#            | payment-service | payment-product       | single-payment                |
-#            | payments        | sepa-credit-transfers | singlePayInit-successful.json |
+    Scenario Outline: Successful payment initiation request for single payments (redirect)
+        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the single payment initiating request
+        Then a successful response code and the appropriate single payment response data
+        And a redirect URL is delivered to the PSU
+        Examples:
+            | payment-service | payment-product       | single-payment                |
+            | payments        | sepa-credit-transfers | singlePayInit-successful.json |
 #
 #    Scenario Outline: Failed payment initiation request for single payments (redirect)
 #        Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
