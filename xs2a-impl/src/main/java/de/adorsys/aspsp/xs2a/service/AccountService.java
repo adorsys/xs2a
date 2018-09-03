@@ -286,7 +286,6 @@ public class AccountService {
                          .collect(Collectors.toList());
     }
 
-
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
                                                      BookingStatus bookingStatus) {
         return StringUtils.isNotBlank(transactionId)
@@ -327,7 +326,7 @@ public class AccountService {
                    : ActionStatus.SUCCESS;
     }
 
-    public AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+    private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
         return new AccountReport(
             bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
                 ? report.getBooked() : new Transactions[]{},
