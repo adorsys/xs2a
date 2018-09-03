@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.config.consent;
+package de.adorsys.aspsp.xs2a.spi.config.rest.consent;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.exception.RestException;

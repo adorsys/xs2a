@@ -24,8 +24,8 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.spi.config.consent.SpiAisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.config.consent.SpiPisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiAisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiPisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
@@ -162,7 +162,16 @@ public class ConsentSpiImpl implements ConsentSpi {
             ibansFromAccess,
             new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload();
 
-        return CollectionUtils.isEmpty(accountDetailsList);
+        return ibansFromAccess.stream()
+                   .map(acc -> filter(acc, accountDetailsList))
+                   .anyMatch(a -> !a);
+    }
+
+    private boolean filter(String iban, List<SpiAccountDetails> accountDetailsList) {
+        return accountDetailsList.stream()
+                   .map(acc -> acc.getIban().equals(iban))
+                   .findAny()
+                   .orElse(false);
     }
 
     private Set<String> getIbansFromAccess(SpiAccountAccess access) {
