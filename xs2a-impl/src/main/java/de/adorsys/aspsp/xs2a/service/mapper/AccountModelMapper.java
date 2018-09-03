@@ -141,6 +141,66 @@ public final class AccountModelMapper {
         return target;
     }
 
+    public static <T> T mapToAccountReference12(AccountReference reference) {
+        T accountReference = null;
+
+        if (StringUtils.isNotBlank(reference.getIban())) {
+            accountReference = (T) new AccountReferenceIban().iban(reference.getIban());
+            ((AccountReferenceIban) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getBban())) {
+            accountReference = (T) new AccountReferenceBban().bban(reference.getBban());
+            ((AccountReferenceBban) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getPan())) {
+            accountReference = (T) new AccountReferencePan().pan(reference.getPan());
+            ((AccountReferencePan) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getMaskedPan())) {
+            accountReference = (T) new AccountReferenceMaskedPan().maskedPan(reference.getMaskedPan());
+            ((AccountReferenceMaskedPan) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        } else if (StringUtils.isNotBlank(reference.getMsisdn())) {
+            accountReference = (T) new AccountReferenceMsisdn().msisdn(reference.getMsisdn());
+            ((AccountReferenceMsisdn) accountReference).setCurrency(reference.getCurrency().getCurrencyCode());
+        }
+        return accountReference;
+    }
+
+    public static Address mapToAddress12(de.adorsys.aspsp.xs2a.domain.address.Address address) {
+        Address targetAddress = new Address().street(address.getStreet());
+        targetAddress.setStreet(address.getStreet());
+        targetAddress.setBuildingNumber(address.getBuildingNumber());
+        targetAddress.setCity(address.getCity());
+        targetAddress.setPostalCode(address.getPostalCode());
+        targetAddress.setCountry(address.getCountry().getCode());
+        return targetAddress;
+    }
+
+    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
+        return Optional.ofNullable(address)
+                   .map(a -> {
+                       de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
+                       targetAddress.setStreet(a.getStreet());
+                       targetAddress.setBuildingNumber(a.getBuildingNumber());
+                       targetAddress.setCity(a.getCity());
+                       targetAddress.setPostalCode(a.getPostalCode());
+                       de.adorsys.aspsp.xs2a.domain.address.CountryCode code = new de.adorsys.aspsp.xs2a.domain.address.CountryCode();
+                       code.setCode(a.getCountry());
+                       targetAddress.setCountry(code);
+                       return targetAddress;
+                   })
+                   .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
+    }
+
+    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
+        return Optional.ofNullable(amount)
+                   .map(a -> {
+                       de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
+                       targetAmount.setContent(a.getAmount());
+                       targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
+                       return targetAmount;
+                   })
+                   .orElse(new de.adorsys.aspsp.xs2a.domain.Amount());
+
+    }
+
     private static Object createAccountObject(AccountReference accountReference) {
         return Optional.ofNullable(accountReference)
                    .map(account -> {

@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 @FeatureFileSteps
-public class GlobalSteps {
+public class GlobalSuccessfulSteps {
     @Autowired
     private Context context;
 

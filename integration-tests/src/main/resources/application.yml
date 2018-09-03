@@ -28,7 +28,7 @@ spring:
     profiles: dev
 
 xs2a:
-  baseUrl: http://localhost:8080/api/v1
+  baseUrl: http://localhost:8080/v1
   config:
     readTimeoutInMs: 10000
     connectionTimeoutInMs: 10000

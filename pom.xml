@@ -41,7 +41,7 @@
     <packaging>pom</packaging>
 
     <name>xs2a</name>
-    <description>OpenSource PMD2 XS2A API implementation</description>
+    <description>OpenSource PSD2 XS2A API implementation</description>
 
     <url>https://github.com/adorsys/xs2a</url>
 

@@ -11,7 +11,7 @@
     "code": "403",
     "header": {},
     "body": {
-      "transactionStatus": "RJCT",
+      "transactionStatus": "",
       "tppMessages": [
         {
           "category": "ERROR",
