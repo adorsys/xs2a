@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2018-2018 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +19,7 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -55,6 +57,18 @@ public class SinglePaymentSuccessfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
+    @Before("Load test data before run scenario")
+    public void loadTestDataIntoDb() {
+        HttpEntity httpEntity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        restTemplate.exchange(
+            context.getMockUrl() + "/integration-tests/refresh-testing-data",
+            HttpMethod.GET,
+            httpEntity,
+            String.class);
+    }
+
     @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
@@ -70,7 +84,7 @@ public class SinglePaymentSuccessfulSteps {
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(
