@@ -83,12 +83,11 @@ public class PeriodicPaymentErrorfulSteps {
         }
 
         try {
-            restTemplate.exchange(
+             restTemplate.exchange(
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
-                new ParameterizedTypeReference<TppMessages>() {
-                });
+                TppMessages.class);
 
         } catch (HttpClientErrorException httpClientErrorException) {
             handleRequestError(httpClientErrorException);
