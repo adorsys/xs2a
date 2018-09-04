@@ -75,7 +75,7 @@ public class PeriodicPaymentSuccessfulSteps {
 
     @When("^PSU sends the recurring payment initiating request$")
     public void sendSuccessfulPeriodicPaymentInitiatingRequest() {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(

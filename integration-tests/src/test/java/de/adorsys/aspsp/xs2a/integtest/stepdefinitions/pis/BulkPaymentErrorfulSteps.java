@@ -63,7 +63,7 @@ public class BulkPaymentErrorfulSteps {
 
     @When("^PSU sends the bulk payment initiating request with error$")
     public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {

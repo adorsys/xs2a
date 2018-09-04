@@ -9,7 +9,7 @@ Feature: Payment Initiation Service
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the single payment initiating request
         Then a successful response code and the appropriate single payment response data
-        And a redirect URL is delivered to the PSU
+#        And a redirect URL is delivered to the PSU
         Examples:
             | payment-service | payment-product       | single-payment                |
             | payments        | sepa-credit-transfers | singlePayInit-successful.json |
@@ -38,7 +38,7 @@ Feature: Payment Initiation Service
         Given PSU wants to initiate multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the bulk payment initiating request
         Then a successful response code and the appropriate bulk payment response data
-        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
+#        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
         Examples:
             | payment-service  | payment-product       | bulk-payment                |
             | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
@@ -68,7 +68,7 @@ Feature: Payment Initiation Service
         Given PSU wants to initiate a recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the recurring payment initiating request
         Then a successful response code and the appropriate recurring payment response data
-        And a redirect URL is delivered to the PSU
+#        And a redirect URL is delivered to the PSU
         Examples:
            | payment-service   | payment-product       | recurring-payment          |
            | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |

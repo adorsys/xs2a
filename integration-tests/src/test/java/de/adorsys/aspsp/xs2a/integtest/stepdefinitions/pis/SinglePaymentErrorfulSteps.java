@@ -67,7 +67,7 @@ public class SinglePaymentErrorfulSteps {
 
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
-        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {

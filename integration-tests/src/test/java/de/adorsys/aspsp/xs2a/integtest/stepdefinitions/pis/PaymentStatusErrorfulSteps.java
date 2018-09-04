@@ -69,7 +69,7 @@ public class PaymentStatusErrorfulSteps {
 
     @When("^PSU requests the status of the payment without an existing payment-id$")
     public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
-        HttpEntity<HashMap> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(

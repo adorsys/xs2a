@@ -70,7 +70,7 @@ public class BulkPaymentSuccessfulSteps {
 
     @When("^PSU sends the bulk payment initiating request$")
     public void sendBulkPaymentInitiatingRequest() {
-        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(

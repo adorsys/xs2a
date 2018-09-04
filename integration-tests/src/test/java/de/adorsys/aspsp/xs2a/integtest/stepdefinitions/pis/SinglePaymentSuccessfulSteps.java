@@ -69,7 +69,7 @@ public class SinglePaymentSuccessfulSteps {
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-        HttpEntity<PaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(
