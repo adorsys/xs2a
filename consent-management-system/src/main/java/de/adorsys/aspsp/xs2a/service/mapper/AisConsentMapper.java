@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ConsentMapper {
+public class AisConsentMapper {
 
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
         return new AisAccountConsent(

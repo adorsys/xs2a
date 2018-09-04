@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
@@ -79,7 +79,7 @@ public class ConsentServiceTest {
     @Mock
     AccountMapper accountMapper;
     @Mock
-    AisConsentMapper aisConsentMapper;
+    Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     AspspProfileService aspspProfileService;
 

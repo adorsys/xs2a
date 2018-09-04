@@ -22,7 +22,7 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +47,11 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentServiceTest {
     @InjectMocks
-    private AISConsentService aisConsentService;
+    private AisConsentService aisConsentService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    private ConsentMapper consentMapper;
+    private AisConsentMapper consentMapper;
     @Mock
     private AisConsentRepository aisConsentRepository;
 

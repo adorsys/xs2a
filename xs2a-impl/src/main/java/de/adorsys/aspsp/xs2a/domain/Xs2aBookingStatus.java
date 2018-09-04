@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModelProperty;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum BookingStatus {
+public enum Xs2aBookingStatus {
 
     PENDING("pending"),
     BOOKED("booked"),
@@ -32,7 +32,7 @@ public enum BookingStatus {
     private String description;
 
     @JsonCreator
-    BookingStatus(String description) {
+    Xs2aBookingStatus(String description) {
         this.description = description;
     }
 
@@ -41,8 +41,8 @@ public enum BookingStatus {
         return description;
     }
 
-    public static BookingStatus forValue(String description) {
-        for (BookingStatus status : values()) {
+    public static Xs2aBookingStatus forValue(String description) {
+        for (Xs2aBookingStatus status : values()) {
             if (status.description.equals(description)) {
                 return status;
             }

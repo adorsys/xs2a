@@ -28,7 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
 import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,10 +45,10 @@ import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 
 @Service
 @RequiredArgsConstructor
-public class AISConsentService {
+public class AisConsentService {
     private final AisConsentRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
-    private final ConsentMapper consentMapper;
+    private final AisConsentMapper consentMapper;
     private final AspspProfileService profileService;
 
     /**

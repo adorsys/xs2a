@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -56,7 +56,7 @@ public class AccountService {
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final ConsentSpi consentSpi;
-    private final AisConsentMapper consentMapper;
+    private final Xs2aAisConsentMapper consentMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
@@ -168,7 +168,7 @@ public class AccountService {
      */
     public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
                                                           LocalDate dateTo, String transactionId, boolean psuInvolved,
-                                                          BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
+                                                          Xs2aBookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<AccountReport>builder()
@@ -206,7 +206,7 @@ public class AccountService {
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
     public ResponseObject<AccountReport> getAccountReportByPeriod(String consentId, String accountId, LocalDate dateFrom,
-                                                                  LocalDate dateTo, BookingStatus bookingStatus, boolean withBalance) {
+                                                                  LocalDate dateTo, Xs2aBookingStatus bookingStatus, boolean withBalance) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<AccountReport>builder()
@@ -287,7 +287,7 @@ public class AccountService {
     }
 
     private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
-                                                     BookingStatus bookingStatus) {
+                                                     Xs2aBookingStatus bookingStatus) {
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
@@ -326,11 +326,11 @@ public class AccountService {
                    : ActionStatus.SUCCESS;
     }
 
-    private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+    private AccountReport filterByBookingStatus(AccountReport report, Xs2aBookingStatus bookingStatus) {
         return new AccountReport(
-            EnumSet.of(BookingStatus.BOOKED, BookingStatus.BOTH).contains(bookingStatus)
+            EnumSet.of(Xs2aBookingStatus.BOOKED, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getBooked() : new Transactions[]{},
-            EnumSet.of(BookingStatus.PENDING, BookingStatus.BOTH).contains(bookingStatus)
+            EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getPending() : new Transactions[]{});
     }
 }
