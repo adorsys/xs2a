@@ -64,6 +64,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         configuration.setAllowedOrigins(singletonList("*"));
         configuration.setAllowedHeaders(asList( "Origin", "Content-Type"));
         configuration.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
