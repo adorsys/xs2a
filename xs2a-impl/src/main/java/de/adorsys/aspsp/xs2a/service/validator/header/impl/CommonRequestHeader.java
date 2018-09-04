@@ -16,16 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.validator.header.impl;
 
-import java.util.UUID;
-
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Data
 @ApiModel(description = "Common request header", value = "CommonRequestHeader")

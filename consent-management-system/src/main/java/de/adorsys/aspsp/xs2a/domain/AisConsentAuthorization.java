@@ -16,17 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
 @Entity(name = "ais_consent_authorization")
-@ApiModel(description = "Ais consent authorization entity", value = "AisConsentAuthorization")
 public class AisConsentAuthorization {
     @Id
     @Column(name = "authorization_id")
@@ -35,33 +31,25 @@ public class AisConsentAuthorization {
     private Long id;
 
     @Column(name = "external_id", nullable = false)
-    @ApiModelProperty(value = "An external exposed identification of the created consent authorization", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @Column(name = "psu_id")
-    @ApiModelProperty(value = "Psu id", required = true, example = "PSU_001")
     private String psuId;
 
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "consent_id")
     private AisConsent consent;
 
     @Column(name = "sca_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")
     private CmsScaStatus scaStatus;
 
     @Column(name = "authentication_method_id")
-    @ApiModelProperty(value = "An identification provided by the ASPSP for the later identification of the authentication method selection.")
     private String authenticationMethodId;
 
     @Column(name = "sca_authentication_data")
-    @ApiModelProperty(value = "SCA authentication data, depending on the chosen authentication method. If the data is binary, then it is base64 encoded.")
     private String scaAuthenticationData;
 
     @Column(name = "password")
-    @ApiModelProperty(value = "password")
     private String password;
-
 }

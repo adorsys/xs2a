@@ -16,9 +16,36 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 public enum ConsentAuthorizationResponseLinkType {
-    START_AUTHORISATION_WITH_PSU_IDENTFICATION,
-    START_AUTHORISATION_WITH_PSU_AUTHENTICATION,
-    START_AUTHORISATION_WITH_AUTHENTCIATION_METHOD_SELECTION,
-    START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION
+    START_AUTHORISATION_WITH_PSU_IDENTIFICATION("startAuthorisationWithPsuIdentification"),
+    START_AUTHORISATION_WITH_PSU_AUTHENTICATION("startAuthorisationWithPsuAuthentication"),
+    START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION("startAuthorisationWithAuthentication"),
+    START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION("startAuthorisationWithTransactionAuthorisation");
+
+    private static final Map<String, ConsentAuthorizationResponseLinkType> container = new HashMap<>();
+
+    private String value;
+
+    ConsentAuthorizationResponseLinkType(String value) {
+        this.value = value;
+    }
+
+    static {
+        for (ConsentAuthorizationResponseLinkType type : values()) {
+            container.put(type.getValue(), type);
+        }
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public static Optional<ConsentAuthorizationResponseLinkType> getByValue(String value) {
+        return Optional.ofNullable(container.get(value));
+    }
 }
+

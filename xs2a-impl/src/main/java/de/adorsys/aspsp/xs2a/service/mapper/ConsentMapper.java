@@ -92,9 +92,9 @@ public class ConsentMapper {
 
     public AisConsentAuthorizationRequest mapToAisConsentAuthorization(SpiScaStatus scaStatus) {
         return Optional.ofNullable(scaStatus)
-            .map(r -> {
+            .map(st -> {
                 AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
-                consentAuthorization.setScaStatus(CmsScaStatus.valueOf(scaStatus.name()));
+                consentAuthorization.setScaStatus(CmsScaStatus.valueOf(st.name()));
                 return consentAuthorization;
             })
             .orElse(null);

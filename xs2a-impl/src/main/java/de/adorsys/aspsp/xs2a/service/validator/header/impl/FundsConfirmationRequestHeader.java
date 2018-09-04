@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.validator.header.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import io.swagger.annotations.ApiModel;
 
 @ApiModel(description = "Funds confirmation request header", value = "FundsConfirmationRequestHeader")

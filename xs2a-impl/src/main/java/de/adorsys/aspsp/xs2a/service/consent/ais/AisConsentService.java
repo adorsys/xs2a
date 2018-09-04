@@ -125,13 +125,12 @@ public class AisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    public String createConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
+    public Optional<String> createConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
         CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
             consentMapper.mapToAisConsentAuthorization(scaStatus), CreateAisConsentAuthorizationResponse.class, consentId).getBody();
 
         return Optional.ofNullable(response)
-            .map(CreateAisConsentAuthorizationResponse::getAuthorizationId)
-            .orElse(null);
+            .map(CreateAisConsentAuthorizationResponse::getAuthorizationId);
     }
 
     /**

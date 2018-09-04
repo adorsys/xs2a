@@ -16,16 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.OAUTH;
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.REDIRECT;
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
-
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Validation;
-import javax.validation.Validator;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
+import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
+import de.adorsys.aspsp.xs2a.service.authorization.*;
+import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.service.mapper.ObjectMapperFactory;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.payment.*;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
+import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.MessageSource;
@@ -37,33 +43,14 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import java.util.Optional;
 
-import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
-import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
-import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
-import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.DecoupledAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.EmbeddedAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.OauthAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.RedirectAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.consent.pis.PisConsentService;
-import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
-import de.adorsys.aspsp.xs2a.service.mapper.ObjectMapperFactory;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.DecoupedScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.EmbeddedScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.OauthScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
-import de.adorsys.aspsp.xs2a.service.payment.RedirectScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
-import lombok.RequiredArgsConstructor;
+import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.OAUTH;
+import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.REDIRECT;
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
 @RequiredArgsConstructor
@@ -96,7 +83,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
-    	return ObjectMapperFactory.instance();
+        return ObjectMapperFactory.instance();
     }
 
     @Bean
@@ -139,7 +126,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             accessToken = keycloakInvokerService.obtainAccessToken();
         }
         return Optional.ofNullable(accessToken)
-            .orElseThrow(IllegalArgumentException::new);
+                   .orElseThrow(IllegalArgumentException::new);
     }
 
     private String obtainAccessTokenFromHeader(HttpServletRequest request) {
@@ -148,30 +135,30 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ScaPaymentService scaPaymentService(PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
-    	switch (aspspProfileService.readScaApproach()) {
-		case OAUTH:
-            return new OauthScaPaymentService(paymentMapper, paymentSpi);
-		case DECOUPLED:
-            return new DecoupedScaPaymentService();
-		case EMBEDDED:
-            return new EmbeddedScaPaymentService();
-		default:
-	        return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
-		}
+        switch (aspspProfileService.readScaApproach()) {
+            case OAUTH:
+                return new OauthScaPaymentService(paymentMapper, paymentSpi);
+            case DECOUPLED:
+                return new DecoupedScaPaymentService();
+            case EMBEDDED:
+                return new EmbeddedScaPaymentService();
+            default:
+                return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+        }
     }
 
     @Bean
-    public AisAuthorizationService authorizationService(AccountSpi accountSpi) {
-    	switch (aspspProfileService.readScaApproach()) {
-		case OAUTH:
-			return new OauthAisAuthorizationService();
-		case DECOUPLED:
-			return new DecoupledAisAuthorizationService();
-		case EMBEDDED:
-			return new EmbeddedAisAuthorizationService(accountSpi);
-		default:
-			return new RedirectAisAuthorizationService();
-		}
+    public AisAuthorizationService authorizationService() {
+        switch (aspspProfileService.readScaApproach()) {
+            case OAUTH:
+                return new OauthAisAuthorizationService();
+            case DECOUPLED:
+                return new DecoupledAisAuthorizationService();
+            case EMBEDDED:
+                return new EmbeddedAisAuthorizationService();
+            default:
+                return new RedirectAisAuthorizationService();
+        }
     }
 
     @Bean

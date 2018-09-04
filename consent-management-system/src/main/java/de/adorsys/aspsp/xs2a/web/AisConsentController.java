@@ -147,7 +147,7 @@ public class AisConsentController {
         @PathVariable("authorization-id") String authorizationId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
-        return aisConsentService.updateConsentAuthorization(authorizationId, consentAuthorization)
+        return aisConsentService.updateConsentAuthorization(authorizationId, consentId, consentAuthorization)
             .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

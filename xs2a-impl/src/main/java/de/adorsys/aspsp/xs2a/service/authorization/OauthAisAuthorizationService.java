@@ -22,10 +22,12 @@ import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class OauthAisAuthorizationService implements AisAuthorizationService {
     @Override
-    public CreateConsentAuthorizationResponse createConsentAuthorization(String psuId, String consentId) {
+    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
         return null;
     }
 

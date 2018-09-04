@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -169,15 +168,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     public ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(String psuId, String consentId) {
-        CreateConsentAuthorizationResponse response = authorizationService.createConsentAuthorization(psuId, consentId);
-        response.setConsentId(consentId);
-
-        String authorizationId = aisConsentService.createConsentAuthorization(consentId, SpiScaStatus.valueOf(response.getScaStatus().toString()));
-        return Optional.ofNullable(authorizationId)
-                   .map(s -> {
-                       response.setAuthorizationId(s);
-                       return ResponseObject.<CreateConsentAuthorizationResponse>builder().body(response).build();
-                   })
+        return authorizationService.createConsentAuthorization(psuId, consentId)
+                   .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
                    .orElseGet(() -> ResponseObject.<CreateConsentAuthorizationResponse>builder().fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400)).build());
     }
 

@@ -21,11 +21,9 @@ import lombok.Data;
 
 @Data
 public class CreateConsentAuthorizationResponse {
-
     private String consentId;
     private String authorizationId;
     private ScaStatus scaStatus;
     private ConsentAuthorizationResponseLinkType responseLinkType;
     private String psuMessage;
-
 }

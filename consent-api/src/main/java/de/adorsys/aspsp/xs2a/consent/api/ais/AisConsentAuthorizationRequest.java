@@ -39,6 +39,4 @@ public class AisConsentAuthorizationRequest {
 
     @ApiModelProperty(value = "SCA authentication data")
     private String scaAuthenticationData;
-
-
 }

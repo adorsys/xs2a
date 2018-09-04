@@ -17,11 +17,11 @@
 package de.adorsys.aspsp.xs2a.domain.address;
 
 
-import javax.validation.constraints.Size;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.Size;
 
 @Data
 @ApiModel(description = "Address", value = "Address")
