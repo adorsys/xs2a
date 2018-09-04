@@ -43,18 +43,18 @@ Feature: Payment Initiation Service
             | payment-service  | payment-product       | bulk-payment                |
             | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
 
-#    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
-#        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the bulk payment initiating request with error
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#          |  payment-service  | payment-product       | bulk-payment                                 |
+    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
+        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the bulk payment initiating request with error
+        Then an error response code is displayed the appropriate error response
+        Examples:
+          |  payment-service  | payment-product       | bulk-payment                                 |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
-#          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
+          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
+          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-exceeding-amount.json        |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-incorrect-syntax.json        |
 

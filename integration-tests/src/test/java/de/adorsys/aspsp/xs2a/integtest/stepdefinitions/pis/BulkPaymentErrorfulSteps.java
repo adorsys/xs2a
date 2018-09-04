@@ -33,7 +33,6 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -70,7 +69,7 @@ public class BulkPaymentErrorfulSteps {
         try {
             restTemplate.exchange(
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-                HttpMethod.POST, entity, HashMap.class);
+                HttpMethod.POST, entity, Object.class);
         } catch (RestClientResponseException restclientResponseException) {
             context.handleRequestError(restclientResponseException);
         }
