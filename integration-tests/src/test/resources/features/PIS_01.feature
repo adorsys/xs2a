@@ -13,19 +13,19 @@ Feature: Payment Initiation Service
         Examples:
             | payment-service | payment-product       | single-payment                |
             | payments        | sepa-credit-transfers | singlePayInit-successful.json |
-#
-#    Scenario Outline: Failed payment initiation request for single payments (redirect)
-#        Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the single payment initiating request with error
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#            | payment-service     | payment-product               | single-payment                                 |
-#            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
-#            | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
+
+    Scenario Outline: Failed payment initiation request for single payments (redirect)
+        Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the single payment initiating request with error
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | payment-service     | payment-product               | single-payment                                 |
+            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
+            | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
 #            | payments            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
 #            | payments            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
 #            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
-#            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
+            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
 #            | payments            | sepa-credit-transfers         | singlePayInit-exceeding-amount.json            |
 
 
@@ -42,7 +42,7 @@ Feature: Payment Initiation Service
         Examples:
             | payment-service  | payment-product       | bulk-payment                |
             | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
-#
+
 #    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
 #        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the bulk payment initiating request with error
@@ -72,7 +72,7 @@ Feature: Payment Initiation Service
         Examples:
            | payment-service   | payment-product       | recurring-payment          |
            | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
-#
+
 #    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
 #        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
 #        When PSU sends the recurring payment initiating request with error

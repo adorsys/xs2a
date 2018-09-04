@@ -47,5 +47,7 @@ public class GlobalErrorfulSteps {
             assertThat(msg.getCategory().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCategory().toString()));
             assertThat(msg.getCode().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCode().toString()));
         });
+
+        context.cleanUp();
     }
 }

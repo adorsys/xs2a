@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -91,12 +90,5 @@ public class SinglePaymentSuccessfulSteps {
 
         assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
         assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
-    }
-
-    @And("^a redirect URL is delivered to the PSU$")
-    public void checkRedirectUrl() {
-        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
-
-        assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
     }
 }
