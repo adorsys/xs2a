@@ -14,6 +14,8 @@ export class BankingService {
   mockServerUrl = environment.mockServerUrl;
   savedData = new Banking();
 
+  GENERATE_TAN_URL = `${this.mockServerUrl}/consent/confirmation/pis/`;
+
   constructor(private httpClient: HttpClient) {
   }
 
@@ -40,11 +42,17 @@ export class BankingService {
   }
 
   saveData(data) {
+    console.log("awi saveData: ", data);
     this.savedData = data;
   }
 
   loadData() {
     return this.savedData;
+  }
+
+  generateTan(): Observable<any> {
+    console.log("awi generateTan");
+    return this.httpClient.post(this.GENERATE_TAN_URL + this.savedData.iban, {});
   }
 
   getSinglePayments(): Observable<SinglePayments> {

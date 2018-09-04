@@ -19,11 +19,11 @@ export class ConsentConfirmationPageComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private bankingService: BankingService){ }
 
   onClickPaymentAccepted(paymentIsAccepted) {
-    this.decision = paymentIsAccepted ? "confirmed" : "revoked"
+    this.decision = paymentIsAccepted ? 'confirmed' : 'revoked'
     this.bankingService.postConsent(this.decision)
       .subscribe(
         success => {
-          var nextState = paymentIsAccepted ? '/consentconfirmationsuccessful' : '/consentconfirmationdenied'
+          let nextState = paymentIsAccepted ? '/consentconfirmationsuccessful' : '/consentconfirmationdenied'
           this.router.navigate([nextState])
         },
         error => {
