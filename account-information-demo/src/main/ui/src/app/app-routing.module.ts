@@ -6,9 +6,9 @@ import { TanConfirmationCanceledComponent } from './components/tan-confirmation-
 import { ConsentConfirmationPageComponent } from './components/consent-confirmation-page/consent-confirmation-page.component';
 import { ConsentConfirmationDeniedComponent } from './components/consent-confirmation-denied/consent-confirmation-denied.component';
 import { AppAuthGuard } from './app.authguard';
-import {TanConfirmationSuccessfulComponent} from "./components/tan-confirmation-successful/tan-confirmation-successful.component";
-import {ConsentConfirmationErrorComponent} from "./components/consent-confirmation-error/consent-confirmation-error.component";
-import {HelpPageComponent} from "./components/help-page/help-page.component";
+import {TanConfirmationSuccessfulComponent} from './components/tan-confirmation-successful/tan-confirmation-successful.component';
+import {ConsentConfirmationErrorComponent} from './components/consent-confirmation-error/consent-confirmation-error.component';
+import {HelpPageComponent} from './components/help-page/help-page.component';
 
 
 
