@@ -7,10 +7,12 @@ import { ConsentConfirmationPageComponent } from './components/consent-confirmat
 import { ConsentConfirmationDeniedComponent } from './components/consent-confirmation-denied/consent-confirmation-denied.component';
 import { ConsentConfirmationSuccessfulComponent } from './components/consent-confirmation-successful/consent-confirmation-successful.component';
 import { AppAuthGuard } from './app.authguard';
+import {HelpPageComponent} from "./components/help-page/help-page.component";
 
 
 
 const routes: Routes = [
+  { path: '', component: HelpPageComponent},
   { path: ':iban/:consentId/:paymentId', component: TanConfirmationPageComponent },
   { path: 'tanconfirmationcanceled', component: TanConfirmationCanceledComponent },
   { path: 'tanconfirmationerror', component: TanConfirmationErrorComponent },

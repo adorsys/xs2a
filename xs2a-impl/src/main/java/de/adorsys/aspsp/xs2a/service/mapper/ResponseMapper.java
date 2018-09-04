@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ import java.util.function.Function;
 import static org.springframework.http.HttpStatus.*;
 
 @Component
-@AllArgsConstructor
 public class ResponseMapper {
 
     public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
@@ -50,7 +48,7 @@ public class ResponseMapper {
     public <T> ResponseEntity<T> created(ResponseObject<T> response) {
         return getEntity(response, CREATED);
     }
-    
+
     public <T> ResponseEntity<T> delete(ResponseObject<T> response) {
         return getEntity(response, NO_CONTENT);
     }

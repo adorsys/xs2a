@@ -36,4 +36,5 @@ public class AspspSettings {
     private int consentLifetime;
     private int transactionLifetime;
     private boolean allPsd2Support;
+    private String authorisationStartType;
 }
