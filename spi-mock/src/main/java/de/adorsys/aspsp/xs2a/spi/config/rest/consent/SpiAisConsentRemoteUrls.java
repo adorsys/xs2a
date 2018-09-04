@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.consent;
+package de.adorsys.aspsp.xs2a.spi.config.rest.consent;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AisConsentRemoteUrls {
+public class SpiAisConsentRemoteUrls {
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 

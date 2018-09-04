@@ -154,6 +154,21 @@ public class AccountMapper {
                    .orElseGet(Collections::emptyList);
     }
 
+    public List<SpiAccountReference> mapToSpiAccountReferencesFromDetails(List<SpiAccountDetails> details) {
+        return Optional.ofNullable(details)
+                   .map(det -> det.stream()
+                                   .map(spiDetail -> new SpiAccountReference(
+                                       spiDetail.getIban(),
+                                       spiDetail.getBban(),
+                                       spiDetail.getPan(),
+                                       spiDetail.getMaskedPan(),
+                                       spiDetail.getMsisdn(),
+                                       spiDetail.getCurrency()
+                                   ))
+                                   .collect(Collectors.toList()))
+                   .orElseGet(Collections::emptyList);
+    }
+
     private List<Balance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
             return new ArrayList<>();
@@ -202,7 +217,7 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public List<AccountDetails> mapToAccountDetailsNoBalances(List<AccountDetails> details) {
+    public List<AccountDetails> mapToAccountDetailsListNoBalances(List<AccountDetails> details) {
         return details.stream()
                    .map(this::mapToAccountDetailNoBalances)
                    .collect(Collectors.toList());
