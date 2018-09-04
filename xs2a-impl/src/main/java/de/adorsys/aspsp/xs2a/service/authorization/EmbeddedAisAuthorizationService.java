@@ -31,6 +31,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
+import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTFICATION;
+
 @Service
 @RequiredArgsConstructor
 public class EmbeddedAisAuthorizationService implements AisAuthorizationService {
@@ -44,12 +47,12 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         return Optional.ofNullable(psuId)
                    .map(s -> {
                        response.setScaStatus(ScaStatus.PSUIDENTIFIED);
-                       response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+                       response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
                        return response;
                    })
                    .orElseGet(() -> {
                        response.setScaStatus(ScaStatus.RECEIVED);
-                       response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTFICATION);
+                       response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_IDENTFICATION);
                        return response;
                    });
     }
@@ -82,7 +85,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         if (updatePsuData.isUpdatePsuIdentification()) {
             response.setPsuId(updatePsuData.getPsuId());
             response.setScaStatus(ScaStatus.PSUIDENTIFIED);
-            response.setResponseLinkType(ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+            response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
             return true;
         }
         return false;
