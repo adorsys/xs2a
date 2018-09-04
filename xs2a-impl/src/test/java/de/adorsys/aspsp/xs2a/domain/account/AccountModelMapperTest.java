@@ -194,6 +194,7 @@ public class AccountModelMapperTest {
         assertEquals(expectedPending.length, actualPending.size());
 
         Map links = result.getLinks();
+        links.values().removeIf(Objects::isNull);
         assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
         assertEquals(3, links.size());
     }
