@@ -15,3 +15,4 @@ setting:
  consentLifetime: 0
  transactionLifetime: 0
  allPsd2Support: false
+ authorisationStartType: IMPLICIT

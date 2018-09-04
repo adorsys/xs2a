@@ -18,14 +18,16 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,8 @@ import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 @Service
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
+    private final AisConsentMapper aisConsentMapper;
+    private final ConsentSpi consentSpi;
     private final ConsentMapper consentMapper;
     private final AisAuthorizationService authorizationService;
     private final AisConsentService aisConsentService;
@@ -56,16 +60,16 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
         if (isInvalidBankOfferConsent(request)) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(MessageErrorCode.PARAMETER_NOT_SUPPORTED)).build();
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(MessageErrorCode.PERIOD_INVALID)).build();
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
         }
 
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(MessageErrorCode.PARAMETER_NOT_SUPPORTED)).build();
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
-
+ddddddddddddddddddddddddddddddddddddddddddd
         CreateConsentReq checkedRequest = new CreateConsentReq();
         checkedRequest.setAccess(request.getAccess());
         checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
@@ -74,14 +78,20 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         checkedRequest.setValidUntil(request.getValidUntil());
 
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
+        SpiCreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(request, psuId, tppId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes()));
+        String consentId = consentSpi.createConsent(createAisConsentRequest);
+
+        dddddddddddddsdsdsdssssssssssssssssss
         String consentId = isNotEmptyAccess(checkedRequest.getAccess())
                                ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
                                : null;
+
+
         //TODO v1.1 Add balances support
         //TODO v1.2 Add embedded approach specfic links
         return !StringUtils.isBlank(consentId)
                    ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null)).build()
-                   : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_400)).build();
+                   : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
     }
 
     /**
@@ -90,10 +100,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Returns status of requested consent
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
-        return consentMapper.mapToConsentStatus(aisConsentService.getAccountConsentStatusById(consentId))
+        return aisConsentMapper.mapToConsentStatus(consentSpi.getAccountConsentStatusById(consentId))
                    .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status)).build())
                    .orElseGet(() -> ResponseObject.<ConsentStatusResponse>builder()
-                                        .fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400)).build());
+                                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
+                                        .build());
     }
 
     /**
@@ -102,13 +113,13 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Revokes account consent on PSU request
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        if (aisConsentService.getAccountConsentById(consentId) != null) {
-            aisConsentService.revokeConsent(consentId);
+        if (consentSpi.getAccountConsentById(consentId) != null) {
+            consentSpi.revokeConsent(consentId);
             return ResponseObject.<Void>builder().build();
         }
 
         return ResponseObject.<Void>builder()
-                   .fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400)).build();
+                   .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
     }
 
     /**
@@ -116,25 +127,25 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * @return AccountConsent requested by consentId
      */
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
-        AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
+        AccountConsent consent = aisConsentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
         return consent == null
-                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400)).build()
+                   ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
     ResponseObject<AccountAccess> getValidatedConsent(String consentId) {
-        AccountConsent consent = consentMapper.mapToAccountConsent(aisConsentService.getAccountConsentById(consentId));
+        AccountConsent consent = aisConsentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
         if (consent == null) {
             return ResponseObject.<AccountAccess>builder()
-                       .fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400)).build();
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
         }
         if (!consent.isValidStatus()) {
             return ResponseObject.<AccountAccess>builder()
-                       .fail(new MessageError(MessageErrorCode.CONSENT_EXPIRED)).build();
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
         if (!consent.isValidFrequency()) {
             return ResponseObject.<AccountAccess>builder()
-                       .fail(new MessageError(MessageErrorCode.ACCESS_EXCEEDED)).build();
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
         }
         return ResponseObject.<AccountAccess>builder().body(consent.getAccess()).build();
     }

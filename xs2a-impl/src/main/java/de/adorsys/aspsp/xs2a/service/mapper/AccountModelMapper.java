@@ -99,10 +99,10 @@ public final class AccountModelMapper {
 
     public static Amount mapToAmount(de.adorsys.aspsp.xs2a.domain.Amount amount) {
         return Optional.ofNullable(amount)
-        .map(a->new Amount()
-                   .amount(a.getContent())
-                   .currency(a.getCurrency().getCurrencyCode()))
-            .orElse(new Amount());
+                   .map(a -> new Amount()
+                                 .amount(a.getContent())
+                                 .currency(a.getCurrency().getCurrencyCode()))
+                   .orElse(new Amount());
     }
 
     public static AccountReport mapToAccountReport(de.adorsys.aspsp.xs2a.domain.account.AccountReport accountReport) {
