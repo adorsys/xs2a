@@ -75,11 +75,4 @@ public class BulkPaymentErrorfulSteps {
             context.handleRequestError(restclientResponseException);
         }
     }
-
-//    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-//        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-//        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-//        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-//        context.setTppMessages(tppMessages);
-//    }
 }

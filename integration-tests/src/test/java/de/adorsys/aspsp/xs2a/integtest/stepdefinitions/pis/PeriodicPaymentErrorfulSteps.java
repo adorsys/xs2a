@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -87,17 +87,10 @@ public class PeriodicPaymentErrorfulSteps {
                 entity,
                 HashMap.class);
 
-        } catch (HttpClientErrorException httpClientErrorException) {
-            context.handleRequestError(httpClientErrorException);
+        } catch (RestClientResponseException restClientResponseException) {
+            context.handleRequestError(restClientResponseException);
         }
     }
-
-//    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-//        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-//        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-//        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-//        context.setTppMessages(tppMessages);
-//    }
 
     private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
         entity.getBody().setEndDate(entity.getBody().getStartDate().minusDays(DAYS_OFFSET));
