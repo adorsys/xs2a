@@ -115,6 +115,6 @@ public class ConsentRequestSteps {
         context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
         TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppmessage(tppMessages);
+        context.setTppMessages(tppMessages);
     }
 }

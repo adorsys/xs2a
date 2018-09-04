@@ -27,16 +27,14 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -87,19 +85,19 @@ public class PeriodicPaymentErrorfulSteps {
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
-                TppMessages.class);
+                HashMap.class);
 
         } catch (HttpClientErrorException httpClientErrorException) {
-            handleRequestError(httpClientErrorException);
+            context.handleRequestError(httpClientErrorException);
         }
     }
 
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppmessage(tppMessages);
-    }
+//    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+//        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+//        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+//        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
+//        context.setTppMessages(tppMessages);
+//    }
 
     private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
         entity.getBody().setEndDate(entity.getBody().getStartDate().minusDays(DAYS_OFFSET));

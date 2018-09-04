@@ -35,7 +35,7 @@ public class GlobalErrorfulSteps {
 
     @Then("^an error response code is displayed the appropriate error response$")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-        TppMessages actualTppMessages = context.getTppmessage();
+        TppMessages actualTppMessages = context.getTppMessages();
         TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
 
         HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();

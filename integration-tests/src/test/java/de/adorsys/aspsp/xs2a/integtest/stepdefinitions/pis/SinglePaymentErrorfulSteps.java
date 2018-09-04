@@ -29,12 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -75,16 +75,16 @@ public class SinglePaymentErrorfulSteps {
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
                 HttpMethod.POST,
                 entity,
-                TppMessages.class);
+                HashMap.class);
         } catch (RestClientResponseException rex) {
-            handleRequestError(rex);
+            context.handleRequestError(rex);
         }
     }
 
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppmessage(tppMessages);
-    }
+//    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+//        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+//        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+//        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
+//        context.setTppMessages(tppMessages);
+//    }
 }
