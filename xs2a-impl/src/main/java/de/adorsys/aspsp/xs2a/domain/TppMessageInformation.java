@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import io.swagger.annotations.ApiModel;
@@ -28,7 +27,6 @@ import javax.validation.constraints.Size;
 
 @Data
 @ApiModel(description = "Tpp Message Information", value = "TppMessageInformation")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(exclude = "text")
 public class TppMessageInformation {
 

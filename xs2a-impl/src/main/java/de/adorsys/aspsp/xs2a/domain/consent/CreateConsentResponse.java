@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import io.swagger.annotations.ApiModel;
@@ -25,7 +24,6 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "Response for the create account information consent request in the Account service")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateConsentResponse {
 
     @ApiModelProperty(value = "Authentication status of the consent", required = true)
