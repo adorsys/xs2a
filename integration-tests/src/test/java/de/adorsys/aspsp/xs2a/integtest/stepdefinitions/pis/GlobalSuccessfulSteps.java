@@ -1,5 +1,6 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
@@ -61,7 +62,10 @@ public class GlobalSuccessfulSteps {
         ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
 
         assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
+    }
 
+    @After
+    public void afterScenario() {
         context.cleanUp();
     }
 }

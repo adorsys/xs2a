@@ -20,12 +20,12 @@ Feature: Payment Initiation Service
         Then an error response code is displayed the appropriate error response
         Examples:
             | payment-service     | payment-product               | single-payment                                 |
-            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
+#            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
             | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
 #            | payments            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
 #            | payments            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
 #            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
-            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
+#            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-psu-ip-address.json |
 #            | payments            | sepa-credit-transfers         | singlePayInit-exceeding-amount.json            |
 
 
@@ -54,7 +54,7 @@ Feature: Payment Initiation Service
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
-          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
+#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-exceeding-amount.json        |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-incorrect-syntax.json        |
 
@@ -73,16 +73,16 @@ Feature: Payment Initiation Service
            | payment-service   | payment-product       | recurring-payment          |
            | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
 
-#    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
-#        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the recurring payment initiating request with error
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#            | payment-service   | payment-product       | recurring-payment                           |
+    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
+        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the recurring payment initiating request with error
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | payment-service   | payment-product       | recurring-payment                           |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-incorrect-syntax.json            |
-#            #| periodic-payments | sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
-#            | periodic-payments | sepa-credit-transfers | recPayInit-no-frequency.json                |
-#            | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
+            | periodic-payments | sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
+            | periodic-payments | sepa-credit-transfers | recPayInit-no-frequency.json                |
+            | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-no-request-id.json               |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |

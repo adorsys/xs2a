@@ -91,7 +91,5 @@ public class PaymentStatusSuccessfulSteps {
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus().name()));
-
-        context.cleanUp();
     }
 }

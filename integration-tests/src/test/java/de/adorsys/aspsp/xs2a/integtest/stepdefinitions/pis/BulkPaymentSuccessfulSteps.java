@@ -103,7 +103,5 @@ public class BulkPaymentSuccessfulSteps {
         actualResponse.getBody().forEach((paymentResponse) -> {
             assertThat(paymentResponse.getLinks().get("scaRedirect"), notNullValue());
         });
-
-        context.cleanUp();
     }
 }
