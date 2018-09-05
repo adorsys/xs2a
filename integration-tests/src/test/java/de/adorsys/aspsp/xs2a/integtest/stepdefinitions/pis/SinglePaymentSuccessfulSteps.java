@@ -81,7 +81,7 @@ public class SinglePaymentSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate single payment response data$")
+    @Then("^a successful response code and the appropriate single payment response data are received$")
     public void checkResponseCode() {
         ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
         PaymentInitationRequestResponse201 givenResponseBody = context.getTestData().getResponse().getBody();
@@ -91,4 +91,7 @@ public class SinglePaymentSuccessfulSteps {
         assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
         assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
     }
+
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }

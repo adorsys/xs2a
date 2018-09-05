@@ -98,4 +98,7 @@ public class PeriodicPaymentSuccessfulSteps {
         assertThat(responseEntity.getBody().getTransactionStatus(), equalTo(responseBody.getTransactionStatus()));
         assertThat(responseEntity.getBody().getPaymentId(), notNullValue());
     }
+
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }

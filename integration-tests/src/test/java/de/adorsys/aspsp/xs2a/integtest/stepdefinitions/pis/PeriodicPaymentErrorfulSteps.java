@@ -95,4 +95,7 @@ public class PeriodicPaymentErrorfulSteps {
     private void makeEndDateBeforeStartDate(HttpEntity<PeriodicPaymentInitiationSctJson> entity) {
         entity.getBody().setEndDate(entity.getBody().getStartDate().minusDays(DAYS_OFFSET));
     }
+
+    // @Then("^an error response code and the appropriate error response are received$")
+    // See GlobalErrorfulSteps
 }

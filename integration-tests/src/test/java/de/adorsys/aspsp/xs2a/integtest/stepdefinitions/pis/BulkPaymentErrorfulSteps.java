@@ -74,4 +74,7 @@ public class BulkPaymentErrorfulSteps {
             context.handleRequestError(restclientResponseException);
         }
     }
+
+    // @Then("^an error response code and the appropriate error response are received$")
+    // See GlobalErrorfulSteps
 }

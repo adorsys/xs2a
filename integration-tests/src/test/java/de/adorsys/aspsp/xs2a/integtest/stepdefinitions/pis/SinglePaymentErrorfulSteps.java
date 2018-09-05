@@ -80,4 +80,7 @@ public class SinglePaymentErrorfulSteps {
             context.handleRequestError(rex);
         }
     }
+
+    // @Then("^an error response code and the appropriate error response are received$")
+    // See GlobalErrorfulSteps
 }

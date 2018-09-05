@@ -33,7 +33,7 @@ public class GlobalErrorfulSteps {
     @Autowired
     private Context context;
 
-    @Then("^an error response code is displayed the appropriate error response$")
+    @Then("^an error response code and the appropriate error response are received")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
         TppMessages actualTppMessages = context.getTppMessages();
         TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
