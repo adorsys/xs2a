@@ -41,7 +41,6 @@ export class AisService {
     return this.httpClient.get<AccountConsent>(`${this.GET_CONSENT_URL}/${consentId}` , {headers: headers})
       .pipe(
         map(data => {
-          console.log(data);
           return data;
         })
       );
@@ -73,7 +72,7 @@ export class AisService {
   }
 
   generateTan(): Observable<string> {
-    return this.httpClient.post<string>(`${this.GENERATE_TAN_URL}/${this.savedIban}`, {});
+    return this.httpClient.post<string>(`${this.GENERATE_TAN_URL}`, {});
   }
 
   updateConsentStatus(consentStatus): Observable<any> {
@@ -86,6 +85,6 @@ export class AisService {
       consentId: this.savedConsentId,
       iban: this.savedIban,
     };
-    return this.httpClient.post<string>(this.VALIDATE_TAN_URL, body);
+    return this.httpClient.put<string>(this.VALIDATE_TAN_URL, body);
   }
 }
