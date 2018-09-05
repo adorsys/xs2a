@@ -116,3 +116,18 @@ Feature: Payment Initiation Service
 #        Examples:
 #            | payment-id                           | payment-service      | payment-status                     |
 #            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Payment Information                                                                                              #
+    #                                                                                                                  #
+    ####################################################################################################################
+
+#    Scenario Outline: Successful Payment Information Request
+#        Given Psu wants to request the payment information of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+#        And the set of data <payment-information>
+#        When PSU requests the information of the payment
+#        Then an appropriate response code and the payment information is delivered to the PSU
+#        Examples:
+#            | payment-id                           | payment-service | payment-information                |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
