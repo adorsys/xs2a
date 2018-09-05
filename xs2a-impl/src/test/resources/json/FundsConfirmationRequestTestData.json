@@ -1,7 +1,7 @@
 {
   "cardNumber": "12345",
   "instructedAmount": {
-    "content": "100.00",
+    "amount": "100.00",
     "currency": "EUR"
   },
   "payee": "Check24",

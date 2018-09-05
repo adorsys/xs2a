@@ -30,7 +30,7 @@
   },
   "endToEndIdentification": "RI-123456789",
   "instructedAmount": {
-    "content": "1000.00",
+    "amount": "1000.00",
     "currency": "EUR"
   },
   "purposeCode": {

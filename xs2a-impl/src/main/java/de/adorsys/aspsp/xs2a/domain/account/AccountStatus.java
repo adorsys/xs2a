@@ -14,35 +14,31 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum BalanceType {
-    CLOSING_BOOKED("closingBooked"),
-    EXPECTED("expected"),
-    AUTHORISED("authorised"),
-    OPENING_BOOKED("openingBooked"),
-    INTERIM_AVAILABLE("interimAvailable"),
-    FORWARD_AVAILABLE("forwardAvailable"),
-    NONINVOICED("nonInvoiced"),
-    AVAILABLE("available");
+public enum AccountStatus {
+    ENABLED("enabled"),
+    DELETED("deleted"),
+    BLOCKED("blocked");
 
-
-    private final static Map<String, BalanceType> container = new HashMap<>();
+    private final static Map<String, AccountStatus> container = new HashMap<>();
 
     static {
-        for (BalanceType type : values()) {
-            container.put(type.getValue(), type);
+        for (AccountStatus accountStatus : values()) {
+            container.put(accountStatus.getValue(), accountStatus);
         }
     }
 
     private String value;
 
-    BalanceType(String value) {
+    AccountStatus(String value) {
         this.value = value;
     }
 
@@ -51,7 +47,13 @@ public enum BalanceType {
     }
 
     @JsonIgnore
-    public static Optional<BalanceType> getByValue(String name) {
+    public static Optional<AccountStatus> getByValue(String name) {
         return Optional.ofNullable(container.get(name));
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
     }
 }
