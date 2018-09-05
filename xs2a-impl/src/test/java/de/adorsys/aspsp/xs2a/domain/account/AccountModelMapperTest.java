@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
-import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
 import de.adorsys.psd2.model.*;
@@ -30,7 +30,8 @@ import java.time.*;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AccountModelMapperTest {
 
