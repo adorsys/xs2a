@@ -125,7 +125,7 @@ Feature: Payment Initiation Service
 
 #    Scenario Outline: Successful Payment Information Request
 #        Given Psu wants to request the payment information of a payment with payment-id <payment-id> by using the payment-service <payment-service>
-#        And the set of data <payment-information>
+#        And the set of payment information data <payment-information>
 #        When PSU requests the information of the payment
 #        Then an appropriate response code and the payment information is delivered to the PSU
 #        Examples:
