@@ -124,7 +124,7 @@ public class AisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "/{consent-id}/update-blob")
+    @PutMapping(path = "/{consent-id}/updateBLOB")
     @ApiOperation(value = "Update consent blob data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
