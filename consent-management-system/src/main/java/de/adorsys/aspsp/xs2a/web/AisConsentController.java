@@ -42,7 +42,7 @@ public class AisConsentController {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 204, message = "No Content")})
     public ResponseEntity<CreateAisConsentResponse> createConsent(@RequestBody CreateAisConsentRequest request) {
-        return aisConsentService.createConsent(request)
+         return aisConsentService.createConsent(request)
                    .map(consentId -> new ResponseEntity<>(new CreateAisConsentResponse(consentId), HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }

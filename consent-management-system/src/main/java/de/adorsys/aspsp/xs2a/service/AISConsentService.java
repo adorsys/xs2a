@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AccountAccessType;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
@@ -31,7 +32,7 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -174,13 +175,26 @@ public class AISConsentService {
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         consent.setAspspConsentData(request.getAspspConsentData());
-        if (StringUtils.isNotBlank(request.getAccess().getAvailableAccounts())) {
-            consent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
-        } else {
-            consent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
-        }
+        consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
 
         return consent;
+    }
+
+    private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
+        if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+            return AisConsentRequestType.GLOBAL;
+        } else if (accessInfo.getAvailableAccounts() == AccountAccessType.ALL_ACCOUNTS || accessInfo.getAvailableAccounts() == AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES) {
+            return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
+        } else if (isEmptyAccess(accessInfo)) {
+            return AisConsentRequestType.BANK_OFFERED;
+        }
+        return AisConsentRequestType.DEDICATED_ACCOUNTS;
+    }
+
+    private boolean isEmptyAccess(AisAccountAccessInfo accessInfo) {
+        return CollectionUtils.isEmpty(accessInfo.getAccounts())
+                     && CollectionUtils.isEmpty(accessInfo.getBalances())
+                     && CollectionUtils.isEmpty(accessInfo.getTransactions());
     }
 
     private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, AisConsent consent) {

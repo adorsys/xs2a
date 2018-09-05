@@ -113,10 +113,10 @@ public class AisConsent {
 
     @Column(name = "ais_consent_request_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the consent request: BANK_OFFERED or DEDICATED_ACCOUNTS.", example = "BANK_OFFERED")
+    @ApiModelProperty(value = "Type of the consent request: GLOBAL, BANK_OFFERED or DEDICATED_ACCOUNTS.", required = true, allowableValues = "GLOBAL, BANK_OFFERED, DEDICATED_ACCOUNTS, ALL_AVAILABLE_ACCOUNTS")
     private AisConsentRequestType aisConsentRequestType;
 
-    public List<AccountAccess> getAccesses(){
+    public List<AccountAccess> getAccesses() {
         return new ArrayList<>(accesses);
     }
 

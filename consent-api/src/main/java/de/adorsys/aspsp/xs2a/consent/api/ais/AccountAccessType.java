@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
 import io.swagger.annotations.ApiModel;
 
-@ApiModel(description = "Type of the ais consent request", value = "AisConsentRequestType")
-public enum AisConsentRequestType {
-    GLOBAL,
-    ALL_AVAILABLE_ACCOUNTS,
-    BANK_OFFERED,
-    DEDICATED_ACCOUNTS
+@ApiModel(description = "AccountAccess type", value = "AccountAccessType")
+public enum AccountAccessType {
+    ALL_ACCOUNTS,
+    ALL_ACCOUNTS_WITH_BALANCES;
 }
