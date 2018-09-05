@@ -42,7 +42,6 @@ export class BankingService {
   }
 
   saveData(data) {
-    console.log("awi saveData: ", data);
     this.savedData = data;
   }
 
@@ -51,7 +50,6 @@ export class BankingService {
   }
 
   generateTan(): Observable<any> {
-    console.log("awi generateTan");
     return this.httpClient.post(this.GENERATE_TAN_URL, {});
   }
 
