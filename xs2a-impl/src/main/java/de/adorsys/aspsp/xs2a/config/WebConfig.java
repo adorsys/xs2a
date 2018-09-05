@@ -28,13 +28,16 @@ import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
+import de.adorsys.aspsp.xs2a.service.authorization.*;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
@@ -150,7 +153,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ScaPaymentService scaPaymentService(PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
+    public ScaPaymentService scaPaymentService(ConsentSpi consentSpi, PaymentMapper paymentMapper, PaymentSpi paymentSpi, PisConsentMapper pisConsentMapper) {
         switch (aspspProfileService.readScaApproach()) {
             case OAUTH:
                 return new OauthScaPaymentService(paymentMapper, paymentSpi);
@@ -159,19 +162,19 @@ public class WebConfig extends WebMvcConfigurerAdapter {
             case EMBEDDED:
                 return new EmbeddedScaPaymentService();
             default:
-                return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+                return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
         }
     }
 
     @Bean
-    public AisAuthorizationService authorizationService() {
+    public AisAuthorizationService authorizationService(AccountSpi accountSpi, ConsentSpi consentSpi, AisConsentMapper aisConsentMapper) {
         switch (aspspProfileService.readScaApproach()) {
             case OAUTH:
                 return new OauthAisAuthorizationService();
             case DECOUPLED:
                 return new DecoupledAisAuthorizationService();
             case EMBEDDED:
-                return new EmbeddedAisAuthorizationService();
+                return new EmbeddedAisAuthorizationService(accountSpi, consentSpi, aisConsentMapper);
             default:
                 return new RedirectAisAuthorizationService();
         }

@@ -45,9 +45,7 @@ import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final AisConsentMapper aisConsentMapper;
     private final ConsentSpi consentSpi;
-    private final ConsentMapper consentMapper;
     private final AisAuthorizationService authorizationService;
-    private final AisConsentService aisConsentService;
     private final AspspProfileService aspspProfileService;
 
     /**
@@ -185,16 +183,16 @@ ddddddddddddddddddddddddddddddddddddddddddd
     }
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
-        return Optional.ofNullable(aisConsentService.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId()))
-                   .map(consentAuthorization ->
-                            getUpdateConsentPsuDataResponse(updatePsuData, consentAuthorization))
+        return Optional.ofNullable(authorizationService.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
+                   .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
                    .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                         .build());
     }
 
-    private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData, SpiAccountConsentAuthorization consentAuthorization) {
-        UpdateConsentPsuDataResponse response = aisConsentService.updateConsentAuthorization(updatePsuData, consentAuthorization);
+    private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
+        UpdateConsentPsuDataResponse response = authorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
+
         return Optional.ofNullable(response)
                    .map(s -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build())
                    .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()

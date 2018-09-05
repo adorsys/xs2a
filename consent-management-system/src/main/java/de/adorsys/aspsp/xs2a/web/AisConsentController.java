@@ -117,8 +117,8 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @RequestBody CreateAisConsentRequest request) {
         return aisConsentService.updateConsent(request, consentId)
-            .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping(path = "/{consent-id}/authorizations")
@@ -131,8 +131,8 @@ public class AisConsentController {
         @PathVariable("consent-id") String consentId,
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
         return aisConsentService.createAuthorization(consentId, consentAuthorization)
-            .map(authorizationId -> new ResponseEntity<>(new CreateAisConsentAuthorizationResponse(authorizationId), HttpStatus.CREATED))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .map(authorizationId -> new ResponseEntity<>(new CreateAisConsentAuthorizationResponse(authorizationId), HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/{consent-id}/authorizations/{authorization-id}")
@@ -148,7 +148,23 @@ public class AisConsentController {
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
         return aisConsentService.updateConsentAuthorization(authorizationId, consentId, consentAuthorization)
-            .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping(path = "/{consent-id}/authorizations/{authorization-id}")
+    @ApiOperation(value = "Getting consent authorization.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<AisConsentAuthorizationResponse> getConsentAuthorization(
+        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("consent-id") String consentId,
+        @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("authorization-id") String authorizationId) {
+
+        return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
+                   .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

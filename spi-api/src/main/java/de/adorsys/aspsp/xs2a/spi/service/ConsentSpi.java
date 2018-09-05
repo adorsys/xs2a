@@ -87,4 +87,28 @@ public interface ConsentSpi {
      * @return String identifier of created PIS consent periodic payment
      */
     String createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    Optional<String> createConsentAuthorization(String consentId, SpiScaStatus scaStatus);
+
+    /**
+     * Requests CMS to retrieve AIS consent authorization by its identifier
+     *
+     * @param authorizationId String representation of identifier of stored consent authorization
+     * @return Response containing AIS Consent Authorization
+     */
+
+    SpiAccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId);
+
+    /**
+     * Sends a PUT request to CMS to update created AIS consent authorization
+     *
+     * @param updatePsuData Consent psu data
+     */
+    void updateConsentAuthorization(SpiUpdateConsentPsuDataReq updatePsuData);
 }

@@ -16,19 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization;
 
-import de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.model.ScaStatus;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,11 +34,11 @@ import java.util.Optional;
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.*;
 
 @Service
+@RequiredArgsConstructor
 public class EmbeddedAisAuthorizationService implements AisAuthorizationService {
-    @Autowired
-    private AccountSpi accountSpi;
-    @Autowired
-    private AisConsentService aisConsentService;
+    private final AccountSpi accountSpi;
+    private final ConsentSpi consentSpi;
+    private final AisConsentMapper aisConsentMapper;
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
@@ -64,7 +61,14 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     }
 
     @Override
-    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, SpiAccountConsentAuthorization consentAuthorization) {
+    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        SpiAccountConsentAuthorization spiConsentAuthorization = consentSpi.getAccountConsentAuthorizationById(authorizationId, consentId);
+        return aisConsentMapper.mapToAccountConsentAuthorization(spiConsentAuthorization);
+    }
+
+    @Override
+    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
+
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
 
         if (checkPsuIdentification(updatePsuData, response)) {
@@ -83,8 +87,9 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             return response;
         }
 
-        return response;
+        consentSpi.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response));
 
+        return response;
     }
 
     private boolean checkPsuIdentification(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response) {
@@ -97,7 +102,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         return false;
     }
 
-    private boolean checkPsuAuthentication(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, SpiAccountConsentAuthorization spiAuthorization) {
+    private boolean checkPsuAuthentication(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, AccountConsentAuthorization spiAuthorization) {
         if (spiAuthorization.getPassword() == null && updatePsuData.getPassword() != null) {
             response.setPassword(updatePsuData.getPassword());
 
@@ -116,7 +121,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         return false;
     }
 
-    private boolean checkScaMethod(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, SpiAccountConsentAuthorization spiAuthorization) {
+    private boolean checkScaMethod(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, AccountConsentAuthorization spiAuthorization) {
         if (spiAuthorization.getAuthenticationMethodId() == null && updatePsuData.getAuthenticationMethodId() != null) {
             response.setAuthenticationMethodId(updatePsuData.getAuthenticationMethodId());
             response.setScaStatus(ScaStatus.SCAMETHODSELECTED);

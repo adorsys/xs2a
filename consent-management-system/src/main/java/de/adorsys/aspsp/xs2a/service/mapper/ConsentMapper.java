@@ -20,11 +20,14 @@ import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccess;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
+import de.adorsys.aspsp.xs2a.domain.AisConsentAuthorization;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,6 +45,23 @@ public class ConsentMapper {
             false,
             consent.isTppRedirectPreferred(),
             consent.getAspspConsentData());
+    }
+
+    public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {
+        return Optional.ofNullable(aisConsentAuthorization)
+                   .map(conAuth -> {
+                       AisConsentAuthorizationResponse resp = new AisConsentAuthorizationResponse();
+                       resp.setAuthorizationId(conAuth.getExternalId());
+                       resp.setPsuId(conAuth.getPsuId());
+                       resp.setConsentId(conAuth.getConsent().getExternalId());
+                       resp.setScaStatus(conAuth.getScaStatus());
+                       resp.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
+                       resp.setPassword(conAuth.getPassword());
+                       resp.setScaAuthenticationData(conAuth.getScaAuthenticationData());
+
+                       return resp;
+                   })
+                   .orElse(null);
     }
 
     private AisAccountAccess mapToAisAccountAccess(List<AccountAccess> accountAccesses) {

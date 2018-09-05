@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization;
 
+import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,9 +32,12 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
     }
 
     @Override
-    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, SpiAccountConsentAuthorization consentAuthorization) {
+    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
         return null;
     }
 
-
+    @Override
+    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        return null;
+    }
 }

@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiAisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiPisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
@@ -55,7 +54,6 @@ public class ConsentSpiImpl implements ConsentSpi {
     private final SpiAisConsentMapper aisConsentMapper;
     private final SpiPisConsentMapper pisConsentMapper;
     private final AccountSpi accountSpi;
-    private final AccountMapper accountMapper;
 
 
     /**

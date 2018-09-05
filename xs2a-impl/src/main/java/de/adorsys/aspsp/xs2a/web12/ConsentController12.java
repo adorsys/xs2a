@@ -52,12 +52,12 @@ public class ConsentController12 implements ConsentApi {
 
         Set<AccountReference> references = createConsent.getAccountReferences();
         ResponseObject accountReferenceValidationResponse = references.isEmpty()
-            ? ResponseObject.builder().build()
-            : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
+                                                                ? ResponseObject.builder().build()
+                                                                : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());
 
         ResponseObject<CreateConsentResponse> createConsentResponse = accountReferenceValidationResponse.hasError()
-            ? ResponseObject.<CreateConsentResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-            : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID);
+                                                                          ? ResponseObject.<CreateConsentResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
+                                                                          : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID);
 
         return responseMapper.created(createConsentResponse, ConsentModelMapper::mapToConsentsResponse201);
     }

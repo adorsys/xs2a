@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.account;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.psd2.model.ScaStatus;
 import lombok.Data;
 
 @Data
-public class SpiAccountConsentAuthorization {
+public class AccountConsentAuthorization {
     private String id;
     private String consentId;
     private String psuId;
 
-    private SpiScaStatus scaStatus;
+    private ScaStatus scaStatus;
     private String authenticationMethodId;
     private String scaAuthenticationData;
     private String password;
