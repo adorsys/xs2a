@@ -219,7 +219,7 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public List<Xs2aAccountDetails> mapToAccountDetailsNoBalances(List<Xs2aAccountDetails> details) {
+    public List<Xs2aAccountDetails> mapToAccountDetailsListNoBalances(List<Xs2aAccountDetails> details) {
         return details.stream()
                    .map(this::mapToAccountDetailNoBalances)
                    .collect(Collectors.toList());

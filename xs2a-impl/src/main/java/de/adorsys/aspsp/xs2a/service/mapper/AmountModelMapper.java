@@ -28,7 +28,7 @@ public class AmountModelMapper {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Xs2aAmount amountTarget = new Xs2aAmount();
-                       amountTarget.setContent(a.getAmount());
+                       amountTarget.setAmount(a.getAmount());
                        amountTarget.setCurrency(getCurrencyByCode(a.getCurrency()));
                        return amountTarget;
                    })

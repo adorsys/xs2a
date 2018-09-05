@@ -118,27 +118,6 @@ public class ConsentMapper {
     }
 
     //Spi
-    private SpiAccountAccess mapToSpiAccountAccess(Xs2aAccountAccess access) {
-        return Optional.ofNullable(access)
-                   .map(aa -> {
-                       SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
-                       spiAccountAccess.setAccounts(accountMapper.mapToSpiAccountReferences(aa.getAccounts()));
-                       spiAccountAccess.setBalances(accountMapper.mapToSpiAccountReferences(aa.getBalances()));
-                       spiAccountAccess.setTransactions(accountMapper.mapToSpiAccountReferences(aa.getTransactions()));
-                       spiAccountAccess.setAvailableAccounts(mapToSpiAccountAccessType(aa.getAvailableAccounts()));
-                       spiAccountAccess.setAllPsd2(mapToSpiAccountAccessType(aa.getAllPsd2()));
-                       return spiAccountAccess;
-                   })
-                   .orElse(null);
-    }
-
-    private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
-        return Optional.ofNullable(accessType)
-                   .map(at -> SpiAccountAccessType.valueOf(at.name()))
-                   .orElse(null);
-
-    }
-
     private AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())

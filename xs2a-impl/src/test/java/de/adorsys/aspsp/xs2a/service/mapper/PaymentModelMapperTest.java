@@ -238,7 +238,7 @@ public class PaymentModelMapperTest {
 
     private Xs2aAmount getXs2aAmount() {
         Xs2aAmount amount = new Xs2aAmount();
-        amount.setContent(AMOUNT);
+        amount.setAmount(AMOUNT);
         amount.setCurrency(EUR);
         return amount;
     }

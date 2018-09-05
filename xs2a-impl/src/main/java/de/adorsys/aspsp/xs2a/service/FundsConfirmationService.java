@@ -64,7 +64,7 @@ public class FundsConfirmationService {
     }
 
     private boolean isRequiredAmountEnough(Xs2aAmount requiredAmount, Xs2aAmount availableAmount) {
-        return convertToBigDecimal(availableAmount.getContent()).compareTo(convertToBigDecimal(requiredAmount.getContent())) >= 0 &&
+        return convertToBigDecimal(availableAmount.getAmount()).compareTo(convertToBigDecimal(requiredAmount.getAmount())) >= 0 &&
                    availableAmount.getCurrency() == requiredAmount.getCurrency();
     }
 

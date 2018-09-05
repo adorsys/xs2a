@@ -197,7 +197,7 @@ public final class AccountModelMapper {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Xs2aAmount targetAmount = new Xs2aAmount();
-                       targetAmount.setContent(a.getAmount());
+                       targetAmount.setAmount(a.getAmount());
                        targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
                        return targetAmount;
                    })

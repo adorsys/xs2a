@@ -24,7 +24,6 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
@@ -327,7 +326,7 @@ public class AccountService {
                    : ActionStatus.SUCCESS;
     }
 
-    private Xs2aAccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
+    private Xs2aAccountReport filterByBookingStatus(Xs2aAccountReport report, BookingStatus bookingStatus) {
         return new Xs2aAccountReport(
             EnumSet.of(BookingStatus.BOOKED, BookingStatus.BOTH).contains(bookingStatus)
                 ? report.getBooked() : new Transactions[]{},

@@ -119,7 +119,7 @@ public class FundsConfirmationServiceTest {
 
     private Xs2aAmount getAmount1600() {
         Xs2aAmount amount = new Xs2aAmount();
-        amount.setContent(AMOUNT_1600);
+        amount.setAmount(AMOUNT_1600);
         amount.setCurrency(EUR);
         return amount;
     }
