@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.UpdateAisConsentBlobRequest;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
@@ -139,6 +140,27 @@ public class AISConsentService {
                    .map(consent -> updateAisConsent(consent, request, consentId));
     }
 
+    @Transactional
+    public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
+        return getActualAisConsent(consentId)
+                   .map(consent -> {
+                       consent.addAccountAccess(readAccountAccess(request.getAccess()));
+                       return aisConsentRepository.save(consent)
+                                  .getExternalId();
+                   });
+    }
+
+    @Transactional
+    public Optional<String> updateConsentBlob(UpdateAisConsentBlobRequest request, String consentId) {
+        return getActualAisConsent(consentId)
+                   .map(cons -> updateConsentAspspData(request, cons));
+    }
+
+    private String updateConsentAspspData(UpdateAisConsentBlobRequest request, AisConsent consent) {
+        consent.setAspspConsentData(request.getAspspConsentData());
+        return aisConsentRepository.save(consent).getExternalId();
+    }
+
     private String updateAisConsent(AisConsent consent, CreateAisConsentRequest request, String consentId) {
         aisConsentRepository.delete(consent);
         return createConsentWithConsentId(request, consentId);
@@ -223,15 +245,5 @@ public class AISConsentService {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
         return aisConsentRepository.save(consent);
-    }
-
-    @Transactional
-    public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
-        return getActualAisConsent(consentId)
-                   .map(consent -> {
-                       consent.addAccountAccess(readAccountAccess(request.getAccess()));
-                       return aisConsentRepository.save(consent)
-                                  .getExternalId();
-                   });
     }
 }
