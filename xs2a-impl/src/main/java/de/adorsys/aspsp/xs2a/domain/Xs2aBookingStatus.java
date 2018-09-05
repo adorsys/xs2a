@@ -28,22 +28,22 @@ public enum Xs2aBookingStatus {
     BOOKED("booked"),
     BOTH("both");
 
-    @ApiModelProperty(value = "description", example = "both")
-    private String description;
+    @ApiModelProperty(value = "value", example = "both")
+    private String value;
 
     @JsonCreator
-    Xs2aBookingStatus(String description) {
-        this.description = description;
+    Xs2aBookingStatus(String value) {
+        this.value = value;
     }
 
     @JsonValue
-    public String getDescription() {
-        return description;
+    public String getValue() {
+        return value;
     }
 
-    public static Xs2aBookingStatus forValue(String description) {
+    public static Xs2aBookingStatus forValue(String value) {
         for (Xs2aBookingStatus status : values()) {
-            if (status.description.equals(description)) {
+            if (status.value.equals(value)) {
                 return status;
             }
         }
