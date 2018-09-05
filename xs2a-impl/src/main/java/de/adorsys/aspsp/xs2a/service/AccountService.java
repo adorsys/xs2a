@@ -197,16 +197,16 @@ public class AccountService {
      * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
      * Checks if all transactions are related to accounts set in AccountConsent Transactions section
      *
-     * @param consentId     String representing an AccountConsent identification
      * @param accountId     String representing a PSU`s Account at ASPSP
+     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
+     * @param consentId     String representing an AccountConsent identification
      * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
      * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set to current date)
      * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
-     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<AccountReport> getAccountReportByPeriod(String consentId, String accountId, LocalDate dateFrom,
-                                                                  LocalDate dateTo, BookingStatus bookingStatus, boolean withBalance) {
+    public ResponseObject<AccountReport> getAccountReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
+                                                                  LocalDate dateTo, BookingStatus bookingStatus) {
         ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<AccountReport>builder()

@@ -105,7 +105,7 @@ public class AccountController12 implements AccountApi {
     @Override
     public ResponseEntity<?> getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<AccountReport> responseObject =
-            accountService.getAccountReportByPeriod(consentID, accountId, dateFrom, dateTo, BookingStatus.forValue(bookingStatus), Optional.ofNullable(withBalance).orElse(false));
+            accountService.getAccountReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentID, dateFrom, dateTo, BookingStatus.forValue(bookingStatus));
         return responseMapper.ok(responseObject, AccountModelMapper::mapToAccountReport);
     }
 
