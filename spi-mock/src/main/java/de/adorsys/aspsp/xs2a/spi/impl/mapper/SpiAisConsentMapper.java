@@ -18,13 +18,14 @@ package de.adorsys.aspsp.xs2a.spi.impl.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -96,5 +97,47 @@ public class SpiAisConsentMapper {
                              .map(Currency::getCurrencyCode)
                              .orElse(null));
         return info;
+    }
+
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(SpiScaStatus scaStatus) {
+        return Optional.ofNullable(scaStatus)
+                   .map(st -> {
+                       AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                       consentAuthorization.setScaStatus(CmsScaStatus.valueOf(st.name()));
+                       return consentAuthorization;
+                   })
+                   .orElse(null);
+    }
+
+    public SpiAccountConsentAuthorization mapToSpiAccountConsentAuthorization(AisConsentAuthorizationResponse response) {
+        return Optional.ofNullable(response)
+                   .map(resp -> {
+                       SpiAccountConsentAuthorization consentAuthorization = new SpiAccountConsentAuthorization();
+
+                       consentAuthorization.setId(resp.getAuthorizationId());
+                       consentAuthorization.setConsentId(resp.getConsentId());
+                       consentAuthorization.setPsuId(resp.getPsuId());
+                       consentAuthorization.setScaStatus(SpiScaStatus.valueOf(resp.getScaStatus().name()));
+                       consentAuthorization.setAuthenticationMethodId(resp.getAuthenticationMethodId());
+                       consentAuthorization.setScaAuthenticationData(resp.getScaAuthenticationData());
+                       consentAuthorization.setPassword(resp.getPassword());
+                       return consentAuthorization;
+                   })
+                   .orElse(null);
+    }
+
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorizationRequest(SpiUpdateConsentPsuDataReq updatePsuData) {
+        return Optional.ofNullable(updatePsuData)
+                   .map(data -> {
+                       AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                       consentAuthorization.setPsuId(data.getPsuId());
+                       consentAuthorization.setScaStatus(CmsScaStatus.valueOf(data.getScaStatus().name()));
+                       consentAuthorization.setAuthenticationMethodId(data.getAuthenticationMethodId());
+                       consentAuthorization.setPassword(data.getPassword());
+                       consentAuthorization.setScaAuthenticationData(data.getScaAuthenticationData());
+
+                       return consentAuthorization;
+                   })
+                   .orElse(null);
     }
 }

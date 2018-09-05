@@ -236,6 +236,13 @@ public class AISConsentService {
                    });
     }
 
+    /**
+     * Get consent authorization
+     *
+     * @param consentId
+     * @param authorizationId
+     * @return AisConsentAuthorizationResponse
+     */
     public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent()
                    ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)

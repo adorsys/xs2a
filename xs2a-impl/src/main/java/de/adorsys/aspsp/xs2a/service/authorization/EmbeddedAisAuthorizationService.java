@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     }
 
     private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId) {
-        return aisConsentService.createConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
+        return consentSpi.createConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
                        resp.setConsentId(consentId);

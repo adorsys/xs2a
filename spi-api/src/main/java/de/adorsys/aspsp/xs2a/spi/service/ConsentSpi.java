@@ -18,9 +18,10 @@ package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
+
+import java.util.Optional;
 
 public interface ConsentSpi {
 
@@ -58,8 +59,8 @@ public interface ConsentSpi {
     /**
      * Sends a POST request to CMS to perform decrement of consent usages and report status of the operation held with certain AIS consent
      *
-     * @param tppId       String representation of TPP`s identifier from TPP Certificate
-     * @param consentId   String representation of identifier of stored consent
+     * @param tppId        String representation of TPP`s identifier from TPP Certificate
+     * @param consentId    String representation of identifier of stored consent
      * @param actionStatus Enum value representing whether the acition is successful or errors occured
      */
     void consentActionLog(String tppId, String consentId, ActionStatus actionStatus);

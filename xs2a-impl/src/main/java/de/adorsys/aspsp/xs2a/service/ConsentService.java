@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -67,7 +68,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
-ddddddddddddddddddddddddddddddddddddddddddd
+
         CreateConsentReq checkedRequest = new CreateConsentReq();
         checkedRequest.setAccess(request.getAccess());
         checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
@@ -77,13 +78,8 @@ ddddddddddddddddddddddddddddddddddddddddddd
 
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         SpiCreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(request, psuId, tppId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes()));
+
         String consentId = consentSpi.createConsent(createAisConsentRequest);
-
-        dddddddddddddsdsdsdssssssssssssssssss
-        String consentId = isNotEmptyAccess(checkedRequest.getAccess())
-                               ? aisConsentService.createConsent(checkedRequest, psuId, tppId)
-                               : null;
-
 
         //TODO v1.1 Add balances support
         //TODO v1.2 Add embedded approach specfic links
