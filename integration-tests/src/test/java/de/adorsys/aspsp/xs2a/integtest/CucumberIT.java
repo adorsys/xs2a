@@ -8,5 +8,5 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions")
-public class CucumberIntegrationTest {
+public class CucumberIT {
 }
