@@ -312,7 +312,7 @@ public class PaymentServiceTest {
         singlePayments.setEndToEndIdentification(PAYMENT_ID);
         Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
-        amount.setContent(amountToPay);
+        amount.setAmount(amountToPay);
         singlePayments.setInstructedAmount(amount);
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
@@ -337,7 +337,7 @@ public class PaymentServiceTest {
         PeriodicPayment payment = new PeriodicPayment();
         Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
-        amount.setContent(amountToPay);
+        amount.setAmount(amountToPay);
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(getReference(iban));
         payment.setCreditorAccount(getReference(iban));

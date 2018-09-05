@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.domain.fund;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -33,7 +32,6 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Request for the Confirmation Funds")
 public class FundsConfirmationRequest implements AccountReferenceCollector {
 

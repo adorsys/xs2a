@@ -226,8 +226,7 @@ public class PaymentModelMapperTest {
         response.setTransactionStatus(Xs2aTransactionStatus.ACCP);
         response.setPaymentId(PAYMENT_ID);
 
-        response.setTransactionFees(getXs2aAmount
-                                        ());
+        response.setTransactionFees(getXs2aAmount());
         response.setTransactionFeeIndicator(true);
         response.setScaMethods(null);
         response.setPsuMessage(PSU_MSG);

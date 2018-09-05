@@ -289,7 +289,7 @@ public class PaymentMapper {
 
     private SpiAmount mapToSpiAmount(Xs2aAmount amount) {
         return Optional.ofNullable(amount)
-                   .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getContent())))
+                   .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
                    .orElse(null);
     }
 

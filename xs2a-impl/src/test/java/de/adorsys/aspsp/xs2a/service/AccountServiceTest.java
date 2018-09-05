@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
@@ -27,12 +28,14 @@ import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +50,8 @@ import java.util.*;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.mapToAccountDetails;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -76,11 +80,13 @@ public class AccountServiceTest {
     @Mock
     private ConsentService consentService;
     @Mock
-    private AisConsentService aisConsentService;
+    private ConsentSpi consentSpi;
     @Mock
     private AccountMapper accountMapper;
     @Mock
     private ValueValidatorService valueValidatorService;
+    @Mock
+    private AisConsentMapper aisConsentMapper;
 
     @Before
     public void setUp() {
@@ -89,13 +95,15 @@ public class AccountServiceTest {
         //AccountMapping
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID, IBAN));
         when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1, IBAN_1));
-        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
-        when(accountMapper.mapToAccountDetailsNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
+        when(accountMapper.mapToAccountDetailsListNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
             .thenReturn(Arrays.asList(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN), getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1)));
         when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
         when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1));
+        when(accountMapper.mapToAccountDetailNoBalances(null)).thenReturn(null);
         //AisReporting
-        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), anyBoolean(), any(TypeAccess.class), any(ResponseObject.class));
+        doNothing().when(consentSpi).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiAccountDetails(ACCOUNT_ID, IBAN), ASPSP_CONSENT_DATA));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
@@ -347,6 +355,8 @@ public class AccountServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             getBalancesList());
     }
 
@@ -358,8 +368,10 @@ public class AccountServiceTest {
             null,
             null,
             null,
-            CURRENCY,
+             CURRENCY,
             "David Muller",
+            null,
+            null,
             null,
             null,
             null,
@@ -370,7 +382,7 @@ public class AccountServiceTest {
         Xs2aBalance sb = new Xs2aBalance();
         Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
-        amount.setContent("1000");
+        amount.setAmount("1000");
         sb.setBalanceAmount(amount);
         return Collections.singletonList(sb);
     }
@@ -408,7 +420,7 @@ public class AccountServiceTest {
         transaction.setValueDate(DATE);
         transaction.setCreditorAccount(getAccountReference());
         Xs2aAmount amount = new Xs2aAmount();
-        amount.setContent("1000");
+        amount.setAmount("1000");
         amount.setCurrency(CURRENCY);
         transaction.setAmount(amount);
         return transaction;
@@ -417,7 +429,7 @@ public class AccountServiceTest {
     private SpiTransaction getSpiTransaction() {
         Transactions t = getTransaction();
         return new SpiTransaction(t.getTransactionId(), null, null, null, t.getBookingDate(),
-            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getContent())), null,
+            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getAmount())), null,
             mapToSpiAccountRef(t.getCreditorAccount()), null, null,
             mapToSpiAccountRef(t.getDebtorAccount()), null, null,
             null, null, null);

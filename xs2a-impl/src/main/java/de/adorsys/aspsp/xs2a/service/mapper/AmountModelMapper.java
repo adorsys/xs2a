@@ -39,7 +39,7 @@ public class AmountModelMapper {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Amount amountTarget = new Amount();
-                       amountTarget.setAmount(a.getContent());
+                       amountTarget.setAmount(a.getAmount());
                        amountTarget.setCurrency(a.getCurrency().getCurrencyCode());
                        return amountTarget;
                    })

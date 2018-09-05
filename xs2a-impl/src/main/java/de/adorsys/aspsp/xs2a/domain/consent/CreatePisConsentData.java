@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.consent.pis;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
@@ -26,7 +26,7 @@ import lombok.Value;
 import java.util.Map;
 
 @Value
-public class CreateConsentRequest {
+public class CreatePisConsentData {
     private SinglePayment singlePayment;
     private Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap;
     private PeriodicPayment periodicPayment;
@@ -34,7 +34,7 @@ public class CreateConsentRequest {
     private String paymentProduct;
     private AspspConsentData aspspConsentData;
 
-    public CreateConsentRequest(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
+    public CreatePisConsentData(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
         this.singlePayment = singlePayment;
         this.tppInfo = tppInfo;
         this.paymentProduct = paymentProduct;
@@ -43,7 +43,7 @@ public class CreateConsentRequest {
         this.periodicPayment = null;
     }
 
-    public CreateConsentRequest(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
+    public CreatePisConsentData(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
         this.paymentIdentifierMap = paymentIdentifierMap;
         this.tppInfo = tppInfo;
         this.paymentProduct = paymentProduct;
@@ -52,7 +52,7 @@ public class CreateConsentRequest {
         this.periodicPayment = null;
     }
 
-    public CreateConsentRequest(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
+    public CreatePisConsentData(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct, AspspConsentData aspspConsentData) {
         this.periodicPayment = periodicPayment;
         this.tppInfo = tppInfo;
         this.paymentProduct = paymentProduct;

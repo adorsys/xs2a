@@ -45,7 +45,7 @@ public class AccountModelMapperTest {
         de.adorsys.psd2.model.Amount actualBalanceAmount = result.getBalanceAmount();
         assertNotNull(expectedBalanceAmount);
 
-        assertEquals(expectedBalanceAmount.getContent(), actualBalanceAmount.getAmount());
+        assertEquals(expectedBalanceAmount.getAmount(), actualBalanceAmount.getAmount());
         assertEquals(expectedBalanceAmount.getCurrency().getCurrencyCode(), actualBalanceAmount.getCurrency());
         assertEquals(balance.getBalanceType().name(), result.getBalanceType().name());
 
@@ -66,9 +66,9 @@ public class AccountModelMapperTest {
         List<Xs2aAccountDetails> accountDetailsList = new ArrayList<>();
         Xs2aBalance inputBalance = createBalance();
 
-        accountDetailsList.add(new Xs2aAccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", new ArrayList<Xs2aBalance>()));
-        accountDetailsList.add(new Xs2aAccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", Arrays.asList(inputBalance)));
-        Xs2aAccountDetails accountDetails = new Xs2aAccountDetails("y1", "y2", "y3", "y4", "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CURRENT_ACCOUNT, "y11", new ArrayList<Xs2aBalance>());
+        accountDetailsList.add(new Xs2aAccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", null, null, new ArrayList<Balance>()));
+        accountDetailsList.add(new Xs2aAccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", null, null, Arrays.asList(inputBalance)));
+        AccountDetails accountDetails = new Xs2aAccountDetails("y1", "y2", "y3", "y4", "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CURRENT_ACCOUNT, "y11", null, null, new ArrayList<Balance>());
         accountDetails.setLinks(createLinks());
         accountDetailsList.add(accountDetails);
         Map<String, List<Xs2aAccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
@@ -128,7 +128,7 @@ public class AccountModelMapperTest {
         de.adorsys.psd2.model.Amount amountTarget = transactionDetails.getTransactionAmount();
         assertNotNull(amountTarget);
 
-        assertEquals(amount.getContent(), amountTarget.getAmount());
+        assertEquals(amount.getAmount(), amountTarget.getAmount());
         assertEquals(amount.getCurrency().getCurrencyCode(), amountTarget.getCurrency());
 
         BankTransactionCode bankTransactionCodeCode = transactions.getBankTransactionCodeCode();
@@ -214,7 +214,7 @@ public class AccountModelMapperTest {
     private Xs2aAmount createAmount() {
         Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(Currency.getInstance("EUR"));
-        amount.setContent("1000");
+        amount.setAmount("1000");
         return amount;
     }
 

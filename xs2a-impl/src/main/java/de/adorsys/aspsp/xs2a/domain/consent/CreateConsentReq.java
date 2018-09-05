@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
 
 @Data
 @ApiModel(description = "Request creates an account information consent resource at the ASPSP regarding access to accounts specified in this request")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateConsentReq implements AccountReferenceCollector {
 
     @ApiModelProperty(value = "Requested access services.", required = true)

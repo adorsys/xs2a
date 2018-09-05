@@ -46,6 +46,8 @@ public class AccountMapper {
                            ad.getAccountType(),
                            mapToAccountType(ad.getCashSpiAccountType()),
                            ad.getBic(),
+                           null,
+                           null,
                            mapToBalancesList(ad.getBalances())
                        )
                    )
@@ -56,7 +58,7 @@ public class AccountMapper {
         return Optional.ofNullable(spiAmount)
                    .map(a -> {
                        Xs2aAmount amount = new Xs2aAmount();
-                       amount.setContent(a.getContent().toString());
+                       amount.setAmount(a.getContent().toString());
                        amount.setCurrency(a.getCurrency());
                        return amount;
                    })
@@ -154,6 +156,21 @@ public class AccountMapper {
                    .orElseGet(Collections::emptyList);
     }
 
+    public List<SpiAccountReference> mapToSpiAccountReferencesFromDetails(List<SpiAccountDetails> details) {
+        return Optional.ofNullable(details)
+                   .map(det -> det.stream()
+                                   .map(spiDetail -> new SpiAccountReference(
+                                       spiDetail.getIban(),
+                                       spiDetail.getBban(),
+                                       spiDetail.getPan(),
+                                       spiDetail.getMaskedPan(),
+                                       spiDetail.getMsisdn(),
+                                       spiDetail.getCurrency()
+                                   ))
+                                   .collect(Collectors.toList()))
+                   .orElseGet(Collections::emptyList);
+    }
+
     private List<Xs2aBalance> mapToBalancesList(List<SpiAccountBalance> spiBalances) {
         if (CollectionUtils.isEmpty(spiBalances)) {
             return new ArrayList<>();
@@ -211,6 +228,6 @@ public class AccountMapper {
     public Xs2aAccountDetails mapToAccountDetailNoBalances(Xs2aAccountDetails detail) {
         return new Xs2aAccountDetails(detail.getId(), detail.getIban(), detail.getBban(), detail.getPan(),
             detail.getMaskedPan(), detail.getMsisdn(), detail.getCurrency(), detail.getName(),
-            detail.getAccountType(), detail.getCashAccountType(), detail.getBic(), null);
+            detail.getProduct(), detail.getCashAccountType(), detail.getBic(), null, null, null);
     }
 }
