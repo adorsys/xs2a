@@ -128,7 +128,7 @@ public class AISConsentService {
     }
 
     /**
-     * Update AIS consent
+     * Update AIS consent by id
      *
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated
@@ -140,6 +140,13 @@ public class AISConsentService {
                    .map(consent -> updateAisConsent(consent, request, consentId));
     }
 
+    /**
+     * Update AIS consent account access by id
+     *
+     * @param request   needed parameters for updating AIS consent
+     * @param consentId id of the consent to be updated
+     * @return String consent id
+     */
     @Transactional
     public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
         return getActualAisConsent(consentId)
@@ -150,6 +157,13 @@ public class AISConsentService {
                    });
     }
 
+    /**
+     * Update AIS consent aspsp blob data by id
+     *
+     * @param request   needed parameters for updating AIS consent
+     * @param consentId id of the consent to be updated
+     * @return String consent id
+     */
     @Transactional
     public Optional<String> updateConsentBlob(UpdateAisConsentBlobRequest request, String consentId) {
         return getActualAisConsent(consentId)
