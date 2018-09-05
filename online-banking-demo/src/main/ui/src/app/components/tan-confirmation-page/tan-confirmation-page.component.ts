@@ -20,7 +20,7 @@ export class TanConfirmationPageComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private bankingService: BankingService) { }
 
   onClickContinue() {
-    this.bankingService.postTan()
+    this.bankingService.confirmTan()
       .subscribe(
         success => {
           this.router.navigate(['/consentconfirmation'], { queryParams: this.createQueryParams() });

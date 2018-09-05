@@ -19,7 +19,7 @@ export class BankingService {
   constructor(private httpClient: HttpClient) {
   }
 
-  postTan(): Observable<any> {
+  confirmTan(): Observable<any> {
     const body = {
       tanNumber: this.savedData.tan,
       iban: this.savedData.iban,
@@ -27,7 +27,7 @@ export class BankingService {
       paymentId: this.savedData.paymentId
     };
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.httpClient.post(this.mockServerUrl + '/payment/confirmation/', body, { headers: headers });
+    return this.httpClient.put(this.mockServerUrl + '/consent/confirmation/pis', body, { headers: headers });
   }
 
   postConsent(decision) {
@@ -52,7 +52,7 @@ export class BankingService {
 
   generateTan(): Observable<any> {
     console.log("awi generateTan");
-    return this.httpClient.post(this.GENERATE_TAN_URL + this.savedData.iban, {});
+    return this.httpClient.post(this.GENERATE_TAN_URL, {});
   }
 
   getSinglePayments(): Observable<SinglePayments> {
