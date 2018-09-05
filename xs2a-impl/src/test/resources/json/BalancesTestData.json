@@ -1,7 +1,7 @@
 {
     "balanceAmount": {
       "currency": "EUR",
-      "content": "300.45"
+      "amount": "300.45"
     },
     "balanceType": "INTERIM_AVAILABLE",
     "lastChangeDateTime": "2018-03-31T15:16:16.374",

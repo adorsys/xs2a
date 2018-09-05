@@ -64,15 +64,28 @@ public class AccountDetails {
     @ApiModelProperty(value = "Name: Name given by the bank or the Psu in Online- Banking", example = "Main Account")
     private final String name;
 
-    @ApiModelProperty(value = "Account Type: Product Name of the Bank for this account", example = "Girokonto")
+    @ApiModelProperty(value = "Product Name of the Bank for this account, proprietary definition", example = "Girokonto")
     @Size(max = 35)
-    private final String accountType;
+    private final String product;
 
     @ApiModelProperty(value = "Cash Account Type: PExternalCashAccountType1Code from ISO20022")
     private final CashAccountType cashAccountType;
 
+    @ApiModelProperty(value = "Account status")
+    private AccountStatus accountStatus;
+
     @ApiModelProperty(value = "BIC: The BIC associated to the account.", example = "EDEKDEHHXXX")
     private final String bic;
+
+    @ApiModelProperty(value = "Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.")
+    @Size(max = 70)
+    private final String linkedAccounts;
+
+    @ApiModelProperty(value = "Specifies the usage of the account")
+    private UsageEnum usageEnum;
+
+    @ApiModelProperty(value = "Specifications that might be provided by the ASPSP", example = "Details")
+    private final String details;
 
     @ApiModelProperty(value = "Balances")
     private final List<Balance> balances;
