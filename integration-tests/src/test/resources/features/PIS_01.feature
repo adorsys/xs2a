@@ -116,3 +116,18 @@ Feature: Payment Initiation Service
 #        Examples:
 #            | payment-id                           | payment-service      | payment-status                     |
 #            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |
+
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Payment Cancellation                                                                                             #
+    #                                                                                                                  #
+    ####################################################################################################################
+#    Scenario Outline: Successful Payment Cancellation Request
+#        Given Psu wants to cancel an existing payment using the payment service <payment-service>
+#        And the set of data <payment-cancellation>
+#        When PSU initiates the cancellation of the payment
+#        Then an successful response code and the appropriate transaction status is delivered to the PSU
+#        Examples:
+#            | payment-service | payment-cancellation                |
+#            | payments        | paymentCancellation-successful.json |
