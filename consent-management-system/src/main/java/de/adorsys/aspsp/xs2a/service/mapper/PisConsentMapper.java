@@ -30,7 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class PISConsentMapper {
+public class PisConsentMapper {
 
     public Optional<PisConsent> mapToPisConsent(PisConsentRequest request) {
         return Optional.ofNullable(request.getPayments())

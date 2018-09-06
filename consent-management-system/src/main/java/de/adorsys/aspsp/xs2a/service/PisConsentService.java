@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.mapper.PISConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +33,9 @@ import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 
 @Service
 @RequiredArgsConstructor
-public class PISConsentService {
+public class PisConsentService {
     private final PisConsentRepository pisConsentRepository;
-    private final PISConsentMapper pisConsentMapper;
+    private final PisConsentMapper pisConsentMapper;
 
     /**
      * Creates new pis consent with full information about payment

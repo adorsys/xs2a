@@ -18,14 +18,14 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import com.google.common.collect.Lists;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
@@ -52,14 +52,14 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     private final ConsentSpi consentSpi;
     private final PaymentMapper paymentMapper;
     private final PaymentSpi paymentSpi;
-    private final PisConsentMapper pisConsentMapper;
+    private final Xs2aPisConsentMapper pisConsentMapper;
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
         AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
         PaymentInitialisationResponse response = createPeriodicPaymentAndGetResponse(periodicPayment, aspspConsentData);
-        return response.getTransactionStatus() != TransactionStatus.RJCT
+        return response.getTransactionStatus() != Xs2aTransactionStatus.RJCT
                    ? createConsentForPeriodicPaymentAndExtendPaymentResponse(new CreatePisConsentData(periodicPayment, tppInfo, paymentProduct, aspspConsentData), response)
                    : response;
     }
@@ -97,9 +97,9 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
         paymentIdentifierMap.forEach((sp, resp) -> {
             if (StringUtils.isBlank(resp.getPaymentId())
-                    || resp.getTransactionStatus() == TransactionStatus.RJCT) {
+                    || resp.getTransactionStatus() == Xs2aTransactionStatus.RJCT) {
                 resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
-                resp.setTransactionStatus(TransactionStatus.RJCT);
+                resp.setTransactionStatus(Xs2aTransactionStatus.RJCT);
             }
         });
         return paymentIdentifierMap;
@@ -115,9 +115,9 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
         for (PaymentInitialisationResponse resp : paymentResponses) {
             if (StringUtils.isBlank(resp.getPaymentId())
-                    || resp.getTransactionStatus() == TransactionStatus.RJCT) {
+                    || resp.getTransactionStatus() == Xs2aTransactionStatus.RJCT) {
                 resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
-                resp.setTransactionStatus(TransactionStatus.RJCT);
+                resp.setTransactionStatus(Xs2aTransactionStatus.RJCT);
             }
         }
 
@@ -139,7 +139,7 @@ public class RedirectScaPaymentService implements ScaPaymentService {
         AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
         PaymentInitialisationResponse response = createSinglePaymentAndGetResponse(singlePayment, aspspConsentData);
-        return response.getTransactionStatus() != TransactionStatus.RJCT
+        return response.getTransactionStatus() != Xs2aTransactionStatus.RJCT
                    ? createConsentForSinglePaymentAndExtendPaymentResponse(new CreatePisConsentData(singlePayment, tppInfo, paymentProduct, aspspConsentData), response)
                    : response;
     }

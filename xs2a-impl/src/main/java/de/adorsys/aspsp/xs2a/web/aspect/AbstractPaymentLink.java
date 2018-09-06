@@ -21,20 +21,15 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 
 import java.util.Base64;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
-    protected Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentProduct) {
-        Class controller = getController();
+    protected Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService) {
         String encodedPaymentId = Base64.getEncoder().encodeToString(body.getPaymentId().getBytes());
 
         Links links = new Links();
         links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
-        links.setSelf(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
-        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
-        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
-        links.setStatus(linkTo(controller, paymentProduct).slash(encodedPaymentId).slash("status").toString());
+        links.setSelf(buildLink("/v1/{paymentService}/{paymentId}", paymentService, encodedPaymentId));
+        links.setStatus(buildLink("/v1/{paymentService}/{paymentId}/status", paymentService, encodedPaymentId));
         return links;
     }
 }

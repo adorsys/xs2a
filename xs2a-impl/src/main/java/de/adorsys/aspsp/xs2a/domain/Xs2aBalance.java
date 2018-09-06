@@ -26,10 +26,10 @@ import java.time.LocalDateTime;
 
 @Data
 @ApiModel(description = "Balance Information", value = "Balance")
-public class Balance {
+public class Xs2aBalance {
 
     @ApiModelProperty(value = "balance amount", required = true)
-    private Amount balanceAmount;
+    private Xs2aAmount balanceAmount;
 
     @ApiModelProperty(value = "balance type", required = true)
     private BalanceType balanceType;

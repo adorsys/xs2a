@@ -8,7 +8,7 @@
       "bookingDate": "2018-03-09",
       "amount": {
         "currency": "EUR",
-        "content": "3000.45"
+        "amount": "3000.45"
       },
       "creditorName": "",
       "debtorName": "AccountMockData.getAccounts().get(2)",

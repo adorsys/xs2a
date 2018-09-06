@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AccountAccessType;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
@@ -98,10 +99,10 @@ public class ConsentMapper {
     }
 
     //Domain
-    private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
+    private Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
-                            new AccountAccess(
+                            new Xs2aAccountAccess(
                                 accountMapper.mapToAccountReferences(aa.getAccounts()),
                                 accountMapper.mapToAccountReferences(aa.getBalances()),
                                 accountMapper.mapToAccountReferences(aa.getTransactions()),
@@ -111,14 +112,14 @@ public class ConsentMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
+    private Xs2aAccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
         return Optional.ofNullable(accessType)
-                   .map(at -> AccountAccessType.valueOf(at.name()))
+                   .map(at -> Xs2aAccountAccessType.valueOf(at.name()))
                    .orElse(null);
     }
 
     //Spi
-    private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
+    private AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
                                    .map(this::mapToListAccountInfo)
@@ -133,10 +134,10 @@ public class ConsentMapper {
                                        .orElseGet(Collections::emptyList));
 
         accessInfo.setAvailableAccounts(Optional.ofNullable(access.getAvailableAccounts())
-                                            .map(AccountAccessType::name)
+                                            .map(availAcc -> AccountAccessType.valueOf(availAcc.name()))
                                             .orElse(null));
         accessInfo.setAllPsd2(Optional.ofNullable(access.getAllPsd2())
-                                  .map(AccountAccessType::name)
+                                  .map(allPsd2 -> AccountAccessType.valueOf(allPsd2.name()))
                                   .orElse(null));
 
         return accessInfo;

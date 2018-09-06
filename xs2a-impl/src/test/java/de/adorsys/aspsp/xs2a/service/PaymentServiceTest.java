@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Amount;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
@@ -47,8 +47,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.aspsp.xs2a.domain.TransactionStatus.RCVD;
-import static de.adorsys.aspsp.xs2a.domain.TransactionStatus.RJCT;
+import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RCVD;
+import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -57,7 +57,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
-
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "";
     private static final String IBAN = "DE123456789";
@@ -89,13 +88,15 @@ public class PaymentServiceTest {
     private ReadPaymentFactory readPaymentFactory;
     @Mock
     private ReadSinglePayment readSinglePayment;
+    @Mock
+    private AccountReferenceValidationService referenceValidationService;
 
     @Before
     public void setUp() {
         //Mapper
         when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RCVD)).thenReturn(RCVD);
-        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(TransactionStatus.ACCP);
-        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(TransactionStatus.RJCT);
+        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.ACCP)).thenReturn(Xs2aTransactionStatus.ACCP);
+        when(paymentMapper.mapToTransactionStatus(SpiTransactionStatus.RJCT)).thenReturn(Xs2aTransactionStatus.RJCT);
         when(paymentMapper.mapToTransactionStatus(null)).thenReturn(null);
         when(paymentMapper.mapToSpiPaymentType(PaymentType.SINGLE)).thenReturn(SpiPaymentType.SINGLE);
         when(paymentMapper.mapToSpiPaymentType(PaymentType.PERIODIC)).thenReturn(SpiPaymentType.PERIODIC);
@@ -123,6 +124,8 @@ public class PaymentServiceTest {
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RJCT, PAYMENT_FAILED)));
         when(paymentMapper.mapToTppInfo(TPP_INFO_STR))
             .thenReturn(TPP_INFO);
+
+        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
@@ -130,16 +133,16 @@ public class PaymentServiceTest {
     @Test
     public void getPaymentStatusById() {
         //When
-        ResponseObject<TransactionStatus> response = paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE);
+        ResponseObject<Xs2aTransactionStatus> response = paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE);
         //Then
         assertThat(response.hasError()).isFalse();
-        assertThat(response.getBody()).isEqualTo(TransactionStatus.ACCP);
+        assertThat(response.getBody()).isEqualTo(Xs2aTransactionStatus.ACCP);
     }
 
     @Test
     public void getPaymentStatusById_Failure() {
         //When
-        ResponseObject<TransactionStatus> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE);
+        ResponseObject<Xs2aTransactionStatus> response = paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE);
         //Then
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError().getTppMessage().getMessageErrorCode()).isEqualTo(MessageErrorCode.RESOURCE_UNKNOWN_403);
@@ -296,7 +299,7 @@ public class PaymentServiceTest {
     }
 
     //Test additional methods
-    private PaymentInitialisationResponse getPaymentResponse(TransactionStatus status, MessageErrorCode errorCode) {
+    private PaymentInitialisationResponse getPaymentResponse(Xs2aTransactionStatus status, MessageErrorCode errorCode) {
         PaymentInitialisationResponse paymentInitialisationResponse = new PaymentInitialisationResponse();
         paymentInitialisationResponse.setTransactionStatus(status);
 
@@ -310,9 +313,9 @@ public class PaymentServiceTest {
     private SinglePayment getSinglePayment(String iban, String amountToPay) {
         SinglePayment singlePayments = new SinglePayment();
         singlePayments.setEndToEndIdentification(PAYMENT_ID);
-        Amount amount = new Amount();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
-        amount.setContent(amountToPay);
+        amount.setAmount(amountToPay);
         singlePayments.setInstructedAmount(amount);
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
@@ -335,9 +338,9 @@ public class PaymentServiceTest {
 
     private PeriodicPayment getPeriodicPayment(String iban, String amountToPay) {
         PeriodicPayment payment = new PeriodicPayment();
-        Amount amount = new Amount();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(CURRENCY);
-        amount.setContent(amountToPay);
+        amount.setAmount(amountToPay);
         payment.setInstructedAmount(amount);
         payment.setDebtorAccount(getReference(iban));
         payment.setCreditorAccount(getReference(iban));

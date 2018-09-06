@@ -33,6 +33,7 @@ import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
@@ -153,17 +154,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public ScaPaymentService scaPaymentService(ConsentSpi consentSpi, PaymentMapper paymentMapper, PaymentSpi paymentSpi, PisConsentMapper pisConsentMapper) {
-        switch (aspspProfileService.readScaApproach()) {
-            case OAUTH:
-                return new OauthScaPaymentService(paymentMapper, paymentSpi);
-            case DECOUPLED:
-                return new DecoupedScaPaymentService();
-            case EMBEDDED:
-                return new EmbeddedScaPaymentService();
-            default:
-                return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
+    public ScaPaymentService scaPaymentService(ConsentSpi consentSpi, PaymentMapper paymentMapper, PaymentSpi paymentSpi, Xs2aPisConsentMapper pisConsentMapper) {
+        ScaApproach scaApproach = aspspProfileService.readScaApproach();
+        if (OAUTH == scaApproach) {
+            return new OauthScaPaymentService(paymentMapper, paymentSpi);
+        } else if (DECOUPLED == scaApproach) {
+            return new DecoupedScaPaymentService();
+        } else if (EMBEDDED == scaApproach) {
+            return new EmbeddedScaPaymentService();
         }
+        return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
     }
 
     @Bean

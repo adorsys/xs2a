@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-public class ConsentMapper {
+public class AisConsentMapper {
 
     public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
         return new AisAccountConsent(
@@ -44,7 +44,8 @@ public class ConsentMapper {
             consent.getConsentStatus(),
             false,
             consent.isTppRedirectPreferred(),
-            consent.getAspspConsentData());
+            consent.getAspspConsentData(),
+            consent.getAisConsentRequestType());
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {

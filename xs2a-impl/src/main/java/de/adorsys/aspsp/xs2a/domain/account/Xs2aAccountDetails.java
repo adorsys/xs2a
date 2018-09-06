@@ -18,7 +18,7 @@
 package de.adorsys.aspsp.xs2a.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import io.swagger.annotations.ApiModel;
@@ -32,7 +32,7 @@ import java.util.List;
 
 @Data
 @ApiModel(description = "SpiAccountDetails information", value = "SpiAccountDetails")
-public class AccountDetails {
+public class Xs2aAccountDetails {
 
     @ApiModelProperty(value = "ID: This is the data element to be used in the path when retrieving data from a dedicated account", required = true, example = "3dc3d5b3-7023-4848-9853-f5400a64e80f")
     @Size(max = 35)
@@ -64,18 +64,31 @@ public class AccountDetails {
     @ApiModelProperty(value = "Name: Name given by the bank or the Psu in Online- Banking", example = "Main Account")
     private final String name;
 
-    @ApiModelProperty(value = "Account Type: Product Name of the Bank for this account", example = "Girokonto")
+    @ApiModelProperty(value = "Product Name of the Bank for this account, proprietary definition", example = "Girokonto")
     @Size(max = 35)
-    private final String accountType;
+    private final String product;
 
     @ApiModelProperty(value = "Cash Account Type: PExternalCashAccountType1Code from ISO20022")
     private final CashAccountType cashAccountType;
 
+    @ApiModelProperty(value = "Account status")
+    private AccountStatus accountStatus;
+
     @ApiModelProperty(value = "BIC: The BIC associated to the account.", example = "EDEKDEHHXXX")
     private final String bic;
 
+    @ApiModelProperty(value = "Case of a set of pending card transactions, the APSP will provide the relevant cash account the card is set up on.")
+    @Size(max = 70)
+    private final String linkedAccounts;
+
+    @ApiModelProperty(value = "Specifies the usage of the account")
+    private UsageEnum usageEnum;
+
+    @ApiModelProperty(value = "Specifications that might be provided by the ASPSP", example = "Details")
+    private final String details;
+
     @ApiModelProperty(value = "Balances")
-    private final List<Balance> balances;
+    private final List<Xs2aBalance> balances;
 
     @ApiModelProperty(value = "links: inks to the account, which can be directly used for retrieving account information from the dedicated account")
     @JsonProperty("_links")

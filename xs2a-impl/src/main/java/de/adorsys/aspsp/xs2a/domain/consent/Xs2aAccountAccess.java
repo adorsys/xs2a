@@ -27,7 +27,7 @@ import java.util.List;
 
 @Value
 @ApiModel(description = "Account access", value = "AccountAccess")
-public class AccountAccess {
+public class Xs2aAccountAccess {
 
     @ApiModelProperty(value = "detailed account information", required = false)
     private List<AccountReference> accounts;
@@ -39,10 +39,10 @@ public class AccountAccess {
     private List<AccountReference> transactions;
 
     @ApiModelProperty(value = "only the value 'allAccounts' or 'allAccountsWithBalances' is admitted", example = "allAccounts", required = false)
-    private AccountAccessType availableAccounts;
+    private Xs2aAccountAccessType availableAccounts;
 
     @ApiModelProperty(value = "only the value 'allAccounts' is admitted", example = "allAccounts", required = false)
-    private AccountAccessType allPsd2;
+    private Xs2aAccountAccessType allPsd2;
 
     @JsonIgnore
     public boolean isNotEmpty(){
