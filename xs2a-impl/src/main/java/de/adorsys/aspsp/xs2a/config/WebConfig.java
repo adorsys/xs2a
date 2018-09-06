@@ -31,8 +31,7 @@ import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.authorization.*;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
@@ -60,8 +59,7 @@ import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.OAUTH;
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.REDIRECT;
+import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
@@ -167,7 +165,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public AisAuthorizationService authorizationService(AccountSpi accountSpi, ConsentSpi consentSpi, AisConsentMapper aisConsentMapper) {
+    public AisAuthorizationService authorizationService(AccountSpi accountSpi, ConsentSpi consentSpi, Xs2aAisConsentMapper aisConsentMapper) {
         switch (aspspProfileService.readScaApproach()) {
             case OAUTH:
                 return new OauthAisAuthorizationService();

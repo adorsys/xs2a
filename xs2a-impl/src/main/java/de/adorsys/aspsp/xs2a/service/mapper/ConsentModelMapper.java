@@ -20,10 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.psd2.api.ConsentApi;
-import de.adorsys.psd2.model.AccountAccess;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.AuthenticationType;
-import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.ConsentStatus;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
@@ -119,15 +118,15 @@ public class ConsentModelMapper {
 
     private static Xs2aAccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
-            .map(acs ->
-                new Xs2aAccountAccess(
-                    mapToAccountReferencesInner(acs.getAccounts()),
-                    mapToAccountReferencesInner(acs.getBalances()),
-                    mapToAccountReferencesInner(acs.getTransactions()),
-                    mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
-                    mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2())
-                ))
-            .orElse(null);
+                   .map(acs ->
+                            new Xs2aAccountAccess(
+                                mapToAccountReferencesInner(acs.getAccounts()),
+                                mapToAccountReferencesInner(acs.getBalances()),
+                                mapToAccountReferencesInner(acs.getTransactions()),
+                                mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
+                                mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2())
+                            ))
+                   .orElse(null);
     }
 
     private static AccountAccess mapToAccountAccessDomain(Xs2aAccountAccess accountAccess) {
@@ -135,23 +134,23 @@ public class ConsentModelMapper {
                    .map(access -> {
                            AccountAccess mappedAccountAccess = new AccountAccess();
 
-                    mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
-                    mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
-                    mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
-                    mappedAccountAccess.setAvailableAccounts(
-                        AccountAccess.AvailableAccountsEnum.fromValue(
-                            Optional.ofNullable(access.getAvailableAccounts())
-                                .map(Xs2aAccountAccessType::getDescription)
-                                .orElse(null)
-                        )
-                    );
-                    mappedAccountAccess.setAllPsd2(
-                        AccountAccess.AllPsd2Enum.fromValue(
-                            Optional.ofNullable(access.getAllPsd2())
-                                .map(Xs2aAccountAccessType::getDescription)
-                                .orElse(null)
-                        )
-                    );
+                           mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
+                           mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
+                           mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
+                           mappedAccountAccess.setAvailableAccounts(
+                               AccountAccess.AvailableAccountsEnum.fromValue(
+                                   Optional.ofNullable(access.getAvailableAccounts())
+                                       .map(Xs2aAccountAccessType::getDescription)
+                                       .orElse(null)
+                               )
+                           );
+                           mappedAccountAccess.setAllPsd2(
+                               AccountAccess.AllPsd2Enum.fromValue(
+                                   Optional.ofNullable(access.getAllPsd2())
+                                       .map(Xs2aAccountAccessType::getDescription)
+                                       .orElse(null)
+                               )
+                           );
 
                            return mappedAccountAccess;
                        }
@@ -161,14 +160,14 @@ public class ConsentModelMapper {
 
     private static Xs2aAccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
-            .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
-            .orElse(null);
+                   .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
+                   .orElse(null);
     }
 
     private static Xs2aAccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
         return Optional.ofNullable(allPsd2Enum)
-            .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
-            .orElse(null);
+                   .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
+                   .orElse(null);
     }
 
     private static List<AccountReference> mapToAccountReferencesInner(List<Object> references) {
