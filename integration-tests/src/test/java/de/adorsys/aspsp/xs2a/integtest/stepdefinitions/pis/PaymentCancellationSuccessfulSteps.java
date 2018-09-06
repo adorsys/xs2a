@@ -70,7 +70,8 @@ public class PaymentCancellationSuccessfulSteps {
 
     @When("^PSU initiates the cancellation of the payment$")
     public void sendPaymentCancellationRequest() {
-        HttpEntity<HashMap> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitiationCancelResponse200202> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
