@@ -141,6 +141,6 @@ Feature: Payment Initiation Service
         Examples:
             | payment-id                           | payment-service              | payment-information                        |
             | 11111111-aaaa-xxxx-1111-1x1x1x1x1x1x | payments                     | singlePayInformation-not-existing-id.json  |
-            | 5b911ad3d300c60f7edceda1 | payments                     | singlePayInformation-no-request-id.json     |
-            | 5b911ad3d300c60f7edceda1 | payments                     | singlePayInformation-wrong-format-request-id.json |
-            | 5b911ad3d300c60f7edceda1 | recurring-payments           | singlePayInformation-wrong-payment-service.json |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-no-request-id.json     |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-wrong-format-request-id.json |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | recurring-payments           | singlePayInformation-wrong-payment-service.json |
