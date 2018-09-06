@@ -97,8 +97,8 @@ public class AccountServiceTest {
             .thenReturn(Arrays.asList(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN), getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1)));
         when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
         when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
-        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID, IBAN));
-        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalances(ACCOUNT_ID_1, IBAN_1));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
+        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1));
         when(accountMapper.mapToAccountDetailNoBalances(null)).thenReturn(null);
         //AisReporting
         doNothing().when(consentSpi).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
@@ -353,23 +353,9 @@ public class AccountServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             getBalancesList());
-    }
-
-    private AccountDetails getAccountDetailsNoBalances(String accountId, String iban) {
-        return new AccountDetails(
-            accountId,
-            iban,
-            "zz22",
-            null,
-            null,
-            null,
-            CURRENCY,
-            "David Muller",
-            null,
-            null,
-            null,
-            null);
     }
 
     private AccountDetails getAccountDetailsNoBalance(String accountId, String iban) {
@@ -380,8 +366,10 @@ public class AccountServiceTest {
             null,
             null,
             null,
-            CURRENCY,
+             CURRENCY,
             "David Muller",
+            null,
+            null,
             null,
             null,
             null,
@@ -392,7 +380,7 @@ public class AccountServiceTest {
         Balance sb = new Balance();
         Amount amount = new Amount();
         amount.setCurrency(CURRENCY);
-        amount.setContent("1000");
+        amount.setAmount("1000");
         sb.setBalanceAmount(amount);
         return Collections.singletonList(sb);
     }
@@ -430,7 +418,7 @@ public class AccountServiceTest {
         transaction.setValueDate(DATE);
         transaction.setCreditorAccount(getAccountReference());
         Amount amount = new Amount();
-        amount.setContent("1000");
+        amount.setAmount("1000");
         amount.setCurrency(CURRENCY);
         transaction.setAmount(amount);
         return transaction;
@@ -439,7 +427,7 @@ public class AccountServiceTest {
     private SpiTransaction getSpiTransaction() {
         Transactions t = getTransaction();
         return new SpiTransaction(t.getTransactionId(), null, null, null, t.getBookingDate(),
-            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getContent())), null,
+            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getAmount())), null,
             mapToSpiAccountRef(t.getCreditorAccount()), null, null,
             mapToSpiAccountRef(t.getDebtorAccount()), null, null,
             null, null, null);

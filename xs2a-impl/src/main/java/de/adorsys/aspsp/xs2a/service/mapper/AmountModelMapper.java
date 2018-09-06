@@ -27,7 +27,7 @@ public class AmountModelMapper {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        de.adorsys.aspsp.xs2a.domain.Amount amountTarget = new de.adorsys.aspsp.xs2a.domain.Amount();
-                       amountTarget.setContent(a.getAmount());
+                       amountTarget.setAmount(a.getAmount());
                        amountTarget.setCurrency(getCurrencyByCode(a.getCurrency()));
                        return amountTarget;
                    })
@@ -38,7 +38,7 @@ public class AmountModelMapper {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Amount amountTarget = new Amount();
-                       amountTarget.setAmount(a.getContent());
+                       amountTarget.setAmount(a.getAmount());
                        amountTarget.setCurrency(a.getCurrency().getCurrencyCode());
                        return amountTarget;
                    })

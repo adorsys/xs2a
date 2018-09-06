@@ -19,19 +19,35 @@ package de.adorsys.aspsp.xs2a.domain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Currency;
 
 @Data
-@ApiModel(description = "Amount information", value = "Amount")
-public class Amount {
+@ApiModel(description = "Exchange Rate ", value = "ExchangeRate")
+public class Xs2aExchangeRate {
 
-	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
+    @ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
     @NotNull
-    private Currency currency;
+    private Currency currencyFrom;
 
-	@ApiModelProperty(value = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
+    @ApiModelProperty(value = "Rate from", required = true, example = "zzz")
     @NotNull
-    private String amount;
+    private String rateFrom;
+
+    @ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
+    @NotNull
+    private Currency currencyTo;
+
+    @ApiModelProperty(value = "Rate to", required = true, example = "zzz")
+    @NotNull
+    private String rateTo;
+
+    @ApiModelProperty(value = "Rate date", required = true, example = "2017-01-01")
+    @NotNull
+    private LocalDate rateDate;
+
+    @ApiModelProperty(value = "Rate contract", example = "zzz")
+    @NotNull
+    private String rateContract;
 }

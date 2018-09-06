@@ -46,6 +46,8 @@ public class AccountMapper {
                            ad.getAccountType(),
                            mapToAccountType(ad.getCashSpiAccountType()),
                            ad.getBic(),
+                           null,
+                           null,
                            mapToBalancesList(ad.getBalances())
                        )
                    )
@@ -56,7 +58,7 @@ public class AccountMapper {
         return Optional.ofNullable(spiAmount)
                    .map(a -> {
                        Amount amount = new Amount();
-                       amount.setContent(a.getContent().toString());
+                       amount.setAmount(a.getContent().toString());
                        amount.setCurrency(a.getCurrency());
                        return amount;
                    })

@@ -71,7 +71,7 @@ public class FundsConfirmationServiceTest {
     @Before
     public void setUp() throws IOException {
         when(accountService.getAccountDetailsByAccountReference(any(AccountReference.class)))
-            .thenReturn(Optional.of(new AccountDetails(null, null, null, null, null, null, null, null, null, null, null, getBalances())));
+            .thenReturn(Optional.of(new AccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
@@ -119,7 +119,7 @@ public class FundsConfirmationServiceTest {
 
     private Amount getAmount1600() {
         Amount amount = new Amount();
-        amount.setContent(AMOUNT_1600);
+        amount.setAmount(AMOUNT_1600);
         amount.setCurrency(EUR);
         return amount;
     }

@@ -34,7 +34,7 @@
   "executionRule": "preceeding",
   "frequency": "ANNUAL",
   "instructedAmount": {
-    "content": "1000.00",
+    "amount": "1000.00",
     "currency": "EUR"
   },
   "purposeCode": {

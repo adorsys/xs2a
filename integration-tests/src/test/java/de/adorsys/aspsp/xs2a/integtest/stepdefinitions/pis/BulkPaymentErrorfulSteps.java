@@ -27,14 +27,13 @@ import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -65,23 +64,18 @@ public class BulkPaymentErrorfulSteps {
 
     @When("^PSU sends the bulk payment initiating request with error$")
     public void sendBulkPaymentInitiatingRequest() throws IOException {
-        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-                HttpMethod.POST, new HttpEntity<>(entity), new ParameterizedTypeReference<TppMessages>() {
-                });
+                HttpMethod.POST, entity, HashMap.class);
         } catch (RestClientResponseException restclientResponseException) {
-            handleRequestError(restclientResponseException);
+            context.handleRequestError(restclientResponseException);
         }
     }
 
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppmessage(tppMessages);
-    }
+    // @Then("^an error response code and the appropriate error response are received$")
+    // See GlobalErrorfulSteps
 }

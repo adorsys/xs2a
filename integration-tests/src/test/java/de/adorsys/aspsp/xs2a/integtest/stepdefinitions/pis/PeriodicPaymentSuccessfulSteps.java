@@ -66,7 +66,8 @@ public class PeriodicPaymentSuccessfulSteps {
 
         TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(
             resourceToString("/data-input/pis/recurring/" + dataFileName, UTF_8),
-            new TypeReference<TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {});
+            new TypeReference<TestData<PeriodicPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
+            });
 
         context.setTestData(data);
         context.getTestData().getRequest().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
@@ -74,11 +75,11 @@ public class PeriodicPaymentSuccessfulSteps {
 
     @When("^PSU sends the recurring payment initiating request$")
     public void sendSuccessfulPeriodicPaymentInitiatingRequest() {
-        HttpEntity<PeriodicPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitationRequestResponse201> responseEntity = restTemplate.exchange(
-            context.getBaseUrl() + "/periodic-payments/" + context.getPaymentProduct(),
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
             HttpMethod.POST,
             entity,
             new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
@@ -94,7 +95,10 @@ public class PeriodicPaymentSuccessfulSteps {
         HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
 
         assertThat(responseEntity.getStatusCode(), equalTo(expectedStatus));
-        assertThat(responseEntity.getBody().getTransactionStatus().name(), equalTo(responseBody.getTransactionStatus()));
+        assertThat(responseEntity.getBody().getTransactionStatus(), equalTo(responseBody.getTransactionStatus()));
         assertThat(responseEntity.getBody().getPaymentId(), notNullValue());
     }
+
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }

@@ -57,7 +57,7 @@ public class BulkPaymentSuccessfulSteps {
     private ObjectMapper mapper;
 
     @Given("^PSU wants to initiate multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataBulkPayment(String dataFileName, String paymentProduct, String paymentService) throws IOException {
+    public void loadTestDataBulkPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
@@ -70,12 +70,12 @@ public class BulkPaymentSuccessfulSteps {
 
     @When("^PSU sends the bulk payment initiating request$")
     public void sendBulkPaymentInitiatingRequest() {
-        HttpEntity<BulkPaymentInitiationSctJson> entity = PaymentUtils.getHttpEntity(
+        HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-            HttpMethod.POST, new HttpEntity<>(entity), new ParameterizedTypeReference<List<PaymentInitationRequestResponse201>>() {
+            HttpMethod.POST, entity, new ParameterizedTypeReference<List<PaymentInitationRequestResponse201>>() {
             });
 
         context.setActualResponse(response);
