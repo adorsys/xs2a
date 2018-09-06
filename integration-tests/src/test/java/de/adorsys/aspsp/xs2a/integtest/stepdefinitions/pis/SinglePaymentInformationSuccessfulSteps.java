@@ -64,27 +64,25 @@ public class SinglePaymentInformationSuccessfulSteps {
 
     @And("^the set of payment information data (.*)$")
     public void loadPaymentInformationTestData(String dataFileName) throws IOException {
-        TestData data;
+        TypeReference typeReference;
         switch (context.getPaymentService()) {
             case "bulk-payments":
-                 data = mapper.readValue(resourceToString(
-                    "/data-input/pis/status/" + dataFileName, UTF_8),
-                    new TypeReference<TestData<HashMap, BulkPaymentInitiationSctWithStatusResponse>>() {
-                    });
+                 typeReference = new TypeReference<TestData<HashMap, BulkPaymentInitiationSctWithStatusResponse>>() {
+                 };
                 break;
             case "periodic-payments" :
-                data = mapper.readValue(resourceToString(
-                    "/data-input/pis/status/" + dataFileName, UTF_8),
-                    new TypeReference<TestData<HashMap, PeriodicPaymentInitiationSctWithStatusResponse>>() {
-                    });
+                typeReference = new TypeReference<TestData<HashMap, PeriodicPaymentInitiationSctWithStatusResponse>>() {
+                };
                 break;
 
             default:
-                data = mapper.readValue(resourceToString(
-                    "/data-input/pis/status/" + dataFileName, UTF_8),
-                    new TypeReference<TestData<HashMap, PaymentInitiationSctWithStatusResponse>>() {
-                    });;
+                typeReference = new TypeReference<TestData<HashMap, PaymentInitiationSctWithStatusResponse>>() {
+                };
+                break;
         }
+        TestData data = mapper.readValue(resourceToString(
+            "/data-input/pis/information/" + dataFileName, UTF_8),typeReference
+            );
         context.setTestData(data);
     }
 
@@ -98,7 +96,7 @@ public class SinglePaymentInformationSuccessfulSteps {
                     context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
                     HttpMethod.GET,
                     entity,
-                    PaymentInitiationSctWithStatusResponse.class);
+                    BulkPaymentInitiationSctWithStatusResponse.class);
                 break;
 
             case "periodic-payments" :
@@ -106,7 +104,7 @@ public class SinglePaymentInformationSuccessfulSteps {
                     context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
                     HttpMethod.GET,
                     entity,
-                    PaymentInitiationSctWithStatusResponse.class);
+                    PeriodicPaymentInitiationSctWithStatusResponse.class);
                 break;
 
             default:
