@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.aspsp.xs2a.service.PISConsentService;
+import de.adorsys.aspsp.xs2a.service.PisConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/v1/pis/consent")
 @Api(value = "api/v1/pis/consent", tags = "PIS, Consents", description = "Provides access to consent management system for PIS")
 public class PisConsentController {
-    private final PISConsentService pisConsentService;
+    private final PisConsentService pisConsentService;
 
     @PostMapping(path = "/")
     @ApiResponses(value = {

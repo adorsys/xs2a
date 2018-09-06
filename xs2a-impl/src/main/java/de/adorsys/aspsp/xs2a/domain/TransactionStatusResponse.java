@@ -22,5 +22,5 @@ import lombok.Value;
 @Value
 @ApiModel(description = "Transactions Status response", value = "transactionStatus")
 public class TransactionStatusResponse {
-    private TransactionStatus transactionStatus;
+    private Xs2aTransactionStatus transactionStatus;
 }

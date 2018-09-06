@@ -19,8 +19,10 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.*;
-import de.adorsys.aspsp.xs2a.service.AISConsentService;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.aspsp.xs2a.service.AisConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/v1/ais/consent")
 @Api(value = "api/v1/ais/consent", tags = "AIS, Consents", description = "Provides access to consent management system for AIS")
 public class AisConsentController {
-    private final AISConsentService aisConsentService;
+    private final AisConsentService aisConsentService;
 
     @PostMapping(path = "/")
     @ApiOperation(value = "Create consent for given psu id and accesses.")
@@ -40,7 +42,7 @@ public class AisConsentController {
         @ApiResponse(code = 201, message = "Created", response = String.class),
         @ApiResponse(code = 204, message = "No Content")})
     public ResponseEntity<CreateAisConsentResponse> createConsent(@RequestBody CreateAisConsentRequest request) {
-        return aisConsentService.createConsent(request)
+         return aisConsentService.createConsent(request)
                    .map(consentId -> new ResponseEntity<>(new CreateAisConsentResponse(consentId), HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }

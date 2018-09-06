@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class AisConsentMapper {
+public class Xs2aAisConsentMapper {
     private final AccountMapper accountMapper;
 
     public SpiCreateAisConsentRequest mapToSpiCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
@@ -89,10 +89,10 @@ public class AisConsentMapper {
         return actionStatus;
     }
 
-    private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
+    private Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
-                            new AccountAccess(
+                            new Xs2aAccountAccess(
                                 accountMapper.mapToAccountReferences(aa.getAccounts()),
                                 accountMapper.mapToAccountReferences(aa.getBalances()),
                                 accountMapper.mapToAccountReferences(aa.getTransactions()),
@@ -102,13 +102,13 @@ public class AisConsentMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
+    private Xs2aAccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
         return Optional.ofNullable(accessType)
-                   .map(at -> AccountAccessType.valueOf(at.name()))
+                   .map(at -> Xs2aAccountAccessType.valueOf(at.name()))
                    .orElse(null);
     }
 
-    private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
+    private SpiAccountAccess mapToSpiAccountAccess(Xs2aAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa -> {
                        SpiAccountAccess spiAccountAccess = new SpiAccountAccess();
@@ -122,7 +122,7 @@ public class AisConsentMapper {
                    .orElse(null);
     }
 
-    private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
+    private SpiAccountAccessType mapToSpiAccountAccessType(Xs2aAccountAccessType accessType) {
         return Optional.ofNullable(accessType)
                    .map(at -> SpiAccountAccessType.valueOf(at.name()))
                    .orElse(null);

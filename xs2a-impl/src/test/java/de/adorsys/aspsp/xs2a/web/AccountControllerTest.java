@@ -19,10 +19,10 @@ package de.adorsys.aspsp.xs2a.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
@@ -68,7 +68,7 @@ public class AccountControllerTest {
     @Before
     public void setUp() throws Exception {
         when(accountService.getAccountDetailsList(anyString(), anyBoolean())).thenReturn(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE));
-        ResponseObject<List<Balance>> balances = readBalances();
+        ResponseObject<List<Xs2aBalance>> balances = readBalances();
         when(accountService.getBalances(anyString(), anyString())).thenReturn(balances);
         when(accountService.getAccountReport(any(String.class), any(String.class), any(LocalDate.class), any(LocalDate.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean())).thenReturn(createAccountReport(ACCOUNT_REPORT_SOURCE));
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getAccountDetails());
@@ -79,10 +79,10 @@ public class AccountControllerTest {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(getAccountDetails().getBody(), HttpStatus.OK));
         //Given
         boolean withBalance = true;
-        ResponseObject<AccountDetails> expectedResult = getAccountDetails();
+        ResponseObject<Xs2aAccountDetails> expectedResult = getAccountDetails();
 
         //When
-        AccountDetails result = accountController.readAccountDetails(CONSENT_ID, ACCOUNT_ID, withBalance).getBody();
+        Xs2aAccountDetails result = accountController.readAccountDetails(CONSENT_ID, ACCOUNT_ID, withBalance).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult.getBody());
@@ -93,10 +93,10 @@ public class AccountControllerTest {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody(), HttpStatus.OK));
         //Given
         boolean withBalance = true;
-        Map<String, List<AccountDetails>> expectedResult = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
+        Map<String, List<Xs2aAccountDetails>> expectedResult = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
 
         //When:
-        Map<String, List<AccountDetails>> result = accountController.getAccounts("id", withBalance).getBody();
+        Map<String, List<Xs2aAccountDetails>> result = accountController.getAccounts("id", withBalance).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -106,12 +106,12 @@ public class AccountControllerTest {
     public void getBalances_ResultTest() throws IOException {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(readBalances().getBody(), HttpStatus.OK));
         //Given:
-        Balance expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balance.class).get();
-        List<Balance> expectedResult = new ArrayList<>();
+        Xs2aBalance expectedBalances = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Xs2aBalance.class).get();
+        List<Xs2aBalance> expectedResult = new ArrayList<>();
         expectedResult.add(expectedBalances);
 
         //When:
-        List<Balance> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID).getBody();
+        List<Xs2aBalance> result = accountController.getBalances(CONSENT_ID, ACCOUNT_ID).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
@@ -122,41 +122,41 @@ public class AccountControllerTest {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(createAccountReport(ACCOUNT_REPORT_SOURCE).getBody(), HttpStatus.OK));
         //Given:
         boolean psuInvolved = true;
-        AccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), AccountReport.class).get();
+        Xs2aAccountReport expectedResult = jsonConverter.toObject(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8), Xs2aAccountReport.class).get();
 
         //When
-        AccountReport result = accountController.getTransactions(ACCOUNT_ID, "123", null, null, TRANSACTION_ID, psuInvolved, "both", false, false).getBody();
+        Xs2aAccountReport result = accountController.getTransactions(ACCOUNT_ID, "123", null, null, TRANSACTION_ID, psuInvolved, "both", false, false).getBody();
 
         //Then:
         assertThat(result).isEqualTo(expectedResult);
     }
 
-    private ResponseObject<Map<String, List<AccountDetails>>> createAccountDetailsList(String path) throws IOException {
-        AccountDetails[] array = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8), AccountDetails[].class).get();
-        Map<String, List<AccountDetails>> result = new HashMap<>();
+    private ResponseObject<Map<String, List<Xs2aAccountDetails>>> createAccountDetailsList(String path) throws IOException {
+        Xs2aAccountDetails[] array = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8), Xs2aAccountDetails[].class).get();
+        Map<String, List<Xs2aAccountDetails>> result = new HashMap<>();
         result.put("accountList", Arrays.asList(array));
-        return ResponseObject.<Map<String, List<AccountDetails>>>builder()
+        return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
                    .body(result).build();
     }
 
-    private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
-        Map<String, List<AccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
-        return ResponseObject.<AccountDetails>builder()
+    private ResponseObject<Xs2aAccountDetails> getAccountDetails() throws IOException {
+        Map<String, List<Xs2aAccountDetails>> map = createAccountDetailsList(ACCOUNT_DETAILS_SOURCE).getBody();
+        return ResponseObject.<Xs2aAccountDetails>builder()
                    .body(map.get("accountList").get(0)).build();
     }
 
-    private ResponseObject<AccountReport> createAccountReport(String path) throws IOException {
-        AccountReport accountReport = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8), AccountReport.class).get();
+    private ResponseObject<Xs2aAccountReport> createAccountReport(String path) throws IOException {
+        Xs2aAccountReport accountReport = jsonConverter.toObject(IOUtils.resourceToString(path, UTF_8), Xs2aAccountReport.class).get();
 
-        return ResponseObject.<AccountReport>builder()
+        return ResponseObject.<Xs2aAccountReport>builder()
                    .body(accountReport).build();
     }
 
-    private ResponseObject<List<Balance>> readBalances() throws IOException {
-        Balance read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balance.class).get();
-        List<Balance> res = new ArrayList<>();
+    private ResponseObject<List<Xs2aBalance>> readBalances() throws IOException {
+        Xs2aBalance read = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Xs2aBalance.class).get();
+        List<Xs2aBalance> res = new ArrayList<>();
         res.add(read);
-        return ResponseObject.<List<Balance>>builder()
+        return ResponseObject.<List<Xs2aBalance>>builder()
                    .body(res).build();
     }
 }

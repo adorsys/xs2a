@@ -33,9 +33,9 @@ public class GlobalErrorfulSteps {
     @Autowired
     private Context context;
 
-    @Then("^an error response code is displayed the appropriate error response$")
+    @Then("^an error response code and the appropriate error response are received")
     public void anErrorResponseCodeIsDisplayedTheAppropriateErrorResponse() {
-        TppMessages actualTppMessages = context.getTppmessage();
+        TppMessages actualTppMessages = context.getTppMessages();
         TppMessages givenTppMessages = (TppMessages) context.getTestData().getResponse().getBody();
 
         HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
@@ -48,4 +48,5 @@ public class GlobalErrorfulSteps {
             assertThat(msg.getCode().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCode().toString()));
         });
     }
+    // @After **** see GlobalSuccessfulSteps
 }

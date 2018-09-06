@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.domain.fund;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
-import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -47,7 +47,7 @@ public class FundsConfirmationRequest implements AccountReferenceCollector {
 
     @NotNull
     @ApiModelProperty(value = "Transaction amount to be checked within the funds check mechanism.", required = true)
-    private Amount instructedAmount;
+    private Xs2aAmount instructedAmount;
 
     @JsonIgnore
     @Override

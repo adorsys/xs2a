@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.aspsp.xs2a.domain.code;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-@Data
-@ApiModel(description = "Exception")
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-
-public class Exception {
-
-	@ApiModelProperty(value = "transaction status", example = "Rejected")
-	private Xs2aTransactionStatus transaction_status;
-	@ApiModelProperty(value = "Tpp message")
-	private TppMessageInformation tpp_message;
+public enum Xs2aFrequencyCode {
+    DAILY, WEEKLY, EVERYTWOWEEKS, MONTHLY, EVERYTWOMONTHS, QUARTERLY, SEMIANNUAL, ANNUAL
 }

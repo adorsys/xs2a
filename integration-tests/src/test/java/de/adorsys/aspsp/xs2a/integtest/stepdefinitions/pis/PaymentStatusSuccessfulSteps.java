@@ -73,7 +73,7 @@ public class PaymentStatusSuccessfulSteps {
 
     @When("^PSU requests the status of the payment$")
     public void sendPaymentStatusRequest() throws HttpClientErrorException {
-        HttpEntity<HashMap> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<PaymentInitiationStatusResponse200Json> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",

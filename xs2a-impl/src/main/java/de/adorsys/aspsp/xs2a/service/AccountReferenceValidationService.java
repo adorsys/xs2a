@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -50,7 +50,7 @@ public class AccountReferenceValidationService {
                                             .anyMatch(Predicate.isEqual(false));
 
         return isInvalidReferenceSet
-                   ? ResponseObject.builder().fail(new MessageError(TransactionStatus.RJCT, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build()
+                   ? ResponseObject.builder().fail(new MessageError(Xs2aTransactionStatus.RJCT, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build()
                    : ResponseObject.builder().build();
     }
 

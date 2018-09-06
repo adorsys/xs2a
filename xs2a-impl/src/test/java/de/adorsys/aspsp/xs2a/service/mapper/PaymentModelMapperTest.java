@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
@@ -63,7 +63,7 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToTransactionStatus12() {
         //Given
-        TransactionStatus[] xs2aStatuses = TransactionStatus.values();
+        Xs2aTransactionStatus[] xs2aStatuses = Xs2aTransactionStatus.values();
         de.adorsys.psd2.model.TransactionStatus[] statuses12 = de.adorsys.psd2.model.TransactionStatus.values();
         //When
         assertThat(xs2aStatuses.length).isEqualTo(statuses12.length);
@@ -72,7 +72,7 @@ public class PaymentModelMapperTest {
         }
     }
 
-    private void testTransactionStatus12(TransactionStatus status, de.adorsys.psd2.model.TransactionStatus expected) {
+    private void testTransactionStatus12(Xs2aTransactionStatus status, de.adorsys.psd2.model.TransactionStatus expected) {
         //When
         de.adorsys.psd2.model.TransactionStatus result = PaymentModelMapper.mapToTransactionStatus12(status);
         //Then
@@ -223,7 +223,7 @@ public class PaymentModelMapperTest {
 
     private PaymentInitialisationResponse getXs2aPaymentResponse() {
         PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-        response.setTransactionStatus(TransactionStatus.ACCP);
+        response.setTransactionStatus(Xs2aTransactionStatus.ACCP);
         response.setPaymentId(PAYMENT_ID);
 
         response.setTransactionFees(getXs2aAmount());
@@ -236,9 +236,9 @@ public class PaymentModelMapperTest {
         return response;
     }
 
-    private Amount getXs2aAmount() {
-        Amount amount = new Amount();
-        amount.setContent(AMOUNT);
+    private Xs2aAmount getXs2aAmount() {
+        Xs2aAmount amount = new Xs2aAmount();
+        amount.setAmount(AMOUNT);
         amount.setCurrency(EUR);
         return amount;
     }

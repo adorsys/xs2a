@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public enum TransactionStatus {
+public enum Xs2aTransactionStatus {
 
     ACCP("AcceptedCustomerProfile"),  //Preceding check of technical validation was successful. Customer profile check was also successful
     ACSC("AcceptedSettlementCompleted"),  //Settlement on the debtor's account has been completed. Usage : this can be used by the first agent to report to the debtor that the transaction has been completed. Warning : this status is provided for transaction status reasons, not for financial information. It can only be used after bilateral agreement"),
@@ -34,7 +34,7 @@ public enum TransactionStatus {
     private String transactionStatus;
 
     @JsonCreator
-    TransactionStatus(String transactionStatus) {
+    Xs2aTransactionStatus(String transactionStatus) {
         this.transactionStatus = transactionStatus;
     }
 

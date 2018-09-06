@@ -17,9 +17,7 @@
       "postalCode": "90431",
       "street": "Herrnstraße"
     },
-    "creditorAgent": {
-      "code": "BCENECEQ"
-    },
+    "creditorAgent": "BCENECEQ",
     "creditorName": "Telekom",
     "debtorAccount": {
       "bban": "1111111111",
@@ -31,7 +29,7 @@
     },
     "endToEndIdentification": "RI-123456789",
     "instructedAmount": {
-      "content": "1000.00",
+      "amount": "1000.00",
       "currency": "EUR"
     },
     "purposeCode": {

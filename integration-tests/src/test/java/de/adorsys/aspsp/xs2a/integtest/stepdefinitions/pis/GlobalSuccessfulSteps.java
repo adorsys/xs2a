@@ -1,8 +1,11 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+import cucumber.api.java.After;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
@@ -13,6 +16,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Objects;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class GlobalSuccessfulSteps {
@@ -49,5 +55,17 @@ public class GlobalSuccessfulSteps {
 
         context.setScaApproach("oauth");
         context.setAccessToken(Objects.requireNonNull(response).getBody().get("access_token").toString());
+    }
+
+    @And("^a redirect URL is delivered to the PSU$")
+    public void checkRedirectUrl() {
+        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
+
+        assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
+    }
+
+    @After
+    public void afterScenario() {
+        context.cleanUp();
     }
 }

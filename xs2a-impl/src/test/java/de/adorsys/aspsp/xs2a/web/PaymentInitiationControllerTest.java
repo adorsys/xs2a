@@ -53,7 +53,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentInitiationControllerTest {
-
     private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
     private static final String CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH = "/json/CreatePaymentInitiationResponseTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
@@ -79,18 +78,18 @@ public class PaymentInitiationControllerTest {
     @Before
     public void setUpPaymentServiceMock() throws IOException {
         when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().body(TransactionStatus.ACCP).build());
+            .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE))
-            .thenReturn(ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+            .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPaymentInitiation(any(), any(), any())).thenReturn(readResponseObject());
     }
 
     @Test
     public void getTransactionStatusById_Success() {
-        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(TransactionStatus.ACCP, HttpStatus.OK));
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(Xs2aTransactionStatus.ACCP, HttpStatus.OK));
         //Given:
         HttpStatus expectedHttpStatus = OK;
-        TransactionStatus expectedTransactionStatus = TransactionStatus.ACCP;
+        Xs2aTransactionStatus expectedTransactionStatus = Xs2aTransactionStatus.ACCP;
 
         //When:
         ResponseEntity<TransactionStatusResponse> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
