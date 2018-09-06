@@ -183,7 +183,7 @@ public class AISConsentService {
     private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
         if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
             return AisConsentRequestType.GLOBAL;
-        } else if (accessInfo.getAvailableAccounts() == AccountAccessType.ALL_ACCOUNTS || accessInfo.getAvailableAccounts() == AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES) {
+        } else if (EnumSet.of(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
             return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
         } else if (isEmptyAccess(accessInfo)) {
             return AisConsentRequestType.BANK_OFFERED;
@@ -193,8 +193,8 @@ public class AISConsentService {
 
     private boolean isEmptyAccess(AisAccountAccessInfo accessInfo) {
         return CollectionUtils.isEmpty(accessInfo.getAccounts())
-                     && CollectionUtils.isEmpty(accessInfo.getBalances())
-                     && CollectionUtils.isEmpty(accessInfo.getTransactions());
+                   && CollectionUtils.isEmpty(accessInfo.getBalances())
+                   && CollectionUtils.isEmpty(accessInfo.getTransactions());
     }
 
     private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, AisConsent consent) {

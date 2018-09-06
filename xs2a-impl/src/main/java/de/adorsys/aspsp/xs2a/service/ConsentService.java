@@ -177,8 +177,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    || request.getAccess().getAvailableAccounts() == ALL_ACCOUNTS_WITH_BALANCES;
     }
 
-    private AccountAccess getAccessForGlobalOrAllAvailableAccountsConsent(CreateConsentReq request) {
-        return new AccountAccess(
+    private Xs2aAccountAccess getAccessForGlobalOrAllAvailableAccountsConsent(CreateConsentReq request) {
+        return new Xs2aAccountAccess(
             new ArrayList<>(),
             new ArrayList<>(),
             new ArrayList<>(),
