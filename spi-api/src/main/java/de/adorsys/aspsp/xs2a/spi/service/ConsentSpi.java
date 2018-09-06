@@ -18,9 +18,10 @@ package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
+
+import java.util.Optional;
 
 public interface ConsentSpi {
 
@@ -58,8 +59,8 @@ public interface ConsentSpi {
     /**
      * Sends a POST request to CMS to perform decrement of consent usages and report status of the operation held with certain AIS consent
      *
-     * @param tppId       String representation of TPP`s identifier from TPP Certificate
-     * @param consentId   String representation of identifier of stored consent
+     * @param tppId        String representation of TPP`s identifier from TPP Certificate
+     * @param consentId    String representation of identifier of stored consent
      * @param actionStatus Enum value representing whether the acition is successful or errors occured
      */
     void consentActionLog(String tppId, String consentId, ActionStatus actionStatus);
@@ -87,4 +88,28 @@ public interface ConsentSpi {
      * @return String identifier of created PIS consent periodic payment
      */
     String createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    Optional<String> createConsentAuthorization(String consentId, SpiScaStatus scaStatus);
+
+    /**
+     * Requests CMS to retrieve AIS consent authorization by its identifier
+     *
+     * @param authorizationId String representation of identifier of stored consent authorization
+     * @return Response containing AIS Consent Authorization
+     */
+
+    SpiAccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId);
+
+    /**
+     * Sends a PUT request to CMS to update created AIS consent authorization
+     *
+     * @param updatePsuData Consent psu data
+     */
+    void updateConsentAuthorization(SpiUpdateConsentPsuDataReq updatePsuData);
 }
