@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
@@ -43,7 +43,7 @@ import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 @Service
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
-    private final AisConsentMapper aisConsentMapper;
+    private final Xs2aAisConsentMapper aisConsentMapper;
     private final ConsentSpi consentSpi;
     private final AspspProfileService aspspProfileService;
 

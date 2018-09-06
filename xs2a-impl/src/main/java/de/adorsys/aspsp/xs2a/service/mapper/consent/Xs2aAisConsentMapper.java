@@ -30,7 +30,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class AisConsentMapper {
+public class Xs2aAisConsentMapper {
     private final AccountMapper accountMapper;
 
     public SpiCreateAisConsentRequest mapToSpiCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {

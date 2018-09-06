@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -56,7 +56,7 @@ public class AccountService {
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final ConsentSpi consentSpi;
-    private final AisConsentMapper consentMapper;
+    private final Xs2aAisConsentMapper consentMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
@@ -168,7 +168,7 @@ public class AccountService {
      */
     public ResponseObject<Xs2aAccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
                                                               LocalDate dateTo, String transactionId, boolean psuInvolved,
-                                                              BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
+                                                              Xs2aBookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
         ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<Xs2aAccountReport>builder()
@@ -207,7 +207,7 @@ public class AccountService {
      */
 
     public ResponseObject<Xs2aAccountReport> getAccountReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
-                                                                  LocalDate dateTo, BookingStatus bookingStatus) {
+                                                                  LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
         ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<Xs2aAccountReport>builder()
@@ -288,7 +288,7 @@ public class AccountService {
     }
 
     private Optional<Xs2aAccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
-                                                         BookingStatus bookingStatus) {
+                                                         Xs2aBookingStatus bookingStatus) {
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
@@ -327,11 +327,11 @@ public class AccountService {
                    : ActionStatus.SUCCESS;
     }
 
-    private Xs2aAccountReport filterByBookingStatus(Xs2aAccountReport report, BookingStatus bookingStatus) {
+    private Xs2aAccountReport filterByBookingStatus(Xs2aAccountReport report, Xs2aBookingStatus bookingStatus) {
         return new Xs2aAccountReport(
-            EnumSet.of(BookingStatus.BOOKED, BookingStatus.BOTH).contains(bookingStatus)
+            EnumSet.of(Xs2aBookingStatus.BOOKED, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getBooked() : new Transactions[]{},
-            EnumSet.of(BookingStatus.PENDING, BookingStatus.BOTH).contains(bookingStatus)
+            EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getPending() : new Transactions[]{});
     }
 }
