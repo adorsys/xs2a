@@ -128,19 +128,6 @@ public class AISConsentService {
     }
 
     /**
-     * Update AIS consent by id
-     *
-     * @param request   needed parameters for updating AIS consent
-     * @param consentId id of the consent to be updated
-     * @return String consent id
-     */
-    @Transactional
-    public Optional<String> updateConsent(CreateAisConsentRequest request, String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
-                   .map(consent -> updateAisConsent(consent, request, consentId));
-    }
-
-    /**
      * Update AIS consent account access by id
      *
      * @param request   needed parameters for updating AIS consent
@@ -148,10 +135,10 @@ public class AISConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
+    public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
         return getActualAisConsent(consentId)
                    .map(consent -> {
-                       consent.addAccountAccess(readAccountAccess(request.getAccess()));
+                       consent.addAccountAccess(readAccountAccess(request));
                        return aisConsentRepository.save(consent)
                                   .getExternalId();
                    });
@@ -172,22 +159,8 @@ public class AISConsentService {
 
     private String updateConsentAspspData(UpdateAisConsentBlobRequest request, AisConsent consent) {
         consent.setAspspConsentData(request.getAspspConsentData());
-        return aisConsentRepository.save(consent).getExternalId();
-    }
-
-    private String updateAisConsent(AisConsent consent, CreateAisConsentRequest request, String consentId) {
-        aisConsentRepository.delete(consent);
-        return createConsentWithConsentId(request, consentId);
-    }
-
-    private String createConsentWithConsentId(CreateAisConsentRequest request, String consentId) {
-        AisConsent consent = createConsentFromRequest(request);
-        consent.setExternalId(consentId);
-
-        AisConsent saved = aisConsentRepository.save(consent);
-        return saved.getId() != null
-                   ? saved.getExternalId()
-                   : null;
+        AisConsent savedConsent = aisConsentRepository.save(consent);
+        return savedConsent.getExternalId();
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {

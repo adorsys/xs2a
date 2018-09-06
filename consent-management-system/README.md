@@ -43,5 +43,4 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to retrieve the AIS consent by its external identifier. 
 - An endpoint to retrieve the AIS consent status by its external identifier.
 - An endpoint to update the AIS consent status by its external identifier. 
-- An endpoint to update the whole AIS consent. (Shall be deprecated in closest releases)
 - An endpoint to update the AIS consent blob data.

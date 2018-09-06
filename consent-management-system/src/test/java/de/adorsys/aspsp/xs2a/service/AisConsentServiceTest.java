@@ -95,9 +95,7 @@ public class AisConsentServiceTest {
     }
 
     @Test
-    public void updateAccountAccessById(){
-        CreateAisConsentRequest createAisConsentRequest = buildCorrectCreateAisConsentRequest();
-
+    public void updateAccountAccessById() {
         // When
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
@@ -109,8 +107,7 @@ public class AisConsentServiceTest {
             new AccountInfo("iban-1", "EUR"),
             new AccountInfo("iban-1", "USD")
         ));
-        createAisConsentRequest.setAccess(info);
-        Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, createAisConsentRequest);
+        Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
 
@@ -122,13 +119,12 @@ public class AisConsentServiceTest {
             new AccountInfo("iban-2", "EUR"),
             new AccountInfo("iban-3", "USD")
         ));
-        createAisConsentRequest.setAccess(info);
-        consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, createAisConsentRequest);
+        consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
 
         // Then
-        Optional<String> consentId_notExist = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildCorrectCreateAisConsentRequest());
+        Optional<String> consentId_notExist = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Assert
         assertFalse(consentId_notExist.isPresent());
     }
