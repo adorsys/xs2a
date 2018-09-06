@@ -116,21 +116,21 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
-    ResponseObject<AccountAccess> getValidatedConsent(String consentId) {
+    ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId) {
         AccountConsent consent = aisConsentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
         if (consent == null) {
-            return ResponseObject.<AccountAccess>builder()
+            return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
         }
         if (!consent.isValidStatus()) {
-            return ResponseObject.<AccountAccess>builder()
+            return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
         }
         if (!consent.isValidFrequency()) {
-            return ResponseObject.<AccountAccess>builder()
+            return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.ACCESS_EXCEEDED))).build();
         }
-        return ResponseObject.<AccountAccess>builder().body(consent.getAccess()).build();
+        return ResponseObject.<Xs2aAccountAccess>builder().body(consent.getAccess()).build();
     }
 
     boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
@@ -149,9 +149,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
     }
 
-    private Boolean isNotEmptyAccess(AccountAccess access) {
+    private Boolean isNotEmptyAccess(Xs2aAccountAccess access) {
         return Optional.ofNullable(access)
-                   .map(AccountAccess::isNotEmpty)
+                   .map(Xs2aAccountAccess::isNotEmpty)
                    .orElse(false);
     }
 

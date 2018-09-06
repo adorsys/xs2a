@@ -19,11 +19,11 @@ package de.adorsys.aspsp.xs2a.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
@@ -71,7 +71,7 @@ public class FundsConfirmationServiceTest {
     @Before
     public void setUp() throws IOException {
         when(accountService.getAccountDetailsByAccountReference(any(AccountReference.class)))
-            .thenReturn(Optional.of(new AccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
+            .thenReturn(Optional.of(new Xs2aAccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
@@ -117,15 +117,15 @@ public class FundsConfirmationServiceTest {
         return jsonConverter.toObject(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), FundsConfirmationRequest.class).get();
     }
 
-    private Amount getAmount1600() {
-        Amount amount = new Amount();
+    private Xs2aAmount getAmount1600() {
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setAmount(AMOUNT_1600);
         amount.setCurrency(EUR);
         return amount;
     }
 
-    private List<Balance> getBalances() throws IOException {
-        Balance balance = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Balance.class).get();
+    private List<Xs2aBalance> getBalances() throws IOException {
+        Xs2aBalance balance = jsonConverter.toObject(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8), Xs2aBalance.class).get();
         return Collections.singletonList(balance);
     }
 }

@@ -18,7 +18,14 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,14 +41,14 @@ import java.util.stream.Collectors;
 public final class AccountModelMapper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static AccountList mapToAccountList(Map<String, List<de.adorsys.aspsp.xs2a.domain.account.AccountDetails>> accountDetailsList) {
+    public static AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
         List<AccountDetails> details = accountDetailsList.values().stream()
                                            .flatMap(ad -> ad.stream().map(AccountModelMapper::mapToAccountDetails))
                                            .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
-    public static AccountDetails mapToAccountDetails(de.adorsys.aspsp.xs2a.domain.account.AccountDetails accountDetails) {
+    public static AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
         AccountDetails target = new AccountDetails();
         BeanUtils.copyProperties(accountDetails, target);
 
@@ -57,7 +64,7 @@ public final class AccountModelMapper {
                    ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
     }
 
-    private static BalanceList mapToBalanceList(List<de.adorsys.aspsp.xs2a.domain.Balance> balances) {
+    private static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
         BalanceList balanceList = null;
 
         if (CollectionUtils.isNotEmpty(balances)) {
@@ -71,7 +78,7 @@ public final class AccountModelMapper {
         return balanceList;
     }
 
-    public static ReadBalanceResponse200 mapToBalance(List<de.adorsys.aspsp.xs2a.domain.Balance> balances) {
+    public static ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {
         BalanceList balancesResponse = new BalanceList();
         balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
 
@@ -79,7 +86,7 @@ public final class AccountModelMapper {
                    .balances(balancesResponse);
     }
 
-    public static Balance mapToBalance(de.adorsys.aspsp.xs2a.domain.Balance balance) {
+    public static Balance mapToBalance(Xs2aBalance balance) {
         Balance target = new Balance();
         BeanUtils.copyProperties(balance, target);
 
@@ -97,15 +104,7 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static Amount mapToAmount(de.adorsys.aspsp.xs2a.domain.Amount amount) {
-        return Optional.ofNullable(amount)
-                   .map(a -> new Amount()
-                                 .amount(a.getAmount())
-                                 .currency(a.getCurrency().getCurrencyCode()))
-                   .orElse(new Amount());
-    }
-
-    public static AccountReport mapToAccountReport(de.adorsys.aspsp.xs2a.domain.account.AccountReport accountReport) {
+    public static AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
                                                           .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
@@ -137,7 +136,7 @@ public final class AccountModelMapper {
             .ifPresent(amount -> target.setTransactionAmount(AmountModelMapper.mapToAmount(amount)));
 
         target.setPurposeCode(PurposeCode.fromValue(Optional.ofNullable(transactions.getPurposeCode())
-                                                        .map(de.adorsys.aspsp.xs2a.domain.code.PurposeCode::getCode)
+                                                        .map(Xs2aPurposeCode::getCode)
                                                         .orElse(null)));
 
         Optional.ofNullable(transactions.getBankTransactionCodeCode())
@@ -168,7 +167,7 @@ public final class AccountModelMapper {
         return accountReference;
     }
 
-    public static Address mapToAddress12(de.adorsys.aspsp.xs2a.domain.address.Address address) {
+    public static Address mapToAddress12(Xs2aAddress address) {
         Address targetAddress = new Address().street(address.getStreet());
         targetAddress.setStreet(address.getStreet());
         targetAddress.setBuildingNumber(address.getBuildingNumber());
@@ -178,31 +177,31 @@ public final class AccountModelMapper {
         return targetAddress;
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.address.Address mapToXs2aAddress(Address address) {
+    public static Xs2aAddress mapToXs2aAddress(Address address) {
         return Optional.ofNullable(address)
                    .map(a -> {
-                       de.adorsys.aspsp.xs2a.domain.address.Address targetAddress = new de.adorsys.aspsp.xs2a.domain.address.Address();
+                       Xs2aAddress targetAddress = new Xs2aAddress();
                        targetAddress.setStreet(a.getStreet());
                        targetAddress.setBuildingNumber(a.getBuildingNumber());
                        targetAddress.setCity(a.getCity());
                        targetAddress.setPostalCode(a.getPostalCode());
-                       de.adorsys.aspsp.xs2a.domain.address.CountryCode code = new de.adorsys.aspsp.xs2a.domain.address.CountryCode();
+                       Xs2aCountryCode code = new Xs2aCountryCode();
                        code.setCode(a.getCountry());
                        targetAddress.setCountry(code);
                        return targetAddress;
                    })
-                   .orElse(new de.adorsys.aspsp.xs2a.domain.address.Address());
+                   .orElse(new Xs2aAddress());
     }
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
+    public static Xs2aAmount mapToXs2aAmount(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       de.adorsys.aspsp.xs2a.domain.Amount targetAmount = new de.adorsys.aspsp.xs2a.domain.Amount();
+                       Xs2aAmount targetAmount = new Xs2aAmount();
                        targetAmount.setAmount(a.getAmount());
                        targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
                        return targetAmount;
                    })
-                   .orElse(new de.adorsys.aspsp.xs2a.domain.Amount());
+                   .orElse(new Xs2aAmount());
 
     }
 

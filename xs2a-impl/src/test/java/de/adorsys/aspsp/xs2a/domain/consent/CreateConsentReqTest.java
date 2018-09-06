@@ -63,8 +63,8 @@ public class CreateConsentReqTest {
         assertThat(result.size()).isEqualTo(0);
     }
 
-    private AccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {
-        return new AccountAccess(accounts, balances, transactions, null, null);
+    private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {
+        return new Xs2aAccountAccess(accounts, balances, transactions, null, null);
     }
 
     private List<AccountReference> getRefs(int qty) {

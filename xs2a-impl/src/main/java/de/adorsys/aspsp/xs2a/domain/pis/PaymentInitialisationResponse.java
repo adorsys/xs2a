@@ -33,13 +33,13 @@ public class PaymentInitialisationResponse {
 
     @JsonUnwrapped
     @ApiModelProperty(value = "The transaction status is filled with value of the ISO20022 data table", required = true, example = "ACCP")
-    private TransactionStatus transactionStatus;
+    private Xs2aTransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Resource identification of the generated payment initiation resource.", required = true, example = "qwer3456tzui7890")
     private String paymentId;
 
     @ApiModelProperty(value = "Can be used by the ASPSP to transport transaction fees relevant for the underlying payments.")
-    private Amount transactionFees;
+    private Xs2aAmount transactionFees;
 
     @ApiModelProperty(value = "If equals true, the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU.", example = "false")
     private boolean transactionFeeIndicator;

@@ -18,8 +18,8 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.web12.AccountController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -37,9 +37,9 @@ import java.util.stream.Collectors;
 public class AccountAspect extends AbstractLinkAspect<AccountController12> {
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetails(..)) && args(consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
-    public ResponseObject<AccountDetails> getAccountDetailsAspect(ResponseObject<AccountDetails> result, String consentId, String accountId, boolean withBalance) {
+    public ResponseObject<Xs2aAccountDetails> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
         if (!result.hasError()) {
-            AccountDetails accountDetails = result.getBody();
+            Xs2aAccountDetails accountDetails = result.getBody();
             accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
             return result;
         }
@@ -47,9 +47,9 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetailsList(..)) && args(consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
-    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsListAspect(ResponseObject<Map<String, List<AccountDetails>>> result, String consentId, boolean withBalance) {
+    public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountDetailsListAspect(ResponseObject<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
         if (!result.hasError()) {
-            Map<String, List<AccountDetails>> accountDetails = result.getBody();
+            Map<String, List<Xs2aAccountDetails>> accountDetails = result.getBody();
             setLinksToAccountsMap(accountDetails, withBalance);
             return result;
         }
@@ -57,9 +57,9 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
-    public ResponseObject<AccountReport> getAccountReportByPeriodAspect(ResponseObject<AccountReport> result, String accountId, boolean withBalance) {
+    public ResponseObject<Xs2aAccountReport> getAccountReportByPeriodAspect(ResponseObject<Xs2aAccountReport> result, String accountId, boolean withBalance) {
         if (!result.hasError()) {
-            AccountReport accountReport = result.getBody();
+            Xs2aAccountReport accountReport = result.getBody();
             accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
             return result;
         }
@@ -67,9 +67,9 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args(consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
-    public ResponseObject<AccountReport> getAccountReportByTransactionIdAspect(ResponseObject<AccountReport> result, String consentID, String accountId, String resourceId) {
+    public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionIdAspect(ResponseObject<Xs2aAccountReport> result, String consentID, String accountId, String resourceId) {
         if (!result.hasError()) {
-            AccountReport accountReport = result.getBody();
+            Xs2aAccountReport accountReport = result.getBody();
             Links links = new Links();
             links.setViewBalances(buildLink("/v1/accounts/{account-id}/transactions/{resourceId}", accountId, resourceId));
             accountReport.setLinks(links);
@@ -78,7 +78,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLinksForAccountReport(AccountReport accountReport, String accountId) {
+    private Links buildLinksForAccountReport(Xs2aAccountReport accountReport, String accountId) {
         Links links = new Links();
         links.setViewAccount(buildLink("/v1/accounts/{accountId}", accountId));
 
@@ -92,18 +92,18 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         return links;
     }
 
-    private Map<String, List<AccountDetails>> setLinksToAccountsMap(Map<String, List<AccountDetails>> map, boolean withBalance) {
+    private Map<String, List<Xs2aAccountDetails>> setLinksToAccountsMap(Map<String, List<Xs2aAccountDetails>> map, boolean withBalance) {
         map.entrySet().forEach(list -> updateAccountLinks(list.getValue(), withBalance));
         return map;
     }
 
-    private List<AccountDetails> updateAccountLinks(List<AccountDetails> accountDetailsList, boolean withBalance) {
+    private List<Xs2aAccountDetails> updateAccountLinks(List<Xs2aAccountDetails> accountDetailsList, boolean withBalance) {
         return accountDetailsList.stream()
                    .map(acc -> setLinksToAccount(acc, withBalance))
                    .collect(Collectors.toList());
     }
 
-    private AccountDetails setLinksToAccount(AccountDetails accountDetails, boolean withBalance) {
+    private Xs2aAccountDetails setLinksToAccount(Xs2aAccountDetails accountDetails, boolean withBalance) {
         accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
         return accountDetails;
     }
