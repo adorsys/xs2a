@@ -192,6 +192,10 @@ public class PaymentModelMapper {
         }
     }
 
+    public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(Xs2aTransactionStatus status) {
+        return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus12(status));
+    }
+
     public static TransactionStatus mapToTransactionStatus12(Xs2aTransactionStatus responseObject) {
         return TransactionStatus.valueOf(responseObject.name());
     }

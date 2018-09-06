@@ -101,7 +101,7 @@ public class ConsentModelMapper {
 
     private static ScaMethods mapToScaMethodsOuter(CreateConsentResponse createConsentResponse) {
         List<AuthenticationObject> authList = Optional.ofNullable(createConsentResponse.getScaMethods())
-                                                  .map(arr -> Arrays.stream(createConsentResponse.getScaMethods())
+                                                  .map(arr -> Arrays.stream(arr)
                                                                   .map(au -> new AuthenticationObject()
                                                                                  .authenticationType(AuthenticationType.fromValue(au.getAuthenticationType().getDescription()))
                                                                                  .authenticationVersion(au.getAuthenticationVersion())
@@ -120,9 +120,9 @@ public class ConsentModelMapper {
         return Optional.ofNullable(accountAccess)
                    .map(acs ->
                             new Xs2aAccountAccess(
-                                mapToAccountReferencesInner(acs.getAccounts()),
-                                mapToAccountReferencesInner(acs.getBalances()),
-                                mapToAccountReferencesInner(acs.getTransactions()),
+                                mapToXs2aAccountReferences(acs.getAccounts()),
+                                mapToXs2aAccountReferences(acs.getBalances()),
+                                mapToXs2aAccountReferences(acs.getTransactions()),
                                 mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
                                 mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2())
                             ))
@@ -133,7 +133,6 @@ public class ConsentModelMapper {
         return Optional.ofNullable(accountAccess)
                    .map(access -> {
                            AccountAccess mappedAccountAccess = new AccountAccess();
-
                            mappedAccountAccess.setAccounts(new ArrayList<>(access.getAccounts()));
                            mappedAccountAccess.setBalances(new ArrayList<>(access.getBalances()));
                            mappedAccountAccess.setTransactions(new ArrayList<>(access.getTransactions()));
@@ -170,15 +169,15 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private static List<AccountReference> mapToAccountReferencesInner(List<Object> references) {
+    private static List<AccountReference> mapToXs2aAccountReferences(List<Object> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
-                                   .map(ConsentModelMapper::mapToAccountReferenceInner)
+                                   .map(ConsentModelMapper::mapToXs2aAccountReference)
                                    .collect(Collectors.toList()))
                    .orElseGet(Collections::emptyList);
     }
 
-    private static AccountReference mapToAccountReferenceInner(Object reference) {
+    private static AccountReference mapToXs2aAccountReference(Object reference) {
         return OBJECT_MAPPER.convertValue(reference, AccountReference.class);
     }
 
