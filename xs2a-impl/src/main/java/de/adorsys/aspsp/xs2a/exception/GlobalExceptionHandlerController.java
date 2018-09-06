@@ -50,7 +50,13 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(value = {ValidationException.class})
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
-        log.warn("ValidationException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.warn("Validation exception handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        return new ResponseEntity<>(getMessageError(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public ResponseEntity illegalArgumentException(IllegalArgumentException ex, HandlerMethod handlerMethod) {
+        log.warn("Illegal argument exception handled in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(getMessageError(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 

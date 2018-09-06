@@ -57,7 +57,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentServiceTest {
-
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "";
     private static final String IBAN = "DE123456789";
@@ -89,6 +88,8 @@ public class PaymentServiceTest {
     private ReadPaymentFactory readPaymentFactory;
     @Mock
     private ReadSinglePayment readSinglePayment;
+    @Mock
+    private AccountReferenceValidationService referenceValidationService;
 
     @Before
     public void setUp() {
@@ -123,6 +124,8 @@ public class PaymentServiceTest {
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RJCT, PAYMENT_FAILED)));
         when(paymentMapper.mapToTppInfo(TPP_INFO_STR))
             .thenReturn(TPP_INFO);
+
+        when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159

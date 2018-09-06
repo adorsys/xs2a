@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
-import de.adorsys.aspsp.xs2a.domain.code.BICFI;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -64,7 +63,7 @@ public class SinglePayment implements AccountReferenceCollector {
     private AccountReference creditorAccount;
 
     @ApiModelProperty(value = "creditor agent")
-    private BICFI creditorAgent;
+    private String creditorAgent;
 
     @NotNull
     @Size(max = 70)
