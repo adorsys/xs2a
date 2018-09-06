@@ -1,57 +1,55 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BankingService} from '../../service/banking.service';
-import {Observable} from 'rxjs';
 import { SinglePayments } from '../../models/models';
+import { Banking } from '../../models/banking.model';
 
 @Component({
   selector: 'app-consent-confirmation-page',
   templateUrl: './consent-confirmation-page.component.html'
 })
 export class ConsentConfirmationPageComponent implements OnInit {
-  singlePayments$: Observable<SinglePayments>;
-  id: string;
-  decision: string;
+  singlePayments: SinglePayments;
+  tan: string;
   paymentId: string;
   iban: string;
   consentId: string;
 
-  constructor(private route: ActivatedRoute, private router: Router, private bankingService: BankingService){ }
-
-  onClickPaymentAccepted(paymentIsAccepted) {
-    this.decision = paymentIsAccepted ? 'confirmed' : 'revoked'
-    this.bankingService.postConsent(this.decision)
-      .subscribe(
-        success => {
-          let nextState = paymentIsAccepted ? '/consentconfirmationsuccessful' : '/consentconfirmationdenied'
-          this.router.navigate([nextState])
-        },
-        error => {
-        this.router.navigate(['/consentconfirmationerror'])
-        }
-    )
+  constructor(private route: ActivatedRoute, private router: Router, private bankingService: BankingService) {
   }
+
 
   ngOnInit() {
-    this.route.queryParams
-    .subscribe(params => {
-      this.readBankingDataFromUrl(params)
+    this.route.url
+      .subscribe(params => {
+        this.getBankingDetailsFromUrl(params);
+      });
+
+    let bankingData = <Banking>({tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId});
+    this.bankingService.saveData(bankingData);
+    this.bankingService.getSinglePayments().subscribe(data => {
+      this.iban = data.debtorAccount.iban;
+      bankingData = <Banking>({tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId});
+      this.bankingService.saveData(bankingData);
+      this.singlePayments = data;
     })
-    this.checkAndSaveData()
-    this.singlePayments$ = this.bankingService.getSinglePayments();
   }
 
-  readBankingDataFromUrl(params) {
-    this.iban = params['iban']
-    this.consentId = params['consentId']
-    this.paymentId = params['paymentId']
+  getBankingDetailsFromUrl(params: UrlSegment[]) {
+    this.consentId = params[0].toString();
+    this.paymentId = atob(params[1].toString());
   }
 
-  checkAndSaveData() {
-    var data ={iban: this.iban, consentId: this.consentId, paymentId: this.paymentId}
-    if (Object.keys(this.bankingService.loadData()).length === 0) {
-      this.bankingService.saveData(data)
-    }
+  createQueryParams() {
+    return {
+      consentId: this.consentId,
+      paymentId: this.paymentId,
+    };
   }
 
+  onClickContinue() {
+    this.router.navigate(['/tanconfirmation'], {
+      queryParams: this.createQueryParams()
+    });
+  }
 }

@@ -13,10 +13,10 @@ import {HelpPageComponent} from './components/help-page/help-page.component';
 
 const routes: Routes = [
   { path: '', component: HelpPageComponent},
-  { path: ':consentId/:paymentId', component: TanConfirmationPageComponent },
+  { path: ':consentId/:paymentId', component: ConsentConfirmationPageComponent },
   { path: 'tanconfirmationcanceled', component: TanConfirmationCanceledComponent },
   { path: 'tanconfirmationerror', component: TanConfirmationErrorComponent },
-  { path: 'consentconfirmation', component: ConsentConfirmationPageComponent },
+  { path: 'tanconfirmation', component: TanConfirmationPageComponent },
   { path: 'consentconfirmationdenied', component: ConsentConfirmationDeniedComponent },
   { path: 'consentconfirmationsuccessful', component: ConsentConfirmationSuccessfulComponent },
 ];
