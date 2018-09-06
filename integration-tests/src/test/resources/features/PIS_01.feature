@@ -133,8 +133,12 @@ Feature: Payment Initiation Service
 
 #   Scenario Outline: Failed payment cancellation request
 #        Given PSU wants to cancel a payment <payment-cancellation> using the payment service <payment-service>
-#        When PSU initiates the cancellation of the payment
-#        Then an error response code is displayed the appropriate error response
+#        When PSU initiates the cancellation of the payment with error
+#        Then an error response code and the appropriate error response are received
 #        Examples:
-#            | payment-service | payment-cancellation                     |
-#            | payments        | paymentCancellation-not-existing-id.json |
+#            | payment-service    | payment-cancellation                             |
+#            | payments           | paymentCancellation-not-existing-id.json         |
+#            | payments           | paymentCancellation-no-request-id.json           |
+#            | payments           | paymentCancellation-wrong-format-request-id.json |
+#            | recurring-payments | paymentCancellation-wrong-payment-service.json   |
+
