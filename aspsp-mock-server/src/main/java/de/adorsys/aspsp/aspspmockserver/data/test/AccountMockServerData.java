@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -142,19 +143,19 @@ public class AccountMockServerData {
 
     private List<Psu> fillPsu() {
         return Arrays.asList(
-            psuRepository.save(new Psu("PSU_001", "test1@gmail.com", "aspsp1", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS)),
-            psuRepository.save(new Psu("PSU_002", "test2@gmail.com", "aspsp2", "zzz", Arrays.asList(accountDetails.get(3), accountDetails.get(4)), ALLOWED_PAYMENTS)),
-            psuRepository.save(new Psu("PSU_003", "test3@gmail.com", "aspsp3", "zzz", Arrays.asList(accountDetails.get(5), accountDetails.get(6)), ALLOWED_PAYMENTS)),
+            psuRepository.save(new Psu("PSU_001", "test1@gmail.com", "aspsp1", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS,Arrays.asList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_002", "test2@gmail.com", "aspsp2", "zzz", Arrays.asList(accountDetails.get(3), accountDetails.get(4)), ALLOWED_PAYMENTS, Arrays.asList(SpiScaMethod.SMS_OTP,SpiScaMethod.PUSH_OTP))),
+            psuRepository.save(new Psu("PSU_003", "test3@gmail.com", "aspsp3", "zzz", Arrays.asList(accountDetails.get(5), accountDetails.get(6)), ALLOWED_PAYMENTS, Arrays.asList(SpiScaMethod.PUSH_OTP, SpiScaMethod.CHIP_OTP))),
 
-            // Test User for Cucumber tests
-            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp4", "zzz", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp5", "zzz", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberGreenpeace", "greenpeace@web.de", "aspsp6", "zzz", Arrays.asList(accountDetails.get(8)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberTelekom", "telekom@telekom.de", "aspsp7", "zzz", Arrays.asList(accountDetails.get(9)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberJochen", "jochen.mueller@web.de", "aspsp8", "zzz", Arrays.asList(accountDetails.get(10)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberAmazon", "amazon@mail.com", "aspsp9", "zzz", Arrays.asList(accountDetails.get(11)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberHolidayCheck", "holidaycheck@mail.com", "aspsp10", "zzz", Arrays.asList(accountDetails.get(12)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER)),
-            psuRepository.save(new Psu("PSU_CucumberEventim", "eventim@web.de", "aspsp11", "zzz", Arrays.asList(accountDetails.get(13)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER))
+            // Test User for Cucumber tests //TODO Update Sca Methods for all Cucumber PSUs
+            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp4", "zzz", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp5", "zzz", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_CucumberGreenpeace", "greenpeace@web.de", "aspsp6", "zzz", Arrays.asList(accountDetails.get(8)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_CucumberTelekom", "telekom@telekom.de", "aspsp7", "zzz", Arrays.asList(accountDetails.get(9)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_CucumberJochen", "jochen.mueller@web.de", "aspsp8", "zzz", Arrays.asList(accountDetails.get(10)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_CucumberAmazon", "amazon@mail.com", "aspsp9", "zzz", Arrays.asList(accountDetails.get(11)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_CucumberHolidayCheck", "holidaycheck@mail.com", "aspsp10", "zzz", Arrays.asList(accountDetails.get(12)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("PSU_CucumberEventim", "eventim@web.de", "aspsp11", "zzz", Arrays.asList(accountDetails.get(13)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP)))
         );
 
     }

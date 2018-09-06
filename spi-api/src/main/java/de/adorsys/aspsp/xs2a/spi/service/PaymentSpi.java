@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface PaymentSpi {
      * Initiates a single payment at ASPSP
      *
      * @param spiSinglePayment single payment to be sent for saving at ASPSP
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
@@ -41,7 +42,7 @@ public interface PaymentSpi {
      * Initiates a periodic payment at ASPSP
      *
      * @param periodicPayment  periodic payment to be sent for saving at ASPSP
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
@@ -51,7 +52,7 @@ public interface PaymentSpi {
      * Initiates a bulk payment at ASPSP
      *
      * @param payments         bulk payment to be sent for saving at ASPSP
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
@@ -62,7 +63,7 @@ public interface PaymentSpi {
      *
      * @param paymentId        ASPSP identifier of a payment
      * @param paymentType      Type of payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return payment status
      */
@@ -71,10 +72,10 @@ public interface PaymentSpi {
     /**
      * Returns a single payment by its ASPSP identifier
      *
-     * @param paymentType    Type of payment
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of a payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param paymentType      Type of payment
+     * @param paymentProduct   The addressed payment product
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
      */
@@ -83,10 +84,10 @@ public interface PaymentSpi {
     /**
      * Returns a periodic payment by its ASPSP identifier
      *
-     * @param paymentType    Type of payment
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of a payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param paymentType      Type of payment
+     * @param paymentProduct   The addressed payment product
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
      */
@@ -95,12 +96,20 @@ public interface PaymentSpi {
     /**
      * Returns a bulk payment by its ASPSP identifier
      *
-     * @param paymentType    Type of payment
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of a payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param paymentType      Type of payment
+     * @param paymentProduct   The addressed payment product
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
      */
     SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+
+    /**
+     * Returns a list of SCA methods for PSU by its login
+     *
+     * @param name PSU login
+     * @return a list of SCA methods applicable for specified PSU
+     */
+    SpiResponse<List<SpiScaMethod>> getScaMethodsByName(String name);
 }
