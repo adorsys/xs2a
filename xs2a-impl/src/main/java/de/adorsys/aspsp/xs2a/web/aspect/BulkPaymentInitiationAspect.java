@@ -16,12 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.web12.PaymentController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,21 +32,21 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Component
-public class BulkPaymentInitiationAspect extends AbstractPaymentLink<BulkPaymentInitiationController> {
+public class BulkPaymentInitiationAspect extends AbstractPaymentLink<PaymentController12> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController.createBulkPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result")
-    public ResponseEntity<List<PaymentInitialisationResponse>> invokeAspect(ResponseEntity<List<PaymentInitialisationResponse>> result, String paymentProduct) {
-        if (!hasError(result)) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createBulkPayments(..)) && args(payments, tppSignatureCertificate, paymentProduct)", returning = "result", argNames = "result,payments,tppSignatureCertificate,paymentProduct")
+    public ResponseObject<List<PaymentInitialisationResponse>> invokeAspect(ResponseObject<List<PaymentInitialisationResponse>> result, List<SinglePayment> payments, String tppSignatureCertificate, String paymentProduct) {
+        if (!result.hasError()) {
             result.getBody().stream()
-                .map(paym -> setLinksAndReturnResponse(paym, paymentProduct))
+                .map(this::setLinksAndReturnResponse)
                 .collect(Collectors.toList());
+            return result;
         }
-
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
 
-    private PaymentInitialisationResponse setLinksAndReturnResponse(PaymentInitialisationResponse response, String paymentProduct) {
-        response.setLinks(buildPaymentLinks(response, paymentProduct));
+    private PaymentInitialisationResponse setLinksAndReturnResponse(PaymentInitialisationResponse response) {
+        response.setLinks(buildPaymentLinks(response, PaymentType.BULK.getValue()));
         return response;
     }
 }
