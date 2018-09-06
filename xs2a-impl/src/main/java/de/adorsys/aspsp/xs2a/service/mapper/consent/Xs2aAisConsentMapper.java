@@ -89,10 +89,10 @@ public class Xs2aAisConsentMapper {
         return actionStatus;
     }
 
-    private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
+    private Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
-                            new AccountAccess(
+                            new Xs2aAccountAccess(
                                 accountMapper.mapToAccountReferences(aa.getAccounts()),
                                 accountMapper.mapToAccountReferences(aa.getBalances()),
                                 accountMapper.mapToAccountReferences(aa.getTransactions()),
@@ -108,7 +108,7 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    private SpiAccountAccess mapToSpiAccountAccess(AccountAccess access) {
+    private SpiAccountAccess mapToSpiAccountAccess(Xs2aAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa -> {
                        SpiAccountAccess spiAccountAccess = new SpiAccountAccess();

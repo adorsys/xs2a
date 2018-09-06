@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.Balance;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
@@ -56,17 +56,17 @@ public class AccountController {
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<Map<String, List<AccountDetails>>> getAccounts(
+    public ResponseEntity<Map<String, List<Xs2aAccountDetails>>> getAccounts(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
         @RequestParam(name = "with-balance", required = false) boolean withBalance) {
-        ResponseObject<Map<String, List<AccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance);
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance);
         return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = AccountDetails.class),
+        @ApiResponse(code = 200, message = "OK", response = Xs2aAccountDetails.class),
         @ApiResponse(code = 400, message = "Bad request"),
         @ApiResponse(code = 401, message = "Consent invalid or expired"),
         @ApiResponse(code = 404, message = "Account not found"),
@@ -80,13 +80,13 @@ public class AccountController {
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<AccountDetails> readAccountDetails(
+    public ResponseEntity<Xs2aAccountDetails> readAccountDetails(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed", example = "11111-999999999")
         @PathVariable(name = "account-id") String accountId,
         @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
         @RequestParam(name = "with-balance", required = false) boolean withBalance) {
-        ResponseObject<AccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance);
+        ResponseObject<Xs2aAccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance);
         return responseMapper.ok(responseObject);
     }
 
@@ -106,17 +106,17 @@ public class AccountController {
         @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<List<Balance>> getBalances(
+    public ResponseEntity<List<Xs2aBalance>> getBalances(
         @RequestHeader(name = "consent-id") String consentId,
         @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
         @PathVariable(name = "account-id") String accountId) {
-        ResponseObject<List<Balance>> responseObject = accountService.getBalances(consentId, accountId);
+        ResponseObject<List<Xs2aBalance>> responseObject = accountService.getBalances(consentId, accountId);
         return responseMapper.ok(responseObject);
     }
 
     @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = AccountReport.class),
+        @ApiResponse(code = 200, message = "OK", response = Xs2aAccountReport.class),
         @ApiResponse(code = 400, message = "Bad request"),
         @ApiResponse(code = 401, message = "Consent invalid or expired"),
         @ApiResponse(code = 429, message = "Access exceeded")})
@@ -130,24 +130,24 @@ public class AccountController {
         @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<AccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
-                                                         @PathVariable(name = "account-id") String accountId,
-                                                         @RequestHeader(name = "consent-id", required = false) String consentId,
-                                                         @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
-                                                         @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                                                         @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
-                                                         @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
-                                                         @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
-                                                         @RequestParam(name = "transactionId", required = false) String transactionId,
-                                                         @ApiParam(name = "psuInvolved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-                                                         @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
-                                                         @ApiParam(name = "bookingStatus", example = "both", required = true, allowableValues = "booked, pending, both")
-                                                         @RequestParam(name = "bookingStatus") String bookingStatus,
-                                                         @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-                                                         @RequestParam(name = "withBalance", required = false) boolean withBalance,
-                                                         @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
-                                                         @RequestParam(name = "deltaList", required = false) boolean deltaList) {
-        ResponseObject<AccountReport> responseObject =
+    public ResponseEntity<Xs2aAccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
+                                                             @PathVariable(name = "account-id") String accountId,
+                                                             @RequestHeader(name = "consent-id", required = false) String consentId,
+                                                             @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
+                                                             @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+                                                             @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
+                                                             @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+                                                             @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
+                                                             @RequestParam(name = "transactionId", required = false) String transactionId,
+                                                             @ApiParam(name = "psuInvolved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
+                                                             @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
+                                                             @ApiParam(name = "bookingStatus", example = "both", required = true, allowableValues = "booked, pending, both")
+                                                             @RequestParam(name = "bookingStatus") String bookingStatus,
+                                                             @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
+                                                             @RequestParam(name = "withBalance", required = false) boolean withBalance,
+                                                             @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
+                                                             @RequestParam(name = "deltaList", required = false) boolean deltaList) {
+        ResponseObject<Xs2aAccountReport> responseObject =
             accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, Xs2aBookingStatus.forValue(bookingStatus), withBalance, deltaList);
         return responseMapper.ok(responseObject);
     }

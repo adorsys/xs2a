@@ -16,20 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
+import de.adorsys.aspsp.xs2a.web12.PaymentController12;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
 @Component
-public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentInitiationController> {
+public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController12> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.PaymentInitiationController.createPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result")
+    /* TODO refactor links creation according to 1.2 spec https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/283
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result", argNames = "result,paymentProduct")
     public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
         if (!hasError(result)) {
             PaymentInitialisationResponse body = result.getBody();
@@ -37,4 +35,5 @@ public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentInitiati
         }
         return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
     }
+    */
 }

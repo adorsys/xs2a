@@ -17,14 +17,21 @@
 package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collections;
 import java.util.Optional;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 @Component
 public abstract class AbstractLinkAspect<T> {
@@ -34,21 +41,41 @@ public abstract class AbstractLinkAspect<T> {
     protected AspspProfileService aspspProfileService;
     @Autowired
     protected JsonConverter jsonConverter;
+    @Autowired
+    private MessageService messageService;
 
-    protected Class<T> getController() {
+    protected <B> boolean hasError(ResponseEntity<B> target) {
+        Optional<B> body = Optional.ofNullable(target.getBody());
+        return body.isPresent() && body.get().getClass()
+                                       .isAssignableFrom(MessageError.class);
+    }
+
+    <R> ResponseObject<R> enrichErrorTextMessage(ResponseObject<R> response) {
+        MessageError error = response.getError();
+        TppMessageInformation tppMessage = error.getTppMessage();
+        tppMessage.setText(messageService.getMessage(tppMessage.getMessageErrorCode().name()));
+        error.setTppMessages(Collections.singleton(tppMessage));
+        return ResponseObject.<R>builder()
+                   .fail(error)
+                   .build();
+    }
+
+    protected String buildLink(String path, Object... params) {
+        return fromHttpUrl(linkTo(getControllerClass()).toString())
+                   .path(path)
+                   .buildAndExpand(params)
+                   .toUriString();
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<T> getControllerClass() {
         try {
-            String className = ((ParameterizedType) getClass().getGenericSuperclass())
+            String className = ((ParameterizedType) this.getClass().getGenericSuperclass())
                                    .getActualTypeArguments()[0]
                                    .getTypeName();
             return (Class<T>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Class isn't parametrized with generic type! Use <>");
         }
-    }
-
-    protected <B> boolean hasError(ResponseEntity<B> target) {
-        Optional<B> body = Optional.ofNullable(target.getBody());
-        return body.isPresent() && body.get().getClass()
-                                       .isAssignableFrom(MessageError.class);
     }
 }

@@ -21,20 +21,19 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 
 import java.util.Base64;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
     protected Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentProduct) {
-        Class controller = getController();
         String encodedPaymentId = Base64.getEncoder().encodeToString(body.getPaymentId().getBytes());
 
         Links links = new Links();
         links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
-        links.setSelf(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
-        links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
-        links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
-        links.setStatus(linkTo(controller, paymentProduct).slash(encodedPaymentId).slash("status").toString());
+        /* TODO refactor links creation according to 1.2 spec https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/283
+            links.setSelf(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+            links.setUpdatePsuIdentification(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+            links.setUpdatePsuAuthentication(linkTo(controller, paymentProduct).slash(encodedPaymentId).toString());
+            links.setStatus(linkTo(controller, paymentProduct).slash(encodedPaymentId).slash("status").toString());
+        */
         return links;
     }
 }

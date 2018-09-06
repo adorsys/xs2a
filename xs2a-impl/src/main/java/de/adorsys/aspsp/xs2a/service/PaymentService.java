@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
@@ -56,12 +56,12 @@ public class PaymentService {
      * @param paymentType The addressed payment category Single, Periodic or Bulk
      * @return Information about the status of a payment
      */
-    public ResponseObject<TransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType) {
-        TransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), new AspspConsentData()).getPayload());
+    public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType) {
+        Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), new AspspConsentData()).getPayload());
         //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return Optional.ofNullable(transactionStatus)
-                   .map(tr -> ResponseObject.<TransactionStatus>builder().body(tr).build())
-                   .orElseGet(() -> ResponseObject.<TransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+                   .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
+                   .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
     }
 
     /**
@@ -102,7 +102,7 @@ public class PaymentService {
         if (CollectionUtils.isNotEmpty(validPayments)) {
             List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct);
             if (CollectionUtils.isNotEmpty(paymentResponses) && paymentResponses.stream()
-                                                                    .anyMatch(pr -> pr.getTransactionStatus() != TransactionStatus.RJCT)) {
+                                                                    .anyMatch(pr -> pr.getTransactionStatus() != Xs2aTransactionStatus.RJCT)) {
                 paymentResponses.addAll(invalidPayments);
                 return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                            .body(paymentResponses).build();//TODO Temporary fix should be updated along migration to 1.2

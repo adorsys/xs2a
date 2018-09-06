@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.code;
+package de.adorsys.aspsp.xs2a.domain.address;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@ApiModel(description = "PurposeCode", value = "Purpose code")
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class PurposeCode {
+@ApiModel(description = "Country code", value = "49")
+public class Xs2aCountryCode {
 
-    // todo documentation doesn't have any definition. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/40
-    @ApiModelProperty(value = "Purpose code", example = "BCENECEQ")
+    @ApiModelProperty(value = "Country code", required = true, example = "49")
     private String code;
 }
