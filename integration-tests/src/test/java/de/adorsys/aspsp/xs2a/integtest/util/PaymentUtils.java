@@ -27,6 +27,7 @@ public class PaymentUtils {
         headers.setAll(request.getHeader());
         headers.add("Authorization", "Bearer " + token);
         headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
 
         return new HttpEntity<>(request.getBody(), headers);
     }
