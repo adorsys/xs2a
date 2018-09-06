@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
@@ -131,24 +131,24 @@ public class AccountController {
         @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header"),
         @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
     public ResponseEntity<Xs2aAccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
-                                                         @PathVariable(name = "account-id") String accountId,
+                                                             @PathVariable(name = "account-id") String accountId,
                                                              @RequestHeader(name = "consent-id", required = false) String consentId,
                                                              @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
-                                                         @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+                                                             @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
                                                              @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
-                                                         @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
+                                                             @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
                                                              @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
-                                                         @RequestParam(name = "transactionId", required = false) String transactionId,
+                                                             @RequestParam(name = "transactionId", required = false) String transactionId,
                                                              @ApiParam(name = "psuInvolved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-                                                         @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
+                                                             @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
                                                              @ApiParam(name = "bookingStatus", example = "both", required = true, allowableValues = "booked, pending, both")
-                                                         @RequestParam(name = "bookingStatus") String bookingStatus,
+                                                             @RequestParam(name = "bookingStatus") String bookingStatus,
                                                              @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-                                                         @RequestParam(name = "withBalance", required = false) boolean withBalance,
+                                                             @RequestParam(name = "withBalance", required = false) boolean withBalance,
                                                              @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
-                                                         @RequestParam(name = "deltaList", required = false) boolean deltaList) {
+                                                             @RequestParam(name = "deltaList", required = false) boolean deltaList) {
         ResponseObject<Xs2aAccountReport> responseObject =
-            accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, BookingStatus.forValue(bookingStatus), withBalance, deltaList);
+            accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, Xs2aBookingStatus.forValue(bookingStatus), withBalance, deltaList);
         return responseMapper.ok(responseObject);
     }
 }

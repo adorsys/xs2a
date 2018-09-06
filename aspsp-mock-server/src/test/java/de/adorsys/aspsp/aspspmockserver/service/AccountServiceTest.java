@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -203,7 +204,7 @@ public class AccountServiceTest {
     }
 
     private Psu getPsuWithRightAccounts() {
-        return new Psu("12345678910", "test@gmail.com", "aspsp", "zzz", getAccounts(), null);
+        return new Psu("12345678910", "test@gmail.com", "aspsp", "zzz", getAccounts(), null, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private List<SpiAccountDetails> getAccounts() {

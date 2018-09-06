@@ -25,7 +25,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
@@ -79,7 +79,7 @@ public class ConsentServiceTest {
     @Mock
     AccountMapper accountMapper;
     @Mock
-    AisConsentMapper aisConsentMapper;
+    Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     AspspProfileService aspspProfileService;
 
@@ -410,7 +410,7 @@ public class ConsentServiceTest {
     }
 
     private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
+        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
     private List<AccountReference> getReferenceList() {

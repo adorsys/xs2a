@@ -36,6 +36,7 @@ public class Psu {
     private String password;
     private List<SpiAccountDetails> accountDetailsList;
     private List<String> permittedPaymentProducts;
+    private List<SpiScaMethod> scaMethods;
 
     @JsonIgnore
     public boolean isValid() {

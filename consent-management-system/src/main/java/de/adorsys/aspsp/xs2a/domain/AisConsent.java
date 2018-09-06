@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -110,7 +111,12 @@ public class AisConsent {
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] aspspConsentData;
 
-    public List<AccountAccess> getAccesses(){
+    @Column(name = "ais_consent_request_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the consent request: GLOBAL, BANK_OFFERED or DEDICATED_ACCOUNTS.", required = true, example = "GLOBAL")
+    private AisConsentRequestType aisConsentRequestType;
+
+    public List<AccountAccess> getAccesses() {
         return new ArrayList<>(accesses);
     }
 

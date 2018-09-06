@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -119,6 +120,13 @@ public class PaymentSpiImpl implements PaymentSpi {
                 .map(Collections::singletonList)
                 .orElse(null);
         return new SpiResponse<>(response,  new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+    }
+
+    @Override
+    public SpiResponse<List<SpiScaMethod>> getScaMethodsByName(String name) {
+        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+        });
+        return new SpiResponse<>(response.getBody(), new AspspConsentData());
     }
 
     private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayment spiSinglePayment) {

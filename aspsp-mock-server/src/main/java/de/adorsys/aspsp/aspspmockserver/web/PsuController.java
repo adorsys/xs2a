@@ -18,6 +18,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,7 +39,7 @@ public class PsuController {
     @ApiOperation(value = "Returns a list of all PSU`s available at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = List.class),
-        @ApiResponse(code = 204, message = "Not Content")})
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/")
     public ResponseEntity<List<Psu>> readAllPsuList() {
         List<Psu> psus = psuService.getAllPsuList();
@@ -50,7 +51,7 @@ public class PsuController {
     @ApiOperation(value = "Returns a PSU by its ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = List.class),
-        @ApiResponse(code = 204, message = "Not Content")})
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{psu-id}")
     public ResponseEntity<Psu> readPsuById(@PathVariable("psu-id") String psuId) {
         return psuService.getPsuById(psuId)
@@ -61,7 +62,7 @@ public class PsuController {
     @ApiOperation(value = "Returns a list of allowed payment products for PSU by its ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = List.class),
-        @ApiResponse(code = 204, message = "Not Content")})
+        @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/allowed-payment-products/{iban}")
     public ResponseEntity<List<String>> readPaymentProductsById(@PathVariable("iban") String iban) {
         return Optional.ofNullable(psuService.getAllowedPaymentProducts(iban))
@@ -98,5 +99,24 @@ public class PsuController {
         return psuService.deletePsuById(psuId)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.notFound().build();
+    }
+
+    @ApiOperation(value = "Returns a list of SCA methods for PSU by its login", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = List.class),
+        @ApiResponse(code = 204, message = "No Content")})
+    @GetMapping(path = "/sca-methods/{name}")
+    public ResponseEntity<List<SpiScaMethod>> readScaMethods(@PathVariable("name") String name) {
+        return Optional.ofNullable(psuService.getScaMethods(name))
+                   .map(ResponseEntity::ok)
+                   .orElse(ResponseEntity.noContent().build());
+    }
+
+    @ApiOperation(value = "Updates list of SCA methods for PSU specified by its login", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK")})
+    @PutMapping(path = "/sca-methods/{name}")
+    public void updateScaMethods(@RequestBody List<SpiScaMethod> scaMethods, @PathVariable("name") String name) {
+        psuService.updateScaMethods(name, scaMethods);
     }
 }
