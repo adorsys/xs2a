@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.UpdateAisConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
@@ -129,6 +130,25 @@ public class AisConsentServiceTest {
         assertFalse(consentId_notExist.isPresent());
     }
 
+    @Test
+    public void updateAspspDataById() {
+        // When
+        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
+
+        // Then
+        UpdateAisConsentAspspDataRequest request = buildUpdateBlobRequest();
+        Optional<String> consentId = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID, request);
+        // Assert
+        assertTrue(consentId.isPresent());
+
+        //Then
+        Optional<String> consentId_notExists = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
+        // Assert
+        assertFalse(consentId_notExists.isPresent());
+    }
+
     private AisConsent buildConsent() {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setId(CONSENT_ID);
@@ -158,6 +178,12 @@ public class AisConsentServiceTest {
 
     private List<AccountInfo> buildAccountsInfo() {
         return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
+    }
+
+    private static UpdateAisConsentAspspDataRequest buildUpdateBlobRequest() {
+        UpdateAisConsentAspspDataRequest request = new UpdateAisConsentAspspDataRequest();
+        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        return request;
     }
 
     private AisAccountConsent buildSpiAccountConsent() {

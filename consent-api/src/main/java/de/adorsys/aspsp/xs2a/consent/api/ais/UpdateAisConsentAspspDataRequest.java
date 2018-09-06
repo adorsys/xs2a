@@ -22,7 +22,7 @@ import lombok.Data;
 
 @Data
 @ApiModel(description = "Ais consent update blob request", value = "AisConsentBlobUpdateRequest")
-public class UpdateAisConsentBlobRequest {
+public class UpdateAisConsentAspspDataRequest {
 
     @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
     private byte[] aspspConsentData;
