@@ -134,14 +134,13 @@ Feature: Payment Initiation Service
 #            | todo-create-bulk-payment             | bulk-payments                | to-do-define-json                  |
 #            | todo-create-periodic-payment         | periodic-payments            | to-do-define-json                  |
 
-#    Scenario Outline: Failed Payment Information Request
-#        Given Psu wants to request the payment information of a payment with payment-id <payment-id> by using the payment-service <payment-service>
-#        And the set of payment information data <payment-information> with error
-#        When PSU requests the information of the payment
-#        Then an error response code and the appropriate error response are received
-#        Examples:
-#            | payment-id                           | payment-service              | payment-information                        |
-#            | 11111111-aaaa-xxxx-1111-1x1x1x1x1x1x | payments                     | singlePayInformation-not-existing-id.json  |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-no-request-id.json     |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-wrong-format-request-id.json |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | recurring-payments           | singlePayInformation-wrong-payment-service.json |
+    Scenario Outline: Failed Payment Information Request
+        Given PSU wants to request the payment information <payment-information> of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+        When PSU requests the information of the payment with error
+        Then an error response code and the appropriate error response are received
+        Examples:
+            | payment-id                           | payment-service              | payment-information                        |
+            | 11111111-aaaa-xxxx-1111-1x1x1x1x1x1x | payments                     | singlePayInformation-not-existing-id.json  |
+            | 5b911ad3d300c60f7edceda1 | payments                     | singlePayInformation-no-request-id.json     |
+            | 5b911ad3d300c60f7edceda1 | payments                     | singlePayInformation-wrong-format-request-id.json |
+            | 5b911ad3d300c60f7edceda1 | recurring-payments           | singlePayInformation-wrong-payment-service.json |
