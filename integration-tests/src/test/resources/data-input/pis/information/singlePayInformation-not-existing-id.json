@@ -9,10 +9,12 @@
   "response": {
     "code": "403",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "RESOURCE_UNKNOWN"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "RESOURCE_UNKNOWN"
+      }
+    ]
   }
 }
 
