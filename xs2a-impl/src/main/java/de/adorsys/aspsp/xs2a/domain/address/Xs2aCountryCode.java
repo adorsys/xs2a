@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.code;
+package de.adorsys.aspsp.xs2a.domain.address;
 
-public enum FrequencyCode {
-    DAILY, WEEKLY, EVERYTWOWEEKS, MONTHLY, EVERYTWOMONTHS, QUARTERLY, SEMIANNUAL, ANNUAL
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+@ApiModel(description = "Country code", value = "49")
+public class Xs2aCountryCode {
+
+    @ApiModelProperty(value = "Country code", required = true, example = "49")
+    private String code;
 }

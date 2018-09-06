@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -212,7 +212,7 @@ public class ConsentServiceTest {
 
         //Then:
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(messageError.getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 
@@ -276,7 +276,7 @@ public class ConsentServiceTest {
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
             req, CORRECT_PSU_ID);
         //Then:
-        assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }*/
 
     @Test
@@ -292,7 +292,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID);
         //Then:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -309,7 +309,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.getAccountConsentById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -325,7 +325,7 @@ public class ConsentServiceTest {
         //When:
         ResponseObject response = consentService.deleteAccountConsentsById(WRONG_CONSENT_ID);
         //Than:
-        assertThat(response.getError().getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(response.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
 
     @Test
@@ -360,7 +360,7 @@ public class ConsentServiceTest {
 
         //Then
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getTransactionStatus()).isEqualTo(TransactionStatus.RJCT);
+        assertThat(messageError.getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 
@@ -391,7 +391,7 @@ public class ConsentServiceTest {
         return new SpiAccountAccess(accounts, balances, transactions, allAccounts ? SpiAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? SpiAccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private AccountConsent getConsent(String id, AccountAccess access, boolean withBalance) {
+    private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
         return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
     }
 
@@ -399,7 +399,7 @@ public class ConsentServiceTest {
         return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false);
     }
 
-    private CreateConsentReq getCreateConsentRequest(AccountAccess access) {
+    private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(access);
         req.setValidUntil(DATE);
@@ -409,8 +409,8 @@ public class ConsentServiceTest {
         return req;
     }
 
-    private AccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new AccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
+    private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
     }
 
     private List<AccountReference> getReferenceList() {

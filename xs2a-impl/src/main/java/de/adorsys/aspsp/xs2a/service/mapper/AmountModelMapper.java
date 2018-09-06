@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.psd2.model.Amount;
 import org.apache.commons.lang3.StringUtils;
 import java.util.Currency;
@@ -23,10 +24,10 @@ import java.util.Optional;
 
 public class AmountModelMapper {
 
-    public static de.adorsys.aspsp.xs2a.domain.Amount mapToXs2aAmount(Amount amount) {
+    public static Xs2aAmount mapToXs2aAmount(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
-                       de.adorsys.aspsp.xs2a.domain.Amount amountTarget = new de.adorsys.aspsp.xs2a.domain.Amount();
+                       Xs2aAmount amountTarget = new Xs2aAmount();
                        amountTarget.setAmount(a.getAmount());
                        amountTarget.setCurrency(getCurrencyByCode(a.getCurrency()));
                        return amountTarget;
@@ -34,7 +35,7 @@ public class AmountModelMapper {
                    .orElse(null);
     }
 
-    public static Amount mapToAmount(de.adorsys.aspsp.xs2a.domain.Amount amount) {
+    public static Amount mapToAmount(Xs2aAmount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Amount amountTarget = new Amount();

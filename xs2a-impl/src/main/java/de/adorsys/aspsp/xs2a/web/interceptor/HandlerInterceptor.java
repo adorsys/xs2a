@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.web.interceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +85,6 @@ public class HandlerInterceptor extends HandlerInterceptorAdapter {
         String message = messageSource.getMessage(errorCode.name(), null, forLanguageTag("en"));
         TppMessageInformation messageInformation = new TppMessageInformation(ERROR, errorCode);
         messageInformation.setText(message);
-        return new MessageError(TransactionStatus.RJCT, messageInformation);
+        return new MessageError(Xs2aTransactionStatus.RJCT, messageInformation);
     }
 }

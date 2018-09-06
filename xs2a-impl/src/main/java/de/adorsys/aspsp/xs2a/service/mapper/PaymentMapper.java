@@ -17,15 +17,15 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
-import de.adorsys.aspsp.xs2a.domain.address.CountryCode;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
-import de.adorsys.aspsp.xs2a.domain.code.FrequencyCode;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.AuthenticationObject;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
@@ -50,9 +50,9 @@ public class PaymentMapper {
     private final ObjectMapper objectMapper;
     private final AccountMapper accountMapper;
 
-    public TransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
+    public Xs2aTransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
-                   .map(ts -> TransactionStatus.valueOf(ts.name()))
+                   .map(ts -> Xs2aTransactionStatus.valueOf(ts.name()))
                    .orElse(null);
     }
 
@@ -78,7 +78,7 @@ public class PaymentMapper {
                        spiSinglePayment.setCreditorAddress(mapToSpiAddress(paymentRe.getCreditorAddress()));
                        spiSinglePayment.setUltimateCreditor(paymentRe.getUltimateCreditor());
                        spiSinglePayment.setPurposeCode(Optional.ofNullable(paymentRe.getPurposeCode())
-                                                           .map(PurposeCode::getCode).orElse(""));
+                                                           .map(Xs2aPurposeCode::getCode).orElse(""));
                        spiSinglePayment.setRemittanceInformationUnstructured(paymentRe.getRemittanceInformationUnstructured());
                        spiSinglePayment.setRemittanceInformationStructured(mapToSpiRemittance(paymentRe.getRemittanceInformationStructured()));
                        spiSinglePayment.setRequestedExecutionDate(paymentRe.getRequestedExecutionDate());
@@ -106,7 +106,7 @@ public class PaymentMapper {
                        spiPeriodicPayment.setCreditorAddress(mapToSpiAddress(pp.getCreditorAddress()));
                        spiPeriodicPayment.setUltimateCreditor(pp.getUltimateCreditor());
                        spiPeriodicPayment.setPurposeCode(Optional.ofNullable(pp.getPurposeCode())
-                                                             .map(PurposeCode::getCode)
+                                                             .map(Xs2aPurposeCode::getCode)
                                                              .orElse(null));
                        spiPeriodicPayment.setRemittanceInformationUnstructured(pp.getRemittanceInformationUnstructured());
                        spiPeriodicPayment.setRemittanceInformationStructured(mapToSpiRemittance(pp.getRemittanceInformationStructured()));
@@ -146,7 +146,7 @@ public class PaymentMapper {
     public PaymentInitialisationResponse mapToPaymentInitResponseFailedPayment(SinglePayment payment, MessageErrorCode error) {
                        log.warn("Bulk payment initiation has an error: {}. Payment : {}",error, payment);
                        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-                       response.setTransactionStatus(TransactionStatus.RJCT);
+                       response.setTransactionStatus(Xs2aTransactionStatus.RJCT);
                        response.setPaymentId(payment.getEndToEndIdentification());
                        response.setTppMessages(new MessageErrorCode[]{error});
                        return response;
@@ -197,7 +197,7 @@ public class PaymentMapper {
             payment.setRequestedExecutionDate(sp.getRequestedExecutionDate());
             payment.setRequestedExecutionTime(sp.getRequestedExecutionTime());
             payment.setExecutionRule(sp.getExecutionRule());
-            payment.setFrequency(FrequencyCode.valueOf(sp.getFrequency()));
+            payment.setFrequency(Xs2aFrequencyCode.valueOf(sp.getFrequency()));
             payment.setDayOfExecution(sp.getDayOfExecution());
             payment.setEndDate(sp.getEndDate());
             payment.setStartDate(sp.getStartDate());
@@ -220,14 +220,14 @@ public class PaymentMapper {
         return new MessageErrorCode[]{};//TODO Fill in th Linx
     }
 
-    private SpiAddress mapToSpiAddress(Address address) {
+    private SpiAddress mapToSpiAddress(Xs2aAddress address) {
         return Optional.ofNullable(address)
                    .map(a -> new SpiAddress(
                        a.getStreet(),
                        a.getBuildingNumber(),
                        a.getCity(),
                        a.getPostalCode(),
-                       Optional.ofNullable(a.getCountry()).map(CountryCode::getCode).orElse("")))
+                       Optional.ofNullable(a.getCountry()).map(Xs2aCountryCode::getCode).orElse("")))
                    .orElse(null);
     }
 
@@ -242,14 +242,14 @@ public class PaymentMapper {
                    }).orElse(null);
     }
 
-    private PurposeCode mapToPurposeCode(String purposeCode) {
+    private Xs2aPurposeCode mapToPurposeCode(String purposeCode) {
         return Optional.ofNullable(purposeCode)
                    .map(p -> {
-                       PurposeCode code = new PurposeCode();
+                       Xs2aPurposeCode code = new Xs2aPurposeCode();
                        code.setCode(p);
                        return code;
                    })
-                   .orElseGet(PurposeCode::new);
+                   .orElseGet(Xs2aPurposeCode::new);
     }
 
     private Remittance mapToRemittance(SpiRemittance remittanceInformationStructured) {
@@ -264,11 +264,11 @@ public class PaymentMapper {
                    .orElseGet(Remittance::new);
     }
 
-    private Address mapToAddress(SpiAddress creditorAddress) {
+    private Xs2aAddress mapToAddress(SpiAddress creditorAddress) {
         return Optional.ofNullable(creditorAddress)
                    .map(a -> {
-                       Address address = new Address();
-                       CountryCode code = new CountryCode();
+                       Xs2aAddress address = new Xs2aAddress();
+                       Xs2aCountryCode code = new Xs2aCountryCode();
                        code.setCode(Optional.ofNullable(a.getCountry()).orElse(null));
                        address.setCountry(code);
                        address.setPostalCode(a.getPostalCode());
@@ -277,7 +277,7 @@ public class PaymentMapper {
                        address.setBuildingNumber(a.getBuildingNumber());
                        return address;
                    })
-                   .orElseGet(Address::new);
+                   .orElseGet(Xs2aAddress::new);
 
     }
 
@@ -287,7 +287,7 @@ public class PaymentMapper {
         return bicfi;
     }
 
-    private SpiAmount mapToSpiAmount(Amount amount) {
+    private SpiAmount mapToSpiAmount(Xs2aAmount amount) {
         return Optional.ofNullable(amount)
                    .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
                    .orElse(null);

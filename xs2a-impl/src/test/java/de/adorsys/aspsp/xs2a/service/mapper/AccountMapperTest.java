@@ -21,8 +21,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
@@ -60,7 +60,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorAccountDetails);
-        AccountDetails actualAccountDetails = accountMapper.mapToAccountDetails(donorAccountDetails);
+        Xs2aAccountDetails actualAccountDetails = accountMapper.mapToAccountDetails(donorAccountDetails);
 
         //Then:
         assertThat(actualAccountDetails.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
@@ -85,9 +85,9 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorSpiTransaction);
-        Optional<AccountReport> aAR = accountMapper.mapToAccountReport(donorSpiTransactions);
-        AccountReport actualAccountReport;
-        actualAccountReport = aAR.orElseGet(() -> new AccountReport(new Transactions[]{}, new Transactions[]{}));
+        Optional<Xs2aAccountReport> aAR = accountMapper.mapToAccountReport(donorSpiTransactions);
+        Xs2aAccountReport actualAccountReport;
+        actualAccountReport = aAR.orElseGet(() -> new Xs2aAccountReport(new Transactions[]{}, new Transactions[]{}));
 
 
         //Then:

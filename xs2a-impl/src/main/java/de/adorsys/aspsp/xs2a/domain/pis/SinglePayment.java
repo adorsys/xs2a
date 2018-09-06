@@ -18,11 +18,11 @@ package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
-import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.BICFI;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -57,7 +57,7 @@ public class SinglePayment implements AccountReferenceCollector {
     @Valid
     @NotNull
     @ApiModelProperty(value = "instructed amount", required = true)
-    private Amount instructedAmount;
+    private Xs2aAmount instructedAmount;
 
     @NotNull
     @ApiModelProperty(value = "creditor account", required = true)
@@ -73,7 +73,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @Valid
     @ApiModelProperty(value = "creditor Address")
-    private Address creditorAddress;
+    private Xs2aAddress creditorAddress;
 
     @Deprecated // Since 1.2
     @Size(max = 70)
@@ -82,7 +82,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @Deprecated // Since 1.2
     @ApiModelProperty(value = "purpose code")
-    private PurposeCode purposeCode;
+    private Xs2aPurposeCode purposeCode;
 
     @Size(max = 140)
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
