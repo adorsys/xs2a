@@ -68,14 +68,6 @@ public class AISConsentService {
                    : Optional.empty();
     }
 
-    private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
-        AccountAccessHolder holder = new AccountAccessHolder();
-        holder.fillAccess(access.getAccounts(), ACCOUNT);
-        holder.fillAccess(access.getBalances(), BALANCE);
-        holder.fillAccess(access.getTransactions(), TRANSACTION);
-        return holder.getAccountAccesses();
-    }
-
     /**
      * Read status of consent by id
      *
@@ -155,6 +147,14 @@ public class AISConsentService {
     public Optional<String> updateConsentBlob(UpdateAisConsentBlobRequest request, String consentId) {
         return getActualAisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
+    }
+
+    private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
+        AccountAccessHolder holder = new AccountAccessHolder();
+        holder.fillAccess(access.getAccounts(), ACCOUNT);
+        holder.fillAccess(access.getBalances(), BALANCE);
+        holder.fillAccess(access.getTransactions(), TRANSACTION);
+        return holder.getAccountAccesses();
     }
 
     private String updateConsentAspspData(UpdateAisConsentBlobRequest request, AisConsent consent) {
