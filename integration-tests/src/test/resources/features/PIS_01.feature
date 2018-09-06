@@ -5,23 +5,23 @@ Feature: Payment Initiation Service
     # Single Payment                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Successful payment initiation request for single payments (redirect)
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the single payment initiating request
-#        Then a successful response code and the appropriate single payment response data
+    Scenario Outline: Successful payment initiation request for single payments (redirect)
+        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the single payment initiating request
+        Then a successful response code and the appropriate single payment response data are received
 #        And a redirect URL is delivered to the PSU
-#        Examples:
-#            | payment-service | payment-product       | single-payment                |
-#            | payments        | sepa-credit-transfers | singlePayInit-successful.json |
-#
-#    Scenario Outline: Failed payment initiation request for single payments (redirect)
-#        Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the single payment initiating request with error
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#            | payment-service     | payment-product               | single-payment                                 |
+        Examples:
+            | payment-service | payment-product       | single-payment                |
+            | payments        | sepa-credit-transfers | singlePayInit-successful.json |
+
+    Scenario Outline: Failed payment initiation request for single payments (redirect)
+        Given PSU initiates an errorful single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the single payment initiating request with error
+        Then an error response code and the appropriate error response are received
+        Examples:
+            | payment-service     | payment-product               | single-payment                                 |
 #            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json            |
-#            | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
+            | payments            | sepa-credit-trans             | singlePayInit-incorrect-payment-product.json   |
 #            | payments            | sepa-credit-transfers         | singlePayInit-no-request-id.json               |
 #            | payments            | sepa-credit-transfers         | singlePayInit-no-ip-address.json               |
 #            | payments            | sepa-credit-transfers         | singlePayInit-wrong-format-request-id.json     |
@@ -34,23 +34,23 @@ Feature: Payment Initiation Service
     # Bulk Payment                                                                                                     #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Payment initiation request for bulk payments (redirect)
-#        Given PSU wants to initiate multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the bulk payment initiating request
-#        Then a successful response code and the appropriate bulk payment response data
+    Scenario Outline: Payment initiation request for bulk payments (redirect)
+        Given PSU wants to initiate multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the bulk payment initiating request
+        Then a successful response code and the appropriate bulk payment response data
 #        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
-#        Examples:
-#            | payment-service  | payment-product       | bulk-payment                |
-#            | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
-#
-#    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
-#        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the bulk payment initiating request with error
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#          |  payment-service  | payment-product       | bulk-payment                                 |
+        Examples:
+            | payment-service  | payment-product       | bulk-payment                |
+            | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
+
+    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
+        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the bulk payment initiating request with error
+        Then an error response code and the appropriate error response are received
+        Examples:
+          |  payment-service  | payment-product       | bulk-payment                                 |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
-#          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
+          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
@@ -64,25 +64,25 @@ Feature: Payment Initiation Service
     # Recurring Payments                                                                                               #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Payment initiation request for recurring payments (redirect)
-#        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the recurring payment initiating request
-#        Then a successful response code and the appropriate recurring payment response data
+    Scenario Outline: Payment initiation request for recurring payments (redirect)
+        Given PSU wants to initiate a recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the recurring payment initiating request
+        Then a successful response code and the appropriate recurring payment response data
 #        And a redirect URL is delivered to the PSU
-#        Examples:
-#           | payment-service   | payment-product       | recurring-payment          |
-#           | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
-#
-#    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
-#        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        When PSU sends the recurring payment initiating request with error
-#        Then an error response code is displayed the appropriate error response
-#        Examples:
-#            | payment-service   | payment-product       | recurring-payment                           |
+        Examples:
+           | payment-service   | payment-product       | recurring-payment          |
+           | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
+
+    Scenario Outline: Failed payment initiation request for recurring payments (redirect)
+        Given PSU loads an errorful recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
+        When PSU sends the recurring payment initiating request with error
+        Then an error response code and the appropriate error response are received
+        Examples:
+            | payment-service   | payment-product       | recurring-payment                           |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-incorrect-syntax.json            |
-#            #| periodic-payments | sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
-#            | periodic-payments | sepa-credit-transfers | recPayInit-no-frequency.json                |
-#            | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
+            | periodic-payments | sepa-credit-trans     | recPayInit-incorrect-payment-product.json   |
+            | periodic-payments | sepa-credit-transfers | recPayInit-no-frequency.json                |
+            | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-no-request-id.json               |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
@@ -112,7 +112,7 @@ Feature: Payment Initiation Service
 #        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
 #        And the errorful set of data <payment-status>
 #        When PSU requests the status of the payment without an existing payment-id
-#        Then an error response code is displayed the appropriate error response
+#        Then an error response code and the appropriate error response are received
 #        Examples:
 #            | payment-id                           | payment-service      | payment-status                     |
 #            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |

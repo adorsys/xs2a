@@ -16,15 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.web.AccountController;
-import lombok.AllArgsConstructor;
+import de.adorsys.aspsp.xs2a.web12.AccountController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,65 +31,63 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-
 @Slf4j
 @Aspect
 @Component
-@AllArgsConstructor
-public class AccountAspect extends AbstractLinkAspect<AccountController> {
+public class AccountAspect extends AbstractLinkAspect<AccountController12> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.readAccountDetails(..)) && args(consentId, accountId, withBalance, ..)", returning = "result")
-    public ResponseEntity<Xs2aAccountDetails> invokeReadAccountDetailsAspect(ResponseEntity<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
-        if (!hasError(result)) {
-            Xs2aAccountDetails body = result.getBody();
-            body.setLinks(buildLinksForAccountDetails(body, withBalance));
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetails(..)) && args(consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
+    public ResponseObject<Xs2aAccountDetails> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
+        if (!result.hasError()) {
+            Xs2aAccountDetails accountDetails = result.getBody();
+            accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
+            return result;
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getAccounts(..)) && args(consentId, withBalance, ..)", returning = "result")
-    public ResponseEntity<Map<String, List<Xs2aAccountDetails>>> invokeGetAccountsAspect(ResponseEntity<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
-        if (!hasError(result)) {
-            Map<String, List<Xs2aAccountDetails>> body = result.getBody();
-            setLinksToAccountsMap(body, withBalance);
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetailsList(..)) && args(consentId, withBalance)", returning = "result", argNames = "result,consentId,withBalance")
+    public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountDetailsListAspect(ResponseObject<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
+        if (!result.hasError()) {
+            Map<String, List<Xs2aAccountDetails>> accountDetails = result.getBody();
+            setLinksToAccountsMap(accountDetails, withBalance);
+            return result;
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.AccountController.getTransactions(..)) && args(accountId,..)", returning = "result")
-    public ResponseEntity<Xs2aAccountReport> invokeGetTransactionsAspect(ResponseEntity<Xs2aAccountReport> result, String accountId) {
-        if (!hasError(result)) {
-            Xs2aAccountReport body = result.getBody();
-            body.setLinks(buildLinksForAccountReport(body, accountId));
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
+    public ResponseObject<Xs2aAccountReport> getAccountReportByPeriodAspect(ResponseObject<Xs2aAccountReport> result, String accountId, boolean withBalance) {
+        if (!result.hasError()) {
+            Xs2aAccountReport accountReport = result.getBody();
+            accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
+            return result;
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
 
-    private Links buildLinksForAccountDetails(Xs2aAccountDetails accountDetails, boolean withBalance) {
-        Class controller = getController();
-
-        Links links = new Links();
-        if (withBalance) {
-            links.setViewBalances(linkTo(controller).slash(accountDetails.getId()).slash("balances").toString());
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args(consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
+    public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionIdAspect(ResponseObject<Xs2aAccountReport> result, String consentID, String accountId, String resourceId) {
+        if (!result.hasError()) {
+            Xs2aAccountReport accountReport = result.getBody();
+            Links links = new Links();
+            links.setViewBalances(buildLink("/v1/accounts/{account-id}/transactions/{resourceId}", accountId, resourceId));
+            accountReport.setLinks(links);
+            return result;
         }
-        links.setViewTransactions(linkTo(controller).slash(accountDetails.getId()).slash("transactions").toString());
-
-        return links;
+        return enrichErrorTextMessage(result);
     }
 
     private Links buildLinksForAccountReport(Xs2aAccountReport accountReport, String accountId) {
-        Class controller = getController();
-
         Links links = new Links();
-        links.setViewAccount(linkTo(controller).slash(accountId).toString());
+        links.setViewAccount(buildLink("/v1/accounts/{accountId}", accountId));
 
         Optional<String> optionalAccount = jsonConverter.toJson(accountReport);
         String jsonReport = optionalAccount.orElse("");
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             // todo further we should implement real flow for downloading file
-            links.setDownload(linkTo(controller).slash(accountId).slash("transactions/download").toString());
+            links.setDownload(buildLink("/v1/accounts/{accountId}/transactions/download", accountId));
         }
         return links;
     }
@@ -107,7 +104,16 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
     }
 
     private Xs2aAccountDetails setLinksToAccount(Xs2aAccountDetails accountDetails, boolean withBalance) {
-        accountDetails.setLinks(buildLinksForAccountDetails(accountDetails, withBalance));
+        accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
         return accountDetails;
+    }
+
+    private Links buildLinksForAccountDetails(String accountId, boolean withBalance) {
+        Links links = new Links();
+        if (withBalance) {
+            links.setViewBalances(buildLink("/v1/accounts/{accountId}/balances", accountId, accountId));
+        }
+        links.setViewTransactions(buildLink("/v1/accounts/{accountId}/transactions", accountId));
+        return links;
     }
 }
