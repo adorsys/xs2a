@@ -25,7 +25,7 @@ import java.util.Currency;
 
 @Data
 @ApiModel(description = "Amount information", value = "Amount")
-public class Amount {
+public class Xs2aAmount {
 
 	@ApiModelProperty(value = "ISO 4217 currency code", required = true, example = "EUR")
     @NotNull
@@ -33,5 +33,5 @@ public class Amount {
 
 	@ApiModelProperty(value = "The amount given with fractional digits, where fractions must be compliant to the currency definition. The decimal separator is a dot", required = true, example = "1000.00")
     @NotNull
-    private String content;
+    private String amount;
 }

@@ -27,7 +27,7 @@ import java.util.List;
 
 @Value
 @ApiModel(description = "Account access", value = "AccountAccess")
-public class AccountAccess {
+public class Xs2aAccountAccess {
 
     @ApiModelProperty(value = "detailed account information", required = false)
     private List<AccountReference> accounts;

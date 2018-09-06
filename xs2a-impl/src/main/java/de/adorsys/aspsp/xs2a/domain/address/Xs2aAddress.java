@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.domain.address;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,8 +25,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @ApiModel(description = "Address", value = "Address")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class Address {
+public class Xs2aAddress {
 
     @ApiModelProperty(value = "Street", required = false, example = "Herrnstraße")
     @Size(max = 70)
@@ -43,5 +41,5 @@ public class Address {
     private String postalCode;
 
     @ApiModelProperty(value = "Country", required = true)
-    private CountryCode country;
+    private Xs2aCountryCode country;
 }

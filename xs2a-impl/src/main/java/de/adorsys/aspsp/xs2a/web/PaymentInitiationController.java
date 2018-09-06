@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatusResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
@@ -80,7 +80,7 @@ public class PaymentInitiationController {
     }
 
     @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = TransactionStatus.class),
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Xs2aTransactionStatus.class),
         @ApiResponse(code = 403, message = "Not found")})
     @GetMapping(path = "/{paymentId}/status")
     @ApiImplicitParams({
@@ -95,7 +95,7 @@ public class PaymentInitiationController {
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b")
         @PathVariable("paymentId") String paymentId) {
-        ResponseObject<TransactionStatus> status = paymentService.getPaymentStatusById(paymentId, PaymentType.SINGLE);
+        ResponseObject<Xs2aTransactionStatus> status = paymentService.getPaymentStatusById(paymentId, PaymentType.SINGLE);
 
         return responseMapper.ok(status.hasError()
                                      ? ResponseObject.<TransactionStatusResponse>builder().fail(status.getError()).build()

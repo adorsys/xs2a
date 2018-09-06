@@ -26,8 +26,8 @@
       },
       "endDate": "yyyy-mm-dd",
       "endToEndIdentification": "VOD-123456789",
-      "executionRule": "FOLLOWING",
-      "frequency": "MONTHLY",
+      "executionRule": "following",
+      "frequency": "Monthly",
       "instructedAmount": {
         "amount": "44.99",
         "currency": "EUR"

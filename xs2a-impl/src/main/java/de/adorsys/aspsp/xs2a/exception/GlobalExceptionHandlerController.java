@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.exception;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +90,6 @@ public class GlobalExceptionHandlerController {
     private MessageError getMessageError(MessageErrorCode errorCode) {
         TppMessageInformation messageInformation = new TppMessageInformation(ERROR, errorCode);
         messageInformation.setText(messageService.getMessage(errorCode.name()));
-        return new MessageError(TransactionStatus.RJCT, messageInformation);
+        return new MessageError(Xs2aTransactionStatus.RJCT, messageInformation);
     }
 }

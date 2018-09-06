@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.psd2.model.AccountAccess;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.*;
@@ -97,10 +96,10 @@ public class ConsentModelMapper {
         return scaMethods;
     }
 
-    private static de.adorsys.aspsp.xs2a.domain.consent.AccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
+    private static Xs2aAccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
             .map(acs ->
-                new de.adorsys.aspsp.xs2a.domain.consent.AccountAccess(
+                new Xs2aAccountAccess(
                     mapToAccountReferencesInner(acs.getAccounts()),
                     mapToAccountReferencesInner(acs.getBalances()),
                     mapToAccountReferencesInner(acs.getTransactions()),
@@ -110,7 +109,7 @@ public class ConsentModelMapper {
             .orElse(null);
     }
 
-    private static AccountAccess mapToAccountAccessDomain(de.adorsys.aspsp.xs2a.domain.consent.AccountAccess accountAccess) {
+    private static AccountAccess mapToAccountAccessDomain(Xs2aAccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
             .map(access -> {
                     AccountAccess mappedAccountAccess = new AccountAccess();

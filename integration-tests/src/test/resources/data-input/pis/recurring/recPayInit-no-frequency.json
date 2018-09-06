@@ -26,7 +26,7 @@
       },
       "endDate": "yyyy-mm-dd",
       "endToEndIdentification": "VOD-123456789",
-      "executionRule": "FOLLOWING",
+      "executionRule": "following",
       "instructedAmount": {
         "amount": "44.99",
         "currency": "EUR"

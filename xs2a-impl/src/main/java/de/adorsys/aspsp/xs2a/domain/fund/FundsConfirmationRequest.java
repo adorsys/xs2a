@@ -17,9 +17,8 @@
 package de.adorsys.aspsp.xs2a.domain.fund;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
-import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,7 +32,6 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Request for the Confirmation Funds")
 public class FundsConfirmationRequest implements AccountReferenceCollector {
 
@@ -49,7 +47,7 @@ public class FundsConfirmationRequest implements AccountReferenceCollector {
 
     @NotNull
     @ApiModelProperty(value = "Transaction amount to be checked within the funds check mechanism.", required = true)
-    private Amount instructedAmount;
+    private Xs2aAmount instructedAmount;
 
     @JsonIgnore
     @Override

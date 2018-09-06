@@ -17,32 +17,26 @@
 package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum BalanceType {
-    CLOSING_BOOKED("closingBooked"),
-    EXPECTED("expected"),
-    AUTHORISED("authorised"),
-    OPENING_BOOKED("openingBooked"),
-    INTERIM_AVAILABLE("interimAvailable"),
-    FORWARD_AVAILABLE("forwardAvailable"),
-    NONINVOICED("nonInvoiced"),
-    AVAILABLE("available");
+public enum OtpFormat {
+    CHARACTERS("characters"),
+    INTEGER("integer");
 
-
-    private final static Map<String, BalanceType> container = new HashMap<>();
+    private final static Map<String, OtpFormat> container = new HashMap<>();
 
     static {
-        for (BalanceType type : values()) {
-            container.put(type.getValue(), type);
+        for (OtpFormat otpFormat : values()) {
+            container.put(otpFormat.getValue(), otpFormat);
         }
     }
 
     private String value;
 
-    BalanceType(String value) {
+    OtpFormat(String value) {
         this.value = value;
     }
 
@@ -51,7 +45,7 @@ public enum BalanceType {
     }
 
     @JsonIgnore
-    public static Optional<BalanceType> getByValue(String name) {
+    public static Optional<OtpFormat> getByValue(String name) {
         return Optional.ofNullable(container.get(name));
     }
 }

@@ -99,10 +99,10 @@ public class ConsentMapper {
     }
 
     //Domain
-    private AccountAccess mapToAccountAccess(SpiAccountAccess access) {
+    private Xs2aAccountAccess mapToAccountAccess(SpiAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(aa ->
-                            new AccountAccess(
+                            new Xs2aAccountAccess(
                                 accountMapper.mapToAccountReferences(aa.getAccounts()),
                                 accountMapper.mapToAccountReferences(aa.getBalances()),
                                 accountMapper.mapToAccountReferences(aa.getTransactions()),
@@ -119,7 +119,7 @@ public class ConsentMapper {
     }
 
     //Spi
-    private AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
+    private AisAccountAccessInfo mapToAisAccountAccessInfo(Xs2aAccountAccess access) {
         AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
         accessInfo.setAccounts(Optional.ofNullable(access.getAccounts())
                                    .map(this::mapToListAccountInfo)

@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.integtest.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.integtest.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.integtest.config.rest.consent.ConsentMapper;
@@ -54,7 +54,7 @@ public class ConsentTestData {
         this.consentMapper = consentMapper;
     }
 
-    private CreateConsentReq getConsentReq(int tppFrequency, LocalDate expire, boolean recurring, AccountAccess accountAccess) {
+    private CreateConsentReq getConsentReq(int tppFrequency, LocalDate expire, boolean recurring, Xs2aAccountAccess accountAccess) {
             CreateConsentReq consent = new CreateConsentReq();
 
             consent.setFrequencyPerDay(tppFrequency);
@@ -74,8 +74,8 @@ public class ConsentTestData {
         return consentResponse.getConsentId();
     }
 
-    private AccountAccess createAccountAccessTestData(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions){
-        return new AccountAccess(accounts, balances, transactions, null, null);
+    private Xs2aAccountAccess createAccountAccessTestData(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions){
+        return new Xs2aAccountAccess(accounts, balances, transactions, null, null);
     }
 
     private List<AccountReference> createAccountReferenceListTestData () {
@@ -97,7 +97,7 @@ public class ConsentTestData {
         List <AccountReference> accounts = createAccountReferenceListTestData();
         List <AccountReference> balances = createAccountReferenceListTestData();
         List <AccountReference> transactions = createAccountReferenceListTestData();
-        AccountAccess accountAccess = createAccountAccessTestData(accounts, balances, transactions);
+        Xs2aAccountAccess accountAccess = createAccountAccessTestData(accounts, balances, transactions);
         CreateConsentReq consentReq = getConsentReq(1, LocalDate.now().plusDays(VALID_UNTIL),false, accountAccess);
         return createConsent(consentReq,PSU_ID, TTP_ID ) ;
     }

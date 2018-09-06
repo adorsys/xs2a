@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.web12;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -49,9 +49,9 @@ public class PaymentController12 implements PaymentApi {
                                                         String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
                                                         String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
-        ResponseObject<TransactionStatus> response = PaymentType.getByValue(paymentService)
+        ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
                                                          .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
-                                                         .orElseGet(() -> ResponseObject.<TransactionStatus>builder()
+                                                         .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder()
                                                                               .fail(new MessageError(FORMAT_ERROR)).build());
 
         return responseMapper.ok(response, PaymentModelMapper::mapToTransactionStatus12);

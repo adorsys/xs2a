@@ -31,7 +31,7 @@ import javax.validation.constraints.NotNull;
 @ApiModel(description = "Account Report", value = "AccountReport")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
 @JsonRootName(value = "transactions")
-public class AccountReport {
+public class Xs2aAccountReport {
 
     @ApiModelProperty(value = "Booked TransactionsCreditorResponse", required = true)
     @NotNull
