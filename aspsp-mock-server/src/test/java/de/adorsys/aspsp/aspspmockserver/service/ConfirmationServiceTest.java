@@ -20,6 +20,7 @@ import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import org.junit.Before;
@@ -30,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -37,8 +39,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-
-import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfirmationServiceTest {
@@ -140,11 +140,11 @@ public class ConfirmationServiceTest {
     }
 
     private Psu getPsu1() {
-        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null);
+        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private Psu getPsu2() {
-        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null);
+        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private Tan getUnusedTan() {
