@@ -130,7 +130,18 @@ Feature: Payment Initiation Service
 #        Then an appropriate response code and the payment information is delivered to the PSU
 #        Examples:
 #            | payment-id                           | payment-service              | payment-information                |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | paymentStatus-RCVD-successful.json |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-successful.json |
 #            | todo-create-bulk-payment             | bulk-payments                | to-do-define-json                  |
 #            | todo-create-periodic-payment         | periodic-payments            | to-do-define-json                  |
 
+#    Scenario Outline: Failed Payment Information Request
+#        Given Psu wants to request the payment information of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+#        And the set of payment information data <payment-information> with error
+#        When PSU requests the information of the payment
+#        Then an error response code and the appropriate error response are received
+#        Examples:
+#            | payment-id                           | payment-service              | payment-information                        |
+#            | 11111111-aaaa-xxxx-1111-1x1x1x1x1x1x | payments                     | singlePayInformation-not-existing-id.json  |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-no-request-id.json     |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-wrong-format-request-id.json |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | recurring-payments           | singlePayInformation-wrong-payment-service.json |
