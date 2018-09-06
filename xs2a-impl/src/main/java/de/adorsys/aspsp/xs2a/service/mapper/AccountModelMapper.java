@@ -176,7 +176,7 @@ public final class AccountModelMapper {
         targetAddress.setCountry(
             Optional.ofNullable(address.getCountry())
                 .map(c -> c.getCode())
-                .orElse(""));
+                .orElse(null));
         return targetAddress;
     }
 
