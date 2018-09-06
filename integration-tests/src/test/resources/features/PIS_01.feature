@@ -129,5 +129,8 @@ Feature: Payment Initiation Service
 #        When PSU requests the information of the payment
 #        Then an appropriate response code and the payment information is delivered to the PSU
 #        Examples:
-#            | payment-id                           | payment-service | payment-information                |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
+#            | payment-id                           | payment-service              | payment-information                |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | paymentStatus-RCVD-successful.json |
+#            | todo-create-bulk-payment             | bulk-payments                | to-do-define-json                  |
+#            | todo-create-periodic-payment         | periodic-payments            | to-do-define-json                  |
+

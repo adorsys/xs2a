@@ -20,15 +20,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.BulkPaymentInitiationSctWithStatusResponse;
 import de.adorsys.psd2.model.PaymentInitiationSctWithStatusResponse;
+import de.adorsys.psd2.model.PeriodicPaymentInitiationSctWithStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -38,6 +42,8 @@ import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 public class SinglePaymentInformationSuccessfulSteps {
     @Autowired
@@ -58,25 +64,73 @@ public class SinglePaymentInformationSuccessfulSteps {
 
     @And("^the set of payment information data (.*)$")
     public void loadPaymentInformationTestData(String dataFileName) throws IOException {
-        TestData<HashMap, PaymentInitiationSctWithStatusResponse> data = mapper.readValue(resourceToString(
-            "/data-input/pis/status/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, PaymentInitiationSctWithStatusResponse>>() {
-            });
+        TestData data;
+        switch (context.getPaymentService()) {
+            case "bulk-payments":
+                 data = mapper.readValue(resourceToString(
+                    "/data-input/pis/status/" + dataFileName, UTF_8),
+                    new TypeReference<TestData<HashMap, BulkPaymentInitiationSctWithStatusResponse>>() {
+                    });
+                break;
+            case "periodic-payments" :
+                data = mapper.readValue(resourceToString(
+                    "/data-input/pis/status/" + dataFileName, UTF_8),
+                    new TypeReference<TestData<HashMap, PeriodicPaymentInitiationSctWithStatusResponse>>() {
+                    });
+                break;
 
+            default:
+                data = mapper.readValue(resourceToString(
+                    "/data-input/pis/status/" + dataFileName, UTF_8),
+                    new TypeReference<TestData<HashMap, PaymentInitiationSctWithStatusResponse>>() {
+                    });;
+        }
         context.setTestData(data);
     }
 
     @When("^PSU requests the information of the payment$")
     public void sendPaymentInformationRequest() throws HttpClientErrorException {
         HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        ResponseEntity response;
+        switch (context.getPaymentService()) {
+            case "bulk-payments":
+                response = restTemplate.exchange(
+                    context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
+                    HttpMethod.GET,
+                    entity,
+                    PaymentInitiationSctWithStatusResponse.class);
+                break;
 
-        ResponseEntity<PaymentInitiationSctWithStatusResponse> response = restTemplate.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
-            HttpMethod.GET,
-            entity,
-            PaymentInitiationSctWithStatusResponse.class);
+            case "periodic-payments" :
+                response = restTemplate.exchange(
+                    context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
+                    HttpMethod.GET,
+                    entity,
+                    PaymentInitiationSctWithStatusResponse.class);
+                break;
+
+            default:
+                response = restTemplate.exchange(
+                    context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
+                    HttpMethod.GET,
+                    entity,
+                    PaymentInitiationSctWithStatusResponse.class);
+                break;
+        }
 
         context.setActualResponse(response);
     }
+
+    @Then("^an appropriate response code and the payment information is delivered to the PSU$")
+    public void checkResponseCodeAndPaymentInformation() {
+        PaymentInitiationSctWithStatusResponse givenResponseBody = context.getTestData().getResponse().getBody();
+        ResponseEntity<PaymentInitiationSctWithStatusResponse> actualResponseEntity = context.getActualResponse();
+        HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
+
+        assertThat(actualResponseEntity.getStatusCode(), equalTo(expectedStatus));
+
+        assertThat(actualResponseEntity.getBody(), equalTo(givenResponseBody));
+    }
+
 
 }
