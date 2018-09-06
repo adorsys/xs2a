@@ -41,7 +41,8 @@ public class AisConsentMapper {
             consent.getConsentStatus(),
             false,
             consent.isTppRedirectPreferred(),
-            consent.getAspspConsentData());
+            consent.getAspspConsentData(),
+            consent.getAisConsentRequestType());
     }
 
     private AisAccountAccess mapToAisAccountAccess(List<AccountAccess> accountAccesses) {

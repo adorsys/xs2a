@@ -102,9 +102,9 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
+    private Xs2aAccountAccessType mapToAccountAccessType(SpiAccountAccessType accessType) {
         return Optional.ofNullable(accessType)
-                   .map(at -> AccountAccessType.valueOf(at.name()))
+                   .map(at -> Xs2aAccountAccessType.valueOf(at.name()))
                    .orElse(null);
     }
 
@@ -122,7 +122,7 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    private SpiAccountAccessType mapToSpiAccountAccessType(AccountAccessType accessType) {
+    private SpiAccountAccessType mapToSpiAccountAccessType(Xs2aAccountAccessType accessType) {
         return Optional.ofNullable(accessType)
                    .map(at -> SpiAccountAccessType.valueOf(at.name()))
                    .orElse(null);

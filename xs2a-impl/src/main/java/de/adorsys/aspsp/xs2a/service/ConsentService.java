@@ -34,11 +34,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -56,15 +55,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId) {
-        if (isInvalidBankOfferConsent(request)) {
+        if (isNotSupportedGlobalConsentForAllPsd2(request)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
+        }
+        if (isNotSupportedBankOfferedConsent(request)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
         }
         if (!isValidExpirationDate(request.getValidUntil())) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
         }
 
-        if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
+        if (isConsentGlobal(request) || isConsentForAllAvailableAccounts(request)) {
+            request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
@@ -156,13 +158,32 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
-        return request.getAccess().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS &&
-                   CollectionUtils.isEmpty(request.getAccountReferences())
+        return isConsentGlobal(request)
                    && !aspspProfileService.getAllPsd2Support();
     }
 
-    private boolean isInvalidBankOfferConsent(CreateConsentReq request) {
-        return !aspspProfileService.isBankOfferedConsentSupported()
-                   && !isNotEmptyAccess(request.getAccess());
+    private boolean isNotSupportedBankOfferedConsent(CreateConsentReq request) {
+        return !isNotEmptyAccess(request.getAccess())
+                   && !aspspProfileService.isBankOfferedConsentSupported();
+    }
+
+    private boolean isConsentGlobal(CreateConsentReq request) {
+        return isNotEmptyAccess(request.getAccess())
+                   && request.getAccess().getAllPsd2() == ALL_ACCOUNTS;
+    }
+
+    private boolean isConsentForAllAvailableAccounts(CreateConsentReq request) {
+        return request.getAccess().getAvailableAccounts() == ALL_ACCOUNTS
+                   || request.getAccess().getAvailableAccounts() == ALL_ACCOUNTS_WITH_BALANCES;
+    }
+
+    private Xs2aAccountAccess getAccessForGlobalOrAllAvailableAccountsConsent(CreateConsentReq request) {
+        return new Xs2aAccountAccess(
+            new ArrayList<>(),
+            new ArrayList<>(),
+            new ArrayList<>(),
+            request.getAccess().getAvailableAccounts(),
+            request.getAccess().getAllPsd2()
+        );
     }
 }

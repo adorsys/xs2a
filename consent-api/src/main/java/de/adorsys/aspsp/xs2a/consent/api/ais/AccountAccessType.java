@@ -16,23 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import lombok.Value;
+import io.swagger.annotations.ApiModel;
 
-import java.time.LocalDate;
-
-@Value
-public class AisAccountConsent {
-    private String id;
-    private AisAccountAccess access;
-    private boolean recurringIndicator;
-    private LocalDate validUntil;
-    private int frequencyPerDay;
-    private LocalDate lastActionDate;
-    private CmsConsentStatus consentStatus;
-    private boolean withBalance;
-    private boolean tppRedirectPreferred;
-    private byte[] aspspConsentData;
-    private AisConsentRequestType aisConsentRequestType;
+@ApiModel(description = "AccountAccess type", value = "AccountAccessType")
+public enum AccountAccessType {
+    ALL_ACCOUNTS,
+    ALL_ACCOUNTS_WITH_BALANCES;
 }

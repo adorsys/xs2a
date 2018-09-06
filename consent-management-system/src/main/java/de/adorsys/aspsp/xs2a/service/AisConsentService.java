@@ -18,8 +18,10 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AccountAccessType;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
@@ -30,6 +32,7 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +43,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
 
 @Service
@@ -170,8 +175,26 @@ public class AisConsentService {
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
         consent.setAspspConsentData(request.getAspspConsentData());
+        consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
 
         return consent;
+    }
+
+    private AisConsentRequestType getRequestTypeFromAccess(AisAccountAccessInfo accessInfo) {
+        if (accessInfo.getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+            return AisConsentRequestType.GLOBAL;
+        } else if (EnumSet.of(AccountAccessType.ALL_ACCOUNTS, AccountAccessType.ALL_ACCOUNTS_WITH_BALANCES).contains(accessInfo.getAvailableAccounts())) {
+            return AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS;
+        } else if (isEmptyAccess(accessInfo)) {
+            return AisConsentRequestType.BANK_OFFERED;
+        }
+        return AisConsentRequestType.DEDICATED_ACCOUNTS;
+    }
+
+    private boolean isEmptyAccess(AisAccountAccessInfo accessInfo) {
+        return CollectionUtils.isEmpty(accessInfo.getAccounts())
+                   && CollectionUtils.isEmpty(accessInfo.getBalances())
+                   && CollectionUtils.isEmpty(accessInfo.getTransactions());
     }
 
     private ActionStatus resolveConsentActionStatus(ConsentActionRequest request, AisConsent consent) {

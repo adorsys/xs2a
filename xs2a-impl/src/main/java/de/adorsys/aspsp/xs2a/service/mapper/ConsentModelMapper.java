@@ -120,14 +120,14 @@ public class ConsentModelMapper {
                     mappedAccountAccess.setAvailableAccounts(
                         AccountAccess.AvailableAccountsEnum.fromValue(
                             Optional.ofNullable(access.getAvailableAccounts())
-                                .map(AccountAccessType::getDescription)
+                                .map(Xs2aAccountAccessType::getDescription)
                                 .orElse(null)
                         )
                     );
                     mappedAccountAccess.setAllPsd2(
                         AccountAccess.AllPsd2Enum.fromValue(
                             Optional.ofNullable(access.getAllPsd2())
-                                .map(AccountAccessType::getDescription)
+                                .map(Xs2aAccountAccessType::getDescription)
                                 .orElse(null)
                         )
                     );
@@ -138,15 +138,15 @@ public class ConsentModelMapper {
             .orElse(null);
     }
 
-    private static AccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
+    private static Xs2aAccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
-            .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
+            .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
             .orElse(null);
     }
 
-    private static AccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
+    private static Xs2aAccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
         return Optional.ofNullable(allPsd2Enum)
-            .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
+            .flatMap(en -> Xs2aAccountAccessType.getByDescription(en.toString()))
             .orElse(null);
     }
 
