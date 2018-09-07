@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {AisService} from '../../service/ais.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {AccountConsent} from "../../model/aspsp/accountConsent";
+import ConsentStatusEnum = AccountConsent.ConsentStatusEnum;
 
 @Component({
   selector: 'app-tan-confirmation-page',
@@ -32,6 +34,6 @@ export class TanConfirmationPageComponent implements OnInit {
           }
         }
       );
-    this.aisService.updateConsentStatus('VALID').subscribe();
+    this.aisService.updateConsentStatus(ConsentStatusEnum.VALID).subscribe();
   }
 }

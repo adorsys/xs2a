@@ -5,6 +5,7 @@ import { Account} from '../../model/aspsp/account';
 import {Observable} from 'rxjs';
 import {AccountConsent} from '../../model/aspsp/accountConsent';
 import {AspspSettings} from '../../model/profile/aspspSettings';
+import ConsentStatusEnum = AccountConsent.ConsentStatusEnum;
 
 @Component({
   selector: 'app-consent-confirmation-page',
@@ -48,7 +49,7 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   onClickCancel() {
-    this.aisService.updateConsentStatus('REVOKED_BY_PSU').subscribe();
+    this.aisService.updateConsentStatus(ConsentStatusEnum.REVOKEDBYPSU).subscribe();
     this.router.navigate(['/consentconfirmationdenied'], {queryParams: this.createQueryParams});
   }
 
