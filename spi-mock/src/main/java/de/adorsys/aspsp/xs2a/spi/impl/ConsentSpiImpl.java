@@ -19,14 +19,13 @@ package de.adorsys.aspsp.xs2a.spi.impl;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiAisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiPisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
@@ -55,8 +54,6 @@ public class ConsentSpiImpl implements ConsentSpi {
     private final SpiAisConsentMapper aisConsentMapper;
     private final SpiPisConsentMapper pisConsentMapper;
     private final AccountSpi accountSpi;
-    private final AccountMapper accountMapper;
-
 
     /**
      * For detailed description see {@link ConsentSpi#createConsent(SpiCreateAisConsentRequest)}
@@ -107,6 +104,51 @@ public class ConsentSpiImpl implements ConsentSpi {
     @Override
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus) {
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, actionStatus), Void.class);
+    }
+
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    @Override
+    public Optional<String> createConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
+        AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorization(scaStatus);
+
+        CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),
+            request, CreateAisConsentAuthorizationResponse.class, consentId).getBody();
+
+        return Optional.ofNullable(response)
+                   .map(CreateAisConsentAuthorizationResponse::getAuthorizationId);
+    }
+
+    /**
+     * Requests CMS to retrieve AIS consent authorization by its identifier
+     *
+     * @param authorizationId String representation of identifier of stored consent authorization
+     * @return Response containing AIS Consent Authorization
+     */
+    @Override
+    public SpiAccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        AisConsentAuthorizationResponse resp = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId).getBody();
+
+        return aisConsentMapper.mapToSpiAccountConsentAuthorization(resp);
+    }
+
+    /**
+     * Sends a PUT request to CMS to update created AIS consent authorization
+     *
+     * @param updatePsuData Consent psu data
+     */
+    @Override
+    public void updateConsentAuthorization(SpiUpdateConsentPsuDataReq updatePsuData) {
+        final String consentId = updatePsuData.getConsentId();
+        final String authorizationId = updatePsuData.getAuthorizationId();
+        final AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorizationRequest(updatePsuData);
+
+        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, AisConsentAuthorizationResponse.class, consentId, authorizationId);
     }
 
     /**

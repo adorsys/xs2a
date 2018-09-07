@@ -33,6 +33,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -191,6 +192,10 @@ public class PaymentModelMapper {
         }
     }
 
+    public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(Xs2aTransactionStatus status) {
+        return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus12(status));
+    }
+
     public static TransactionStatus mapToTransactionStatus12(Xs2aTransactionStatus responseObject) {
         return TransactionStatus.valueOf(responseObject.name());
     }
@@ -206,7 +211,7 @@ public class PaymentModelMapper {
             response201.setScaMethods(null); //TODO Fix Auth methods mapping
             response201.setChosenScaMethod(null); //TODO add to xs2a domain obj https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
             response201.setChallengeData(null); //TODO add to xs2a domain obj https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            response201.setLinks(null); //TODO add new mapper for Links https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/244
+            response201.setLinks(mapper.convertValue(((PaymentInitialisationResponse) response).getLinks(), Map.class)); //TODO add new mapper for Links https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/244
             response201.setPsuMessage(specificResponse.getPsuMessage());
             response201.setTppMessages(mapToTppMessages(specificResponse.getTppMessages())); //TODO add new Mapper https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/242
             return (R) response201;

@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -34,16 +35,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.*;
+import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
+import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS_WITH_BALANCES;
 
 @Service
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final ConsentSpi consentSpi;
+    private final AisAuthorizationService authorizationService;
     private final AspspProfileService aspspProfileService;
 
     /**
@@ -69,11 +75,20 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
+        CreateConsentReq checkedRequest = new CreateConsentReq();
+        checkedRequest.setAccess(request.getAccess());
+        checkedRequest.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
+        checkedRequest.setRecurringIndicator(request.isRecurringIndicator());
+        checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
+        checkedRequest.setValidUntil(request.getValidUntil());
+
         String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
         SpiCreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(request, psuId, tppId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes()));
+
         String consentId = consentSpi.createConsent(createAisConsentRequest);
 
         //TODO v1.1 Add balances support
+        //TODO v1.2 Add embedded approach specfic links
         return !StringUtils.isBlank(consentId)
                    ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build()
                    : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
@@ -185,5 +200,29 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             request.getAccess().getAvailableAccounts(),
             request.getAccess().getAllPsd2()
         );
+    }
+
+    public ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(String psuId, String consentId) {
+        return authorizationService.createConsentAuthorization(psuId, consentId)
+                   .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
+                   .orElseGet(() -> ResponseObject.<CreateConsentAuthorizationResponse>builder().fail(new MessageError(MessageErrorCode.CONSENT_UNKNOWN_400)).build());
+    }
+
+    public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
+        return Optional.ofNullable(authorizationService.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId()))
+                   .map(conAuth -> getUpdateConsentPsuDataResponse(updatePsuData, conAuth))
+                   .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                        .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                        .build());
+    }
+
+    private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
+        UpdateConsentPsuDataResponse response = authorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
+
+        return Optional.ofNullable(response)
+                   .map(s -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build())
+                   .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                        .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
+                                        .build());
     }
 }

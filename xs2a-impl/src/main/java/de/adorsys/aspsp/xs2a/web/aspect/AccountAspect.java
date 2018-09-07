@@ -111,7 +111,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     private Links buildLinksForAccountDetails(String accountId, boolean withBalance) {
         Links links = new Links();
         if (withBalance) {
-            links.setViewBalances(buildLink("/v1/accounts/{accountId}/balances", accountId, accountId));
+            links.setViewBalances(buildLink("/v1/accounts/{accountId}/balances", accountId));
         }
         links.setViewTransactions(buildLink("/v1/accounts/{accountId}/transactions", accountId));
         return links;

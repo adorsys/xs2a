@@ -106,6 +106,10 @@ public class AisConsent {
     @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
     private List<AccountAccess> accesses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
+    private List<AisConsentAuthorization> authorizations = new ArrayList<>();
+
     @Lob
     @Column(name = "aspsp_consent_data")
     @Type(type = "org.hibernate.type.BinaryType")

@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,7 +58,7 @@ public class PaymentSpiImpl implements PaymentSpi {
         SpiPaymentInitialisationResponse response =
             responseEntity.getStatusCode() == CREATED
                 ? mapToSpiPaymentResponse(responseEntity.getBody())
-                : null;
+                : mapToSpiPaymentResponse(spiSinglePayment);
         return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
@@ -86,7 +87,7 @@ public class PaymentSpiImpl implements PaymentSpi {
         SpiPaymentInitialisationResponse response =
             responseEntity.getStatusCode() == CREATED
                 ? mapToSpiPaymentResponse(responseEntity.getBody())
-                : null;
+                : mapToSpiPaymentResponse(periodicPayment);
         return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
@@ -102,13 +103,13 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiResponse<SpiSinglePayment> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         SpiSinglePayment response = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayment.class, paymentType, paymentProduct, paymentId);
-        return new SpiResponse<>(response,  new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
     @Override
     public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         SpiPeriodicPayment response = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiPeriodicPayment.class, paymentType, paymentProduct, paymentId);
-        return new SpiResponse<>(response,  new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
     @Override
@@ -118,13 +119,31 @@ public class PaymentSpiImpl implements PaymentSpi {
             Optional.ofNullable(aspspResponse)
                 .map(Collections::singletonList)
                 .orElse(null);
-        return new SpiResponse<>(response,  new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+    }
+
+    @Override
+    public SpiResponse<List<SpiScaMethod>> getScaMethodsByName(String name) {
+        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+        });
+        return new SpiResponse<>(response.getBody(), new AspspConsentData());
     }
 
     private SpiPaymentInitialisationResponse mapToSpiPaymentResponse(SpiSinglePayment spiSinglePayment) {
         SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-        paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-        paymentResponse.setPaymentId(spiSinglePayment.getPaymentId());
+        paymentResponse.setSpiTransactionFees(null);
+        paymentResponse.setSpiTransactionFeeIndicator(false);
+        paymentResponse.setScaMethods(null);
+        paymentResponse.setTppRedirectPreferred(false);
+        if (spiSinglePayment.getPaymentId() == null) {
+            paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
+            paymentResponse.setPaymentId(spiSinglePayment.getEndToEndIdentification());
+            paymentResponse.setPsuMessage(null);
+            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"});
+        } else {
+            paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
+            paymentResponse.setPaymentId(spiSinglePayment.getPaymentId());
+        }
         return paymentResponse;
     }
 }
