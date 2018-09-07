@@ -194,7 +194,7 @@ public class AccountModelMapperTest {
 
         Map links = result.getLinks();
         assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
-        assertEquals(16, links.size());
+        assertEquals(22, links.size());
     }
 
     private Xs2aBalance createBalance() {

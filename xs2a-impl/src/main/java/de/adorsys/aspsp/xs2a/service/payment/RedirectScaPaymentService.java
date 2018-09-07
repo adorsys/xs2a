@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import com.google.common.collect.Lists;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
@@ -38,10 +38,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
@@ -71,10 +68,8 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
         SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForPeriodicPayment(createPisConsentData, response.getPaymentId());
-        String pisConsentId = consentSpi.createPisConsentForPeriodicPaymentAndGetId(request);
-        return StringUtils.isBlank(pisConsentId)
-                   ? null
-                   : extendPaymentResponseFields(response, pisConsentId);
+        CreatePisConsentResponse cmsResponse = consentSpi.createPisConsentForPeriodicPaymentAndGetId(request);
+        return extendPaymentResponseFields(response, cmsResponse);
     }
 
     @Override
@@ -126,12 +121,21 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(CreatePisConsentData createPisConsentData) {
         SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForBulkPayment(createPisConsentData);
-        String pisConsentId = consentSpi.createPisConsentForBulkPaymentAndGetId(request);
+        CreatePisConsentResponse cmsResponse = consentSpi.createPisConsentForBulkPaymentAndGetId(request);
 
-        List<PaymentInitialisationResponse> responses = Lists.newArrayList(createPisConsentData.getPaymentIdentifierMap().values());
-        return responses.stream()
-                   .map(resp -> extendPaymentResponseFields(resp, pisConsentId))
-                   .collect(Collectors.toList());
+        return Optional.ofNullable(cmsResponse)
+            .filter(c -> StringUtils.isNotBlank(c.getConsentId()))
+            .map(c -> enrichBulkResponse(c, createPisConsentData.getPaymentIdentifierMap()))
+            .orElse(Collections.emptyList());
+    }
+
+    private List<PaymentInitialisationResponse> enrichBulkResponse(CreatePisConsentResponse cmsResponse, Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap) {
+        paymentIdentifierMap.forEach((k, v) -> {
+            v.setPaymentId(cmsResponse.getPaymentId());
+            v.setPisConsentId(cmsResponse.getConsentId());
+            v.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        });
+        return new ArrayList<>(paymentIdentifierMap.values());
     }
 
     @Override
@@ -152,15 +156,19 @@ public class RedirectScaPaymentService implements ScaPaymentService {
 
     private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
         SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForSinglePayment(createPisConsentData, response.getPaymentId());
-        String pisConsentId = consentSpi.createPisConsentForSinglePaymentAndGetId(request);
+        CreatePisConsentResponse cmsResponse = consentSpi.createPisConsentForSinglePaymentAndGetId(request);
 
-        return StringUtils.isBlank(pisConsentId)
-                   ? null
-                   : extendPaymentResponseFields(response, pisConsentId);
+        return extendPaymentResponseFields(response, cmsResponse);
     }
 
-    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, String pisConsentId) {
-        response.setPisConsentId(pisConsentId);
-        return response;
+    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, CreatePisConsentResponse cmsResponse) {
+        return Optional.ofNullable(cmsResponse)
+                   .filter(c -> StringUtils.isNotBlank(c.getPaymentId()) && StringUtils.isNotBlank(c.getConsentId()))
+                   .map(s -> {
+                       response.setPaymentId(s.getPaymentId());
+                       response.setPisConsentId(s.getConsentId());
+                       return response;
+                   })
+                   .orElse(null);
     }
 }

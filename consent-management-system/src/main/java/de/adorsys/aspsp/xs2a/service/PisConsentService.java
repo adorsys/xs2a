@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
@@ -43,10 +44,10 @@ public class PisConsentService {
      * @param request Consists information about payments.
      * @return Response containing identifier of consent
      */
-    public Optional<String> createPaymentConsent(PisConsentRequest request) {
+    public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
         return pisConsentMapper.mapToPisConsent(request)
                    .map(pisConsentRepository::save)
-                   .map(PisConsent::getExternalId);
+                   .map(r -> new CreatePisConsentResponse(r.getExternalId(), r.getPayments().iterator().next().getPaymentId()));
     }
 
     /**

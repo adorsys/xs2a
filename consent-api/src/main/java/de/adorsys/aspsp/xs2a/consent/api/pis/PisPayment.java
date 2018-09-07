@@ -29,8 +29,11 @@ import java.util.Currency;
 
 @Data
 public class PisPayment {
-    @ApiModelProperty(value = "Payment Id", required = true, example = "32454656712432")
+    @ApiModelProperty(value = "External Payment Id", example = "32454656712432")
     private String paymentId;
+
+    @ApiModelProperty(value = "ASPSP Payment Id", example = "32454656712432")
+    private String executionId;
 
     @ApiModelProperty(value = "End to end identification", example = "RI-123456789")
     private String endToEndIdentification;
@@ -79,7 +82,6 @@ public class PisPayment {
 
     /**
      * Next fields are used in order to create periodic payment
-     *
      */
     @ApiModelProperty(name = "Start date", example = "2020-01-01")
     private LocalDate startDate;

@@ -159,7 +159,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         } else if (DECOUPLED == scaApproach) {
             return new DecoupedScaPaymentService();
         } else if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService();
+            return new EmbeddedScaPaymentService(consentSpi,pisConsentMapper);
         }
         return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
     }
