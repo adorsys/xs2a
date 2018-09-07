@@ -1,19 +1,20 @@
 {
   "request": {
     "header": {
-      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "x-request-id": "2f77a125aa7a-45c0-b414-cea25a116035",
       "date": "Sun, 11 Aug 2019 15:02:37 GMT"
     },
     "body": {}
   },
   "response": {
-    "code": "404",
+    "code": "400",
     "header": {},
     "body": [
       {
         "category": "ERROR",
-        "code": "PRODUCT_UNKNOWN"
+        "code": "FORMAT_ERROR"
       }
     ]
   }
 }
+
