@@ -42,7 +42,7 @@ export class TanConfirmationPageComponent implements OnInit {
     this.bankingService.validateTan(this.tan)
       .subscribe(
         success => {
-          this.bankingService.postConsent('confirmed').subscribe();
+          this.bankingService.setConsentStatus('VALID').subscribe();
           this.router.navigate(['/consentconfirmationsuccessful']);
         },
         error => {
@@ -50,15 +50,15 @@ export class TanConfirmationPageComponent implements OnInit {
               this.tanError = true;
             }
             if (error.error.message === 'LIMIT_EXCEEDED') {
-              this.router.navigate(['/tanconfirmationerror'])
+              this.router.navigate(['/tanconfirmationerror']);
             }
         }
       );
   }
 
   onClickCancel() {
-    this.bankingService.postConsent('revoked')
+    this.bankingService.setConsentStatus('REVOKED_BY_PSU')
       .subscribe();
-    this.router.navigate(['/tanconfirmationcanceled'])
+    this.router.navigate(['/tanconfirmationcanceled']);
   }
 }

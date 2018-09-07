@@ -13,7 +13,7 @@ import { environment as env} from '../../environments/environment';
 export class BankingService {
   savedData = new Banking();
   TAN_URL = `${env.mockServerUrl}/consent/confirmation/pis/`;
-  POST_CONSENT_URL = `${env.mockServerUrl}/payment/confirmation/consent?decision=`;
+  SET_CONSENT_STATUS_URL = `${env.mockServerUrl}/consent/confirmation/pis`;
   GET_SINGLE_PAYMENTS_URL = `${env.mockServerUrl}/payments/`;
 
   constructor(private httpClient: HttpClient) {
@@ -30,15 +30,9 @@ export class BankingService {
     return this.httpClient.put(this.TAN_URL, body, { headers: headers });
   }
 
-  postConsent(decision: string) {
-    const body = {
-      iban: this.savedData.iban,
-      consentId: this.savedData.consentId,
-      paymentId: this.savedData.paymentId
-    };
-
+  setConsentStatus(decision: string) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.httpClient.post(this.POST_CONSENT_URL + decision, body, { headers: headers });
+    return this.httpClient.put(`${this.SET_CONSENT_STATUS_URL}/${this.savedData.consentId}/${decision}`, {}, { headers: headers });
   }
 
   saveData(data) {

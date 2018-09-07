@@ -32,7 +32,7 @@ export class ConsentConfirmationPageComponent implements OnInit {
       bankingData = <Banking>({tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId});
       this.bankingService.saveData(bankingData);
       this.singlePayments = data;
-    })
+    });
   }
 
   getBankingDetailsFromUrl(params: UrlSegment[]) {
@@ -51,5 +51,11 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.router.navigate(['/tanconfirmation'], {
       queryParams: this.createQueryParams()
     });
+  }
+
+  onClickCancel() {
+    this.bankingService.setConsentStatus('REVOKED_BY_PSU')
+      .subscribe();
+    this.router.navigate(['/consentconfirmationdenied']);
   }
 }

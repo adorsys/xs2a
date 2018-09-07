@@ -22,8 +22,7 @@
         </li>
       </ul>
       <div class="buttons-small">
-        <button type="button" name="decision" value="revoked" class="buttons-small btn--cancel"
-                [routerLink]="['/consentconfirmationdenied']">
+        <button (click)="onClickCancel()" type="button" name="decision" value="revoked" class="buttons-small btn--cancel">
           Deny
         </button>
 
