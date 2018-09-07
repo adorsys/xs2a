@@ -28,11 +28,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @ApiModel(description = "AccountAccess type", value = "AccountAccessType")
-public enum AccountAccessType {
+public enum Xs2aAccountAccessType {
     ALL_ACCOUNTS("allAccounts"),
     ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");
 
-    private static Map<String, AccountAccessType> container = new HashMap<>();
+    private static Map<String, Xs2aAccountAccessType> container = new HashMap<>();
 
     static {
         Arrays.stream(values())
@@ -43,7 +43,7 @@ public enum AccountAccessType {
     private String description;
 
     @JsonCreator
-    AccountAccessType(String description) {
+    Xs2aAccountAccessType(String description) {
         this.description = description;
     }
 
@@ -52,7 +52,7 @@ public enum AccountAccessType {
         return description;
     }
 
-    public static Optional<AccountAccessType> getByDescription(String description) {
+    public static Optional<Xs2aAccountAccessType> getByDescription(String description) {
         return Optional.ofNullable(container.get(description));
     }
 }

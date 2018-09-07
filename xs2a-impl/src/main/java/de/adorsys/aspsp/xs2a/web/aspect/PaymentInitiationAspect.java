@@ -16,8 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.web12.PaymentController12;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +31,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController12> {
 
-    /* TODO refactor links creation according to 1.2 spec https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/283
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result", argNames = "result,paymentProduct")
-    public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
-        if (!hasError(result)) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPaymentInitiation(..)) && args(singlePayment, tppSignatureCertificate, paymentProduct)", returning = "result", argNames = "result,singlePayment,tppSignatureCertificate,paymentProduct")
+    public ResponseObject<PaymentInitialisationResponse> invokeAspect(ResponseObject<PaymentInitialisationResponse> result, SinglePayment singlePayment, String tppSignatureCertificate, String paymentProduct) {
+        if (!result.hasError()) {
             PaymentInitialisationResponse body = result.getBody();
-            body.setLinks(buildPaymentLinks(body, paymentProduct));
+            body.setLinks(buildPaymentLinks(body, PaymentType.SINGLE.getValue()));
+            return result;
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
-    */
 }

@@ -54,7 +54,7 @@ public class PaymentController12 implements PaymentApi {
                                                          .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder()
                                                                               .fail(new MessageError(FORMAT_ERROR)).build());
 
-        return responseMapper.ok(response, PaymentModelMapper::mapToTransactionStatus12);
+        return responseMapper.ok(response, PaymentModelMapper::mapToStatusResponse12);
     }
 
     @Override

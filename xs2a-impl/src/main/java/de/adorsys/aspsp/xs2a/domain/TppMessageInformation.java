@@ -30,31 +30,31 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(exclude = "text")
 public class TppMessageInformation {
 
-	@ApiModelProperty(value = "Category of the error, Only ”ERROR” or \"WARNING\" permitted", required = true, example = "Error")
-	private MessageCategory category;
+    @ApiModelProperty(value = "Category of the error, Only ”ERROR” or \"WARNING\" permitted", required = true, example = "Error")
+    private MessageCategory category;
 
-	@ApiModelProperty(value = "Code", required = true)
+    @ApiModelProperty(value = "Code", required = true)
     @JsonProperty(value = "code")
-	private MessageErrorCode messageErrorCode;
+    private MessageErrorCode messageErrorCode;
 
     @ApiModelProperty(value = "Path")
     private String path;
 
-	@ApiModelProperty(value = "Additional explanation text", example = "Additional text information of the ASPSP up to 512 characters")
+    @ApiModelProperty(value = "Additional explanation text", example = "Additional text information of the ASPSP up to 512 characters")
     @Size(max = 512)
-	private String text;
+    private String text;
 
     public TppMessageInformation(MessageCategory category, MessageErrorCode messageErrorCode) {
         this.category = category;
         this.messageErrorCode = messageErrorCode;
     }
 
-    public TppMessageInformation path(String path){
+    public TppMessageInformation path(String path) {
         this.path = path;
         return this;
     }
 
-    public TppMessageInformation text(String text){
+    public TppMessageInformation text(String text) {
         this.text = text;
         return this;
     }

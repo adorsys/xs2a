@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class PisConsentMapper {
+public class Xs2aPisConsentMapper {
 
     private final PaymentMapper paymentMapper;
 

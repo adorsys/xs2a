@@ -22,11 +22,11 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccessType;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
@@ -84,7 +84,7 @@ public class AccountServiceTest {
     @Mock
     private ValueValidatorService valueValidatorService;
     @Mock
-    private AisConsentMapper aisConsentMapper;
+    private Xs2aAisConsentMapper aisConsentMapper;
 
     @Before
     public void setUp() {
@@ -259,7 +259,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_Success() {
         //When:
-        ResponseObject<Xs2aAccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
+        ResponseObject<Xs2aAccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, null, null, TRANSACTION_ID, false, Xs2aBookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.getError()).isEqualTo(null);
@@ -269,7 +269,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_WrongConsent_Failure() {
         //When:
-        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
+        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, null, null, TRANSACTION_ID, false, Xs2aBookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -279,7 +279,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByTransactionId_AccountMismatch_Failure() {
         //When:
-        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WOB, WRONG_ACCOUNT_ID, null, null, TRANSACTION_ID, false, BookingStatus.BOTH, false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WOB, WRONG_ACCOUNT_ID, null, null, TRANSACTION_ID, false, Xs2aBookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -290,7 +290,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Success() {
         //When:
-        ResponseObject<Xs2aAccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
+        ResponseObject<Xs2aAccountReport> response = accountService.getAccountReport(CONSENT_ID_WT, ACCOUNT_ID, DATE, DATE, null, false, Xs2aBookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.getError()).isEqualTo(null);
@@ -300,7 +300,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Failure_Wrong_Account() {
         //When:
-        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, WRONG_ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
+        ResponseObject response = accountService.getAccountReport(CONSENT_ID_WB, WRONG_ACCOUNT_ID, DATE, DATE, null, false, Xs2aBookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -311,7 +311,7 @@ public class AccountServiceTest {
     @Test
     public void getAccountReport_ByPeriod_Failure_Wrong_Consent() {
         //When:
-        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, DATE, DATE, null, false, BookingStatus.BOTH, false, false);
+        ResponseObject response = accountService.getAccountReport(WRONG_CONSENT_ID, ACCOUNT_ID, DATE, DATE, null, false, Xs2aBookingStatus.BOTH, false, false);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -325,7 +325,7 @@ public class AccountServiceTest {
     }
 
     private Xs2aAccountAccess getAccessForMock(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
+        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
     private AccountReference getAccountReference() {

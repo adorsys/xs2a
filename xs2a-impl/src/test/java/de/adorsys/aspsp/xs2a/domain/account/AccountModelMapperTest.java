@@ -16,11 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
-import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
@@ -30,7 +28,8 @@ import java.time.*;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AccountModelMapperTest {
 
@@ -174,8 +173,8 @@ public class AccountModelMapperTest {
 
     @Test
     public void testMapToAccountReport() {
-        Transactions [] bookedTransactions = { createTransactions(), createTransactions(), createTransactions()};
-        Transactions [] pendingTransactions = { createTransactions(), createTransactions()};
+        Transactions[] bookedTransactions = {createTransactions(), createTransactions(), createTransactions()};
+        Transactions[] pendingTransactions = {createTransactions(), createTransactions()};
         Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions);
         accountReport.setLinks(createLinks());
 
@@ -195,7 +194,7 @@ public class AccountModelMapperTest {
 
         Map links = result.getLinks();
         assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
-        assertEquals(3, links.size());
+        assertEquals(16, links.size());
     }
 
     private Xs2aBalance createBalance() {

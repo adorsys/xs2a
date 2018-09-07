@@ -53,7 +53,7 @@ public enum MessageErrorCode {
     //PIS specific error codes
     PRODUCT_INVALID(403),  //The addressed payment product is not available for the PSU
     PRODUCT_UNKNOWN(404),  //The addressed payment product is not supported by the ASPSP
-    PAYMENT_FAILED(400),  //The payment initiation POST request failed during the initial process.. Additional information may be provided by the ASPSP
+    PAYMENT_FAILED(400),  //The payment initiation POST request failed during the initial process. Additional information may be provided by the ASPSP
     REQUIRED_KID_MISSING(401),  //The payment initiation has failed due to a missing KID. This is a specific message code for the Norwegian market, where ASPSP can require the payer to transmit the KID
     EXECUTION_DATE_INVALID(400), //The requested execution date is not a valid execution date for the ASPSP.
     CARD_INVALID(400), //Addressed card number is unknown to the ASPSP or not associated to the PSU.
