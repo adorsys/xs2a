@@ -69,7 +69,7 @@ public class ConsentController12 implements ConsentApi {
 
     @Override
     public ResponseEntity<?> startConsentAuthorisation(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(consentService.createConsentAuthorizationWithResponse(PSU_ID, consentId), ConsentModelMapper::mapToStartScaprocessResponse);
+        return responseMapper.ok(consentService.createConsentAuthorizationWithResponse(PSU_ID, consentId), ConsentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override

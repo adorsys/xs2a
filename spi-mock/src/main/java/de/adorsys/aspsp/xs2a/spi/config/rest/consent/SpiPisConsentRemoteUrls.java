@@ -60,4 +60,13 @@ public class SpiPisConsentRemoteUrls {
         return consentServiceBaseUrl + "/pis/consent/{consentId}";
     }
 
+    /**
+     * @return String consentId
+     * Method: POST
+     * PathVariables: String paymentId
+     */
+    public String createPisConsentAuthorization() {
+        return consentServiceBaseUrl + "/pis/consent/{payment-id}/authorizations";
+    }
+
 }

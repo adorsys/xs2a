@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.account;
+package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import lombok.Data;
-import org.springframework.data.annotation.Id;
+import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationService;
 
-@Data
-public class SpiScaMethod {
-    @Id
-    private String id;
+public interface PisAuthorizationService extends AuthorizationService {
 }

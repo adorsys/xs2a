@@ -56,7 +56,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public static StartScaprocessResponse mapToStartScaprocessResponse(CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
+    public static StartScaprocessResponse mapToStartScaProcessResponse(CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
         return Optional.ofNullable(createConsentAuthorizationResponse)
                    .map(csar -> {
                        ControllerLinkBuilder link = linkTo(methodOn(ConsentApi.class)._updateConsentsPsuData(csar.getConsentId(), csar.getAuthorizationId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null));

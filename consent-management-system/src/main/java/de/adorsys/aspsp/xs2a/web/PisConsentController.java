@@ -18,6 +18,8 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAuthorizationRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
@@ -84,5 +86,19 @@ public class PisConsentController {
         return pisConsentService.updateConsentStatusById(consentId, CmsConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @PostMapping(path = "/{payment-id}/authorizations")
+    @ApiOperation(value = "Create consent authorization for given consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<CreatePisConsentAuthorizationResponse> createConsentAuthorization(
+        @ApiParam(name = "payment-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("payment-id") String paymentId,
+        @RequestBody PisConsentAuthorizationRequest consentAuthorization) {
+        return pisConsentService.createAuthorization(paymentId, consentAuthorization)
+                   .map(authorizationId -> new ResponseEntity<>(new CreatePisConsentAuthorizationResponse(authorizationId), HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

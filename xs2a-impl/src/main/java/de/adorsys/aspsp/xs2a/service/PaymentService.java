@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
@@ -49,6 +50,7 @@ public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final AccountReferenceValidationService referenceValidationService;
     private ApplicationContext applicationContext;
+    private final AuthorizationService pisAuthorizationService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method

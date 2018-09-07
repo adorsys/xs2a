@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization;
+package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-public class RedirectAisAuthorizationService implements AisAuthorizationService {
+public class DecoupledPisAuthorizationService implements PisAuthorizationService {
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
         return null;
