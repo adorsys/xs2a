@@ -14,9 +14,10 @@ import {AspspSettings} from '../../model/profile/aspspSettings';
 export class ConsentConfirmationPageComponent implements OnInit {
   consentId: string;
   accounts: Account[];
-  consent$: Observable<AccountConsent>;
+  consent: AccountConsent;
   profile$: Observable<AspspSettings>;
   iban: string;
+  bankOffered: boolean;
 
   constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
 
@@ -24,8 +25,15 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.route.url
       .subscribe(params => { this.getConsentIdFromUrl(params); });
     this.aisService.saveConsentId(this.consentId);
-    this.consent$ = this.aisService.getConsent(this.consentId);
-    this.aisService.getAccounts()
+    this.aisService.getConsent(this.consentId)
+      .subscribe(data => {
+      if (data.access.accounts.length == 0) {
+        this.bankOffered = true;
+        this.getAllPsuAccounts()
+        }
+        this.consent =  data;
+      });
+    this.aisService.getAccountsWithConsentID()
       .subscribe(data => {
         this.iban = data[0].iban;
         this.accounts = data;
@@ -52,5 +60,11 @@ export class ConsentConfirmationPageComponent implements OnInit {
     return {
       consentId: this.consentId,
     };
+  }
+
+  getAllPsuAccounts() {
+    this.aisService.getAllPsuAccounts().subscribe(
+
+    )
   }
 }

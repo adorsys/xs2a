@@ -7,6 +7,7 @@ import {AccountConsent} from '../model/aspsp/accountConsent';
 import {Account} from '../model/aspsp/account';
 import {AccountsResponse} from '../model/aspsp/AccountsResponse';
 import {AspspSettings} from '../model/profile/aspspSettings';
+import {SpiAccountDetails} from "../model/mock/spiAccountDetails";
 
 
 @Injectable({
@@ -14,7 +15,8 @@ import {AspspSettings} from '../model/profile/aspspSettings';
 })
 export class AisService {
   GET_CONSENT_URL = `${environment.aspspServerUrl}/api/v1/consents`;
-  GET_ACCOUNTS_URL = `${environment.aspspServerUrl}/api/v1/accounts?with-balance=true`;
+  GET_ACCOUNTS_WITH_CONSENTID_URL = `${environment.aspspServerUrl}/api/v1/accounts?with-balance=true`;
+  GET_ALL_PSU_ACCOUNTS_URL = `${environment.mockServerUrl}/account/`;
   GENERATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   UPDATE_CONSENT_STATUS_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   VALIDATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
@@ -40,20 +42,21 @@ export class AisService {
     });
     return this.httpClient.get<AccountConsent>(`${this.GET_CONSENT_URL}/${consentId}` , {headers: headers})
       .pipe(
+
         map(data => {
           return data;
         })
       );
   }
 
-  getAccounts(): Observable<Account[]> {
+  getAccountsWithConsentID(): Observable<Account[]> {
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
       'consent-id': this.savedConsentId,
       'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
     });
-    return this.httpClient.get <AccountsResponse>(this.GET_ACCOUNTS_URL, {headers: headers})
+    return this.httpClient.get <AccountsResponse>(this.GET_ACCOUNTS_WITH_CONSENTID_URL, {headers: headers})
       .pipe(
         map(data => {
           return data.accountList;
@@ -61,8 +64,16 @@ export class AisService {
       );
   }
 
+  getAllPsuAccounts(): Observable<SpiAccountDetails[]> {
+    return this.httpClient.get <SpiAccountDetails[]>(this.GET_ALL_PSU_ACCOUNTS_URL)
+      .pipe(
+        map(data =>{
+          return data;
+        })
+      )
+  }
+
   getProfile(): Observable<AspspSettings> {
-    // TODO: Activate when CORS issue is resolved
     return this.httpClient.get<AspspSettings>(`${this.GET_PROFILE_URL}`)
       .pipe(
         map(data => {
