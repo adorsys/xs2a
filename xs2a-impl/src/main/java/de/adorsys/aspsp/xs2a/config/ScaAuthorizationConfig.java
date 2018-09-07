@@ -87,7 +87,7 @@ public class ScaAuthorizationConfig {
             return new DecoupedScaPaymentService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService();
+            return new EmbeddedScaPaymentService(consentSpi, pisConsentMapper);
         }
         return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
     }
