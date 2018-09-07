@@ -38,6 +38,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -45,7 +46,10 @@ import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class SinglePaymentInformationSuccessfulSteps {
+public class PaymentInformationSuccessfulSteps {
+
+    private static final long DAYS_OFFSET = 100L;
+
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
@@ -62,30 +66,34 @@ public class SinglePaymentInformationSuccessfulSteps {
         context.setPaymentService(paymentService);
     }
 
+    //Default Case: Single Payment Information
     @And("^the set of payment information data (.*)$")
     public void loadPaymentInformationTestData(String dataFileName) throws IOException {
-        TypeReference typeReference;
+        TestData data;
         switch (context.getPaymentService()) {
             case "bulk-payments":
-                 typeReference = new TypeReference<TestData<HashMap, BulkPaymentInitiationSctWithStatusResponse>>() {
-                 };
+                data = mapper.readValue(resourceToString(
+                    "/data-input/pis/information/" + dataFileName, UTF_8),new TypeReference<TestData<HashMap, BulkPaymentInitiationSctWithStatusResponse>>() {
+                });
                 break;
             case "periodic-payments" :
-                typeReference = new TypeReference<TestData<HashMap, PeriodicPaymentInitiationSctWithStatusResponse>>() {
-                };
+                 TestData<HashMap, PeriodicPaymentInitiationSctWithStatusResponse> dataPeriodic = mapper.readValue(resourceToString(
+                    "/data-input/pis/information/" + dataFileName, UTF_8),new TypeReference<TestData<HashMap, PeriodicPaymentInitiationSctWithStatusResponse>>() {
+                 });
+                 dataPeriodic.getResponse().getBody().setEndDate(LocalDate.now().plusDays(DAYS_OFFSET));
+                 data = dataPeriodic;
                 break;
 
             default:
-                typeReference = new TypeReference<TestData<HashMap, PaymentInitiationSctWithStatusResponse>>() {
-                };
+                 data = mapper.readValue(resourceToString(
+                    "/data-input/pis/information/" + dataFileName, UTF_8),new TypeReference<TestData<HashMap, PaymentInitiationSctWithStatusResponse>>() {
+                 });
                 break;
         }
-        TestData data = mapper.readValue(resourceToString(
-            "/data-input/pis/information/" + dataFileName, UTF_8),typeReference
-            );
         context.setTestData(data);
     }
 
+    //Default Case: Single Payment Information
     @When("^PSU requests the information of the payment$")
     public void sendPaymentInformationRequest() throws HttpClientErrorException {
         HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
