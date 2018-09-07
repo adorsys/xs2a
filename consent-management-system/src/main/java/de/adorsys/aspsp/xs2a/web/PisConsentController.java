@@ -41,7 +41,7 @@ public class PisConsentController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<CreatePisConsentResponse> createPaymentConsent(@RequestBody PisConsentRequest request) {
         return pisConsentService.createPaymentConsent(request)
-                   .map(consentId -> new ResponseEntity<>(new CreatePisConsentResponse(consentId), HttpStatus.CREATED))
+                   .map(c -> new ResponseEntity<>(c, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 

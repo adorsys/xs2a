@@ -255,6 +255,9 @@
             <column name="payment_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
+            <column name="execution_id" type="VARCHAR(40)">
+                <constraints nullable="true"/>
+            </column>
             <column name="end_to_end_identification" type="VARCHAR(20)"/>
             <column name="debtor_account_account_reference_id" type="BIGINT"/>
             <column name="ultimate_debtor" type="VARCHAR(100)">
