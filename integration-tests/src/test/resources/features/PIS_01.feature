@@ -97,17 +97,17 @@ Feature: Payment Initiation Service
     # Payment Status                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Successful Payment Status Request
-#        Given Psu wants to request the payment status of a payment with payment-id <payment-id> by using the payment-service <payment-service>
-#        And the set of data <payment-status>
-#        When PSU requests the status of the payment
-#        Then an appropriate response code and the status is delivered to the PSU
-#        Examples:
-#            | payment-id                           | payment-service | payment-status                |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
-#            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments        | paymentStatus-PDNG-successful.json |
-#            | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | payments        | paymentStatus-RJCT-successful.json |
-#
+    Scenario Outline: Successful Payment Status Request
+        Given Psu wants to request the payment status of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+        And the set of data <payment-status>
+        When PSU requests the status of the payment
+        Then an appropriate response code and the status is delivered to the PSU
+        Examples:
+            | payment-id                           | payment-service | payment-status                |
+            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
+            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments        | paymentStatus-PDNG-successful.json |
+            | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | payments        | paymentStatus-RJCT-successful.json |
+
 #    Scenario Outline: Payment Status Request with not existing Payment-ID
 #        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
 #        And the errorful set of data <payment-status>

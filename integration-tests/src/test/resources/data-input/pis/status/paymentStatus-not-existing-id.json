@@ -9,9 +9,11 @@
   "response": {
     "code": "404",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "PRODUCT_UNKNOWN"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "PRODUCT_UNKNOWN"
+      }
+    ]
   }
 }
