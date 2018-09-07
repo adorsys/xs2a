@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import { BankingService } from '../../service/banking.service';
 import { Banking } from '../../models/banking.model';
 
@@ -12,55 +12,53 @@ export class TanConfirmationPageComponent implements OnInit {
   iban: string;
   consentId: string;
   paymentId: string;
-  wrongTanCount: number = 0;
+  tanError: boolean;
+
 
   constructor(private route: ActivatedRoute, private router: Router, private bankingService: BankingService) { }
 
+
+  ngOnInit() {
+    this.route.queryParams
+      .subscribe(params => { this.getBankingDetailsFromUrl(params); });
+    let bankingData = <Banking>({ tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId });
+    this.bankingService.saveData(bankingData);
+    this.bankingService.getSinglePayments().subscribe(data => {
+      this.iban = data.debtorAccount.iban;
+      bankingData = <Banking>({ tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId });
+      this.bankingService.saveData(bankingData);
+      this.bankingService.generateTan().subscribe();
+    });
+  }
+
+  getBankingDetailsFromUrl(params: Params) {
+    this.consentId = params['consentId'];
+    this.paymentId = params['paymentId'];
+  }
+
+
+
   onClickContinue() {
-    const data = <Banking>({ tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId })
-    this.bankingService.saveData(data)
-    this.bankingService.postTan()
+    this.bankingService.validateTan(this.tan)
       .subscribe(
         success => {
-          this.router.navigate(['/consentconfirmation'], { queryParams: this.createQueryParams() });
+          this.bankingService.setConsentStatus('VALID').subscribe();
+          this.router.navigate(['/consentconfirmationsuccessful']);
         },
         error => {
           if (error.error.message === 'WRONG_TAN') {
-            if (this.wrongTanCount >= 2) {
-              // redirect to ttp-site
-              this.router.navigate(['/tanconfirmationerror'])
+              this.tanError = true;
             }
-            this.tan = "";
-            this.wrongTanCount += 1;
-          }
-          else {
-            this.router.navigate(['/tanconfirmationerror'])
-          }
+            if (error.error.message === 'LIMIT_EXCEEDED') {
+              this.router.navigate(['/tanconfirmationerror']);
+            }
         }
-      )
+      );
   }
 
   onClickCancel() {
-    this.bankingService.postConsent('revoked')
-      .subscribe()
-  }
-
-  ngOnInit() {
-    this.route.url
-      .subscribe(params => { this.getBankingDetailsFromUrl(params) })
-  }
-
-  getBankingDetailsFromUrl(params: UrlSegment[]) {
-    this.iban = params[0].toString()
-    this.consentId = params[1].toString()
-    this.paymentId = atob(params[2].toString())
-  }
-
-  createQueryParams() {
-    return {
-      iban: this.iban,
-      consentId: this.consentId,
-      paymentId: this.paymentId,
-    }
+    this.bankingService.setConsentStatus('REVOKED_BY_PSU')
+      .subscribe();
+    this.router.navigate(['/tanconfirmationcanceled']);
   }
 }

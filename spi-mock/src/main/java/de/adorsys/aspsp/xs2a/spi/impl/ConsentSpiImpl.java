@@ -174,12 +174,11 @@ public class ConsentSpiImpl implements ConsentSpi {
      * For detailed description see {@link ConsentSpi#createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest)}
      */
     @Override
-    public String createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
+    public CreatePisConsentResponse createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
         PisConsentRequest cmsPisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForSinglePayment(spiPisConsentRequest);
         CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), cmsPisConsentRequest, CreatePisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createPisConsentResponse)
-                   .map(CreatePisConsentResponse::getConsentId)
                    .orElse(null);
     }
 
@@ -187,12 +186,11 @@ public class ConsentSpiImpl implements ConsentSpi {
      * For detailed description see {@link ConsentSpi#createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest)}
      */
     @Override
-    public String createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
+    public CreatePisConsentResponse createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
         PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForBulkPayment(spiPisConsentRequest);
         CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), pisConsentRequest, CreatePisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createPisConsentResponse)
-                   .map(CreatePisConsentResponse::getConsentId)
                    .orElse(null);
     }
 
@@ -200,12 +198,11 @@ public class ConsentSpiImpl implements ConsentSpi {
      * For detailed description see {@link ConsentSpi#createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest)}
      */
     @Override
-    public String createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
+    public CreatePisConsentResponse createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
         PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForPeriodicPayment(spiPisConsentRequest);
         CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), pisConsentRequest, CreatePisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createPisConsentResponse)
-                   .map(CreatePisConsentResponse::getConsentId)
                    .orElse(null);
     }
 

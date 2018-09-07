@@ -9,7 +9,7 @@ Feature: Payment Initiation Service
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the single payment initiating request
         Then a successful response code and the appropriate single payment response data are received
-#        And a redirect URL is delivered to the PSU
+        And a redirect URL is delivered to the PSU
         Examples:
             | payment-service | payment-product       | single-payment                |
             | payments        | sepa-credit-transfers | singlePayInit-successful.json |
@@ -38,7 +38,7 @@ Feature: Payment Initiation Service
         Given PSU wants to initiate multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the bulk payment initiating request
         Then a successful response code and the appropriate bulk payment response data
-#        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
+        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
         Examples:
             | payment-service  | payment-product       | bulk-payment                |
             | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
@@ -68,7 +68,7 @@ Feature: Payment Initiation Service
         Given PSU wants to initiate a recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the recurring payment initiating request
         Then a successful response code and the appropriate recurring payment response data
-#        And a redirect URL is delivered to the PSU
+        And a redirect URL is delivered to the PSU
         Examples:
            | payment-service   | payment-product       | recurring-payment          |
            | periodic-payments | sepa-credit-transfers | recPayInit-successful.json |
@@ -97,17 +97,17 @@ Feature: Payment Initiation Service
     # Payment Status                                                                                                   #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Successful Payment Status Request
-#        Given Psu wants to request the payment status of a payment with payment-id <payment-id> by using the payment-service <payment-service>
-#        And the set of data <payment-status>
-#        When PSU requests the status of the payment
-#        Then an appropriate response code and the status is delivered to the PSU
-#        Examples:
-#            | payment-id                           | payment-service | payment-status                |
-#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
-#            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments        | paymentStatus-PDNG-successful.json |
-#            | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | payments        | paymentStatus-RJCT-successful.json |
-#
+    Scenario Outline: Successful Payment Status Request
+        Given Psu wants to request the payment status of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+        And the set of data <payment-status>
+        When PSU requests the status of the payment
+        Then an appropriate response code and the status is delivered to the PSU
+        Examples:
+            | payment-id                           | payment-service | payment-status                |
+            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentStatus-RCVD-successful.json |
+            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments        | paymentStatus-PDNG-successful.json |
+            | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | payments        | paymentStatus-RJCT-successful.json |
+
 #    Scenario Outline: Payment Status Request with not existing Payment-ID
 #        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
 #        And the errorful set of data <payment-status>
@@ -116,3 +116,31 @@ Feature: Payment Initiation Service
 #        Examples:
 #            | payment-id                           | payment-service      | payment-status                     |
 #            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Payment Information                                                                                              #
+    #                                                                                                                  #
+    ####################################################################################################################
+
+#    Scenario Outline: Successful Payment Information Request
+#        Given Psu wants to request the payment information of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+#        And the set of payment information data <payment-information>
+#        When PSU requests the information of the payment
+#        Then an appropriate response code and the payment information is delivered to the PSU
+#        Examples:
+#            | payment-id                           | payment-service              | payment-information                    |
+ #           | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-successful.json   |
+ #           | b8115f14-4f72-4e4e-8798-202808e85289 | bulk-payments                | bulkPayInformation-successful.json     |
+ #           | p7115f14-4f72-4e4e-8798-202808e85232 | periodic-payments            | periodicPayInformation-successful.json |
+
+    Scenario Outline: Failed Payment Information Request
+        Given PSU wants to request the payment information <payment-information> of a payment with payment-id <payment-id> by using the payment-service <payment-service>
+        When PSU requests the information of the payment with error
+        Then an error response code and the appropriate error response are received
+        Examples:
+            | payment-id                           | payment-service              | payment-information                        |
+            | 11111111-aaaa-xxxx-1111-1x1x1x1x1x1x | payments                     | singlePayInformation-not-existing-id.json  |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-no-request-id.json     |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-wrong-format-request-id.json |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | recurring-payments           | singlePayInformation-wrong-payment-service.json |

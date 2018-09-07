@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -85,7 +86,7 @@ public class SpiPisConsentMapper {
         return Optional.ofNullable(payment)
                 .map(pmt -> {
                     PisPayment pisPayment = new PisPayment();
-                    pisPayment.setPaymentId(pmt.getPaymentId());
+                    pisPayment.setPaymentId(Optional.ofNullable(pmt.getPaymentId()).orElse(UUID.randomUUID().toString()));
                     pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
                     pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
                     pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());

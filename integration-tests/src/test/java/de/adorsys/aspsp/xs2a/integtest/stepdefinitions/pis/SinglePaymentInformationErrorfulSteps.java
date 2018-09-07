@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
@@ -40,7 +40,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class PaymentStatusErrorfulSteps {
+public class SinglePaymentInformationErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -52,27 +52,27 @@ public class PaymentStatusErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^Psu requests the payment status of a payment with a non existing payment-id (.*) by using the payment-service (.*)$")
-    public void setPaymentParameters(String paymentId, String paymentService) {
-        context.setPaymentId(paymentId);
+    @Given("^PSU wants to request the payment information (.*) of a payment with payment-id (.*) by using the payment-service (.*)$")
+    public void setPaymentParametersForRequestingPaymentInformation(String dataFileName, String paymentId, String paymentService) throws IOException {
         context.setPaymentService(paymentService);
-    }
+        context.setPaymentId(paymentId);
 
-    @And("^the errorful set of data (.*)$")
-    public void loadErrorfulTestData(String dataFileName) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, TppMessages>>() {
-        });
+        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
+            "/data-input/pis/information/" + dataFileName, UTF_8),
+            new TypeReference<TestData<HashMap, TppMessages>>() {
+            });
 
         context.setTestData(data);
     }
 
-    @When("^PSU requests the status of the payment without an existing payment-id$")
-    public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+    @When("^PSU requests the information of the payment with error$")
+    public void sendPaymentInformationRequestWithError() throws HttpClientErrorException, IOException {
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
                 HttpMethod.GET,
                 entity,
                 HashMap.class);
