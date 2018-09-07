@@ -151,6 +151,48 @@ public class AisConsentService {
                    .map(cons -> updateConsentAspspData(request, cons));
     }
 
+    /**
+     * Create consent authorization
+     *
+     * @param consentId
+     * @param request   needed parameters for creating consent authorization
+     * @return String authorization id
+     */
+    @Transactional
+    public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
+        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID))
+                   .map(aisConsent -> saveNewAuthorization(aisConsent, request));
+    }
+
+    /**
+     * Get consent authorization
+     *
+     * @param consentId
+     * @param authorizationId
+     * @return AisConsentAuthorizationResponse
+     */
+    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent()
+                   ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)
+                         .map(consentMapper::mapToAisConsentAuthorizationResponse)
+                   : Optional.empty();
+    }
+
+    /**
+     * Update consent authorization
+     *
+     * @param authorizationId
+     * @param consentId
+     * @param request         needed parameters for updating consent authorization
+     * @return Boolean
+     */
+    @Transactional
+    public Optional<Boolean> updateConsentAuthorization(String authorizationId, String consentId, AisConsentAuthorizationRequest request) {
+        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent()
+                   ? updateConsentAuthorization(authorizationId, request)
+                   : Optional.of(false);
+    }
+
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
         AccountAccessHolder holder = new AccountAccessHolder();
         holder.fillAccess(access.getAccounts(), ACCOUNT);
@@ -254,43 +296,6 @@ public class AisConsentService {
         return aisConsentRepository.save(consent);
     }
 
-    @Transactional
-    public Optional<String> updateAccountAccess(String consentId, CreateAisConsentRequest request) {
-        return getActualAisConsent(consentId)
-                   .map(consent -> {
-                       consent.addAccountAccess(readAccountAccess(request.getAccess()));
-                       return aisConsentRepository.save(consent)
-                                  .getExternalId();
-                   });
-    }
-
-    /**
-     * Get consent authorization
-     *
-     * @param consentId
-     * @param authorizationId
-     * @return AisConsentAuthorizationResponse
-     */
-    public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent()
-                   ? aisConsentAuthorizationRepository.findByExternalId(authorizationId)
-                         .map(consentMapper::mapToAisConsentAuthorizationResponse)
-                   : Optional.empty();
-    }
-
-    /**
-     * Create consent authorization
-     *
-     * @param consentId
-     * @param request   needed parameters for creating consent authorization
-     * @return String authorization id
-     */
-    @Transactional
-    public Optional<String> createAuthorization(String consentId, AisConsentAuthorizationRequest request) {
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID))
-                   .map(aisConsent -> saveNewAuthorization(aisConsent, request));
-    }
-
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
@@ -298,21 +303,6 @@ public class AisConsentService {
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
-    }
-
-    /**
-     * Update consent authorization
-     *
-     * @param authorizationId
-     * @param consentId
-     * @param request         needed parameters for updating consent authorization
-     * @return Boolean
-     */
-    @Transactional
-    public Optional<Boolean> updateConsentAuthorization(String authorizationId, String consentId, AisConsentAuthorizationRequest request) {
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent()
-                   ? updateConsentAuthorization(authorizationId, request)
-                   : Optional.of(false);
     }
 
     private Optional<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
