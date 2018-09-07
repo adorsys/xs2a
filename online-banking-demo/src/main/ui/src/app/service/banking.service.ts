@@ -19,9 +19,9 @@ export class BankingService {
   constructor(private httpClient: HttpClient) {
   }
 
-  validateTan(): Observable<any> {
+  validateTan(tan: string): Observable<any> {
     const body = {
-      tanNumber: this.savedData.tan,
+      tanNumber: tan,
       iban: this.savedData.iban,
       consentId: this.savedData.consentId,
       paymentId: this.savedData.paymentId

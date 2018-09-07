@@ -39,7 +39,7 @@ export class TanConfirmationPageComponent implements OnInit {
 
 
   onClickContinue() {
-    this.bankingService.validateTan()
+    this.bankingService.validateTan(this.tan)
       .subscribe(
         success => {
           this.bankingService.postConsent('confirmed').subscribe();
