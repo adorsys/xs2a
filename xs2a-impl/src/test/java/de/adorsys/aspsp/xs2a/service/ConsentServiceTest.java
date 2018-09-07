@@ -392,11 +392,11 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, null);
     }
 
     private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false);
+        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, null);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {

@@ -61,6 +61,11 @@ public class AccountConsent {
     private final boolean tppRedirectPreferred;
 
     @JsonIgnore
+    private final String psuId;
+    @JsonIgnore
+    private final String tppId;
+
+    @JsonIgnore
     public boolean isValidStatus() {
         return EnumSet.of(VALID, RECEIVED).contains(consentStatus);
     }

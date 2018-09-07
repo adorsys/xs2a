@@ -64,7 +64,9 @@ public class Xs2aAisConsentMapper {
                        ac.getLastActionDate(),
                        ConsentStatus.valueOf(ac.getConsentStatus().name()),
                        ac.isWithBalance(),
-                       ac.isTppRedirectPreferred()))
+                       ac.isTppRedirectPreferred(),
+                       ac.getPsuId(),
+                       ac.getTppId()))
                    .orElse(null);
     }
 

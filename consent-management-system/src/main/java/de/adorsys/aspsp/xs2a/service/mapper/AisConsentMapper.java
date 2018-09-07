@@ -45,7 +45,9 @@ public class AisConsentMapper {
             false,
             consent.isTppRedirectPreferred(),
             consent.getAspspConsentData(),
-            consent.getAisConsentRequestType());
+            consent.getAisConsentRequestType(),
+            consent.getPsuId(),
+            consent.getTppId());
     }
 
     public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {
