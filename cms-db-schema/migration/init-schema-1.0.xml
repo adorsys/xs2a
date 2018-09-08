@@ -328,30 +328,6 @@
                                  referencedColumnNames="id" referencedTableName="pis_consent"/>
     </changeSet>
 
-    <changeSet author="pru@adorsys.com.ua" id="2018-07-24-10">
-        <comment>Create table pis_payment.</comment>
-
-        <createTable tableName="pis_consent_payments">
-            <column name="pis_consent_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-            <column name="payments_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addForeignKeyConstraint baseColumnNames="pis_consent_id" baseTableName="pis_consent_payments"
-                                 constraintName="pis_consent_id_fkey" deferrable="false" initiallyDeferred="false"
-                                 referencedColumnNames="id" referencedTableName="pis_consent"/>
-
-        <addForeignKeyConstraint baseColumnNames="payments_id" baseTableName="pis_consent_payments"
-                                 constraintName="payments_id_fkey" deferrable="false" initiallyDeferred="false"
-                                 referencedColumnNames="id" referencedTableName="pis_payment_data"/>
-
-        <addUniqueConstraint columnNames="payments_id" constraintName="payment_id_unique"
-                             tableName="pis_consent_payments"/>
-    </changeSet>
-
     <changeSet author="age@adorsys.de" id="2018-08-28-1">
         <comment>Create sequence for ais consent authorization id.</comment>
         <createSequence sequenceName="ais_consent_authorization_id_seq"/>

@@ -104,7 +104,7 @@ public interface ConsentSpi {
      * @param paymentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    Optional<String> createPisConsentAuthorization(String paymentId, SpiScaStatus scaStatus);
+    SpiCreatePisConsentAuthorizationResponse createPisConsentAuthorization(String paymentId);
 
     /**
      * Requests CMS to retrieve AIS consent authorization by its identifier

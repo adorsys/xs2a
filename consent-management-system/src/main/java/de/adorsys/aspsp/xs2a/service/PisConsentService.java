@@ -17,7 +17,8 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAuthorizationRequest;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
@@ -112,22 +113,21 @@ public class PisConsentService {
      * Create consent authorization
      *
      * @param paymentId
-     * @param request   needed parameters for creating consent authorization
      * @return String authorization id
      */
     @Transactional
-    public Optional<String> createAuthorization(String paymentId, PisConsentAuthorizationRequest request) {
+    public Optional<CreatePisConsentAuthorizationResponse> createAuthorization(String paymentId) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent(), request));
+                   .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent()))
+                   .map(c -> new CreatePisConsentAuthorizationResponse(c.getExternalId()));
     }
 
-    private String saveNewAuthorization(PisConsent pisConsent, PisConsentAuthorizationRequest request) {
+    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
         consentAuthorization.setPsuId(consentAuthorization.getPsuId());
         consentAuthorization.setConsent(pisConsent);
-        consentAuthorization.setScaStatus(request.getScaStatus());
-        return pisConsentAuthorizationRepository.save(consentAuthorization)
-                   .getExternalId();
+        consentAuthorization.setScaStatus(CmsScaStatus.RECEIVED);
+        return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 }

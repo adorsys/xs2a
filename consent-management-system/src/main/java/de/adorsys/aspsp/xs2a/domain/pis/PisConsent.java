@@ -84,7 +84,7 @@ public class PisConsent {
         pisPaymentsData.forEach(this::addPisPaymentData);
     }
 
-    public void addPisPaymentData(PisPaymentData pisPaymentData) {
+    private void addPisPaymentData(PisPaymentData pisPaymentData) {
         payments.add(pisPaymentData);
         pisPaymentData.setConsent(this);
     }

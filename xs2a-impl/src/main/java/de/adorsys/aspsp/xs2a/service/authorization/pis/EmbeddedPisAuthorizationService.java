@@ -16,48 +16,21 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
-import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
-
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
-import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_IDENTIFICATION;
 
 @RequiredArgsConstructor
 public class EmbeddedPisAuthorizationService implements PisAuthorizationService {
     private final ConsentSpi consentSpi;
+    private final Xs2aPisConsentMapper pisConsentMapper;
 
     @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String paymentId) {
-        return StringUtils.isBlank(psuId)
-                   ? createConsentAuthorizationAndGetResponse(ScaStatus.RECEIVED, START_AUTHORISATION_WITH_PSU_IDENTIFICATION, paymentId)
-                   : createConsentAuthorizationAndGetResponse(ScaStatus.PSUAUTHENTICATED, START_AUTHORISATION_WITH_PSU_AUTHENTICATION, paymentId);
-    }
-
-    private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String paymentId) {
-        return consentSpi.createPisConsentAuthorization(paymentId, SpiScaStatus.valueOf(scaStatus.name()))
-                   .map(authId -> {
-                       CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
-                       resp.setAuthorizationId(authId);
-                       resp.setScaStatus(scaStatus);
-                       resp.setResponseLinkType(linkType);
-
-                       return resp;
-                   });
-    }
-
-    @Override
-    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        return null;
-    }
-
-    @Override
-    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return null;
+    public Optional<Xsa2CreatePisConsentAuthorizationResponse> createConsentAuthorization(String paymentId, PaymentType paymentType) {
+        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(consentSpi.createPisConsentAuthorization(paymentId), paymentType);
     }
 }

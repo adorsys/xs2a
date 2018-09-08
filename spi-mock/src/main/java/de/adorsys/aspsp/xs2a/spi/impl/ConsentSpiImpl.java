@@ -20,8 +20,6 @@ import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
-import de.adorsys.aspsp.xs2a.consent.api.pis.CreatePisConsentAuthorizationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAuthorizationRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiAisConsentRemoteUrls;
@@ -116,14 +114,10 @@ public class ConsentSpiImpl implements ConsentSpi {
      * @return long representation of identifier of stored consent authorization
      */
     @Override
-    public Optional<String> createPisConsentAuthorization(String paymentId, SpiScaStatus scaStatus) {
-        PisConsentAuthorizationRequest request = pisConsentMapper.mapToPisConsentAuthorization(scaStatus);
-
-        CreatePisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorization(),
-            request, CreatePisConsentAuthorizationResponse.class, paymentId).getBody();
-
-        return Optional.ofNullable(response)
-                   .map(CreatePisConsentAuthorizationResponse::getAuthorizationId);
+    public SpiCreatePisConsentAuthorizationResponse createPisConsentAuthorization(String paymentId) {
+        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorization(),
+            null, SpiCreatePisConsentAuthorizationResponse.class, paymentId)
+                   .getBody();
     }
 
     /**

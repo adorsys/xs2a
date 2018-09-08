@@ -16,26 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 
 import java.util.Optional;
 
 public class RedirectPisAuthorizationService implements PisAuthorizationService {
     @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
-        return null;
-    }
-
-    @Override
-    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        return null;
-    }
-
-    @Override
-    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+    public Optional<Xsa2CreatePisConsentAuthorizationResponse> createConsentAuthorization(String paymentId, PaymentType paymentType) {
         return null;
     }
 }

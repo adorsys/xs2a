@@ -16,18 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
-
 import lombok.Data;
 
 @Data
-public class SpiUpdateConsentPsuDataResponse {
-    private String psuId;
-    private String consentId;
+public class SpiCreatePisConsentAuthorizationResponse {
     private String authorizationId;
-    private SpiScaStatus scaStatus;
-    private String authenticationMethodId;
-    private String scaAuthenticationData;
-    private String password;
-    private SpiConsentAuthorizationResponseLinkType responseLinkType;
-    private String psuMessage;
 }

@@ -18,15 +18,8 @@ package de.adorsys.aspsp.xs2a.config;
 
 import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
-import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.ais.DecoupledAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.ais.EmbeddedAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.ais.OauthAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.DecoupledPisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.EmbeddedPisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.OauthPisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.RedirectPisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.authorization.ais.*;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.*;
 import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -93,7 +86,7 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public AuthorizationService aisAuthorizationService(AccountSpi accountSpi, ConsentSpi consentSpi, Xs2aAisConsentMapper aisConsentMapper) {
+    public AisAuthorizationService aisAuthorizationService(AccountSpi accountSpi, ConsentSpi consentSpi, Xs2aAisConsentMapper aisConsentMapper) {
         switch (getScaApproach()) {
             case OAUTH:
                 return new OauthAisAuthorizationService();
@@ -107,7 +100,7 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public AuthorizationService pisAuthorizationService(ConsentSpi consentSpi) {
+    public PisAuthorizationService pisAuthorizationService(ConsentSpi consentSpi, Xs2aPisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthPisAuthorizationService();
@@ -116,7 +109,7 @@ public class ScaAuthorizationConfig {
             return new DecoupledPisAuthorizationService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisAuthorizationService(consentSpi);
+            return new EmbeddedPisAuthorizationService(consentSpi, pisConsentMapper);
         }
         return new RedirectPisAuthorizationService();
     }

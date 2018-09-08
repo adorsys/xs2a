@@ -16,8 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.*;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAuthorizationRequest;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
+import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
+import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -26,7 +28,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTppInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
@@ -200,15 +201,5 @@ public class SpiPisConsentMapper {
                        return cmsRemittance;
                    })
                    .orElseGet(CmsRemittance::new);
-    }
-
-    public PisConsentAuthorizationRequest mapToPisConsentAuthorization(SpiScaStatus scaStatus) {
-        return Optional.ofNullable(scaStatus)
-                   .map(st -> {
-                       PisConsentAuthorizationRequest consentAuthorization = new PisConsentAuthorizationRequest();
-                       consentAuthorization.setScaStatus(CmsScaStatus.valueOf(st.name()));
-                       return consentAuthorization;
-                   })
-                   .orElse(null);
     }
 }

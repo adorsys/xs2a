@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
@@ -31,7 +30,6 @@ import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,8 +47,6 @@ public class PaymentService {
     private final ScaPaymentService scaPaymentService;
     private final ReadPaymentFactory readPaymentFactory;
     private final AccountReferenceValidationService referenceValidationService;
-    private ApplicationContext applicationContext;
-    private final AuthorizationService pisAuthorizationService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -59,19 +55,16 @@ public class PaymentService {
      * @param paymentType             Type of payment (payments, bulk-payments, periodic-payments)
      * @param paymentProduct          The addressed payment product
      * @param tppSignatureCertificate Tpp signature certificate
-     * @param <T>                     Generic Payment class parameter
-     * @param <R>                     Generic Response class parameter
      * @return Response containing information about created payment or corresponding error
      */
-    public <T, R> ResponseObject<R> createPayment(T payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
-        ResponseObject<R> response;
-        PaymentService selfPaymentService = applicationContext.getBean(PaymentService.class);
+    public ResponseObject createPayment(Object payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
+        ResponseObject response;
         if (paymentType == PaymentType.SINGLE) {
-            response = (ResponseObject<R>) selfPaymentService.createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.getCode());
+            response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         } else if (paymentType == PaymentType.PERIODIC) {
-            response = (ResponseObject<R>) selfPaymentService.initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
+            response = initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         } else {
-            response = (ResponseObject<R>) selfPaymentService.createBulkPayments((List<SinglePayment>) payment, tppSignatureCertificate, paymentProduct.getCode());
+            response = createBulkPayments((List<SinglePayment>) payment, tppSignatureCertificate, paymentProduct.getCode());
         }
         return response;
     }
@@ -160,8 +153,7 @@ public class PaymentService {
     public ResponseObject<Object> getPaymentById(PaymentType paymentType, String paymentId) {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
         Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "TMP")); //NOT USED IN 1.2
-        return payment
-                   .map(p -> ResponseObject.builder()
+        return payment.map(p -> ResponseObject.builder()
                                  .body(p)
                                  .build())
                    .orElseGet(() -> ResponseObject.builder()

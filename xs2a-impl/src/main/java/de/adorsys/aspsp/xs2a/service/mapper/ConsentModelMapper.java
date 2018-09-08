@@ -56,6 +56,14 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
+    public static StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisConsentAuthorizationResponse response) {
+        return Optional.ofNullable(response)
+                   .map(r -> new StartScaprocessResponse()
+                              .scaStatus(ScaStatus.valueOf(r.getScaStatus()))
+                              ._links(OBJECT_MAPPER.convertValue(r.getLinks(), Map.class)))
+                   .orElse(null);
+    }
+
     public static StartScaprocessResponse mapToStartScaProcessResponse(CreateConsentAuthorizationResponse createConsentAuthorizationResponse) {
         return Optional.ofNullable(createConsentAuthorizationResponse)
                    .map(csar -> {

@@ -16,7 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationService;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 
-public interface PisAuthorizationService extends AuthorizationService {
+import java.util.Optional;
+
+public interface PisAuthorizationService {
+    Optional<Xsa2CreatePisConsentAuthorizationResponse> createConsentAuthorization(String paymentId, PaymentType paymentType);
 }
