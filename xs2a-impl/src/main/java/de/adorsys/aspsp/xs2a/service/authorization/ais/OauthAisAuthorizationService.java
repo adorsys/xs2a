@@ -14,20 +14,30 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization;
+package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-public interface AisAuthorizationService {
+@Service
+public class OauthAisAuthorizationService implements AisAuthorizationService {
+    @Override
+    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
+        return null;
+    }
 
-    Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId);
+    @Override
+    public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
+        return null;
+    }
 
-    UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization);
-
-    AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId);
+    @Override
+    public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
+        return null;
+    }
 }

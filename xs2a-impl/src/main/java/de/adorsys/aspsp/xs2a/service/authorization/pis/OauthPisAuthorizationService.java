@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent;
+package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 
-import lombok.Data;
+import java.util.Optional;
 
-@Data
-public class SpiUpdateConsentPsuDataResponse {
-    private String psuId;
-    private String consentId;
-    private String authorizationId;
-    private SpiScaStatus scaStatus;
-    private String authenticationMethodId;
-    private String scaAuthenticationData;
-    private String password;
-    private SpiConsentAuthorizationResponseLinkType responseLinkType;
-    private String psuMessage;
+public class OauthPisAuthorizationService implements PisAuthorizationService {
+    @Override
+    public Optional<Xsa2CreatePisConsentAuthorizationResponse> createConsentAuthorization(String paymentId, PaymentType paymentType) {
+        return null;
+    }
 }

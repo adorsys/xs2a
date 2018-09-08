@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -43,9 +44,11 @@ public class PisConsent {
     @ApiModelProperty(value = "An external exposed identification of the created payment consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "consent",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true)
     @ApiModelProperty(value = "List of single payments ", required = true)
-    private List<PisPaymentData> payments;
+    private List<PisPaymentData> payments = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id")
@@ -76,4 +79,13 @@ public class PisConsent {
     @Column(name = "aspsp_consent_data")
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] aspspConsentData;
+
+    public void addPaymentsData(List<PisPaymentData> pisPaymentsData) {
+        pisPaymentsData.forEach(this::addPisPaymentData);
+    }
+
+    private void addPisPaymentData(PisPaymentData pisPaymentData) {
+        payments.add(pisPaymentData);
+        pisPaymentData.setConsent(this);
+    }
 }

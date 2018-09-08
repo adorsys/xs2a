@@ -110,11 +110,24 @@ public class ConsentSpiImpl implements ConsentSpi {
     /**
      * Sends a POST request to CMS to store created consent authorization
      *
+     * @param paymentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    @Override
+    public SpiCreatePisConsentAuthorizationResponse createPisConsentAuthorization(String paymentId) {
+        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorization(),
+            null, SpiCreatePisConsentAuthorizationResponse.class, paymentId)
+                   .getBody();
+    }
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
      * @param consentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
     @Override
-    public Optional<String> createConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
+    public Optional<String> createAisConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
         AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorization(scaStatus);
 
         CreateAisConsentAuthorizationResponse response = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsentAuthorization(),

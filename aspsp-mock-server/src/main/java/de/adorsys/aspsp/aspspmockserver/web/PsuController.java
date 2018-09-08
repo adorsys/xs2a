@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,9 +106,9 @@ public class PsuController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
-    @GetMapping(path = "/sca-methods/{name}")
-    public ResponseEntity<List<SpiScaMethod>> readScaMethods(@PathVariable("name") String name) {
-        return Optional.ofNullable(psuService.getScaMethods(name))
+    @GetMapping(path = "/sca-methods")
+    public ResponseEntity<List<SpiScaMethod>> readScaMethods(Principal principal) {
+        return Optional.ofNullable(psuService.getScaMethods(principal.getName()))
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.noContent().build());
     }
@@ -115,8 +116,8 @@ public class PsuController {
     @ApiOperation(value = "Updates list of SCA methods for PSU specified by its login", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    @PutMapping(path = "/sca-methods/{name}")
-    public void updateScaMethods(@RequestBody List<SpiScaMethod> scaMethods, @PathVariable("name") String name) {
-        psuService.updateScaMethods(name, scaMethods);
+    @PutMapping(path = "/sca-methods")
+    public void updateScaMethods(@RequestBody List<SpiScaMethod> scaMethods, Principal principal) {
+        psuService.updateScaMethods(principal.getName(), scaMethods);
     }
 }

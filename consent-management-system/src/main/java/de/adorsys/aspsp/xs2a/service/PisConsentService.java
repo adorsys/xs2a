@@ -17,17 +17,24 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
+import de.adorsys.aspsp.xs2a.domain.pis.PisConsentAuthorization;
+import de.adorsys.aspsp.xs2a.repository.PisConsentAuthorizationRepository;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
+import de.adorsys.aspsp.xs2a.repository.PisPaymentDataRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
@@ -37,6 +44,8 @@ import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
 public class PisConsentService {
     private final PisConsentRepository pisConsentRepository;
     private final PisConsentMapper pisConsentMapper;
+    private final PisConsentAuthorizationRepository pisConsentAuthorizationRepository;
+    private final PisPaymentDataRepository pisPaymentDataRepository;
 
     /**
      * Creates new pis consent with full information about payment
@@ -98,5 +107,27 @@ public class PisConsentService {
     private Optional<PisConsent> getActualPisConsent(String consentId) {
         return Optional.ofNullable(consentId)
                    .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+    }
+
+    /**
+     * Create consent authorization
+     *
+     * @param paymentId
+     * @return String authorization id
+     */
+    @Transactional
+    public Optional<CreatePisConsentAuthorizationResponse> createAuthorization(String paymentId) {
+        return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
+                   .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent()))
+                   .map(c -> new CreatePisConsentAuthorizationResponse(c.getExternalId()));
+    }
+
+    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
+        PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
+        consentAuthorization.setExternalId(UUID.randomUUID().toString());
+        consentAuthorization.setPsuId(consentAuthorization.getPsuId());
+        consentAuthorization.setConsent(pisConsent);
+        consentAuthorization.setScaStatus(CmsScaStatus.RECEIVED);
+        return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 }

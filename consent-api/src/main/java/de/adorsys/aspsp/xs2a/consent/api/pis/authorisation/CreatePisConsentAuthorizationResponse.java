@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.repository;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
-import org.springframework.data.repository.CrudRepository;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.util.Optional;
-import java.util.Set;
-
-public interface PisConsentRepository extends CrudRepository<PisConsent, Long> {
-    Optional<PisConsent> findByExternalId(String externalId);
-
-    Optional<PisConsent> findByExternalIdAndConsentStatusIn(String externalId, Set<CmsConsentStatus> statuses);
+@Data
+@AllArgsConstructor
+@ApiModel(description = "PIS consent authorization", value = "PisConsentAuthorization")
+public class CreatePisConsentAuthorizationResponse {
+    @ApiModelProperty(value = "ID of the Authorization", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
+    private String authorizationId;
 }
