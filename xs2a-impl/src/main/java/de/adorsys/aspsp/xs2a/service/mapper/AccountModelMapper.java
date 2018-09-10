@@ -175,7 +175,7 @@ public final class AccountModelMapper {
         targetAddress.setPostalCode(address.getPostalCode());
         targetAddress.setCountry(
             Optional.ofNullable(address.getCountry())
-                .map(c -> c.getCode())
+                .map(Xs2aCountryCode::getCode)
                 .orElse(null));
         return targetAddress;
     }
