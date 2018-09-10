@@ -107,14 +107,14 @@ Feature: Payment Initiation Service
             | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments        | paymentStatus-PDNG-successful.json |
             | 97694f0d-32e2-43a4-9e8d-261f2fc28236 | payments        | paymentStatus-RJCT-successful.json |
 
-#    Scenario Outline: Payment Status Request with not existing Payment-ID
-#        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
-#        And the errorful set of data <payment-status>
-#        When PSU requests the status of the payment without an existing payment-id
-#        Then an error response code and the appropriate error response are received
-#        Examples:
-#            | payment-id                           | payment-service      | payment-status                     |
-#            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |
+    Scenario Outline: Payment Status Request with not existing Payment-ID
+        Given Psu requests the payment status of a payment with a non existing payment-id <payment-id> by using the payment-service <payment-service>
+        And the errorful set of data <payment-status>
+        When PSU requests the status of the payment without an existing payment-id
+        Then an error response code and the appropriate error response are received
+        Examples:
+            | payment-id                           | payment-service      | payment-status                     |
+            | 529e0507-7539-4a65-9b74-bdf87061e99b | payments             | paymentStatus-not-existing-id.json |
 
     ####################################################################################################################
     #                                                                                                                  #
