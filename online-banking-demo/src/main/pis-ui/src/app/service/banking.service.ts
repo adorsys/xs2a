@@ -44,10 +44,6 @@ export class BankingService {
   }
 
   getSinglePayments(): Observable<SinglePayments> {
-    return this.httpClient.get<SinglePayments>(this.GET_SINGLE_PAYMENTS_URL + this.savedData.paymentId).pipe(
-      map(data => {
-        return data;
-      })
-    );
+    return this.httpClient.get<SinglePayments>(this.GET_SINGLE_PAYMENTS_URL + this.savedData.paymentId);
   }
 }

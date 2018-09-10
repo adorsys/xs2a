@@ -14,7 +14,7 @@
                 <span>{{Account.iban}}</span>
               </li>
               <li *ngFor="let Balance of Account.balances">
-                <span>{{Balance.balanceAmount.content}} {{Balance.balanceAmount.currency}}</span>
+                <span>{{Balance.balanceAmount.amount}} {{Balance.balanceAmount.currency}}</span>
               </li>
            </ul>
           <ul>Your Account Details:

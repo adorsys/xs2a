@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {AisService} from '../../service/ais.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {AccountConsent} from "../../model/aspsp/accountConsent";
+import { AisService } from '../../service/ais.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import ConsentStatusEnum = AccountConsent.ConsentStatusEnum;
+import { AccountConsent } from '../../model/aspsp/accountConsent';
 
 @Component({
   selector: 'app-tan-confirmation-page',
@@ -26,10 +26,9 @@ export class TanConfirmationPageComponent implements OnInit {
           this.router.navigate(['/tanconfirmationsuccessful']);
         },
         error => {
-          if (error.error.message == "WRONG_TAN") {
+          if (error.error.message === 'WRONG_TAN') {
             this.wrongTanAttempt = true;
-          }
-          else {
+          } else {
             this.router.navigate(['/tanconfirmationerror']);
           }
         }

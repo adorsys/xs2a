@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { AisService } from '../../service/ais.service';
-import { Account} from '../../model/aspsp/account';
-import {Observable} from 'rxjs';
-import {AccountConsent} from '../../model/aspsp/accountConsent';
-import {AspspSettings} from '../../model/profile/aspspSettings';
+import { Account } from '../../model/aspsp/account';
+import { AccountConsent } from '../../model/aspsp/accountConsent';
+import { AspspSettings } from '../../model/profile/aspspSettings';
 import ConsentStatusEnum = AccountConsent.ConsentStatusEnum;
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-consent-confirmation-page',
@@ -28,9 +28,9 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.aisService.saveConsentId(this.consentId);
     this.aisService.getConsent(this.consentId)
       .subscribe(data => {
-      if (data.access.accounts.length == 0) {
+      if (data.access.accounts.length === 0) {
         this.bankOffered = true;
-        this.getAllPsuAccounts()
+        this.getAllPsuAccounts();
         }
         this.consent =  data;
       });
@@ -64,8 +64,6 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   getAllPsuAccounts() {
-    this.aisService.getAllPsuAccounts().subscribe(
-
-    )
+    this.aisService.getAllPsuAccounts().subscribe();
   }
 }

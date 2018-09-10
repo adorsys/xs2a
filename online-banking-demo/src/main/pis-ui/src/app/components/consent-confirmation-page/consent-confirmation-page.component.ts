@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
-import {BankingService} from '../../service/banking.service';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { BankingService } from '../../service/banking.service';
 import { SinglePayments } from '../../models/models';
 import { Banking } from '../../models/banking.model';
 

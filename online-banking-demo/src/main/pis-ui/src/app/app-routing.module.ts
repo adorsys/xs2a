@@ -7,7 +7,7 @@ import { ConsentConfirmationPageComponent } from './components/consent-confirmat
 import { ConsentConfirmationDeniedComponent } from './components/consent-confirmation-denied/consent-confirmation-denied.component';
 import { ConsentConfirmationSuccessfulComponent } from './components/consent-confirmation-successful/consent-confirmation-successful.component';
 import { AppAuthGuard } from './app.authguard';
-import {HelpPageComponent} from './components/help-page/help-page.component';
+import { HelpPageComponent } from './components/help-page/help-page.component';
 
 
 

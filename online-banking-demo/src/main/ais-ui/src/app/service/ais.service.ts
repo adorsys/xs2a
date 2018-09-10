@@ -3,11 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import {AccountConsent} from '../model/aspsp/accountConsent';
-import {Account} from '../model/aspsp/account';
-import {AccountsResponse} from '../model/aspsp/AccountsResponse';
-import {AspspSettings} from '../model/profile/aspspSettings';
-import {SpiAccountDetails} from "../model/mock/spiAccountDetails";
+import { AccountConsent } from '../model/aspsp/accountConsent';
+import { Account } from '../model/aspsp/account';
+import { AccountsResponse } from '../model/aspsp/AccountsResponse';
+import { AspspSettings } from '../model/profile/aspspSettings';
+import { SpiAccountDetails } from '../model/mock/spiAccountDetails';
 
 
 @Injectable({
@@ -40,13 +40,7 @@ export class AisService {
       'x-request-id': environment.xRequestId,
       'tpp-qwac-certificate': environment.tppQwacCertificate,
     });
-    return this.httpClient.get<AccountConsent>(`${this.GET_CONSENT_URL}/${consentId}` , {headers: headers})
-      .pipe(
-
-        map(data => {
-          return data;
-        })
-      );
+    return this.httpClient.get<AccountConsent>(`${this.GET_CONSENT_URL}/${consentId}` , {headers: headers});
   }
 
   getAccountsWithConsentID(): Observable<Account[]> {
@@ -65,21 +59,11 @@ export class AisService {
   }
 
   getAllPsuAccounts(): Observable<SpiAccountDetails[]> {
-    return this.httpClient.get <SpiAccountDetails[]>(this.GET_ALL_PSU_ACCOUNTS_URL)
-      .pipe(
-        map(data =>{
-          return data;
-        })
-      )
+    return this.httpClient.get <SpiAccountDetails[]>(this.GET_ALL_PSU_ACCOUNTS_URL);
   }
 
   getProfile(): Observable<AspspSettings> {
-    return this.httpClient.get<AspspSettings>(`${this.GET_PROFILE_URL}`)
-      .pipe(
-        map(data => {
-          return data;
-        })
-      );
+    return this.httpClient.get<AspspSettings>(`${this.GET_PROFILE_URL}`);
   }
 
   generateTan(): Observable<string> {

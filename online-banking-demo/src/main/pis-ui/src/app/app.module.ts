@@ -15,11 +15,11 @@ import { KeycloakAngularModule, KeycloakService } from '../../node_modules/keycl
 import { FormsModule } from '@angular/forms';
 import { ConsentConfirmationErrorComponent } from './components/consent-confirmation-error/consent-confirmation-error.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { registerLocaleData } from '@angular/common'
+import { registerLocaleData } from '@angular/common';
 import localeDE from '@angular/common/locales/de';
-import { HelpPageComponent } from './components/help-page/help-page.component'
+import { HelpPageComponent } from './components/help-page/help-page.component';
 
-registerLocaleData(localeDE)
+registerLocaleData(localeDE);
 
 @NgModule({
   declarations: [
