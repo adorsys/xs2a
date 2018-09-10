@@ -38,8 +38,8 @@ public class MessageErrorMapper {
     private final MessageService messageService;
 
 
-    public TppMessages mapToTppMessages(MessageErrorCode... tppMessages) {
-        return Optional.ofNullable(tppMessages)
+    public TppMessages mapToTppMessages(MessageErrorCode... errorCodes) {
+        return Optional.ofNullable(errorCodes)
                    .map(m -> Arrays.stream(m)
                                  .map(str -> mapToGenericError(str, "n/a"))  //TODO add actual path
                                  .collect(Collectors.toList()))
