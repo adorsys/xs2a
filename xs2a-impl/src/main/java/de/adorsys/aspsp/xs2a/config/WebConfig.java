@@ -26,6 +26,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
+import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
@@ -97,7 +99,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageSource()));
+        registry.addInterceptor(new HandlerInterceptor(requestValidatorService(), objectMapper(), messageErrorMapper()));
     }
 
     @Bean
@@ -115,6 +117,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
         serviceLocatorFactoryBean.setServiceLocatorInterface(ReadPaymentFactory.class);
         return serviceLocatorFactoryBean;
+    }
+
+    @Bean
+    public MessageErrorMapper messageErrorMapper() {
+        return new MessageErrorMapper(new MessageService(messageSource()));
     }
 
     @Override

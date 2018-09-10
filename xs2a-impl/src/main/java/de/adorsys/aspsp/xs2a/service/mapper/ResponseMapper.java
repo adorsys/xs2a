@@ -16,22 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.message.MessageService;
-import de.adorsys.psd2.model.TppMessageCategory;
-import de.adorsys.psd2.model.TppMessageGeneric;
-import de.adorsys.psd2.model.TppMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -39,7 +31,7 @@ import static org.springframework.http.HttpStatus.*;
 @Component
 public class ResponseMapper {
 
-    private final MessageService messageService;
+    private final MessageErrorMapper messageErrorMapper;
 
     public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
         return getEntity(response, OK, mapper);
@@ -83,31 +75,8 @@ public class ResponseMapper {
     }
 
     private ResponseEntity createErrorResponse(MessageError error) {
-        TppMessages tppMessages = Optional.ofNullable(error)
-                                      .map(MessageError::getTppMessages)
-                                      .map(e -> e.stream()
-                                                    .map(this::mapToGenericError)
-                                                    .collect(Collectors.toList()))
-                                      .map(c -> {
-                                          TppMessages messages = new TppMessages();
-                                          messages.addAll(c);
-                                          return messages;
-                                      })
-                                      .orElse(null);
-
-
-        return new ResponseEntity<>(tppMessages, valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
+        return new ResponseEntity<>(messageErrorMapper.mapToTppMessages(error), valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
     }
 
-    private TppMessageGeneric mapToGenericError(TppMessageInformation info) {
-        MessageErrorCode code = info.getMessageErrorCode();
 
-        TppMessageGeneric tppMessage = new TppMessageGeneric();
-        tppMessage.setCategory(TppMessageCategory.ERROR);
-        tppMessage.setPath(info.getPath());
-        tppMessage.setCode(code);
-        tppMessage.setText(messageService.getMessage(code.name()));
-
-        return tppMessage;
-    }
 }
