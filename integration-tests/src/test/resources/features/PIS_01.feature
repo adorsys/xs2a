@@ -49,7 +49,6 @@ Feature: Payment Initiation Service
         Then an error response code and the appropriate error response are received
         Examples:
           |  payment-service  | payment-product       | bulk-payment                                 |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-incorrect-syntax.json            |
           |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
 #          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
