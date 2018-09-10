@@ -440,7 +440,7 @@ public class ConsentServiceTest {
         List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_1"));
         HashMap<String, String> credential = new HashMap<>();
         credential.put("authorityId", CORRECT_PSU_ID);
-        Authentication authentication = new UsernamePasswordAuthenticationToken("", credential, authorities);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(null, credential, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
