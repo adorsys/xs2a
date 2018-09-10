@@ -132,6 +132,6 @@ public class AspspRemoteUrls {
      * @return URL
      */
     public String getScaMethods() {
-        return spiMockBaseUrl + "/psu/sca-methods/{name}";
+        return spiMockBaseUrl + "/psu/sca-methods";
     }
 }

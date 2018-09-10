@@ -24,7 +24,6 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,8 +59,8 @@ public class PaymentStatusErrorfulSteps {
     }
 
     @And("^the errorful set of data (.*)$")
-    public void loadTestDataErrorful(String dataFileName) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
+    public void loadErrorfulTestData(String dataFileName) throws IOException {
+        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, TppMessages>>() {
         });
 
         context.setTestData(data);

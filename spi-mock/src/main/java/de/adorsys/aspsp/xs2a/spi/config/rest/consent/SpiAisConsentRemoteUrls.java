@@ -68,4 +68,31 @@ public class SpiAisConsentRemoteUrls {
     public String consentActionLog() {
         return consentServiceBaseUrl + "/ais/consent/action";
     }
+
+    /**
+     * @return String consentId
+     * Method: POST
+     * PathVariables: String consentId
+     */
+    public String createAisConsentAuthorization() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorizations";
+    }
+
+    /**
+     * @return String consentId
+     * Method: PUT
+     * PathVariables: String consentId, String authorizationId
+     */
+    public String updateAisConsentAuthorization() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorizations/{authorization-id}";
+    }
+
+    /**
+     * @return SpiAccountConsentAuthorization consent
+     * Method: GET
+     * PathVariables: String consentId, String authorizationId
+     */
+    public String getAisConsentAuthorizationById() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorizations/{authorization-id}";
+    }
 }

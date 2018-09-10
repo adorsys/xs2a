@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -136,5 +137,10 @@ public class AccountSpiImpl implements AccountSpi {
         }, reference.getIban()).getBody())
                                     .orElse(Collections.emptyList());
         return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+    }
+
+    @Override
+    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password) {
+        return null;
     }
 }

@@ -50,21 +50,20 @@ public class PaymentModelMapper {
     private final MessageService messageService;
 
     // Mappers into xs2a domain classes
-    public <T> T mapToXs2aPayment(Object payment, PaymentType type, PaymentProduct product) {
+    public Object mapToXs2aPayment(Object payment, PaymentType type, PaymentProduct product) {
         if (type == SINGLE) {
-            PaymentInitiationSctJson single = mapper.convertValue(payment, PaymentInitiationSctJson.class);
-            validationService.validate(single);
-            return (T) mapToXs2aSinglePayment(single);
-
+            return mapToXs2aSinglePayment(validatePayment(payment, PaymentInitiationSctJson.class));
         } else if (type == PERIODIC) {
-            PeriodicPaymentInitiationSctJson periodic = mapper.convertValue(payment, PeriodicPaymentInitiationSctJson.class);
-            validationService.validate(periodic);
-            return (T) mapToXs2aPeriodicPayment(periodic);
+            return mapToXs2aPeriodicPayment(validatePayment(payment, PeriodicPaymentInitiationSctJson.class));
         } else {
-            BulkPaymentInitiationSctJson bulk = mapper.convertValue(payment, BulkPaymentInitiationSctJson.class);
-            validationService.validate(bulk);
-            return (T) mapToXs2aBulkPayment(bulk);
+            return mapToXs2aBulkPayment(validatePayment(payment, BulkPaymentInitiationSctJson.class));
         }
+    }
+
+    private <R> R validatePayment(Object payment, Class<R> clazz) {
+        R result = mapper.convertValue(payment, clazz);
+        validationService.validate(result);
+        return result;
     }
 
     private SinglePayment mapToXs2aSinglePayment(PaymentInitiationSctJson paymentRequest) {
@@ -145,7 +144,7 @@ public class PaymentModelMapper {
     }
 
     //Mappers into PSD2 generated API model classes
-    public <T, R> T mapToGetPaymentResponse12(R payment, PaymentType type, PaymentProduct product) {
+    public Object mapToGetPaymentResponse12(Object payment, PaymentType type, PaymentProduct product) {
         if (type == SINGLE) {
             SinglePayment xs2aPayment = (SinglePayment) payment;
             PaymentInitiationTarget2WithStatusResponse paymentResponse = new PaymentInitiationTarget2WithStatusResponse();
@@ -157,8 +156,8 @@ public class PaymentModelMapper {
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
             paymentResponse.setCreditorAddress(mapToAddress12(xs2aPayment.getCreditorAddress()));
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
-            paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus()));
-            return (T) paymentResponse;
+            paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus())); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+            return paymentResponse;
         } else if (type == PERIODIC) {
             PeriodicPayment xs2aPayment = (PeriodicPayment) payment;
             PeriodicPaymentInitiationTarget2WithStatusResponse paymentResponse = new PeriodicPaymentInitiationTarget2WithStatusResponse();
@@ -177,8 +176,8 @@ public class PaymentModelMapper {
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
             String executionDateString = String.format("%02d", xs2aPayment.getDayOfExecution());
             paymentResponse.setDayOfExecution(DayOfExecution.fromValue(executionDateString));
-            paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus()));
-            return (T) paymentResponse;
+            paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus()); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+            return paymentResponse;
         } else {
             List<SinglePayment> xs2aPayment = (List<SinglePayment>) payment;
             BulkPaymentInitiationTarget2WithStatusResponse paymentResponse = new BulkPaymentInitiationTarget2WithStatusResponse();
@@ -188,15 +187,19 @@ public class PaymentModelMapper {
             paymentResponse.setDebtorAccount(mapToAccountReference12(xs2aPayment.get(0).getDebtorAccount())); //TODO create entity and add field! https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
             paymentResponse.setPayments(mapToBulkPartList12(xs2aPayment));
             paymentResponse.setTransactionStatus(mapToTransactionStatus12(Xs2aTransactionStatus.RCVD)); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
-            return (T) paymentResponse;
+            return paymentResponse;
         }
+    }
+
+    public static PaymentInitiationStatusResponse200Json mapToStatusResponse12(Xs2aTransactionStatus status) {
+        return new PaymentInitiationStatusResponse200Json().transactionStatus(mapToTransactionStatus12(status));
     }
 
     public static TransactionStatus mapToTransactionStatus12(Xs2aTransactionStatus responseObject) {
         return TransactionStatus.valueOf(responseObject.name());
     }
 
-    public <T, R> R mapToPaymentInitiationResponse12(T response, PaymentType type, PaymentProduct product) {
+    public Object mapToPaymentInitiationResponse12(Object response, PaymentType type, PaymentProduct product) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         if (type == SINGLE || type == PERIODIC) {
             PaymentInitialisationResponse specificResponse = (PaymentInitialisationResponse) response;
@@ -210,12 +213,12 @@ public class PaymentModelMapper {
             response201.setLinks(mapper.convertValue(((PaymentInitialisationResponse) response).getLinks(), Map.class)); //TODO add new mapper for Links https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/244
             response201.setPsuMessage(specificResponse.getPsuMessage());
             response201.setTppMessages(mapToTppMessages(specificResponse.getTppMessages())); //TODO add new Mapper https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/242
-            return (R) response201;
+            return response201;
         } else {
             List<PaymentInitialisationResponse> specificResponse = (List<PaymentInitialisationResponse>) response;
-            return (R) specificResponse.stream()
-                           .map(r -> mapToPaymentInitiationResponse12(r, SINGLE, product))
-                           .collect(Collectors.toList());
+            return specificResponse.stream()
+                       .map(r -> mapToPaymentInitiationResponse12(r, SINGLE, product))
+                       .collect(Collectors.toList());
         }
     }
 
