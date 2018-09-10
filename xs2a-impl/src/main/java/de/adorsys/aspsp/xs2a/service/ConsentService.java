@@ -26,19 +26,18 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
@@ -82,7 +81,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         checkedRequest.setFrequencyPerDay(request.getFrequencyPerDay());
         checkedRequest.setValidUntil(request.getValidUntil());
 
-        String tppId = "This is a test TppId"; //TODO v1.1 add corresponding request header
+        String tppId = getTppId();
         SpiCreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(request, psuId, tppId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes()));
 
         String consentId = consentSpi.createConsent(createAisConsentRequest);
@@ -100,8 +99,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Returns status of requested consent
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
-        return aisConsentMapper.mapToConsentStatus(consentSpi.getAccountConsentStatusById(consentId))
-                   .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status)).build())
+        return Optional.ofNullable(getValidatedSpiAccountConsent(consentId))
+                   .map(consent -> aisConsentMapper.mapToConsentStatus(consent.getConsentStatus()))
+                   .map(status -> ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(status.get())).build())
                    .orElseGet(() -> ResponseObject.<ConsentStatusResponse>builder()
                                         .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400)))
                                         .build());
@@ -113,7 +113,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Revokes account consent on PSU request
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        if (consentSpi.getAccountConsentById(consentId) != null) {
+        if (getValidatedSpiAccountConsent(consentId) != null) {
             consentSpi.revokeConsent(consentId);
             return ResponseObject.<Void>builder().build();
         }
@@ -127,14 +127,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * @return AccountConsent requested by consentId
      */
     public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
-        AccountConsent consent = aisConsentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
+        AccountConsent consent = aisConsentMapper.mapToAccountConsent(getValidatedSpiAccountConsent(consentId));
         return consent == null
                    ? ResponseObject.<AccountConsent>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build()
                    : ResponseObject.<AccountConsent>builder().body(consent).build();
     }
 
     ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId) {
-        AccountConsent consent = aisConsentMapper.mapToAccountConsent(consentSpi.getAccountConsentById(consentId));
+        AccountConsent consent = aisConsentMapper.mapToAccountConsent(getValidatedSpiAccountConsent(consentId));
         if (consent == null) {
             return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
@@ -224,5 +224,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                         .build());
+    }
+
+    private SpiAccountConsent getValidatedSpiAccountConsent(String consentId) {
+        return Optional.ofNullable(consentSpi.getAccountConsentById(consentId))
+                   .filter(consent -> getTppId().equals(consent.getTppId()))
+                   .orElse(null);
+    }
+
+    private String getTppId() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                   .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
+                   .map(credentials -> credentials.get("authorityId"))
+                   .orElse("This is a test TppId");
     }
 }

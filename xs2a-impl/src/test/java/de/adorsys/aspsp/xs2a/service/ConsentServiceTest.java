@@ -43,10 +43,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDate;
 import java.util.*;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -92,6 +95,7 @@ public class ConsentServiceTest {
         when(aisConsentMapper.mapToAccountConsent(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false)))
             .thenReturn(getConsent(CONSENT_ID, getAccess(Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
         when(aisConsentMapper.mapToConsentStatus(SpiConsentStatus.RECEIVED)).thenReturn(Optional.of(ConsentStatus.RECEIVED));
+        when(aisConsentMapper.mapToConsentStatus(SpiConsentStatus.VALID)).thenReturn(Optional.of(ConsentStatus.RECEIVED));
         when(aisConsentMapper.mapToConsentStatus(null)).thenReturn(Optional.empty());
 
         //AisReportMock
@@ -281,6 +285,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsStatusById_Success() {
+        //Given
+        setAuthentication();
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
@@ -297,6 +303,8 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsById_Success() {
+        //Given
+        setAuthentication();
         //When:
         ResponseObject response = consentService.getAccountConsentById(CONSENT_ID);
         AccountConsent consent = (AccountConsent) response.getBody();
@@ -392,11 +400,11 @@ public class ConsentServiceTest {
     }
 
     private AccountConsent getConsent(String id, Xs2aAccountAccess access, boolean withBalance) {
-        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false, null, null);
+        return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
     }
 
     private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, null);
+        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, CORRECT_PSU_ID);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
@@ -426,5 +434,13 @@ public class ConsentServiceTest {
         ref.setIban(iban);
         ref.setCurrency(currency);
         return ref;
+    }
+
+    private void setAuthentication(){
+        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_1"));
+        HashMap<String, String> credential = new HashMap<>();
+        credential.put("authorityId", CORRECT_PSU_ID);
+        Authentication authentication = new UsernamePasswordAuthenticationToken("", credential, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

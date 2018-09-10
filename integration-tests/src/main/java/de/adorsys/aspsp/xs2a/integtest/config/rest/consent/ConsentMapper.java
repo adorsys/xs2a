@@ -71,9 +71,7 @@ public class ConsentMapper {
                        ac.getLastActionDate(),
                        ConsentStatus.valueOf(ac.getConsentStatus().name()),
                        ac.isWithBalance(),
-                       ac.isTppRedirectPreferred(),
-                       ac.getPsuId(),
-                       ac.getTppId()))
+                       ac.isTppRedirectPreferred()))
                    .orElse(null);
     }
 
