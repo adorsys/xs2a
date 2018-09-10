@@ -16,5 +16,6 @@ export const environment = {
   assets: { dotaImages: 'https://api.opendota.com/apps/dota2/images' },
   apis: { dota: 'https://api.opendota.com/api' },
   mockServerUrl: 'http://localhost:28080',
+  xs2aServerUrl: 'http://localhost:8080',
   keycloak: keycloakConfig
 };
