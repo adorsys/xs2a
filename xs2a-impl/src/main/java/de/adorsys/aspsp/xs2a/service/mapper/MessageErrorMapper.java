@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,13 +41,9 @@ public class MessageErrorMapper {
     public TppMessages mapToTppMessages(MessageErrorCode... tppMessages) {
         return Optional.ofNullable(tppMessages)
                    .map(m -> Arrays.stream(m)
-                                 .map(this::mapToGenericError)
+                                 .map(str -> mapToGenericError(str, "n/a"))  //TODO add actual path
                                  .collect(Collectors.toList()))
-                   .map(c -> {
-                       TppMessages messages = new TppMessages();
-                       messages.addAll(c);
-                       return messages;
-                   })
+                   .map(this::mapTppMessageGenericListToTppMessages)
                    .orElse(null);
     }
 
@@ -56,6 +53,12 @@ public class MessageErrorMapper {
                    .map(e -> e.stream()
                                  .map(this::mapToGenericError)
                                  .collect(Collectors.toList()))
+                   .map(this::mapTppMessageGenericListToTppMessages)
+                   .orElse(null);
+    }
+
+    private TppMessages mapTppMessageGenericListToTppMessages(List<TppMessageGeneric> list) {
+        return Optional.ofNullable(list)
                    .map(c -> {
                        TppMessages messages = new TppMessages();
                        messages.addAll(c);
@@ -64,24 +67,22 @@ public class MessageErrorMapper {
                    .orElse(null);
     }
 
-    private TppMessageGeneric mapToGenericError(MessageErrorCode code) {
-        TppMessageGeneric tppMessage = new TppMessageGeneric();
-        tppMessage.setCategory(TppMessageCategory.ERROR);
-        tppMessage.setCode(code);
-        tppMessage.setPath("N/A"); //TODO set path
-        tppMessage.setText(messageService.getMessage(code.name()));
-        return tppMessage;
+    private TppMessageGeneric mapToGenericError(TppMessageInformation info) {
+        return Optional.ofNullable(info)
+                   .map(i -> mapToGenericError(i.getMessageErrorCode(), i.getPath()))
+                   .orElse(null);
     }
 
-    private TppMessageGeneric mapToGenericError(TppMessageInformation info) {
-        MessageErrorCode code = info.getMessageErrorCode();
-
-        TppMessageGeneric tppMessage = new TppMessageGeneric();
-        tppMessage.setCategory(TppMessageCategory.ERROR);
-        tppMessage.setPath(info.getPath());
-        tppMessage.setCode(code);
-        tppMessage.setText(messageService.getMessage(code.name()));
-
-        return tppMessage;
+    private TppMessageGeneric mapToGenericError(MessageErrorCode code, String path) {
+        return Optional.ofNullable(code)
+                   .map(c -> {
+                       TppMessageGeneric tppMessage = new TppMessageGeneric();
+                       tppMessage.setCategory(TppMessageCategory.ERROR);
+                       tppMessage.setCode(code);
+                       tppMessage.setPath(path);
+                       tppMessage.setText(messageService.getMessage(c.name()));
+                       return tppMessage;
+                   })
+                   .orElse(null);
     }
 }
