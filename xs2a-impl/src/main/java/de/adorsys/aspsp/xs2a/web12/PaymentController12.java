@@ -21,7 +21,9 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
+import de.adorsys.aspsp.xs2a.service.mapper.ConsentModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.PaymentApi;
@@ -41,6 +43,7 @@ public class PaymentController12 implements PaymentApi {
     private final PaymentService xs2aPaymentService;
     private final ResponseMapper responseMapper;
     private final PaymentModelMapper paymentModelMapper;
+    private final ConsentService consentService;
 
     @Override
     public ResponseEntity<?> getPaymentInitiationStatus(String paymentService, String paymentId, UUID xRequestID, String digest,
@@ -120,7 +123,7 @@ public class PaymentController12 implements PaymentApi {
 
     @Override
     public ResponseEntity<?> startPaymentAuthorisation(String paymentService, String paymentId, UUID xRequestID, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        return responseMapper.ok(consentService.createPisConsentAuthorization(paymentId, PaymentType.getByValue(paymentService).get()), ConsentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override

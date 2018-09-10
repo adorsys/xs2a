@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.account;
+package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 @Data
-public class SpiScaMethod {
-    @Id
-    private String id;
+public class SpiCreatePisConsentAuthorizationResponse {
+    private String authorizationId;
 }

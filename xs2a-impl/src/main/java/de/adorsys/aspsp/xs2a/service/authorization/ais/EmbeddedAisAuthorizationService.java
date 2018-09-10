@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization;
+package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.psd2.model.ScaStatus;
@@ -49,7 +49,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     }
 
     private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId) {
-        return consentSpi.createConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
+        return consentSpi.createAisConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
                        resp.setConsentId(consentId);
@@ -113,7 +113,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                 response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
                 return true;
             } else {
-                response.setAuthenticationMethodId(spiResponse.getPayload().get(0).getId());
+                response.setAuthenticationMethodId(spiResponse.getPayload().get(0).name());
                 response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
                 return true;

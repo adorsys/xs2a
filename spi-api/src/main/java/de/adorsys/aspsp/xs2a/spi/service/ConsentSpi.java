@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
@@ -71,7 +72,7 @@ public interface ConsentSpi {
      * @param spiPisConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for single payment
      */
-    String createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
+    CreatePisConsentResponse createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
 
     /**
      * Sends a POST request to CMS to store created PIS consent for bulk payment
@@ -79,7 +80,7 @@ public interface ConsentSpi {
      * @param spiPisConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent for bulk payment
      */
-    String createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
+    CreatePisConsentResponse createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
 
     /**
      * Sends a POST request to CMS to store created PIS consent for periodic payment
@@ -87,7 +88,7 @@ public interface ConsentSpi {
      * @param spiPisConsentRequest Provides transporting data when creating an consent
      * @return String identifier of created PIS consent periodic payment
      */
-    String createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
+    CreatePisConsentResponse createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest);
 
     /**
      * Sends a POST request to CMS to store created consent authorization
@@ -95,7 +96,15 @@ public interface ConsentSpi {
      * @param consentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    Optional<String> createConsentAuthorization(String consentId, SpiScaStatus scaStatus);
+    Optional<String> createAisConsentAuthorization(String consentId, SpiScaStatus scaStatus);
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
+     * @param paymentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    SpiCreatePisConsentAuthorizationResponse createPisConsentAuthorization(String paymentId);
 
     /**
      * Requests CMS to retrieve AIS consent authorization by its identifier

@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.profile;
 
+import de.adorsys.aspsp.xs2a.config.cache.CacheConfig;
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.aspsp.AspspSettings;
@@ -25,6 +26,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -97,6 +99,7 @@ public class AspspProfileService {
      *
      * @return Available SCA approach for tpp
      */
+    @Cacheable(CacheConfig.ASPSP_PROFILE_CACHE)
     public ScaApproach readScaApproach() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
