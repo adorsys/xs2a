@@ -91,5 +91,8 @@ public class PaymentStatusSuccessfulSteps {
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus().name()));
+
+        // Todo: Take assert back in when respective response headers are implemented
+        // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
     }
 }

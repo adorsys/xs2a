@@ -93,6 +93,9 @@ public class BulkPaymentSuccessfulSteps {
         for (int i = 0; i < givenResponseBody.size(); ++i) {
             assertThat(actualResponseList.getBody().get(i).getTransactionStatus(), equalTo(givenResponseBody.get(i).getTransactionStatus()));
             assertThat(actualResponseList.getBody().get(i).getPaymentId(), notNullValue());
+
+            // Todo: Take assert back in when respective response headers are implemented
+            // assertThat(actualResponseList.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
         }
     }
 

@@ -90,6 +90,12 @@ public class SinglePaymentSuccessfulSteps {
 
         assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
         assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
+
+        // Todo: Take asserts back in when respective response headers are implemented
+        // assertThat(actualResponse.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
+        //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
+
+        // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
     }
 
     // @And("^a redirect URL is delivered to the PSU$")
