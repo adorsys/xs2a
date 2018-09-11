@@ -55,8 +55,8 @@ public class MessageErrorMapper {
                    .orElse(null);
     }
 
-    private TppMessages mapTppMessageGenericListToTppMessages(List<TppMessageGeneric> list) {
-        return Optional.ofNullable(list)
+    private TppMessages mapTppMessageGenericListToTppMessages(List<TppMessageGeneric> messageGenericList) {
+        return Optional.ofNullable(messageGenericList)
                    .map(c -> {
                        TppMessages messages = new TppMessages();
                        messages.addAll(c);
