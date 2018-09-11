@@ -156,7 +156,7 @@ public class PaymentModelMapper {
             paymentResponse.setCreditorName(xs2aPayment.getCreditorName());
             paymentResponse.setCreditorAddress(mapToAddress12(xs2aPayment.getCreditorAddress()));
             paymentResponse.setRemittanceInformationUnstructured(xs2aPayment.getRemittanceInformationUnstructured());
-            paymentResponse.setTransactionStatus(mapToTransactionStatus12(Xs2aTransactionStatus.RCVD)); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+            paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus())); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
             return paymentResponse;
         } else if (type == PERIODIC) {
             PeriodicPayment xs2aPayment = (PeriodicPayment) payment;
@@ -176,7 +176,7 @@ public class PaymentModelMapper {
             paymentResponse.setFrequency(FrequencyCode.valueOf(xs2aPayment.getFrequency().name()));
             String executionDateString = String.format("%02d", xs2aPayment.getDayOfExecution());
             paymentResponse.setDayOfExecution(DayOfExecution.fromValue(executionDateString));
-            paymentResponse.setTransactionStatus(mapToTransactionStatus12(Xs2aTransactionStatus.RCVD)); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
+            paymentResponse.setTransactionStatus(mapToTransactionStatus12(xs2aPayment.getTransactionStatus())); //TODO add field to xs2a entity https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/243
             return paymentResponse;
         } else {
             List<SinglePayment> xs2aPayment = (List<SinglePayment>) payment;
