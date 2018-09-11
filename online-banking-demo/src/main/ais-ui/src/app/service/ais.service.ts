@@ -58,8 +58,20 @@ export class AisService {
       );
   }
 
-  getAllPsuAccounts(): Observable<SpiAccountDetails[]> {
-    return this.httpClient.get <SpiAccountDetails[]>(this.GET_ALL_PSU_ACCOUNTS_URL);
+  // TODO Delete function when getAccount endpoint is ready for bank offered consent
+  getAllPsuAccounts(): Observable<Account[]> {
+    const headers = new HttpHeaders({
+      'x-request-id': environment.xRequestId,
+      'consent-id': 'df4c8aaf-fc65-4e7b-a72d-792053a5502f',
+      'tpp-qwac-certificate': environment.tppQwacCertificate,
+      'accept': 'application/json'
+    });
+    return this.httpClient.get <AccountsResponse>(this.GET_ACCOUNTS_WITH_CONSENTID_URL, {headers: headers})
+      .pipe(
+        map(data => {
+          return data.accountList;
+        })
+      );
   }
 
   getProfile(): Observable<AspspSettings> {

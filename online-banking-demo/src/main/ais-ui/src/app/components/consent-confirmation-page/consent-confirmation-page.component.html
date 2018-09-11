@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="!bankOffered">
   <div class="page">
     <div class="page-inner">
       <div class="container">
@@ -51,7 +51,7 @@
   </div>
 </div>
 
-<div>
+<div *ngIf="bankOffered">
   <div class="page">
     <div class="page-inner">
       <div class="container">
@@ -61,11 +61,8 @@
           TTP has requested the following account information from your bank accounts without indication of accounts.
           Please select on which accounts the requested access should be supoorted.
         </p>
-        <p>Your accounts transactions for the last 9 months</p>
-        <ul class="container__list" *ngIf="accounts">
-          <input type="checkbox" name="chosenAccount1" value="chosenAccount1">Account 1<br>
-          <input type="checkbox" name="chosenAccount2" value="chosenAccount2">Account 2<br>
-          <input type="checkbox" name="chosenAccount3" value="chosenAccount3">Account 3<br>
+        <ul class="container__list">
+          <li *ngFor="let account of accounts"><input type="checkbox" [checked]="onSelectAccount(account.iban)">{{account.iban}}<br></li>
           <ul>Your Account Details:
             <li>Your Accounts Name and Number</li>
             <li>Your Accounts Balance</li>

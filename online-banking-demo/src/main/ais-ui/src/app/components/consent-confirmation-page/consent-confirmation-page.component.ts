@@ -15,31 +15,36 @@ import { Observable } from 'rxjs';
 export class ConsentConfirmationPageComponent implements OnInit {
   consentId: string;
   accounts: Account[];
+  selectedAccountIbans: string[];
   consent: AccountConsent;
   profile$: Observable<AspspSettings>;
   iban: string;
   bankOffered: boolean;
 
-  constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private aisService: AisService) {
+  }
 
   ngOnInit() {
     this.route.url
-      .subscribe(params => { this.getConsentIdFromUrl(params); });
+      .subscribe(params => {
+        this.getConsentIdFromUrl(params);
+      });
     this.aisService.saveConsentId(this.consentId);
     this.aisService.getConsent(this.consentId)
-      .subscribe(data => {
-      if (data.access.accounts.length === 0) {
-        this.bankOffered = true;
-        this.getAllPsuAccounts();
+      .subscribe(consent => {
+        this.consent = consent;
+        if (consent.access.accounts.length === 0) {
+          this.bankOffered = true;
+          this.getAllPsuAccounts();
+        } else {
+          this.getAccountsWithConsentId();
         }
-        this.consent =  data;
-      });
-    this.aisService.getAccountsWithConsentID()
-      .subscribe(data => {
-        this.iban = data[0].iban;
-        this.accounts = data;
       });
     this.profile$ = this.aisService.getProfile();
+  }
+
+  onSelectAccount(iban: string):void {
+    this.selectedAccountIbans.push(iban);
   }
 
   onClickContinue() {
@@ -64,6 +69,17 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   getAllPsuAccounts() {
-    this.aisService.getAllPsuAccounts().subscribe();
+    this.aisService.getAllPsuAccounts().subscribe( accounts => {
+      this.iban = accounts[0].iban;
+      this.accounts = accounts;
+    });
+  }
+
+  getAccountsWithConsentId() {
+    this.aisService.getAccountsWithConsentID()
+      .subscribe(accounts => {
+        this.iban = accounts[0].iban;
+        this.accounts = accounts;
+      });
   }
 }
