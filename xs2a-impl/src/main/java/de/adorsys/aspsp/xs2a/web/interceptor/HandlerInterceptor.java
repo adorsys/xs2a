@@ -21,8 +21,8 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.psd2.model.TppMessages;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -33,17 +33,11 @@ import java.util.Map;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class HandlerInterceptor extends HandlerInterceptorAdapter {
     private final RequestValidatorService requestValidatorService;
     private final ObjectMapper objectMapper;
     private final MessageErrorMapper messageErrorMapper;
-
-    @Autowired
-    public HandlerInterceptor(RequestValidatorService requestValidatorService, ObjectMapper objectMapper, MessageErrorMapper messageErrorMapper) {
-        this.requestValidatorService = requestValidatorService;
-        this.objectMapper = objectMapper;
-        this.messageErrorMapper = messageErrorMapper;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {

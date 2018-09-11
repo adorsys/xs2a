@@ -19,8 +19,8 @@ package de.adorsys.aspsp.xs2a.exception;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.psd2.model.TppMessages;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -38,14 +38,9 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandlerController {
-
-    private MessageErrorMapper messageErrorMapper;
-
-    @Autowired
-    public GlobalExceptionHandlerController(MessageErrorMapper messageErrorMapper) {
-        this.messageErrorMapper = messageErrorMapper;
-    }
+    private final MessageErrorMapper messageErrorMapper;
 
     @ExceptionHandler(value = {ValidationException.class})
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
