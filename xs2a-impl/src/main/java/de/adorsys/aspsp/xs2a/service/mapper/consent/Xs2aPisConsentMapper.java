@@ -37,10 +37,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -100,11 +97,10 @@ public class Xs2aPisConsentMapper {
                    .map(pmt -> {
                        PisPayment pisPayment = new PisPayment();
 
-                       pisPayment.setPaymentId(paymentId);
+                       pisPayment.setPaymentId(Optional.ofNullable(paymentId).orElseGet(() -> UUID.randomUUID().toString()));
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
                        pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
-
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
                        pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount())); // todo remake amount type from String to BigDecimal
                        pisPayment.setCreditorAccount(mapToPisAccountReference(pmt.getCreditorAccount()));
@@ -130,7 +126,7 @@ public class Xs2aPisConsentMapper {
                    .map(pmt -> {
                        PisPayment pisPayment = new PisPayment();
 
-                       pisPayment.setPaymentId(paymentId);
+                       pisPayment.setPaymentId(Optional.ofNullable(paymentId).orElseGet(() -> UUID.randomUUID().toString()));
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
                        pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
