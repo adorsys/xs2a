@@ -41,6 +41,14 @@ public enum HttpMethod implements HttpRequestBody {
         public HttpRequestBase getHttpRequest() {
             return new HttpPut();
         }
+
+        @Override
+        public <R> HttpRequestBase getHttpRequest(R requestBody) {
+            HttpPut put = new HttpPut();
+            buildStringEntity(requestBody)
+                .ifPresent(put::setEntity);
+            return put;
+        }
     },
     DELETE {
         @Override

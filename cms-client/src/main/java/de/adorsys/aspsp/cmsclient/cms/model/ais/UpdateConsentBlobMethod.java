@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.cmsclient.cms;
+package de.adorsys.aspsp.cmsclient.cms.model.ais;
 
-import de.adorsys.aspsp.cmsclient.core.AbstractRequestMethod;
+import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.ais.UpdateAisConsentAspspDataRequest;
 
-public class RestCmsRequestMethod <T, R> extends AbstractRequestMethod<T, R> {
+public class UpdateConsentBlobMethod extends RestCmsRequestMethod<UpdateAisConsentAspspDataRequest, CreateAisConsentResponse> {
+    private static final String UPDATE_AIS_CONSENT_BLOB_URI = "api/v1/ais/consent/{consent-id}/blob";
 
-    protected RestCmsRequestMethod(final T requestObject, final HttpMethod httpMethod, final String methodPath) {
-        super(requestObject, httpMethod, methodPath);
-    }
-
-    protected RestCmsRequestMethod(final HttpMethod httpMethod, final String methodPath, HttpUriParams uriParams) {
-        super(httpMethod, methodPath, uriParams);
-    }
-
-    public RestCmsRequestMethod(final T requestObject, final HttpMethod httpMethod, final String path, HttpUriParams uriParams) {
-        super(requestObject, httpMethod, path, uriParams);
+    public UpdateConsentBlobMethod(final UpdateAisConsentAspspDataRequest request, HttpUriParams uriParams) {
+        super(request, HttpMethod.PUT, UPDATE_AIS_CONSENT_BLOB_URI, uriParams);
     }
 }
