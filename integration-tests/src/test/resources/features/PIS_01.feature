@@ -8,7 +8,7 @@ Feature: Payment Initiation Service
     Scenario Outline: Successful payment initiation request for single payments (redirect)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the single payment initiating request
-        Then a successful response code and the appropriate single payment response data are received
+        Then a successful response code and the appropriate payment response data are received
         And a redirect URL is delivered to the PSU
         Examples:
             | payment-service | payment-product       | single-payment                |
@@ -34,28 +34,31 @@ Feature: Payment Initiation Service
     # Bulk Payment                                                                                                     #
     #                                                                                                                  #
     ####################################################################################################################
-    Scenario Outline: Payment initiation request for bulk payments (redirect)
-        Given PSU wants to initiate multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
-        When PSU sends the bulk payment initiating request
-        Then a successful response code and the appropriate bulk payment response data
-        And a redirect URL for every payment of the Bulk payment is delivered to the PSU
-        Examples:
-            | payment-service  | payment-product       | bulk-payment                |
-            | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
+# Bulk Payment is currently not considered in the xs2a interface, hence the tests are commented. The response of the
+# interface needs to be adapted to the new specification v1.2 see issue: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/294
 
-    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
-        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
-        When PSU sends the bulk payment initiating request with error
-        Then an error response code and the appropriate error response are received
-        Examples:
-          |  payment-service  | payment-product       | bulk-payment                                 |
-          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-exceeding-amount.json        |
-#          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-incorrect-syntax.json        |
+#    Scenario Outline: Payment initiation request for bulk payments (redirect)
+#        Given PSU wants to initiate multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
+#        When PSU sends the bulk payment initiating request
+#        Then a successful response code and the appropriate payment response data are received
+#        And a redirect URL is delivered to the PSU
+#        Examples:
+#            | payment-service  | payment-product       | bulk-payment                |
+#            | bulk-payments     | sepa-credit-transfers | bulkPayInit-successful.json |
+
+#    Scenario Outline: Failed payment initiation request for bulk payments (redirect)
+#        Given PSU loads errorful multiple payments <bulk-payment> using the payment service <payment-service> and the payment product <payment-product>
+#        When PSU sends the bulk payment initiating request with error
+#        Then an error response code and the appropriate error response are received
+#        Examples:
+#          |  payment-service  | payment-product       | bulk-payment                                 |
+#          |  bulk-payments    | sepa-credit-trans     | bulkPayInit-incorrect-payment-product.json   |
+##          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-request-id.json               |
+##          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-no-ip-address.json               |
+##          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-request-id.json     |
+##          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-wrong-format-psu-ip-address.json |
+##          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-exceeding-amount.json        |
+##          |  bulk-payments    | sepa-credit-transfers | bulkPayInit-one-incorrect-syntax.json        |
 
 
     ####################################################################################################################
@@ -66,7 +69,7 @@ Feature: Payment Initiation Service
     Scenario Outline: Payment initiation request for recurring payments (redirect)
         Given PSU wants to initiate a recurring payment <recurring-payment> using the payment service <payment-service> and the payment product <payment-product>
         When PSU sends the recurring payment initiating request
-        Then a successful response code and the appropriate recurring payment response data
+        Then a successful response code and the appropriate payment response data are received
         And a redirect URL is delivered to the PSU
         Examples:
            | payment-service   | payment-product       | recurring-payment          |

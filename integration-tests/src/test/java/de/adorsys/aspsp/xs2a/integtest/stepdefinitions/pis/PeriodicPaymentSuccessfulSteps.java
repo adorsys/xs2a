@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -31,7 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,9 +38,6 @@ import java.time.LocalDate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class PeriodicPaymentSuccessfulSteps {
@@ -88,22 +83,8 @@ public class PeriodicPaymentSuccessfulSteps {
         context.setActualResponse(responseEntity);
     }
 
-    @Then("^a successful response code and the appropriate recurring payment response data")
-    public void checkSuccessfulResponseCodeFromPeriodicPayment() {
-        PaymentInitationRequestResponse201 responseBody = context.getTestData().getResponse().getBody();
-        ResponseEntity<PaymentInitationRequestResponse201> responseEntity = context.getActualResponse();
-        HttpStatus expectedStatus = context.getTestData().getResponse().getHttpStatus();
-
-        assertThat(responseEntity.getStatusCode(), equalTo(expectedStatus));
-        assertThat(responseEntity.getBody().getTransactionStatus(), equalTo(responseBody.getTransactionStatus()));
-        assertThat(responseEntity.getBody().getPaymentId(), notNullValue());
-
-        // Todo: Take asserts back in when respective response headers are implemented
-//        assertThat(responseEntity.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
-//            context.getPaymentService() + "/" + responseEntity.getBody().getPaymentId()));
-//
-//        assertThat(responseEntity.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
-    }
+//    @Then("^a successful response code and the appropriate payment response data are received$")
+//    see ./GlobalSuccessfulSteps.java
 
     // @And("^a redirect URL is delivered to the PSU$")
     // See GlobalSuccessfulSteps

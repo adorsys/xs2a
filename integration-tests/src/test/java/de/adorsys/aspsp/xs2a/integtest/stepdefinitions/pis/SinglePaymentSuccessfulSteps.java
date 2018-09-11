@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -37,9 +36,6 @@ import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class SinglePaymentSuccessfulSteps {
@@ -81,22 +77,8 @@ public class SinglePaymentSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate single payment response data are received$")
-    public void checkResponseCode() {
-        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
-        PaymentInitationRequestResponse201 givenResponseBody = context.getTestData().getResponse().getBody();
-
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-
-        assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
-        assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
-
-        // Todo: Take asserts back in when respective response headers are implemented
-        // assertThat(actualResponse.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
-        //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
-
-        // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
-    }
+//    @Then("^a successful response code and the appropriate payment response data are received$")
+//    see ./GlobalSuccessfulSteps.java
 
     // @And("^a redirect URL is delivered to the PSU$")
     // See GlobalSuccessfulSteps

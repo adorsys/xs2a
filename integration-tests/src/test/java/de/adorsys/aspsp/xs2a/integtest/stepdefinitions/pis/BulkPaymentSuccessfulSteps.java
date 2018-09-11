@@ -18,9 +18,7 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -36,13 +34,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class BulkPaymentSuccessfulSteps {
@@ -51,7 +45,7 @@ public class BulkPaymentSuccessfulSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> context;
+    private Context<BulkPaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
     @Autowired
     private ObjectMapper mapper;
@@ -61,9 +55,9 @@ public class BulkPaymentSuccessfulSteps {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>> data = mapper.readValue(
+        TestData<BulkPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(
             resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
-            new TypeReference<TestData<BulkPaymentInitiationSctJson, List<PaymentInitationRequestResponse201>>>() {});
+            new TypeReference<TestData<BulkPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {});
 
         context.setTestData(data);
     }
@@ -73,38 +67,17 @@ public class BulkPaymentSuccessfulSteps {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
-        ResponseEntity<List<PaymentInitationRequestResponse201>> response = restTemplate.exchange(
+        ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-            HttpMethod.POST, entity, new ParameterizedTypeReference<List<PaymentInitationRequestResponse201>>() {
+            HttpMethod.POST, entity, new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
             });
 
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate bulk payment response data$")
-    public void checkResponseCodeBulkPayment() throws IllegalArgumentException {
-        ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponseList = context.getActualResponse();
-        List<PaymentInitationRequestResponse201> givenResponseBody = context.getTestData().getResponse().getBody();
+//    @Then("^a successful response code and the appropriate payment response data are received$")
+//    see ./GlobalSuccessfulSteps.java
 
-        assertThat(actualResponseList.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-
-        assertThat(givenResponseBody.size(), equalTo(actualResponseList.getBody().size()));
-
-        for (int i = 0; i < givenResponseBody.size(); ++i) {
-            assertThat(actualResponseList.getBody().get(i).getTransactionStatus(), equalTo(givenResponseBody.get(i).getTransactionStatus()));
-            assertThat(actualResponseList.getBody().get(i).getPaymentId(), notNullValue());
-
-            // Todo: Take assert back in when respective response headers are implemented
-            // assertThat(actualResponseList.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
-        }
-    }
-
-    @And("^a redirect URL for every payment of the Bulk payment is delivered to the PSU$")
-    public void checkRedirectUrlBulkPayment() {
-        ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponse = context.getActualResponse();
-
-        actualResponse.getBody().forEach((paymentResponse) -> {
-            assertThat(paymentResponse.getLinks().get("scaRedirect"), notNullValue());
-        });
-    }
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }

@@ -3,6 +3,7 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
@@ -62,6 +64,23 @@ public class GlobalSuccessfulSteps {
         ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
 
         assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
+    }
+
+    @Then("^a successful response code and the appropriate payment response data are received$")
+    public void checkResponseCode() {
+        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
+        PaymentInitationRequestResponse201 givenResponseBody =  (PaymentInitationRequestResponse201) context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+
+        assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
+        assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
+
+        // Todo: Take asserts back in when respective response headers are implemented
+        // assertThat(actualResponse.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
+        //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
+
+        // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
     }
 
     @After
