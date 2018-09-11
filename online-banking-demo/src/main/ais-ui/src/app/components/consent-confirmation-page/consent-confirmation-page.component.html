@@ -62,7 +62,7 @@
           Please select on which accounts the requested access should be supoorted.
         </p>
         <ul class="container__list">
-          <li *ngFor="let account of accounts"><input type="checkbox" [checked]="onSelectAccount(account.iban)">{{account.iban}}<br></li>
+          <li *ngFor="let account of accounts"><input type="checkbox" (change)="onSelectAccount(account)">{{account.iban}}<br></li>
           <ul>Your Account Details:
             <li>Your Accounts Name and Number</li>
             <li>Your Accounts Balance</li>

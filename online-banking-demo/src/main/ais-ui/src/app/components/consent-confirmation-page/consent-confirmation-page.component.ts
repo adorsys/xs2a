@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 export class ConsentConfirmationPageComponent implements OnInit {
   consentId: string;
   accounts: Account[];
-  selectedAccountIbans: string[];
+  selectedAccounts = new Array<Account>();
   consent: AccountConsent;
   profile$: Observable<AspspSettings>;
   iban: string;
@@ -43,11 +43,17 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.profile$ = this.aisService.getProfile();
   }
 
-  onSelectAccount(iban: string):void {
-    this.selectedAccountIbans.push(iban);
+  onSelectAccount(selectedAccount: Account):void {
+    if (this.selectedAccounts.includes(selectedAccount)) {
+      this.selectedAccounts = this.selectedAccounts.filter(account => account !== selectedAccount);
+    } else {
+      this.selectedAccounts.push(selectedAccount);
+    }
+    console.log('awi selectedAccounts: ', this.selectedAccounts);
   }
 
   onClickContinue() {
+    this.aisService.updateConsent(this.selectedAccounts);
     this.aisService.saveIban(this.iban);
     this.aisService.generateTan().subscribe();
     this.router.navigate(['/tanconfirmation'], {queryParams: this.createQueryParams});

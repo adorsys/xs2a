@@ -8,6 +8,9 @@ import { Account } from '../model/aspsp/account';
 import { AccountsResponse } from '../model/aspsp/AccountsResponse';
 import { AspspSettings } from '../model/profile/aspspSettings';
 import { SpiAccountDetails } from '../model/mock/spiAccountDetails';
+import { AccountReference } from '../model/aspsp/accountReference';
+import { SelectedAccountConsent } from '../model/aspsp/selectedAccountConsent';
+import { AccountAccess } from '../model/aspsp/accountAccess';
 
 
 @Injectable({
@@ -16,7 +19,6 @@ import { SpiAccountDetails } from '../model/mock/spiAccountDetails';
 export class AisService {
   GET_CONSENT_URL = `${environment.aspspServerUrl}/api/v1/consents`;
   GET_ACCOUNTS_WITH_CONSENTID_URL = `${environment.aspspServerUrl}/api/v1/accounts?with-balance=true`;
-  GET_ALL_PSU_ACCOUNTS_URL = `${environment.mockServerUrl}/account/`;
   GENERATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   UPDATE_CONSENT_STATUS_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   VALIDATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
@@ -62,7 +64,7 @@ export class AisService {
   getAllPsuAccounts(): Observable<Account[]> {
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      'consent-id': 'df4c8aaf-fc65-4e7b-a72d-792053a5502f',
+      'consent-id': '612f990f-4b8d-4b3e-8c0b-2fd65047e9e8',
       'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
     });
@@ -93,5 +95,34 @@ export class AisService {
       iban: this.savedIban,
     };
     return this.httpClient.put<string>(this.VALIDATE_TAN_URL, body);
+  }
+
+  updateConsent(selectedAccounts: Account[]) {
+    const selectedAccountConsent: SelectedAccountConsent = this.buildAccountConsent(selectedAccounts);
+  }
+
+  private buildAccountConsent(selectedAccounts: Account[]) {
+    const accountReferencesArray: AccountReference[] = this.convertToAccountReferenceArray(selectedAccounts);
+    console.log('awi accountReference: ', accountReferencesArray);
+    const accountAccess: AccountAccess = {
+      accounts: accountReferencesArray,
+      balances: accountReferencesArray,
+      transactions: accountReferencesArray
+    };
+    console.log('awi accountAccess: ', accountAccess);
+    const accountConsent: SelectedAccountConsent = { access: accountAccess};
+
+    console.log('awi SelectedAccountConsent: ', accountConsent);
+    return accountConsent;
+  }
+
+  private convertToAccountReferenceArray(selectedAccounts: Account[]): AccountReference[] {
+    const accountReferencesArray = new Array<AccountReference>();
+
+    selectedAccounts.forEach(account => {
+      const accountReference: AccountReference = {iban: account.iban, currency: account.currency};
+      accountReferencesArray.push(accountReference);
+    });
+    return accountReferencesArray;
   }
 }
