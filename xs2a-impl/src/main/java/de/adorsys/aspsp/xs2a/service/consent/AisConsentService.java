@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.impl;
+package de.adorsys.aspsp.xs2a.service.consent;
 
+import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiAisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.config.rest.consent.SpiPisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
-import de.adorsys.aspsp.xs2a.spi.impl.mapper.SpiAisConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.impl.mapper.SpiPisConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiUpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,26 +45,28 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class ConsentSpiImpl implements ConsentSpi {
-
-    @Qualifier("spiConsentRestTemplate")
+public class AisConsentService {
+    @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
-    private final SpiAisConsentRemoteUrls remoteAisConsentUrls;
-    private final SpiPisConsentRemoteUrls remotePisConsentUrls;
-    private final SpiAisConsentMapper aisConsentMapper;
-    private final SpiPisConsentMapper pisConsentMapper;
+    private final AisConsentRemoteUrls remoteAisConsentUrls;
+    private final Xs2aAisConsentMapper aisConsentMapper;
     private final AccountSpi accountSpi;
 
     /**
-     * For detailed description see {@link ConsentSpi#createConsent(SpiCreateAisConsentRequest)}
+     * Sends a POST request to CMS to store created AISconsent
+     *
+     * @param request          Request body storing main consent details
+     * @param psuId            String representation of PSU`s identifier at ASPSP
+     * @param tppId            String representation of TPP`s identifier from TPP Certificate
+     * @param aspspConsentData Aspsp private binary data
+     * @return String representation of identifier of stored consent
      */
-    @Override
-    public String createConsent(SpiCreateAisConsentRequest spiCreateAisConsentRequest) {
-        if (isDirectAccessRequest(spiCreateAisConsentRequest) && isInvalidSpiAccountAccessRequest(spiCreateAisConsentRequest.getAccess())) {
+    public String createConsent(CreateConsentReq request, String psuId, String tppId, AspspConsentData aspspConsentData) {
+        if (isDirectAccessRequest(request) && isInvalidSpiAccountAccessRequest(request.getAccess())) {
             return null;
         }
 
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCmsCreateAisConsentRequest(spiCreateAisConsentRequest);
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuId, tppId, aspspConsentData);
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), createAisConsentRequest, CreateAisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createAisConsentResponse)
@@ -73,17 +75,21 @@ public class ConsentSpiImpl implements ConsentSpi {
     }
 
     /**
-     * For detailed description see {@link ConsentSpi#getAccountConsentById(String)}
+     * Requests CMS to retrieve AIS consent by its identifier
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return Response containing AIS Consent
      */
-    @Override
     public SpiAccountConsent getAccountConsentById(String consentId) {
         return consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentById(), SpiAccountConsent.class, consentId).getBody();
     }
 
     /**
-     * For detailed description see {@link ConsentSpi#getAccountConsentStatusById(String)}
+     * Requests CMS to retrieve AIS consent status by its identifier
+     *
+     * @param consentId String representation of identifier of stored consent
+     * @return Response containing AIS Consent Status
      */
-    @Override
     public SpiConsentStatus getAccountConsentStatusById(String consentId) {
         AisConsentStatusResponse response = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentStatusById(), AisConsentStatusResponse.class, consentId).getBody();
         return aisConsentMapper.mapToSpiConsentStatus(response.getConsentStatus())
@@ -91,33 +97,23 @@ public class ConsentSpiImpl implements ConsentSpi {
     }
 
     /**
-     * For detailed description see {@link ConsentSpi#revokeConsent(String)}
+     * Requests CMS to update consent status to "Revoked by PSU" state
+     *
+     * @param consentId String representation of identifier of stored consent
      */
-    @Override
     public void revokeConsent(String consentId) {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentStatus(), null, consentId, SpiConsentStatus.REVOKED_BY_PSU);
     }
 
     /**
-     * For detailed description see {@link ConsentSpi#consentActionLog(String, String, ActionStatus)}
+     * Sends a POST request to CMS to perform decrement of consent usages and report status of the operation held with certain AIS consent
+     *
+     * @param tppId        String representation of TPP`s identifier from TPP Certificate
+     * @param consentId    String representation of identifier of stored consent
+     * @param actionStatus Enum value representing whether the acition is successful or errors occured
      */
-    @Override
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus) {
         consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, actionStatus), Void.class);
-    }
-
-
-    /**
-     * Sends a POST request to CMS to store created consent authorization
-     *
-     * @param paymentId String representation of identifier of stored consent
-     * @return long representation of identifier of stored consent authorization
-     */
-    @Override
-    public SpiCreatePisConsentAuthorizationResponse createPisConsentAuthorization(String paymentId) {
-        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorization(),
-            null, SpiCreatePisConsentAuthorizationResponse.class, paymentId)
-                   .getBody();
     }
 
     /**
@@ -126,7 +122,6 @@ public class ConsentSpiImpl implements ConsentSpi {
      * @param consentId String representation of identifier of stored consent
      * @return long representation of identifier of stored consent authorization
      */
-    @Override
     public Optional<String> createAisConsentAuthorization(String consentId, SpiScaStatus scaStatus) {
         AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorization(scaStatus);
 
@@ -143,7 +138,7 @@ public class ConsentSpiImpl implements ConsentSpi {
      * @param authorizationId String representation of identifier of stored consent authorization
      * @return Response containing AIS Consent Authorization
      */
-    @Override
+
     public SpiAccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
         AisConsentAuthorizationResponse resp = consentRestTemplate.getForEntity(remoteAisConsentUrls.getAisConsentAuthorizationById(), AisConsentAuthorizationResponse.class, consentId, authorizationId).getBody();
 
@@ -155,7 +150,6 @@ public class ConsentSpiImpl implements ConsentSpi {
      *
      * @param updatePsuData Consent psu data
      */
-    @Override
     public void updateConsentAuthorization(SpiUpdateConsentPsuDataReq updatePsuData) {
         final String consentId = updatePsuData.getConsentId();
         final String authorizationId = updatePsuData.getAuthorizationId();
@@ -164,51 +158,14 @@ public class ConsentSpiImpl implements ConsentSpi {
         consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, AisConsentAuthorizationResponse.class, consentId, authorizationId);
     }
 
-    /**
-     * For detailed description see {@link ConsentSpi#createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest)}
-     */
-    @Override
-    public CreatePisConsentResponse createPisConsentForSinglePaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
-        PisConsentRequest cmsPisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForSinglePayment(spiPisConsentRequest);
-        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), cmsPisConsentRequest, CreatePisConsentResponse.class).getBody();
-
-        return Optional.ofNullable(createPisConsentResponse)
-                   .orElse(null);
+    private boolean isDirectAccessRequest(CreateConsentReq request) {
+        Xs2aAccountAccess accountAccess = request.getAccess();
+        return CollectionUtils.isNotEmpty(accountAccess.getBalances())
+                   || CollectionUtils.isNotEmpty(accountAccess.getAccounts())
+                   || CollectionUtils.isNotEmpty(accountAccess.getTransactions());
     }
 
-    /**
-     * For detailed description see {@link ConsentSpi#createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest)}
-     */
-    @Override
-    public CreatePisConsentResponse createPisConsentForBulkPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
-        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForBulkPayment(spiPisConsentRequest);
-        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), pisConsentRequest, CreatePisConsentResponse.class).getBody();
-
-        return Optional.ofNullable(createPisConsentResponse)
-                   .orElse(null);
-    }
-
-    /**
-     * For detailed description see {@link ConsentSpi#createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest)}
-     */
-    @Override
-    public CreatePisConsentResponse createPisConsentForPeriodicPaymentAndGetId(SpiPisConsentRequest spiPisConsentRequest) {
-        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForPeriodicPayment(spiPisConsentRequest);
-        CreatePisConsentResponse createPisConsentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), pisConsentRequest, CreatePisConsentResponse.class).getBody();
-
-        return Optional.ofNullable(createPisConsentResponse)
-                   .orElse(null);
-    }
-
-
-    private boolean isDirectAccessRequest(SpiCreateAisConsentRequest spiCreateAisConsentRequest) {
-        SpiAccountAccess spiAccountAccess = spiCreateAisConsentRequest.getAccess();
-        return CollectionUtils.isNotEmpty(spiAccountAccess.getBalances())
-                   || CollectionUtils.isNotEmpty(spiAccountAccess.getAccounts())
-                   || CollectionUtils.isNotEmpty(spiAccountAccess.getTransactions());
-    }
-
-    private boolean isInvalidSpiAccountAccessRequest(SpiAccountAccess requestedAccess) {
+    private boolean isInvalidSpiAccountAccessRequest(Xs2aAccountAccess requestedAccess) {
         Set<String> ibansFromAccess = getIbansFromAccess(requestedAccess);
         List<SpiAccountDetails> accountDetailsList = accountSpi.readAccountDetailsByIbans(
             ibansFromAccess,
@@ -226,7 +183,7 @@ public class ConsentSpiImpl implements ConsentSpi {
                    .orElse(false);
     }
 
-    private Set<String> getIbansFromAccess(SpiAccountAccess access) {
+    private Set<String> getIbansFromAccess(Xs2aAccountAccess access) {
         return Stream.of(
             getIbansFromAccountReference(access.getAccounts()),
             getIbansFromAccountReference(access.getBalances()),
@@ -236,10 +193,10 @@ public class ConsentSpiImpl implements ConsentSpi {
                    .collect(Collectors.toSet());
     }
 
-    private Set<String> getIbansFromAccountReference(List<SpiAccountReference> references) {
+    private Set<String> getIbansFromAccountReference(List<AccountReference> references) {
         return Optional.ofNullable(references)
                    .map(list -> list.stream()
-                                    .map(SpiAccountReference::getIban)
+                                    .map(AccountReference::getIban)
                                     .collect(Collectors.toSet()))
                    .orElseGet(Collections::emptySet);
     }

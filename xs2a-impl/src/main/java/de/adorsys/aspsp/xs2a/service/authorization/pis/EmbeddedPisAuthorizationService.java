@@ -18,19 +18,19 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
 @RequiredArgsConstructor
 public class EmbeddedPisAuthorizationService implements PisAuthorizationService {
-    private final ConsentSpi consentSpi;
+    private final PisConsentService pisConsentService;
     private final Xs2aPisConsentMapper pisConsentMapper;
 
     @Override
     public Optional<Xsa2CreatePisConsentAuthorizationResponse> createConsentAuthorization(String paymentId, PaymentType paymentType) {
-        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(consentSpi.createPisConsentAuthorization(paymentId), paymentType);
+        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(pisConsentService.createPisConsentAuthorization(paymentId), paymentType);
     }
 }
