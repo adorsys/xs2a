@@ -34,9 +34,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class MessageErrorMapper {
-
     private final MessageService messageService;
-
 
     public TppMessages mapToTppMessages(MessageErrorCode... errorCodes) {
         return Optional.ofNullable(errorCodes)
