@@ -24,5 +24,5 @@ public enum CmsScaStatus {
     STARTED,
     FINALISED,
     FAILED,
-    EXEMPTED;
+    EXEMPTED
 }
