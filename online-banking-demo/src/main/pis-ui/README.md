@@ -12,8 +12,8 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
     - spring.mail.username=
     - spring.mail.properties.mail.smtp.auth=false
     - spring.mail.properties.mail.smtp.starttls.enable=false
-3. Get the psu user credentials (login + password) in `http://localhost:28080/swagger-ui.html`. You can find these credentials with the `GET /psu/` endpoint. The user has to match the debtor iban from step 3.
-4. Create a new payment in `http://localhost:8080/swagger-ui.html`. The endpoint for the creation is `Payment Initiation Service (PIS)` -> `POST /v1/{payment-service}/{payment-product}`
+4. Get the psu user credentials (login + password) in `http://localhost:28080/swagger-ui.html`. You can find these credentials with the `GET /psu/` endpoint. The user has to match the debtor iban from step 5. A user with these credentials must also exist in your local keycloak instance.
+5. Create a new payment in `http://localhost:8080/swagger-ui.html`. The endpoint for the creation is `Payment Initiation Service (PIS)` -> `POST /v1/{payment-service}/{payment-product}`
     - Fill the data as like as the following example:
 
           "header": {
@@ -49,11 +49,11 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
         
      - The data above creates a payment for the PSU with the IBAN "DE52500105173911841934".
      
-5. There is a redirect_link in the response. Open this link in your browser. You should be redirected to our pis-webapp. If your not yet logged in via keycloak, the webapp should redirect you automatically to keycloak, where you have to login with the PSU credentials.
-    - ATTENTION: You have to login with the PSU credentials from step 2. 
-6. Follow the instructions on the screen.
-7. After you have confirmed the payment, you should find a email with the TAN in your fakeSMTP application. Insert the TAN in the TAN input. You have three attempts until the consent will be set revoked and you will be redirected to an error page.
-8. After clicking on the Submit button your payment will be confirmed and you should be redirected to the swagger page.
+6. There is a redirect_link in the response. Open this link in your browser. You should be redirected to our pis-webapp. If your not yet logged in via keycloak, the webapp should redirect you automatically to keycloak, where you have to login with the PSU credentials.
+    - ATTENTION: You have to login with the PSU credentials from step 4. 
+7. Follow the instructions on the screen.
+8. After you have confirmed the payment, you should find an email with the TAN in your fakeSMTP application. Insert the TAN in the TAN input. You have three attempts until the consent will be set revoked and you will be redirected to an error page.
+9. After clicking on the Submit button your payment will be confirmed and you should be redirected to the swagger page.
 
 ## Setup
 
