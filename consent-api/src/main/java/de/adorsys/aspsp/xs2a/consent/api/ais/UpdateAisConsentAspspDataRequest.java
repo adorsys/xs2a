@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.account;
+package de.adorsys.aspsp.xs2a.consent.api.ais;
 
-import lombok.AllArgsConstructor;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class SpiTppInfo {
-    private String registrationNumber;
-    private String tppName;
-    private String tppRole;
-    private String nationalCompetentAuthority;
-    private String redirectUri;
-    private String nokRedirectUri;
+@ApiModel(description = "Ais consent update blob request", value = "AisConsentBlobUpdateRequest")
+public class UpdateAisConsentAspspDataRequest {
+
+    @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
+    private byte[] aspspConsentData;
 }
