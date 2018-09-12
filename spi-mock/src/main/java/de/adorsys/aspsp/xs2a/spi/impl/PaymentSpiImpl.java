@@ -110,18 +110,27 @@ public class PaymentSpiImpl implements PaymentSpi {
         return new SpiResponse<>(response, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#getSinglePaymentById(SpiPaymentType, String, String, AspspConsentData)}
+     */
     @Override
     public SpiResponse<SpiSinglePayment> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         SpiSinglePayment response = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayment.class, paymentType, paymentProduct, paymentId);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#getPeriodicPaymentById(SpiPaymentType, String, String, AspspConsentData)}
+     */
     @Override
     public SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         SpiPeriodicPayment response = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiPeriodicPayment.class, paymentType, paymentProduct, paymentId);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#getBulkPaymentById(SpiPaymentType, String, String, AspspConsentData)}
+     */
     @Override
     public SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData) {
         SpiSinglePayment aspspResponse = aspspRestTemplate.getForObject(aspspRemoteUrls.getPaymentById(), SpiSinglePayment.class, paymentType, paymentProduct, paymentId);
@@ -132,6 +141,9 @@ public class PaymentSpiImpl implements PaymentSpi {
         return new SpiResponse<>(response, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#authorisePsu(String, String, AspspConsentData)}
+     */
     @Override
     public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData) {
         SpiAuthorisationStatus spiAuthorisationStatus = Optional.ofNullable(keycloakInvokerService.obtainAccessToken(psuId, password))
@@ -140,6 +152,9 @@ public class PaymentSpiImpl implements PaymentSpi {
         return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#readAvailableScaMethod(AspspConsentData)}
+     */
     @Override
     public SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(AspspConsentData aspspConsentData) {
         ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
@@ -150,6 +165,9 @@ public class PaymentSpiImpl implements PaymentSpi {
         return new SpiResponse<>(spiScaMethods, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#executePayment(PisPaymentType, List, AspspConsentData)}
+     */
     @Override
     public SpiResponse<String> executePayment(PisPaymentType paymentType, List<PisPayment> payments, AspspConsentData aspspConsentData) {
         String paymentId = null;
@@ -161,6 +179,9 @@ public class PaymentSpiImpl implements PaymentSpi {
         return new SpiResponse<>(paymentId, aspspConsentData);
     }
 
+    /**
+     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(AspspConsentData)}
+     */
     @Override
     public void performStrongUserAuthorisation(AspspConsentData aspspConsentData) {
         aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class);
