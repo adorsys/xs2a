@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
 import lombok.Data;
 
@@ -26,7 +25,7 @@ public class UpdatePisConsentPsuDataRequest {
     private String authorizationId;
     private String psuId;
     private String password;
-    private CmsScaMethod chosenScaMethod;
+    private String authenticationMethodId;
     private CmsScaStatus scaStatus;
     private String paymentService;
 }

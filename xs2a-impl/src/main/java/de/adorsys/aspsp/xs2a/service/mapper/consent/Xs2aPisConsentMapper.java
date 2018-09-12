@@ -16,10 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
-import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
+import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -41,6 +38,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -222,7 +220,7 @@ public class Xs2aPisConsentMapper {
 
     public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
-                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response)));
+                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response), response.getAvailableScaMethods()));
     }
 
     private String getScaStatus(UpdatePisConsentPsuDataResponse response) {
@@ -266,5 +264,15 @@ public class Xs2aPisConsentMapper {
 
     private SpiAccountReference mapToSpiAccountReferenceFromCmsReference(CmsAccountReference reference) {
         return new SpiAccountReference(reference.getIban(), reference.getBban(), reference.getPan(), reference.getMaskedPan(), reference.getMsisdn(), reference.getCurrency());
+    }
+
+    public List<CmsScaMethod> mapToCmsScaMethods(List<SpiScaMethod> spiScaMethods) {
+        return spiScaMethods.stream()
+                   .map(this::mapToCmsScaMethod)
+                   .collect(Collectors.toList());
+    }
+
+    public CmsScaMethod mapToCmsScaMethod(SpiScaMethod spiScaMethod) {
+        return CmsScaMethod.valueOf(spiScaMethod.name());
     }
 }

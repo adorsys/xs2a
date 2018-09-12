@@ -17,8 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
@@ -43,8 +41,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.FINALISED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -114,31 +111,28 @@ public class PisConsentService {
     public UpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
         GetPisConsentAuthorisationResponse authorizationResponse = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
                                                                        .getBody();
-        if (CmsScaStatus.STARTED == authorizationResponse.getScaStatus()) {
+
+        if (STARTED == authorizationResponse.getScaStatus()) {
             SpiAuthorisationStatus authorisationStatus = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData()).getPayload();
             if (SpiAuthorisationStatus.FAILURE == authorisationStatus) {
-                return new UpdatePisConsentPsuDataResponse(CmsScaStatus.FAILED);
+                return new UpdatePisConsentPsuDataResponse(FAILED);
             }
             List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(new AspspConsentData()).getPayload();
 
             if (CollectionUtils.isEmpty(spiScaMethods)) {
                 paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments(), new AspspConsentData());
                 request.setScaStatus(FINALISED);
-
-                return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                    UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+                return executeUpdatePisConsentAuthorisation(request);
 
             } else if (isSingleScaMethod(spiScaMethods)) {
-                paymentSpi.performStrongUserAuthorisation(new AspspConsentData());
-                request.setScaStatus(SCAMETHODSELECTED);
-                request.setChosenScaMethod(CmsScaMethod.valueOf(spiScaMethods.get(0).name()));
-
-                return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                    UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+                return executeSingleScaUpdate(request, spiScaMethods.get(0).name());
 
             } else if (isMultipleScaMethods(spiScaMethods)) {
-                // TODO will be implemented in the next MR https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/296
-                return null;
+                request.setScaStatus(PSUAUTHENTICATED);
+                UpdatePisConsentPsuDataResponse response = executeUpdatePisConsentAuthorisation(request);
+                response.setAvailableScaMethods(pisConsentMapper.mapToCmsScaMethods(spiScaMethods));
+                return response;
+
             }
         } else if (SCAMETHODSELECTED == authorizationResponse.getScaStatus()) {
             paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword(), new AspspConsentData());
@@ -146,12 +140,27 @@ public class PisConsentService {
             paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments(), new AspspConsentData());
             request.setScaStatus(FINALISED);
 
-            UpdatePisConsentPsuDataResponse response = consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
-                UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+            UpdatePisConsentPsuDataResponse response = executeUpdatePisConsentAuthorisation(request);
             response.setChosenScaMethod(response.getChosenScaMethod());
             return response;
+
+        } else if (PSUAUTHENTICATED == authorizationResponse.getScaStatus()) {
+            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword(), new AspspConsentData());
+            return executeSingleScaUpdate(request, request.getAuthenticationMethodId());
         }
         return new UpdatePisConsentPsuDataResponse(null);
+    }
+
+    private UpdatePisConsentPsuDataResponse executeUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+        return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
+            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+    }
+
+    private UpdatePisConsentPsuDataResponse executeSingleScaUpdate(UpdatePisConsentPsuDataRequest request, String authenticationMethodId) {
+        paymentSpi.performStrongUserAuthorisation(new AspspConsentData());
+        request.setScaStatus(SCAMETHODSELECTED);
+        request.setAuthenticationMethodId(authenticationMethodId);
+        return executeUpdatePisConsentAuthorisation(request);
     }
 
     private SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse authorizationResponse) {
