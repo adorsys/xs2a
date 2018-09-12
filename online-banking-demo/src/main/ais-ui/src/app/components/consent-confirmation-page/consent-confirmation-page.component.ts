@@ -43,12 +43,26 @@ export class ConsentConfirmationPageComponent implements OnInit {
     this.profile$ = this.aisService.getProfile();
   }
 
+  onSelectAllAccounts(): void {
+    if (this.selectedAccounts === this.accounts) {
+      this.selectedAccounts = [];
+    } else {
+      this.selectedAccounts = this.accounts;
+    }
+    console.log('awi selectedAccounts: ', this.selectedAccounts);
+  }
+
   onSelectAccount(selectedAccount: Account):void {
     if (this.selectedAccounts.includes(selectedAccount)) {
       this.selectedAccounts = this.selectedAccounts.filter(account => account !== selectedAccount);
     } else {
       this.selectedAccounts.push(selectedAccount);
     }
+    console.log('awi selectedAccounts: ', this.selectedAccounts);
+  }
+
+  isAccountSelected(selectedAccount: Account): boolean {
+    return this.selectedAccounts.includes(selectedAccount);
   }
 
   onClickContinue() {

@@ -167,6 +167,10 @@
   justify-content: space-around;
   border-radius: 1px;
 
+  & .disabled {
+    background-color: lightgray;
+  }
+
 }
 
 .button-small {

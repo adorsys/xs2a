@@ -59,10 +59,21 @@
         <h1 class="container__title">Confirm new AIS request</h1>
         <p class="container__text">
           TTP has requested the following account information from your bank accounts without indication of accounts.
-          Please select on which accounts the requested access should be supoorted.
+          Please select on which accounts the requested access should be supported.
         </p>
         <ul class="container__list">
-          <li *ngFor="let account of accounts"><input type="checkbox" (change)="onSelectAccount(account)">{{account.iban}}<br></li>
+          <li><input type="checkbox" (change)="onSelectAllAccounts()" [checked]="selectedAccounts.length === accounts?.length">Select all<br></li>
+          <li *ngFor="let account of accounts">
+            <ul class="container__account">
+              <li><input type="checkbox" (change)="onSelectAccount(account)" [checked]="isAccountSelected(account)"></li>
+              <li>
+                <span>{{account.iban}}</span>
+              </li>
+              <li *ngFor="let Balance of account.balances">
+                <span>{{Balance.balanceAmount.amount}} {{Balance.balanceAmount.currency}}</span>
+              </li>
+            </ul>
+          </li>
           <ul>Your Account Details:
             <li>Your Accounts Name and Number</li>
             <li>Your Accounts Balance</li>
@@ -88,7 +99,7 @@
           <button (click)=onClickCancel() type="button" name="decision" value="revoked" class="buttons-small btn--cancel">
             Cancel
           </button>
-          <button (click)=onClickContinue() type="button" name="decision" value="confirmed" class="buttons-small btn--continue">
+          <button (click)=onClickContinue() [disabled]="selectedAccounts.length === 0" [ngClass]="{disabled: selectedAccounts.length === 0}" type="button" name="decision" value="confirmed" class="buttons-small btn--continue">
             Confirm
           </button>
         </div>
