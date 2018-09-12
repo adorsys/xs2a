@@ -23,16 +23,23 @@ import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
-import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -87,9 +94,9 @@ public class Xs2aPisConsentMapper {
 
     }
 
-    public Optional<Xsa2CreatePisConsentAuthorizationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(SpiCreatePisConsentAuthorizationResponse spi, PaymentType paymentType) {
+    public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(SpiCreatePisConsentAuthorizationResponse spi, PaymentType paymentType) {
         return Optional.ofNullable(spi)
-                   .map(s -> new Xsa2CreatePisConsentAuthorizationResponse(s.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+                   .map(s -> new Xsa2CreatePisConsentAuthorisationResponse(s.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment, String paymentId) {
@@ -210,5 +217,52 @@ public class Xs2aPisConsentMapper {
                        return cmsRemittance;
                    })
                    .orElseGet(CmsRemittance::new);
+    }
+
+    public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
+        return Optional.ofNullable(response)
+                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response)));
+    }
+
+    private String getScaStatus(UpdatePisConsentPsuDataResponse response) {
+        return Optional.ofNullable(response.getScaStatus())
+                   .map(Enum::name)
+                   .orElse(null);
+    }
+
+    public SpiSinglePayment mapToSpiSinglePayment(PisPayment pisPayment) {
+        SpiSinglePayment payment = new SpiSinglePayment();
+        payment.setPaymentId(pisPayment.getPaymentId());
+        payment.setEndToEndIdentification(pisPayment.getEndToEndIdentification());
+        payment.setDebtorAccount(mapToSpiAccountReferenceFromCmsReference(pisPayment.getDebtorAccount()));
+        payment.setUltimateDebtor(pisPayment.getUltimateDebtor());
+        payment.setInstructedAmount(new SpiAmount(pisPayment.getCurrency(), pisPayment.getAmount()));
+        payment.setCreditorAccount(mapToSpiAccountReferenceFromCmsReference(pisPayment.getCreditorAccount()));
+        payment.setCreditorAgent(pisPayment.getCreditorAgent());
+        payment.setCreditorName(pisPayment.getCreditorName());
+        payment.setCreditorAddress(mapToSpiAddressFromCmsAddress(pisPayment.getCreditorAddress()));
+        payment.setRemittanceInformationUnstructured(pisPayment.getRemittanceInformationUnstructured());
+        payment.setRemittanceInformationStructured(mapToSpiRemittanceStructuredFromCmsRemittance(pisPayment.getRemittanceInformationStructured()));
+        payment.setRequestedExecutionDate(pisPayment.getRequestedExecutionDate());
+        payment.setRequestedExecutionTime(pisPayment.getRequestedExecutionTime());
+        payment.setUltimateCreditor(pisPayment.getUltimateCreditor());
+        payment.setPurposeCode(pisPayment.getPurposeCode());
+        return payment;
+    }
+
+    private SpiRemittance mapToSpiRemittanceStructuredFromCmsRemittance(CmsRemittance remittanceInformationStructured) {
+        SpiRemittance remittance = new SpiRemittance();
+        remittance.setReference(remittanceInformationStructured.getReference());
+        remittance.setReferenceIssuer(remittanceInformationStructured.getReferenceIssuer());
+        remittance.setReferenceType(remittanceInformationStructured.getReferenceType());
+        return remittance;
+    }
+
+    private SpiAddress mapToSpiAddressFromCmsAddress(CmsAddress address) {
+        return new SpiAddress(address.getStreet(), address.getBuildingNumber(), address.getCity(), address.getPostalCode(), address.getCountry());
+    }
+
+    private SpiAccountReference mapToSpiAccountReferenceFromCmsReference(CmsAccountReference reference) {
+        return new SpiAccountReference(reference.getIban(), reference.getBban(), reference.getPan(), reference.getMaskedPan(), reference.getMsisdn(), reference.getCurrency());
     }
 }

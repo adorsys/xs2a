@@ -29,13 +29,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AccountSpi {
-
     /**
      * Queries ASPSP to get List of transactions dependant on period and accountId
      *
-     * @param accountId String representation of ASPSP account primary identifier
-     * @param dateFrom  Date representing the beginning of the search period
-     * @param dateTo    Date representing the ending of the search period
+     * @param accountId        String representation of ASPSP account primary identifier
+     * @param dateFrom         Date representing the beginning of the search period
+     * @param dateTo           Date representing the ending of the search period
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of transactions
@@ -45,8 +44,8 @@ public interface AccountSpi {
     /**
      * Queries ASPSP to (GET) transaction by its primary identifier and account identifier
      *
-     * @param transactionId String representation of ASPSP primary identifier of transaction
-     * @param accountId     String representation of ASPSP account primary identifier
+     * @param transactionId    String representation of ASPSP primary identifier of transaction
+     * @param accountId        String representation of ASPSP account primary identifier
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Transaction
@@ -56,7 +55,7 @@ public interface AccountSpi {
     /**
      * Queries ASPSP to (GET) AccountDetails by primary ASPSP account identifier
      *
-     * @param accountId String representation of ASPSP account primary identifier
+     * @param accountId        String representation of ASPSP account primary identifier
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Account details
@@ -66,7 +65,7 @@ public interface AccountSpi {
     /**
      * Queries ASPSP to (GET) a list of account details of a certain PSU by identifier
      *
-     * @param psuId String representing ASPSP`s primary identifier of PSU
+     * @param psuId            String representing ASPSP`s primary identifier of PSU
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
@@ -76,7 +75,7 @@ public interface AccountSpi {
     /**
      * Queries ASPSP to (GET) List of AccountDetails by IBAN
      *
-     * @param iban String representation of Account IBAN
+     * @param iban             String representation of Account IBAN
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
@@ -86,7 +85,7 @@ public interface AccountSpi {
     /**
      * Queries ASPSP to (GET) list of account details with certain account IBANS
      *
-     * @param ibans a collection of Strings representing account IBANS
+     * @param ibans            a collection of Strings representing account IBANS
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
@@ -96,7 +95,7 @@ public interface AccountSpi {
     /**
      * Queries ASPSP to (GET) list of allowed payment products for current PSU by its account reference
      *
-     * @param reference Account reference
+     * @param reference        Account reference
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of allowed payment products

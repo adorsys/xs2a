@@ -22,10 +22,24 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class PaymentMapper {
+    public List<AspspPayment> mapToAspspPaymentList(List<SpiSinglePayment> payments) {
+        return payments.stream()
+                   .map(p -> mapToAspspPayment(p, PisPaymentType.BULK))
+                   .collect(Collectors.toList());
+    }
+
+    public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<AspspPayment> payments) {
+        return payments.stream()
+                   .map(this::mapToSpiSinglePayment)
+                   .collect(Collectors.toList());
+    }
+
     public AspspPayment mapToAspspPayment(SpiSinglePayment singlePayment, PisPaymentType paymentType) {
         return Optional.ofNullable(singlePayment)
                    .map(s -> buildAspspPayment(s, paymentType))

@@ -22,7 +22,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface PisConsentAuthorizationRepository extends CrudRepository<PisConsentAuthorization, Long> {
-
     Optional<PisConsentAuthorization> findByExternalId(String externalId);
-
 }

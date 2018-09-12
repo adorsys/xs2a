@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.account;
+package de.adorsys.aspsp.xs2a.spi.domain.authorisation;
 
-public enum SpiBookingStatus {
-    PENDING, BOOKED, BOTH;
+public enum SpiAuthorisationStatus {
+    SUCCESS,
+    FAILURE;
 }
