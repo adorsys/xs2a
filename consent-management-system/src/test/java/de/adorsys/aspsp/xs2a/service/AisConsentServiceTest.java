@@ -20,9 +20,10 @@ import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.UpdateAisConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
-import de.adorsys.aspsp.xs2a.service.mapper.ConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +48,11 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class AisConsentServiceTest {
     @InjectMocks
-    private AISConsentService aisConsentService;
+    private AisConsentService aisConsentService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    private ConsentMapper consentMapper;
+    private AisConsentMapper consentMapper;
     @Mock
     private AisConsentRepository aisConsentRepository;
 
@@ -95,9 +96,7 @@ public class AisConsentServiceTest {
     }
 
     @Test
-    public void updateAccountAccessById(){
-        CreateAisConsentRequest createAisConsentRequest = buildCorrectCreateAisConsentRequest();
-
+    public void updateAccountAccessById() {
         // When
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
@@ -109,8 +108,7 @@ public class AisConsentServiceTest {
             new AccountInfo("iban-1", "EUR"),
             new AccountInfo("iban-1", "USD")
         ));
-        createAisConsentRequest.setAccess(info);
-        Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, createAisConsentRequest);
+        Optional<String> consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
 
@@ -122,15 +120,33 @@ public class AisConsentServiceTest {
             new AccountInfo("iban-2", "EUR"),
             new AccountInfo("iban-3", "USD")
         ));
-        createAisConsentRequest.setAccess(info);
-        consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, createAisConsentRequest);
+        consentId = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID, info);
         // Assert
         assertTrue(consentId.isPresent());
 
         // Then
-        Optional<String> consentId_notExist = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildCorrectCreateAisConsentRequest());
+        Optional<String> consentId_notExist = aisConsentService.updateAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
         // Assert
         assertFalse(consentId_notExist.isPresent());
+    }
+
+    @Test
+    public void updateAspspDataById() {
+        // When
+        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentRepository.findByExternalIdAndConsentStatusIn(EXTERNAL_CONSENT_ID_NOT_EXIST, EnumSet.of(RECEIVED, VALID))).thenReturn(Optional.empty());
+        when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
+
+        // Then
+        UpdateAisConsentAspspDataRequest request = buildUpdateBlobRequest();
+        Optional<String> consentId = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID, request);
+        // Assert
+        assertTrue(consentId.isPresent());
+
+        //Then
+        Optional<String> consentId_notExists = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
+        // Assert
+        assertFalse(consentId_notExists.isPresent());
     }
 
     private AisConsent buildConsent() {
@@ -164,11 +180,17 @@ public class AisConsentServiceTest {
         return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
     }
 
+    private static UpdateAisConsentAspspDataRequest buildUpdateBlobRequest() {
+        UpdateAisConsentAspspDataRequest request = new UpdateAisConsentAspspDataRequest();
+        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        return request;
+    }
+
     private AisAccountConsent buildSpiAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
             null, false,
             null, 0,
             null, null,
-            false, false, null);
+            false, false, null, null);
     }
 }

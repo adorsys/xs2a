@@ -18,10 +18,11 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
-import de.adorsys.aspsp.xs2a.service.PISConsentService;
+import de.adorsys.aspsp.xs2a.service.PisConsentService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/v1/pis/consent")
 @Api(value = "api/v1/pis/consent", tags = "PIS, Consents", description = "Provides access to consent management system for PIS")
 public class PisConsentController {
-    private final PISConsentService pisConsentService;
+    private final PisConsentService pisConsentService;
 
     @PostMapping(path = "/")
     @ApiResponses(value = {
@@ -41,7 +42,7 @@ public class PisConsentController {
         @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<CreatePisConsentResponse> createPaymentConsent(@RequestBody PisConsentRequest request) {
         return pisConsentService.createPaymentConsent(request)
-                   .map(consentId -> new ResponseEntity<>(new CreatePisConsentResponse(consentId), HttpStatus.CREATED))
+                   .map(c -> new ResponseEntity<>(c, HttpStatus.CREATED))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
@@ -84,5 +85,18 @@ public class PisConsentController {
         return pisConsentService.updateConsentStatusById(consentId, CmsConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
                    .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    }
+
+    @PostMapping(path = "/{payment-id}/authorizations")
+    @ApiOperation(value = "Create consent authorization for given consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<CreatePisConsentAuthorizationResponse> createConsentAuthorization(
+        @ApiParam(name = "payment-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable("payment-id") String paymentId) {
+        return pisConsentService.createAuthorization(paymentId)
+                   .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
+                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

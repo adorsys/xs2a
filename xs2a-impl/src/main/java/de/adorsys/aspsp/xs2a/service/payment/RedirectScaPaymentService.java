@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import com.google.common.collect.Lists;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
@@ -24,24 +24,19 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiPisConsentRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
@@ -49,10 +44,19 @@ import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 @Service
 @RequiredArgsConstructor
 public class RedirectScaPaymentService implements ScaPaymentService {
-    private final ConsentSpi consentSpi;
+    private final PisConsentService pisConsentService;
     private final PaymentMapper paymentMapper;
     private final PaymentSpi paymentSpi;
-    private final PisConsentMapper pisConsentMapper;
+
+    @Override
+    public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
+        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+
+        PaymentInitialisationResponse response = createSinglePaymentAndGetResponse(singlePayment, aspspConsentData);
+        return response.getTransactionStatus() != Xs2aTransactionStatus.RJCT
+                   ? createConsentForSinglePaymentAndExtendPaymentResponse(new CreatePisConsentData(singlePayment, tppInfo, paymentProduct, aspspConsentData), response)
+                   : response;
+    }
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
@@ -70,11 +74,8 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForPeriodicPaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
-        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForPeriodicPayment(createPisConsentData, response.getPaymentId());
-        String pisConsentId = consentSpi.createPisConsentForPeriodicPaymentAndGetId(request);
-        return StringUtils.isBlank(pisConsentId)
-                   ? null
-                   : extendPaymentResponseFields(response, pisConsentId);
+        CreatePisConsentResponse cmsResponse = pisConsentService.createPisConsentForPeriodicPayment(createPisConsentData, response.getPaymentId());
+        return extendPaymentResponseFields(response, cmsResponse);
     }
 
     @Override
@@ -125,23 +126,21 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private List<PaymentInitialisationResponse> createConsentForBulkPaymentAndExtendPaymentResponses(CreatePisConsentData createPisConsentData) {
-        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForBulkPayment(createPisConsentData);
-        String pisConsentId = consentSpi.createPisConsentForBulkPaymentAndGetId(request);
+        CreatePisConsentResponse cmsResponse = pisConsentService.createPisConsentForBulkPayment(createPisConsentData);
 
-        List<PaymentInitialisationResponse> responses = Lists.newArrayList(createPisConsentData.getPaymentIdentifierMap().values());
-        return responses.stream()
-                   .map(resp -> extendPaymentResponseFields(resp, pisConsentId))
-                   .collect(Collectors.toList());
+        return Optional.ofNullable(cmsResponse)
+                   .filter(c -> StringUtils.isNotBlank(c.getConsentId()))
+                   .map(c -> enrichBulkResponse(c, createPisConsentData.getPaymentIdentifierMap()))
+                   .orElse(Collections.emptyList());
     }
 
-    @Override
-    public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-
-        PaymentInitialisationResponse response = createSinglePaymentAndGetResponse(singlePayment, aspspConsentData);
-        return response.getTransactionStatus() != Xs2aTransactionStatus.RJCT
-                   ? createConsentForSinglePaymentAndExtendPaymentResponse(new CreatePisConsentData(singlePayment, tppInfo, paymentProduct, aspspConsentData), response)
-                   : response;
+    private List<PaymentInitialisationResponse> enrichBulkResponse(CreatePisConsentResponse cmsResponse, Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap) {
+        paymentIdentifierMap.forEach((k, v) -> {
+            v.setPaymentId(cmsResponse.getPaymentId());
+            v.setPisConsentId(cmsResponse.getConsentId());
+            v.setTransactionStatus(Xs2aTransactionStatus.RCVD);
+        });
+        return new ArrayList<>(paymentIdentifierMap.values());
     }
 
     private PaymentInitialisationResponse createSinglePaymentAndGetResponse(SinglePayment singlePayment, AspspConsentData aspspConsentData) {
@@ -151,16 +150,19 @@ public class RedirectScaPaymentService implements ScaPaymentService {
     }
 
     private PaymentInitialisationResponse createConsentForSinglePaymentAndExtendPaymentResponse(CreatePisConsentData createPisConsentData, PaymentInitialisationResponse response) {
-        SpiPisConsentRequest request = pisConsentMapper.mapToSpiPisConsentRequestForSinglePayment(createPisConsentData, response.getPaymentId());
-        String pisConsentId = consentSpi.createPisConsentForSinglePaymentAndGetId(request);
+        CreatePisConsentResponse cmsResponse = pisConsentService.createPisConsentForSinglePayment(createPisConsentData, response.getPaymentId());
 
-        return StringUtils.isBlank(pisConsentId)
-                   ? null
-                   : extendPaymentResponseFields(response, pisConsentId);
+        return extendPaymentResponseFields(response, cmsResponse);
     }
 
-    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, String pisConsentId) {
-        response.setPisConsentId(pisConsentId);
-        return response;
+    private PaymentInitialisationResponse extendPaymentResponseFields(PaymentInitialisationResponse response, CreatePisConsentResponse cmsResponse) {
+        return Optional.ofNullable(cmsResponse)
+                   .filter(c -> StringUtils.isNotBlank(c.getPaymentId()) && StringUtils.isNotBlank(c.getConsentId()))
+                   .map(s -> {
+                       response.setPaymentId(s.getPaymentId());
+                       response.setPisConsentId(s.getConsentId());
+                       return response;
+                   })
+                   .orElse(null);
     }
 }

@@ -16,8 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.web12.PaymentController12;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
@@ -25,15 +28,11 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController12> {
-
-    /* TODO refactor links creation according to 1.2 spec https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/283
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPaymentInitiation(..)) && args(paymentProduct,..)", returning = "result", argNames = "result,paymentProduct")
-    public ResponseEntity<PaymentInitialisationResponse> invokeAspect(ResponseEntity<PaymentInitialisationResponse> result, String paymentProduct) {
-        if (!hasError(result)) {
-            PaymentInitialisationResponse body = result.getBody();
-            body.setLinks(buildPaymentLinks(body, paymentProduct));
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment, paymentType, ..)", returning = "result", argNames = "result,payment,paymentType")
+    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentType paymentType) {
+        if (!result.hasError()) {
+            return enrichLink(result, paymentType);
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
-    */
 }

@@ -60,7 +60,7 @@ public abstract class AbstractLinkAspect<T> {
                    .build();
     }
 
-    protected String buildLink(String path, Object... params) {
+    String buildPath(String path, Object... params) {
         return fromHttpUrl(linkTo(getControllerClass()).toString())
                    .path(path)
                    .buildAndExpand(params)

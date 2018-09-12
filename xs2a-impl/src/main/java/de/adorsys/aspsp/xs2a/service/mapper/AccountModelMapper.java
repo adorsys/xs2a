@@ -173,7 +173,10 @@ public final class AccountModelMapper {
         targetAddress.setBuildingNumber(address.getBuildingNumber());
         targetAddress.setCity(address.getCity());
         targetAddress.setPostalCode(address.getPostalCode());
-        targetAddress.setCountry(address.getCountry().getCode());
+        targetAddress.setCountry(
+            Optional.ofNullable(address.getCountry())
+                .map(Xs2aCountryCode::getCode)
+                .orElse(null));
         return targetAddress;
     }
 

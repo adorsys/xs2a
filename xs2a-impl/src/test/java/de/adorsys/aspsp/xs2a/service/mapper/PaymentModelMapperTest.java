@@ -85,7 +85,7 @@ public class PaymentModelMapperTest {
         PaymentInitialisationResponse givenResponse = getXs2aPaymentResponse();
         PaymentInitationRequestResponse201 expectedResponse = getPaymentResponse12();
         //When
-        PaymentInitationRequestResponse201 result = paymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, PaymentType.SINGLE, PaymentProduct.SCT);
+        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, PaymentType.SINGLE, PaymentProduct.SCT);
         //Then
         assertThat(result).isEqualTo(expectedResponse);
     }
@@ -97,7 +97,7 @@ public class PaymentModelMapperTest {
         //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
         //When
-        SinglePayment result = paymentModelMapper.mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
+        SinglePayment result = (SinglePayment) paymentModelMapper.mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
         //Then
         assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
         assertThat(result.getDebtorAccount()).isNotNull();

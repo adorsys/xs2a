@@ -71,7 +71,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         if (!result.hasError()) {
             Xs2aAccountReport accountReport = result.getBody();
             Links links = new Links();
-            links.setViewBalances(buildLink("/v1/accounts/{account-id}/transactions/{resourceId}", accountId, resourceId));
+            links.setViewBalances(buildPath("/v1/accounts/{account-id}/transactions/{resourceId}", accountId, resourceId));
             accountReport.setLinks(links);
             return result;
         }
@@ -80,14 +80,14 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
 
     private Links buildLinksForAccountReport(Xs2aAccountReport accountReport, String accountId) {
         Links links = new Links();
-        links.setViewAccount(buildLink("/v1/accounts/{accountId}", accountId));
+        links.setViewAccount(buildPath("/v1/accounts/{accountId}", accountId));
 
         Optional<String> optionalAccount = jsonConverter.toJson(accountReport);
         String jsonReport = optionalAccount.orElse("");
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             // todo further we should implement real flow for downloading file
-            links.setDownload(buildLink("/v1/accounts/{accountId}/transactions/download", accountId));
+            links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         }
         return links;
     }
@@ -111,9 +111,9 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     private Links buildLinksForAccountDetails(String accountId, boolean withBalance) {
         Links links = new Links();
         if (withBalance) {
-            links.setViewBalances(buildLink("/v1/accounts/{accountId}/balances", accountId, accountId));
+            links.setViewBalances(buildPath("/v1/accounts/{accountId}/balances", accountId));
         }
-        links.setViewTransactions(buildLink("/v1/accounts/{accountId}/transactions", accountId));
+        links.setViewTransactions(buildPath("/v1/accounts/{accountId}/transactions", accountId));
         return links;
     }
 }

@@ -24,8 +24,9 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.AisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
@@ -36,7 +37,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,11 +75,12 @@ public class ConsentServiceTest {
     @Mock
     AccountSpi accountSpi;
     @Mock
-    ConsentSpi consentSpi;
+    AisConsentService aisConsentService;
+    ;
     @Mock
     AccountMapper accountMapper;
     @Mock
-    AisConsentMapper aisConsentMapper;
+    Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     AspspProfileService aspspProfileService;
 
@@ -95,46 +96,46 @@ public class ConsentServiceTest {
         when(aisConsentMapper.mapToConsentStatus(null)).thenReturn(Optional.empty());
 
         //AisReportMock
-        doNothing().when(consentSpi).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
+        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
         when(accountSpi.readAccountsByPsuId(CORRECT_PSU_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiDetailsList(), ASPSP_CONSENT_DATA));
         when(accountSpi.readAccountsByPsuId(WRONG_PSU_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.emptyList(), ASPSP_CONSENT_DATA));
         //ByPSU-ID
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
 
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(getReferenceList(), getReferenceList(), getReferenceList(), false, true)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), getReferenceList(), getReferenceList(), false, true)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
         //ByAccess
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN_1, CURRENCY_2), getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Arrays.asList(getReference(CORRECT_IBAN, CURRENCY), getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), true, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, true)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), false, false)), CORRECT_PSU_ID, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
-        when(consentSpi.createConsent(aisConsentMapper.mapToSpiCreateAisConsentRequest(getCreateConsentRequest(getAccess(
-            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA)))
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.singletonList(getReference(CORRECT_IBAN, CURRENCY)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList(), false, false)), null, TPP_ID, ASPSP_CONSENT_DATA))
             .thenReturn(CONSENT_ID);
 
 
@@ -143,15 +144,15 @@ public class ConsentServiceTest {
         when(accountSpi.readAccountDetailsByIbans(new HashSet<>(Arrays.asList(WRONG_IBAN)), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.emptyList(), ASPSP_CONSENT_DATA));
 
         //GetConsentById
-        when(consentSpi.getAccountConsentById(CONSENT_ID)).thenReturn(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
-        when(consentSpi.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
+        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
 
         //GetStatusById
-        when(consentSpi.getAccountConsentStatusById(CONSENT_ID))
+        when(aisConsentService.getAccountConsentStatusById(CONSENT_ID))
             .thenReturn(SpiConsentStatus.RECEIVED);
-        when(consentSpi.getAccountConsentStatusById(WRONG_CONSENT_ID))
+        when(aisConsentService.getAccountConsentStatusById(WRONG_CONSENT_ID))
             .thenReturn(null);
-        doNothing().when(consentSpi).revokeConsent(anyString());
+        doNothing().when(aisConsentService).revokeConsent(anyString());
 
         when(aspspProfileService.getConsentLifetime())
             .thenReturn(0);
@@ -410,7 +411,7 @@ public class ConsentServiceTest {
     }
 
     private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? AccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? AccountAccessType.ALL_ACCOUNTS : null);
+        return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
     private List<AccountReference> getReferenceList() {

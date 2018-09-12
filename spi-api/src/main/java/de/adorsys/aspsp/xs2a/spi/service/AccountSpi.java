@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -101,4 +102,6 @@ public interface AccountSpi {
      * @return a list of allowed payment products
      */
     SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
+
+    SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password);
 }

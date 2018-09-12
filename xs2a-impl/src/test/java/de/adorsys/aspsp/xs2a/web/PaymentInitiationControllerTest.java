@@ -53,7 +53,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentInitiationControllerTest {
-
     private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
     private static final String CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH = "/json/CreatePaymentInitiationResponseTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");

@@ -7,11 +7,13 @@
     "body": {}
   },
   "response": {
-    "code": "404",
+    "code": "403",
     "header": {},
-    "body": {
-      "category": "ERROR",
-      "code": "PRODUCT_UNKNOWN"
-    }
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "RESOURCE_UNKNOWN"
+      }
+    ]
   }
 }
