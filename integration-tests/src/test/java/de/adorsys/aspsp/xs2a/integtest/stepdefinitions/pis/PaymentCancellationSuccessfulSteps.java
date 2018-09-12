@@ -88,5 +88,6 @@ public class PaymentCancellationSuccessfulSteps {
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
+        assertThat(actualResponse.getHeaders().get("x-request-id"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
     }
 }
