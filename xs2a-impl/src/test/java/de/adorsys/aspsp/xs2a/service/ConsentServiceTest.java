@@ -403,8 +403,8 @@ public class ConsentServiceTest {
         return new AccountConsent(id, access, false, DATE, 4, null, ConsentStatus.VALID, withBalance, false);
     }
 
-    private SpiAccountConsent getSpiConsent(String id, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(id, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, CORRECT_PSU_ID);
+    private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
+        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, CORRECT_PSU_ID);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
