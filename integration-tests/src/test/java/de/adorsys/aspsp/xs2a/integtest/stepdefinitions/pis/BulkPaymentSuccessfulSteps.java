@@ -100,6 +100,8 @@ public class BulkPaymentSuccessfulSteps {
     public void checkRedirectUrlBulkPayment() {
         ResponseEntity<List<PaymentInitationRequestResponse201>> actualResponse = context.getActualResponse();
 
-        actualResponse.getBody().forEach((paymentResponse) -> assertThat(paymentResponse.getLinks().get("scaRedirect"), notNullValue()));
+        actualResponse.getBody().forEach((paymentResponse) -> {
+            assertThat(paymentResponse.getLinks().get("scaRedirect"), notNullValue());
+        });
     }
 }
