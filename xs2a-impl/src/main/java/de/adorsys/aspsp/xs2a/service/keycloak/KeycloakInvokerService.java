@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.keycloak;
 
 import de.adorsys.aspsp.xs2a.config.KeycloakConfigProperties;
+import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
 import de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,6 +37,8 @@ import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BE
 @Service
 public class KeycloakInvokerService {
     @Autowired
+    private BearerToken bearerToken;
+    @Autowired
     private KeycloakConfigProperties keycloakConfig;
     @Autowired
     @Qualifier("keycloakRestTemplate")
@@ -46,13 +49,16 @@ public class KeycloakInvokerService {
     @Value("${keycloak-password}")
     private String keycloakPassword;
 
+    // TODO move the user authorisation logic to AspspConsentData https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/297
     public String obtainAccessToken(String userName, String password) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("username", userName);
         params.add("password", password);
-        return Optional.ofNullable(doObtainAccessToken(params))
-                   .map(token -> BEARER_TOKEN_PREFIX + token)
-                   .orElse(null);
+        String token = Optional.ofNullable(doObtainAccessToken(params))
+                       .map(t -> AuthorizationConstant.AUTHORIZATION_HEADER + ": " + BEARER_TOKEN_PREFIX + t)
+                       .orElse(null);
+        bearerToken.setToken(token);
+        return token;
     }
 
     public String obtainAccessToken() {

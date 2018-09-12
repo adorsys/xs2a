@@ -102,18 +102,18 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public PisAuthorizationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
+    public PisAuthorisationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthPisAuthorizationService();
+            return new OauthPisAuthorisationService();
         }
         if (DECOUPLED == scaApproach) {
-            return new DecoupledPisAuthorizationService();
+            return new DecoupledPisAuthorisationService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisAuthorizationService(pisConsentService, pisConsentMapper);
+            return new EmbeddedPisAuthorisationService(pisConsentService, pisConsentMapper);
         }
-        return new RedirectPisAuthorizationService();
+        return new RedirectPisAuthorisationService();
     }
 
     private ScaApproach getScaApproach() {

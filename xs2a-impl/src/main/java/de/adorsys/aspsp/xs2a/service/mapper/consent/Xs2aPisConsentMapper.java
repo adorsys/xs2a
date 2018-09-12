@@ -30,7 +30,7 @@ import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
@@ -94,9 +94,9 @@ public class Xs2aPisConsentMapper {
 
     }
 
-    public Optional<Xsa2CreatePisConsentAuthorizationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(SpiCreatePisConsentAuthorizationResponse spi, PaymentType paymentType) {
+    public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(SpiCreatePisConsentAuthorizationResponse spi, PaymentType paymentType) {
         return Optional.ofNullable(spi)
-                   .map(s -> new Xsa2CreatePisConsentAuthorizationResponse(s.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+                   .map(s -> new Xsa2CreatePisConsentAuthorisationResponse(s.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment, String paymentId) {

@@ -65,15 +65,15 @@ public class PisConsentRemoteUrls {
      * Method: POST
      * PathVariables: String paymentId
      */
-    public String createPisConsentAuthorization() {
+    public String createPisConsentAuthorisation() {
         return consentServiceBaseUrl + "/pis/consent/{payment-id}/authorizations";
     }
 
-    public String updatePisConsentAuthorization() {
+    public String updatePisConsentAuthorisation() {
         return consentServiceBaseUrl + "/pis/consent/authorizations/{authorization-id}";
     }
 
-    public String getPisConsentAuthorizationById() {
+    public String getPisConsentAuthorisationById() {
         return consentServiceBaseUrl + "/pis/consent/authorizations/{authorization-id}";
     }
 

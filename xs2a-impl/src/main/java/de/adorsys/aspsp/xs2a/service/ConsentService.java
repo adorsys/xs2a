@@ -26,7 +26,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.AisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorizationService;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
@@ -52,7 +52,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final AisConsentService aisConsentService;
     private final AisAuthorizationService aisAuthorizationService;
-    private final PisAuthorizationService pisAuthorizationService;
+    private final PisAuthorisationService pisAuthorizationService;
     private final AspspProfileService aspspProfileService;
 
     /**
@@ -168,12 +168,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                         .build());
     }
 
-    public ResponseObject<Xsa2CreatePisConsentAuthorizationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType) {
-        return pisAuthorizationService.createConsentAuthorization(paymentId, paymentType)
-                   .map(resp -> ResponseObject.<Xsa2CreatePisConsentAuthorizationResponse>builder()
+    public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorization(String paymentId, PaymentType paymentType) {
+        return pisAuthorizationService.createConsentAuthorisation(paymentId, paymentType)
+                   .map(resp -> ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(() -> ResponseObject.<Xsa2CreatePisConsentAuthorizationResponse>builder()
+                   .orElseGet(() -> ResponseObject.<Xsa2CreatePisConsentAuthorisationResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
                                         .build());
     }

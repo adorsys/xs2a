@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
+package de.adorsys.aspsp.xs2a.spi.domain.authorisation;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import lombok.Data;
-
-import java.util.List;
-
-@Data
-public class GetPisConsentAuthorizationResponse {
-    private String psuId;
-    private CmsScaStatus scaStatus;
-    private String password;
-    private List<PisPayment> payments;
-    private PisPaymentType paymentType;
+public enum SpiAuthorisationStatus {
+    SUCCESS,
+    FAILURE;
 }

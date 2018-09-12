@@ -18,8 +18,8 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorizationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
@@ -119,10 +119,10 @@ public class PisConsentService {
      * @return String authorization id
      */
     @Transactional
-    public Optional<CreatePisConsentAuthorizationResponse> createAuthorization(String paymentId) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
                    .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent()))
-                   .map(c -> new CreatePisConsentAuthorizationResponse(c.getExternalId()));
+                   .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
     private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
@@ -148,7 +148,7 @@ public class PisConsentService {
                    }).map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
     }
 
-    public Optional<GetPisConsentAuthorizationResponse> getPisConsentAuthorizationById(String authorizationId) {
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
         return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }

@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.spi.service;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
@@ -107,17 +108,18 @@ public interface PaymentSpi {
      */
     SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
-    SpiResponse<String> authorisePsu(String psuId, String password);
+    SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
 
     /**
      * Returns a list of SCA methods for PSU by its login
      *
-     * @param token    PSU authorisation token
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
      */
-    SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(String token);
+    SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(AspspConsentData aspspConsentData);
 
-    SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments);
+    SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments, AspspConsentData aspspConsentData);
 
-    void generateConfirmationCode();
+    void performStrongUserAuthorisation(AspspConsentData aspspConsentData);
 }

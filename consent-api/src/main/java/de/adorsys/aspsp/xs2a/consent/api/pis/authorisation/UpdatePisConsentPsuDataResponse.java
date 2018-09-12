@@ -17,15 +17,11 @@
 package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class UpdatePisConsentPsuDataResponse {
     private CmsScaStatus scaStatus;
-
-    public UpdatePisConsentPsuDataResponse(CmsScaStatus scaStatus) {
-        this.scaStatus = scaStatus;
-    }
 }

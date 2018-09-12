@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import lombok.AllArgsConstructor;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
+import java.util.List;
 
 @Data
-@AllArgsConstructor
-public class BearerToken {
-    private String token;
-
-    public String getToken(){
-        return StringUtils.substringAfter(token, BEARER_TOKEN_PREFIX);
-    }
+public class GetPisConsentAuthorisationResponse {
+    private String psuId;
+    private CmsScaStatus scaStatus;
+    private String password;
+    private List<PisPayment> payments;
+    private PisPaymentType paymentType;
 }

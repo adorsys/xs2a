@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
@@ -101,8 +101,8 @@ public class PisConsentMapper {
                    }).orElse(null);
     }
 
-    public GetPisConsentAuthorizationResponse mapToGetPisConsentAuthorizationResponse(PisConsentAuthorization pis) {
-        GetPisConsentAuthorizationResponse response = new GetPisConsentAuthorizationResponse();
+    public GetPisConsentAuthorisationResponse mapToGetPisConsentAuthorizationResponse(PisConsentAuthorization pis) {
+        GetPisConsentAuthorisationResponse response = new GetPisConsentAuthorisationResponse();
         response.setPayments(mapToPisPaymentList(pis.getConsent().getPayments()));
         response.setPaymentType(pis.getConsent().getPisPaymentType());
         response.setPassword(pis.getPassword());
