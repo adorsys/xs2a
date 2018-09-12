@@ -23,16 +23,12 @@ import org.springframework.data.annotation.Id;
 @Data
 @AllArgsConstructor
 public class Tan {
-
     @Id
     private String id;
     private String psuId;
     private String tanNumber;
     private TanStatus tanStatus;
     private int numberOfAttempts;
-
-    public Tan() {
-    }
 
     public Tan(String psuId, String tanNumber) {
         this.psuId = psuId;

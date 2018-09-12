@@ -266,7 +266,7 @@ public class ConsentServiceTest {
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
     }
 
-    /*@Test
+    @Test
     public void createAccountConsentsWithResponse_Failure() {
         //Given:
         CreateConsentReq req = getCreateConsentRequest(
@@ -278,7 +278,7 @@ public class ConsentServiceTest {
             req, CORRECT_PSU_ID);
         //Then:
         assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
-    }*/
+    }
 
     @Test
     public void getAccountConsentsStatusById_Success() {
