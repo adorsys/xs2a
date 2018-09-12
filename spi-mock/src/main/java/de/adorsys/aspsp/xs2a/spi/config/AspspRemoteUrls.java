@@ -138,4 +138,8 @@ public class AspspRemoteUrls {
     public String getGenerateTanConfirmation() {
         return spiMockBaseUrl + "/consent/confirmation/pis";
     }
+
+    public String applyStrongUserAuthorisation() {
+        return spiMockBaseUrl + "/consent/confirmation/pis";
+    }
 }

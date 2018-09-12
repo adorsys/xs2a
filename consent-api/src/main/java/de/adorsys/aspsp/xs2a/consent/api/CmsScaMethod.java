@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
+package de.adorsys.aspsp.xs2a.consent.api;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import java.util.List;
-
-@Data
-@AllArgsConstructor
-public class UpdatePisConsentPsuDataResponse {
-    private CmsScaStatus scaStatus;
-    private CmsScaMethod chosenScaMethod;
-    private List<CmsScaMethod> availableScaMethods;
-
-    public UpdatePisConsentPsuDataResponse(CmsScaStatus scaStatus) {
-        this.scaStatus = scaStatus;
-    }
+public enum CmsScaMethod {
+    SMS_OTP,
+    CHIP_OTP,
+    PHOTO_OTP,
+    PUSH_OTP
 }

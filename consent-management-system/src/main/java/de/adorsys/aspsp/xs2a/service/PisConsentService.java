@@ -139,9 +139,9 @@ public class PisConsentService {
                        if (CmsScaStatus.STARTED == p.getScaStatus()) {
                            p.setPassword(request.getPassword());
                            p.setPsuId(request.getPsuId());
-                       } else if (CmsScaStatus.FINALISED == p.getScaStatus()) {
-                           p.getConsent().getPayments()
-                               .forEach(pd -> pd.setExecutionId(request.getExecutionPaymentId()));
+                       }
+                       if (CmsScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
+                           p.setChosenScaMethod(request.getChosenScaMethod());
                        }
                        p.setScaStatus(request.getScaStatus());
                        return pisConsentAuthorizationRepository.save(p);

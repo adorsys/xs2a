@@ -37,6 +37,8 @@ public class Tan {
         this.numberOfAttempts = 0;
     }
 
+    public Tan() {}
+
     public void incrementNumberOfAttempts() {
         this.numberOfAttempts++;
     }

@@ -27,6 +27,7 @@ import java.util.List;
 public class GetPisConsentAuthorisationResponse {
     private String psuId;
     private CmsScaStatus scaStatus;
+    private String consentId;
     private String password;
     private List<PisPayment> payments;
     private PisPaymentType paymentType;
