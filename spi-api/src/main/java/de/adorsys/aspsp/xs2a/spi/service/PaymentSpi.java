@@ -123,7 +123,7 @@ public interface PaymentSpi {
      * Returns a list of SCA methods for PSU by its login
      *
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
      */
     SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(AspspConsentData aspspConsentData);
