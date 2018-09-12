@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloak;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import lombok.Data;
 
-import java.io.IOException;
+import java.util.List;
 
-@Slf4j
-public class KeycloakRestErrorHandler extends DefaultResponseErrorHandler {
-
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        log.error("Keycloak rest call exception: httpStatus {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
-    }
+@Data
+public class GetPisConsentAuthorizationResponse {
+    private String psuId;
+    private CmsScaStatus scaStatus;
+    private String password;
+    private List<PisPayment> payments;
+    private PisPaymentType paymentType;
 }

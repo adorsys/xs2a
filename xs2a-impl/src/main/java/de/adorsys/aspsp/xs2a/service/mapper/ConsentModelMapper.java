@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.psd2.api.ConsentApi;
@@ -215,4 +216,27 @@ public class ConsentModelMapper {
 
         return updatePsuData;
     }
+
+    public static UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
+        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+        request.setPsuId(psuId);
+        request.setPaymentId(paymentId);
+        request.setAuthorizationId(authorisationId);
+        request.setPaymentService(paymentService);
+        if (!body.isEmpty()) {
+            Optional.ofNullable(body.get("psuData"))
+                .map(o -> (LinkedHashMap<String, String>) o)
+                .ifPresent(psuData -> {
+                    request.setPassword(psuData.get("password"));
+                });
+        }
+        return request;
+    }
+
+    public static UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(Xs2aUpdatePisConsentPsuDataResponse response) {
+        return new UpdatePsuAuthenticationResponse()
+                   ._links(OBJECT_MAPPER.convertValue(response.getLinks(), Map.class))
+                   .scaStatus(ScaStatus.valueOf(response.getScaStatus()));
+    }
+
 }

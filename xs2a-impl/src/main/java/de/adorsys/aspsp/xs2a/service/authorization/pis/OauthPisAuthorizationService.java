@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 
@@ -25,5 +27,10 @@ public class OauthPisAuthorizationService implements PisAuthorizationService {
     @Override
     public Optional<Xsa2CreatePisConsentAuthorizationResponse> createConsentAuthorization(String paymentId, PaymentType paymentType) {
         return null;
+    }
+
+    @Override
+    public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
+        return Optional.empty();
     }
 }

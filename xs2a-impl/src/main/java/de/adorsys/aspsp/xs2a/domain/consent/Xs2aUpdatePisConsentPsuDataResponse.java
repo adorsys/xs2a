@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloak;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import de.adorsys.aspsp.xs2a.domain.Links;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.io.IOException;
+@Data
+@AllArgsConstructor
+public class Xs2aUpdatePisConsentPsuDataResponse {
+    private String scaStatus;
+    private String psuMessage;
+    private String paymentId;
+    private String authorisationId;
+    private Links links = new Links();
 
-@Slf4j
-public class KeycloakRestErrorHandler extends DefaultResponseErrorHandler {
-
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        log.error("Keycloak rest call exception: httpStatus {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
+    public Xs2aUpdatePisConsentPsuDataResponse(String scaStatus) {
+        this.scaStatus = scaStatus;
     }
 }

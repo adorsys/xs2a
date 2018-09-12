@@ -17,16 +17,27 @@
 package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,6 +47,7 @@ public class PisConsentService {
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;
     private final Xs2aPisConsentMapper pisConsentMapper;
+    private final PaymentSpi paymentSpi;
 
     /**
      * Sends a POST request to CMS to store created PIS consent for single payment
@@ -91,5 +103,46 @@ public class PisConsentService {
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorization(),
             null, SpiCreatePisConsentAuthorizationResponse.class, paymentId)
                    .getBody();
+    }
+
+    public UpdatePisConsentPsuDataResponse updatePisConsentAuthorization(UpdatePisConsentPsuDataRequest request) {
+        GetPisConsentAuthorizationResponse authorizationResponse = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorizationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorizationResponse.class, request.getAuthorizationId())
+                                                                       .getBody();
+        if (CmsScaStatus.STARTED == authorizationResponse.getScaStatus()) {
+            String token = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword()).getPayload();
+            if (StringUtils.isEmpty(token)) {
+                return new UpdatePisConsentPsuDataResponse(CmsScaStatus.FAILED);
+            }
+            List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(token).getPayload();
+
+            if (CollectionUtils.isEmpty(spiScaMethods)) {
+                String executionPaymentId = paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments()).getPayload();
+                request.setExecutionPaymentId(executionPaymentId);
+                request.setScaStatus(CmsScaStatus.FINALISED);
+
+                return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorization(), HttpMethod.PUT, new HttpEntity<>(request),
+                    UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+
+            } else if (isSingleScaMethod(spiScaMethods)) {
+                paymentSpi.generateConfirmationCode();
+                request.setScaStatus(CmsScaStatus.SCAMETHODSELECTED);
+
+                return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorization(), HttpMethod.PUT, new HttpEntity<>(request),
+                    UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+
+            } else if (isMultipleScaMethod(spiScaMethods)) {
+                // TODO will be implemented in the next MR
+                return null;
+            }
+        }
+        return new UpdatePisConsentPsuDataResponse();
+    }
+
+    private boolean isSingleScaMethod(List<SpiScaMethod> spiScaMethods) {
+        return spiScaMethods.size() == 1;
+    }
+
+    private boolean isMultipleScaMethod(List<SpiScaMethod> spiScaMethods) {
+        return spiScaMethods.size() > 1;
     }
 }

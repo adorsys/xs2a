@@ -16,6 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -105,11 +107,17 @@ public interface PaymentSpi {
      */
     SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
 
+    SpiResponse<String> authorisePsu(String psuId, String password);
+
     /**
      * Returns a list of SCA methods for PSU by its login
      *
-     * @param name PSU login
+     * @param token    PSU authorisation token
      * @return a list of SCA methods applicable for specified PSU
      */
-    SpiResponse<List<SpiScaMethod>> getScaMethodsByName(String name);
+    SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(String token);
+
+    SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments);
+
+    void generateConfirmationCode();
 }

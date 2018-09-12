@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.config.rest;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -35,7 +36,10 @@ public class BearerTokenInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        request.getHeaders().add(AUTHORIZATION_HEADER, BEARER_TOKEN_PREFIX + this.bearerToken);
+        HttpHeaders headers = request.getHeaders();
+        if (!headers.containsKey(AUTHORIZATION_HEADER)) {
+            headers.add(AUTHORIZATION_HEADER, BEARER_TOKEN_PREFIX + this.bearerToken);
+        }
         return execution.execute(request, body);
     }
 }

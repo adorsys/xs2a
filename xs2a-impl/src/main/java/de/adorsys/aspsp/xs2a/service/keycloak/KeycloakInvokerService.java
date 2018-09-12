@@ -29,6 +29,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
 
@@ -45,26 +46,39 @@ public class KeycloakInvokerService {
     @Value("${keycloak-password}")
     private String keycloakPassword;
 
+    public String obtainAccessToken(String userName, String password) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("username", userName);
+        params.add("password", password);
+        return Optional.ofNullable(doObtainAccessToken(params))
+                   .map(token -> BEARER_TOKEN_PREFIX + token)
+                   .orElse(null);
+    }
+
     public String obtainAccessToken() {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("username", keycloakUsername);
+        params.add("password", keycloakPassword);
+
+        return Optional.ofNullable(doObtainAccessToken(params))
+                   .map(token -> AuthorizationConstant.AUTHORIZATION_HEADER + ": " + BEARER_TOKEN_PREFIX + token)
+                   .orElse(null);
+    }
+
+    private String doObtainAccessToken(MultiValueMap<String, String> params) {
+        params.add("grant_type", "password");
+        params.add("client_id", keycloakConfig.getResource());
+        params.add("client_secret", keycloakConfig.getCredentials().getSecret());
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", "password");
-        map.add("username", keycloakUsername);
-        map.add("password", keycloakPassword);
-        map.add("client_id", keycloakConfig.getResource());
-        map.add("client_secret", keycloakConfig.getCredentials().getSecret());
-
-        ResponseEntity<HashMap<String, String>> response = keycloakRestTemplate.exchange(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", HttpMethod.POST, new HttpEntity<>(map, headers),
+        ResponseEntity<HashMap<String, String>> response = keycloakRestTemplate.exchange(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", HttpMethod.POST, new HttpEntity<>(params, headers),
             new ParameterizedTypeReference<HashMap<String, String>>() {
             });
 
-        String accessToken = null;
-        if(response.getBody() != null){
-            accessToken = AuthorizationConstant.AUTHORIZATION_HEADER + ": " + BEARER_TOKEN_PREFIX + response.getBody()
-                                                                                                        .get(AuthorizationConstant.ACCESS_TOKEN);
-        }
-        return accessToken;
+        return Optional.ofNullable(response.getBody())
+                   .map(body -> body.get(AuthorizationConstant.ACCESS_TOKEN))
+                   .orElse(null);
     }
 }
