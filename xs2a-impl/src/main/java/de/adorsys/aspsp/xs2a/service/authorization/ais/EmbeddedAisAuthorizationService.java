@@ -17,13 +17,13 @@
 package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +38,7 @@ import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseL
 @RequiredArgsConstructor
 public class EmbeddedAisAuthorizationService implements AisAuthorizationService {
     private final AccountSpi accountSpi;
-    private final ConsentSpi consentSpi;
+    private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
 
     @Override
@@ -48,22 +48,9 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                    : createConsentAuthorizationAndGetResponse(ScaStatus.PSUAUTHENTICATED, START_AUTHORISATION_WITH_PSU_AUTHENTICATION, consentId);
     }
 
-    private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId) {
-        return consentSpi.createAisConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
-                   .map(authId -> {
-                       CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
-                       resp.setConsentId(consentId);
-                       resp.setAuthorizationId(authId);
-                       resp.setScaStatus(scaStatus);
-                       resp.setResponseLinkType(linkType);
-
-                       return resp;
-                   });
-    }
-
     @Override
     public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        SpiAccountConsentAuthorization spiConsentAuthorization = consentSpi.getAccountConsentAuthorizationById(authorizationId, consentId);
+        SpiAccountConsentAuthorization spiConsentAuthorization = aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId);
         return aisConsentMapper.mapToAccountConsentAuthorization(spiConsentAuthorization);
     }
 
@@ -88,9 +75,22 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             return response;
         }
 
-        consentSpi.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response));
+        aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response));
 
         return response;
+    }
+
+    private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId) {
+        return aisConsentService.createAisConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
+                   .map(authId -> {
+                       CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
+                       resp.setConsentId(consentId);
+                       resp.setAuthorizationId(authId);
+                       resp.setScaStatus(scaStatus);
+                       resp.setResponseLinkType(linkType);
+
+                       return resp;
+                   });
     }
 
     private boolean checkPsuIdentification(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response) {
@@ -141,6 +141,4 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         }
         return false;
     }
-
-
 }

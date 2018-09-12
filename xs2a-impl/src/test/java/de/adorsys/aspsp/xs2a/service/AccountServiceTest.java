@@ -18,13 +18,14 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
@@ -33,7 +34,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,7 +78,7 @@ public class AccountServiceTest {
     @Mock
     private ConsentService consentService;
     @Mock
-    private ConsentSpi consentSpi;
+    private AisConsentService aisConsentService;
     @Mock
     private AccountMapper accountMapper;
     @Mock
@@ -101,7 +101,7 @@ public class AccountServiceTest {
         when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1));
         when(accountMapper.mapToAccountDetailNoBalances(null)).thenReturn(null);
         //AisReporting
-        doNothing().when(consentSpi).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
+        doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
         //getAccountDetailsByAccountId_WoB_Success
         when(accountSpi.readAccountDetails(ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiAccountDetails(ACCOUNT_ID, IBAN), ASPSP_CONSENT_DATA));
         when(consentService.getValidatedConsent(CONSENT_ID_WOB)).thenReturn(getAccessResponse(getReferences(IBAN, IBAN_1), null, null, false, false));
@@ -366,7 +366,7 @@ public class AccountServiceTest {
             null,
             null,
             null,
-             CURRENCY,
+            CURRENCY,
             "David Muller",
             null,
             null,
