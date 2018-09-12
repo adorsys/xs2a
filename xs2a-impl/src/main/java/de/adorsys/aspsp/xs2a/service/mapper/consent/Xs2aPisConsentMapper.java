@@ -34,6 +34,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationRes
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
@@ -247,6 +248,7 @@ public class Xs2aPisConsentMapper {
         payment.setRequestedExecutionTime(pisPayment.getRequestedExecutionTime());
         payment.setUltimateCreditor(pisPayment.getUltimateCreditor());
         payment.setPurposeCode(pisPayment.getPurposeCode());
+        payment.setPaymentStatus(SpiTransactionStatus.ACCP);
         return payment;
     }
 

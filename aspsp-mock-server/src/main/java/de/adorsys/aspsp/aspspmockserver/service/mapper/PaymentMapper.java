@@ -62,6 +62,7 @@ public class PaymentMapper {
 
     private AspspPayment buildAspspPayment(SpiSinglePayment single, PisPaymentType paymentType) {
         AspspPayment aspsp = new AspspPayment(paymentType);
+        aspsp.setPaymentId(single.getPaymentId());
         aspsp.setEndToEndIdentification(single.getEndToEndIdentification());
         aspsp.setDebtorAccount(single.getDebtorAccount());
         aspsp.setUltimateDebtor(single.getUltimateDebtor());

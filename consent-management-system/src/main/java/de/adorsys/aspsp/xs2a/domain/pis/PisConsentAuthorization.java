@@ -16,12 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Data
+@ToString(exclude = "consent")
 @Entity(name = "pis_consent_authorization")
 public class PisConsentAuthorization {
     @Id
@@ -52,4 +55,8 @@ public class PisConsentAuthorization {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "chosen_sca_method")
+    @Enumerated(value = EnumType.STRING)
+    private CmsScaMethod chosenScaMethod;
 }

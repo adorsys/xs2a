@@ -127,7 +127,4 @@ public class PisPaymentData {
     @JoinColumn(name = "consent_id", nullable = false)
     @ApiModelProperty(value = "Detailed information about consent", required = true)
     private PisConsent consent;
-
-    @Column(name = "execution_id")
-    private String executionId;
 }
