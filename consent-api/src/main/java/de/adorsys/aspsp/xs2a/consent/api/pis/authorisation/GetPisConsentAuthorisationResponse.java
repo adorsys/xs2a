@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Data
-public class SpiCreateAisConsentRequest {
+public class GetPisConsentAuthorisationResponse {
     private String psuId;
-    private String tppId;
-    private int frequencyPerDay;
-    private SpiAccountAccess access;
-    private LocalDate validUntil;
-    private boolean recurringIndicator;
-    private boolean tppRedirectPreferred;
-    private boolean combinedServiceIndicator;
-    private byte[] aspspConsentData;
+    private CmsScaStatus scaStatus;
+    private String password;
+    private List<PisPayment> payments;
+    private PisPaymentType paymentType;
 }

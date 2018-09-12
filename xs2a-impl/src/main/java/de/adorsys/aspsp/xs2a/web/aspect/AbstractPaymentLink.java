@@ -18,22 +18,25 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 
 import java.util.Base64;
+import java.util.EnumSet;
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
+import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthorisationStartType.EXPLICIT;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
-import static java.util.EnumSet.of;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
     @SuppressWarnings("unchecked")
     protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentType paymentType) {
         Object body = result.getBody();
-        if (of(SINGLE, PERIODIC).contains(paymentType)) {
+        if (EnumSet.of(SINGLE, PERIODIC).contains(paymentType)) {
             doEnrichLink(paymentType, (PaymentInitialisationResponse) body);
         } else {
             ((List<PaymentInitialisationResponse>) body)
@@ -47,12 +50,31 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService) {
+        if (RJCT == body.getTransactionStatus()) {
+            return null;
+        }
         String encodedPaymentId = Base64.getEncoder()
                                       .encodeToString(body.getPaymentId().getBytes());
         Links links = new Links();
         links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
         links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", paymentService, encodedPaymentId));
         links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", paymentService, encodedPaymentId));
+        if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
+            return addEmbeddedRelatedLinks(links, paymentService, encodedPaymentId, body.getAuthorizationId());
+        }
+        return links;
+    }
+
+    private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorisationId) {
+        if (EXPLICIT == aspspProfileService.getAuthorisationStartType()) {
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
+        } else {
+            links.setScaStatus(
+                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}", paymentService, paymentId, authorisationId));
+            links.setStartAuthorisationWithPsuAuthentication(
+                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", paymentService, paymentId, authorisationId));
+        }
+
         return links;
     }
 }

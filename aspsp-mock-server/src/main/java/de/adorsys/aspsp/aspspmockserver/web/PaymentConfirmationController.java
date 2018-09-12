@@ -45,7 +45,7 @@ public class PaymentConfirmationController {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity generateAndSendTan(Principal principal) {
+    public ResponseEntity<Void> generateAndSendTan(Principal principal) {
         return tanConfirmationService.generateAndSendTanForPsuByName(principal.getName())
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
