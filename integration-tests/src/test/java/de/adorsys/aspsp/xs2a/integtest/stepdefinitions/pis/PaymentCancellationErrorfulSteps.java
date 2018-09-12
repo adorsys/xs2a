@@ -51,12 +51,10 @@ public class PaymentCancellationErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to cancel a payment (.*) using the payment service (.*)$")
-    public void loadTestData(String dataFileName, String paymentService) throws IOException {
+    @Given("^PSU wants to cancel a payment (.*) with payment-id (.*) using the payment service (.*)$")
+    public void loadTestData(String dataFileName, String paymentId, String paymentService) throws IOException {
         context.setPaymentService(paymentService);
-
-        //TO DO: handle Testdata
-        //context.setPaymentId("");
+        context.setPaymentId(paymentId);
 
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/cancellation/" + dataFileName, UTF_8),
