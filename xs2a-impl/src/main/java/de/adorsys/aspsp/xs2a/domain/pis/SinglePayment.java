@@ -41,6 +41,8 @@ import java.util.Set;
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
 public class SinglePayment implements AccountReferenceCollector {
 
+    private String paymentId;
+
     @Size(max = 35)
     @ApiModelProperty(value = "end to end identification", example = "RI-123456789")
     private String endToEndIdentification;
