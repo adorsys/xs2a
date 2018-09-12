@@ -286,8 +286,6 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsStatusById_Success() {
-        //Given
-        setAuthentication();
         //When:
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         //Then:
@@ -304,8 +302,6 @@ public class ConsentServiceTest {
 
     @Test
     public void getAccountConsentsById_Success() {
-        //Given
-        setAuthentication();
         //When:
         ResponseObject response = consentService.getAccountConsentById(CONSENT_ID);
         AccountConsent consent = (AccountConsent) response.getBody();
@@ -405,7 +401,7 @@ public class ConsentServiceTest {
     }
 
     private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
-        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, CORRECT_PSU_ID);
+        return new SpiAccountConsent(consentId, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, TPP_ID);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {
@@ -435,13 +431,5 @@ public class ConsentServiceTest {
         ref.setIban(iban);
         ref.setCurrency(currency);
         return ref;
-    }
-
-    private void setAuthentication(){
-        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_1"));
-        HashMap<String, String> credential = new HashMap<>();
-        credential.put("authorityId", CORRECT_PSU_ID);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(null, credential, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

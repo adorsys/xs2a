@@ -240,4 +240,5 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
                    .map(credentials -> credentials.get("authorityId"))
                    .orElse("This is a test TppId");
+    }
 }
