@@ -49,7 +49,6 @@ export class ConsentConfirmationPageComponent implements OnInit {
     } else {
       this.selectedAccounts.push(selectedAccount);
     }
-    console.log('awi selectedAccounts: ', this.selectedAccounts);
   }
 
   onClickContinue() {
