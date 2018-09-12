@@ -30,7 +30,6 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 @Component
 public class ResponseMapper {
-
     private final MessageErrorMapper messageErrorMapper;
 
     public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
