@@ -13,8 +13,7 @@ need to be up and running. For specific instructions on how to configure and sta
 [README](../README.md).
 
 ### Starting the Tests
-The Cucumber tests can be started from the CucumberIT.java file. 
-Which can be found at `integration-tests/src/test/java/de/adorsys/aspsp/xs2a/integtest`
+The Cucumber tests can be started from the [CucumberIT.java](./src/test/java/de/adorsys/aspsp/xs2a/integtest/CucumberIT.java) file. 
 
 ## Structure of the Tests
 
@@ -24,7 +23,7 @@ The tests are logically separated in PIS (Payment Initiation Service), AIS (Acco
 SCA (Strong Customer Authentication) and FCS (Confirmation of Funds Service). The different components of the tests can 
 be found at the following locations:
 
-[Feature Files](/src/test/resources/features)  
-[Test data (JSON Files)](/src/test/resources/data-input)  
-[Implementation of steps](/src/test/java/de/adorsys/aspsp/xs2a/integtest/stepdefinitions/pis) 
+[Feature Files](./src/test/resources/features)  
+[Test data (JSON Files)](./integration-tests/src/test/resources/data-input)  
+[Implementation of steps](./src/test/java/de/adorsys/aspsp/xs2a/integtest/stepdefinitions/pis) 
 
