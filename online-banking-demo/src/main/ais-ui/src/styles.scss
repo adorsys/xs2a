@@ -74,6 +74,10 @@
     width: 600px;
     padding: 0px;
     list-style: none;
+
+    &__checkbox {
+      display: flex;
+    }
   }
 
   &__account span{
