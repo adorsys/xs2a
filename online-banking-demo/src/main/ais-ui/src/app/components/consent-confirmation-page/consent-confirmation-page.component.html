@@ -64,8 +64,11 @@
           Please select on which accounts the requested access should be supported.
         </p>
         <ul class="container__list">
+          <div class="accounts">
           <li><input type="checkbox" (change)="onSelectAllAccounts()"
-                     [checked]="selectedAccounts.length === accounts?.length">Select all<br></li>
+                     [checked]="selectedAccounts.length === accounts?.length">Select all<br>
+          </li>
+          <div class="seperator"></div>
           <li *ngFor="let account of accounts">
             <ul class="container__account">
               <span class="container__account__checkbox">
@@ -81,6 +84,7 @@
               </li>
             </ul>
           </li>
+          </div>
           <ul>Your Account Details:
             <li>Your Accounts Name and Number</li>
             <li>Your Accounts Balance</li>

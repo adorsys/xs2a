@@ -97,6 +97,14 @@
     font-weight: 400;
     color: #333333f0;
 
+    & .accounts {
+      padding-bottom: 20px;
+    }
+
+    & .seperator {
+      width: 100%;
+      border-bottom: 1px dashed #33333382;
+    }
   }
 
   &__list li{

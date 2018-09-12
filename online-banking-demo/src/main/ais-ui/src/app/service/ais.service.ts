@@ -65,7 +65,7 @@ export class AisService {
   getAllPsuAccounts(): Observable<Account[]> {
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      'consent-id': '9a3b945d-4d4c-4c65-91c1-fbd4dbc7f2a2',
+      'consent-id': 'c64e30fd-b814-4e37-b155-8acc3ac30fea',
       'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
     });
