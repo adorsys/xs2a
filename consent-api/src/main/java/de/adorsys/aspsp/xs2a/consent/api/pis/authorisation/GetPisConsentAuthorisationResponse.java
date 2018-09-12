@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.consent;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import de.adorsys.aspsp.xs2a.domain.Links;
-import lombok.AllArgsConstructor;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class Xsa2CreatePisConsentAuthorizationResponse {
-    private String authorizationId;
-    private String scaStatus;
-    private String paymentType;
-    private Links links = new Links();
+import java.util.List;
 
-    public Xsa2CreatePisConsentAuthorizationResponse(String authorizationId, String scaStatus, String paymentType) {
-        this.authorizationId = authorizationId;
-        this.scaStatus = scaStatus;
-        this.paymentType = paymentType;
-    }
+@Data
+public class GetPisConsentAuthorisationResponse {
+    private String psuId;
+    private CmsScaStatus scaStatus;
+    private String password;
+    private List<PisPayment> payments;
+    private PisPaymentType paymentType;
 }

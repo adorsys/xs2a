@@ -38,6 +38,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
@@ -60,7 +61,7 @@ public class ScaAuthorizationConfig {
         String accessToken = null;
         if (OAUTH == scaApproach) {
             accessToken = obtainAccessTokenFromHeader(request);
-        } else if (REDIRECT == scaApproach) {
+        } else if (EnumSet.of(REDIRECT, EMBEDDED).contains(scaApproach)) {
             accessToken = keycloakInvokerService.obtainAccessToken();
         }
         return Optional.ofNullable(accessToken)
@@ -101,18 +102,18 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public PisAuthorizationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
+    public PisAuthorisationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthPisAuthorizationService();
+            return new OauthPisAuthorisationService();
         }
         if (DECOUPLED == scaApproach) {
-            return new DecoupledPisAuthorizationService();
+            return new DecoupledPisAuthorisationService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisAuthorizationService(pisConsentService, pisConsentMapper);
+            return new EmbeddedPisAuthorisationService(pisConsentService, pisConsentMapper);
         }
-        return new RedirectPisAuthorizationService();
+        return new RedirectPisAuthorisationService();
     }
 
     private ScaApproach getScaApproach() {

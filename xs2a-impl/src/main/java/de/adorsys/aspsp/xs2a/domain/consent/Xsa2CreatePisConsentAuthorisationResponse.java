@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-@ApiModel(description = "PIS consent authorization", value = "PisConsentAuthorization")
-public class CreatePisConsentAuthorizationResponse {
-    @ApiModelProperty(value = "ID of the Authorization", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
+public class Xsa2CreatePisConsentAuthorisationResponse {
     private String authorizationId;
+    private String scaStatus;
+    private String paymentType;
+    private Links links = new Links();
+
+    public Xsa2CreatePisConsentAuthorisationResponse(String authorizationId, String scaStatus, String paymentType) {
+        this.authorizationId = authorizationId;
+        this.scaStatus = scaStatus;
+        this.paymentType = paymentType;
+    }
 }

@@ -84,4 +84,5 @@ public class Links {
     private String startAuthorisationWithTransactionAuthorisation;
     @ApiModelProperty(value = "The link to retrieve the scaStatus of the corresponding authorisation sub-resource. This link is only contained, if an authorisation sub-resource has been already created.")
     private String scaStatus;
+    private String authoriseTransaction;
 }
