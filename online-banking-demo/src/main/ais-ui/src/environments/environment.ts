@@ -16,6 +16,7 @@ export const environment = {
   assets: { dotaImages: 'https://api.opendota.com/apps/dota2/images' },
   apis: { dota: 'https://api.opendota.com/api' },
   aspspServerUrl: 'http://localhost:8080',
+  cmsServerUrl: 'http://localhost:38080',
   mockServerUrl: 'http://localhost:28080',
   profileServerUrl: 'http://localhost:48080',
   keycloak: keycloakConfig,

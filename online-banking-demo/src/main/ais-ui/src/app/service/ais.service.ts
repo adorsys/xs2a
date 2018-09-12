@@ -21,6 +21,7 @@ export class AisService {
   GET_ACCOUNTS_WITH_CONSENTID_URL = `${environment.aspspServerUrl}/api/v1/accounts?with-balance=true`;
   GENERATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   UPDATE_CONSENT_STATUS_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
+  UPDATE_CONSENT = `${environment.cmsServerUrl}/api/v1/ais/consent/`;
   VALIDATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   GET_PROFILE_URL = `${environment.profileServerUrl}/api/v1/aspsp-profile`;
   savedConsentId: string;
@@ -64,7 +65,7 @@ export class AisService {
   getAllPsuAccounts(): Observable<Account[]> {
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      'consent-id': '612f990f-4b8d-4b3e-8c0b-2fd65047e9e8',
+      'consent-id': '9a3b945d-4d4c-4c65-91c1-fbd4dbc7f2a2',
       'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
     });
@@ -99,20 +100,19 @@ export class AisService {
 
   updateConsent(selectedAccounts: Account[]) {
     const selectedAccountConsent: SelectedAccountConsent = this.buildAccountConsent(selectedAccounts);
+
+    return this.httpClient.put(`${this.UPDATE_CONSENT}/${this.savedConsentId}/access`, selectedAccountConsent);
   }
 
   private buildAccountConsent(selectedAccounts: Account[]) {
     const accountReferencesArray: AccountReference[] = this.convertToAccountReferenceArray(selectedAccounts);
-    console.log('awi accountReference: ', accountReferencesArray);
     const accountAccess: AccountAccess = {
       accounts: accountReferencesArray,
       balances: accountReferencesArray,
       transactions: accountReferencesArray
     };
-    console.log('awi accountAccess: ', accountAccess);
     const accountConsent: SelectedAccountConsent = { access: accountAccess};
 
-    console.log('awi SelectedAccountConsent: ', accountConsent);
     return accountConsent;
   }
 
