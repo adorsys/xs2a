@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.fund;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
-public class SpiFundsConfirmationRequest {
-    private final String cardNumber;
-    private final SpiAccountReference psuAccount;
-    private final String payee;
-    private final SpiAmount instructedAmount;
+@Data
+public class UpdatePisConsentPsuDataRequest {
+    private String paymentId;
+    private String authorizationId;
+    private String psuId;
+    private String password;
+    private String authenticationMethodId;
+    private CmsScaStatus scaStatus;
+    private String paymentService;
 }

@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-public enum CmsScaStatus {
-    RECEIVED,
-    PSUIDENTIFIED,
-    PSUAUTHENTICATED,
-    SCAMETHODSELECTED,
-    STARTED,
-    FINALISED,
-    FAILED,
-    EXEMPTED
+public enum Xs2aAuthorisationStartType {
+    EXPLICIT,
+    IMPLICIT
 }

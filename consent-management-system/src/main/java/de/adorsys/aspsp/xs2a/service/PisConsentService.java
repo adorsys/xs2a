@@ -17,8 +17,11 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorizationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
@@ -38,6 +41,8 @@ import java.util.UUID;
 
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.STARTED;
 
 @Service
 @RequiredArgsConstructor
@@ -116,18 +121,37 @@ public class PisConsentService {
      * @return String authorization id
      */
     @Transactional
-    public Optional<CreatePisConsentAuthorizationResponse> createAuthorization(String paymentId) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
                    .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent()))
-                   .map(c -> new CreatePisConsentAuthorizationResponse(c.getExternalId()));
+                   .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
     private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuId(consentAuthorization.getPsuId());
         consentAuthorization.setConsent(pisConsent);
-        consentAuthorization.setScaStatus(CmsScaStatus.RECEIVED);
+        consentAuthorization.setScaStatus(STARTED);
         return pisConsentAuthorizationRepository.save(consentAuthorization);
+    }
+
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
+        return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
+                   .map(p -> {
+                       if (STARTED == p.getScaStatus()) {
+                           p.setPassword(request.getPassword());
+                           p.setPsuId(request.getPsuId());
+                       }
+                       if (SCAMETHODSELECTED == request.getScaStatus()) {
+                           p.setChosenScaMethod(CmsScaMethod.valueOf(request.getAuthenticationMethodId()));
+                       }
+                       p.setScaStatus(request.getScaStatus());
+                       return pisConsentAuthorizationRepository.save(p);
+                   }).map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
+    }
+
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
+        return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
+                   .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 }

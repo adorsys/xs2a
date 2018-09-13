@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.aspspmockserver.domain;
+package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
-import io.swagger.annotations.ApiModelProperty;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class Confirmation {
-    @ApiModelProperty(value = "Identification resource of the given consent", example = "6d4b403b-f5f5-41c0-847f-b6abf1edb102")
+public class GetPisConsentAuthorisationResponse {
+    private String psuId;
+    private CmsScaStatus scaStatus;
     private String consentId;
-
-    @ApiModelProperty(value = "Identification resource of the created payment", example = "6d4b403b-f5f5-41c0-847f-b6abf1edb102")
-    private String paymentId;
-
-    @ApiModelProperty(value = "A transaction authentication number (TAN) is used by online banking services as a form of single use one-time passwords", example = "sR111a")
-    private String tanNumber;
+    private String password;
+    private List<PisPayment> payments;
+    private PisPaymentType paymentType;
 }

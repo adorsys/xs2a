@@ -14,32 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.psu;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class Tan {
-    @Id
-    private String id;
-    private String psuId;
-    private String tanNumber;
-    private TanStatus tanStatus;
-    private int numberOfAttempts;
+public class Xs2aUpdatePisConsentPsuDataResponse {
+    private String scaStatus;
+    private String psuMessage;
+    private String paymentId;
+    private String authorisationId;
+    private List<CmsScaMethod> availableScaMethods;
+    private Links links = new Links();
 
-    public Tan(String psuId, String tanNumber) {
-        this.psuId = psuId;
-        this.tanNumber = tanNumber;
-        this.tanStatus = TanStatus.UNUSED;
-        this.numberOfAttempts = 0;
-    }
-
-    public Tan() {}
-
-    public void incrementNumberOfAttempts() {
-        this.numberOfAttempts++;
+    public Xs2aUpdatePisConsentPsuDataResponse(String scaStatus, List<CmsScaMethod> availableScaMethods) {
+        this.scaStatus = scaStatus;
+        this.availableScaMethods = availableScaMethods;
     }
 }

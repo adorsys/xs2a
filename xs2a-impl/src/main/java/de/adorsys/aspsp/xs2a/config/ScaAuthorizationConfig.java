@@ -38,11 +38,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
 import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
+// TODO refactor to AbstractFactory https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/298
 @Configuration
 @RequiredArgsConstructor
 public class ScaAuthorizationConfig {
@@ -60,7 +62,7 @@ public class ScaAuthorizationConfig {
         String accessToken = null;
         if (OAUTH == scaApproach) {
             accessToken = obtainAccessTokenFromHeader(request);
-        } else if (REDIRECT == scaApproach) {
+        } else if (EnumSet.of(REDIRECT, EMBEDDED).contains(scaApproach)) {
             accessToken = keycloakInvokerService.obtainAccessToken();
         }
         return Optional.ofNullable(accessToken)
@@ -72,7 +74,7 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public ScaPaymentService scaPaymentService(PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
+    public ScaPaymentService scaPaymentService(Xs2aPisConsentMapper xs2aPisConsentMapper, AspspProfileService aspspProfileService, PisAuthorisationService pisAuthorisationService, PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthScaPaymentService(paymentMapper, paymentSpi);
@@ -81,7 +83,7 @@ public class ScaAuthorizationConfig {
             return new DecoupedScaPaymentService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService(pisConsentService);
+            return new EmbeddedScaPaymentService(aspspProfileService, pisAuthorisationService, paymentSpi, paymentMapper, pisConsentService);
         }
         return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
     }
@@ -101,21 +103,21 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public PisAuthorizationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
+    public PisAuthorisationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthPisAuthorizationService();
+            return new OauthPisAuthorisationService();
         }
         if (DECOUPLED == scaApproach) {
-            return new DecoupledPisAuthorizationService();
+            return new DecoupledPisAuthorisationService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisAuthorizationService(pisConsentService, pisConsentMapper);
+            return new EmbeddedPisAuthorisationService(pisConsentService, pisConsentMapper);
         }
-        return new RedirectPisAuthorizationService();
+        return new RedirectPisAuthorisationService();
     }
 
     private ScaApproach getScaApproach() {
-        return aspspProfileService.readScaApproach();
+        return aspspProfileService.getScaApproach();
     }
 }

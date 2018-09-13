@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.aspsp.xs2a.domain.Links;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
-public class SpiCreateAisConsentRequest {
-    private String psuId;
-    private String tppId;
-    private int frequencyPerDay;
-    private SpiAccountAccess access;
-    private LocalDate validUntil;
-    private boolean recurringIndicator;
-    private boolean tppRedirectPreferred;
-    private boolean combinedServiceIndicator;
-    private byte[] aspspConsentData;
+@AllArgsConstructor
+public class Xsa2CreatePisConsentAuthorisationResponse {
+    private String authorizationId;
+    private String scaStatus;
+    private String paymentType;
+    private Links links = new Links();
+
+    public Xsa2CreatePisConsentAuthorisationResponse(String authorizationId, String scaStatus, String paymentType) {
+        this.authorizationId = authorizationId;
+        this.scaStatus = scaStatus;
+        this.paymentType = paymentType;
+    }
 }

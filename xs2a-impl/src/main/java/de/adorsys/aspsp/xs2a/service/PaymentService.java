@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
 
 @Slf4j
 @Service
@@ -165,7 +166,7 @@ public class PaymentService {
         if (CollectionUtils.isNotEmpty(validPayments)) {
             List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct);
             if (paymentResponses.stream()
-                    .anyMatch(pr -> pr.getTransactionStatus() != Xs2aTransactionStatus.RJCT)) {
+                    .anyMatch(pr -> pr.getTransactionStatus() != RJCT)) {
                 paymentResponses.addAll(invalidPayments);
                 return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                            .body(paymentResponses)
