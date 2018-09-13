@@ -80,6 +80,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         objectMapper.registerModule(getDateTimeDeserializerModule());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.registerModule(new Jdk8Module()); // add support for Optionals
         objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types

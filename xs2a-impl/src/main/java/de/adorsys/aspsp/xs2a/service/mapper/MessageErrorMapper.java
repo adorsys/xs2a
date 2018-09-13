@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,11 +40,10 @@ public class MessageErrorMapper {
     public TppMessages mapToTppMessages(MessageErrorCode... errorCodes) {
         return Optional.ofNullable(errorCodes)
                    .map(m -> Arrays.stream(m)
-                                 .filter(Objects::nonNull)
-                                 .map(str -> mapToGenericError(str, "n/a"))  //TODO add actual path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/300
+                                 .map(str -> mapToGenericError(str, "N/A"))  //TODO add actual path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/300
                                  .collect(Collectors.toList()))
                    .map(this::mapTppMessageGenericListToTppMessages)
-                   .orElse(null);
+                   .orElseGet(TppMessages::new);
     }
 
     public TppMessages mapToTppMessages(MessageError error) {
@@ -55,7 +53,7 @@ public class MessageErrorMapper {
                                  .map(this::mapToGenericError)
                                  .collect(Collectors.toList()))
                    .map(this::mapTppMessageGenericListToTppMessages)
-                   .orElse(null);
+                   .orElseGet(TppMessages::new);
     }
 
     private TppMessages mapTppMessageGenericListToTppMessages(List<TppMessageGeneric> messageGenericList) {
@@ -65,17 +63,15 @@ public class MessageErrorMapper {
                        messages.addAll(c);
                        return messages;
                    })
-                   .orElse(null);
+                   .orElseGet(TppMessages::new);
     }
 
-    private TppMessageGeneric mapToGenericError(TppMessageInformation info) {
-        return Optional.ofNullable(info)
-                   .filter(str -> Objects.nonNull(str.getMessageErrorCode()))
-                   .map(i -> mapToGenericError(i.getMessageErrorCode(), i.getPath()))
-                   .orElse(null);
+    private TppMessageGeneric mapToGenericError(@NonNull TppMessageInformation info) {
+        return mapToGenericError(info.getMessageErrorCode(), info.getPath());
+
     }
 
-    private TppMessageGeneric mapToGenericError(@NonNull MessageErrorCode code, @NonNull String path) {
+    private TppMessageGeneric mapToGenericError(@NonNull MessageErrorCode code, String path) {
         TppMessageGeneric tppMessage = new TppMessageGeneric();
         tppMessage.setCategory(TppMessageCategory.ERROR);
         tppMessage.setCode(code);
