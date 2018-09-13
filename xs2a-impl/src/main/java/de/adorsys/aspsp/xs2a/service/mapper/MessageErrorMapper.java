@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class MessageErrorMapper {
     public TppMessages mapToTppMessages(MessageErrorCode... errorCodes) {
         return Optional.ofNullable(errorCodes)
                    .map(m -> Arrays.stream(m)
+                                 .filter(Objects::nonNull)
                                  .map(str -> mapToGenericError(str, "n/a"))  //TODO add actual path
                                  .collect(Collectors.toList()))
                    .map(this::mapTppMessageGenericListToTppMessages)
@@ -49,6 +51,7 @@ public class MessageErrorMapper {
         return Optional.ofNullable(error)
                    .map(MessageError::getTppMessages)
                    .map(e -> e.stream()
+                                 .filter(Objects::nonNull)
                                  .map(this::mapToGenericError)
                                  .collect(Collectors.toList()))
                    .map(this::mapTppMessageGenericListToTppMessages)
