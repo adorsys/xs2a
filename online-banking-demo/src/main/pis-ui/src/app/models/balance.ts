@@ -48,5 +48,5 @@ export namespace Balance {
         FORWARDAVAILABLE: 'FORWARD_AVAILABLE' as BalanceTypeEnum,
         NONINVOICED: 'NON_INVOICED' as BalanceTypeEnum,
         AVAILABLE: 'AVAILABLE' as BalanceTypeEnum
-    }
+    };
 }

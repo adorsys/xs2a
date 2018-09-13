@@ -41,9 +41,9 @@ export namespace AccountAccess {
     export type AllPsd2Enum = 'allAccounts';
     export const AllPsd2Enum = {
         Accounts: 'allAccounts' as AllPsd2Enum
-    }
+    };
     export type AvailableAccountsEnum = 'allAccounts';
     export const AvailableAccountsEnum = {
         Accounts: 'allAccounts' as AvailableAccountsEnum
-    }
+    };
 }

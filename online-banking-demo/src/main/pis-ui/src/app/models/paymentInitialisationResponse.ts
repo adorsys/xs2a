@@ -96,5 +96,5 @@ export namespace PaymentInitialisationResponse {
         BEARERTOKENEMPTY: 'BEARER_TOKEN_EMPTY' as TppMessagesEnum,
         INTERNALSERVERERROR: 'INTERNAL_SERVER_ERROR' as TppMessagesEnum,
         UNAUTHORIZED: 'UNAUTHORIZED' as TppMessagesEnum
-    }
+    };
 }

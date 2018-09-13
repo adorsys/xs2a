@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Banking } from '../models/banking.model';
 import { SinglePayments } from '../models/models';
-import { environment as env} from '../../environments/environment';
+import { environment as env } from '../../environments/environment';
 
 
 @Injectable({

@@ -30,7 +30,7 @@ export interface SpiAccountDetails {
      */
     balances?: Array<Balance>;
     /**
-     * BBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN. 
+     * BBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this account, for payment accounts which have no IBAN.
      */
     bban?: string;
     /**
@@ -74,5 +74,5 @@ export namespace SpiAccountDetails {
     export type CashAccountTypeEnum = 'CURRENT_ACCOUNT';
     export const CashAccountTypeEnum = {
         ACCOUNT: 'CURRENT_ACCOUNT' as CashAccountTypeEnum
-    }
+    };
 }

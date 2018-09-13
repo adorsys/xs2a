@@ -12,7 +12,7 @@
 
 
 /**
- * Links 
+ * Links
  */
 export interface Links {
     /**

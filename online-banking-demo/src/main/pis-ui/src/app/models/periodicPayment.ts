@@ -94,5 +94,5 @@ export namespace PeriodicPayment {
         QUARTERLY: 'QUARTERLY' as FrequencyEnum,
         SEMIANNUAL: 'SEMIANNUAL' as FrequencyEnum,
         ANNUAL: 'ANNUAL' as FrequencyEnum
-    }
+    };
 }

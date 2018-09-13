@@ -47,5 +47,5 @@ export namespace CreateConsentResp {
         REVOKEDBYPSU: 'REVOKED_BY_PSU' as ConsentStatusEnum,
         EXPIRED: 'EXPIRED' as ConsentStatusEnum,
         TERMINATEDBYTPP: 'TERMINATED_BY_TPP' as ConsentStatusEnum
-    }
+    };
 }
