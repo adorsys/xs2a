@@ -87,4 +87,9 @@ public class EmbeddedSteps {
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getStartAuthorisationWithPsuAuthentication(), notNullValue());
     }
+
+    @Given("^PSU initiated a payment (.*) with the payment-id (.*)$")
+    public void psuInitiatedAPaymentWithThePaymentId() {
+
+    }
 }
