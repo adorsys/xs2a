@@ -173,7 +173,7 @@ stages:
   - "build:src"    # build jar and provide as artifact
   - "build:qa"     # run tests and code quality checks
   - "build:image"  # dockerize jar and push to gitlab registry
-  - "deploy"       # push to openshift registry (snapshot deployment) or release registry
+  - "deploy:static"      # push to openshift registry (snapshot deployment) or release registry
 
 
 # ------------------------------------------------------------------
@@ -239,7 +239,7 @@ unit_tests:
 # Develop
 
 deploy_develop_stage:
-  stage: deploy:static
+  stage: "deploy:static"
   <<: *deploy_docker_build
   <<: *deploy_docker_copy
   <<: *helm_env_deploy
