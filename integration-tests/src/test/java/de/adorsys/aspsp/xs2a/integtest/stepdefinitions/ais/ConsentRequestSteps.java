@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ais;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +22,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.Consents;
@@ -74,16 +75,15 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request$")
     public void sendConsentRequest() throws HttpClientErrorException {
-        HttpEntity<Consents> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
+        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
             context.getAccessToken());
+            ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
+                context.getBaseUrl() + "/consents",
+                HttpMethod.POST,
+                entity,
+                ConsentsResponse201.class);
 
-        ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
-            context.getBaseUrl() + "/consents",
-            HttpMethod.POST,
-            entity,
-            ConsentsResponse201.class);
-
-        context.setActualResponse(response);
+            context.setActualResponse(response);
     }
 
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")
