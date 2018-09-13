@@ -198,4 +198,14 @@ public class AspspProfileUpdateController {
         aspspProfileService.updateAuthorisationStartType(authorisationStartType);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/transactions_without_balances_supported")
+    @ApiOperation(value = "Update the value of transactions without balances supported. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateTransactionsWithoutBalancesSupported(@RequestBody Boolean transactionsWithoutBalancesSupported) {
+        aspspProfileService.updateTransactionsWithoutBalancesSupported(transactionsWithoutBalancesSupported);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

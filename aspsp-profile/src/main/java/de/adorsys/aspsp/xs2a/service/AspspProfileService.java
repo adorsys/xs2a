@@ -55,7 +55,8 @@ public class AspspProfileService {
             profileConfiguration.getConsentLifetime(),
             profileConfiguration.getTransactionLifetime(),
             profileConfiguration.isAllPsd2Support(),
-            profileConfiguration.getAuthorisationStartType());
+            profileConfiguration.getAuthorisationStartType(),
+            profileConfiguration.isTransactionsWithoutBalancesSupported());
     }
 
     /**
@@ -215,5 +216,14 @@ public class AspspProfileService {
      */
     public void updateAuthorisationStartType(AuthorisationStartType authorisationStartType) {
         profileConfiguration.setAuthorisationStartType(authorisationStartType);
+    }
+
+    /**
+     * Update the value of transactions without balances supported
+     *
+     * @param transactionsWithoutBalancesSupported the value of transactions without balances supported
+     */
+    public void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported) {
+        profileConfiguration.setTransactionsWithoutBalancesSupported(transactionsWithoutBalancesSupported);
     }
 }

@@ -26,11 +26,14 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.model.TransactionsResponse200Json;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,6 +61,7 @@ public class AccountService {
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper consentMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
+    public final AspspProfileService aspspProfileService;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -148,6 +152,34 @@ public class AccountService {
 
         aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.BALANCE, response));
         return response;
+    }
+
+    /**
+     * Read transaction reports or transaction lists of a given account adressed by "account-id", depending on the steering parameter  "bookingStatus" together with balances.  For a given account, additional parameters are e.g. the attributes "dateFrom" and "dateTo".  The ASPSP might add balance information, if transaction lists without balances are not supported.
+     *
+     * @param accountId     String representing a PSU`s Account at ASPSP
+     * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
+     * @param consentId     String representing an AccountConsent identification
+     * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
+     * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set to current date)
+     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
+     * @return TransactionsResponse200Json filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
+     */
+    public ResponseObject<TransactionsResponse200Json> getTransactionList(String accountId, String bookingStatus, String consentId, LocalDate dateFrom, LocalDate dateTo, Boolean withBalance) {
+        ResponseObject<Xs2aAccountReport> responseObject = getAccountReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentId, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
+        if (responseObject.hasError()) {
+            return ResponseObject.<TransactionsResponse200Json>builder()
+                       .fail(new MessageError(new TppMessageInformation(ERROR, responseObject.getError().getTppMessage().getMessageErrorCode()))).build();
+        }
+        TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
+        transactionsResponse200Json.setTransactions(AccountModelMapper.mapToAccountReport(responseObject.getBody()));
+        if (!aspspProfileService.isTransactionsWithoutBalancesSupported()) {
+            ResponseObject<List<Xs2aBalance>> balancesResponse = getBalances(consentId, accountId);
+            if (!balancesResponse.hasError()) {
+                transactionsResponse200Json.setBalances(AccountModelMapper.mapToBalanceList(balancesResponse.getBody()));
+            }
+        }
+        return ResponseObject.<TransactionsResponse200Json>builder().body(transactionsResponse200Json).build();
     }
 
     /**

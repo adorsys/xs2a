@@ -64,7 +64,7 @@ public final class AccountModelMapper {
                    ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
     }
 
-    private static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
+    public static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
         BalanceList balanceList = null;
 
         if (CollectionUtils.isNotEmpty(balances)) {

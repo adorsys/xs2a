@@ -116,6 +116,11 @@ public class ProfileConfiguration {
      */
     private AuthorisationStartType authorisationStartType;
 
+    /**
+     * If "false" indicates that an ASPSP might add balance information to transactions list
+     */
+    private boolean transactionsWithoutBalancesSupported;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.FUTURE_DATED);
