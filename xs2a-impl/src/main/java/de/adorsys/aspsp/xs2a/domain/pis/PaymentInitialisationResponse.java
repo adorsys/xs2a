@@ -20,10 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.AuthenticationObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -36,19 +33,25 @@ public class PaymentInitialisationResponse {
 
     @JsonUnwrapped
     @ApiModelProperty(value = "The transaction status is filled with value of the ISO20022 data table", required = true, example = "ACCP")
-    private TransactionStatus transactionStatus;
+    private Xs2aTransactionStatus transactionStatus;
 
     @ApiModelProperty(value = "Resource identification of the generated payment initiation resource.", required = true, example = "qwer3456tzui7890")
     private String paymentId;
 
     @ApiModelProperty(value = "Can be used by the ASPSP to transport transaction fees relevant for the underlying payments.")
-    private Amount transactionFees;
+    private Xs2aAmount transactionFees;
 
     @ApiModelProperty(value = "If equals true, the transaction will involve specific transaction cost as shown by the ASPSP in their public price list or as agreed between ASPSP and PSU.", example = "false")
     private boolean transactionFeeIndicator;
 
     @ApiModelProperty(value = "This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods")
     private AuthenticationObject[] scaMethods;
+
+    @ApiModelProperty(value = "This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified e.g. with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected.")
+    private AuthenticationObject chosenScaMethod;
+
+    @ApiModelProperty(value = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA.")
+    private Xs2aChallengeData challengeData;
 
     @ApiModelProperty(value = "Text to be displayed to the PSU")
     private String psuMessage;
@@ -65,5 +68,15 @@ public class PaymentInitialisationResponse {
 
     @JsonIgnore
     private String pisConsentId;
+
+    //For Embedded approach Implicit case
+    @JsonIgnore
+    private String authorizationId;
+
+    @JsonIgnore
+    private String scaStatus;
+
+    @JsonIgnore
+    private String paymentType;
 }
 

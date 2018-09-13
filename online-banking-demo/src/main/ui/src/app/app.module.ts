@@ -16,7 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { ConsentConfirmationErrorComponent } from './components/consent-confirmation-error/consent-confirmation-error.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { registerLocaleData } from '@angular/common'
-import localeDE from '@angular/common/locales/de'
+import localeDE from '@angular/common/locales/de';
+import { HelpPageComponent } from './components/help-page/help-page.component'
 
 registerLocaleData(localeDE)
 
@@ -30,6 +31,7 @@ registerLocaleData(localeDE)
     ConsentConfirmationDeniedComponent,
     ConsentConfirmationSuccessfulComponent,
     ConsentConfirmationErrorComponent,
+    HelpPageComponent,
   ],
   imports: [
     BrowserModule,

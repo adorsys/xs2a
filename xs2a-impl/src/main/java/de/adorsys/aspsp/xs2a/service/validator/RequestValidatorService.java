@@ -69,18 +69,21 @@ public class RequestValidatorService {
             return violationMap;
         }
 
-        violationMap.putAll(getRequestHeaderViolationMap(request, handler));
-        violationMap.putAll(getRequestParametersViolationMap(request, handler));
-        violationMap.putAll(getRequestPathVariablesViolationMap(request, handler));
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            violationMap.putAll(getRequestHeaderViolationMap(request, handlerMethod));
+            violationMap.putAll(getRequestParametersViolationMap(request, handlerMethod));
+            violationMap.putAll(getRequestPathVariablesViolationMap(request, handlerMethod));
+        }
 
         return violationMap;
     }
 
-    private Map<String, String> getRequestParametersViolationMap(HttpServletRequest request, Object handler) {
+    private Map<String, String> getRequestParametersViolationMap(HttpServletRequest request, HandlerMethod handler) {
 
         Map<String, String> requestParameterMap = getRequestParametersMap(request);
 
-        RequestParameter parameterImpl = parametersFactory.getParameterImpl(requestParameterMap, ((HandlerMethod) handler).getBeanType());
+        RequestParameter parameterImpl = parametersFactory.getParameterImpl(requestParameterMap, handler.getBeanType());
 
         if (parameterImpl instanceof ErrorMessageParameterImpl) {
             return Collections.singletonMap("Wrong parameters : ", ((ErrorMessageParameterImpl) parameterImpl).getErrorMessage());
@@ -89,7 +92,7 @@ public class RequestValidatorService {
         return getViolationMessagesMap(validator.validate(parameterImpl));
     }
 
-    Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, Object handler) {
+    Map<String, String> getRequestPathVariablesViolationMap(HttpServletRequest request, HandlerMethod handler) {
         Map<String, String> requestPathViolationMap = new HashMap<>();
         requestPathViolationMap.putAll(checkPaymentProductByRequest(request));
         requestPathViolationMap.putAll(getPaymentTypeViolationMap(handler));
@@ -97,17 +100,17 @@ public class RequestValidatorService {
         return requestPathViolationMap;
     }
 
-    Map<String, String> getPaymentTypeViolationMap(Object handler) {
-        return Optional.ofNullable(classMap.get(((HandlerMethod) handler).getBeanType()))
+    Map<String, String> getPaymentTypeViolationMap(HandlerMethod handler) {
+        return Optional.ofNullable(classMap.get(handler.getBeanType()))
                    .map(this::getViolationMapForPaymentType)
                    .orElseGet(Collections::emptyMap);
     }
 
-    Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, Object handler) {
+    Map<String, String> getRequestHeaderViolationMap(HttpServletRequest request, HandlerMethod handler) {
 
         Map<String, String> requestHeadersMap = getRequestHeadersMap(request);
 
-        RequestHeader headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap, ((HandlerMethod) handler).getBeanType());
+        RequestHeader headerImpl = HeadersFactory.getHeadersImpl(requestHeadersMap, handler.getBeanType());
 
         if (headerImpl instanceof ErrorMessageHeaderImpl) {
             return Collections.singletonMap("Wrong header arguments: ",

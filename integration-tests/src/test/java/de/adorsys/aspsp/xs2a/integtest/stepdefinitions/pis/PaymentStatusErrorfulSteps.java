@@ -24,13 +24,11 @@ import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -54,39 +52,35 @@ public class PaymentStatusErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^Psu requests the payment status of a payment with a non existing payment-id (.*) by using the payment-service (.*)$")
+    @Given("^Psu requests the payment status of a payment with payment-id (.*) by using the payment-service (.*)$")
     public void setPaymentParameters(String paymentId, String paymentService) {
         context.setPaymentId(paymentId);
         context.setPaymentService(paymentService);
     }
 
     @And("^the errorful set of data (.*)$")
-    public void loadTestDataErrorful(String dataFileName) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
+    public void loadErrorfulTestData(String dataFileName) throws IOException {
+        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, TppMessages>>() {
         });
 
         context.setTestData(data);
     }
 
-    @When("^PSU requests the status of the payment without an existing payment-id$")
+    @When("^PSU requests the status of the payment with error$")
     public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
-        HttpEntity<HashMap> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
+        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
                 context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
                 HttpMethod.GET,
                 entity,
-                TppMessages.class);
+                HashMap.class);
         } catch (RestClientResponseException rex) {
-            handleRequestError(rex);
+            context.handleRequestError(rex);
         }
     }
 
-    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
-        context.setTppmessage(tppMessages);
-    }
+    // @Then("^an error response code and the appropriate error response are received$")
+    // See GlobalErrorfulSteps
 }

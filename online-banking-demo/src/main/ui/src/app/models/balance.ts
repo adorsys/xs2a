@@ -38,13 +38,15 @@ export interface Balance {
     referenceDate?: string;
 }
 export namespace Balance {
-    export type BalanceTypeEnum = 'CLOSING_BOOKED' | 'EXPECTED' | 'AUTHORISED' | 'OPENING_BOOKED' | 'INTERIM_AVAILABLE' | 'FORWARD_AVAILABLE';
+    export type BalanceTypeEnum = 'CLOSING_BOOKED' | 'EXPECTED' | 'AUTHORISED' | 'OPENING_BOOKED' | 'INTERIM_AVAILABLE' | 'FORWARD_AVAILABLE' | 'NON_INVOICED' | 'AVAILABLE';
     export const BalanceTypeEnum = {
         CLOSINGBOOKED: 'CLOSING_BOOKED' as BalanceTypeEnum,
         EXPECTED: 'EXPECTED' as BalanceTypeEnum,
         AUTHORISED: 'AUTHORISED' as BalanceTypeEnum,
         OPENINGBOOKED: 'OPENING_BOOKED' as BalanceTypeEnum,
         INTERIMAVAILABLE: 'INTERIM_AVAILABLE' as BalanceTypeEnum,
-        FORWARDAVAILABLE: 'FORWARD_AVAILABLE' as BalanceTypeEnum
+        FORWARDAVAILABLE: 'FORWARD_AVAILABLE' as BalanceTypeEnum,
+        NONINVOICED: 'NON_INVOICED' as BalanceTypeEnum,
+        AVAILABLE: 'AVAILABLE' as BalanceTypeEnum
     }
 }

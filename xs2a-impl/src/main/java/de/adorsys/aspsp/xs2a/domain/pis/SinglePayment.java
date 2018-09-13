@@ -18,11 +18,11 @@ package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
-import de.adorsys.aspsp.xs2a.domain.Amount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.address.Address;
-import de.adorsys.aspsp.xs2a.domain.code.BICFI;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,6 +41,8 @@ import java.util.Set;
 @ApiModel(description = "Payment Initialisation Request", value = "SinglePayments")
 public class SinglePayment implements AccountReferenceCollector {
 
+    private String paymentId;
+
     @Size(max = 35)
     @ApiModelProperty(value = "end to end identification", example = "RI-123456789")
     private String endToEndIdentification;
@@ -49,6 +51,7 @@ public class SinglePayment implements AccountReferenceCollector {
     @ApiModelProperty(value = "debtor account", required = true)
     private AccountReference debtorAccount;
 
+    @Deprecated // Since 1.2
     @Size(max = 70)
     @ApiModelProperty(value = "ultimate debtor", example = "Mueller")
     private String ultimateDebtor;
@@ -56,14 +59,14 @@ public class SinglePayment implements AccountReferenceCollector {
     @Valid
     @NotNull
     @ApiModelProperty(value = "instructed amount", required = true)
-    private Amount instructedAmount;
+    private Xs2aAmount instructedAmount;
 
     @NotNull
     @ApiModelProperty(value = "creditor account", required = true)
     private AccountReference creditorAccount;
 
     @ApiModelProperty(value = "creditor agent")
-    private BICFI creditorAgent;
+    private String creditorAgent;
 
     @NotNull
     @Size(max = 70)
@@ -72,28 +75,36 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @Valid
     @ApiModelProperty(value = "creditor Address")
-    private Address creditorAddress;
+    private Xs2aAddress creditorAddress;
 
+    @Deprecated // Since 1.2
     @Size(max = 70)
     @ApiModelProperty(value = "ultimate creditor", example = "Telekom")
     private String ultimateCreditor;
 
+    @Deprecated // Since 1.2
     @ApiModelProperty(value = "purpose code")
-    private PurposeCode purposeCode;
+    private Xs2aPurposeCode purposeCode;
 
     @Size(max = 140)
     @ApiModelProperty(value = "remittance information unstructured", example = "Ref. Number TELEKOM-1222")
     private String remittanceInformationUnstructured;
 
+    @Deprecated // Since 1.2
     @Valid
     @ApiModelProperty(value = "remittance information structured")
     private Remittance remittanceInformationStructured;
 
+    @Deprecated // Since 1.2
     @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
+    @Deprecated // Since 1.2
     @ApiModelProperty(value = "requested execution time", example = "2020-01-01T15:30:35.035Z")
     private LocalDateTime requestedExecutionTime;
+
+    @ApiModelProperty(value = "Transaction status", example = "Pending")
+    private Xs2aTransactionStatus transactionStatus;
 
     @JsonIgnore
     public boolean isValidExecutionDateAndTime() { //TODO Should be removed with https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/167

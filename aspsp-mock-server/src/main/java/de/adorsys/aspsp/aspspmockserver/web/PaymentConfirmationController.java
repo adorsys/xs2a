@@ -45,7 +45,7 @@ public class PaymentConfirmationController {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity generateAndSendTan(Principal principal) {
+    public ResponseEntity<Void> generateAndSendTan(Principal principal) {
         return tanConfirmationService.generateAndSendTanForPsuByName(principal.getName())
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
@@ -57,9 +57,9 @@ public class PaymentConfirmationController {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity confirmTan(@RequestBody Confirmation confirmation) {
+    public ResponseEntity confirmTan(@RequestBody Confirmation confirmation, Principal principal) {
         return paymentService.getPaymentById(confirmation.getPaymentId()).isPresent()
-                   ? tanConfirmationService.confirmTan(confirmation.getIban(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.PAYMENT)
+                   ? tanConfirmationService.confirmTan(principal.getName(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.PAYMENT)
                    : new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request"), HttpStatus.BAD_REQUEST);
     }
 

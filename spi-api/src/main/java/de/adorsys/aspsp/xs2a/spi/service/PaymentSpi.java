@@ -16,13 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public interface PaymentSpi {
      * Initiates a single payment at ASPSP
      *
      * @param spiSinglePayment single payment to be sent for saving at ASPSP
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
@@ -41,7 +42,7 @@ public interface PaymentSpi {
      * Initiates a periodic payment at ASPSP
      *
      * @param periodicPayment  periodic payment to be sent for saving at ASPSP
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
@@ -51,7 +52,7 @@ public interface PaymentSpi {
      * Initiates a bulk payment at ASPSP
      *
      * @param payments         bulk payment to be sent for saving at ASPSP
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
@@ -62,7 +63,7 @@ public interface PaymentSpi {
      *
      * @param paymentId        ASPSP identifier of a payment
      * @param paymentType      Type of payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return payment status
      */
@@ -71,10 +72,10 @@ public interface PaymentSpi {
     /**
      * Returns a single payment by its ASPSP identifier
      *
-     * @param paymentType    Type of payment
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of a payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param paymentType      Type of payment
+     * @param paymentProduct   The addressed payment product
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
      */
@@ -83,10 +84,10 @@ public interface PaymentSpi {
     /**
      * Returns a periodic payment by its ASPSP identifier
      *
-     * @param paymentType    Type of payment
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of a payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param paymentType      Type of payment
+     * @param paymentProduct   The addressed payment product
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
      */
@@ -95,12 +96,53 @@ public interface PaymentSpi {
     /**
      * Returns a bulk payment by its ASPSP identifier
      *
-     * @param paymentType    Type of payment
-     * @param paymentProduct The addressed payment product
-     * @param paymentId      ASPSP identifier of a payment
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.<br>
+     * @param paymentType      Type of payment
+     * @param paymentProduct   The addressed payment product
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
      */
     SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
+
+    /**
+     * Authorises psu and returns current autorization status
+     *
+     * @param psuId            ASPSP identifier of the psu
+     * @param password         Psu's password
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return success or failure authorization status
+     */
+    SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
+
+    /**
+     * Returns a list of SCA methods for PSU by its login
+     *
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return a list of SCA methods applicable for specified PSU
+     */
+    SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(AspspConsentData aspspConsentData);
+
+    /**
+     * Returns a bulk payment by its ASPSP identifier
+     *
+     * @param pisPaymentType   Type of payment
+     * @param pisPayments      List of payments for execution
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return execution payment id
+     */
+    SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments, AspspConsentData aspspConsentData);
+
+    /**
+     * Performs strong customer authorization
+     *
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     */
+    void performStrongUserAuthorisation(AspspConsentData aspspConsentData);
+
+    void applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
 }

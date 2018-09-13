@@ -4,7 +4,7 @@ setting:
  combinedServiceIndicator: false
  availablePaymentProducts: sepa-credit-transfers, instant-sepa-credit-transfers
  availablePaymentTypes: bulk, periodic, delayed
- scaApproach: REDIRECT
+ scaApproach: EMBEDDED
  tppSignatureRequired: false
  bankOfferedConsentSupport: false
  pisRedirectUrlToAspsp: http://localhost:4200/
@@ -15,4 +15,4 @@ setting:
  consentLifetime: 0
  transactionLifetime: 0
  allPsd2Support: false
- authorisationStartType: IMPLICIT
+ authorisationStartType: EXPLICIT

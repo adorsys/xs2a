@@ -1,0 +1,41 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "psu-ip-address": "192.168.0.26",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
+    },
+    "body": {}
+  },
+  "response": {
+    "header": {
+    },
+    "body": {
+      "endToEndIdentification": "Mueller-123456789",
+      "debtorAccount": {
+        "currency": "EUR",
+        "iban": "DE52500105173911841934"
+      },
+      "instructedAmount": {
+        "currency": "EUR",
+        "amount": "150.00"
+      },
+      "creditorAccount": {
+        "currency": "EUR",
+        "iban": "DE06500105171657611553"
+      },
+      "creditorAgent": "AAAADEBBXXX",
+      "creditorName": "Jochen Mueller",
+      "creditorAddress": {
+        "buildingNumber": "1",
+        "city": "Nürnberg",
+        "country": "DE",
+        "postalCode": "90429",
+        "street": "Fürther Straße"
+      },
+      "remittanceInformationUnstructured": "Ref. Number Mueller-1111",
+      "transactionStatus": "RCVD"
+    }
+  }
+}
+

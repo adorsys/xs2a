@@ -26,48 +26,32 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.aspsp.xs2a.component.DateTimeDeserializer;
 import de.adorsys.aspsp.xs2a.component.PaymentTypeEnumConverter;
-import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
-import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
-import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.consent.PisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.payment.*;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
-import de.adorsys.aspsp.xs2a.spi.service.ConsentSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.AUTHORIZATION_HEADER;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
-
-    private final AspspProfileService aspspProfileService;
-
-    private final KeycloakInvokerService keycloakInvokerService;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -124,41 +108,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Bean
     public Validator validator() {
         return Validation.buildDefaultValidatorFactory().getValidator();
-    }
-
-    @Bean
-    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public BearerToken getBearerToken(HttpServletRequest request) {
-        return new BearerToken(getAccessToken(request));
-    }
-
-    private String getAccessToken(HttpServletRequest request) {
-        ScaApproach scaApproach = aspspProfileService.readScaApproach();
-        String accessToken = null;
-        if (OAUTH == scaApproach) {
-            accessToken = obtainAccessTokenFromHeader(request);
-        } else if (REDIRECT == scaApproach) {
-            accessToken = keycloakInvokerService.obtainAccessToken();
-        }
-        return Optional.ofNullable(accessToken)
-                   .orElseThrow(IllegalArgumentException::new);
-    }
-
-    private String obtainAccessTokenFromHeader(HttpServletRequest request) {
-        return request.getHeader(AUTHORIZATION_HEADER);
-    }
-
-    @Bean
-    public ScaPaymentService scaPaymentService(ConsentSpi consentSpi, PaymentMapper paymentMapper, PaymentSpi paymentSpi, PisConsentMapper pisConsentMapper) {
-        ScaApproach scaApproach = aspspProfileService.readScaApproach();
-        if (OAUTH == scaApproach) {
-            return new OauthScaPaymentService(paymentMapper, paymentSpi);
-        } else if (DECOUPLED == scaApproach) {
-            return new DecoupedScaPaymentService();
-        } else if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService();
-        }
-        return new RedirectScaPaymentService(consentSpi, paymentMapper, paymentSpi, pisConsentMapper);
     }
 
     @Bean

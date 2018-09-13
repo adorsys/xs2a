@@ -1,5 +1,4 @@
 /*
-
  * Copyright 2018-2018 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -40,9 +38,6 @@ import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class SinglePaymentSuccessfulSteps {
@@ -96,21 +91,9 @@ public class SinglePaymentSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate single payment response data$")
-    public void checkResponseCode() {
-        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
-        PaymentInitationRequestResponse201 givenResponseBody = context.getTestData().getResponse().getBody();
+//    @Then("^a successful response code and the appropriate payment response data are received$")
+//    see ./GlobalSuccessfulSteps.java
 
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-
-        assertThat(actualResponse.getBody().getTransactionStatus().name(), equalTo(givenResponseBody.getTransactionStatus()));
-        assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
-    }
-
-    @And("^a redirect URL is delivered to the PSU$")
-    public void checkRedirectUrl() {
-        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
-
-        assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
-    }
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }
