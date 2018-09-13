@@ -93,7 +93,6 @@ export class AisService {
     const body = {
       tanNumber: tan,
       consentId: this.savedConsentId,
-      iban: this.savedIban,
     };
     return this.httpClient.put<string>(this.VALIDATE_TAN_URL, body);
   }
