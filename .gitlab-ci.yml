@@ -32,6 +32,10 @@ variables: &variables
   GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo"
   OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-demo"
 
+  # Online banking UIapp
+  GITLAB_IMAGE_NAME_ONLINE_BANKING_UI: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo/src/main/ui"
+  OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-ui"
+
   GITHUB_REPO: "adorsys/xs2a"
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
   GITLAB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
@@ -98,6 +102,9 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
 
+    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-ui
+    - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
+
 .deploy_docker_copy: &deploy_docker_copy
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
@@ -130,6 +137,10 @@ variables: &variables
     - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
+
+    - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
 
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
@@ -240,6 +251,7 @@ unit_tests:
 
 deploy_develop_stage:
   stage: "deploy:static"
+  when: manual
   <<: *deploy_docker_build
   <<: *deploy_docker_copy
   <<: *helm_env_deploy
