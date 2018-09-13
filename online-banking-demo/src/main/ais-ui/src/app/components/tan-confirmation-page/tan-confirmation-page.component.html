@@ -7,7 +7,7 @@
         <label class="authentication">
           Tan
         </label>
-        <input class="authentication input--text" type="text" name="tan" [(ngModel)]="tan" required>
+        <input class="authentication input--text" type="text" name="tan" [(ngModel)]="tan" autocomplete="off" required>
       </div>
       <div *ngIf="wrongTanAttempt"><p>Your TAN is incorrect. Please try again.</p></div>
       <div class="buttons-small">
