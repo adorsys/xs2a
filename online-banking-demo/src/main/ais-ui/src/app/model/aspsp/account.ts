@@ -1,4 +1,4 @@
-import {Balance} from "./balance";
+import { Balance } from './balance';
 
 export class Account {
   id: string;
@@ -11,6 +11,6 @@ export class Account {
   _links: {
     viewBalances: string;
     viewTransactions: string;
-  }
+  };
 }
 

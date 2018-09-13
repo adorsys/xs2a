@@ -29,5 +29,5 @@ export namespace TransactionStatus {
         RCVD: 'RCVD' as TransactionStatusEnum,
         PDNG: 'PDNG' as TransactionStatusEnum,
         RJCT: 'RJCT' as TransactionStatusEnum
-    }
+    };
 }

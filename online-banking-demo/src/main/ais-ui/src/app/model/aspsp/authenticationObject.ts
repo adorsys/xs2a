@@ -43,5 +43,5 @@ export namespace AuthenticationObject {
         CHIPOTP: 'CHIP_OTP' as AuthenticationTypeEnum,
         PHOTOOTP: 'PHOTO_OTP' as AuthenticationTypeEnum,
         PUSHOTP: 'PUSH_OTP' as AuthenticationTypeEnum
-    }
+    };
 }

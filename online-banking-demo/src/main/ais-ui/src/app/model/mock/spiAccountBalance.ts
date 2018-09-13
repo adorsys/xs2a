@@ -28,5 +28,5 @@ export namespace SpiAccountBalance {
         OPENINGBOOKED: 'OPENING_BOOKED' as SpiBalanceTypeEnum,
         INTERIMAVAILABLE: 'INTERIM_AVAILABLE' as SpiBalanceTypeEnum,
         FORWARDAVAILABLE: 'FORWARD_AVAILABLE' as SpiBalanceTypeEnum
-    }
+    };
 }

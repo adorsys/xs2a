@@ -50,5 +50,5 @@ export namespace SpiPeriodicPayment {
         RCVD: 'RCVD' as PaymentStatusEnum,
         PDNG: 'PDNG' as PaymentStatusEnum,
         RJCT: 'RJCT' as PaymentStatusEnum
-    }
+    };
 }

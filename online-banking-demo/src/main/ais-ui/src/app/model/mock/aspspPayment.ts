@@ -51,12 +51,12 @@ export namespace AspspPayment {
         RCVD: 'RCVD' as PaymentStatusEnum,
         PDNG: 'PDNG' as PaymentStatusEnum,
         RJCT: 'RJCT' as PaymentStatusEnum
-    }
+    };
     export type PisPaymentTypeEnum = 'BULK' | 'PERIODIC' | 'FUTURE_DATED' | 'SINGLE';
     export const PisPaymentTypeEnum = {
         BULK: 'BULK' as PisPaymentTypeEnum,
         PERIODIC: 'PERIODIC' as PisPaymentTypeEnum,
         FUTUREDATED: 'FUTURE_DATED' as PisPaymentTypeEnum,
         SINGLE: 'SINGLE' as PisPaymentTypeEnum
-    }
+    };
 }

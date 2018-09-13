@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Account} from "./account";
+import { Account } from './account';
 
 export interface AccountsResponse {
   accountList: Account[];

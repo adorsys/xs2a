@@ -46,5 +46,5 @@ export namespace Balance {
         OPENINGBOOKED: 'OPENING_BOOKED' as BalanceTypeEnum,
         INTERIMAVAILABLE: 'INTERIM_AVAILABLE' as BalanceTypeEnum,
         FORWARDAVAILABLE: 'FORWARD_AVAILABLE' as BalanceTypeEnum
-    }
+    };
 }

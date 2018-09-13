@@ -83,5 +83,5 @@ export namespace ResponseEntity {
         _509: '509' as StatusCodeEnum,
         _510: '510' as StatusCodeEnum,
         _511: '511' as StatusCodeEnum
-    }
+    };
 }

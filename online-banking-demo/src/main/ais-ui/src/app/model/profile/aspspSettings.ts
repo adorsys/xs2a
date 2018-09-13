@@ -33,13 +33,13 @@ export namespace AspspSettings {
         BOOKED: 'BOOKED' as AvailableBookingStatusesEnum,
         PENDING: 'PENDING' as AvailableBookingStatusesEnum,
         BOTH: 'BOTH' as AvailableBookingStatusesEnum
-    }
+    };
     export type MulticurrencyAccountLevelEnum = 'SUBACCOUNT' | 'AGGREGATION' | 'AGGREGATION_AND_SUBACCOUNT';
     export const MulticurrencyAccountLevelEnum = {
         SUBACCOUNT: 'SUBACCOUNT' as MulticurrencyAccountLevelEnum,
         AGGREGATION: 'AGGREGATION' as MulticurrencyAccountLevelEnum,
         AGGREGATIONANDSUBACCOUNT: 'AGGREGATION_AND_SUBACCOUNT' as MulticurrencyAccountLevelEnum
-    }
+    };
     export type SupportedAccountReferenceFieldsEnum = 'IBAN' | 'BBAN' | 'PAN' | 'MASKEDPAN' | 'MSISDN';
     export const SupportedAccountReferenceFieldsEnum = {
         IBAN: 'IBAN' as SupportedAccountReferenceFieldsEnum,
@@ -47,5 +47,5 @@ export namespace AspspSettings {
         PAN: 'PAN' as SupportedAccountReferenceFieldsEnum,
         MASKEDPAN: 'MASKEDPAN' as SupportedAccountReferenceFieldsEnum,
         MSISDN: 'MSISDN' as SupportedAccountReferenceFieldsEnum
-    }
+    };
 }

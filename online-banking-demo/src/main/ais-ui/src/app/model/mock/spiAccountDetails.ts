@@ -30,5 +30,5 @@ export namespace SpiAccountDetails {
     export type CashSpiAccountTypeEnum = 'CURRENT_ACCOUNT';
     export const CashSpiAccountTypeEnum = {
         ACCOUNT: 'CURRENT_ACCOUNT' as CashSpiAccountTypeEnum
-    }
+    };
 }
