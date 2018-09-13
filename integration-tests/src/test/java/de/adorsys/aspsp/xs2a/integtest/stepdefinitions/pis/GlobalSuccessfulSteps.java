@@ -76,7 +76,7 @@ public class GlobalSuccessfulSteps {
         assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
         assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
 
-        // Todo: Take asserts back in when respective response headers are implemented
+        // TODO: Take asserts back in when respective response headers are implemented (https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/289)
         // assertThat(actualResponse.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
         //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
 
