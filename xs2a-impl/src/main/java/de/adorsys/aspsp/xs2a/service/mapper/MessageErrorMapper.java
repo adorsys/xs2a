@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.model.TppMessageGeneric;
 import de.adorsys.psd2.model.TppMessages;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +42,7 @@ public class MessageErrorMapper {
         return Optional.ofNullable(errorCodes)
                    .map(m -> Arrays.stream(m)
                                  .filter(Objects::nonNull)
-                                 .map(str -> mapToGenericError(str, "n/a"))  //TODO add actual path
+                                 .map(str -> mapToGenericError(str, "n/a"))  //TODO add actual path https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/300
                                  .collect(Collectors.toList()))
                    .map(this::mapTppMessageGenericListToTppMessages)
                    .orElse(null);
@@ -51,7 +52,6 @@ public class MessageErrorMapper {
         return Optional.ofNullable(error)
                    .map(MessageError::getTppMessages)
                    .map(e -> e.stream()
-                                 .filter(Objects::nonNull)
                                  .map(this::mapToGenericError)
                                  .collect(Collectors.toList()))
                    .map(this::mapTppMessageGenericListToTppMessages)
@@ -70,20 +70,17 @@ public class MessageErrorMapper {
 
     private TppMessageGeneric mapToGenericError(TppMessageInformation info) {
         return Optional.ofNullable(info)
+                   .filter(str -> Objects.nonNull(str.getMessageErrorCode()))
                    .map(i -> mapToGenericError(i.getMessageErrorCode(), i.getPath()))
                    .orElse(null);
     }
 
-    private TppMessageGeneric mapToGenericError(MessageErrorCode code, String path) {
-        return Optional.ofNullable(code)
-                   .map(c -> {
-                       TppMessageGeneric tppMessage = new TppMessageGeneric();
-                       tppMessage.setCategory(TppMessageCategory.ERROR);
-                       tppMessage.setCode(code);
-                       tppMessage.setPath(path);
-                       tppMessage.setText(messageService.getMessage(c.name()));
-                       return tppMessage;
-                   })
-                   .orElse(null);
+    private TppMessageGeneric mapToGenericError(@NonNull MessageErrorCode code, @NonNull String path) {
+        TppMessageGeneric tppMessage = new TppMessageGeneric();
+        tppMessage.setCategory(TppMessageCategory.ERROR);
+        tppMessage.setCode(code);
+        tppMessage.setPath(path);
+        tppMessage.setText(messageService.getMessage(code.name()));
+        return tppMessage;
     }
 }
