@@ -51,6 +51,7 @@ public class AspspProfileServiceTest {
     private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
+    private static final AuthorisationStartType AUTHORIZATION_START_TYPE = AuthorisationStartType.IMPLICIT;
 
     @InjectMocks
     private AspspProfileService aspspProfileService;
@@ -90,6 +91,8 @@ public class AspspProfileServiceTest {
             .thenReturn(ALL_PSD_2_SUPPORT);
         when(profileConfiguration.isBankOfferedConsentSupport())
             .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
+        when(profileConfiguration.getAuthorisationStartType())
+            .thenReturn(AUTHORIZATION_START_TYPE);
     }
 
     @Test
@@ -116,7 +119,6 @@ public class AspspProfileServiceTest {
             COMBINED_SERVICE_INDICATOR,
             AVAILABLE_PAYMENT_PRODUCTS,
             AVAILABLE_PAYMENT_TYPES,
-            SCA_APPROACH,
             TPP_SIGNATURE_REQUIRED,
             PIS_REDIRECT_LINK,
             AIS_REDIRECT_LINK,
@@ -126,7 +128,8 @@ public class AspspProfileServiceTest {
             SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
             CONSENT_LIFETIME,
             TRANSACTION_LIFETIME,
-            ALL_PSD_2_SUPPORT);
+            ALL_PSD_2_SUPPORT,
+            AUTHORIZATION_START_TYPE);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.aspsp.xs2a.domain.code.FrequencyCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -47,7 +47,7 @@ public class PeriodicPayment extends SinglePayment {
 
     @NotNull
     @ApiModelProperty(name = "frequency", required = true, example = "ANNUAL")
-    private FrequencyCode frequency;
+    private Xs2aFrequencyCode frequency;
 
     @Min(1)
     @Max(31)

@@ -16,13 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
-import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.Amount;
-import de.adorsys.aspsp.xs2a.domain.Balance;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
-import de.adorsys.aspsp.xs2a.domain.code.PurposeCode;
+import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
 import org.junit.Test;
 
@@ -30,22 +28,23 @@ import java.time.*;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AccountModelMapperTest {
 
     @Test
     public void testBalanceMapping() {
-        Balance balance = createBalance();
+        Xs2aBalance balance = createBalance();
 
         de.adorsys.psd2.model.Balance result = mapToBalance(balance);
         assertNotNull(result);
 
-        Amount expectedBalanceAmount = balance.getBalanceAmount();
+        Xs2aAmount expectedBalanceAmount = balance.getBalanceAmount();
         de.adorsys.psd2.model.Amount actualBalanceAmount = result.getBalanceAmount();
         assertNotNull(expectedBalanceAmount);
 
-        assertEquals(expectedBalanceAmount.getContent(), actualBalanceAmount.getAmount());
+        assertEquals(expectedBalanceAmount.getAmount(), actualBalanceAmount.getAmount());
         assertEquals(expectedBalanceAmount.getCurrency().getCurrencyCode(), actualBalanceAmount.getCurrency());
         assertEquals(balance.getBalanceType().name(), result.getBalanceType().name());
 
@@ -63,15 +62,15 @@ public class AccountModelMapperTest {
 
     @Test
     public void testMapToAccountList() {
-        List<AccountDetails> accountDetailsList = new ArrayList<>();
-        Balance inputBalance = createBalance();
+        List<Xs2aAccountDetails> accountDetailsList = new ArrayList<>();
+        Xs2aBalance inputBalance = createBalance();
 
-        accountDetailsList.add(new AccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", new ArrayList<Balance>()));
-        accountDetailsList.add(new AccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", Arrays.asList(inputBalance)));
-        AccountDetails accountDetails = new AccountDetails("y1", "y2", "y3", "y4", "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CURRENT_ACCOUNT, "y11", new ArrayList<Balance>());
+        accountDetailsList.add(new Xs2aAccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", null, null, new ArrayList<>()));
+        accountDetailsList.add(new Xs2aAccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", null, null, Arrays.asList(inputBalance)));
+        Xs2aAccountDetails accountDetails = new Xs2aAccountDetails("y1", "y2", "y3", "y4", "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CURRENT_ACCOUNT, "y11", null, null, new ArrayList<>());
         accountDetails.setLinks(createLinks());
         accountDetailsList.add(accountDetails);
-        Map<String, List<AccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
+        Map<String, List<Xs2aAccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
 
         AccountList result = mapToAccountList(accountDetailsMap);
         assertNotNull(result);
@@ -124,11 +123,11 @@ public class AccountModelMapperTest {
         TransactionDetails transactionDetails = mapToTransaction(transactions);
         assertNotNull(transactionDetails);
 
-        Amount amount = transactions.getAmount();
+        Xs2aAmount amount = transactions.getAmount();
         de.adorsys.psd2.model.Amount amountTarget = transactionDetails.getTransactionAmount();
         assertNotNull(amountTarget);
 
-        assertEquals(amount.getContent(), amountTarget.getAmount());
+        assertEquals(amount.getAmount(), amountTarget.getAmount());
         assertEquals(amount.getCurrency().getCurrencyCode(), amountTarget.getCurrency());
 
         BankTransactionCode bankTransactionCodeCode = transactions.getBankTransactionCodeCode();
@@ -157,7 +156,7 @@ public class AccountModelMapperTest {
         assertEquals(expectedDebtorAccount.getIban(), actualDebtorAccount.getIban());
         assertEquals(expectedDebtorAccount.getCurrency().getCurrencyCode(), actualDebtorAccount.getCurrency());
 
-        PurposeCode expectedPurposeCode = transactions.getPurposeCode();
+        Xs2aPurposeCode expectedPurposeCode = transactions.getPurposeCode();
         assertNotNull(expectedPurposeCode);
 
         de.adorsys.psd2.model.PurposeCode actualPurposeCode = transactionDetails.getPurposeCode();
@@ -174,9 +173,9 @@ public class AccountModelMapperTest {
 
     @Test
     public void testMapToAccountReport() {
-        Transactions [] bookedTransactions = { createTransactions(), createTransactions(), createTransactions()};
-        Transactions [] pendingTransactions = { createTransactions(), createTransactions()};
-        AccountReport accountReport = new AccountReport(bookedTransactions, pendingTransactions);
+        Transactions[] bookedTransactions = {createTransactions(), createTransactions(), createTransactions()};
+        Transactions[] pendingTransactions = {createTransactions(), createTransactions()};
+        Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions);
         accountReport.setLinks(createLinks());
 
         de.adorsys.psd2.model.AccountReport result = mapToAccountReport(accountReport);
@@ -195,13 +194,12 @@ public class AccountModelMapperTest {
 
         Map links = result.getLinks();
         assertEquals(accountReport.getLinks().getScaOAuth(), links.get("scaOAuth"));
-        assertEquals(3, links.size());
     }
 
-    private Balance createBalance() {
-        Balance balance = new Balance();
+    private Xs2aBalance createBalance() {
+        Xs2aBalance balance = new Xs2aBalance();
 
-        Amount amount = createAmount();
+        Xs2aAmount amount = createAmount();
 
         balance.setBalanceAmount(amount);
         balance.setBalanceType(BalanceType.AUTHORISED);
@@ -211,10 +209,10 @@ public class AccountModelMapperTest {
         return balance;
     }
 
-    private Amount createAmount() {
-        Amount amount = new Amount();
+    private Xs2aAmount createAmount() {
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setCurrency(Currency.getInstance("EUR"));
-        amount.setContent("1000");
+        amount.setAmount("1000");
         return amount;
     }
 
@@ -231,7 +229,7 @@ public class AccountModelMapperTest {
 
     private Transactions createTransactions() {
         Transactions transactions = new Transactions();
-        Amount amount = createAmount();
+        Xs2aAmount amount = createAmount();
         transactions.setAmount(amount);
         transactions.setBankTransactionCodeCode(new BankTransactionCode("code"));
         transactions.setBookingDate(LocalDate.now());
@@ -242,7 +240,7 @@ public class AccountModelMapperTest {
         transactions.setDebtorName("Debtor Name");
         transactions.setEndToEndId("endToEndId");
         transactions.setMandateId("mandateId");
-        transactions.setPurposeCode(new PurposeCode("BKDF"));
+        transactions.setPurposeCode(new Xs2aPurposeCode("BKDF"));
         transactions.setRemittanceInformationStructured("setRemittanceInformationStructured");
         transactions.setRemittanceInformationUnstructured("setRemittanceInformationUnstructured");
         transactions.setTransactionId("transactionId");

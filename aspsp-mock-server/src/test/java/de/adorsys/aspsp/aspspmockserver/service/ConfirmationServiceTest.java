@@ -20,6 +20,7 @@ import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import org.junit.Before;
@@ -30,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -37,8 +39,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-
-import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConfirmationServiceTest {
@@ -53,6 +53,7 @@ public class ConfirmationServiceTest {
     private static final String TAN_NUMBER = "123456";
     private static final String WRONG_TAN_NUMBER = "wrong tan number";
     private static final String CONSENT_ID = "6d4b403b-f5f5-41c0-847f-b6abf1edb102";
+    private final String USER_NAME = "aspsp";
 
     @InjectMocks
     private TanConfirmationService tanConfirmationService;
@@ -89,9 +90,10 @@ public class ConfirmationServiceTest {
             .thenReturn(Collections.singletonList(getUnusedTan()));
         when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_2, TanStatus.UNUSED))
             .thenReturn(Collections.emptyList());
+        when(accountService.getPsuIdByName(USER_NAME))
+            .thenReturn(Optional.empty());
         when(accountService.getPsuIdByName(WRONG_NAME))
             .thenReturn(Optional.empty());
-
     }
 
     @Test
@@ -104,18 +106,9 @@ public class ConfirmationServiceTest {
     }
 
     @Test
-    public void isTanNumberValidByIban_Success() {
-        //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_1, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
-
-        //Then
-        assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
     public void isTanNumberValidByIban_Failure() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_1, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(USER_NAME, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -124,7 +117,7 @@ public class ConfirmationServiceTest {
     @Test
     public void isTanNumberValidByIban_TanStatusValid() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_2, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(USER_NAME, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -133,18 +126,18 @@ public class ConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusInvalid() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_1, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(USER_NAME, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     private Psu getPsu1() {
-        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null);
+        return new Psu(PSU_ID_1, "test1@gmail.com", "aspsp1", "zzz", null, null, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private Psu getPsu2() {
-        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null);
+        return new Psu(PSU_ID_2, "test2@gmail.com", "aspsp2", "zzz", null, null, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private Tan getUnusedTan() {

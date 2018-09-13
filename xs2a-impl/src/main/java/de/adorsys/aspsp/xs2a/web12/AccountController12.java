@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.web12;
 
-import de.adorsys.aspsp.xs2a.domain.BookingStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -104,14 +104,14 @@ public class AccountController12 implements AccountApi {
 
     @Override
     public ResponseEntity<?> getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<AccountReport> responseObject =
-            accountService.getAccountReportByPeriod(consentID, accountId, dateFrom, dateTo, BookingStatus.forValue(bookingStatus), Optional.ofNullable(withBalance).orElse(false));
+                ResponseObject<Xs2aAccountReport> responseObject =
+            accountService.getAccountReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentID, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
         return responseMapper.ok(responseObject, AccountModelMapper::mapToAccountReport);
     }
 
     @Override
     public ResponseEntity<?> getTransactionDetails(String accountId, String resourceId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<AccountReport> responseObject =
+        ResponseObject<Xs2aAccountReport> responseObject =
             accountService.getAccountReportByTransactionId(consentID, accountId, resourceId);
         return responseMapper.ok(responseObject, AccountModelMapper::mapToAccountReport);
     }

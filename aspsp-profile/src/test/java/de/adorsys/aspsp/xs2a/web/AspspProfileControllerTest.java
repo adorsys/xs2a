@@ -44,7 +44,6 @@ public class AspspProfileControllerTest {
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
-    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
@@ -55,6 +54,7 @@ public class AspspProfileControllerTest {
     private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
+    private static final AuthorisationStartType AUTHORIZATION_START_TYPE = AuthorisationStartType.IMPLICIT;
 
     @Autowired
     private AspspProfileController aspspProfileController;
@@ -102,7 +102,6 @@ public class AspspProfileControllerTest {
             COMBINED_SERVICE_INDICATOR,
             AVAILABLE_PAYMENT_PRODUCTS,
             AVAILABLE_PAYMENT_TYPES,
-            SCA_APPROACH,
             TPP_SIGNATURE_REQUIRED,
             PIS_REDIRECT_LINK,
             AIS_REDIRECT_LINK,
@@ -112,7 +111,8 @@ public class AspspProfileControllerTest {
             SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
             CONSENT_LIFETIME,
             TRANSACTION_LIFETIME,
-            ALL_PSD_2_SUPPORT);
+            ALL_PSD_2_SUPPORT,
+            AUTHORIZATION_START_TYPE);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

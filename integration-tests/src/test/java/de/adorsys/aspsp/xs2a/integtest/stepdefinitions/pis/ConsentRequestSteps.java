@@ -23,15 +23,18 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -59,8 +62,9 @@ public class ConsentRequestSteps {
     @Given("^PSU wants to create a consent (.*)$")
     public void loadTestData(String dataFileName) throws IOException {
 
-        TestData<Consents, ConsentsResponse201> data = mapper.readValue(resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8), new TypeReference<TestData<Consents, ConsentsResponse201>>() {
-        });
+        TestData<Consents, ConsentsResponse201> data = mapper.readValue(
+            resourceToString("/data-input/ais/consent/" + dataFileName, UTF_8),
+            new TypeReference<TestData<Consents, ConsentsResponse201>>() {});
 
         context.setTestData(data);
 
@@ -70,11 +74,8 @@ public class ConsentRequestSteps {
 
     @When("^PSU sends the create consent request$")
     public void sendConsentRequest() throws HttpClientErrorException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAll(context.getTestData().getRequest().getHeader());
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
-        headers.add("Content-Type", "application/json");
-        HttpEntity<Consents> entity = new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
+        HttpEntity<Consents> entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
+            context.getAccessToken());
 
         ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
             context.getBaseUrl() + "/consents",
@@ -94,32 +95,26 @@ public class ConsentRequestSteps {
         assertThat(actualResponse.getBody().getConsentStatus(), equalTo(givenResponseBody.getConsentStatus()));
         assertThat(actualResponse.getBody().getConsentId(), notNullValue());
     }
-      //TODO: Uncomment when solution for Mapping TppMessages and mapping of error responses is found
-//    @When("^PSU sends the create consent request with error$")
-//    public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAll(context.getTestData().getRequest().getHeader());
-//        headers.add("Authorization", "Bearer " + context.getAccessToken());
-//        headers.add("Content-Type", "application/json");
-//        HttpEntity<Consents> entity = new HttpEntity<>(context.getTestData().getRequest().getBody(), headers);
-//        try {
-//            restTemplate.exchange(
-//                context.getBaseUrl() + "/consents",
-//                HttpMethod.POST,
-//                entity,
-//                Consents.class);
-//        } catch (RestClientResponseException rex) {
-//            handleRequestError(rex);
-//        }
-//    }
-//
-//
-//    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
-//        ResponseEntity<CreateConsentResponse> actualResponse = new ResponseEntity<>(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
-//        context.setActualResponse(actualResponse);
-//        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        ITMessageError messageError = objectMapper.readValue(responseBodyAsString, ITMessageError.class);
-//        context.setMessageError(messageError);
-//    }
+
+    @When("^PSU sends the create consent request with error$")
+    public void sendErrorfulConsentRequest() throws HttpClientErrorException, IOException {
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+        try {
+            restTemplate.exchange(
+                context.getBaseUrl() + "/consents",
+                HttpMethod.POST,
+                entity,
+                ConsentsResponse201.class);
+        } catch (RestClientResponseException rex) {
+            handleRequestError(rex);
+        }
+    }
+
+    private void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
+        context.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
+        String responseBodyAsString = exceptionObject.getResponseBodyAsString();
+        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
+        context.setTppMessages(tppMessages);
+    }
 }

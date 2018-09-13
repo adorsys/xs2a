@@ -188,4 +188,14 @@ public class AspspProfileUpdateController {
         aspspProfileService.updateAllPsd2Support(allPsd2Support);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/authorisation-start-type")
+    @ApiOperation(value = "Update type of authorization start. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updateAuthorisationStartType(@RequestBody AuthorisationStartType authorisationStartType) {
+        aspspProfileService.updateAuthorisationStartType(authorisationStartType);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

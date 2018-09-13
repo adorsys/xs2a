@@ -23,4 +23,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class CreatePisConsentResponse {
     private String consentId;
+    private String paymentId;
 }

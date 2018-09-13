@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -40,7 +40,7 @@ public class PaymentController {
 
     @ApiOperation(value = "Get payment information", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = TransactionStatus.class),
+        @ApiResponse(code = 200, message = "OK", response = Xs2aTransactionStatus.class),
         @ApiResponse(code = 404, message = "Not found"),
         @ApiResponse(code = 403, message = "Wrong path variables")})
     @GetMapping(path = "/{payment-service}/{payment-product}/{paymentId}")
@@ -62,6 +62,6 @@ public class PaymentController {
         @PathVariable("payment-product") String paymentProduct,
         @ApiParam(name = "paymentId", value = "529e0507-7539-4a65-9b74-bdf87061e99b", required = true)
         @PathVariable("paymentId") String paymentId) {
-        return responseMapper.ok(paymentService.getPaymentById(paymentType, paymentProduct, paymentId));
+        return responseMapper.ok(paymentService.getPaymentById(paymentType, paymentId));
     }
 }

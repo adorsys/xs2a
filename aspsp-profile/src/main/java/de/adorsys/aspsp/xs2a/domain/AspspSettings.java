@@ -26,7 +26,6 @@ public class AspspSettings {
     private boolean combinedServiceIndicator;
     private List<String> availablePaymentProducts;
     private List<String> availablePaymentTypes;
-    private ScaApproach scaApproach;
     private boolean tppSignatureRequired;
     private String pisRedirectUrlToAspsp;
     private String aisRedirectUrlToAspsp;
@@ -37,4 +36,5 @@ public class AspspSettings {
     private int consentLifetime;
     private int transactionLifetime;
     private boolean allPsd2Support;
+    private AuthorisationStartType authorisationStartType;
 }

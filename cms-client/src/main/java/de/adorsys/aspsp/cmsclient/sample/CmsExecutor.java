@@ -25,10 +25,7 @@ import de.adorsys.aspsp.cmsclient.cms.model.pis.UpdatePaymentConsentStatusMethod
 import de.adorsys.aspsp.cmsclient.core.Configuration;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 import de.adorsys.aspsp.xs2a.consent.api.*;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -66,6 +63,8 @@ public class CmsExecutor {
         getAisConsentById(cmsServiceInvoker);
         getConsentStatusById(cmsServiceInvoker);
         saveConsentActionLog(cmsServiceInvoker);
+        updateConsentAccess(cmsServiceInvoker);
+        updateConsentBlob(cmsServiceInvoker);
         updateConsentStatus(cmsServiceInvoker);
 
         createPaymentConsent(cmsServiceInvoker);
@@ -100,6 +99,22 @@ public class CmsExecutor {
         consentStatusResponse.ifPresent(status -> logger.info("Status of the consent: " + status.getConsentStatus().name()));
     }
 
+    private static void updateConsentAccess(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .build();
+        Optional<CreateAisConsentResponse> updateAccessResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateConsentAccessMethod(buildAccess(), uriParams)));
+        updateAccessResponse.ifPresent(resp -> logger.info("Access was updated in: " + resp.getConsentId()));
+    }
+
+    private static void updateConsentBlob(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .build();
+        Optional<CreateAisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateConsentBlobMethod(buildUpdateBlobRequest(), uriParams)));
+        updateBlobResponse.ifPresent(resp -> logger.info("Blob was updated in: " + resp.getConsentId()));
+    }
+
     private static void updateConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
@@ -125,6 +140,12 @@ public class CmsExecutor {
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         info.setAccounts(singletonList(new AccountInfo("iban-1", "EUR")));
         return info;
+    }
+
+    private static UpdateAisConsentAspspDataRequest buildUpdateBlobRequest() {
+        UpdateAisConsentAspspDataRequest request = new UpdateAisConsentAspspDataRequest();
+        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        return request;
     }
 
     private static void createPaymentConsent(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {

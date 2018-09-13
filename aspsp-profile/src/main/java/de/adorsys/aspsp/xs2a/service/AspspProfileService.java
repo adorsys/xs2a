@@ -34,8 +34,8 @@ public class AspspProfileService {
     /**
      * Reads all aspsp settings (frequency per day, combined service indicator, available payment products, available payment types,
      * is tpp signature required, PIS redirect URL, AIS redirect URL, multicurrency account level, is bank offered consent supported,
-     * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime and allPsd2 support)
-     * except SCA approach
+     * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime, allPsd2 support and
+     * type of authorization start) except SCA approach
      *
      * @return aspsp specific settings method which is stored in profile
      */
@@ -45,7 +45,6 @@ public class AspspProfileService {
             profileConfiguration.isCombinedServiceIndicator(),
             profileConfiguration.getAvailablePaymentProducts(),
             profileConfiguration.getAvailablePaymentTypes(),
-            profileConfiguration.getScaApproach(),
             profileConfiguration.isTppSignatureRequired(),
             profileConfiguration.getPisRedirectUrlToAspsp(),
             profileConfiguration.getAisRedirectUrlToAspsp(),
@@ -55,7 +54,8 @@ public class AspspProfileService {
             profileConfiguration.getSupportedAccountReferenceFields(),
             profileConfiguration.getConsentLifetime(),
             profileConfiguration.getTransactionLifetime(),
-            profileConfiguration.isAllPsd2Support());
+            profileConfiguration.isAllPsd2Support(),
+            profileConfiguration.getAuthorisationStartType());
     }
 
     /**
@@ -206,5 +206,14 @@ public class AspspProfileService {
      */
     public void updateAllPsd2Support(boolean allPsd2Support) {
         profileConfiguration.setAllPsd2Support(allPsd2Support);
+    }
+
+    /**
+     * Update type of authorization start to implicit or explicit
+     *
+     * @param authorisationStartType AllPsd2Support status to substitute existing one
+     */
+    public void updateAuthorisationStartType(AuthorisationStartType authorisationStartType) {
+        profileConfiguration.setAuthorisationStartType(authorisationStartType);
     }
 }

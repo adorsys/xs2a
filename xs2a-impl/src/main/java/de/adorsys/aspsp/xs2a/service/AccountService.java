@@ -16,15 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.AccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReport;
-import de.adorsys.aspsp.xs2a.domain.consent.AccountAccess;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.consent.ais.AisConsentService;
+import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -54,6 +56,7 @@ public class AccountService {
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final AisConsentService aisConsentService;
+    private final Xs2aAisConsentMapper consentMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
 
     /**
@@ -64,19 +67,20 @@ public class AccountService {
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @return List of AccountDetails with Balances if requested and granted by consent
      */
-    public ResponseObject<Map<String, List<AccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance) {
-        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+    public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountDetailsList(String consentId, boolean withBalance) {
+        ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<Map<String, List<AccountDetails>>>builder()
+            return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        List<AccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
-        ResponseObject<Map<String, List<AccountDetails>>> response = accountDetails.isEmpty()
-                                                                         ? ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                                                                         : ResponseObject.<Map<String, List<AccountDetails>>>builder()
-                                                                               .body(Collections.singletonMap("accountList", accountDetails)).build();
-        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.ACCOUNT, response);
+        List<Xs2aAccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = accountDetails.isEmpty()
+                                                                             ? ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
+                                                                                   .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
+                                                                             : ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
+                                                                                   .body(Collections.singletonMap("accountList", accountDetails)).build();
+
+        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, response));
         return response;
     }
 
@@ -89,22 +93,22 @@ public class AccountService {
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @return AccountDetails based on accountId with Balances if requested and granted by consent
      */
-    public ResponseObject<AccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance) {
-        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+    public ResponseObject<Xs2aAccountDetails> getAccountDetails(String consentId, String accountId, boolean withBalance) {
+        ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<AccountDetails>builder()
+            return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
-            return ResponseObject.<AccountDetails>builder()
+            return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
         boolean isValid = withBalance
                               ? consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())
                               : consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getAccounts());
 
-        ResponseObject.ResponseBuilder<AccountDetails> builder = ResponseObject.builder();
+        ResponseObject.ResponseBuilder<Xs2aAccountDetails> builder = ResponseObject.builder();
         if (isValid) {
             builder = withBalance
                           ? builder.body(accountDetails)
@@ -113,7 +117,8 @@ public class AccountService {
             builder = builder
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
-        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.ACCOUNT, builder.build());
+
+        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, builder.build()));
         return builder.build();
     }
 
@@ -124,24 +129,24 @@ public class AccountService {
      * @param accountId String representing a PSU`s Account at ASPSP
      * @return List of AccountBalances based on accountId if granted by consent
      */
-    public ResponseObject<List<Balance>> getBalances(String consentId, String accountId) {
-        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+    public ResponseObject<List<Xs2aBalance>> getBalances(String consentId, String accountId) {
+        ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<List<Balance>>builder()
+            return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
-            return ResponseObject.<List<Balance>>builder()
+            return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
-        ResponseObject<List<Balance>> response = isValid
-                                                     ? ResponseObject.<List<Balance>>builder().body(accountDetails.getBalances()).build()
-                                                     : ResponseObject.<List<Balance>>builder()
-                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<List<Xs2aBalance>> response = isValid
+                                                         ? ResponseObject.<List<Xs2aBalance>>builder().body(accountDetails.getBalances()).build()
+                                                         : ResponseObject.<List<Xs2aBalance>>builder()
+                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, false, TypeAccess.BALANCE, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.BALANCE, response));
         return response;
     }
 
@@ -161,29 +166,29 @@ public class AccountService {
      * @param deltaList     boolean  indicating that the AISP is in favour to get all transactions after the last report access for this PSU on the addressed account
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<AccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
-                                                          LocalDate dateTo, String transactionId, boolean psuInvolved,
-                                                          BookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
-        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+    public ResponseObject<Xs2aAccountReport> getAccountReport(String consentId, String accountId, LocalDate dateFrom,
+                                                              LocalDate dateTo, String transactionId, boolean psuInvolved,
+                                                              Xs2aBookingStatus bookingStatus, boolean withBalance, boolean deltaList) {
+        ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<AccountReport>builder()
+            return ResponseObject.<Xs2aAccountReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
 
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
-            return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<AccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus);
+        Optional<Xs2aAccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus);
 
-        ResponseObject<AccountReport> response = isValid && report.isPresent()
-                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
-                                                     : ResponseObject.<AccountReport>builder()
-                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
+                                                         ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
+                                                         : ResponseObject.<Xs2aAccountReport>builder()
+                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.TRANSACTION, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
     }
 
@@ -192,37 +197,38 @@ public class AccountService {
      * Uses one of two ways to get transaction from ASPSP: 1. By transactionId, 2. By time period limited with dateFrom/dateTo variables
      * Checks if all transactions are related to accounts set in AccountConsent Transactions section
      *
-     * @param consentId     String representing an AccountConsent identification
      * @param accountId     String representing a PSU`s Account at ASPSP
+     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
+     * @param consentId     String representing an AccountConsent identification
      * @param dateFrom      ISO Date representing the value of desired start date of AccountReport
      * @param dateTo        ISO Date representing the value of desired end date of AccountReport (if omitted is set to current date)
      * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
-     * @param withBalance   boolean representing if the responded AccountDetails should contain. Not applicable since v1.1
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<AccountReport> getAccountReportByPeriod(String consentId, String accountId, LocalDate dateFrom,
-                                                                  LocalDate dateTo, BookingStatus bookingStatus, boolean withBalance) {
-        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+
+    public ResponseObject<Xs2aAccountReport> getAccountReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
+                                                                      LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
+        ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<AccountReport>builder()
+            return ResponseObject.<Xs2aAccountReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
 
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
-            return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<AccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo)
-                                             .map(r -> filterByBookingStatus(r, bookingStatus));
+        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo)
+                                                 .map(r -> filterByBookingStatus(r, bookingStatus));
 
-        ResponseObject<AccountReport> response = isValid && report.isPresent()
-                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
-                                                     : ResponseObject.<AccountReport>builder()
-                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
+                                                         ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
+                                                         : ResponseObject.<Xs2aAccountReport>builder()
+                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, withBalance, TypeAccess.TRANSACTION, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
     }
 
@@ -236,42 +242,52 @@ public class AccountService {
      * @param transactionId String representing the ASPSP identification of transaction
      * @return AccountReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<AccountReport> getAccountReportByTransactionId(String consentId, String accountId,
-                                                                         String transactionId) {
-        ResponseObject<AccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+    public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionId(String consentId, String accountId,
+                                                                             String transactionId) {
+        ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<AccountReport>builder()
+            return ResponseObject.<Xs2aAccountReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
 
-        AccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
-            return ResponseObject.<AccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<AccountReport> report = getAccountReportByTransaction(transactionId, accountId);
+        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId);
 
-        ResponseObject<AccountReport> response = isValid && report.isPresent()
-                                                     ? ResponseObject.<AccountReport>builder().body(report.get()).build()
-                                                     : ResponseObject.<AccountReport>builder()
-                                                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
+                                                         ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
+                                                         : ResponseObject.<Xs2aAccountReport>builder()
+                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, false, TypeAccess.TRANSACTION, response);
+        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.TRANSACTION, response));
         return response;
     }
 
-    private List<AccountDetails> getAccountDetailsFromReferences(boolean withBalance, AccountAccess accountAccess) {
+    public Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
+        return Optional.ofNullable(reference) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Refactor to procedure style - we read data inside the stream here
+                   .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban(), new AspspConsentData()).getPayload()) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+                   .map(Collection::stream)
+                   .flatMap(accDts -> accDts
+                                          .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
+                                          .findFirst())
+                   .map(accountMapper::mapToAccountDetails);
+    }
+
+    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(boolean withBalance, Xs2aAccountAccess accountAccess) {
         List<AccountReference> references = withBalance
                                                 ? accountAccess.getBalances()
                                                 : accountAccess.getAccounts();
-        List<AccountDetails> details = getAccountDetailsFromReferences(references);
+        List<Xs2aAccountDetails> details = getAccountDetailsFromReferences(references);
         return withBalance
                    ? details
-                   : accountMapper.mapToAccountDetailsNoBalances(details);
+                   : accountMapper.mapToAccountDetailsListNoBalances(details);
     }
 
-    private List<AccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
+    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
         return CollectionUtils.isEmpty(references)
                    ? Collections.emptyList()
                    : references.stream()
@@ -281,45 +297,41 @@ public class AccountService {
                          .collect(Collectors.toList());
     }
 
-    private Optional<AccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
-                                                     BookingStatus bookingStatus) {
+    private Optional<Xs2aAccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
+                                                         Xs2aBookingStatus bookingStatus) {
         return StringUtils.isNotBlank(transactionId)
                    ? getAccountReportByTransaction(transactionId, accountId)
                    : getAccountReportByPeriod(accountId, dateFrom, dateTo)
                          .map(r -> filterByBookingStatus(r, bookingStatus));
     }
 
-    private AccountReport filterByBookingStatus(AccountReport report, BookingStatus bookingStatus) {
-        return new AccountReport(
-            bookingStatus == BookingStatus.BOOKED || bookingStatus == BookingStatus.BOTH
-                ? report.getBooked() : new Transactions[]{},
-            bookingStatus == BookingStatus.PENDING || bookingStatus == BookingStatus.BOTH
-                ? report.getPending() : new Transactions[]{});
-    }
-
-    private Optional<AccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
+    private Optional<Xs2aAccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId, new AspspConsentData()).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         return accountMapper.mapToAccountReport(transaction
                                                     .map(Collections::singletonList)
                                                     .orElseGet(Collections::emptyList));
     }
 
-    private Optional<AccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
+    private Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
-        return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateTo, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
-    public Optional<AccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
-        return Optional.ofNullable(reference) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Refactor to procedure style - we read data inside the stream here
-                   .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban(), new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload()) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-                   .map(Collection::stream)
-                   .flatMap(accDts -> accDts
-                                          .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
-                                          .findFirst())
-                   .map(accountMapper::mapToAccountDetails);
+    private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {
+        return response.hasError()
+                   ? consentMapper.mapActionStatusError(response.getError().getTppMessage().getMessageErrorCode(), withBalance, access)
+                   : ActionStatus.SUCCESS;
+    }
+
+    private Xs2aAccountReport filterByBookingStatus(Xs2aAccountReport report, Xs2aBookingStatus bookingStatus) {
+        return new Xs2aAccountReport(
+            EnumSet.of(Xs2aBookingStatus.BOOKED, Xs2aBookingStatus.BOTH).contains(bookingStatus)
+                ? report.getBooked() : new Transactions[]{},
+            EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
+                ? report.getPending() : new Transactions[]{});
     }
 }

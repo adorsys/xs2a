@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.aspsp</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.7-SNAPSHOT</version>
     <modules>
         <module>aspsp-idp</module>
         <module>spi-api</module>
@@ -41,7 +41,7 @@
     <packaging>pom</packaging>
 
     <name>xs2a</name>
-    <description>OpenSource PMD2 XS2A API implementation</description>
+    <description>OpenSource PSD2 XS2A API implementation</description>
 
     <url>https://github.com/adorsys/xs2a</url>
 

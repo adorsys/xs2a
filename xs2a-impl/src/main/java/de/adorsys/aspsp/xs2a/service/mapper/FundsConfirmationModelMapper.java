@@ -16,15 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
+import java.util.Optional;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
-import java.util.Optional;
 
 public class FundsConfirmationModelMapper {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.instance();
 
     public static FundsConfirmationRequest mapToFundsConfirmationRequest(ConfirmationOfFunds confirmationOfFunds) {
         return Optional.ofNullable(confirmationOfFunds)

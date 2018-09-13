@@ -23,7 +23,6 @@ import org.springframework.data.annotation.Id;
 @Data
 @AllArgsConstructor
 public class Tan {
-
     @Id
     private String id;
     private String psuId;
@@ -31,15 +30,14 @@ public class Tan {
     private TanStatus tanStatus;
     private int numberOfAttempts;
 
-    public Tan() {
-    }
-
     public Tan(String psuId, String tanNumber) {
         this.psuId = psuId;
         this.tanNumber = tanNumber;
         this.tanStatus = TanStatus.UNUSED;
         this.numberOfAttempts = 0;
     }
+
+    public Tan() {}
 
     public void incrementNumberOfAttempts() {
         this.numberOfAttempts++;

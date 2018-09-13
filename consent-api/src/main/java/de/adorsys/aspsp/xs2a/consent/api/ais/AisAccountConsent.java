@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.ais;
 
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import lombok.Value;
 
@@ -33,4 +34,7 @@ public class AisAccountConsent {
     private boolean withBalance;
     private boolean tppRedirectPreferred;
     private byte[] aspspConsentData;
+    private AisConsentRequestType aisConsentRequestType;
+    private String psuId;
+    private String tppId;
 }

@@ -19,6 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -162,7 +163,7 @@ public class PsuControllerTest {
     }
 
     private Psu getPsu(String psuId, String email, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(PSU_ID, email, PSU_NAME, PSU_PASSWORD, details, products);
+        return new Psu(PSU_ID, email, PSU_NAME, PSU_PASSWORD, details, products, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private List<SpiAccountDetails> getDetails(boolean isEmpty) {

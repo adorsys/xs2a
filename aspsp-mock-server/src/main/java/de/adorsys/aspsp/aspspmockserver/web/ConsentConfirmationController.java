@@ -55,8 +55,8 @@ public class ConsentConfirmationController {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity confirmTan(@RequestBody Confirmation confirmation) {
-        return tanConfirmationService.confirmTan(confirmation.getIban(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.CONSENT);
+    public ResponseEntity confirmTan(@RequestBody Confirmation confirmation, Principal principal) {
+        return tanConfirmationService.confirmTan(principal.getName(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.CONSENT);
     }
 
     @PutMapping(path = "/{consent-id}/{status}")
