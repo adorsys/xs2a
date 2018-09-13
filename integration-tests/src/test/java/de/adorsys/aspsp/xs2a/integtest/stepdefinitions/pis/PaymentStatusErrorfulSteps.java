@@ -52,7 +52,7 @@ public class PaymentStatusErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^Psu requests the payment status of a payment with a non existing payment-id (.*) by using the payment-service (.*)$")
+    @Given("^Psu requests the payment status of a payment with payment-id (.*) by using the payment-service (.*)$")
     public void setPaymentParameters(String paymentId, String paymentService) {
         context.setPaymentId(paymentId);
         context.setPaymentService(paymentService);
@@ -66,7 +66,7 @@ public class PaymentStatusErrorfulSteps {
         context.setTestData(data);
     }
 
-    @When("^PSU requests the status of the payment without an existing payment-id$")
+    @When("^PSU requests the status of the payment with error$")
     public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
         HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
 
