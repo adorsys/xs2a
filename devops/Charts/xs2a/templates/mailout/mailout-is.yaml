@@ -1,0 +1,20 @@
+{{- if and .Values.mailout.enabled (not .Values.mailout.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-mailout
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: mailout
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.mailout.image.name }}:{{ .Values.mailout.image.tag }}
+    referencePolicy:
+      type: Source
+{{- end }}

@@ -1,19 +1,13 @@
-FROM node:8
+FROM centos/nginx-112-centos7
 
-# Create app directory
-WORKDIR /usr/src/app
+CMD ["/usr/libexec/s2i/run"]
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY ./dist ./
+WORKDIR /opt/ui-app
 
-#RUN npm install
-# If you are building your code for production
-# RUN npm install --only=production
+COPY ./dist/prototype-banking/ /opt/app-root/src
+COPY ./devops/nginx.conf /opt/app-root/etc/nginx.default.d/default.conf
 
-# Bundle app source
-COPY . .
-
-EXPOSE 8080
-CMD [ "npm", "start" ]
+USER root
+RUN chgrp -R 0 /opt/app-root/src && \
+    chmod -R g=u /opt/app-root/src
+USER 1001

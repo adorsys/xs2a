@@ -1,0 +1,20 @@
+{{ if and .Values.uiapp.enabled (not .Values.uiapp.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-uiapp
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: uiapp
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: {{ .Values.uiapp.image.name }}:{{ .Values.uiapp.image.tag }}
+      referencePolicy:
+          type: Source
+{{- end }}

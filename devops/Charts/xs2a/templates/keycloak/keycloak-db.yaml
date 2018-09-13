@@ -1,0 +1,138 @@
+{{- if and .Values.keycloak.enabled (eq .Values.keycloak.dbVendor "postgres") }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    {{- with .Values.keycloak.db.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind":"ImageStreamTag",
+          {{- if .Values.keycloak.db.image.namespace }}
+          "namespace": "{{ .Values.keycloak.db.image.namespace }}",
+          {{- end }}
+          "name":"{{- if .Values.keycloak.db.image.stream }}{{ .Values.keycloak.db.image.name }}:{{ default "latest" .Values.keycloak.db.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-keycloak-db:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.containers[?(@.name==\"postgresql\")].image"
+      }{{- if .Values.keycloak.db.metrics.enabled }},{
+        "from": {
+          "kind":"ImageStreamTag",
+          {{- if .Values.keycloak.db.metrics.image.namespace }}
+          "namespace": "{{ .Values.keycloak.db.metrics.image.namespace }}",
+          {{- end }}
+          "name":"{{- if .Values.keycloak.db.metrics.image.stream }}{{ .Values.keycloak.db.metrics.image.name }}:{{ default "latest" .Values.keycloak.db.metrics.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-keycloak-db-metrics:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.containers[?(@.name==\"metrics\")].image"
+      }{{- end }}]
+    checksum/secret: {{ include (print $.Template.BasePath "/keycloak/keycloak-secrets.yaml") . | sha256sum }}
+  name: {{ template "psd2.fullname" . }}-keycloak-db
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: keycloak-db
+    app: {{ template "psd2.fullname" . }}-keycloak
+spec:
+  serviceName: {{ template "psd2.fullname" . }}-keycloak-db-hs
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: keycloak-db
+  replicas: 1
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: keycloak-db
+{{- with .Values.keycloak.db.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: postgresql
+        # redhat hack: invalid image to stop first unused deployment
+        image: " "
+        imagePullPolicy: {{ .Values.keycloak.db.image.pullPolicy }}
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+{{- range $name, $value := .Values.keycloak.db.env }}
+{{- if not ( empty $value) }}
+        - name: {{ $name | quote }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "psd2.fullname" $ }}-keycloak-db
+              key: {{ $name | quote }}
+{{- end }}
+{{- end }}
+        ports:
+        - name: postgresql
+          containerPort: 5432
+          protocol: TCP
+        resources:
+{{ toYaml .Values.keycloak.db.resources | indent 10 }}
+        livenessProbe:
+{{ toYaml .Values.keycloak.db.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.keycloak.db.readinessProbe | indent 10 }}
+{{- if .Values.keycloak.db.persistence.enabled }}
+        volumeMounts:
+        - mountPath: /var/lib/pgsql/data
+          name: data
+{{- end }}
+{{- if .Values.keycloak.db.metrics.enabled }}
+    - name: metrics
+      # redhat hack: invalid image to stop first unused deployment
+      image: " "
+      env:
+      - name: DATA_SOURCE_URI
+        value: localhost:5432/?sslmode=disable
+      - name: DATA_SOURCE_USER
+        valueFrom:
+          secretKeyRef:
+            key: POSTGRESQL_USER
+            name: {{ template "psd2.fullname" . }}-keycloak-db
+      - name: DATA_SOURCE_PASS
+        valueFrom:
+          secretKeyRef:
+            key: POSTGRESQL_PASSWORD
+            name: {{ template "psd2.fullname" . }}-keycloak-db
+      ports:
+      - name: metrics
+        containerPort: 9187
+      {{- if .Values.keycloak.db.metrics.customMetrics }}
+      args: ["-extend.query-path", "/conf/custom-metrics.yaml"]
+      volumeMounts:
+        - name: custom-metrics
+          mountPath: /conf
+          readOnly: true
+      {{- end }}
+      resources:
+{{ toYaml .Values.keycloak.db.metrics.resources | indent 10 }}
+{{- end }}
+{{- if and .Values.keycloak.db.metrics.enabled .Values.keycloak.db.metrics.customMetrics }}
+    volumes:
+      - name: custom-metrics
+          configMap:
+            name: {{ template "psd2.fullname" . }}-keycloak-db-metrics
+            defaultMode: 0555
+{{- end }}
+{{- if .Values.keycloak.db.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+{{- if .Values.keycloak.db.persistence.storageClass }}
+      storageClassName: "{{ .Values.keycloak.db.persistence.storageClass }}"
+{{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.keycloak.db.persistence.size }}
+{{- end }}
+{{- end }}

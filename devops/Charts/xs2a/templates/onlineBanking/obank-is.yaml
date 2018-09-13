@@ -1,0 +1,20 @@
+{{ if and .Values.obank.enabled (not .Values.obank.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-obank
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: OnlineBanking
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      from:
+        kind: DockerImage
+        name: {{ .Values.obank.image.name }}:{{ .Values.obank.image.tag }}
+      referencePolicy:
+          type: Source
+{{- end }}

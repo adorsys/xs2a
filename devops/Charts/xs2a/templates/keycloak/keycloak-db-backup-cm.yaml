@@ -1,0 +1,32 @@
+{{- if and .Values.keycloak.enabled .Values.keycloak.db.backup.enabled (eq .Values.keycloak.dbVendor "postgres") }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "psd2.fullname" . }}-keycloak-backup
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: keycloak-backup
+data:
+  backup.sh: |
+    #!/bin/bash
+
+    if ! mountpoint /data/; then
+      echo "/data/ should be a mountpoint!"
+      exit 1
+    fi
+
+    mkdir -p /data/backup/
+
+    if ! PGPASS=$POSTGRESQL_PASSWORD pg_dump --username="${POSTGRESQL_USER}" "${POSTGRESQL_HOST}" "${POSTGRESQL_DATABASE}" | gzip > "/data/backup/pg_dump_$(date +%Y-%m-%d-%H-%M-%S).sql.gz"; then
+      echo "Unexpected error on pg_dump"
+      exit 1
+    fi
+
+    if ! find /data/backup/ -type f -mtime +{{ .Values.keycloak.db.backup.retention  }} -name '*.gz' -delete; then
+      echo "Unexpected error on backup rotation"
+      exit 1
+    fi
+
+    exit 0
+{{- end }}
