@@ -17,34 +17,48 @@
 package de.adorsys.aspsp.onlinebanking.web;
 
 import de.adorsys.aspsp.onlinebanking.config.EnvironmentConfigurationProperties;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(MockitoJUnitRunner.class)
 public class EnvironmentConfigurationPropertiesControllerTest {
+    private final String MOCK_SERVER_URL = "http://localhost:28080";
+    private final String XS2A_SERVER_URL = "http://localhost:8080";
+    private final String KEYCLOAK_URL = "http://localhost:8081/auth";
+    private final String KEYCLOAK_REALM = "xs2a";
+    private final String KEYCLOAK_CLIENT_ID = "aspsp-mock";
 
-    @Value("${environment.mockServerUrl}")
-    private String mockServerUrl;
-    @Value("${environment.xs2aServerUrl}")
-    private String xs2aServerUrl;
-    @Value("${environment.keycloakConfig.url}")
-    private String url;
-    @Value("${environment.keycloakConfig.realm}")
-    private String realm;
-    @Value("${environment.keycloakConfig.clientId}")
-    private String clientId;
-
-    @Autowired
+    @Mock
+    private EnvironmentConfigurationProperties configurationProperties;
+    @Mock
+    private EnvironmentConfigurationProperties.KeycloakConfig keycloakConfig;
+    @InjectMocks
     private EnvironmentConfigurationPropertiesController configurationPropertiesController;
+
+    @Before
+    public void setUp() {
+        when(configurationProperties.getMockServerUrl())
+            .thenReturn(MOCK_SERVER_URL);
+        when(configurationProperties.getXs2aServerUrl())
+            .thenReturn(XS2A_SERVER_URL);
+        when(configurationProperties.getKeycloakConfig())
+            .thenReturn(keycloakConfig);
+        when(keycloakConfig.getUrl())
+            .thenReturn(KEYCLOAK_URL);
+        when(keycloakConfig.getRealm())
+            .thenReturn(KEYCLOAK_REALM);
+        when(keycloakConfig.getClientId())
+            .thenReturn(KEYCLOAK_CLIENT_ID);
+    }
 
     @Test
     public void getEnvironmentConfigurationProperties() {
@@ -56,19 +70,18 @@ public class EnvironmentConfigurationPropertiesControllerTest {
 
         //Then
         assertThat(configurationPropertiesResponse.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(configurationPropertiesResponse.getBody()).isEqualTo(buildEnvironmentConfigurationProperties());
-    }
 
-    private EnvironmentConfigurationProperties buildEnvironmentConfigurationProperties() {
-        EnvironmentConfigurationProperties.KeycloakConfig keycloakConfig = new EnvironmentConfigurationProperties.KeycloakConfig();
-        keycloakConfig.setUrl(url);
-        keycloakConfig.setRealm(realm);
-        keycloakConfig.setClientId(clientId);
+        EnvironmentConfigurationProperties actualConfigurationProperties = configurationPropertiesResponse.getBody();
 
-        EnvironmentConfigurationProperties configurationProperties = new EnvironmentConfigurationProperties();
-        configurationProperties.setMockServerUrl(mockServerUrl);
-        configurationProperties.setXs2aServerUrl(xs2aServerUrl);
-        configurationProperties.setKeycloakConfig(keycloakConfig);
-        return configurationProperties;
+        assertThat(actualConfigurationProperties).isNotNull();
+        assertThat(actualConfigurationProperties.getMockServerUrl()).isEqualTo(MOCK_SERVER_URL);
+        assertThat(actualConfigurationProperties.getXs2aServerUrl()).isEqualTo(XS2A_SERVER_URL);
+
+        EnvironmentConfigurationProperties.KeycloakConfig actualKeycloackConfig = actualConfigurationProperties.getKeycloakConfig();
+
+        assertThat(actualKeycloackConfig).isNotNull();
+        assertThat(actualKeycloackConfig.getUrl()).isEqualTo(KEYCLOAK_URL);
+        assertThat(actualKeycloackConfig.getRealm()).isEqualTo(KEYCLOAK_REALM);
+        assertThat(actualKeycloackConfig.getClientId()).isEqualTo(KEYCLOAK_CLIENT_ID);
     }
 }
