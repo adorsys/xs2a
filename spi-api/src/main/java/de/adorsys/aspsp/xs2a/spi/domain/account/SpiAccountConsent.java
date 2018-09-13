@@ -39,4 +39,6 @@ public class SpiAccountConsent {
     private SpiConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
+    private String psuId;
+    private String tppId;
 }
