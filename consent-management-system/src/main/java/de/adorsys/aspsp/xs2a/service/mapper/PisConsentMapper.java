@@ -18,6 +18,8 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
@@ -97,6 +99,21 @@ public class PisConsentMapper {
 
                        return pisTppInfo;
                    }).orElse(null);
+    }
+
+    public GetPisConsentAuthorisationResponse mapToGetPisConsentAuthorizationResponse(PisConsentAuthorization pis) {
+        GetPisConsentAuthorisationResponse response = new GetPisConsentAuthorisationResponse();
+        response.setPayments(mapToPisPaymentList(pis.getConsent().getPayments()));
+        response.setPaymentType(pis.getConsent().getPisPaymentType());
+        response.setPassword(pis.getPassword());
+        response.setPsuId(pis.getPsuId());
+        response.setScaStatus(pis.getScaStatus());
+        response.setConsentId(pis.getConsent().getExternalId());
+        return response;
+    }
+
+    public UpdatePisConsentPsuDataResponse mapToUpdatePisConsentPsuDataResponse(PisConsentAuthorization pisConsentAuthorization) {
+        return new UpdatePisConsentPsuDataResponse(pisConsentAuthorization.getScaStatus());
     }
 
     public Optional<PisConsentResponse> mapToPisConsentResponse(PisConsent pisConsent) {

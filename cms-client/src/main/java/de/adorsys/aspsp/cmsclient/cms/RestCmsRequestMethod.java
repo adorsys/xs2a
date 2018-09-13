@@ -29,4 +29,8 @@ public class RestCmsRequestMethod <T, R> extends AbstractRequestMethod<T, R> {
     protected RestCmsRequestMethod(final HttpMethod httpMethod, final String methodPath, HttpUriParams uriParams) {
         super(httpMethod, methodPath, uriParams);
     }
+
+    public RestCmsRequestMethod(final T requestObject, final HttpMethod httpMethod, final String path, HttpUriParams uriParams) {
+        super(requestObject, httpMethod, path, uriParams);
+    }
 }

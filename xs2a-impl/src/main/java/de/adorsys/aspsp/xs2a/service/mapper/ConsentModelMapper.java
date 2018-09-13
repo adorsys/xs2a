@@ -17,6 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.psd2.api.ConsentApi;
@@ -24,6 +26,7 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.ConsentStatus;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 
@@ -56,11 +59,11 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public static StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisConsentAuthorizationResponse response) {
+    public static StartScaprocessResponse mapToStartScaProcessResponse(Xsa2CreatePisConsentAuthorisationResponse response) {
         return Optional.ofNullable(response)
                    .map(r -> new StartScaprocessResponse()
-                              .scaStatus(ScaStatus.valueOf(r.getScaStatus()))
-                              ._links(OBJECT_MAPPER.convertValue(r.getLinks(), Map.class)))
+                                 .scaStatus(ScaStatus.valueOf(r.getScaStatus()))
+                                 ._links(OBJECT_MAPPER.convertValue(r.getLinks(), Map.class)))
                    .orElse(null);
     }
 
@@ -215,4 +218,42 @@ public class ConsentModelMapper {
 
         return updatePsuData;
     }
+
+    public static UpdatePisConsentPsuDataRequest mapToPisUpdatePsuData(String psuId, String paymentId, String authorisationId, String paymentService, Map body) {
+        UpdatePisConsentPsuDataRequest request = new UpdatePisConsentPsuDataRequest();
+        request.setPsuId(psuId);
+        request.setPaymentId(paymentId);
+        request.setAuthorizationId(authorisationId);
+        request.setPaymentService(paymentService);
+        if (!body.isEmpty()) {
+            Optional.ofNullable(body.get("psuData"))
+                .map(o -> (LinkedHashMap<String, String>) o)
+                .ifPresent(psuData -> {
+                    request.setPassword(psuData.get("password"));
+                });
+            Optional.ofNullable(body.get("psuData"))
+                .map(o -> (LinkedHashMap<String, String>) o)
+                .ifPresent(psuData -> {
+                    request.setAuthenticationMethodId(psuData.get("authenticationMethodId"));
+                });
+        }
+        return request;
+    }
+
+    public static UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(Xs2aUpdatePisConsentPsuDataResponse response) {
+        return new UpdatePsuAuthenticationResponse()
+                   ._links(OBJECT_MAPPER.convertValue(response.getLinks(), Map.class))
+                   .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
+                   .scaStatus(ScaStatus.valueOf(response.getScaStatus()));
+    }
+
+    private static ScaMethods getAvailableScaMethods(List<CmsScaMethod> availableScaMethods) {
+        ScaMethods scaMethods = new ScaMethods();
+        if (CollectionUtils.isNotEmpty(availableScaMethods)) {
+            availableScaMethods.forEach(a -> scaMethods.add(new AuthenticationObject()
+                                                                .authenticationMethodId(a.name())));
+        }
+        return scaMethods;
+    }
+
 }

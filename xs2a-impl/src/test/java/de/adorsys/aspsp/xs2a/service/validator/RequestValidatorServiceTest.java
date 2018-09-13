@@ -77,7 +77,7 @@ public class RequestValidatorServiceTest {
         when(validator.validate(any())).thenReturn(new HashSet<>());
         //Given:
         HttpServletRequest request = getCorrectRequest();
-        Object handler = getHandler();
+        HandlerMethod handler = getHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
@@ -104,7 +104,7 @@ public class RequestValidatorServiceTest {
     public void shouldFail_getRequestHeaderViolationMap_wrongRequestHeaderFormat() throws Exception {
         //Given:
         HttpServletRequest request = getWrongRequestWrongTppRequestIdFormat();
-        Object handler = getHandler();
+        HandlerMethod handler = getHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestHeaderViolationMap(request, handler);
@@ -119,7 +119,7 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.CBCT.getCode()));
-        Object handler = getPaymentInitiationControllerHandler();
+        HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request, handler);
@@ -134,7 +134,7 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.SCT.getCode()));
-        Object handler = getPaymentInitiationControllerHandler();
+        HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request, handler);
@@ -148,7 +148,7 @@ public class RequestValidatorServiceTest {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
         request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.SCT.getCode()));
-        Object handler = getPeriodicPaymentsControllerHandler();
+        HandlerMethod handler = getPeriodicPaymentsControllerHandler();
 
         //When:
         Map<String, String> actualViolations = requestValidatorService.getPaymentTypeViolationMap(handler);
@@ -197,15 +197,15 @@ public class RequestValidatorServiceTest {
         return request;
     }
 
-    private Object getHandler() throws NoSuchMethodException {
+    private HandlerMethod getHandler() throws NoSuchMethodException {
         return new HandlerMethod(consentInformationController, "getAccountConsentsInformationById", String.class);
     }
 
-    private Object getPaymentInitiationControllerHandler() throws NoSuchMethodException {
+    private HandlerMethod getPaymentInitiationControllerHandler() throws NoSuchMethodException {
         return new HandlerMethod(paymentInitiationController, "getPaymentInitiationStatusById", String.class, String.class);
     }
 
-    private Object getPeriodicPaymentsControllerHandler() throws NoSuchMethodException {
+    private HandlerMethod getPeriodicPaymentsControllerHandler() throws NoSuchMethodException {
         return new HandlerMethod(periodicPaymentsController, "createPeriodicPayment", String.class, String.class, PeriodicPayment.class);
     }
 }

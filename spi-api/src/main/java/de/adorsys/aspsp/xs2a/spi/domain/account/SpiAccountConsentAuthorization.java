@@ -24,7 +24,6 @@ public class SpiAccountConsentAuthorization {
     private String id;
     private String consentId;
     private String psuId;
-
     private SpiScaStatus scaStatus;
     private String authenticationMethodId;
     private String scaAuthenticationData;

@@ -68,5 +68,15 @@ public class PaymentInitialisationResponse {
 
     @JsonIgnore
     private String pisConsentId;
+
+    //For Embedded approach Implicit case
+    @JsonIgnore
+    private String authorizationId;
+
+    @JsonIgnore
+    private String scaStatus;
+
+    @JsonIgnore
+    private String paymentType;
 }
 

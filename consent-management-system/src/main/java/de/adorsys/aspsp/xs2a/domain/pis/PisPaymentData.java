@@ -75,7 +75,7 @@ public class PisPaymentData {
 
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor Address")
-    @JoinColumn(name="address_id")
+    @JoinColumn(name = "address_id")
     private PisAddress creditorAddress;
 
     @Column(name = "remittance_information_unstructured")
@@ -84,7 +84,7 @@ public class PisPaymentData {
 
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "remittance information structured")
-    @JoinColumn(name="remittance_id")
+    @JoinColumn(name = "remittance_id")
     private PisRemittance remittanceInformationStructured;
 
     @Column(name = "requested_execution_date", nullable = false)

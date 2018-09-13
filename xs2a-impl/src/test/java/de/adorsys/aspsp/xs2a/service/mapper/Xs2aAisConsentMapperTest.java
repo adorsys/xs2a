@@ -22,12 +22,9 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreateAisConsentRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,12 +47,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Xs2aAisConsentMapperTest {
-    private final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private final String SPI_ACCOUNT_CONSENT_REQ_JSON_PATH = "/json/MapGetAccountConsentTest.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
-    private final String PSU_ID = "12345";
-    private final String TPP_ID = "This is a test TppId";
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     @InjectMocks
     private Xs2aAisConsentMapper aisConsentMapper;
@@ -70,23 +63,6 @@ public class Xs2aAisConsentMapperTest {
     public void setUp() {
         when(accountMapper.mapToAccountReferences(any())).thenReturn(getReferences());
         when(accountMapper.mapToSpiAccountReferences(any())).thenReturn(getSpiReferences());
-    }
-
-    @Test
-    public void mapToSpiCreateAisConsentRequest() throws IOException {
-        //Given:
-        String aicRequestJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
-        CreateConsentReq donorRequest = jsonConverter.toObject(aicRequestJson, CreateConsentReq.class).get();
-        SpiCreateAisConsentRequest expectedRequest = jsonConverter.toObject(aicRequestJson, SpiCreateAisConsentRequest.class).get();
-
-        //When:
-        SpiCreateAisConsentRequest actualRequest = aisConsentMapper.mapToSpiCreateAisConsentRequest(donorRequest, PSU_ID, TPP_ID, ASPSP_CONSENT_DATA);
-
-        //Then:
-        assertThat(actualRequest.isRecurringIndicator()).isEqualTo(expectedRequest.isRecurringIndicator());
-        assertThat(actualRequest.getValidUntil()).isEqualTo(expectedRequest.getValidUntil());
-        assertThat(actualRequest.getFrequencyPerDay()).isEqualTo(expectedRequest.getFrequencyPerDay());
-        assertThat(actualRequest.isCombinedServiceIndicator()).isEqualTo(expectedRequest.isCombinedServiceIndicator());
     }
 
     @Test
