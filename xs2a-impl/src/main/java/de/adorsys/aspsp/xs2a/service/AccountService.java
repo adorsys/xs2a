@@ -293,7 +293,7 @@ public class AccountService {
     }
 
     private List<Xs2aAccountDetails> getAccountDetailsByConsentId(boolean withBalance, String consentId) {
-        SpiAccountConsent spiAccountConsent = consentSpi.getAccountConsentById(consentId);
+        SpiAccountConsent spiAccountConsent = aisConsentService.getAccountConsentById(consentId);
         List<SpiAccountDetails> spiAccountDetails = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), new AspspConsentData()).getPayload();
         List<Xs2aAccountDetails> details = spiAccountDetails.stream()
                                                .map(accountMapper::mapToAccountDetails)
