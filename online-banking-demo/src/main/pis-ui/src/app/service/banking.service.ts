@@ -22,7 +22,7 @@ export class BankingService {
   validateTan(tan: string): Observable<any> {
     const body = {
       tanNumber: tan,
-      iban: this.savedData.iban,
+      // iban: this.savedData.iban,
       consentId: this.savedData.consentId,
       paymentId: this.savedData.paymentId
     };
