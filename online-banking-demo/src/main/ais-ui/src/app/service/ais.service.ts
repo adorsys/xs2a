@@ -21,7 +21,7 @@ export class AisService {
   GET_ACCOUNTS_WITH_CONSENTID_URL = `${environment.aspspServerUrl}/api/v1/accounts?with-balance=true`;
   GENERATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   UPDATE_CONSENT_STATUS_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
-  UPDATE_CONSENT = `${environment.cmsServerUrl}/api/v1/ais/consent/`;
+  UPDATE_CONSENT = `${environment.cmsServerUrl}/api/v1/ais/consent`;
   VALIDATE_TAN_URL = `${environment.mockServerUrl}/consent/confirmation/ais`;
   GET_PROFILE_URL = `${environment.profileServerUrl}/api/v1/aspsp-profile`;
   savedConsentId: string;
