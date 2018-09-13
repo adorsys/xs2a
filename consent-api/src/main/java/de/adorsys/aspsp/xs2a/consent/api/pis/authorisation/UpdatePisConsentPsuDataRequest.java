@@ -22,10 +22,10 @@ import lombok.Data;
 @Data
 public class UpdatePisConsentPsuDataRequest {
     private String paymentId;
-    private String executionPaymentId;
     private String authorizationId;
     private String psuId;
     private String password;
+    private String authenticationMethodId;
     private CmsScaStatus scaStatus;
     private String paymentService;
 }

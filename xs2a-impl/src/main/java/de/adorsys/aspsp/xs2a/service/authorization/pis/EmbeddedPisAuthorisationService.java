@@ -31,11 +31,24 @@ public class EmbeddedPisAuthorisationService implements PisAuthorisationService 
     private final PisConsentService pisConsentService;
     private final Xs2aPisConsentMapper pisConsentMapper;
 
+    /**
+     * Creates authorization for pis consent
+     *
+     * @param paymentId   ASPSP identifier of a payment
+     * @param paymentType Type of payment
+     * @return create consent authorization responss, which contains authorization id, sca status, payment type and links
+     */
     @Override
     public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType) {
         return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(pisConsentService.createPisConsentAuthorisation(paymentId), paymentType);
     }
 
+    /**
+     * Updates authorization for pis consent
+     *
+     * @param request Provides transporting data when updating consent psu data
+     * @return update consent authorization responss, which contains payment id, authorization id, sca status, psu message and links
+     */
     @Override
     public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
         return pisConsentMapper.mapToXs2aUpdatePisConsentPsuDataResponse(pisConsentService.updatePisConsentAuthorisation(request));

@@ -40,7 +40,10 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
 
     private Links buildLink(UpdatePisConsentPsuDataRequest request) {
         Links links = new Links();
-        links.setAuthoriseTransaction(buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
+        links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", request.getPaymentService(), request.getPaymentId()));
+        links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", request.getPaymentService(), request.getPaymentId()));
+        links.setSelectAuthenticationMethod(buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
+        links.setUpdatePsuAuthentication(buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
         return links;
     }
 }

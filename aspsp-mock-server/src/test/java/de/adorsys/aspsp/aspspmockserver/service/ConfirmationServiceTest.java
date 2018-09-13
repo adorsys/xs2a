@@ -53,6 +53,7 @@ public class ConfirmationServiceTest {
     private static final String TAN_NUMBER = "123456";
     private static final String WRONG_TAN_NUMBER = "wrong tan number";
     private static final String CONSENT_ID = "6d4b403b-f5f5-41c0-847f-b6abf1edb102";
+    private final String USER_NAME = "aspsp";
 
     @InjectMocks
     private TanConfirmationService tanConfirmationService;
@@ -89,9 +90,10 @@ public class ConfirmationServiceTest {
             .thenReturn(Collections.singletonList(getUnusedTan()));
         when(tanRepository.findByPsuIdAndTanStatus(PSU_ID_2, TanStatus.UNUSED))
             .thenReturn(Collections.emptyList());
+        when(accountService.getPsuIdByName(USER_NAME))
+            .thenReturn(Optional.empty());
         when(accountService.getPsuIdByName(WRONG_NAME))
             .thenReturn(Optional.empty());
-
     }
 
     @Test
@@ -104,18 +106,9 @@ public class ConfirmationServiceTest {
     }
 
     @Test
-    public void isTanNumberValidByIban_Success() {
-        //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_1, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
-
-        //Then
-        assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
     public void isTanNumberValidByIban_Failure() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_1, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(USER_NAME, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -124,7 +117,7 @@ public class ConfirmationServiceTest {
     @Test
     public void isTanNumberValidByIban_TanStatusValid() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_2, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(USER_NAME, TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -133,7 +126,7 @@ public class ConfirmationServiceTest {
     @Test
     public void isPsuTanNumberValid_TanStatusInvalid() {
         //When
-        ResponseEntity actualResult = tanConfirmationService.confirmTan(IBAN_1, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
+        ResponseEntity actualResult = tanConfirmationService.confirmTan(USER_NAME, WRONG_TAN_NUMBER, CONSENT_ID, ConfirmationType.PAYMENT);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

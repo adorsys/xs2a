@@ -16,13 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.consent.api;
 
-public enum CmsScaStatus {
-    RECEIVED,
-    PSUIDENTIFIED,
-    PSUAUTHENTICATED,
-    SCAMETHODSELECTED,
-    STARTED,
-    FINALISED,
-    FAILED,
-    EXEMPTED
+public enum CmsScaMethod {
+    SMS_OTP,
+    CHIP_OTP,
+    PHOTO_OTP,
+    PUSH_OTP
 }

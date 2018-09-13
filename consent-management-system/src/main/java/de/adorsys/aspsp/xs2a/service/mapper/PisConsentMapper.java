@@ -108,6 +108,7 @@ public class PisConsentMapper {
         response.setPassword(pis.getPassword());
         response.setPsuId(pis.getPsuId());
         response.setScaStatus(pis.getScaStatus());
+        response.setConsentId(pis.getConsent().getExternalId());
         return response;
     }
 

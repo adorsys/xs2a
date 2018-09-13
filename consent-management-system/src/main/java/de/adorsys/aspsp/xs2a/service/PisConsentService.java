@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -41,6 +41,8 @@ import java.util.UUID;
 
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.STARTED;
 
 @Service
 @RequiredArgsConstructor
@@ -129,19 +131,19 @@ public class PisConsentService {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
         consentAuthorization.setConsent(pisConsent);
-        consentAuthorization.setScaStatus(CmsScaStatus.STARTED);
+        consentAuthorization.setScaStatus(STARTED);
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
         return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(p -> {
-                       if (CmsScaStatus.STARTED == p.getScaStatus()) {
+                       if (STARTED == p.getScaStatus()) {
                            p.setPassword(request.getPassword());
                            p.setPsuId(request.getPsuId());
-                       } else if (CmsScaStatus.FINALISED == p.getScaStatus()) {
-                           p.getConsent().getPayments()
-                               .forEach(pd -> pd.setExecutionId(request.getExecutionPaymentId()));
+                       }
+                       if (SCAMETHODSELECTED == request.getScaStatus()) {
+                           p.setChosenScaMethod(CmsScaMethod.valueOf(request.getAuthenticationMethodId()));
                        }
                        p.setScaStatus(request.getScaStatus());
                        return pisConsentAuthorizationRepository.save(p);

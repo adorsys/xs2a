@@ -61,14 +61,10 @@
   "response": {
     "code": "201",
     "header": {},
-    "body": [
-      {
-        "transactionStatus": "RCVD"
-      },
+    "body":
       {
         "transactionStatus": "RCVD"
       }
-    ]
   }
 }
 
