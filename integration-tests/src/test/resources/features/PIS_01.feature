@@ -143,3 +143,29 @@ Feature: Payment Initiation Service
 #            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-no-request-id.json     |
 #            | a9115f14-4f72-4e4e-8798-202808e85238 | payments                     | singlePayInformation-wrong-format-request-id.json |
 #            | a9115f14-4f72-4e4e-8798-202808e85238 | recurring-payments           | singlePayInformation-wrong-payment-service.json |
+
+
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Payment Cancellation                                                                                             #
+    #                                                                                                                  #
+    ####################################################################################################################
+
+#    Scenario Outline: Successful payment cancellation request
+#        Given PSU wants to cancel an existing payment <payment-cancellation> with payment-id <payment-id> using the payment service <payment-service>
+#        When PSU initiates the cancellation of the payment
+#        Then an successful response code and the appropriate transaction status is delivered to the PSU
+#        Examples:
+#            | payment-id                           | payment-service | payment-cancellation                |
+#            | a9115f14-4f72-4e4e-8798-202808e85238 | payments        | paymentCancellation-successful.json |
+#
+#   Scenario Outline: Failed payment cancellation request
+#        Given PSU wants to cancel a payment <payment-cancellation> with payment-id <payment-id> using the payment service <payment-service>
+#        When PSU initiates the cancellation of the payment with error
+#        Then an error response code and the appropriate error response are received
+#        Examples:
+#            | payment-id                           | payment-service    | payment-cancellation                             |
+#            | 11111111-aaaa-xxxx-1111-1x1x1x1x1x1x | payments           | paymentCancellation-not-existing-id.json         |
+#            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments           | paymentCancellation-no-request-id.json           |
+#            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | payments           | paymentCancellation-wrong-format-request-id.json |
+#            | 68147b90-e4ef-41c6-9c8b-c848c1e93700 | recurring-payments | paymentCancellation-wrong-payment-service.json   |
