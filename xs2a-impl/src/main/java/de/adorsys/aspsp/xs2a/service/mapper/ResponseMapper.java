@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -26,8 +27,10 @@ import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.*;
 
+@RequiredArgsConstructor
 @Component
 public class ResponseMapper {
+    private final MessageErrorMapper messageErrorMapper;
 
     public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
         return getEntity(response, OK, mapper);
@@ -71,6 +74,8 @@ public class ResponseMapper {
     }
 
     private ResponseEntity createErrorResponse(MessageError error) {
-        return new ResponseEntity<>(error, valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
+        return new ResponseEntity<>(messageErrorMapper.mapToTppMessages(error), valueOf(error.getTppMessage().getMessageErrorCode().getCode()));
     }
+
+
 }
