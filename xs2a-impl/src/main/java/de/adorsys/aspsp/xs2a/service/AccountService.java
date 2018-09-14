@@ -166,13 +166,13 @@ public class AccountService {
      * @return TransactionsResponse200Json filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
     public ResponseObject<TransactionsResponse200Json> getTransactionList(String accountId, String bookingStatus, String consentId, LocalDate dateFrom, LocalDate dateTo, Boolean withBalance) {
-        ResponseObject<Xs2aAccountReport> responseObject = getAccountReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentId, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
-        if (responseObject.hasError()) {
+        ResponseObject<Xs2aAccountReport> accountReportResponseObject = getAccountReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentId, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
+        if (accountReportResponseObject.hasError()) {
             return ResponseObject.<TransactionsResponse200Json>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, responseObject.getError().getTppMessage().getMessageErrorCode()))).build();
+                       .fail(new MessageError(new TppMessageInformation(ERROR, accountReportResponseObject.getError().getTppMessage().getMessageErrorCode()))).build();
         }
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
-        transactionsResponse200Json.setTransactions(AccountModelMapper.mapToAccountReport(responseObject.getBody()));
+        transactionsResponse200Json.setTransactions(AccountModelMapper.mapToAccountReport(accountReportResponseObject.getBody()));
         if (!aspspProfileService.isTransactionsWithoutBalancesSupported()) {
             ResponseObject<List<Xs2aBalance>> balancesResponse = getBalances(consentId, accountId);
             if (!balancesResponse.hasError()) {
