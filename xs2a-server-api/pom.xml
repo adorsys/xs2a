@@ -13,7 +13,7 @@
 
     <properties>
         <springfox.version>2.9.2</springfox.version>
-        <pmd.skip>true</pmd.skip>
+        <pmd.skip>true</pmd.skip> <!-- This module uses generated sources, that we cannot adopt -->
     </properties>
 
     <dependencies>
