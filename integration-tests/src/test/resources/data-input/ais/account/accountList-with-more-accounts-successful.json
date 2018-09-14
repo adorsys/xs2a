@@ -13,10 +13,12 @@
     "body": {
       "accounts": [
         {
-          "iban": "DE52500105173911841934"
+          "iban": "DE52500105173911841934",
+          "name": "Alexander Mueller"
         },
         {
-          "iban": "to-be-done"
+          "iban": "to-be-done",
+          "name": "Alexander Mueller"
         }
       ]
     }
