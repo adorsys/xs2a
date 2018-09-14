@@ -88,6 +88,7 @@ Feature: Account Information Service
             | accountList-wrong-format-request-id.json |
             | accountList-invalid-request-id.json      |
             | accountList-no-consent.json              |
+            #| accountList-with-expired-consent.json    |
     # ToDo: expired consent: Ticket PSD-179 needs to be done first
 
     Scenario Outline: Request account details successfully
