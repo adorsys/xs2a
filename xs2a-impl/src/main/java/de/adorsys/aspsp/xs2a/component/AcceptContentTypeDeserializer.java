@@ -23,20 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class AcceptContentTypeDeserializer extends StdDeserializer<MediaType[]> {
-
-    private static final List<MediaType> ALLOWED_ACCEPT_HEADER_VALUES = new ArrayList<>();
-
-    static {
-        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.APPLICATION_JSON);
-        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.APPLICATION_XML);
-        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.TEXT_PLAIN);
-        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.ALL);
-    }
 
     public AcceptContentTypeDeserializer() {
         super(MediaType[].class);
@@ -45,20 +35,10 @@ public class AcceptContentTypeDeserializer extends StdDeserializer<MediaType[]> 
     @Override
     public MediaType[] deserialize(JsonParser jsonParser, DeserializationContext ctxt) {
         try {
-
             String parsedText = jsonParser.getText();
             List<MediaType> mediaTypes = MediaType.parseMediaTypes(parsedText);
 
-            long validMediaTypes = mediaTypes.stream()
-                                       .filter(ALLOWED_ACCEPT_HEADER_VALUES::contains)
-                                       .count();
-
-            if (validMediaTypes == mediaTypes.size()) {
-                return mediaTypes.toArray(new MediaType[0]);
-            } else {
-                throw new IllegalArgumentException("Unsupported 'Accept' header values");
-            }
-
+            return mediaTypes.toArray(new MediaType[0]);
         } catch (IOException e) {
             log.error("Unsupported Accept header value format!");
         }
