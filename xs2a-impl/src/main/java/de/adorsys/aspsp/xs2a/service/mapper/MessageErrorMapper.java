@@ -56,14 +56,9 @@ public class MessageErrorMapper {
                    .orElseGet(TppMessages::new);
     }
 
-    private TppMessages mapTppMessageGenericListToTppMessages(List<TppMessageGeneric> messageGenericList) {
-        return Optional.ofNullable(messageGenericList)
-                   .map(c -> {
-                       TppMessages messages = new TppMessages();
-                       messages.addAll(c);
-                       return messages;
-                   })
-                   .orElseGet(TppMessages::new);
+    private TppMessages mapTppMessageGenericListToTppMessages(@NonNull List<TppMessageGeneric> messageGenericList) {
+        return messageGenericList.stream()
+                   .collect(Collectors.toCollection(TppMessages::new));
     }
 
     private TppMessageGeneric mapToGenericError(@NonNull TppMessageInformation info) {
