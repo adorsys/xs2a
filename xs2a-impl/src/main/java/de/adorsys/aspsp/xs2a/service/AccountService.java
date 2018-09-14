@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 @Slf4j
 @Service
@@ -166,7 +167,7 @@ public class AccountService {
      * @return TransactionsResponse200Json filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
     public ResponseObject<TransactionsResponse200Json> getTransactionList(String accountId, String bookingStatus, String consentId, LocalDate dateFrom, LocalDate dateTo, Boolean withBalance) {
-        ResponseObject<Xs2aAccountReport> accountReportResponseObject = getAccountReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentId, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
+        ResponseObject<Xs2aAccountReport> accountReportResponseObject = getAccountReportByPeriod(accountId, isTrue(withBalance), consentId, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
         if (accountReportResponseObject.hasError()) {
             return ResponseObject.<TransactionsResponse200Json>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, accountReportResponseObject.getError().getTppMessage().getMessageErrorCode()))).build();
