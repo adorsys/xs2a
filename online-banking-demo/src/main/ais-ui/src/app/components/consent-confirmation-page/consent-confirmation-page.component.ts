@@ -30,14 +30,12 @@ export class ConsentConfirmationPageComponent implements OnInit {
         this.getConsentIdFromUrl(params);
       });
     this.aisService.saveConsentId(this.consentId);
+    this.getAccountsWithConsentId();
     this.aisService.getConsent(this.consentId)
       .subscribe(consent => {
         this.consent = consent;
-        if (consent.access.accounts.length === 0) {
+        if (consent.access.accounts === undefined) {
           this.bankOffered = true;
-          this.getAllPsuAccounts();
-        } else {
-          this.getAccountsWithConsentId();
         }
       });
     this.profile$ = this.aisService.getProfile();
@@ -83,13 +81,6 @@ export class ConsentConfirmationPageComponent implements OnInit {
     return {
       consentId: this.consentId,
     };
-  }
-
-  getAllPsuAccounts() {
-    this.aisService.getAllPsuAccounts().subscribe( accounts => {
-      this.iban = accounts[0].iban;
-      this.accounts = accounts;
-    });
   }
 
   getAccountsWithConsentId() {

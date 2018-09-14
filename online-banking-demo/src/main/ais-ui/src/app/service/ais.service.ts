@@ -61,22 +61,6 @@ export class AisService {
       );
   }
 
-  // TODO Delete function when getAccount endpoint is ready for bank offered consent
-  getAllPsuAccounts(): Observable<Account[]> {
-    const headers = new HttpHeaders({
-      'x-request-id': environment.xRequestId,
-      'consent-id': 'c64e30fd-b814-4e37-b155-8acc3ac30fea',
-      'tpp-qwac-certificate': environment.tppQwacCertificate,
-      'accept': 'application/json'
-    });
-    return this.httpClient.get <AccountsResponse>(this.GET_ACCOUNTS_WITH_CONSENTID_URL, {headers: headers})
-      .pipe(
-        map(data => {
-          return data.accountList;
-        })
-      );
-  }
-
   getProfile(): Observable<AspspSettings> {
     return this.httpClient.get<AspspSettings>(`${this.GET_PROFILE_URL}`);
   }
