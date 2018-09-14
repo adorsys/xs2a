@@ -44,12 +44,11 @@ export class ConsentConfirmationPageComponent implements OnInit {
   }
 
   onSelectAllAccounts(): void {
-    if (this.selectedAccounts === this.accounts) {
+    if (this.selectedAccounts.length === this.accounts.length) {
       this.selectedAccounts = [];
     } else {
       this.selectedAccounts = this.accounts;
     }
-    console.log('awi selectedAccounts: ', this.selectedAccounts);
   }
 
   onSelectAccount(selectedAccount: Account):void {
@@ -58,7 +57,6 @@ export class ConsentConfirmationPageComponent implements OnInit {
     } else {
       this.selectedAccounts.push(selectedAccount);
     }
-    console.log('awi selectedAccounts: ', this.selectedAccounts);
   }
 
   isAccountSelected(selectedAccount: Account): boolean {
