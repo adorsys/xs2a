@@ -22,4 +22,14 @@ mvn clean install
 mvn spring-boot:run -Drun.profiles=debug_mode
  
 ```
+## CORS
+By default, all origins, all headers and all HTTP methods are allowed.
+You can override CORS settings by changing values in `application.properties`
+```
+endpoints.cors.allow-credentials
+endpoints.cors.allowed-origins
+endpoints.cors.allowed-headers
+endpoints.cors.allowed-methods
+```
+
 

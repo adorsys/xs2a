@@ -44,3 +44,13 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to retrieve the AIS consent status by its external identifier.
 - An endpoint to update the AIS consent status by its external identifier. 
 - An endpoint to update the AIS consent blob data.
+
+## CORS
+By default, all origins, all headers and all HTTP methods are allowed.
+You can override CORS settings by changing values in `application.properties`
+```
+endpoints.cors.allow-credentials
+endpoints.cors.allowed-origins
+endpoints.cors.allowed-headers
+endpoints.cors.allowed-methods
+```

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,11 +33,12 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    CorsConfigProperties corsConfigProperties;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -63,10 +65,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean corsFilterRegistrationBean() {
         CorsConfiguration config = new CorsConfiguration();
         config.applyPermitDefaultValues();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(singletonList("*"));
-        config.setAllowedHeaders(singletonList("*"));
-        config.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE"));
+        config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
+        config.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
+        config.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
+        config.setAllowedMethods(corsConfigProperties.getAllowedMethods());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
