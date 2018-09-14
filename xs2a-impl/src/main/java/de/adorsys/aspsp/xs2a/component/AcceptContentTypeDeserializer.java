@@ -29,7 +29,7 @@ import java.util.List;
 @Slf4j
 public class AcceptContentTypeDeserializer extends StdDeserializer<MediaType[]> {
 
-    private static List<MediaType> ALLOWED_ACCEPT_HEADER_VALUES = new ArrayList<>();
+    private static final List<MediaType> ALLOWED_ACCEPT_HEADER_VALUES = new ArrayList<>();
 
     static {
         ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.APPLICATION_JSON);
