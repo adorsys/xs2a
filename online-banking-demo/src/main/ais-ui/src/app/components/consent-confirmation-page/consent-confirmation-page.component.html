@@ -103,9 +103,7 @@
             <li>Your standing Orders</li>
           </ul>
         </ul>
-        <div *ngIf="consent$ | async as Consent">
-          TPP will access your accounts till {{ Consent.validUntil }}
-        </div>
+          TPP will access your accounts till {{ consent?.validUntil }}
         <div class="buttons-small">
           <button (click)=onClickCancel() type="button" name="decision" value="revoked"
                   class="buttons-small btn--cancel">
