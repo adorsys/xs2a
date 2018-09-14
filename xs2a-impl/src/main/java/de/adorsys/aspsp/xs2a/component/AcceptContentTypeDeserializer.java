@@ -19,31 +19,46 @@ package de.adorsys.aspsp.xs2a.component;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import de.adorsys.aspsp.xs2a.spi.domain.ContentType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
-public class AcceptContentTypeDeserializer extends StdDeserializer<ContentType[]> {
+public class AcceptContentTypeDeserializer extends StdDeserializer<MediaType[]> {
+
+    private static List<MediaType> ALLOWED_ACCEPT_HEADER_VALUES = new ArrayList<>();
+
+    static {
+        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.APPLICATION_JSON);
+        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.APPLICATION_XML);
+        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.TEXT_PLAIN);
+        ALLOWED_ACCEPT_HEADER_VALUES.add(MediaType.ALL);
+    }
 
     public AcceptContentTypeDeserializer() {
-        super(ContentType[].class);
+        super(MediaType[].class);
     }
 
     @Override
-    public ContentType[] deserialize(JsonParser jsonParser, DeserializationContext ctxt) {
+    public MediaType[] deserialize(JsonParser jsonParser, DeserializationContext ctxt) {
         try {
-            String input = jsonParser.getText();
-            String[] acceptTypes = StringUtils.split(input, ", ");
-            return Arrays.stream(acceptTypes)
-                       .map(ContentType::getByName)
-                       .filter(Optional::isPresent)
-                       .map(Optional::get)
-                       .toArray(ContentType[]::new);
+
+            String parsedText = jsonParser.getText();
+            List<MediaType> mediaTypes = MediaType.parseMediaTypes(parsedText);
+
+            long validMediaTypes = mediaTypes.stream()
+                                       .filter(ALLOWED_ACCEPT_HEADER_VALUES::contains)
+                                       .count();
+
+            if (validMediaTypes == mediaTypes.size()) {
+                return mediaTypes.toArray(new MediaType[0]);
+            } else {
+                throw new IllegalArgumentException("Unsupported 'Accept' header values");
+            }
+
         } catch (IOException e) {
             log.error("Unsupported Accept header value format!");
         }

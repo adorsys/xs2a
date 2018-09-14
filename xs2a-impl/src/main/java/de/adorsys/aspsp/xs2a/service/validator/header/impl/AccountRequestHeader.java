@@ -20,10 +20,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.adorsys.aspsp.xs2a.component.AcceptContentTypeDeserializer;
-import de.adorsys.aspsp.xs2a.spi.domain.ContentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.http.MediaType;
 
 import javax.validation.constraints.NotNull;
 
@@ -44,5 +44,5 @@ public class AccountRequestHeader extends CommonRequestHeader {
     @ApiModelProperty(value = "Indicates the formats of account reports supported together with a prioritisation following the http header definition", required = false, example = "application/json")
     @JsonProperty(value = "accept")
     @JsonDeserialize(using = AcceptContentTypeDeserializer.class)
-    private ContentType[] accept;
+    private MediaType[] accept;
 }
