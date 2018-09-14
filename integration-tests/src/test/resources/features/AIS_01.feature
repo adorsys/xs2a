@@ -89,6 +89,27 @@ Feature: Account Information Service
 #            #| accountList-with-expired-consent.json    | to-be-set-in-test |
 #    # ToDo: expired  PSD-235: Ticket PSD-179 needs to be done first
 #
+#    Scenario Outline: Request account details successfully
+#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
+#        When PSU requests the account details
+#        Then a successful response code and the appropriate details of accounts get returned
+#        Examples:
+#            | account-resource              | account-id                           | consent-id        |
+#            | accountDetail-successful.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#
+#    Scenario Outline: Request account details errorful
+#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
+#        When PSU requests the account details
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource                        | account-id                           | consent-id        |
+#            | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | accountDetail-no-consent.json           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | no-consent        |
+#            #| accountDetail-with-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#    # ToDo: expired  PSD-235: Ticket PSD-179 needs to be done first
+
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Balance Request                                                                                                  #
