@@ -23,6 +23,10 @@ spring:
   jackson:
     serialization.write_dates_as_timestamps: false
 
+logging:
+  level:
+    de.adorsys.aspsp.xs2a.integtest: DEBUG
+
 ---
 spring:
     profiles: dev
