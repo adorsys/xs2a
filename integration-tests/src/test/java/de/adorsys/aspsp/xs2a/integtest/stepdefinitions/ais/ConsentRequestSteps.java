@@ -77,7 +77,7 @@ public class ConsentRequestSteps {
     public void sendConsentRequest() throws HttpClientErrorException {
         HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(),
             context.getAccessToken());
-            ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
+        ResponseEntity<ConsentsResponse201> response = restTemplate.exchange(
                 context.getBaseUrl() + "/consents",
                 HttpMethod.POST,
                 entity,
