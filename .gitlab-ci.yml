@@ -93,7 +93,8 @@ variables: &variables
   script:
     - mvn -DskipTests clean install
 
-.deploy_docker_build: &deploy_docker_build
+# Build docker images and put them to GITLAB repo
+.build_docker_image: &build_docker_image
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
 
@@ -121,7 +122,8 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-ui
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
 
-.deploy_docker_copy: &deploy_docker_copy
+# Pull docker images and put them to OPENSHIFT repo
+.push_docker_openshift: &push_docker_openshift
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
@@ -269,8 +271,8 @@ unit_tests:
 deploy_develop_stage:
   stage: "deploy:static"
   when: manual
-  <<: *deploy_docker_build
-  <<: *deploy_docker_copy
+  <<: *build_docker_image
+  <<: *push_docker_openshift
   <<: *helm_env_deploy
   only:
     - devops-helm
@@ -298,7 +300,7 @@ build_image_integ:
   environment:
     name: integ
     url: https://xs2a.integ.cloud.adorsys.de
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_integ:
   stage: deploy
@@ -309,7 +311,7 @@ deploy_image_integ:
     url: https://xs2a.integ.cloud.adorsys.de
   variables:
     DOCKER_TAG: integ
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
 
 # Master
 
@@ -322,7 +324,7 @@ build_image_master:
   environment:
     name: demo
     url: https://xs2a.cloud.adorsys.de
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_master:
   stage: deploy
@@ -333,7 +335,7 @@ deploy_image_master:
   environment:
     name: demo
     url: https://xs2a.cloud.adorsys.de
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
 
 # Release
 
@@ -343,7 +345,7 @@ build_image_release:
     - tags
   variables:
     DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_release:
   stage: deploy
@@ -352,7 +354,7 @@ deploy_image_release:
   when: manual
   variables:
     DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
 
 # Integ tests
 
@@ -362,7 +364,7 @@ build_image_integtest:
     - schedules
   variables:
     DOCKER_TAG: nightly
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_integtest:
   stage: deploy
@@ -370,4 +372,4 @@ deploy_image_integtest:
     - schedules
   variables:
     DOCKER_TAG: nightly
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
