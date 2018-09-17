@@ -59,6 +59,11 @@ auth:
   username: aspsp
   password: zzz
 
+logging:
+  level:
+    de.adorsys.aspsp.xs2a.integtest: DEBUG
+
+
 ---
 
 spring:

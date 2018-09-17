@@ -23,13 +23,17 @@ mvn spring-boot:run -Drun.profiles=debug_mode
  
 ```
 ## CORS
-By default, all origins, all headers and all HTTP methods are allowed.
+By default, allow credentials, all origins and all headers are disabled.
 You can override CORS settings by changing values in `application.properties`
 ```
-endpoints.cors.allow-credentials
-endpoints.cors.allowed-origins
-endpoints.cors.allowed-headers
-endpoints.cors.allowed-methods
+# Whether credentials are supported. When not set, credentials are not supported.
+endpoints.cors.allow-credentials=true
+# Comma-separated list of origins to allow. '*' allows all origins. When not set, CORS support is disabled.
+endpoints.cors.allowed-origins=*
+# Comma-separated list of headers to include in a response.
+endpoints.cors.allowed-headers=Origin,Authorization,Content-Type
+# Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET.
+endpoints.cors.allowed-methods=GET,POST,PUT,DELETE
 ```
 
 
