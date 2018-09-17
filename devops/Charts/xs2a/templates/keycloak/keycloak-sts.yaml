@@ -55,7 +55,6 @@ spec:
 {{ toYaml . | indent 8 }}
 {{- end }}
     spec:
-      podManagementPolicy: Parallel
       {{- if (eq .Values.keycloak.dbVendor "postgres") }}
       initContainers:
       - name: wait-for-postgresql
@@ -78,6 +77,7 @@ spec:
       {{- end }}
       containers:
       - name: keycloak
+        # redhat hack: invalid image to stop first unused deployment
         image: " "
         env:
         - name: TZ
@@ -103,22 +103,31 @@ spec:
           valueFrom:
             secretKeyRef:
               key: POSTGRESQL_USER
-              name: "{{ template "psd2.fullname" . }}-keycloak-db"
+              name: "{{ template "psd2.fullname" . }}-pg-db"
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRESQL_PASSWORD
-              name: "{{ template "psd2.fullname" . }}-keycloak-db"
+              name: "{{ template "psd2.fullname" . }}-pg-db"
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:
               key: POSTGRESQL_DATABASE
-              name: "{{ template "psd2.fullname" . }}-keycloak-db"
+              name: "{{ template "psd2.fullname" . }}-pg-db"
         {{- end }}
 {{- range $name, $value := .Values.keycloak.env }}
 {{- if not (empty $value) }}
         - name: {{ $name | quote }}
           value: {{ tpl (toString $value) $ | quote }}
+{{- end }}
+{{- end }}
+{{- range $name, $value := .Values.keycloak.secrets }}
+{{- if not ( empty $value) }}
+        - name: {{ $name | quote }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "psd2.fullname" $ }}-keycloak
+              key: {{ $name | quote }}
 {{- end }}
 {{- end }}
         ports:

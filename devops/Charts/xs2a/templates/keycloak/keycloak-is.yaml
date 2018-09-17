@@ -18,42 +18,4 @@ spec:
     referencePolicy:
       type: Source
 {{- end }}
-{{- if and (eq .Values.keycloak.dbVendor "postgres") (not .Values.keycloak.db.image.stream) }}
----
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: {{ template "psd2.fullname" . }}-keycloak-db
-  labels:
-{{ include "psd2.labels" . | indent 4 }}
-spec:
-  lookupPolicy:
-    local: false
-  tags:
-  - name: latest
-    from:
-      kind: DockerImage
-      name: {{ .Values.keycloak.db.image.name }}:{{ .Values.keycloak.db.image.tag }}
-    referencePolicy:
-      type: Source
-{{- end }}
-{{- if and (eq .Values.keycloak.dbVendor "postgres") .Values.keycloak.db.metrics.enabled (not .Values.keycloak.db.metrics.image.stream) }}
----
-apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: {{ template "psd2.fullname" . }}-keycloak-db-metrics
-  labels:
-{{ include "psd2.labels" . | indent 4 }}
-spec:
-  lookupPolicy:
-    local: false
-  tags:
-  - name: latest
-    from:
-      kind: DockerImage
-      name: {{ .Values.keycloak.db.metrics.image.name }}:{{ .Values.keycloak.db.metrics.image.tag }}
-    referencePolicy:
-      type: Source
-{{- end }}
 {{- end }}

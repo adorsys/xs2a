@@ -1,7 +1,7 @@
 ---
 {{ if .Values.mailout.enabled }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   annotations:
 {{- with .Values.mailout.deploymentAnnotations }}
@@ -11,6 +11,9 @@ metadata:
       [{
         "from": {
           "kind": "ImageStreamTag",
+          {{- if .Values.mailout.image.namespace }}
+          "namespace": "{{ .Values.mailout.image.namespace }}",
+          {{- end }}
           "name":"{{- if .Values.mailout.image.stream }}{{ .Values.mailout.image.name }}:{{ default "latest" .Values.mailout.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mailout:latest{{- end }}"
         },
         "fieldPath": "spec.template.spec.containers[?(@.name==\"mailout\")].image"
@@ -29,15 +32,15 @@ spec:
       app.kubernetes.io/component: mailout
   template:
     metadata:
-{{- with .Values.mailout.podAnnotations }}
       annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/mailout/mailout-secret.yaml") . | sha256sum }}
+{{- with .Values.keycloak.db.podAnnotations }}
 {{ toYaml . | indent 8 }}
 {{- end }}
       labels:
 {{ include "psd2.matchLabels" . | indent 8 }}
         app.kubernetes.io/component: mailout
     spec:
-      subdomain: mailout
       containers:
       - name: mailout
         image: " "
@@ -64,11 +67,11 @@ spec:
               key: {{ $name | quote }}
 {{- end }}
 {{- end }}
-{{- if .Values.mailout.existingSecret }}
+      {{- if .Values.mailout.existingSecret }}
         envFrom:
         - secretRef:
             name: {{ .Values.mailout.existingSecret | quote }}
-{{- end }}
+      {{- end }}
         resources:
 {{ toYaml .Values.mailout.resources | indent 10 }}
         livenessProbe:

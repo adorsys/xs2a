@@ -1,0 +1,61 @@
+{{- if and .Values.cms.enabled .Values.postgres.backup.enabled }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "psd2.fullname" . }}-cms-backup
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: cms-backup
+spec:
+  schedule: "{{ .Values.postgres.backup.schedule }}"
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          annotations:
+            alpha.image.policy.openshift.io/resolve-names: '*'
+          labels:
+{{ include "psd2.matchLabels" . | indent 12 }}
+            app.kubernetes.io/component: cms-backup
+        spec:
+          containers:
+          - name: cms-backup
+            command: ["/scripts/backup.sh"]
+            image: "{{ template "psd2.fullname" . }}-pg-db:latest"
+            resources:
+{{ toYaml .Values.postgres.backup.resources | indent 14 }}
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: backup
+              mountPath: /data
+            env:
+              - name: TZ
+                value: {{ .Values.timezone | quote }}
+              - name: PGPASSFILE
+                value: "/tmp/.pgpass"
+              - name: POSTGRESQL_HOST
+                value: {{ template "psd2.fullname" . }}-cms-db
+              {{- range $name, $value := .Values.postgres.secrets }}
+              {{- if not ( empty $value) }}
+              - name: {{ $name | quote }}
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "psd2.fullname" $ }}-pg-db
+                    key: {{ $name | quote }}
+              {{- end }}
+              {{- end }}
+          restartPolicy: OnFailure
+          volumes:
+          - name: scripts
+            configMap:
+              name: "{{ template "psd2.fullname" . }}-pg-backup-scripts"
+              defaultMode: 0555
+          - name: backup
+            persistentVolumeClaim:
+              claimName: {{ template "psd2.fullname" . }}-cms-backup
+{{- end }}

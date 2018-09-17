@@ -1,4 +1,4 @@
-{{- if and .Values.keycloak.enabled .Values.keycloak.db.backup.enabled (eq .Values.keycloak.dbVendor "postgres") }}
+{{- if and .Values.postgres.enabled .Values.postgres.backup.enabled }}
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -8,7 +8,7 @@ metadata:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: keycloak-backup
 spec:
-  schedule: "{{ .Values.keycloak.db.backup.schedule }}"
+  schedule: "{{ .Values.postgres.backup.schedule }}"
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 3
   jobTemplate:
@@ -25,29 +25,30 @@ spec:
           containers:
           - name: backup
             command: ["/scripts/backup.sh"]
-            image: "{{ template "psd2.fullname" . }}-keycloak-db:latest"
+            image: "{{ template "psd2.fullname" . }}-pg-db:latest"
             resources:
-{{ toYaml .Values.keycloak.db.backup.resources | indent 14 }}
+{{ toYaml .Values.postgres.backup.resources | indent 14 }}
             volumeMounts:
             - name: scripts
               mountPath: /scripts
             - name: backup
               mountPath: /data
             env:
-            - name: POSTGRESQL_HOST
-              value: {{ template "psd2.fullname" . }}-keycloak-db
-            - name: POSTGRESQL_USER
-              value: postgres
-            - name: POSTGRESQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: admin-password
-                  name: {{ template "psd2.fullname" . }}-keycloak-db
-            - name: POSTGRESQL_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  key: admin-password
-                  name: {{ template "psd2.fullname" . }}-keycloak-db
+              - name: TZ
+                value: {{ .Values.timezone | quote }}
+              - name: PGPASSFILE
+                value: "/tmp/.pgpass"
+              - name: POSTGRESQL_HOST
+                value: {{ template "psd2.fullname" . }}-keycloak-db
+              {{- range $name, $value := .Values.postgres.secrets }}
+              {{- if not ( empty $value) }}
+              - name: {{ $name | quote }}
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ template "psd2.fullname" $ }}-keycloak-db
+                    key: {{ $name | quote }}
+              {{- end }}
+              {{- end }}
           restartPolicy: OnFailure
           volumes:
           - name: scripts

@@ -7,8 +7,8 @@ keycloak:
 
   image:
     stream: false
-    name: docker.io/jboss/keycloak-openshift
-    tag: 4.2.1.Final
+    name: docker.io/jboss/keycloak
+    tag: 4.4.0.Final
     namespace: ~
     pullPolicy: IfNotPresent
 
@@ -39,7 +39,7 @@ keycloak:
     httpGet:
       path: /auth/
       port: http
-    initialDelaySeconds: 30
+    initialDelaySeconds: 10
     timeoutSeconds: 10
     periodSeconds: 10
     failureThreshold: 10
@@ -145,13 +145,16 @@ keycloak:
 
   realms:
     xs2a:
+      enabled: true
       displayName: ADORSYS PSD2
       registrationAllowed: true
+      loginWithEmailAllowed: true
       verifyEmail: false
+      registrationEmailAsUsername: false
       sslRequired: external
-#      smtpServer:
-#        from: "realm@example.com"
-#        host: '{{ template "psd2.fullname" . }}-mailout'
+      smtpServer:
+        from: "realm@example.com"
+        host: '{{ template "psd2.fullname" . }}-mailout'
       clients:
         aspsp-mock:
           secret: "{{ .Values.keycloak.secrets.mock }}"
@@ -162,7 +165,6 @@ keycloak:
           authorizationServicesEnabled: false
           webOrigins: ["*"]
           redirectUris: ["*"]
-
           publicClient: false
           bearerOnly: false
           authenticationFlowBindingOverrides: {}
@@ -175,6 +177,8 @@ keycloak:
           directAccessGrantsEnabled: true
           serviceAccountsEnabled: false
           authorizationServicesEnabled: false
+          webOrigins: ["*"]
+          redirectUris: ["*"]
         xs2a-impl:
           secret: "{{ .Values.keycloak.secrets.xs2a }}"
           standardFlowEnabled: true
@@ -182,19 +186,32 @@ keycloak:
           directAccessGrantsEnabled: true
           serviceAccountsEnabled: false
           authorizationServicesEnabled: false
+          webOrigins: ["*"]
+          redirectUris: ["*"]
+      roles:
+        ROLE_ADMIN:
+          composite: false
+          clientRole: false
+          description: ""
+        mock_super_admin:
+          composite: false
+          clientRole: false
+          description: >-
+            Super admin mock is a rule for the multibanking-mock. With this role, connected user in the mock can see all data from all the users and eventually delete them.
       users:
-        mock:
-          firstName: mock
-          lastName: admin
+        mock-user:
+          firstName: "Mock"
+          lastName: "User"
           email: ""
           emailVerified: true
-          credentials: [{ type: password, value: "TestPassword123" }]
+          realmRoles: ["ROLE_ADMIN", "mock_super_admin"]
+          credentials: [{ type: password, value: "{{ tpl (.Values.mock.admin.password | toString) $ }}" }]
         test:
-          firstName: test
+          firstName: PSD2
           lastName: User
-          email: test@user.de
+          email: ""
           emailVerified: true
-          credentials: [{ type: password, value: "TestPassword123" }]
+          credentials: [{ type: password, value: "Test123" }]
 
 
 xs2a:
@@ -286,6 +303,9 @@ mock:
     CONSENT_SERVICE_BASEURL: http://{{ template "psd2.fullname" . }}-cms:8080/api/v1
     keycloak_username: "{{ .Values.keycloak.admin.username }}"
     keycloak_password: "{{ .Values.keycloak.admin.password }}"
+
+  admin:
+    password: test123
 
   deploymentAnnotations: {}
   podAnnotations: {}
@@ -548,7 +568,6 @@ obank:
   podAnnotations: {}
   serviceAnnotations: {}
 
-
 uiapp:
 ## online-banking-demo-ui
   enabled: false
@@ -605,6 +624,7 @@ mailout:
     name: docker.io/jkroepke/openshift-mta
     tag: latest
     stream: false
+    namespace: ~
 
   revisionHistoryLimit: 10
 
@@ -622,11 +642,11 @@ mailout:
       SENDMAIL_DEFINE_confREFUSE_LA: "0"
       SENDMAIL_DEFINE_confQUEUE_LA: "0"
 
-  secrets:
-    SENDMAIL_SMART_HOST_USER: ~
-    SENDMAIL_SMART_HOST_PASSWORD: ~
+#  secrets:
+#    SENDMAIL_SMART_HOST_USER: ~
+#    SENDMAIL_SMART_HOST_PASSWORD: ~
 
-  existingSecret: ~
+  existingSecret: smtp-secret-mailout
 
   resources:
     limits:
@@ -644,6 +664,95 @@ mailout:
     exec:
       command:
       - /healthcheck.sh
+
+  deploymentAnnotations: {}
+  podAnnotations: {}
+  serviceAnnotations: {}
+
+postgres:
+  enabled: false
+  slave:
+    enabled: false
+
+  image:
+    stream: false
+    name: docker.io/centos/postgresql-10-centos7
+    tag: latest
+    namespace: ~
+    pullPolicy: IfNotPresent
+
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ~
+
+  secrets:
+    POSTGRESQL_ADMIN_PASSWORD: xs2acms
+    POSTGRESQL_USER: aspspcms
+    POSTGRESQL_PASSWORD: xs2acms
+    POSTGRESQL_DATABASE: cms
+  ###    Slave Env
+  #    POSTGRESQL_MASTER_USER: example
+  #    POSTGRESQL_MASTER_PASSWORD: example
+
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 250m
+    limits:
+      memory: 256Mi
+      cpu: 500m
+
+  livenessProbe:
+    exec:
+      command: [/usr/libexec/check-container, --live]
+    initialDelaySeconds: 120
+    timeoutSeconds: 10
+  readinessProbe:
+    exec:
+      command: [/usr/libexec/check-container]
+    initialDelaySeconds: 5
+    timeoutSeconds: 10
+
+  metrics:
+    enabled: false
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 100m
+      limits:
+        memory: 128Mi
+        cpu: 200m
+    image:
+      stream: false
+      name: docker.io/wrouesnel/postgres_exporter
+      tag: v0.4.6
+      namespace: ~
+      pullPolicy: IfNotPresent
+    customMetrics:
+      enabled: false
+      value:
+  #    pg_database:
+  #      query: "SELECT d.datname AS name, CASE WHEN pg_catalog.has_database_privilege(d.datname, 'CONNECT') THEN pg_catalog.pg_database_size(d.datname) ELSE 0 END AS size FROM pg_catalog.pg_database d where datname not in ('template0', 'template1', 'postgres')"
+  #      metrics:
+  #        - name:
+  #            usage: "LABEL"
+  #            description: "Name of the database"
+  #        - size_bytes:
+  #            usage: "GAUGE"
+  #            description: "Size of the database in bytes"
+  backup:
+    enabled: false
+    schedule: "0 1 * * *"
+    retention: 7
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 100m
+    persistence:
+      size: 10Gi
+      storageClass: ~
+
   deploymentAnnotations: {}
   podAnnotations: {}
   serviceAnnotations: {}

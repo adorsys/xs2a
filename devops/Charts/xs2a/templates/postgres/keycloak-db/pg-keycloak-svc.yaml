@@ -5,36 +5,38 @@ kind: Service
 metadata:
   name: "{{ template "psd2.fullname" . }}-keycloak-db-hs"
   labels:
-{{ include "psd2.labels" . | indent 4 }}
+  {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: keycloak-db
 spec:
+  sessionAffinity: ClientIP
   # StatefulSets require headless services
   clusterIP: None
   ports:
-  - name: postgresql
-    port: 5432
-    targetPort: postgresql
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
   selector:
-{{ include "psd2.matchLabels" . | indent 4 }}
+  {{ include "psd2.matchLabels" . | indent 4 }}
     app.kubernetes.io/component: keycloak-db
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  {{- with .Values.keycloak.db.serviceAnnotations }}
+{{- with .Values.postgres.serviceAnnotations }}
   annotations:
 {{ toYaml . | indent 4 }}
-  {{- end }}
+{{- end }}
   name: "{{ template "psd2.fullname" . }}-keycloak-db"
   labels:
-{{ include "psd2.labels" . | indent 4 }}
+  {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: keycloak-db
 spec:
+  sessionAffinity: ClientIP
   ports:
-  - name: postgresql
-    port: 5432
-    targetPort: postgresql
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
   selector:
-{{ include "psd2.matchLabels" . | indent 4 }}
+  {{ include "psd2.matchLabels" . | indent 4 }}
     app.kubernetes.io/component: keycloak-db
 {{- end }}

@@ -1,0 +1,37 @@
+{{- if and .Values.postgres.backup.enabled (eq .Values.keycloak.dbVendor "postgres") }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "psd2.fullname" . }}-pg-backup-scripts
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: pg-backup
+data:
+  backup.sh: |
+    #!/bin/bash
+    set -euo pipefail
+
+    if ! mountpoint /data/; then
+      echo "/data/ should be a mountpoint!"
+      exit 1
+    fi
+
+    mkdir -p /data/backup/
+
+    echo "${POSTGRESQL_HOST}:5432:${POSTGRESQL_DATABASE}:${POSTGRESQL_USER}:${POSTGRESQL_PASSWORD}" > "$PGPASSFILE"
+    chmod 0600 "$PGPASSFILE"
+
+    if ! pg_dump --username="${POSTGRESQL_USER}" --host="${POSTGRESQL_HOST}" "${POSTGRESQL_DATABASE}" | gzip > "/data/backup/pg_dump_$(date +%Y-%m-%d-%H-%M-%S).sql.gz"; then
+      echo "Unexpected error on pg_dump"
+      exit 1
+    fi
+
+    if ! find /data/backup/ -type f -mtime +{{ .Values.postgres.backup.retention  }} -name '*.gz' -delete; then
+      echo "Unexpected error on backup rotation"
+      exit 1
+    fi
+
+    echo "Backup successfull"
+    exit 0
+{{- end }}
