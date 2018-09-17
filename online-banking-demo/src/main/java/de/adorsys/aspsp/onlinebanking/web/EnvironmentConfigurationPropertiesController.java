@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EnvironmentConfigurationPropertiesController {
     private final EnvironmentConfigurationProperties configurationProperties;
 
-    @GetMapping(path = "/")
+    @GetMapping
     public ResponseEntity<EnvironmentConfigurationProperties> getEnvironmentConfigurationProperties() {
         return new ResponseEntity<>(configurationProperties, HttpStatus.OK);
     }
