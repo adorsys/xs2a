@@ -85,7 +85,7 @@ public class ScaAuthorizationConfig {
         if (EMBEDDED == scaApproach) {
             return new EmbeddedScaPaymentService(aspspProfileService, pisAuthorisationService, paymentSpi, paymentMapper, pisConsentService);
         }
-        return new RedirectScaPaymentService(pisConsentService, paymentMapper, paymentSpi);
+        return new RedirectScaPaymentService(aspspProfileService, pisAuthorisationService, paymentSpi, paymentMapper, pisConsentService);
     }
 
     @Bean
