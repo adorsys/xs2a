@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.TransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
@@ -205,6 +206,14 @@ public final class AccountModelMapper {
                        return targetAmount;
                    })
                    .orElse(new Xs2aAmount());
+
+    }
+
+    public static TransactionsResponse200Json mapToTransactionsResponse200Json(TransactionsReport transactionsReport){
+        TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
+        transactionsResponse200Json.setTransactions(AccountModelMapper.mapToAccountReport(transactionsReport.getAccountReport()));
+        transactionsResponse200Json.setBalances(AccountModelMapper.mapToBalanceList(transactionsReport.getBalances()));
+        return transactionsResponse200Json;
 
     }
 
