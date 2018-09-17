@@ -59,8 +59,7 @@ import java.time.LocalDateTime;
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
-    @Autowired
-    CorsConfigProperties corsConfigProperties;
+    private final CorsConfigProperties corsConfigProperties;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

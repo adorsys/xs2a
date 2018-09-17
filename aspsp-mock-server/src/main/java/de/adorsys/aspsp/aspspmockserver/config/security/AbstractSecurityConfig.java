@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
@@ -38,12 +39,13 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
+@RequiredArgsConstructor
 public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-    @Autowired
-    CorsConfigProperties corsConfigProperties;
+    protected final CorsConfigProperties corsConfigProperties;
     protected final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/","/api-docs/**", "/v2/api-docs/**",
         "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**",
         "/sso/**", "/img/*.png"};
+
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) {
