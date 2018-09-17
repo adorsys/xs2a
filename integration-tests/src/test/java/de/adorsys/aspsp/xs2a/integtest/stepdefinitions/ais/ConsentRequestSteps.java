@@ -83,7 +83,7 @@ public class ConsentRequestSteps {
                 entity,
                 ConsentsResponse201.class);
 
-            context.setActualResponse(response);
+        context.setActualResponse(response);
     }
 
     @Then("^a successful response code and the appropriate consent response data is delivered to the PSU$")

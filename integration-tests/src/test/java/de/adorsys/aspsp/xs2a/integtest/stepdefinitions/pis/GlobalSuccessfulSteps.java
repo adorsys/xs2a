@@ -87,7 +87,7 @@ public class GlobalSuccessfulSteps {
 
     @After
     public void afterScenario() {
+        log.debug("Cleaning up context");
         context.cleanUp();
-        log.debug("Cleaning up");
     }
 }
