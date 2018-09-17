@@ -18,22 +18,21 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.LinksPaymentInitiation;
-import de.adorsys.psd2.model.PaymentInitiationSctJson;
+import de.adorsys.psd2.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
@@ -89,7 +88,58 @@ public class EmbeddedSteps {
     }
 
     @Given("^PSU initiated a payment (.*) with the payment-id (.*)$")
-    public void psuInitiatedAPaymentWithThePaymentId() {
+    public void psuInitiatedAPaymentWithThePaymentId(String paymentId) {
+        context.setPaymentId(paymentId);
+        HttpEntity entity = PaymentUtils.getHttpEntity(null, context.getAccessToken());
 
+        restTemplate.exchange(
+            context.getBaseUrl() + context.getPaymentService() + "/" + paymentId + "/authorisations",
+            HttpMethod.POST,
+            entity,
+            LinksSelectPsuAuthenticationMethod.class);
+    }
+
+    @And("^PSU needs to authorize and identify using (.*)$")
+    public void psuAuthorizationUsingAuthorisationData(String dataFileName, String authorisationId) throws IOException {
+        context.setAuthorisationId(authorisationId);
+        TestData<HashMap, LinksPaymentInitiation> data = mapper.readValue(resourceToString(
+            "/data-input/pis/embedded/" + dataFileName, UTF_8),
+            new TypeReference<TestData<HashMap, TppMessages>>() {
+            });
+
+        HttpEntity entity = PaymentUtils.getHttpEntity(data.getRequest(), context.getAccessToken());
+
+        restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentId() + "/authorisations" + authorisationId,
+            HttpMethod.PUT,
+            entity,
+            StartScaprocessResponse.class);
+    }
+
+    @When("^PSU sends the authorisation request$")
+    public void psuSendsTheAuthorisationRequest() {
+        HttpEntity entityWithScaMethod = PaymentUtils.getHttpEntity("Sca-Method", context);
+
+        restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentId() + "/authorisations" + context.getAuthorisationId(),
+            HttpMethod.PUT,
+            entityWithScaMethod,
+            LinksSelectPsuAuthenticationMethod.class);
+
+        HttpEntity entityWithTanValue = PaymentUtils.getHttpEntity("Tan-Value", context);
+        ResponseEntity<ScaStatusResponse> finalScaStatus = restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentId() + "/authorisations" + context.getAuthorisationId(),
+            HttpMethod.PUT,
+            entityWithTanValue,
+            ScaStatusResponse.class);
+
+        context.setAuthorisationResponse(finalScaStatus);
+    }
+
+    @Then("^a successful response code and the appropriate authorization data are received$")
+    public void checkResponseCodeAndScaStatus() {
+        ResponseEntity<ScaStatusResponse> actualResponse = context.getAuthorisationResponse();
+        assertThat(actualResponse.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(actualResponse.getBody().getScaStatus().toString(), equalTo(ScaStatus.PSUAUTHENTICATED.toString()));
     }
 }

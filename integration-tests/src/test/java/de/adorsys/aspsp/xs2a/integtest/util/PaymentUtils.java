@@ -19,16 +19,39 @@ package de.adorsys.aspsp.xs2a.integtest.util;
 import de.adorsys.aspsp.xs2a.integtest.model.Request;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 public class PaymentUtils {
 
     public static HttpEntity getHttpEntity(Request request, String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setAll(request.getHeader());
+        if (request != null)
+            headers.setAll(request.getHeader());
         headers.add("Authorization", "Bearer " + token);
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
 
-        return new HttpEntity<>(request.getBody(), headers);
+        return new HttpEntity<>(request != null ? request.getBody() : null, headers);
+    }
+
+    public static HttpEntity getHttpEntity(String scaInformation, Context context) {
+        MultiValueMap<String, String> bodyWithScaData = new LinkedMultiValueMap<>();
+        // we need to setup sca info from data file or from other source
+        if (scaInformation.contains("Sca-Method")) {
+            bodyWithScaData.add(scaInformation, context.getScaMethod());
+        } else {
+            bodyWithScaData.add(scaInformation, context.getTanValue());
+        }
+        return new HttpEntity<>(bodyWithScaData, getHeaders(context));
+    }
+
+    private static HttpHeaders getHeaders(Context context) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        headers.add("Content-Type", "application/json");
+        headers.add("Accept", "application/json");
+
+        return headers;
     }
 }
