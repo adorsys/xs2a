@@ -5,15 +5,15 @@ Feature: Account Information Service
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-#    Scenario Outline: Successful consent request creation (redirect)
-#        Given PSU wants to create a consent <consent-resource>
-#        When PSU sends the create consent request
-#        Then a successful response code and the appropriate consent response data is delivered to the PSU
-#        Examples:
-#            | consent-resource                           |
-#            | consent-dedicated-successful.json          |
+    Scenario Outline: Successful consent request creation (redirect)
+        Given PSU wants to create a consent <consent-resource>
+        When PSU sends the create consent request
+        Then a successful response code and the appropriate consent response data is delivered to the PSU
+        Examples:
+            | consent-resource                           |
+            | consent-dedicated-successful.json          |
 #            | consent-all-psd2-accounts-successful.json  |
-#            | consent-all-accounts-successful.json       |
+            | consent-all-accounts-successful.json       |
 #
 ##    #TODO Errorful Request
 #
