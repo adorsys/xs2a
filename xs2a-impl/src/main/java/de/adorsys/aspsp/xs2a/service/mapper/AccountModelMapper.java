@@ -65,7 +65,7 @@ public final class AccountModelMapper {
                    ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
     }
 
-    public static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
+    private static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
         BalanceList balanceList = null;
 
         if (CollectionUtils.isNotEmpty(balances)) {
@@ -211,8 +211,8 @@ public final class AccountModelMapper {
 
     public static TransactionsResponse200Json mapToTransactionsResponse200Json(TransactionsReport transactionsReport){
         TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
-        transactionsResponse200Json.setTransactions(AccountModelMapper.mapToAccountReport(transactionsReport.getAccountReport()));
-        transactionsResponse200Json.setBalances(AccountModelMapper.mapToBalanceList(transactionsReport.getBalances()));
+        transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
+        transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));
         return transactionsResponse200Json;
 
     }
