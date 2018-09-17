@@ -106,6 +106,11 @@ public class Xs2aAisConsentMapper {
                        request.setAuthenticationMethodId(updatePsuData.getAuthenticationMethodId());
                        request.setScaAuthenticationData(updatePsuData.getScaAuthenticationData());
                        request.setPassword(updatePsuData.getPassword());
+                       request.setScaStatus(
+                           Optional.ofNullable(data.getScaStatus())
+                               .map(status -> SpiScaStatus.valueOf(status.name()))
+                               .orElse(null)
+                       );
                        return request;
                    })
                    .orElse(null);
@@ -165,7 +170,11 @@ public class Xs2aAisConsentMapper {
                    .map(data -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
                        consentAuthorization.setPsuId(data.getPsuId());
-                       consentAuthorization.setScaStatus(CmsScaStatus.valueOf(data.getScaStatus().name()));
+                       consentAuthorization.setScaStatus(
+                           Optional.ofNullable(data.getScaStatus())
+                               .map(status -> CmsScaStatus.valueOf(status.name()))
+                               .orElse(null)
+                       );
                        consentAuthorization.setAuthenticationMethodId(data.getAuthenticationMethodId());
                        consentAuthorization.setPassword(data.getPassword());
                        consentAuthorization.setScaAuthenticationData(data.getScaAuthenticationData());
