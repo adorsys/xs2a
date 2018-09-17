@@ -24,6 +24,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreatePisConsentAuthorizationResponse;
@@ -121,11 +122,12 @@ public class PisConsentService {
                                                                        .getBody();
 
         if (STARTED == authorizationResponse.getScaStatus()) {
-            SpiAuthorisationStatus authorisationStatus = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData()).getPayload();
-            if (SpiAuthorisationStatus.FAILURE == authorisationStatus) {
+            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword());
+            if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
                 return new UpdatePisConsentPsuDataResponse(FAILED);
             }
-            List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(new AspspConsentData()).getPayload();
+
+            List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(new AspspConsentData(authorizationResponse.getAspspData())).getPayload();
 
             if (CollectionUtils.isEmpty(spiScaMethods)) {
                 paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments(), new AspspConsentData());
@@ -143,7 +145,7 @@ public class PisConsentService {
 
             }
         } else if (SCAMETHODSELECTED == authorizationResponse.getScaStatus()) {
-            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword(), new AspspConsentData());
+            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword());
             paymentSpi.applyStrongUserAuthorisation(buildSpiPaymentConfirmation(request, authorizationResponse), new AspspConsentData());
             paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments(), new AspspConsentData());
             request.setScaStatus(FINALISED);
@@ -153,7 +155,7 @@ public class PisConsentService {
             return response;
 
         } else if (PSUAUTHENTICATED == authorizationResponse.getScaStatus()) {
-            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword(), new AspspConsentData());
+            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword());
             return executeSingleScaUpdate(request, request.getAuthenticationMethodId());
         }
         return new UpdatePisConsentPsuDataResponse(null);

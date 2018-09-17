@@ -38,7 +38,7 @@ public class PaymentController {
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
 
-    @ApiOperation(value = "Get payment information", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Get payment information")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = Xs2aTransactionStatus.class),
         @ApiResponse(code = 404, message = "Not found"),

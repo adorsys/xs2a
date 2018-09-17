@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.constant;
+package de.adorsys.aspsp.xs2a.spi.config.keycloak;
 
-public class AuthorizationConstant {
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_TOKEN_PREFIX = "Bearer ";
-    public static final String ACCESS_TOKEN = "access_token";
-    public static final String REFRESH_TOKEN = "refresh_token";
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
-    private AuthorizationConstant(){}
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
+
+@Data
+@AllArgsConstructor
+public class BearerToken {
+    private String token;
+
+    public String getToken() {
+        return StringUtils.substringAfter(token, BEARER_TOKEN_PREFIX);
+    }
 }

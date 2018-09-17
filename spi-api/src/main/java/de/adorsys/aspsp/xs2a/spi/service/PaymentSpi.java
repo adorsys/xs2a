@@ -110,11 +110,9 @@ public interface PaymentSpi {
      *
      * @param psuId            ASPSP identifier of the psu
      * @param password         Psu's password
-     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
-     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return success or failure authorization status
      */
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
+    SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password);
 
     /**
      * Returns a list of SCA methods for PSU by its login

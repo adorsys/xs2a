@@ -16,11 +16,33 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.constant;
 
-public class AuthorizationConstant {
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_TOKEN_PREFIX = "Bearer ";
-    public static final String ACCESS_TOKEN = "access_token";
-    public static final String REFRESH_TOKEN = "refresh_token";
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-    private AuthorizationConstant(){}
+public enum GrantType {
+    PASSWORD("password"),
+    REFRESH_TOKEN("refresh_token");
+
+    private static final Map<String, GrantType> container = new HashMap<>();
+
+    static {
+        for (GrantType type : values()) {
+            container.put(type.getValue(), type);
+        }
+    }
+
+    private String value;
+
+    GrantType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public static Optional<GrantType> getByValue(String value){
+        return Optional.ofNullable(container.get(value));
+    }
 }

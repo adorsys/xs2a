@@ -28,4 +28,5 @@ public class UpdatePisConsentPsuDataRequest {
     private String authenticationMethodId;
     private CmsScaStatus scaStatus;
     private String paymentService;
+    private byte[] aspspData;
 }

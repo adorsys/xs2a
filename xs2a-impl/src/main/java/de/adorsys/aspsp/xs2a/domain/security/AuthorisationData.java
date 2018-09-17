@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest;
+package de.adorsys.aspsp.xs2a.domain.security;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
 
 @Data
-@AllArgsConstructor
-public class BearerToken {
-    private String token;
+public class AuthorisationData {
+    private String login;
+    private String password;
+    private String accessToken;
+    private String refreshToken;
 
-    public String getToken(){
-        return StringUtils.substringAfter(token, BEARER_TOKEN_PREFIX);
+    public AuthorisationData(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public AuthorisationData(String login, String password, String accessToken, String refreshToken) {
+        this.login = login;
+        this.password = password;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }

@@ -14,13 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.constant;
+package de.adorsys.aspsp.xs2a.spi.config.keycloak;
 
-public class AuthorizationConstant {
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_TOKEN_PREFIX = "Bearer ";
-    public static final String ACCESS_TOKEN = "access_token";
-    public static final String REFRESH_TOKEN = "refresh_token";
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-    private AuthorizationConstant(){}
+@Data
+@Component
+@ConfigurationProperties(prefix = "keycloak")
+public class KeycloakConfigProperties {
+    private String realm;
+    private String resource;
+    private Credentials credentials;
+    private String authServerUrl;
+
+    @Data
+    public static class Credentials {
+        private String secret;
+    }
+
+    public String getRootPath() {
+        return authServerUrl + "/realms/" + realm;
+    }
 }

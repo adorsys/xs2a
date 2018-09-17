@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.keycloak;
+package de.adorsys.aspsp.xs2a.spi.config.rest;
 
-import lombok.extern.slf4j.Slf4j;
+import de.adorsys.aspsp.xs2a.exception.RestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 
 import java.io.IOException;
 
-@Slf4j
-public class KeycloakRestErrorHandler extends DefaultResponseErrorHandler {
+public class AspspRestErrorHandler extends DefaultResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-        log.error("Keycloak rest call exception: httpStatus {}, reason: {}", response.getStatusCode(), response.getStatusCode().getReasonPhrase());
+        HttpStatus statusCode = response.getStatusCode();
+        throw new RestException(statusCode, statusCode.getReasonPhrase());
     }
 }

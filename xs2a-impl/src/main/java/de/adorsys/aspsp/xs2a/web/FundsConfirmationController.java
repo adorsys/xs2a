@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import io.swagger.annotations.*;
@@ -40,10 +39,9 @@ import javax.validation.Valid;
 public class FundsConfirmationController {
     private final FundsConfirmationService fundsConfirmationService;
     private final ResponseMapper responseMapper;
-    private final AccountReferenceValidationService referenceValidationService;
 
     @PostMapping
-    @ApiOperation(value = "Create a confirmation of funds request ", notes = "debtor account, creditor account, creditor name, remittance information unstructured", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Create a confirmation of funds request ", notes = "debtor account, creditor account, creditor name, remittance information unstructured")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "return true or false"),
         @ApiResponse(code = 400, message = "Bad request")})

@@ -16,17 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.domain.security.AuthorisationData;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.config.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +56,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate aspspRestTemplate;
     private final KeycloakInvokerService keycloakInvokerService;
     private final Xs2aPisConsentMapper xs2aPisConsentMapper;
+    private final JsonConverter jsonConverter;
 
     /**
      * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayment, AspspConsentData)}
@@ -142,14 +145,17 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#authorisePsu(String, String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#authorisePsu(String, String)}
      */
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData) {
-        SpiAuthorisationStatus spiAuthorisationStatus = Optional.ofNullable(keycloakInvokerService.obtainAccessToken(psuId, password))
-                                                            .map(token -> SUCCESS)
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password) {
+        Optional<AuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
+        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
                                                             .orElse(FAILURE);
-        return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData);
+        byte[] authorisationBody = accessToken.flatMap(jsonConverter::toJson)
+                                       .map(String::getBytes)
+                                       .orElse(null);
+        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(authorisationBody));
     }
 
     /**

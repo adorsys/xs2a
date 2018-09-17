@@ -105,8 +105,7 @@ public class PisConsentMapper {
         GetPisConsentAuthorisationResponse response = new GetPisConsentAuthorisationResponse();
         response.setPayments(mapToPisPaymentList(pis.getConsent().getPayments()));
         response.setPaymentType(pis.getConsent().getPisPaymentType());
-        response.setPassword(pis.getPassword());
-        response.setPsuId(pis.getPsuId());
+        response.setAspspData(pis.getConsent().getAspspConsentData());
         response.setScaStatus(pis.getScaStatus());
         response.setConsentId(pis.getConsent().getExternalId());
         return response;

@@ -31,4 +31,5 @@ public class GetPisConsentAuthorisationResponse {
     private String password;
     private List<PisPayment> payments;
     private PisPaymentType paymentType;
+    private byte[] aspspData;
 }
