@@ -23,17 +23,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -57,20 +51,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         objectMapper.registerModule(new JavaTimeModule()); // add support for java.time types
         objectMapper.registerModule(new ParameterNamesModule()); // support for multiargs constructors
         return objectMapper;
-    }
-
-    @Bean
-    public FilterRegistrationBean corsFilterRegistrationBean() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.applyPermitDefaultValues();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(singletonList("*"));
-        config.setAllowedHeaders(singletonList("*"));
-        config.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE"));
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return new FilterRegistrationBean(new CorsFilter(source));
     }
 }
