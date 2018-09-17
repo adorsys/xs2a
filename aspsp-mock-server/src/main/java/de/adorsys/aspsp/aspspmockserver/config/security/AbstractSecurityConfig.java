@@ -21,6 +21,7 @@ import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,16 +32,15 @@ import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
 public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+    @Autowired
+    CorsConfigProperties corsConfigProperties;
     protected final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/","/api-docs/**", "/v2/api-docs/**",
         "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**",
         "/sso/**", "/img/*.png"};
@@ -64,13 +64,17 @@ public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigur
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(singletonList("*"));
-        configuration.setAllowedHeaders(asList( "Origin", "Authorization", "Content-Type"));
-        configuration.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE"));
+    public FilterRegistrationBean corsFilterRegistrationBean() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
+        config.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
+        config.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
+        config.setAllowedMethods(corsConfigProperties.getAllowedMethods());
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        source.registerCorsConfiguration("/**", config);
+
+        return new FilterRegistrationBean(new CorsFilter(source));
     }
 }

@@ -42,4 +42,13 @@ standalone.bat (for Windows users, *.sh for Linux)
 - Create user with name: aspsp
 - Create role 'user' and map it to 'aspsp' user 
 ```
-
+## CORS
+By default, all origins, all headers and all HTTP methods are allowed.
+You can override CORS settings by changing values in `application.properties`
+```
+endpoints.cors.allow-credentials
+endpoints.cors.allowed-origins
+endpoints.cors.allowed-headers
+endpoints.cors.allowed-methods
+endpoints.cors.max-age
+```

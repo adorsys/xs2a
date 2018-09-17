@@ -86,3 +86,13 @@ ASPSP-profile is a module where ASPSP stores information about certain paramethe
 To specify the ASPSP-profile url, change `aspsp-profile.baseurl` property in `application.properties` file to your ASPSP-profile base url. The example given below is default url for xs2a project:
 
 ```aspsp-profile.baseurl=http://localhost:48080/api/v1```
+
+## CORS
+By default, all origins, all headers and all HTTP methods are allowed.
+You can override CORS settings by changing values in `application.properties`
+```
+endpoints.cors.allow-credentials
+endpoints.cors.allowed-origins
+endpoints.cors.allowed-headers
+endpoints.cors.allowed-methods
+```

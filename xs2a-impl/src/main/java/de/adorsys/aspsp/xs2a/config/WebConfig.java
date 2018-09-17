@@ -31,14 +31,19 @@ import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -52,6 +57,8 @@ import java.time.LocalDateTime;
 public class WebConfig extends WebMvcConfigurerAdapter {
     @Value("${application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
+    @Autowired
+    CorsConfigProperties corsConfigProperties;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -115,6 +122,22 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
         serviceLocatorFactoryBean.setServiceLocatorInterface(ReadPaymentFactory.class);
         return serviceLocatorFactoryBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean corsFilterRegistrationBean() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
+        config.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
+        config.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
+        config.setAllowedMethods(corsConfigProperties.getAllowedMethods());
+        config.setMaxAge(corsConfigProperties.getMaxAge());
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new FilterRegistrationBean(new CorsFilter(source));
     }
 
     @Override
