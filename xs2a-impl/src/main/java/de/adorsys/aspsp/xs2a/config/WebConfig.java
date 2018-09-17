@@ -33,7 +33,6 @@ import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.web.interceptor.HandlerInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
