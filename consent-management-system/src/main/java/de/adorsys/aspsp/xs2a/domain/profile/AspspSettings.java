@@ -37,4 +37,5 @@ public class AspspSettings {
     private int transactionLifetime;
     private boolean allPsd2Support;
     private String authorisationStartType;
+    private boolean transactionsWithoutBalancesSupported;
 }

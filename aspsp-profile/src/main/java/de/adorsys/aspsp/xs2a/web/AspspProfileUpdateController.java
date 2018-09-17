@@ -204,7 +204,7 @@ public class AspspProfileUpdateController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok", response = String.class),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateTransactionsWithoutBalancesSupported(@RequestBody Boolean transactionsWithoutBalancesSupported) {
+    public ResponseEntity<Void> updateTransactionsWithoutBalancesSupported(@RequestBody boolean transactionsWithoutBalancesSupported) {
         aspspProfileService.updateTransactionsWithoutBalancesSupported(transactionsWithoutBalancesSupported);
         return new ResponseEntity<>(HttpStatus.OK);
     }
