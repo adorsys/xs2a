@@ -226,7 +226,7 @@ public class PaymentMapper {
                    .map(codes -> Arrays.stream(codes)
                                      .map(MessageErrorCode::valueOf)
                                      .toArray(MessageErrorCode[]::new))
-                   .orElse(new MessageErrorCode[]{});
+                   .orElseGet(() -> new MessageErrorCode[]{});
     }
 
     private SpiAddress mapToSpiAddress(Xs2aAddress address) {
