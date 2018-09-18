@@ -27,7 +27,7 @@
     </parent>
 
     <groupId>de.adorsys.psd2.aspsp</groupId>
-    <artifactId>aspsp-profile</artifactId>
+    <artifactId>aspsp-profile-server</artifactId>
     <version>1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
