@@ -16,11 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.web.filter;
 
-import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
-import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
-import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
-import lombok.extern.slf4j.Slf4j;
-import no.difi.certvalidator.api.CertificateValidationException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,17 +39,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
+import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
+import lombok.extern.slf4j.Slf4j;
+import no.difi.certvalidator.api.CertificateValidationException;
 
 /**
  * The intent of this Class is to get the Qwac certificate from header, extract
