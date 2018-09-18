@@ -32,7 +32,7 @@
         <module>psd2-validator</module>
         <module>consent-management-system</module>
         <module>consent-api</module>
-        <module>aspsp-profile-server</module>
+        <module>aspsp-profile</module>
         <module>integration-tests</module>
         <module>cms-db-schema</module>
         <module>online-banking-demo</module>
