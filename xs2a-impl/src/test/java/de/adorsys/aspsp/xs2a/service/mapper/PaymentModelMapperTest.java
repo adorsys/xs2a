@@ -60,6 +60,9 @@ public class PaymentModelMapperTest {
     @Mock
     ObjectMapper objectMapper;
 
+    @Mock
+    MessageErrorMapper messageErrorMapper;
+
     @Test
     public void mapToTransactionStatus12() {
         //Given

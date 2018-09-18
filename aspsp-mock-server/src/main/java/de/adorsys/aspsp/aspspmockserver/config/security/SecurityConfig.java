@@ -22,6 +22,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 @Configuration
 public class SecurityConfig extends AbstractSecurityConfig {
 
+    public SecurityConfig(CorsConfigProperties corsConfigProperties) {
+        super(corsConfigProperties);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);

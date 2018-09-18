@@ -30,6 +30,8 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -76,12 +78,17 @@ public class AccountService {
             return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        List<Xs2aAccountDetails> accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
-        ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = accountDetails.isEmpty()
-                                                                             ? ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
-                                                                                   .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build()
-                                                                             : ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
-                                                                                   .body(Collections.singletonMap("accountList", accountDetails)).build();
+
+        List<Xs2aAccountDetails> accountDetails;
+
+        if (isBankOfferedConsent(allowedAccountData.getBody())) {
+            accountDetails = getAccountDetailsByConsentId(withBalance, consentId);
+        } else {
+            accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
+        }
+
+        ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
+                                                                             .body(Collections.singletonMap("accountList", accountDetails)).build();
 
         aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, response));
         return response;
@@ -293,6 +300,20 @@ public class AccountService {
                                                 ? accountAccess.getBalances()
                                                 : accountAccess.getAccounts();
         List<Xs2aAccountDetails> details = getAccountDetailsFromReferences(references);
+        return filterAccountDetailsByWithBalance(withBalance, details);
+    }
+
+    private List<Xs2aAccountDetails> getAccountDetailsByConsentId(boolean withBalance, String consentId) {
+        SpiAccountConsent spiAccountConsent = aisConsentService.getAccountConsentById(consentId);
+        List<SpiAccountDetails> spiAccountDetails = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), new AspspConsentData()).getPayload();
+        List<Xs2aAccountDetails> details = spiAccountDetails.stream()
+                                               .map(accountMapper::mapToAccountDetails)
+                                               .collect(Collectors.toList());
+
+        return filterAccountDetailsByWithBalance(withBalance, details);
+    }
+
+    private List<Xs2aAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<Xs2aAccountDetails> details) {
         return withBalance
                    ? details
                    : accountMapper.mapToAccountDetailsListNoBalances(details);
@@ -344,5 +365,11 @@ public class AccountService {
                 ? report.getBooked() : new Transactions[]{},
             EnumSet.of(Xs2aBookingStatus.PENDING, Xs2aBookingStatus.BOTH).contains(bookingStatus)
                 ? report.getPending() : new Transactions[]{});
+    }
+
+    private boolean isBankOfferedConsent(Xs2aAccountAccess accountAccess) {
+        return CollectionUtils.isEmpty(accountAccess.getBalances())
+                   && CollectionUtils.isEmpty(accountAccess.getTransactions())
+                   && CollectionUtils.isEmpty(accountAccess.getAccounts());
     }
 }

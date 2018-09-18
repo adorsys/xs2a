@@ -3,9 +3,11 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 import cucumber.api.java.After;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
@@ -18,8 +20,10 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+@Slf4j
 @FeatureFileSteps
 public class GlobalSuccessfulSteps {
     @Autowired
@@ -64,8 +68,26 @@ public class GlobalSuccessfulSteps {
         assertThat(actualResponse.getBody().getLinks().get("scaRedirect"), notNullValue());
     }
 
+    @Then("^a successful response code and the appropriate payment response data are received$")
+    public void checkResponseCode() {
+        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
+        PaymentInitationRequestResponse201 givenResponseBody =  (PaymentInitationRequestResponse201) context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+
+        assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
+        assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
+
+        // TODO: Take asserts back in when respective response headers are implemented (https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/289)
+        // assertThat(actualResponse.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
+        //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
+
+        // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
+    }
+
     @After
     public void afterScenario() {
+        log.debug("Cleaning up context");
         context.cleanUp();
     }
 }

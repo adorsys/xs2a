@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
+import de.adorsys.aspsp.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
 import org.apache.commons.io.IOUtils;
@@ -51,6 +52,8 @@ public class FundsConfirmationControllerTest {
     private FundsConfirmationService fundsConfirmationService;
     @Mock
     private ResponseMapper responseMapper;
+    @Mock
+    private FundsConfirmationModelMapper fundsConfirmationModelMapper;
     @Mock
     private AccountReferenceValidationService referenceValidationService;
 

@@ -18,8 +18,8 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -37,9 +37,6 @@ import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
 public class SinglePaymentSuccessfulSteps {
@@ -53,6 +50,18 @@ public class SinglePaymentSuccessfulSteps {
 
     @Autowired
     private ObjectMapper mapper;
+
+    @Before("Load test data before run scenario")
+    public void loadTestDataIntoDb() {
+        HttpEntity httpEntity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        restTemplate.exchange(
+            context.getMockUrl() + "/integration-tests/refresh-testing-data",
+            HttpMethod.GET,
+            httpEntity,
+            String.class);
+    }
 
     @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
@@ -81,16 +90,8 @@ public class SinglePaymentSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate single payment response data are received$")
-    public void checkResponseCode() {
-        ResponseEntity<PaymentInitationRequestResponse201> actualResponse = context.getActualResponse();
-        PaymentInitationRequestResponse201 givenResponseBody = context.getTestData().getResponse().getBody();
-
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-
-        assertThat(actualResponse.getBody().getTransactionStatus(), equalTo(givenResponseBody.getTransactionStatus()));
-        assertThat(actualResponse.getBody().getPaymentId(), notNullValue());
-    }
+//    @Then("^a successful response code and the appropriate payment response data are received$")
+//    see ./GlobalSuccessfulSteps.java
 
     // @And("^a redirect URL is delivered to the PSU$")
     // See GlobalSuccessfulSteps
