@@ -18,11 +18,13 @@ package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.*;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
@@ -31,8 +33,6 @@ import java.util.List;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
 import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AspspProfileServiceTest {
@@ -61,37 +61,37 @@ public class AspspProfileServiceTest {
 
     @Before
     public void setUpAccountServiceMock() {
-        when(profileConfiguration.getFrequencyPerDay())
+        Mockito.when(profileConfiguration.getFrequencyPerDay())
             .thenReturn(FREQUENCY_PER_DAY);
-        when(profileConfiguration.isCombinedServiceIndicator())
+        Mockito.when(profileConfiguration.isCombinedServiceIndicator())
             .thenReturn(COMBINED_SERVICE_INDICATOR);
-        when(profileConfiguration.getAvailablePaymentProducts())
+        Mockito.when(profileConfiguration.getAvailablePaymentProducts())
             .thenReturn(AVAILABLE_PAYMENT_PRODUCTS);
-        when(profileConfiguration.getAvailablePaymentTypes())
+        Mockito.when(profileConfiguration.getAvailablePaymentTypes())
             .thenReturn(AVAILABLE_PAYMENT_TYPES);
-        when(profileConfiguration.isTppSignatureRequired())
+        Mockito.when(profileConfiguration.isTppSignatureRequired())
             .thenReturn(TPP_SIGNATURE_REQUIRED);
-        when(profileConfiguration.getScaApproach())
+        Mockito.when(profileConfiguration.getScaApproach())
             .thenReturn(SCA_APPROACH);
-        when(profileConfiguration.getPisRedirectUrlToAspsp())
+        Mockito.when(profileConfiguration.getPisRedirectUrlToAspsp())
             .thenReturn(PIS_REDIRECT_LINK);
-        when(profileConfiguration.getAisRedirectUrlToAspsp())
+        Mockito.when(profileConfiguration.getAisRedirectUrlToAspsp())
             .thenReturn(AIS_REDIRECT_LINK);
-        when(profileConfiguration.getMulticurrencyAccountLevel())
+        Mockito.when(profileConfiguration.getMulticurrencyAccountLevel())
             .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
-        when(profileConfiguration.getAvailableBookingStatuses())
+        Mockito.when(profileConfiguration.getAvailableBookingStatuses())
             .thenReturn(AVAILABLE_BOOKING_STATUSES);
-        when(profileConfiguration.getSupportedAccountReferenceFields())
+        Mockito.when(profileConfiguration.getSupportedAccountReferenceFields())
             .thenReturn(SUPPORTED_ACCOUNT_REFERENCE_FIELDS);
-        when(profileConfiguration.getConsentLifetime())
+        Mockito.when(profileConfiguration.getConsentLifetime())
             .thenReturn(CONSENT_LIFETIME);
-        when(profileConfiguration.getTransactionLifetime())
+        Mockito.when(profileConfiguration.getTransactionLifetime())
             .thenReturn(TRANSACTION_LIFETIME);
-        when(profileConfiguration.isAllPsd2Support())
+        Mockito.when(profileConfiguration.isAllPsd2Support())
             .thenReturn(ALL_PSD_2_SUPPORT);
-        when(profileConfiguration.isBankOfferedConsentSupport())
+        Mockito.when(profileConfiguration.isBankOfferedConsentSupport())
             .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
-        when(profileConfiguration.getAuthorisationStartType())
+        Mockito.when(profileConfiguration.getAuthorisationStartType())
             .thenReturn(AUTHORIZATION_START_TYPE);
     }
 
@@ -101,7 +101,7 @@ public class AspspProfileServiceTest {
         AspspSettings actualResponse = aspspProfileService.getAspspSettings();
 
         //Then:
-        assertThat(actualResponse).isEqualTo(buildAspspSettings());
+        Assertions.assertThat(actualResponse).isEqualTo(buildAspspSettings());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class AspspProfileServiceTest {
         ScaApproach actualResponse = aspspProfileService.getScaApproach();
 
         //Then:
-        assertThat(actualResponse).isEqualTo(SCA_APPROACH);
+        Assertions.assertThat(actualResponse).isEqualTo(SCA_APPROACH);
     }
 
     private static AspspSettings buildAspspSettings() {
