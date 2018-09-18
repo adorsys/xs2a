@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
@@ -47,12 +48,12 @@ public class ProfileConfiguration {
     /**
      * List of payment products supported by ASPSP
      */
-    private List<String> availablePaymentProducts;
+    private List<String> availablePaymentProducts = new ArrayList<>();
 
     /**
      * List of payment types supported by ASPSP
      */
-    private List<String> availablePaymentTypes;
+    private List<String> availablePaymentTypes = new ArrayList<>();
 
     /**
      * SCA Approach supported by ASPSP
@@ -89,12 +90,12 @@ public class ProfileConfiguration {
     /**
      * Booking statuses supported by ASPSP, such as Booked, Pending and Both
      */
-    private List<BookingStatus> availableBookingStatuses;
+    private List<BookingStatus> availableBookingStatuses = new ArrayList<>();
 
     /**
      * Account Reference fields supported by ASPSP, such as: IBAN, PAN, MSIDN
      */
-    private List<SupportedAccountReferenceField> supportedAccountReferenceFields;
+    private List<SupportedAccountReferenceField> supportedAccountReferenceFields = new ArrayList<>();
 
     /**
      * The limit of a maximum lifetime of consent set in days

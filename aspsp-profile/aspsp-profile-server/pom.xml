@@ -30,7 +30,7 @@
     <version>1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>aspsp-profile</name>
+    <name>aspsp-profile-server</name>
     <description>Aspsp profile service for XS2A and ASPSP </description>
 
     <properties>

@@ -40,7 +40,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                    .apiInfo(getApiInfo())
                    .select()
-                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.aspsp.xs2a.web"))
+                   .apis(RequestHandlerSelectors.basePackage("de.adorsys.psd2.aspsp.profile"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))
                    .paths(Predicates.not(PathSelectors.regex("/connect.*")))
                    .paths(Predicates.not(PathSelectors.regex("/management.*")))
