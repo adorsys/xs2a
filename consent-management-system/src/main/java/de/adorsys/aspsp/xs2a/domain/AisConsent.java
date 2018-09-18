@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
+import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,11 +29,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
 
 @Data
-@ToString(exclude = "accounts")
+@ToString(exclude = "accesses")
 @Entity(name = "ais_consent")
 @ApiModel(description = "Ais consent entity", value = "AisConsent")
 public class AisConsent {
@@ -99,17 +101,27 @@ public class AisConsent {
     @ApiModelProperty(value = "Usage counter for the consent", required = true, example = "7")
     private int usageCounter;
 
+    @ElementCollection
+    @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @ApiModelProperty(value = "Set of accesses given by psu for this account", required = true)
+    private List<AccountAccess> accesses = new ArrayList<>();
+
     @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @ApiModelProperty(value = "List of accounts related to the consent", required = true)
-    private List<AisAccount> accounts = new ArrayList<>();
+    @ApiModelProperty(value = "List of authorizations related to the consent", required = true)
+    private List<AisConsentAuthorization> authorizations = new ArrayList<>();
 
     @Lob
     @Column(name = "aspsp_consent_data")
     @Type(type = "org.hibernate.type.BinaryType")
     private byte[] aspspConsentData;
 
-    public void addAccounts(List<AisAccount> accounts) {
-        accounts.forEach(this::addAccount);
+    @Column(name = "ais_consent_request_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    @ApiModelProperty(value = "Type of the consent request: GLOBAL, BANK_OFFERED or DEDICATED_ACCOUNTS.", required = true, example = "GLOBAL")
+    private AisConsentRequestType aisConsentRequestType;
+
+    public List<AccountAccess> getAccesses() {
+        return new ArrayList<>(accesses);
     }
 
     public boolean isExpiredByDate() {
@@ -124,8 +136,7 @@ public class AisConsent {
         return usageCounter > 0;
     }
 
-    private void addAccount(AisAccount account) {
-        this.accounts.add(account);
-        account.setConsent(this);
+    public void addAccountAccess(Set<AccountAccess> accountAccesses) {
+        accesses = new ArrayList<>(accountAccesses);
     }
 }

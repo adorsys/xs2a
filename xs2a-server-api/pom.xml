@@ -7,13 +7,13 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.6-SNAPSHOT</version>
+        <version>1.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
         <springfox.version>2.9.2</springfox.version>
-        <pmd.skip>true</pmd.skip>
+        <pmd.skip>true</pmd.skip> <!-- This module uses generated sources, that we cannot adopt -->
     </properties>
 
     <dependencies>

@@ -31,7 +31,7 @@ public class ConsentRestConfig {
     @Value("${rest-consent-config.connection-timeout.ms:10000}")
     private int connectionTimeout;
 
-    @Bean(name = "consentRestTemplate")
+    @Bean
     public RestTemplate consentRestTemplate() {
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));

@@ -22,12 +22,13 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,6 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PaymentInitiationControllerTest {
-
     private static final String CREATE_PAYMENT_INITIATION_REQUEST_JSON_PATH = "/json/CreatePaymentInitiationRequestTest.json";
     private static final String CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH = "/json/CreatePaymentInitiationResponseTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
@@ -77,19 +77,19 @@ public class PaymentInitiationControllerTest {
 
     @Before
     public void setUpPaymentServiceMock() throws IOException {
-        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentProduct.SCT.getCode()))
-            .thenReturn(ResponseObject.<TransactionStatusResponse>builder().body(new TransactionStatusResponse(TransactionStatus.ACCP)).build());
-        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentProduct.SCT.getCode()))
-            .thenReturn(ResponseObject.<TransactionStatusResponse>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
+        when(paymentService.getPaymentStatusById(PAYMENT_ID, PaymentType.SINGLE))
+            .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().body(Xs2aTransactionStatus.ACCP).build());
+        when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE))
+            .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
         when(paymentService.createPaymentInitiation(any(), any(), any())).thenReturn(readResponseObject());
     }
 
     @Test
     public void getTransactionStatusById_Success() {
-        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(TransactionStatus.ACCP, HttpStatus.OK));
+        when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(Xs2aTransactionStatus.ACCP, HttpStatus.OK));
         //Given:
         HttpStatus expectedHttpStatus = OK;
-        TransactionStatus expectedTransactionStatus = TransactionStatus.ACCP;
+        Xs2aTransactionStatus expectedTransactionStatus = Xs2aTransactionStatus.ACCP;
 
         //When:
         ResponseEntity<TransactionStatusResponse> actualResponse = paymentInitiationController.getPaymentInitiationStatusById(PaymentProduct.SCT.getCode(), PAYMENT_ID);
@@ -125,7 +125,7 @@ public class PaymentInitiationControllerTest {
 
         //When:
         ResponseEntity<PaymentInitialisationResponse> actualResult = paymentInitiationController
-                                                                         .createPaymentInitiation(paymentProduct.getCode(),"", payment);
+                                                                         .createPaymentInitiation(paymentProduct.getCode(), "", payment);
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());

@@ -17,28 +17,30 @@
 package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
+import de.adorsys.aspsp.xs2a.web12.ConsentController12;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
 @Component
 @AllArgsConstructor
-public class ConsentAspect extends AbstractLinkAspect<ConsentInformationController> {
+public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.ConsentInformationController.createAccountConsent(..)) && args(psuId, ..)", returning = "result")
-    public ResponseEntity<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseEntity<CreateConsentResponse> result, String psuId) {
-        if (!hasError(result)) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result")
+    public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, String psuId) {
+        if (!result.hasError()) {
             CreateConsentResponse body = result.getBody();
             body.setLinks(buildLinksForConsentResponse(body));
+            return result;
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
 
     private Links buildLinksForConsentResponse(CreateConsentResponse response) {

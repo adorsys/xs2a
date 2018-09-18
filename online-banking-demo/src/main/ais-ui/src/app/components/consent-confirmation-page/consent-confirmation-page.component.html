@@ -1,0 +1,121 @@
+<div *ngIf="!bankOffered">
+  <div class="page">
+    <div class="page-inner">
+      <div class="container">
+        <p>This Information is not visible for TPP</p>
+        <h1 class="container__title">Confirm new AIS request</h1>
+        <p class="container__text">
+          TTP has requested the following account information from your bank accounts.
+          If you agree to us providing this specific information, then please click the Confirm button below.
+        </p>
+        <ul class="container__list" *ngIf="accounts">
+          <ul class="container__account" *ngFor="let Account of accounts">
+            <li>
+              <span>{{Account.iban}}</span>
+            </li>
+            <li *ngFor="let Balance of Account.balances">
+              <span>{{Balance.balanceAmount.amount}} {{Balance.balanceAmount.currency}}</span>
+            </li>
+          </ul>
+          <ul>Your Account Details:
+            <li>Your Accounts Name and Number</li>
+            <li>Your Accounts Balance</li>
+          </ul>
+          <div *ngIf="profile$ | async as profile">
+            <ul>Your Account Transcations for the last {{profile.transactionLifetime}} months
+              <li>incoming and outgoing Transactions</li>
+            </ul>
+          </div>
+          <ul>Your Account Features and Benefits:
+            <li>The Type of Accounts you have</li>
+            <li>The Fees, Charges and Interests you pay</li>
+          </ul>
+          <ul>Your Regular Payments:
+            <li>Your direct Debits</li>
+            <li>Your standing Orders</li>
+          </ul>
+        </ul>
+        <div>
+          TPP will access your accounts till {{ consent?.validUntil }}
+        </div>
+        <div class="buttons-small">
+          <button (click)=onClickCancel() type="button" name="decision" value="revoked"
+                  class="buttons-small btn--cancel">
+            Cancel
+          </button>
+          <button (click)=onClickContinue() type="button" name="decision" value="confirmed"
+                  class="buttons-small btn--continue">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="bankOffered">
+  <div class="page">
+    <div class="page-inner">
+      <div class="container">
+        <p>This Information is not visible for TPP</p>
+        <h1 class="container__title">Confirm new AIS request</h1>
+        <p class="container__text">
+          TTP has requested the following account information from your bank accounts without indication of accounts.
+          Please select on which accounts the requested access should be supported.
+        </p>
+        <ul class="container__list">
+          <div class="accounts">
+          <li><input type="checkbox" (change)="onSelectAllAccounts()"
+                     [checked]="selectedAccounts.length === accounts?.length">Select all<br>
+          </li>
+          <div class="seperator"></div>
+          <li *ngFor="let account of accounts">
+            <ul class="container__account">
+              <span class="container__account__checkbox">
+                <li>
+                  <input type="checkbox" (change)="onSelectAccount(account)" [checked]="isAccountSelected(account)">
+                </li>
+                <li>
+                  {{account.iban}}
+                </li>
+              </span>
+              <li *ngFor="let Balance of account.balances">
+                <span>{{Balance.balanceAmount.amount}} {{Balance.balanceAmount.currency}}</span>
+              </li>
+            </ul>
+          </li>
+          </div>
+          <ul>Your Account Details:
+            <li>Your Accounts Name and Number</li>
+            <li>Your Accounts Balance</li>
+          </ul>
+          <div *ngIf="profile$ | async as profile">
+            <ul>Your Account Transcations for the last {{profile.transactionLifetime}} months
+              <li>incoming and outgoing Transactions</li>
+            </ul>
+          </div>
+          <ul>Your Account Features and Benefits:
+            <li>The Type of Accounts you have</li>
+            <li>The Fees, Charges and Interests you pay</li>
+          </ul>
+          <ul>Your Regular Payments:
+            <li>Your direct Debits</li>
+            <li>Your standing Orders</li>
+          </ul>
+        </ul>
+          TPP will access your accounts till {{ consent?.validUntil }}
+        <div class="buttons-small">
+          <button (click)=onClickCancel() type="button" name="decision" value="revoked"
+                  class="buttons-small btn--cancel">
+            Cancel
+          </button>
+          <button (click)=onClickContinue() [disabled]="selectedAccounts.length === 0"
+                  [ngClass]="{disabled: selectedAccounts.length === 0}" type="button" name="decision" value="confirmed"
+                  class="buttons-small btn--continue">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

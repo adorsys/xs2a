@@ -111,6 +111,11 @@ public class ProfileConfiguration {
      */
     private boolean allPsd2Support;
 
+    /**
+     * Type of authorisation start: IMPLICIT or EXPLICIT
+     */
+    private AuthorisationStartType authorisationStartType;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.FUTURE_DATED);

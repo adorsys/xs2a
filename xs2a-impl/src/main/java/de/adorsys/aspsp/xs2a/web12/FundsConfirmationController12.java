@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.UUID;
 
 @Slf4j
@@ -36,10 +37,11 @@ public class FundsConfirmationController12 implements FundsConfirmationApi {
 
     private final ResponseMapper responseMapper;
     private final FundsConfirmationService fundsConfirmationService;
+    private final FundsConfirmationModelMapper fundsConfirmationModelMapper;
 
     @Override
     public ResponseEntity<?> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
-        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(FundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
+        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
 
     }
 }

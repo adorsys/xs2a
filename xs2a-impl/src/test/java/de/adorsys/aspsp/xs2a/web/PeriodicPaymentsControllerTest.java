@@ -21,7 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
@@ -104,7 +104,7 @@ public class PeriodicPaymentsControllerTest {
 
     private PaymentInitialisationResponse getPaymentInitializationResponse() {
         PaymentInitialisationResponse resp = new PaymentInitialisationResponse();
-        resp.setTransactionStatus(TransactionStatus.ACCP);
+        resp.setTransactionStatus(Xs2aTransactionStatus.ACCP);
         resp.setPaymentId("352397d6-a9f2-4914-8549-d127c02660ba");
         resp.setPisConsentId("f33e9b14-56b8-4f3b-b2fd-87884a4a24b9");
         resp.setLinks(new Links());

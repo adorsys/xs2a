@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.web.interceptor;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
 import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
 import org.junit.Test;
@@ -25,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.method.HandlerMethod;
@@ -49,7 +49,7 @@ public class HandlerInterceptorTest {
     @Mock
     private ObjectMapper objectMapper;
     @Mock
-    private MessageSource messageSource;
+    private MessageErrorMapper messageErrorMapper;
 
     @InjectMocks
     private ConsentInformationController consentInformationController;
