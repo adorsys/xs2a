@@ -47,12 +47,9 @@ public class AcceptContentTypeDeserializer extends StdDeserializer<MediaType[]> 
         try {
             String parsedText = jsonParser.getText();
             List<MediaType> mediaTypes = MediaType.parseMediaTypes(parsedText);
+            mediaTypes.removeIf((e) -> !ALLOWED_TYPES.contains(e));
 
-            long validMediaTypes = mediaTypes.stream()
-                                       .filter(ALLOWED_TYPES::contains)
-                                       .count();
-
-            if (validMediaTypes == mediaTypes.size()) {
+            if (!mediaTypes.isEmpty()) {
                 return mediaTypes.toArray(new MediaType[0]);
             }
         } catch (IOException e) {
