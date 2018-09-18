@@ -1,6 +1,7 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -35,6 +36,15 @@ public class GlobalSuccessfulSteps {
 
     @Autowired
     private AuthConfigProperty authConfigProperty;
+
+    @Before
+    public void loadTestDataIntoDb() {
+        template.exchange(
+            context.getMockUrl() + "/integration-tests/refresh-testing-data",
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            String.class);
+    }
 
     @Given("^PSU request access token for oauth approach$")
     public void requestAccessToken() {
