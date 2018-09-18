@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.aspsp;
+package de.adorsys.psd2.aspsp.profile.exception;
 
-public enum ScaApproach {
-    REDIRECT,
-    OAUTH,
-    DECOUPLED,
-    EMBEDDED
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+
+@Value
+@EqualsAndHashCode(callSuper = true)
+public class AspspProfileRestException extends RuntimeException {
+    private int httpStatusCode;
+    private String message;
 }

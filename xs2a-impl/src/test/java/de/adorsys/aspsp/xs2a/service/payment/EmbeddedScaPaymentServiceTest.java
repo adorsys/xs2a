@@ -29,7 +29,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -76,7 +76,7 @@ public class EmbeddedScaPaymentServiceTest {
     @Mock
     private Xs2aPisConsentMapper pisConsentMapper;
     @Mock
-    private AspspProfileService profileService;
+    private AspspProfileServiceWrapper profileService;
     @Mock
     private PisAuthorisationService pisAuthorizationService;
     @Mock
