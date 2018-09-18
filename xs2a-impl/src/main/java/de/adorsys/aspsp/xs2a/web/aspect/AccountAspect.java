@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.TransactionsReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.web12.AccountController12;
@@ -68,9 +68,9 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
-    public ResponseObject<TransactionsReport> getTransactionsReportByPeriod(ResponseObject<TransactionsReport> result, String accountId, boolean withBalance) {
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String accountId, boolean withBalance) {
         if (!result.hasError()) {
-            TransactionsReport transactionsReport = result.getBody();
+            Xs2aTransactionsReport transactionsReport = result.getBody();
             Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
             accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
             transactionsReport.setLinks(buildLinksForTransactionReport(accountId));

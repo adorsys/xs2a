@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.TransactionsReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
@@ -215,17 +215,17 @@ public class AccountService {
      * @param bookingStatus ENUM representing either one of BOOKED/PENDING or BOTH transaction statuses
      * @return TransactionsReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
-    public ResponseObject<TransactionsReport> getTransactionsReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
-                                                                            LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
+                                                                                LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
         ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
-            return ResponseObject.<TransactionsReport>builder()
+            return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
 
         Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
-            return ResponseObject.<TransactionsReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+            return ResponseObject.<Xs2aTransactionsReport>builder().fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
@@ -233,11 +233,11 @@ public class AccountService {
                                                  .map(r -> filterByBookingStatus(r, bookingStatus));
 
         if (!(isValid && report.isPresent())) {
-            return ResponseObject.<TransactionsReport>builder()
+            return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
         }
 
-        TransactionsReport transactionsReport = new TransactionsReport();
+        Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.get());
         transactionsReport.setAccountReference(accountModelMapper.mapToAccountReference(accountDetails));
 
@@ -245,7 +245,7 @@ public class AccountService {
                 && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
             transactionsReport.setBalances(accountDetails.getBalances());
         }
-        ResponseObject<TransactionsReport> response = ResponseObject.<TransactionsReport>builder().body(transactionsReport).build();
+        ResponseObject<Xs2aTransactionsReport> response = ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build();
 
         aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
