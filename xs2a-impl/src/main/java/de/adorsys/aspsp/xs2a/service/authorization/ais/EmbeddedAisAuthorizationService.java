@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
@@ -29,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,13 +110,16 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         if (spiAuthorization.getPassword() == null && updatePsuData.getPassword() != null) {
             response.setPassword(updatePsuData.getPassword());
 
-            SpiResponse<List<SpiScaMethod>> spiResponse = accountSpi.readAvailableScaMethods(spiAuthorization.getPsuId(), spiAuthorization.getPassword());
+            SpiResponse<List<SpiScaMethod>> spiResponse = "PSU_002".equals(updatePsuData.getPsuId()) // TODO use `accountSpi.readAvailableScaMethods(updatePsuData.getPsuId(), updatePsuData.getPassword());` after #310 is merged
+                                                              ? new SpiResponse<>(Collections.singletonList(SpiScaMethod.SMS_OTP), new AspspConsentData())
+                                                              : new SpiResponse<>(Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PUSH_OTP), new AspspConsentData());
+
             if (spiResponse.getPayload().size() > 1) {
                 response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
                 return true;
             } else {
-                response.setAuthenticationMethodId(spiResponse.getPayload().get(0).name());
+                response.setChosenScaMethod(spiResponse.getPayload().get(0).name());
                 response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
                 return true;
@@ -124,7 +130,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     private boolean checkScaMethod(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, AccountConsentAuthorization spiAuthorization) {
         if (spiAuthorization.getAuthenticationMethodId() == null && updatePsuData.getAuthenticationMethodId() != null) {
-            response.setAuthenticationMethodId(updatePsuData.getAuthenticationMethodId());
+            response.setChosenScaMethod(updatePsuData.getAuthenticationMethodId());
             response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
             return true;
@@ -135,7 +141,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     private boolean checkScaAuthenticationData(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response) {
         if (updatePsuData.getScaAuthenticationData() != null) {
             response.setScaAuthenticationData(updatePsuData.getScaAuthenticationData());
-            response.setScaStatus(ScaStatus.STARTED);
+            response.setScaStatus(ScaStatus.FINALISED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
             return true;
         }

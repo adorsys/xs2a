@@ -16,8 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class UpdateConsentPsuDataResponse {
@@ -27,7 +30,8 @@ public class UpdateConsentPsuDataResponse {
     private String authorizationId;
 
     private ScaStatus scaStatus;
-    private String authenticationMethodId;
+    private List<CmsScaMethod> availableScaMethods;
+    private String chosenScaMethod;
     private String scaAuthenticationData;
     private String password;
 

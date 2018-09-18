@@ -103,7 +103,7 @@ public class Xs2aAisConsentMapper {
                        request.setPsuId(updatePsuData.getPsuId());
                        request.setConsentId(updatePsuData.getConsentId());
                        request.setAuthorizationId(updatePsuData.getAuthorizationId());
-                       request.setAuthenticationMethodId(updatePsuData.getAuthenticationMethodId());
+                       request.setAuthenticationMethodId(updatePsuData.getChosenScaMethod());
                        request.setScaAuthenticationData(updatePsuData.getScaAuthenticationData());
                        request.setPassword(updatePsuData.getPassword());
                        request.setScaStatus(

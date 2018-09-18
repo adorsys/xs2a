@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -141,6 +142,11 @@ public class AccountSpiImpl implements AccountSpi {
 
     @Override
     public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password) {
-        return null;
+        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
+            remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+            });
+        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
+                                               .orElse(Collections.emptyList());
+        return new SpiResponse<>(spiScaMethods, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 }
