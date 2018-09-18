@@ -16,26 +16,17 @@
 
 package de.adorsys.aspsp.aspspmockserver.config.security;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import java.util.List;
 
-@Configuration
-public class SecurityConfig extends AbstractSecurityConfig {
-
-    public SecurityConfig(CorsConfigProperties corsConfigProperties) {
-        super(corsConfigProperties);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
-
-        http
-            .csrf().disable()
-            .cors().and()
-            .authorizeRequests()
-            .antMatchers(ALLOW_PATH).permitAll()
-            .anyRequest()
-            .authenticated();
-    }
+@Data
+@Component
+@ConfigurationProperties(prefix = "endpoints.cors")
+public class CorsConfigProperties {
+    private Boolean allowCredentials;
+    private List<String> allowedOrigins;
+    private List<String> allowedMethods;
+    private List<String> allowedHeaders;
 }
