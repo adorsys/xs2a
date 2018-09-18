@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.psd2.aspsp.profile.domain;
 
-public enum ScaApproach {
-    REDIRECT,
-    OAUTH,
-    DECOUPLED,
-    EMBEDDED
+public enum MulticurrencyAccountLevel {
+    SUBACCOUNT,
+    AGGREGATION,
+    AGGREGATION_AND_SUBACCOUNT
 }

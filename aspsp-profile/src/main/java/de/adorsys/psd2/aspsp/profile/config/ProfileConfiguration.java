@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.psd2.aspsp.profile.config;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.*;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.PropertySource;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
+import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
 
 @Data
 @Configuration

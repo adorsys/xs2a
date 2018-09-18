@@ -14,34 +14,37 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.psd2.aspsp.profile.web;
 
-import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.*;
-import static de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField.IBAN;
+import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.*;
+import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileServiceTest {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class AspspProfileControllerTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final List<String> AVAILABLE_PAYMENT_PRODUCTS = getPaymentProducts();
     private static final List<String> AVAILABLE_PAYMENT_TYPES = getPaymentTypes();
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
-    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL = MulticurrencyAccountLevel.SUBACCOUNT;
@@ -53,64 +56,44 @@ public class AspspProfileServiceTest {
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
     private static final AuthorisationStartType AUTHORIZATION_START_TYPE = AuthorisationStartType.IMPLICIT;
 
-    @InjectMocks
-    private AspspProfileService aspspProfileService;
+    @Autowired
+    private AspspProfileController aspspProfileController;
 
-    @Mock
-    private ProfileConfiguration profileConfiguration;
+    @MockBean
+    private AspspProfileService aspspProfileService;
 
     @Before
     public void setUpAccountServiceMock() {
-        when(profileConfiguration.getFrequencyPerDay())
-            .thenReturn(FREQUENCY_PER_DAY);
-        when(profileConfiguration.isCombinedServiceIndicator())
-            .thenReturn(COMBINED_SERVICE_INDICATOR);
-        when(profileConfiguration.getAvailablePaymentProducts())
-            .thenReturn(AVAILABLE_PAYMENT_PRODUCTS);
-        when(profileConfiguration.getAvailablePaymentTypes())
-            .thenReturn(AVAILABLE_PAYMENT_TYPES);
-        when(profileConfiguration.isTppSignatureRequired())
-            .thenReturn(TPP_SIGNATURE_REQUIRED);
-        when(profileConfiguration.getScaApproach())
-            .thenReturn(SCA_APPROACH);
-        when(profileConfiguration.getPisRedirectUrlToAspsp())
-            .thenReturn(PIS_REDIRECT_LINK);
-        when(profileConfiguration.getAisRedirectUrlToAspsp())
-            .thenReturn(AIS_REDIRECT_LINK);
-        when(profileConfiguration.getMulticurrencyAccountLevel())
-            .thenReturn(MULTICURRENCY_ACCOUNT_LEVEL);
-        when(profileConfiguration.getAvailableBookingStatuses())
-            .thenReturn(AVAILABLE_BOOKING_STATUSES);
-        when(profileConfiguration.getSupportedAccountReferenceFields())
-            .thenReturn(SUPPORTED_ACCOUNT_REFERENCE_FIELDS);
-        when(profileConfiguration.getConsentLifetime())
-            .thenReturn(CONSENT_LIFETIME);
-        when(profileConfiguration.getTransactionLifetime())
-            .thenReturn(TRANSACTION_LIFETIME);
-        when(profileConfiguration.isAllPsd2Support())
-            .thenReturn(ALL_PSD_2_SUPPORT);
-        when(profileConfiguration.isBankOfferedConsentSupport())
-            .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
-        when(profileConfiguration.getAuthorisationStartType())
-            .thenReturn(AUTHORIZATION_START_TYPE);
+        when(aspspProfileService.getAspspSettings())
+            .thenReturn(buildAspspSettings());
+        when(aspspProfileService.getScaApproach())
+            .thenReturn(ScaApproach.REDIRECT);
     }
 
     @Test
     public void getAspspSettings() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
         //When:
-        AspspSettings actualResponse = aspspProfileService.getAspspSettings();
+        ResponseEntity<AspspSettings> actualResponse = aspspProfileController.getAspspSettings();
 
         //Then:
-        assertThat(actualResponse).isEqualTo(buildAspspSettings());
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(buildAspspSettings());
     }
 
     @Test
     public void getScaApproach() {
+        //Given:
+        HttpStatus expectedStatusCode = HttpStatus.OK;
+
         //When:
-        ScaApproach actualResponse = aspspProfileService.getScaApproach();
+        ResponseEntity<ScaApproach> actualResponse = aspspProfileController.getScaApproach();
 
         //Then:
-        assertThat(actualResponse).isEqualTo(SCA_APPROACH);
+        assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(actualResponse.getBody()).isEqualTo(ScaApproach.REDIRECT);
     }
 
     private static AspspSettings buildAspspSettings() {

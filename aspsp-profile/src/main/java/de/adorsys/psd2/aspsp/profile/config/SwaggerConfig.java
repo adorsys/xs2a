@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.psd2.aspsp.profile.config;
 
 import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;

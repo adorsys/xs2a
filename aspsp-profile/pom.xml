@@ -26,6 +26,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <groupId>de.adorsys.psd2.aspsp</groupId>
     <artifactId>aspsp-profile</artifactId>
     <version>1.8-SNAPSHOT</version>
     <packaging>jar</packaging>

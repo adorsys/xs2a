@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a;
+package de.adorsys.psd2.aspsp.profile.domain;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import io.swagger.annotations.ApiModel;
 
-@EnableScheduling
-@SpringBootApplication
-public class AspspProfileApplication {
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(AspspProfileApplication.class)
-            .properties("spring.config.name=application")
-            .run(args);
-    }
+@ApiModel(description = "Booking status", value = "BookingStatus")
+public enum BookingStatus {
+    BOOKED,
+    PENDING,
+    BOTH
 }
-

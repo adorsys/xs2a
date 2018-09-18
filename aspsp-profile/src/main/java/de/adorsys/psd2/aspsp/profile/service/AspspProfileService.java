@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.psd2.aspsp.profile.service;
 
-import de.adorsys.aspsp.xs2a.config.ProfileConfiguration;
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.domain.BookingStatus.BOOKED;
-import static de.adorsys.aspsp.xs2a.domain.SupportedAccountReferenceField.IBAN;
+import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
+import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField.IBAN;
 
 @Service
 @RequiredArgsConstructor

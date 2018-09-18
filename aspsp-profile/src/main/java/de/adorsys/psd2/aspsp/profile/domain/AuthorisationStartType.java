@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.psd2.aspsp.profile.domain;
 
 import io.swagger.annotations.ApiModel;
 

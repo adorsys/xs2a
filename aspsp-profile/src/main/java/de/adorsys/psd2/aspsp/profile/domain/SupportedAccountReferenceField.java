@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.psd2.aspsp.profile.domain;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-import java.util.List;
+import io.swagger.annotations.ApiModel;
 
-@Data
-@Component
-@ConfigurationProperties(prefix = "endpoints.cors")
-public class CorsConfigProperties {
-    private Boolean allowCredentials;
-    private List<String> allowedOrigins;
-    private List<String> allowedMethods;
-    private List<String> allowedHeaders;
+@ApiModel(description = "Supported AccountReference Filed", value = "SupportedAccountReferenceField")
+public enum SupportedAccountReferenceField {
+    IBAN,
+    BBAN,
+    PAN,
+    MASKEDPAN,
+    MSISDN
 }

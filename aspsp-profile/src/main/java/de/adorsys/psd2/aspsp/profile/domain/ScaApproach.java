@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain;
+package de.adorsys.psd2.aspsp.profile.domain;
 
-import io.swagger.annotations.ApiModel;
-
-@ApiModel(description = "Booking status", value = "BookingStatus")
-public enum BookingStatus {
-    BOOKED,
-    PENDING,
-    BOTH
+public enum ScaApproach {
+    REDIRECT,
+    OAUTH,
+    DECOUPLED,
+    EMBEDDED
 }

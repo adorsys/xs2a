@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.web;
+package de.adorsys.psd2.aspsp.profile.web;
 
-import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.service.AspspProfileService;
-import io.swagger.annotations.*;
+import de.adorsys.psd2.aspsp.profile.domain.*;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
