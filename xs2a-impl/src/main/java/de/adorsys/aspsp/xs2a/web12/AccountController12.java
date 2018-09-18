@@ -43,20 +43,21 @@ public class AccountController12 implements AccountApi {
 
     private final AccountService accountService;
     private final ResponseMapper responseMapper;
+    private final AccountModelMapper accountModelMapper;
 
     @Override
     public ResponseEntity<?> getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(accountService.getAccountDetailsList(consentID, Optional.ofNullable(withBalance).orElse(false)), AccountModelMapper::mapToAccountList);
+        return responseMapper.ok(accountService.getAccountDetailsList(consentID, Optional.ofNullable(withBalance).orElse(false)), accountModelMapper::mapToAccountList);
     }
 
     @Override
     public ResponseEntity<?> readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false)), AccountModelMapper::mapToAccountDetails);
+        return responseMapper.ok(accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false)), accountModelMapper::mapToAccountDetails);
     }
 
     @Override
     public ResponseEntity<?> getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(accountService.getBalances(consentID, accountId), AccountModelMapper::mapToBalance);
+        return responseMapper.ok(accountService.getBalances(consentID, accountId), accountModelMapper::mapToBalance);
     }
 
     @ApiOperation(value = "Read Transaction List", nickname = "getTransactionList", notes = "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. ", response = TransactionsResponse200Json.class, authorizations = {
@@ -104,13 +105,13 @@ public class AccountController12 implements AccountApi {
 
     @Override
     public ResponseEntity<?> getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return  responseMapper.ok(accountService.getTransactionsReportByPeriod(accountId, withBalance, consentID, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus)), AccountModelMapper::mapToTransactionsResponse200Json);
+        return  responseMapper.ok(accountService.getTransactionsReportByPeriod(accountId, withBalance, consentID, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus)), accountModelMapper::mapToTransactionsResponse200Json);
     }
 
     @Override
     public ResponseEntity<?> getTransactionDetails(String accountId, String resourceId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Xs2aAccountReport> responseObject =
             accountService.getAccountReportByTransactionId(consentID, accountId, resourceId);
-        return responseMapper.ok(responseObject, AccountModelMapper::mapToAccountReport);
+        return responseMapper.ok(responseObject, accountModelMapper::mapToAccountReport);
     }
 }

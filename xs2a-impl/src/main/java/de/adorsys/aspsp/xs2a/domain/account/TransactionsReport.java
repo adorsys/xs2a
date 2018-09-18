@@ -16,26 +16,29 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import javax.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Data
 @ApiModel(description = "Transactions Report", value = "TransactionsReport")
-@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-@JsonRootName(value = "transactions")
-@RequiredArgsConstructor
 public class TransactionsReport {
 
-    @ApiModelProperty(value = "AccountReport", required = true)
-    @NotNull
+    @ApiModelProperty(value = "AccountReference")
+    private AccountReference accountReference;
+
+    @ApiModelProperty(value = "AccountReport")
     private Xs2aAccountReport accountReport;
+
     @ApiModelProperty(value = "BalanceList")
     private List<Xs2aBalance> balances;
+
+    @ApiModelProperty(value = "Links")
+    @JsonProperty("_links")
+    private Links links;
 }

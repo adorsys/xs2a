@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.account.TransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.web12.AccountController12;
@@ -66,6 +67,18 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         return enrichErrorTextMessage(result);
     }
 
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
+    public ResponseObject<TransactionsReport> getTransactionsReportByPeriod(ResponseObject<TransactionsReport> result, String accountId, boolean withBalance) {
+        if (!result.hasError()) {
+            TransactionsReport transactionsReport = result.getBody();
+            Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
+            accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
+            transactionsReport.setLinks(buildLinksForTransactionReport(accountId));
+            return result;
+        }
+        return enrichErrorTextMessage(result);
+    }
+
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args(consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
     public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionIdAspect(ResponseObject<Xs2aAccountReport> result, String consentID, String accountId, String resourceId) {
         if (!result.hasError()) {
@@ -89,6 +102,12 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
             // todo further we should implement real flow for downloading file
             links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         }
+        return links;
+    }
+
+    private Links buildLinksForTransactionReport(String accountId) {
+        Links links = new Links();
+        links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         return links;
     }
 

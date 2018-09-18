@@ -16,28 +16,31 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.model.*;
 import org.junit.Test;
 
 import java.time.*;
 import java.util.*;
 
-import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class AccountModelMapperTest {
 
+    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
+
     @Test
     public void testBalanceMapping() {
         Xs2aBalance balance = createBalance();
 
-        de.adorsys.psd2.model.Balance result = mapToBalance(balance);
+        de.adorsys.psd2.model.Balance result = accountModelMapper.mapToBalance(balance);
         assertNotNull(result);
 
         Xs2aAmount expectedBalanceAmount = balance.getBalanceAmount();
@@ -72,7 +75,7 @@ public class AccountModelMapperTest {
         accountDetailsList.add(accountDetails);
         Map<String, List<Xs2aAccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
 
-        AccountList result = mapToAccountList(accountDetailsMap);
+        AccountList result = accountModelMapper.mapToAccountList(accountDetailsMap);
         assertNotNull(result);
 
         List<de.adorsys.psd2.model.AccountDetails> accounts = result.getAccounts();
@@ -120,7 +123,7 @@ public class AccountModelMapperTest {
     @Test
     public void testMapToTransaction() {
         Transactions transactions = createTransactions();
-        TransactionDetails transactionDetails = mapToTransaction(transactions);
+        TransactionDetails transactionDetails = accountModelMapper.mapToTransaction(transactions);
         assertNotNull(transactionDetails);
 
         Xs2aAmount amount = transactions.getAmount();
@@ -178,7 +181,7 @@ public class AccountModelMapperTest {
         Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions);
         accountReport.setLinks(createLinks());
 
-        de.adorsys.psd2.model.AccountReport result = mapToAccountReport(accountReport);
+        de.adorsys.psd2.model.AccountReport result = accountModelMapper.mapToAccountReport(accountReport);
         assertNotNull(result);
 
         //transactions mapping tested in testMapToTransaction

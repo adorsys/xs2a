@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
@@ -63,6 +64,7 @@ public class AccountService {
     private final Xs2aAisConsentMapper consentMapper;
     private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
     public final AspspProfileService aspspProfileService;
+    private final AccountModelMapper accountModelMapper;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -214,7 +216,7 @@ public class AccountService {
      * @return TransactionsReport filled with appropriate transaction arrays Booked and Pending. For v1.1 balances sections is added
      */
     public ResponseObject<TransactionsReport> getTransactionsReportByPeriod(String accountId, boolean withBalance, String consentId, LocalDate dateFrom,
-                                                                       LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
+                                                                            LocalDate dateTo, Xs2aBookingStatus bookingStatus) {
         ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
         if (allowedAccountData.hasError()) {
             return ResponseObject.<TransactionsReport>builder()
@@ -230,21 +232,20 @@ public class AccountService {
         Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo)
                                                  .map(r -> filterByBookingStatus(r, bookingStatus));
 
-        if (!(isValid && report.isPresent())){
+        if (!(isValid && report.isPresent())) {
             return ResponseObject.<TransactionsReport>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
         }
 
         TransactionsReport transactionsReport = new TransactionsReport();
         transactionsReport.setAccountReport(report.get());
+        transactionsReport.setAccountReference(accountModelMapper.mapToAccountReference(accountDetails));
 
-        if (!aspspProfileService.isTransactionsWithoutBalancesSupported()) {
-            ResponseObject<List<Xs2aBalance>> balancesResponse = getBalances(consentId, accountId);
-            if (!balancesResponse.hasError()) {
-                transactionsReport.setBalances(balancesResponse.getBody());
-            }
+        if (!aspspProfileService.isTransactionsWithoutBalancesSupported()
+                && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
+            transactionsReport.setBalances(accountDetails.getBalances());
         }
-        ResponseObject<TransactionsReport> response =  ResponseObject.<TransactionsReport>builder().body(transactionsReport).build();
+        ResponseObject<TransactionsReport> response = ResponseObject.<TransactionsReport>builder().body(transactionsReport).build();
 
         aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
