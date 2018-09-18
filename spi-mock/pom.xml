@@ -32,11 +32,6 @@
     <description>Mock spi interfaces for aspsp</description>
 
     <properties>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <swagger.annotations.version>1.5.19</swagger.annotations.version>
-        <java.version>1.8</java.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
