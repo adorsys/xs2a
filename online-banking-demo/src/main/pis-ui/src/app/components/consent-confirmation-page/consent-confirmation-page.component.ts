@@ -12,7 +12,6 @@ export class ConsentConfirmationPageComponent implements OnInit {
   singlePayments: SinglePayments;
   tan: string;
   paymentId: string;
-  iban: string;
   consentId: string;
 
   constructor(private route: ActivatedRoute, private router: Router, private bankingService: BankingService) {
@@ -25,12 +24,9 @@ export class ConsentConfirmationPageComponent implements OnInit {
         this.getBankingDetailsFromUrl(params);
       });
 
-    let bankingData = <Banking>({tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId});
+    let bankingData = <Banking>({tan: this.tan, consentId: this.consentId, paymentId: this.paymentId});
     this.bankingService.saveData(bankingData);
     this.bankingService.getSinglePayments().subscribe(data => {
-      this.iban = data.debtorAccount.iban;
-      bankingData = <Banking>({tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId});
-      this.bankingService.saveData(bankingData);
       this.singlePayments = data;
     });
   }

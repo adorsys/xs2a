@@ -9,7 +9,6 @@ import { Banking } from '../../models/banking.model';
 })
 export class TanConfirmationPageComponent implements OnInit {
   tan: string;
-  iban: string;
   consentId: string;
   paymentId: string;
   tanError: boolean;
@@ -21,21 +20,16 @@ export class TanConfirmationPageComponent implements OnInit {
   ngOnInit() {
     this.route.queryParams
       .subscribe(params => { this.getBankingDetailsFromUrl(params); });
-    let bankingData = <Banking>({ tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId });
+    let bankingData = <Banking>({ tan: this.tan, consentId: this.consentId, paymentId: this.paymentId });
     this.bankingService.saveData(bankingData);
-    this.bankingService.getSinglePayments().subscribe(data => {
-      this.iban = data.debtorAccount.iban;
-      bankingData = <Banking>({ tan: this.tan, iban: this.iban, consentId: this.consentId, paymentId: this.paymentId });
-      this.bankingService.saveData(bankingData);
-      this.bankingService.generateTan().subscribe();
-    });
+    this.bankingService.getSinglePayments().subscribe();
+    this.bankingService.generateTan().subscribe();
   }
 
   getBankingDetailsFromUrl(params: Params) {
     this.consentId = params['consentId'];
     this.paymentId = params['paymentId'];
   }
-
 
 
   onClickContinue() {
