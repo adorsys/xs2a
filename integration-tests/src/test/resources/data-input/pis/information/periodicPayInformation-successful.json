@@ -1,0 +1,43 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "psu-ip-address": "192.168.0.26",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
+    },
+    "body": {}
+  },
+  "response": {
+    "header": {},
+    "body": {
+      "endToEndIdentification": "VOD-123456789",
+      "debtorAccount": {
+        "currency": "EUR",
+        "iban": "DE52500105173911841934"
+      },
+      "instructedAmount": {
+        "amount": "44.99",
+        "currency": "EUR"
+      },
+      "creditorAccount": {
+        "currency": "EUR",
+        "iban": "DE50500105172339433267"
+      },
+      "creditorName": "Vodafone",
+      "creditorAddress": {
+        "street": "Breite Gasse",
+        "buildingNumber": "34",
+        "city": "Nürnberg",
+        "postalCode": "90457",
+        "country": "DE"
+      },
+      "remittanceInformationUnstructured": "Ref. Number Vodafone-1222",
+      "startDate": "yyyy-mm-dd",
+      "endDate": "yyyy-mm-dd",
+      "executionRule": "following",
+      "frequency": "Monthly",
+      "dayOfExecution": "14",
+      "transactionStatus": "RCVD"
+    }
+  }
+}

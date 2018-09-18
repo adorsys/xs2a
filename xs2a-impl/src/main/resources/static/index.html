@@ -1,27 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="page">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <title>XS2A</title>
+    <base href="/">
 </head>
+<header class="header">
+    <div><img src="img/adorsys_logo_RGB_dunkelblau.png" alt="adorsys logo" /></div>
+    <div class="header__title">XS2A</div>
+</header>
 <body>
-<div style="text-align: center; margin-top: 20vh">
-    <h1>XS2A</h1>
-    <p>
-        <a  href="https://adorsys.de/en/psd2.html">Adorsys PSD2 Start page</a>
-    </p>
-    <p>
-        <a href="swagger-ui.html">Swagger UI </a>
-    </p>
-    <p>
-        <u>Main pages of services:</u><br>
-            - <a href="https://aspsp-profile-integ.cloud.adorsys.de/api/v1/">ASPSP profile</a><br>
-            - <a href="https://xs2a-cms.integ.cloud.adorsys.de/api/v1/">Consent management system</a><br>
-            - <a href="https://aspsp-mock-integ.cloud.adorsys.de">ASPSP mock server</a>
-    </p>
-    <p>
-        <a href="https://github.com/adorsys/xs2a/tree/develop/spi-mock"> Github service documentation</a>
-    </p>
-</div>
+    <div class="container">
+        <div class="elements">
+            <h1 class="headline">XS2A</h1>
+            <ul class="minicontainer">
+                <li>
+                    <a  href="https://adorsys.de/en/psd2.html">Adorsys PSD2 Start Page</a>
+                </li>
+                <li>
+                    <a href="swagger-ui.html">Swagger UI </a>
+                </li>
+            </ul>
+
+            <h2>Main Service Pages</h2>
+            <ul class="minicontainer">
+                <li>
+                    <a href="https://aspsp-profile-integ.cloud.adorsys.de/api/v1/">ASPSP Profile</a>
+                </li>
+                <li>
+                    <a href="https://xs2a-cms.integ.cloud.adorsys.de">Consent Management System</a>
+                </li>
+                <li>
+                    <a href="https://aspsp-mock-integ.cloud.adorsys.de">ASPSP Mock Server</a>
+                </li>
+                <li>
+                    <a href="https://github.com/adorsys/xs2a/tree/develop/aspsp-mock-server"> Github Service Documentation</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>

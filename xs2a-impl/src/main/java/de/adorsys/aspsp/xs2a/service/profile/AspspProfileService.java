@@ -16,15 +16,18 @@
 
 package de.adorsys.aspsp.xs2a.service.profile;
 
+import de.adorsys.aspsp.xs2a.config.cache.CacheConfig;
 import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
 import de.adorsys.aspsp.xs2a.domain.aspsp.AspspSettings;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
-import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthorisationStartType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -87,7 +90,7 @@ public class AspspProfileService {
      * @return 'true' if current sca approach requires 'redirect', 'false' if not
      */
     public boolean isRedirectMode() {
-        ScaApproach scaApproach = readScaApproach();
+        ScaApproach scaApproach = getScaApproach();
         return scaApproach == ScaApproach.REDIRECT
                    || scaApproach == ScaApproach.DECOUPLED;
     }
@@ -97,7 +100,8 @@ public class AspspProfileService {
      *
      * @return Available SCA approach for tpp
      */
-    public ScaApproach readScaApproach() {
+    @Cacheable(CacheConfig.ASPSP_PROFILE_CACHE)
+    public ScaApproach getScaApproach() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
     }
@@ -156,6 +160,20 @@ public class AspspProfileService {
         return readAspspSettings().isAllPsd2Support();
     }
 
+    /**
+     * Reads value Authorisation start type (Explicit/Implicit) from ASPSP profile service
+     *
+     * @return String value of authorisation start type
+     */
+    public Xs2aAuthorisationStartType getAuthorisationStartType() {
+        return Xs2aAuthorisationStartType.valueOf(readAspspSettings().getAuthorisationStartType());
+    }
+
+    /**
+     * Reads value BankOfferedConsentSupported
+     *
+     * @return boolean representation of support of Bank Offered Consent
+     */
     public boolean isBankOfferedConsentSupported() {
         return readAspspSettings().isBankOfferedConsentSupport();
     }

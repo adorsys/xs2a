@@ -20,6 +20,7 @@ import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +64,7 @@ public class PsuServiceTest {
         when(psuRepository.findAll()).thenReturn(Collections.singletonList(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProducts())));
 
         //findOne
-        when(psuRepository.findOne(PSU_ID)).thenReturn(getPsu(PSU_ID, E_MAIL, PSU_NAME,  getDetails(false), getProducts()));
+        when(psuRepository.findOne(PSU_ID)).thenReturn(getPsu(PSU_ID, E_MAIL, PSU_NAME, getDetails(false), getProducts()));
         when(psuRepository.findOne(PSU_ID_1)).thenReturn(getPsu(PSU_ID_1, E_MAIL, PSU_NAME, getDetails(false), getProducts()));
         when(psuRepository.findOne(WRONG_PSU_ID)).thenReturn(null);
 
@@ -210,7 +211,7 @@ public class PsuServiceTest {
     }
 
     private Psu getPsu(String psuId, String email, String name, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(psuId, email, name, PASSWORD, details, products);
+        return new Psu(psuId, email, name, PASSWORD, details, products, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private List<SpiAccountDetails> getDetails(boolean isEmpty) {

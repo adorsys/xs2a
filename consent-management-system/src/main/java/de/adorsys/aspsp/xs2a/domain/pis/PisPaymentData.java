@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -74,7 +75,7 @@ public class PisPaymentData {
 
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "Creditor Address")
-    @JoinColumn(name="address_id")
+    @JoinColumn(name = "address_id")
     private PisAddress creditorAddress;
 
     @Column(name = "remittance_information_unstructured")
@@ -83,7 +84,7 @@ public class PisPaymentData {
 
     @OneToOne(cascade = CascadeType.ALL)
     @ApiModelProperty(value = "remittance information structured")
-    @JoinColumn(name="remittance_id")
+    @JoinColumn(name = "remittance_id")
     private PisRemittance remittanceInformationStructured;
 
     @Column(name = "requested_execution_date", nullable = false)
@@ -120,4 +121,10 @@ public class PisPaymentData {
     @Column(name = "day_of_execution")
     @ApiModelProperty(name = "dayOfExecution", example = "14")
     private int dayOfExecution;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "consent_id", nullable = false)
+    @ApiModelProperty(value = "Detailed information about consent", required = true)
+    private PisConsent consent;
 }

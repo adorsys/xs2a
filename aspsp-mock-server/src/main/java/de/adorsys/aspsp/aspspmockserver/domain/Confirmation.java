@@ -21,9 +21,6 @@ import lombok.Data;
 
 @Data
 public class Confirmation {
-    @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
-    private String iban;
-
     @ApiModelProperty(value = "Identification resource of the given consent", example = "6d4b403b-f5f5-41c0-847f-b6abf1edb102")
     private String consentId;
 

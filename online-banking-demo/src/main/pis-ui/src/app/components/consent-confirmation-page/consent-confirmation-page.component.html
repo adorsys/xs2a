@@ -1,0 +1,35 @@
+<div class="page">
+  <div class="page-inner">
+    <div class="container">
+      <h1 class="container__title">Confirm New Payment</h1>
+      <p class="container__text">
+        Please check if the details below are correct. If so, select 'Confirm', or select 'Deny', if you no longer wish to continue.</p>
+      <ul class="container__list" *ngIf="singlePayments">
+        <li>Payee:
+          <span>{{singlePayments.creditorName}}</span>
+        </li>
+        <li>Account No:
+          <span>{{singlePayments.creditorAccount.iban}}</span>
+        </li>
+        <li>Reference:
+          <span>{{singlePayments.remittanceInformationUnstructured}}</span>
+        </li>
+        <li>Amount:
+          <span>{{singlePayments.instructedAmount.content | currency:'EUR':'symbol':'':'de'}}</span>
+        </li>
+        <li>Date:
+          <span>{{singlePayments.requestedExecutionDate | date:'mediumDate':'':'de'}}</span>
+        </li>
+      </ul>
+      <div class="buttons-small">
+        <button (click)="onClickCancel()" type="button" name="decision" value="revoked" class="buttons-small btn--cancel">
+          Deny
+        </button>
+
+        <button (click)="onClickContinue()" type="button" name="decision" value="confirmed" class="buttons-small btn--continue">
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

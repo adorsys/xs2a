@@ -18,8 +18,8 @@ package de.adorsys.aspsp.xs2a.spi.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Setter;
-import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.springframework.data.annotation.Id;
 
@@ -27,7 +27,7 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 
-@Value
+@Data
 @AllArgsConstructor
 public class SpiAccountDetails {
     @Id

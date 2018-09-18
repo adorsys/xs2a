@@ -19,6 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.service;
 import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -117,6 +118,31 @@ public class PsuService {
 
             }
         }
+    }
 
+    /**
+     * Returns a List of SCA methods that could be applied to named PSU
+     *
+     * @param name User Login
+     * @return list of SCA methods
+     */
+    public List<SpiScaMethod> getScaMethods(String name) {
+        return psuRepository.findPsuByName(name)
+                   .map(Psu::getScaMethods)
+                   .orElse(null);
+    }
+
+    /**
+     * Updates allowed PSU`s SCA methods Set
+     *
+     * @param name       User Login
+     * @param scaMethods list of SCA methods
+     */
+    public void updateScaMethods(String name, List<SpiScaMethod> scaMethods) {
+        psuRepository.findPsuByName(name)
+            .map(p -> {
+                p.setScaMethods(scaMethods);
+                return psuRepository.save(p);
+            });
     }
 }

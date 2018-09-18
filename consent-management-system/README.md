@@ -30,3 +30,31 @@ mvn clean install
 mvn spring-boot:run
  
 ```
+
+# Using CMS
+Our implementation of CMS offers a set of endpoints to create/update/get the AIS consent information.
+As a requested by PSD2 specification every AIS consent contains a counter field to store data about remaining uses of current AIS consent. 
+This value should be decremented each time the TPP of PSU requests any consent related information from CMS.
+ 
+**WARNING:** `The counter is not decremented automatically! To perform decrement and logging developer should trigger the corresponding endpoint at AIS controller!`
+##AIS:
+- An endpoint to create AIS consent
+- An endpoint to update consent usage counter (decrements usage value by 1 use) and log the information on account/operation etc the consent was used for
+- An endpoint to retrieve the AIS consent by its external identifier. 
+- An endpoint to retrieve the AIS consent status by its external identifier.
+- An endpoint to update the AIS consent status by its external identifier. 
+- An endpoint to update the AIS consent blob data.
+
+## CORS
+By default, allow credentials, all origins and all headers are disabled.
+You can override CORS settings by changing values in `application.properties`
+```
+# Whether credentials are supported. When not set, credentials are not supported.
+endpoints.cors.allow-credentials=true
+# Comma-separated list of origins to allow. '*' allows all origins. When not set, CORS support is disabled.
+endpoints.cors.allowed-origins=*
+# Comma-separated list of headers to include in a response.
+endpoints.cors.allowed-headers=Origin,Authorization,Content-Type
+# Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET.
+endpoints.cors.allowed-methods=GET,POST,PUT,DELETE
+```

@@ -125,4 +125,21 @@ public class AspspRemoteUrls {
     public String getPaymentById() {
         return spiMockBaseUrl + "/payments/{payment-type}/{payment-product}/{paymentId}";
     }
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that GETs list of SCA methods for PSU by its login
+     *
+     * @return URL
+     */
+    public String getScaMethods() {
+        return spiMockBaseUrl + "/psu/sca-methods";
+    }
+
+    public String getGenerateTanConfirmation() {
+        return spiMockBaseUrl + "/consent/confirmation/pis";
+    }
+
+    public String applyStrongUserAuthorisation() {
+        return spiMockBaseUrl + "/consent/confirmation/pis";
+    }
 }

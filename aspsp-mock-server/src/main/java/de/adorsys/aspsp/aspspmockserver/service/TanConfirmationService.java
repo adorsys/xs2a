@@ -83,14 +83,14 @@ public class TanConfirmationService {
     /**
      * Gets new Tan and sends it to psu's email for payment confirmation
      *
-     * @param iban      Iban of Psu in order to get correct Psu
+     * @param name      Name of Psu in order to get correct Psu
      * @param tanNumber TAN
      * @return true if Tan has status UNUSED, otherwise return false
      */
-    public ResponseEntity confirmTan(String iban, String tanNumber, String consentId, ConfirmationType confirmationType) {
-        if (isTanNumberValidByIban(iban, tanNumber)) {
+    public ResponseEntity confirmTan(String name, String tanNumber, String consentId, ConfirmationType confirmationType) {
+        if (isTanNumberValid(name, tanNumber)) {
             return new ResponseEntity(HttpStatus.OK);
-        } else if (getTanNumberOfAttemptsByIban(iban) < maximumNumberOfTanAttempts) {
+        } else if (getTanNumberOfAttempts(name) < maximumNumberOfTanAttempts) {
             ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
             return new ResponseEntity<>(error, error.getStatus());
         }
@@ -99,15 +99,15 @@ public class TanConfirmationService {
         return new ResponseEntity<>(error, error.getStatus());
     }
 
-    private boolean isTanNumberValidByIban(String iban, String tanNumber) {
-        return accountService.getPsuIdByIban(iban)
+    private boolean isTanNumberValid(String name, String tanNumber) {
+        return accountService.getPsuIdByName(name)
                    .map(psuId -> isPsuTanNumberValid(psuId, tanNumber))
                    .orElse(false);
     }
 
-    private int getTanNumberOfAttemptsByIban(String iban) {
+    private int getTanNumberOfAttempts(String name) {
         tanRepository.findAll();
-        return accountService.getPsuIdByIban(iban)
+        return accountService.getPsuIdByName(name)
                    .flatMap(psuId -> tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
                                          .findFirst()
                                          .map(Tan::getNumberOfAttempts))
@@ -173,6 +173,7 @@ public class TanConfirmationService {
             mail.setText(getEmailContentFromTemplate(tanNumber), true);
 
             emailSender.send(mail.getMimeMessage());
+            log.info("Generated Tan: {}", tanNumber);
             return true;
         } catch (MessagingException e) {
             log.warn("Problem with creating or sanding email: {}", e);

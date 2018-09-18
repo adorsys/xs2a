@@ -41,6 +41,9 @@ bin/
 logs
 log
 
+### Web-App ###
+node_modules
+
 .DS_Store
 .springBeans
 

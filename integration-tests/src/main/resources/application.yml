@@ -28,7 +28,7 @@ spring:
     profiles: dev
 
 xs2a:
-  baseUrl: http://localhost:8080/api/v1
+  baseUrl: http://localhost:8080/v1
   config:
     readTimeoutInMs: 10000
     connectionTimeoutInMs: 10000
@@ -58,6 +58,11 @@ auth:
   grantType: password
   username: aspsp
   password: zzz
+
+logging:
+  level:
+    de.adorsys.aspsp.xs2a.integtest: DEBUG
+
 
 ---
 

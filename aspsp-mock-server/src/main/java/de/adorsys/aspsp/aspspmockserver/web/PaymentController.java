@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RestController
 @AllArgsConstructor
@@ -57,9 +57,10 @@ public class PaymentController {
     public ResponseEntity<List<SpiSinglePayment>> createBulkPayments(
         @RequestBody List<SpiSinglePayment> payments) {
         List<SpiSinglePayment> saved = paymentService.addBulkPayments(payments);
-        return isEmpty(saved)
-                   ? ResponseEntity.noContent().build()
-                   : new ResponseEntity<>(saved, CREATED);
+        return saved.stream()
+                   .noneMatch(p -> p.getPaymentStatus() == RJCT)
+                   ? new ResponseEntity<>(saved, CREATED)
+                   : ResponseEntity.noContent().build();
     }
 
     @ApiOperation(value = "Returns the status of payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

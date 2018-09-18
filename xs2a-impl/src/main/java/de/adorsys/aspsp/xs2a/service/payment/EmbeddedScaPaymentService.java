@@ -16,29 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
-public class EmbeddedScaPaymentService implements ScaPaymentService {
-    @Override
-    public Optional<PaymentInitialisationResponse> createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<PaymentInitialisationResponse> createBulkPayment(List<SinglePayment> payments, TppInfo tppInfo, String paymentProduct) {
-        return null;
-    }
-
-    @Override
-    public Optional<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
-        return Optional.empty();
+public class EmbeddedScaPaymentService extends RedirectAndEmbeddedPaymentService {
+    public EmbeddedScaPaymentService(AspspProfileService profileService, PisAuthorisationService pisAuthorizationService, PaymentSpi paymentSpi, PaymentMapper paymentMapper, PisConsentService pisConsentService) {
+        super(profileService, pisAuthorizationService, paymentSpi, paymentMapper, pisConsentService);
     }
 }

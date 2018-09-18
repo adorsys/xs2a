@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
@@ -37,7 +37,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 import static junit.framework.TestCase.assertNotNull;
@@ -51,7 +50,7 @@ public class OauthScaPaymentServiceTest {
     private static final String PAYMENT_ID = "123456789";
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TppInfo TPP_INFO = new TppInfo();
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("zzzzzzzzzzzzzz".getBytes());
+    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
 
     @InjectMocks
@@ -88,7 +87,7 @@ public class OauthScaPaymentServiceTest {
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId().equals(PAYMENT_ID));
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RCVD));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD));
         assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages() == null);
     }
 
@@ -100,7 +99,7 @@ public class OauthScaPaymentServiceTest {
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId() == null);
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
         assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages()[0] == PAYMENT_FAILED);
     }
 
@@ -112,7 +111,7 @@ public class OauthScaPaymentServiceTest {
         List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId() == null && actualResponse.get(1).getPaymentId() == null);
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(TransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(TransactionStatus.RJCT));
+        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
         assertTrue(actualResponse.get(0).getTppMessages()[0] == PAYMENT_FAILED && actualResponse.get(1).getTppMessages()[0] == PAYMENT_FAILED);
     }
 
@@ -125,16 +124,16 @@ public class OauthScaPaymentServiceTest {
         return Arrays.asList(getPayment(firstOk), getPayment(secondOk));
     }
 
-    private Optional<PaymentInitialisationResponse> getResp(boolean paymentPassed) {
+    private PaymentInitialisationResponse getResp(boolean paymentPassed) {
         PaymentInitialisationResponse response = new PaymentInitialisationResponse();
         if (paymentPassed) {
             response.setPaymentId(PAYMENT_ID);
-            response.setTransactionStatus(TransactionStatus.RCVD);
+            response.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         } else {
             response.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
-            response.setTransactionStatus(TransactionStatus.RJCT);
+            response.setTransactionStatus(Xs2aTransactionStatus.RJCT);
         }
-        return Optional.of(response);
+        return response;
     }
 
     private List<SpiPaymentInitialisationResponse> getSpiRespList(boolean firstOk, boolean secondOk) {
