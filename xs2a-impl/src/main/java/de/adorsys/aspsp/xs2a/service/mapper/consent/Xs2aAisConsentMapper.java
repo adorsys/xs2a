@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -178,6 +179,16 @@ public class Xs2aAisConsentMapper {
                        return consentAuthorization;
                    })
                    .orElse(null);
+    }
+
+    public List<CmsScaMethod> mapToCmsScaMethods(List<SpiScaMethod> spiScaMethods) {
+        return spiScaMethods.stream()
+                   .map(this::mapToCmsScaMethod)
+                   .collect(Collectors.toList());
+    }
+
+    private CmsScaMethod mapToCmsScaMethod(SpiScaMethod spiScaMethod) {
+        return CmsScaMethod.valueOf(spiScaMethod.name());
     }
 
     private CmsScaStatus mapToCmsScaStatus(SpiScaStatus status) {

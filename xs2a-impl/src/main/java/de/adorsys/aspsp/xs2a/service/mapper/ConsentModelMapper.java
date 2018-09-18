@@ -88,6 +88,7 @@ public class ConsentModelMapper {
                    .map(r ->
                             // TODO add mapping of chosenScaMethod after ChosenScaMethod generated entity will be updated in the specification
                             new UpdatePsuAuthenticationResponse()
+                                ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                                 .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
                                 .scaStatus(r.getScaStatus())
                    )

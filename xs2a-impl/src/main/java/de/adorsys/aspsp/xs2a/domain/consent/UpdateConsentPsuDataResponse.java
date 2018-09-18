@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
+import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.Data;
 
@@ -34,6 +35,7 @@ public class UpdateConsentPsuDataResponse {
     private String chosenScaMethod;
     private String scaAuthenticationData;
     private String password;
+    private Links links;
 
     private ConsentAuthorizationResponseLinkType responseLinkType;
     private String psuMessage;

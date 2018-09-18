@@ -20,12 +20,17 @@ import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.web12.ConsentController12;
+import de.adorsys.psd2.model.ScaStatus;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Slf4j
 @Aspect
@@ -43,9 +48,58 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
         return enrichErrorTextMessage(result);
     }
 
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(request)", returning = "result")
+    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq request) {
+        if (!result.hasError()) {
+            UpdateConsentPsuDataResponse body = result.getBody();
+            body.setLinks(buildLinksForUpdateConsentResponse(body, request));
+            return result;
+        }
+        return enrichErrorTextMessage(result);
+    }
+
     private Links buildLinksForConsentResponse(CreateConsentResponse response) {
         Links links = new Links();
         links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
+
+        return links;
+    }
+
+    private Links buildLinksForUpdateConsentResponse(UpdateConsentPsuDataResponse response, UpdateConsentPsuDataReq request) {
+        return Optional.ofNullable(response.getScaStatus())
+            .map(status -> {
+                Links links = null;
+
+                if (status == ScaStatus.PSUAUTHENTICATED) {
+                    links = buildLinksForPsuAuthenticatedConsentResponse(request);
+                } else if (status == ScaStatus.SCAMETHODSELECTED) {
+                    links = buildLinksForScaMethodSelectedConsentResponse(request);
+                } else if (status == ScaStatus.FINALISED) {
+                    links = buildLinksForFinalisedConsentResponse(request);
+                }
+
+                return links;
+            })
+            .orElse(null);
+    }
+
+    private Links buildLinksForPsuAuthenticatedConsentResponse(UpdateConsentPsuDataReq request) {
+        Links links = new Links();
+        links.setSelectAuthenticationMethod(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", request.getConsentId(), request.getAuthorizationId()));
+
+        return links;
+    }
+
+    private Links buildLinksForScaMethodSelectedConsentResponse(UpdateConsentPsuDataReq request) {
+        Links links = new Links();
+        links.setAuthoriseTransaction(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", request.getConsentId(), request.getAuthorizationId()));
+
+        return links;
+    }
+
+    private Links buildLinksForFinalisedConsentResponse(UpdateConsentPsuDataReq request) {
+        Links links = new Links();
+        links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", request.getConsentId(), request.getAuthorizationId()));
 
         return links;
     }

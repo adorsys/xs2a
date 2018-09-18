@@ -115,6 +115,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                                                               : new SpiResponse<>(Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PUSH_OTP), new AspspConsentData());
 
             if (spiResponse.getPayload().size() > 1) {
+                response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(spiResponse.getPayload()));
                 response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
                 return true;
