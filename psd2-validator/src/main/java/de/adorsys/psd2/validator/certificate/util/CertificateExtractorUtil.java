@@ -5,6 +5,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
@@ -26,6 +27,11 @@ public class CertificateExtractorUtil {
 	public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
+
+        if(cert == null) {
+            log.debug("Error reading certificate ");
+            throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
+        }
 
 		List<TppRole> roles = new ArrayList<>();
 
