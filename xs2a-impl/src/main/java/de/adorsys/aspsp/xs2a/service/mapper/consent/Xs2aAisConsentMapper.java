@@ -51,7 +51,7 @@ public class Xs2aAisConsentMapper {
                        aisRequest.setValidUntil(r.getValidUntil());
                        aisRequest.setRecurringIndicator(r.isRecurringIndicator());
                        aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
-                       aisRequest.setAspspConsentData(aspspConsentData.getAspspConsentData());
+                       aisRequest.setAspspConsentData(aspspConsentData.getBody());
 
                        return aisRequest;
                    })

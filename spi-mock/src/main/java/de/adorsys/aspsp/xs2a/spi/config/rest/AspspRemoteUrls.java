@@ -132,11 +132,11 @@ public class AspspRemoteUrls {
      * @return URL
      */
     public String getScaMethods() {
-        return spiMockBaseUrl + "/psu/sca-methods";
+        return spiMockBaseUrl + "/psu/sca-methods/{psuId}";
     }
 
     public String getGenerateTanConfirmation() {
-        return spiMockBaseUrl + "/consent/confirmation/pis";
+        return spiMockBaseUrl + "/consent/confirmation/pis/{psuId}";
     }
 
     public String applyStrongUserAuthorisation() {

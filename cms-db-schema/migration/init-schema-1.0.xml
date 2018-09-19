@@ -373,8 +373,6 @@
             <column name="sca_status" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
-            <column name="authentication_method_id" type="VARCHAR(40)"/>
-            <column name="sca_authentication_data" type="VARCHAR(40)"/>
             <column name="chosen_sca_method" type="VARCHAR(10)"/>
         </createTable>
 

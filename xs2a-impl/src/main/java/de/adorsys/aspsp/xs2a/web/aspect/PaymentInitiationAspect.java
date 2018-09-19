@@ -35,10 +35,10 @@ public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentControll
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment, paymentType, ..)", returning = "result", argNames = "result,payment,paymentType")
-    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentType paymentType) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment, paymentType, psuId, ..)", returning = "result", argNames = "result,payment,paymentType,psuId")
+    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentType paymentType, String psuId) {
         if (!result.hasError()) {
-            return enrichLink(result, paymentType);
+            return enrichLink(result, paymentType, psuId);
         }
         return enrichErrorTextMessage(result);
     }

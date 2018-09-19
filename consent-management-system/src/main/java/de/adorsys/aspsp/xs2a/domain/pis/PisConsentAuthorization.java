@@ -44,12 +44,6 @@ public class PisConsentAuthorization {
     @Enumerated(value = EnumType.STRING)
     private CmsScaStatus scaStatus;
 
-    @Column(name = "authentication_method_id")
-    private String authenticationMethodId;
-
-    @Column(name = "sca_authentication_data")
-    private String scaAuthenticationData;
-
     @Column(name = "chosen_sca_method")
     @Enumerated(value = EnumType.STRING)
     private CmsScaMethod chosenScaMethod;

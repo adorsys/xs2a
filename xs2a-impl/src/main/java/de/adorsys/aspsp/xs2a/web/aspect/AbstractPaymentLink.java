@@ -41,29 +41,29 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentType paymentType) {
+    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentType paymentType, String psuId) {
         Object body = result.getBody();
         if (EnumSet.of(SINGLE, PERIODIC).contains(paymentType)) {
-            doEnrichLink(paymentType, (PaymentInitialisationResponse) body);
+            doEnrichLink(paymentType, (PaymentInitialisationResponse) body, psuId);
         } else {
             ((List<PaymentInitialisationResponse>) body)
-                .forEach(r -> doEnrichLink(paymentType, r));
+                .forEach(r -> doEnrichLink(paymentType, r, psuId));
         }
         return result;
     }
 
-    private void doEnrichLink(PaymentType paymentType, PaymentInitialisationResponse body) {
-        body.setLinks(buildPaymentLinks(body, paymentType.getValue()));
+    private void doEnrichLink(PaymentType paymentType, PaymentInitialisationResponse body, String psuId) {
+        body.setLinks(buildPaymentLinks(body, paymentType.getValue(), psuId));
     }
 
-    private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService) {
+    private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService, String psuId) {
         if (RJCT == body.getTransactionStatus()) {
             return null;
         }
         String encodedPaymentId = Base64.getEncoder()
                                       .encodeToString(body.getPaymentId().getBytes());
         Links links = new Links();
-        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
+        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + psuId);
         links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", paymentService, encodedPaymentId));
         links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", paymentService, encodedPaymentId));
         if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {

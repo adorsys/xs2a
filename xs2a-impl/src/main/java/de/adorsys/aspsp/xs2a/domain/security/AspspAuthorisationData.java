@@ -16,21 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.domain.security;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
-public class AuthorisationData {
-    private String login;
+@Value
+public class AspspAuthorisationData {
+    private String psuId;
     private String password;
     private String accessToken;
     private String refreshToken;
 
-    public AuthorisationData(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public AuthorisationData(String login, String password, String accessToken, String refreshToken) {
-        this.login = login;
+    public AspspAuthorisationData(String psuId, String password, String accessToken, String refreshToken) {
+        this.psuId = psuId;
         this.password = password;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
