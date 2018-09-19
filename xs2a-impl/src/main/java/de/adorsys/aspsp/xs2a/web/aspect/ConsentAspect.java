@@ -38,7 +38,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result")
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result", argNames = "result,request,psuId")
     public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, String psuId) {
         if (!result.hasError()) {
             CreateConsentResponse body = result.getBody();
