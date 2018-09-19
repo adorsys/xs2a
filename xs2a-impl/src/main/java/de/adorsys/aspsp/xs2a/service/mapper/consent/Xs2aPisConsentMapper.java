@@ -272,7 +272,7 @@ public class Xs2aPisConsentMapper {
                    .collect(Collectors.toList());
     }
 
-    public CmsScaMethod mapToCmsScaMethod(SpiScaMethod spiScaMethod) {
+    private CmsScaMethod mapToCmsScaMethod(SpiScaMethod spiScaMethod) {
         return CmsScaMethod.valueOf(spiScaMethod.name());
     }
 }
