@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
@@ -50,18 +49,6 @@ public class SinglePaymentSuccessfulSteps {
 
     @Autowired
     private ObjectMapper mapper;
-
-    @Before("Load test data before run scenario")
-    public void loadTestDataIntoDb() {
-        HttpEntity httpEntity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        restTemplate.exchange(
-            context.getMockUrl() + "/integration-tests/refresh-testing-data",
-            HttpMethod.GET,
-            httpEntity,
-            String.class);
-    }
 
     @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
