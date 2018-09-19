@@ -155,7 +155,7 @@ public class AisConsentService {
         final String authorizationId = updatePsuData.getAuthorizationId();
         final AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorizationRequest(updatePsuData);
 
-        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, AisConsentAuthorizationResponse.class, consentId, authorizationId);
+        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, consentId, authorizationId);
     }
 
     private boolean isDirectAccessRequest(CreateConsentReq request) {

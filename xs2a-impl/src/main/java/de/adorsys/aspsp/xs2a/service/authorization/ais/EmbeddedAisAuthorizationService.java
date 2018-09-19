@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -59,26 +60,59 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
+        UpdateConsentPsuDataResponse response = createResponseFromUpdatePsuData(updatePsuData, consentAuthorization);
+        aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, updatePsuData));
+        return response;
+    }
 
+    private UpdateConsentPsuDataResponse createResponseFromUpdatePsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
 
-        if (checkPsuIdentification(updatePsuData, response)) {
+        if (checkPsuIdentification(request)) {
+            response.setPsuId(request.getPsuId());
+            response.setScaStatus(ScaStatus.PSUIDENTIFIED);
+            response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
             return response;
         }
 
-        if (checkPsuAuthentication(updatePsuData, response, consentAuthorization)) {
+        if (checkPsuAuthentication(request, consentAuthorization)) {
+            response.setPsuId(request.getPsuId());
+            response.setPassword(request.getPassword());
+
+            SpiResponse<List<SpiScaMethod>> spiResponse = "PSU_002".equals(request.getPsuId()) // TODO use `accountSpi.readAvailableScaMethods(updatePsuData.getPsuId(), updatePsuData.getPassword());` after #310 is merged
+                                                              ? new SpiResponse<>(Collections.singletonList(SpiScaMethod.SMS_OTP), new AspspConsentData())
+                                                              : new SpiResponse<>(Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PUSH_OTP), new AspspConsentData());
+
+            List<SpiScaMethod> availableMethods = spiResponse.getPayload();
+
+            if (CollectionUtils.isNotEmpty(availableMethods)) {
+                if (isMultipleScaMethods(availableMethods)) {
+                    response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(availableMethods));
+                    response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
+                    response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
+                } else {
+                    response.setChosenScaMethod(availableMethods.get(0).name());
+                    response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
+                    response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
+                }
+            }
+
             return response;
         }
 
-        if (checkScaMethod(updatePsuData, response, consentAuthorization)) {
+        if (checkScaMethod(request, consentAuthorization)) {
+            response.setChosenScaMethod(request.getAuthenticationMethodId());
+            response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
+            response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
             return response;
         }
 
-        if (checkScaAuthenticationData(updatePsuData, response)) {
+        if (checkScaAuthenticationData(request)) {
+            response.setScaAuthenticationData(request.getScaAuthenticationData());
+            response.setScaStatus(ScaStatus.FINALISED);
+            response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
             return response;
         }
-
-        aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response));
 
         return response;
     }
@@ -96,56 +130,23 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                    });
     }
 
-    private boolean checkPsuIdentification(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response) {
-        if (updatePsuData.isUpdatePsuIdentification()) {
-            response.setPsuId(updatePsuData.getPsuId());
-            response.setScaStatus(ScaStatus.PSUIDENTIFIED);
-            response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
-            return true;
-        }
-        return false;
+    private boolean checkPsuIdentification(UpdateConsentPsuDataReq updatePsuData) {
+        return updatePsuData.isUpdatePsuIdentification();
     }
 
-    private boolean checkPsuAuthentication(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, AccountConsentAuthorization spiAuthorization) {
-        if (spiAuthorization.getPassword() == null && updatePsuData.getPassword() != null) {
-            response.setPassword(updatePsuData.getPassword());
-
-            SpiResponse<List<SpiScaMethod>> spiResponse = "PSU_002".equals(updatePsuData.getPsuId()) // TODO use `accountSpi.readAvailableScaMethods(updatePsuData.getPsuId(), updatePsuData.getPassword());` after #310 is merged
-                                                              ? new SpiResponse<>(Collections.singletonList(SpiScaMethod.SMS_OTP), new AspspConsentData())
-                                                              : new SpiResponse<>(Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PUSH_OTP), new AspspConsentData());
-
-            if (spiResponse.getPayload().size() > 1) {
-                response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(spiResponse.getPayload()));
-                response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
-                response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
-                return true;
-            } else {
-                response.setChosenScaMethod(spiResponse.getPayload().get(0).name());
-                response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
-                response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
-                return true;
-            }
-        }
-        return false;
+    private boolean checkPsuAuthentication(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization spiAuthorization) {
+        return spiAuthorization.getPassword() == null && updatePsuData.getPassword() != null;
     }
 
-    private boolean checkScaMethod(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response, AccountConsentAuthorization spiAuthorization) {
-        if (spiAuthorization.getAuthenticationMethodId() == null && updatePsuData.getAuthenticationMethodId() != null) {
-            response.setChosenScaMethod(updatePsuData.getAuthenticationMethodId());
-            response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
-            response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
-            return true;
-        }
-        return false;
+    private boolean checkScaMethod(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization spiAuthorization) {
+        return spiAuthorization.getAuthenticationMethodId() == null && updatePsuData.getAuthenticationMethodId() != null;
     }
 
-    private boolean checkScaAuthenticationData(UpdateConsentPsuDataReq updatePsuData, UpdateConsentPsuDataResponse response) {
-        if (updatePsuData.getScaAuthenticationData() != null) {
-            response.setScaAuthenticationData(updatePsuData.getScaAuthenticationData());
-            response.setScaStatus(ScaStatus.FINALISED);
-            response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
-            return true;
-        }
-        return false;
+    private boolean checkScaAuthenticationData(UpdateConsentPsuDataReq updatePsuData) {
+        return updatePsuData.getScaAuthenticationData() != null;
+    }
+
+    private boolean isMultipleScaMethods(List<SpiScaMethod> availableMethods) {
+        return availableMethods.size() > 1;
     }
 }

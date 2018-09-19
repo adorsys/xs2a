@@ -97,16 +97,17 @@ public class Xs2aAisConsentMapper {
         return actionStatus;
     }
 
-    public SpiUpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateConsentPsuDataResponse updatePsuData) {
-        return Optional.ofNullable(updatePsuData)
+    public SpiUpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateConsentPsuDataResponse updatePsuDataResponse,
+                                                                      UpdateConsentPsuDataReq updatePsuDataRequest) {
+        return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        SpiUpdateConsentPsuDataReq request = new SpiUpdateConsentPsuDataReq();
-                       request.setPsuId(updatePsuData.getPsuId());
-                       request.setConsentId(updatePsuData.getConsentId());
-                       request.setAuthorizationId(updatePsuData.getAuthorizationId());
-                       request.setAuthenticationMethodId(updatePsuData.getChosenScaMethod());
-                       request.setScaAuthenticationData(updatePsuData.getScaAuthenticationData());
-                       request.setPassword(updatePsuData.getPassword());
+                       request.setPsuId(updatePsuDataResponse.getPsuId());
+                       request.setConsentId(updatePsuDataRequest.getConsentId());
+                       request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
+                       request.setAuthenticationMethodId(updatePsuDataResponse.getChosenScaMethod());
+                       request.setScaAuthenticationData(updatePsuDataResponse.getScaAuthenticationData());
+                       request.setPassword(updatePsuDataResponse.getPassword());
                        request.setScaStatus(
                            Optional.ofNullable(data.getScaStatus())
                                .map(status -> SpiScaStatus.valueOf(status.name()))
