@@ -85,17 +85,6 @@ public class AspspProfileService {
     }
 
     /**
-     * Reads current sca approach mode from ASPSP profile service
-     *
-     * @return 'true' if current sca approach requires 'redirect', 'false' if not
-     */
-    public boolean isRedirectMode() {
-        ScaApproach scaApproach = getScaApproach();
-        return scaApproach == ScaApproach.REDIRECT
-                   || scaApproach == ScaApproach.DECOUPLED;
-    }
-
-    /**
      * Reads sca approach from ASPSP profile service
      *
      * @return Available SCA approach for tpp

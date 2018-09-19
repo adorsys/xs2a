@@ -16,17 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.service.keycloak.KeycloakInvokerService;
+import de.adorsys.aspsp.xs2a.domain.security.AspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.aspsp.xs2a.spi.config.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +56,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     private final RestTemplate aspspRestTemplate;
     private final KeycloakInvokerService keycloakInvokerService;
     private final Xs2aPisConsentMapper xs2aPisConsentMapper;
+    private final JsonConverter jsonConverter;
 
     /**
      * For detailed description see {@link PaymentSpi#createPaymentInitiation(SpiSinglePayment, AspspConsentData)}
@@ -146,20 +149,23 @@ public class PaymentSpiImpl implements PaymentSpi {
      */
     @Override
     public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData) {
-        SpiAuthorisationStatus spiAuthorisationStatus = Optional.ofNullable(keycloakInvokerService.obtainAccessToken(psuId, password))
-                                                            .map(token -> SUCCESS)
+        Optional<AspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
+        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
                                                             .orElse(FAILURE);
-        return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData);
+        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
+                             .map(String::getBytes)
+                             .orElse(null);
+        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload));
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#readAvailableScaMethod(AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#readAvailableScaMethod(String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(String psuId, AspspConsentData aspspConsentData) {
         ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
             aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-            });
+            }, psuId);
         List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
                                                .orElse(Collections.emptyList());
         return new SpiResponse<>(spiScaMethods, aspspConsentData);
@@ -172,7 +178,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     public SpiResponse<String> executePayment(PisPaymentType paymentType, List<PisPayment> payments, AspspConsentData aspspConsentData) {
         String paymentId = null;
         if (PisPaymentType.SINGLE == paymentType) {
-            SpiPaymentInitialisationResponse paymentInitiation = createPaymentInitiation(xs2aPisConsentMapper.mapToSpiSinglePayment(payments.get(0)), new AspspConsentData())
+            SpiPaymentInitialisationResponse paymentInitiation = createPaymentInitiation(xs2aPisConsentMapper.mapToSpiSinglePayment(payments.get(0)), aspspConsentData)
                                                                      .getPayload();
             paymentId = paymentInitiation.getPaymentId();
         }
@@ -180,11 +186,11 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, AspspConsentData)}
      */
     @Override
-    public void performStrongUserAuthorisation(AspspConsentData aspspConsentData) {
-        aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class);
+    public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
+        aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuId);
     }
 
     @Override

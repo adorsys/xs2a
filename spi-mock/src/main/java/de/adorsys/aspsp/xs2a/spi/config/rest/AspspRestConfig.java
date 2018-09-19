@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.adorsys.aspsp.xs2a.config.rest.aspsp;
+package de.adorsys.aspsp.xs2a.spi.config.rest;
 
-import de.adorsys.aspsp.xs2a.config.rest.BearerToken;
-import de.adorsys.aspsp.xs2a.config.rest.BearerTokenInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.adorsys.aspsp.xs2a.spi.config.keycloak.BearerToken;
+import de.adorsys.aspsp.xs2a.spi.config.keycloak.BearerTokenInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Configuration
+@RequiredArgsConstructor
 public class AspspRestConfig {
     @Value("${http-client.read-timeout.ms:10000}")
     private int readTimeout;
     @Value("${http-client.connection-timeout.ms:10000}")
     private int connectionTimeout;
+    private final BearerToken bearerToken;
 
-    @Autowired
-    private BearerToken bearerToken;
-
+    @RequestScope
     @Bean(name = "aspspRestTemplate")
-    @Scope(scopeName = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public RestTemplate restTemplate(){
         RestTemplate rest = new RestTemplate(clientHttpRequestFactory());
         rest.getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2XmlHttpMessageConverter.class.getName()));

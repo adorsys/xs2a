@@ -16,8 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.web12.PaymentController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -28,10 +31,14 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController12> {
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment, paymentType, ..)", returning = "result", argNames = "result,payment,paymentType")
-    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentType paymentType) {
+    public PaymentInitiationAspect(int maxNumberOfCharInTransactionJson, AspspProfileService aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    }
+
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment, paymentType, psuId, ..)", returning = "result", argNames = "result,payment,paymentType,psuId")
+    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentType paymentType, String psuId) {
         if (!result.hasError()) {
-            return enrichLink(result, paymentType);
+            return enrichLink(result, paymentType, psuId);
         }
         return enrichErrorTextMessage(result);
     }

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest.aspsp;
+package de.adorsys.aspsp.xs2a.spi.config.keycloak;
 
-import de.adorsys.aspsp.xs2a.exception.RestException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
+import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.BEARER_TOKEN_PREFIX;
 
-public class AspspRestErrorHandler extends DefaultResponseErrorHandler {
+@Data
+@AllArgsConstructor
+public class BearerToken {
+    private String token;
 
-    @Override
-    public void handleError(ClientHttpResponse response) throws IOException {
-        HttpStatus statusCode = response.getStatusCode();
-        throw new RestException(statusCode, statusCode.getReasonPhrase());
+    public String getToken() {
+        return StringUtils.substringAfter(token, BEARER_TOKEN_PREFIX);
     }
 }

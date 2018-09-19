@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.rest;
+package de.adorsys.aspsp.xs2a.spi.config.keycloak;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;

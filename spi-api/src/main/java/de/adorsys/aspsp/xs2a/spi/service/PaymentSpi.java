@@ -119,11 +119,12 @@ public interface PaymentSpi {
     /**
      * Returns a list of SCA methods for PSU by its login
      *
+     * @param psuId            ASPSP identifier of the psu
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
      */
-    SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(String psuId, AspspConsentData aspspConsentData);
 
     /**
      * Returns a bulk payment by its ASPSP identifier
@@ -139,10 +140,11 @@ public interface PaymentSpi {
     /**
      * Performs strong customer authorization
      *
+     * @param psuId            ASPSP identifier of the psu
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      */
-    void performStrongUserAuthorisation(AspspConsentData aspspConsentData);
+    void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
 
     void applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
 }

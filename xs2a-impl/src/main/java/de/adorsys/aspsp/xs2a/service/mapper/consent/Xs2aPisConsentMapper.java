@@ -58,7 +58,7 @@ public class Xs2aPisConsentMapper {
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         request.setAspspConsentData(
             Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
+                .map(AspspConsentData::getBody)
                 .orElse(null));
 
         return request;
@@ -72,7 +72,7 @@ public class Xs2aPisConsentMapper {
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         request.setAspspConsentData(
             Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
+                .map(AspspConsentData::getBody)
                 .orElse(null));
 
         return request;
@@ -86,7 +86,7 @@ public class Xs2aPisConsentMapper {
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
         request.setAspspConsentData(
             Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
+                .map(AspspConsentData::getBody)
                 .orElse(null));
 
         return request;

@@ -58,7 +58,7 @@ public class PaymentService {
      * @param tppSignatureCertificate Tpp signature certificate
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject createPayment(Object payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
+    public ResponseObject createPayment(Object payment, PaymentType paymentType, String psuId, PaymentProduct paymentProduct, String tppSignatureCertificate) {
         ResponseObject response;
         if (paymentType == PaymentType.SINGLE) {
             response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.getCode());

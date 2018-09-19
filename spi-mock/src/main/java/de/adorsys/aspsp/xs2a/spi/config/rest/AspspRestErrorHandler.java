@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config;
+package de.adorsys.aspsp.xs2a.spi.config.rest;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import de.adorsys.aspsp.xs2a.exception.RestException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 
-@Data
-@Component
-@ConfigurationProperties(prefix = "keycloak")
-public class KeycloakConfigProperties {
-    private String realm;
-    private String resource;
-    private Credentials credentials;
-    private String authServerUrl;
+import java.io.IOException;
 
-    @Data
-    public static class Credentials {
-        private String secret;
-    }
+public class AspspRestErrorHandler extends DefaultResponseErrorHandler {
 
-    public String getRootPath() {
-        return authServerUrl + "/realms/" + realm;
+    @Override
+    public void handleError(ClientHttpResponse response) throws IOException {
+        HttpStatus statusCode = response.getStatusCode();
+        throw new RestException(statusCode, statusCode.getReasonPhrase());
     }
 }

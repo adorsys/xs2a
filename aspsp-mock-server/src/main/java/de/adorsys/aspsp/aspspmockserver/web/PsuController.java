@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +54,7 @@ public class PsuController {
         @ApiResponse(code = 204, message = "No Content")})
     @GetMapping(path = "/{psu-id}")
     public ResponseEntity<Psu> readPsuById(@PathVariable("psu-id") String psuId) {
-        return psuService.getPsuById(psuId)
+        return psuService.getPsuByPsuId(psuId)
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.noContent().build());
     }
@@ -97,7 +96,7 @@ public class PsuController {
         @ApiResponse(code = 404, message = "Not Found")})
     @DeleteMapping(path = "/{psu-id}")
     public ResponseEntity deletePsu(@PathVariable("psu-id") String psuId) {
-        return psuService.deletePsuById(psuId)
+        return psuService.deletePsuByPsuId(psuId)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.notFound().build();
     }
@@ -106,9 +105,9 @@ public class PsuController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = List.class),
         @ApiResponse(code = 204, message = "No Content")})
-    @GetMapping(path = "/sca-methods")
-    public ResponseEntity<List<SpiScaMethod>> readScaMethods(Principal principal) {
-        return Optional.ofNullable(psuService.getScaMethods(principal.getName()))
+    @GetMapping(path = "/sca-methods/{psu-id}")
+    public ResponseEntity<List<SpiScaMethod>> readScaMethods(@PathVariable("psu-id") String psuId) {
+        return Optional.ofNullable(psuService.getScaMethods(psuId))
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.noContent().build());
     }
@@ -116,8 +115,8 @@ public class PsuController {
     @ApiOperation(value = "Updates list of SCA methods for PSU specified by its login", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    @PutMapping(path = "/sca-methods")
-    public void updateScaMethods(@RequestBody List<SpiScaMethod> scaMethods, Principal principal) {
-        psuService.updateScaMethods(principal.getName(), scaMethods);
+    @PutMapping(path = "/sca-methods/{psu-id}")
+    public void updateScaMethods(@RequestBody List<SpiScaMethod> scaMethods, @PathVariable("psu-id") String psuId) {
+        psuService.updateScaMethods(psuId, scaMethods);
     }
 }

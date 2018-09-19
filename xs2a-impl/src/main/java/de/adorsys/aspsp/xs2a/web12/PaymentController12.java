@@ -91,7 +91,7 @@ public class PaymentController12 implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         String cert = new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapper.mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), cert);
+            xs2aPaymentService.createPayment(paymentModelMapper.mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), PSU_ID, product.get(), cert);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.config;
+package de.adorsys.aspsp.xs2a.spi.config.rest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -132,11 +132,11 @@ public class AspspRemoteUrls {
      * @return URL
      */
     public String getScaMethods() {
-        return spiMockBaseUrl + "/psu/sca-methods";
+        return spiMockBaseUrl + "/psu/sca-methods/{psuId}";
     }
 
     public String getGenerateTanConfirmation() {
-        return spiMockBaseUrl + "/consent/confirmation/pis";
+        return spiMockBaseUrl + "/consent/confirmation/pis/{psuId}";
     }
 
     public String applyStrongUserAuthorisation() {

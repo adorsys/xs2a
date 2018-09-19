@@ -23,4 +23,5 @@ public class SpiPaymentConfirmation {
     private String consentId;
     private String paymentId;
     private String tanNumber;
+    private String psuId;
 }
