@@ -54,7 +54,7 @@ variables:
   paths:
     - "spi-mock/target/spi-mock*jar"
     - "consent-management-system/target/consent-management*jar"
-    - "aspsp-profile/target/aspsp-profile*jar"
+    - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
     - "integration-tests/target/xs2a-integtests.jar"
