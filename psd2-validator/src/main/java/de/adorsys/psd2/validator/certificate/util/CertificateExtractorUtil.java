@@ -27,6 +27,11 @@ public class CertificateExtractorUtil {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
 
+        if(cert == null) {
+            log.debug("Error reading certificate ");
+            throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
+        }
+
 		List<TppRole> roles = new ArrayList<>();
 
 		TppCertificateData tppCertData = new TppCertificateData();
