@@ -367,12 +367,16 @@
             <column name="external_id" type="VARCHAR(40)">
                 <constraints nullable="false"/>
             </column>
+            <column name="psu_id" type="VARCHAR(40)"/>
             <column name="consent_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="sca_status" type="VARCHAR(25)">
                 <constraints nullable="false"/>
             </column>
+            <column name="authentication_method_id" type="VARCHAR(40)"/>
+            <column name="sca_authentication_data" type="VARCHAR(40)"/>
+            <column name="password" type="VARCHAR(40)"/>
             <column name="chosen_sca_method" type="VARCHAR(10)"/>
         </createTable>
 

@@ -140,7 +140,7 @@ public class PisConsentService {
                    .map(p -> {
                        if (STARTED == p.getScaStatus()) {
                            p.getConsent()
-                               .setAspspConsentData(request.getAspspData());
+                               .setAspspConsentData(request.getCmsAspspConsentData().getBody());
                        }
                        if (SCAMETHODSELECTED == request.getScaStatus()) {
                            p.setChosenScaMethod(CmsScaMethod.valueOf(request.getAuthenticationMethodId()));

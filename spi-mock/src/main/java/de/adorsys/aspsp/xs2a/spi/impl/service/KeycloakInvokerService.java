@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.spi.impl.service;
 import de.adorsys.aspsp.xs2a.domain.security.AspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.config.keycloak.BearerToken;
 import de.adorsys.aspsp.xs2a.spi.config.keycloak.KeycloakConfigProperties;
-import de.adorsys.aspsp.xs2a.spi.domain.constant.GrantType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,7 +71,7 @@ public class KeycloakInvokerService {
 
     private Optional<AspspAuthorisationData> doObtainAccessToken(String psuId, String password) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", GrantType.PASSWORD.getValue());
+        params.add("grant_type", "password");
         params.add("client_id", keycloakConfig.getResource());
         params.add("client_secret", keycloakConfig.getCredentials().getSecret());
         params.add("username", psuId);

@@ -6,5 +6,6 @@
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <include file="migration/init-schema-1.0.xml"/>
+    <include file="migration/remove_column_pis_consent_authorization-1.1.xml"/>
 
 </databaseChangeLog>

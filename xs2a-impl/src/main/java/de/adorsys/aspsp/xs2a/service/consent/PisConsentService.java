@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
@@ -120,12 +121,12 @@ public class PisConsentService {
                                                                          .getBody();
 
         if (STARTED == pisConsentAuthorisation.getScaStatus()) {
-            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword());
+            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData());
 
             if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
                 return new UpdatePisConsentPsuDataResponse(FAILED);
             }
-            request.setAspspData(authorisationStatusSpiResponse.getAspspConsentData().getBody());
+            request.setCmsAspspConsentData(new CmsAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData().getBody()));
             List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(request.getPsuId(), authorisationStatusSpiResponse.getAspspConsentData()).getPayload();
 
             if (CollectionUtils.isEmpty(spiScaMethods)) {

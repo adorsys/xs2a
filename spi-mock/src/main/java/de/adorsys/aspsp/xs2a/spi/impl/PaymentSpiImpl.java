@@ -145,10 +145,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#authorisePsu(String, String)}
+     * For detailed description see {@link PaymentSpi#authorisePsu(String, String, AspspConsentData)}
      */
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password) {
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData) {
         Optional<AspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
         SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
                                                             .orElse(FAILURE);

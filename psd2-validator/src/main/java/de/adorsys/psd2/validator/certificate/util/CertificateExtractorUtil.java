@@ -21,6 +21,7 @@ import java.util.List;
 @Slf4j
 public class CertificateExtractorUtil {
 
+    // TODO fix ORGANIZATION_IDENTIFIER exception  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/325
 	public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
