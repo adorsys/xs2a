@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,7 +60,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceTest {
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
-    private final String TPP_ID = "This is a test TppId";
+    private final String TPP_ID = "Test TppId";
     private final String CORRECT_ACCOUNT_ID = "123";
     private final String CORRECT_PSU_ID = "123456789";
     private final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
@@ -79,13 +80,14 @@ public class ConsentServiceTest {
     AccountSpi accountSpi;
     @Mock
     AisConsentService aisConsentService;
-    ;
     @Mock
     AccountMapper accountMapper;
     @Mock
     Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     AspspProfileService aspspProfileService;
+    @Spy
+    TppService tppService;
 
     @Before
     public void setUp() {
