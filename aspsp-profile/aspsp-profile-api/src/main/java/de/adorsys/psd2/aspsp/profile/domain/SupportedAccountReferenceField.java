@@ -18,7 +18,7 @@ package de.adorsys.psd2.aspsp.profile.domain;
 
 import io.swagger.annotations.ApiModel;
 
-@ApiModel(description = "Supported AccountReference Filed", value = "SupportedAccountReferenceField")
+@ApiModel(description = "Supported values of AccountReference field", value = "SupportedAccountReferenceField")
 public enum SupportedAccountReferenceField {
     IBAN,
     BBAN,
