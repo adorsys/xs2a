@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
@@ -37,8 +38,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(psuId, ..)", returning = "result", argNames = "result,psuId")
-    public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, String psuId) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result")
+    public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, String psuId) {
         if (!result.hasError()) {
             CreateConsentResponse body = result.getBody();
             body.setLinks(buildLinksForConsentResponse(body));

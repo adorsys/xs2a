@@ -200,7 +200,7 @@ public class ConsentModelMapper {
         UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
         updatePsuData.setPsuId(psuId);
         updatePsuData.setConsentId(consentId);
-        updatePsuData.setAuthenticationMethodId(authorizationId);
+        updatePsuData.setAuthorizationId(authorizationId);
 
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
