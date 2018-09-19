@@ -16,3 +16,4 @@ setting:
  transactionLifetime: 0
  allPsd2Support: false
  authorisationStartType: EXPLICIT
+ transactionsWithoutBalancesSupported: true

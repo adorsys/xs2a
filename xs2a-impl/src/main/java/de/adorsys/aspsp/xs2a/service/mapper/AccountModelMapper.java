@@ -21,16 +21,19 @@ import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -38,17 +41,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-public final class AccountModelMapper {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+@Component
+@RequiredArgsConstructor
+public class AccountModelMapper {
+    private final ObjectMapper objectMapper;
 
-    public static AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
+    public AccountList mapToAccountList(Map<String, List<Xs2aAccountDetails>> accountDetailsList) {
         List<AccountDetails> details = accountDetailsList.values().stream()
-                                           .flatMap(ad -> ad.stream().map(AccountModelMapper::mapToAccountDetails))
+                                           .flatMap(ad -> ad.stream().map(this::mapToAccountDetails))
                                            .collect(Collectors.toList());
         return new AccountList().accounts(details);
     }
 
-    public static AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
+    public AccountDetails mapToAccountDetails(Xs2aAccountDetails accountDetails) {
         AccountDetails target = new AccountDetails();
         BeanUtils.copyProperties(accountDetails, target);
 
@@ -61,24 +66,24 @@ public final class AccountModelMapper {
                                  .orElse(null));
         return target
                    .balances(mapToBalanceList(accountDetails.getBalances()))
-                   ._links(OBJECT_MAPPER.convertValue(accountDetails.getLinks(), Map.class));
+                   ._links(objectMapper.convertValue(accountDetails.getLinks(), Map.class));
     }
 
-    private static BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
+    private BalanceList mapToBalanceList(List<Xs2aBalance> balances) {
         BalanceList balanceList = null;
 
         if (CollectionUtils.isNotEmpty(balances)) {
             balanceList = new BalanceList();
 
             balanceList.addAll(balances.stream()
-                                   .map(AccountModelMapper::mapToBalance)
+                                   .map(this::mapToBalance)
                                    .collect(Collectors.toList()));
         }
 
         return balanceList;
     }
 
-    public static ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {
+    public ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {
         BalanceList balancesResponse = new BalanceList();
         balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
 
@@ -86,7 +91,7 @@ public final class AccountModelMapper {
                    .balances(balancesResponse);
     }
 
-    public static Balance mapToBalance(Xs2aBalance balance) {
+    public Balance mapToBalance(Xs2aBalance balance) {
         Balance target = new Balance();
         BeanUtils.copyProperties(balance, target);
 
@@ -104,26 +109,26 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
+    public AccountReport mapToAccountReport(Xs2aAccountReport accountReport) {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
-                                                          .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
+                                                          .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
                                                           .orElse(new ArrayList<>());
         booked.addAll(bookedTransactions);
 
         TransactionList pending = new TransactionList();
         List<TransactionDetails> pendingTransactions = Optional.ofNullable(accountReport.getPending())
-                                                           .map(ts -> Arrays.stream(ts).map(AccountModelMapper::mapToTransaction).collect(Collectors.toList()))
+                                                           .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
                                                            .orElse(new ArrayList<>());
         pending.addAll(pendingTransactions);
 
         return new AccountReport()
                    .booked(booked)
                    .pending(pending)
-                   ._links(OBJECT_MAPPER.convertValue(accountReport.getLinks(), Map.class));
+                   ._links(objectMapper.convertValue(accountReport.getLinks(), Map.class));
     }
 
-    public static TransactionDetails mapToTransaction(Transactions transactions) {
+    public TransactionDetails mapToTransaction(Transactions transactions) {
         TransactionDetails target = new TransactionDetails();
         BeanUtils.copyProperties(transactions, target);
 
@@ -145,7 +150,7 @@ public final class AccountModelMapper {
         return target;
     }
 
-    public static <T> T mapToAccountReference12(AccountReference reference) {
+    public <T> T mapToAccountReference12(AccountReference reference) {
         T accountReference = null;
 
         if (StringUtils.isNotBlank(reference.getIban())) {
@@ -167,7 +172,7 @@ public final class AccountModelMapper {
         return accountReference;
     }
 
-    public static Address mapToAddress12(Xs2aAddress address) {
+    public Address mapToAddress12(Xs2aAddress address) {
         Address targetAddress = new Address().street(address.getStreet());
         targetAddress.setStreet(address.getStreet());
         targetAddress.setBuildingNumber(address.getBuildingNumber());
@@ -180,7 +185,7 @@ public final class AccountModelMapper {
         return targetAddress;
     }
 
-    public static Xs2aAddress mapToXs2aAddress(Address address) {
+    public Xs2aAddress mapToXs2aAddress(Address address) {
         return Optional.ofNullable(address)
                    .map(a -> {
                        Xs2aAddress targetAddress = new Xs2aAddress();
@@ -196,7 +201,7 @@ public final class AccountModelMapper {
                    .orElse(new Xs2aAddress());
     }
 
-    public static Xs2aAmount mapToXs2aAmount(Amount amount) {
+    public Xs2aAmount mapToXs2aAmount(Amount amount) {
         return Optional.ofNullable(amount)
                    .map(a -> {
                        Xs2aAmount targetAmount = new Xs2aAmount();
@@ -208,7 +213,28 @@ public final class AccountModelMapper {
 
     }
 
-    private static Object createAccountObject(AccountReference accountReference) {
+    public TransactionsResponse200Json mapToTransactionsResponse200Json(Xs2aTransactionsReport transactionsReport){
+        TransactionsResponse200Json transactionsResponse200Json = new TransactionsResponse200Json();
+        transactionsResponse200Json.setTransactions(mapToAccountReport(transactionsReport.getAccountReport()));
+        transactionsResponse200Json.setBalances(mapToBalanceList(transactionsReport.getBalances()));
+        transactionsResponse200Json.setAccount(mapToAccountReference12(transactionsReport.getAccountReference()));
+        transactionsResponse200Json.setLinks(objectMapper.convertValue(transactionsReport.getLinks(), Map.class));
+        return transactionsResponse200Json;
+
+    }
+
+    public AccountReference mapToAccountReference(Xs2aAccountDetails accountDetails){
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(accountDetails.getIban());
+        accountReference.setBban(accountDetails.getBban());
+        accountReference.setPan(accountDetails.getPan());
+        accountReference.setMaskedPan(accountDetails.getMaskedPan());
+        accountReference.setMsisdn(accountDetails.getMsisdn());
+        accountReference.setCurrency(accountDetails.getCurrency());
+        return accountReference;
+    }
+
+    private Object createAccountObject(AccountReference accountReference) {
         return Optional.ofNullable(accountReference)
                    .map(account -> {
                        if (account.getIban() != null) {
@@ -238,7 +264,7 @@ public final class AccountModelMapper {
                    .orElse(null);
     }
 
-    private static String getCurrencyFromAccountReference(AccountReference accountReference) {
+    private String getCurrencyFromAccountReference(AccountReference accountReference) {
         return Optional.ofNullable(accountReference.getCurrency())
                    .map(Currency::getCurrencyCode)
                    .orElse(null);

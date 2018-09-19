@@ -167,6 +167,15 @@ public class AspspProfileService {
         return readAspspSettings().isBankOfferedConsentSupport();
     }
 
+    /**
+     * Reads value of transactions without balances supported from ASPSP profile service
+     *
+     * @return true if ASPSP transactions without balances supported, false if doesn't
+     */
+    public boolean isTransactionsWithoutBalancesSupported() {
+        return readAspspSettings().isTransactionsWithoutBalancesSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileRestTemplate.exchange(
             aspspProfileRemoteUrls.getAspspSettings(), HttpMethod.GET, null, AspspSettings.class).getBody();
