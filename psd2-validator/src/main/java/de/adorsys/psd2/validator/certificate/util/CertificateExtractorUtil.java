@@ -21,7 +21,6 @@ import java.util.List;
 @Slf4j
 public class CertificateExtractorUtil {
 
-    // TODO fix ORGANIZATION_IDENTIFIER exception  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/325
 	public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
@@ -53,7 +52,7 @@ public class CertificateExtractorUtil {
 		} catch (CertificateEncodingException e) {
 			log.debug(e.getMessage());
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
-		} catch (NoSuchFieldError n) {
+		} catch (NoSuchFieldError n) { // TODO fix ORGANIZATION_IDENTIFIER exception  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/325
             log.error("No such field error: " + n.getMessage());
         }
 		return tppCertData;
