@@ -54,8 +54,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     @Override
     public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        SpiAccountConsentAuthorization spiConsentAuthorization = aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId);
-        return aisConsentMapper.mapToAccountConsentAuthorization(spiConsentAuthorization);
+        return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId);
     }
 
     @Override
@@ -88,11 +87,11 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
                 if (isMultipleScaMethods(availableMethods)) {
                     response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(availableMethods));
-                    response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
+                    response.setScaStatus(Xs2aScaStatus.PSUAUTHENTICATED);
                     response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
                 } else {
                     response.setChosenScaMethod(availableMethods.get(0).name());
-                    response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
+                    response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
                     response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
                 }
             }
@@ -102,14 +101,14 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
         if (checkScaMethod(request, consentAuthorization)) {
             response.setChosenScaMethod(request.getAuthenticationMethodId());
-            response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
+            response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
             return response;
         }
 
         if (checkScaAuthenticationData(request)) {
             response.setScaAuthenticationData(request.getScaAuthenticationData());
-            response.setScaStatus(ScaStatus.FINALISED);
+            response.setScaStatus(Xs2aScaStatus.FINALISED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
             return response;
         }
@@ -118,7 +117,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     }
 
     private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.name()))
+        return aisConsentService.createAisConsentAuthorization(consentId, Xs2aScaStatus.valueOf(scaStatus.name()))
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
                        resp.setConsentId(consentId);

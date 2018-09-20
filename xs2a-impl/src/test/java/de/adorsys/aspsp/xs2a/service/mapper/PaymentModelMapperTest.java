@@ -20,10 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -31,11 +28,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Currency;
 import java.util.LinkedHashMap;
 
+import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +62,9 @@ public class PaymentModelMapperTest {
     @Mock
     MessageErrorMapper messageErrorMapper;
 
+    @Spy
+    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
+
     @Test
     public void mapToTransactionStatus12() {
         //Given
@@ -88,7 +90,7 @@ public class PaymentModelMapperTest {
         PaymentInitialisationResponse givenResponse = getXs2aPaymentResponse();
         PaymentInitationRequestResponse201 expectedResponse = getPaymentResponse12();
         //When
-        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, PaymentType.SINGLE, PaymentProduct.SCT);
+        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, getRequestParameters(SINGLE));
         //Then
         assertThat(result).isEqualTo(expectedResponse);
     }
@@ -100,7 +102,7 @@ public class PaymentModelMapperTest {
         //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
         //When
-        SinglePayment result = (SinglePayment) paymentModelMapper.mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
+        SinglePayment result = (SinglePayment) paymentModelMapper.mapToXs2aPayment(payment, getRequestParameters(SINGLE));
         //Then
         assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
         assertThat(result.getDebtorAccount()).isNotNull();
@@ -244,5 +246,14 @@ public class PaymentModelMapperTest {
         amount.setAmount(AMOUNT);
         amount.setCurrency(EUR);
         return amount;
+    }
+
+    private PaymentRequestParameters getRequestParameters(PaymentType paymentType){
+        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+        requestParameters.setPaymentType(paymentType);
+        requestParameters.setQwacCertificate("TEST CERTIFICATE");
+        requestParameters.setPaymentProduct(PaymentProduct.SCT);
+
+        return requestParameters;
     }
 }

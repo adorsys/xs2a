@@ -27,10 +27,10 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.AisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
@@ -52,8 +52,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final AisConsentService aisConsentService;
     private final AisAuthorizationService aisAuthorizationService;
-    private final PisAuthorisationService pisAuthorizationService;
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileService;
+    private final PisScaAuthorisationService pisAuthorizationService;
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.

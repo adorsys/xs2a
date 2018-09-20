@@ -240,14 +240,10 @@ public class ConsentModelMapper {
         if (!body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> {
-                    request.setPassword(psuData.get("password"));
-                });
+                .ifPresent(psuData -> request.setPassword(psuData.get("password")));
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuData -> {
-                    request.setAuthenticationMethodId(psuData.get("authenticationMethodId"));
-                });
+                .ifPresent(psuData -> request.setAuthenticationMethodId(psuData.get("authenticationMethodId")));
         }
         return request;
     }

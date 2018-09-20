@@ -18,13 +18,17 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -35,7 +39,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
@@ -51,6 +57,8 @@ public class OauthScaPaymentServiceTest {
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TppInfo TPP_INFO = new TppInfo();
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final String IBAN = "DE89370400440532013000";
+    private static final String WRONG_IBAN = "NOK";
 
 
     @InjectMocks
@@ -62,16 +70,16 @@ public class OauthScaPaymentServiceTest {
 
     @Before
     public void setUp() {
-        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(true, true))).thenReturn(getSpiBulk(true, true));
-        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(true, false))).thenReturn(getSpiBulk(true, false));
-        when(paymentMapper.mapToSpiSinglePaymentList(getBulk(false, false))).thenReturn(getSpiBulk(false, false));
+        when(paymentMapper.mapToSpiBulkPayment(getBulk(true, true, IBAN))).thenReturn(getSpiBulkPayment(true, true, IBAN));
+        when(paymentMapper.mapToSpiBulkPayment(getBulk(true, false, IBAN))).thenReturn(getSpiBulkPayment(true, false, IBAN));
+        when(paymentMapper.mapToSpiBulkPayment(getBulk(false, false, WRONG_IBAN))).thenReturn(getSpiBulkPayment(false, false, WRONG_IBAN));
         when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true))).thenReturn(getResp(true));
         when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED))
             .thenReturn(getResp(false));
-        when(paymentSpi.createBulkPayments(getSpiBulk(true, true), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));
-        when(paymentSpi.createBulkPayments(getSpiBulk(true, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA));
-        when(paymentSpi.createBulkPayments(getSpiBulk(false, false), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, true, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, false, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA));
+        when(paymentSpi.createBulkPayments(getSpiBulkPayment(false, false, WRONG_IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA));
     }
 
     @Test
@@ -82,9 +90,9 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createBulkPayment() {
         //Given
-        List<SinglePayment> payments = getBulk(true, true);
+        BulkPayment payment = getBulk(true, true, IBAN);
         //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId().equals(PAYMENT_ID));
         assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD));
@@ -94,9 +102,9 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createBulkPayment_Failure_partial() {
         //Given
-        List<SinglePayment> payments = getBulk(true, false);
+        BulkPayment payment = getBulk(true, false, IBAN);
         //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId() == null);
         assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
@@ -106,9 +114,9 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createBulkPayment_Failure_total() {
         //Given
-        List<SinglePayment> payments = getBulk(false, false);
+        BulkPayment payment = getBulk(false, false, WRONG_IBAN);
         //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payments, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         assertNotNull(actualResponse);
         assertTrue(actualResponse.get(0).getPaymentId() == null && actualResponse.get(1).getPaymentId() == null);
         assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
@@ -120,8 +128,14 @@ public class OauthScaPaymentServiceTest {
         //Nothing to be tested here
     }
 
-    private List<SinglePayment> getBulk(boolean firstOk, boolean secondOk) {
-        return Arrays.asList(getPayment(firstOk), getPayment(secondOk));
+    private BulkPayment getBulk(boolean firstOk, boolean secondOk, String iban) {
+        BulkPayment bulkPayment = new BulkPayment();
+        bulkPayment.setRequestedExecutionDate(LocalDate.now());
+        bulkPayment.setBatchBookingPreferred(false);
+        bulkPayment.setDebtorAccount(getReference(iban));
+        bulkPayment.setPayments(Arrays.asList(getPayment(firstOk), getPayment(secondOk)));
+
+        return bulkPayment;
     }
 
     private PaymentInitialisationResponse getResp(boolean paymentPassed) {
@@ -160,7 +174,35 @@ public class OauthScaPaymentServiceTest {
         return payment;
     }
 
-    private List<SpiSinglePayment> getSpiBulk(boolean firstOk, boolean secondOk) {
+    private SpiBulkPayment getSpiBulkPayment(boolean firstOk, boolean secondOk, String iban) {
+        SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
+        spiBulkPayment.setRequestedExecutionDate(LocalDate.now());
+        spiBulkPayment.setBatchBookingPreferred(false);
+        spiBulkPayment.setDebtorAccount(getSpiReference(iban));
+        spiBulkPayment.setPayments(getSpiSinglePaymentList(firstOk, secondOk));
+
+        return spiBulkPayment;
+    }
+
+    private SpiAccountReference getSpiReference(String iban) {
+        return new SpiAccountReference(
+            iban,
+            null,
+            null,
+            null,
+            null,
+            Currency.getInstance("EUR")
+        );
+    }
+
+    private AccountReference getReference(String iban) {
+        AccountReference reference = new AccountReference();
+        reference.setIban(iban);
+        reference.setCurrency(Currency.getInstance("EUR"));
+        return reference;
+    }
+
+    private List<SpiSinglePayment> getSpiSinglePaymentList(boolean firstOk, boolean secondOk) {
         return Arrays.asList(getSpiPayment(firstOk), getSpiPayment(secondOk));
     }
 

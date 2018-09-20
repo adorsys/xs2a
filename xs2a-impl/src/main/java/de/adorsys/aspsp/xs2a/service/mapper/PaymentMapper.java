@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper;
+package de.adorsys.aspsp.xs2a.service.mapper; //NOPMD
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
@@ -32,7 +34,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -47,19 +49,29 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class PaymentMapper {
+    // TODO fix high amount of different objects as members denotes a high coupling https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/322
     private final ObjectMapper objectMapper;
     private final AccountMapper accountMapper;
+
+    public SpiBulkPayment mapToSpiBulkPayment(BulkPayment bulkPayment) {
+        return Optional.ofNullable(bulkPayment)
+                   .map(bulk -> {
+                       SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
+                       spiBulkPayment.setBatchBookingPreferred(bulk.getBatchBookingPreferred());
+                       spiBulkPayment.setDebtorAccount(accountMapper.mapToSpiAccountReference(bulk.getDebtorAccount()));
+                       spiBulkPayment.setRequestedExecutionDate(bulk.getRequestedExecutionDate());
+                       spiBulkPayment.setPayments(bulk.getPayments().stream()
+                                                      .map(this::mapToSpiSinglePayment)
+                                                      .collect(Collectors.toList()));
+                       return spiBulkPayment;
+                   })
+                   .orElse(null);
+    }
 
     public Xs2aTransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
                    .map(ts -> Xs2aTransactionStatus.valueOf(ts.name()))
                    .orElse(null);
-    }
-
-    public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<SinglePayment> payments) {
-        return payments.stream()
-                   .map(this::mapToSpiSinglePayment)
-                   .collect(Collectors.toList());
     }
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment paymentInitiationRequest) {
@@ -211,10 +223,30 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public List<SinglePayment> mapToBulkPayment(List<SpiSinglePayment> spiSinglePayment) {
-        return CollectionUtils.isNotEmpty(spiSinglePayment)
-                   ? spiSinglePayment.stream().map(this::mapToSinglePayment).collect(Collectors.toList())
-                   : null;
+    public BulkPayment mapToBulkPayment(List<SpiSinglePayment> spiSinglePayments) {
+        if (CollectionUtils.isNotEmpty(spiSinglePayments)) {
+            BulkPayment bulkPayment = new BulkPayment();
+            bulkPayment.setBatchBookingPreferred(false);
+            bulkPayment.setDebtorAccount(getDebtorAccountForBulkPayment(spiSinglePayments));
+            bulkPayment.setPayments(spiSinglePayments.stream()
+                                        .map(this::mapToSinglePayment)
+                                        .collect(Collectors.toList()));
+            return bulkPayment;
+        }
+        return null;
+    }
+
+    public SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
+        SpiPaymentConfirmation paymentConfirmation = new SpiPaymentConfirmation();
+        paymentConfirmation.setTanNumber(request.getPassword());
+        paymentConfirmation.setPaymentId(request.getPaymentId());
+        paymentConfirmation.setConsentId(consentId);
+        paymentConfirmation.setPsuId(request.getPsuId());
+        return paymentConfirmation;
+    }
+
+    private AccountReference getDebtorAccountForBulkPayment(List<SpiSinglePayment> spiSinglePayments) {
+        return accountMapper.mapToAccountReference(spiSinglePayments.get(0).getDebtorAccount());
     }
 
     private AuthenticationObject[] mapToAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
@@ -296,18 +328,20 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public TppInfo mapToTppInfo(String tppSignatureCertificate) {
-        if (StringUtils.isBlank(tppSignatureCertificate)) {
+    public TppInfo mapToTppInfo(PaymentRequestParameters requestParameters) {
+        if (StringUtils.isBlank(requestParameters.getQwacCertificate())) {
             return null;
         }
 
         try {
-            byte[] decodedBytes = Base64.getDecoder().decode(tppSignatureCertificate);
+            byte[] decodedBytes = Base64.getDecoder().decode(requestParameters.getQwacCertificate());
             String decodedJson = new String(decodedBytes);
-
-            return objectMapper.readValue(decodedJson, TppInfo.class);
+            TppInfo tppInfo = objectMapper.readValue(decodedJson, TppInfo.class);
+            tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
+            tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
+            return tppInfo;
         } catch (Exception e) {
-            log.warn("Error with converting TppInfo from certificate {}", tppSignatureCertificate);
+            log.warn("Error with converting TppInfo from certificate {}", requestParameters.getQwacCertificate());
             return null;
         }
     }

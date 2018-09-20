@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -34,14 +35,11 @@ import javax.validation.Valid;
 @RequestMapping(path = "api/v1/periodic-payments/{payment-product}")
 @Api(value = "api/v1/periodic-payments/{payment-product}", tags = "PISP, Periodic Payments", description = "Orders for periodic payments")
 public class PeriodicPaymentsController {
-    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6I" +
-                                               "CJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6IC" +
-                                               "IxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
     private final PaymentService paymentService;
     private final ResponseMapper responseMapper;
     private final AccountReferenceValidationService referenceValidationService;
 
-    @ApiOperation(value = "The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorised by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorised by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP.")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -64,7 +62,7 @@ public class PeriodicPaymentsController {
         ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(periodicPayment.getAccountReferences());
         ResponseObject<PaymentInitialisationResponse> response = accountReferenceValidationResponse.hasError()
                                                                      ? ResponseObject.<PaymentInitialisationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-                                                                     : paymentService.initiatePeriodicPayment(periodicPayment, tppSignatureCertificate, paymentProduct);
+                                                                     : paymentService.initiatePeriodicPayment(periodicPayment, new TppInfo(), paymentProduct);
         return responseMapper.created(response);
     }
 }

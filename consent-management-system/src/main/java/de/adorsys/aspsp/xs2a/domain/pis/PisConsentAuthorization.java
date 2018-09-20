@@ -36,9 +36,6 @@ public class PisConsentAuthorization {
     @Column(name = "external_id", nullable = false)
     private String externalId;
 
-    @Column(name = "psu_id")
-    private String psuId;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "consent_id")
     private PisConsent consent;
@@ -46,15 +43,6 @@ public class PisConsentAuthorization {
     @Column(name = "sca_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private CmsScaStatus scaStatus;
-
-    @Column(name = "authentication_method_id")
-    private String authenticationMethodId;
-
-    @Column(name = "sca_authentication_data")
-    private String scaAuthenticationData;
-
-    @Column(name = "password")
-    private String password;
 
     @Column(name = "chosen_sca_method")
     @Enumerated(value = EnumType.STRING)

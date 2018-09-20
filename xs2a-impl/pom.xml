@@ -52,6 +52,12 @@
         </dependency>
 
         <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-api</artifactId>
+            <version>1.8-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons.io.version}</version>
@@ -66,12 +72,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-spring-boot-starter</artifactId>
-            <version>${keycloak.version}</version>
         </dependency>
 
         <dependency>

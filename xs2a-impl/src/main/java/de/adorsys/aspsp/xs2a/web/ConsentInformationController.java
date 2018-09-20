@@ -41,7 +41,7 @@ public class ConsentInformationController {
     private final ResponseMapper responseMapper;
     private final AccountReferenceValidationService referenceValidationService;
 
-    @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Creates an account information consent resource at the ASPSP regarding access to accounts specified in this request.")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "OK", response = CreateConsentResponse.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -71,7 +71,7 @@ public class ConsentInformationController {
                 : consentService.createAccountConsentsWithResponse(createConsent, psuId));
     }
 
-    @ApiOperation(value = "Can check the status of an account information consent resource", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Can check the status of an account information consent resource")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = ConsentStatus.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -90,7 +90,7 @@ public class ConsentInformationController {
         return responseMapper.ok(response);
     }
 
-    @ApiOperation(value = "Returns the content of an account information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Returns the content of an account information consent object")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AccountConsent.class),
         @ApiResponse(code = 400, message = "Bad request")})
@@ -109,7 +109,7 @@ public class ConsentInformationController {
         return responseMapper.ok(response);
     }
 
-    @ApiOperation(value = " Delete information consent object", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = " Delete information consent object")
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 403, message = "The Consent-ID cannot be matched by the ASPSP relative to the TPP.")})

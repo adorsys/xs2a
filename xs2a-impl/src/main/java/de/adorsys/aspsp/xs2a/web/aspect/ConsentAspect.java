@@ -16,10 +16,15 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web12.ConsentController12;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.AllArgsConstructor;
@@ -33,10 +38,13 @@ import java.util.Optional;
 @Slf4j
 @Aspect
 @Component
-@AllArgsConstructor
 public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result")
+    public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    }
+
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result", argNames = "result,request,psuId")
     public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, String psuId) {
         if (!result.hasError()) {
             CreateConsentResponse body = result.getBody();
