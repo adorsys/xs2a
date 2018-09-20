@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -79,10 +80,10 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
             List<SpiScaMethod> availableMethods = spiResponse.getPayload();
 
-            if (CollectionUtils.isNotEmpty(availableMethods)) {
-                response.setPsuId(request.getPsuId());
-                response.setPassword(request.getPassword());
+            response.setPsuId(request.getPsuId());
+            response.setPassword(request.getPassword());
 
+            if (CollectionUtils.isNotEmpty(availableMethods)) {
                 if (isMultipleScaMethods(availableMethods)) {
                     response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(availableMethods));
                     response.setScaStatus(Xs2aScaStatus.PSUAUTHENTICATED);
@@ -92,6 +93,9 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                     response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
                     response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
                 }
+            } else {
+                response.setScaStatus(Xs2aScaStatus.FAILED);
+                response.setErrorCode(MessageErrorCode.SCA_METHOD_UNKNOWN);
             }
 
             return response;

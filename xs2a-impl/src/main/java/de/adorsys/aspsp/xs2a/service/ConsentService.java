@@ -172,7 +172,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         UpdateConsentPsuDataResponse response = aisAuthorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
 
         return Optional.ofNullable(response)
-                   .map(s -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build())
+                   .map(s -> Optional.ofNullable(s.getErrorCode())
+                                 .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                               .fail(new MessageError(e))
+                                               .build())
+                                 .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build()))
                    .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                         .build());

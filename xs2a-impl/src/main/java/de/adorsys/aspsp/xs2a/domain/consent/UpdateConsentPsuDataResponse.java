@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import lombok.Data;
 
 import java.util.List;
@@ -39,4 +40,6 @@ public class UpdateConsentPsuDataResponse {
 
     private ConsentAuthorizationResponseLinkType responseLinkType;
     private String psuMessage;
+
+    private MessageErrorCode errorCode;
 }
