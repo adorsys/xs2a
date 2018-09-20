@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper; //NOPMD
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
@@ -71,12 +72,6 @@ public class PaymentMapper {
         return Optional.ofNullable(spiTransactionStatus)
                    .map(ts -> Xs2aTransactionStatus.valueOf(ts.name()))
                    .orElse(null);
-    }
-
-    public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<SinglePayment> payments) {
-        return payments.stream()
-                   .map(this::mapToSpiSinglePayment)
-                   .collect(Collectors.toList());
     }
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment paymentInitiationRequest) {
@@ -241,6 +236,15 @@ public class PaymentMapper {
         return null;
     }
 
+    public SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
+        SpiPaymentConfirmation paymentConfirmation = new SpiPaymentConfirmation();
+        paymentConfirmation.setTanNumber(request.getPassword());
+        paymentConfirmation.setPaymentId(request.getPaymentId());
+        paymentConfirmation.setConsentId(consentId);
+        paymentConfirmation.setPsuId(request.getPsuId());
+        return paymentConfirmation;
+    }
+
     private AccountReference getDebtorAccountForBulkPayment(List<SpiSinglePayment> spiSinglePayments) {
         return accountMapper.mapToAccountReference(spiSinglePayments.get(0).getDebtorAccount());
     }
@@ -324,18 +328,20 @@ public class PaymentMapper {
                    .orElse(null);
     }
 
-    public TppInfo mapToTppInfo(String tppSignatureCertificate) {
-        if (StringUtils.isBlank(tppSignatureCertificate)) {
+    public TppInfo mapToTppInfo(PaymentRequestParameters requestParameters) {
+        if (StringUtils.isBlank(requestParameters.getQwacCertificate())) {
             return null;
         }
 
         try {
-            byte[] decodedBytes = Base64.getDecoder().decode(tppSignatureCertificate);
+            byte[] decodedBytes = Base64.getDecoder().decode(requestParameters.getQwacCertificate());
             String decodedJson = new String(decodedBytes);
-
-            return objectMapper.readValue(decodedJson, TppInfo.class);
+            TppInfo tppInfo = objectMapper.readValue(decodedJson, TppInfo.class);
+            tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
+            tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
+            return tppInfo;
         } catch (Exception e) {
-            log.warn("Error with converting TppInfo from certificate {}", tppSignatureCertificate);
+            log.warn("Error with converting TppInfo from certificate {}", requestParameters.getQwacCertificate());
             return null;
         }
     }

@@ -20,17 +20,36 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
-public class OauthPisAuthorisationService implements PisAuthorisationService {
+@RequiredArgsConstructor
+public class RedirectPisScaAuthorisationService implements PisScaAuthorisationService {
+    private final PisAuthorisationService authorisationService;
+    private final Xs2aPisConsentMapper pisConsentMapper;
+
+    /**
+     * Creates authorization for pis consent
+     *
+     * @param paymentId   ASPSP identifier of a payment
+     * @param paymentType Type of payment
+     * @return create consent authorization response, which contains authorization id, sca status, payment type and links
+     */
     @Override
     public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType) {
-        return null;
+        return pisConsentMapper.mapToXsa2CreatePisConsentAuthorizationResponse(authorisationService.createPisConsentAuthorisation(paymentId), paymentType);
     }
 
+    /**
+     * Updates authorization for pis consent
+     *
+     * @param request Provides transporting data when updating consent psu data
+     * @return update consent authorization response, which contains payment id, authorization id, sca status, psu message and links
+     */
     @Override
     public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
-        return Optional.empty();
+        return pisConsentMapper.mapToXs2aUpdatePisConsentPsuDataResponse(authorisationService.updatePisConsentAuthorisation(request));
     }
 }

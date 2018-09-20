@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.consent;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
 import lombok.Data;
 
 @Data
-public class SpiCreatePisConsentAuthorizationResponse {
-    private String authorizationId;
+public class PaymentRequestParameters {
+    private PaymentType paymentType;
+    private PaymentProduct paymentProduct;
+    private String qwacCertificate;
+    private String tppRedirectUri;
+    private String tppNokRedirectUri;
 }

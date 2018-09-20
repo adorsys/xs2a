@@ -14,44 +14,48 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "PaymentProduct", value = "Payment products of ASPSP")
-public enum PaymentProduct {
-    SCT("sepa-credit-transfers"),
-    ISCT("instant-sepa-credit-transfers"),
-    T2P("target-2-payments"),
-    CBCT("cross-border-credit-transfers");
+public enum Xs2aScaStatus {
+    RECEIVED("received"),
+    PSUIDENTIFIED("psuIdentified"),
+    PSUAUTHENTICATED("psuAuthenticated"),
+    SCAMETHODSELECTED("scaMethodSelected"),
+    STARTED("started"),
+    FINALISED("finalised"),
+    FAILED("failed"),
+    EXEMPTED("exempted");
 
-    private String value;
-
-    private static Map<String, PaymentProduct> container = new HashMap<>();
+    private static Map<String, Xs2aScaStatus> container = new HashMap<>();
 
     static {
         Arrays.stream(values())
-            .forEach(product -> container.put(product.getCode(), product));
+            .forEach(status -> container.put(status.getDescription(), status));
     }
 
+    @ApiModelProperty(value = "description", example = "allAccounts")
+    private String description;
+
     @JsonCreator
-    PaymentProduct(String value) {
-        this.value = value;
+    Xs2aScaStatus(String description) {
+        this.description = description;
     }
 
     @JsonValue
-    public String getCode() {
-        return value;
+    public String getDescription() {
+        return description;
     }
 
-    public static Optional<PaymentProduct> getByValue(String value) {
-        return Optional.ofNullable(container.get(value));
+    public static Optional<Xs2aScaStatus> getByDescription(String description) {
+        return Optional.ofNullable(container.get(description));
     }
 }

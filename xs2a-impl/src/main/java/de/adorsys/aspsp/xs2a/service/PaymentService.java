@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
@@ -32,7 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
@@ -46,26 +49,27 @@ public class PaymentService {
     private final ScaPaymentService scaPaymentService;
     private final ReadPaymentFactory readPaymentFactory;
     private final AccountReferenceValidationService referenceValidationService;
+    private final PisConsentService pisConsentService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
      *
-     * @param payment                 Payment information
-     * @param paymentType             Type of payment (payments, bulk-payments, periodic-payments)
-     * @param paymentProduct          The addressed payment product
-     * @param tppSignatureCertificate Tpp signature certificate
+     * @param payment Payment information
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject createPayment(Object payment, PaymentType paymentType, String psuId, PaymentProduct paymentProduct, String tppSignatureCertificate) {
+    public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters, String psuId) {
         ResponseObject response;
-        if (paymentType == PaymentType.SINGLE) {
-            response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.getCode());
-        } else if (paymentType == PaymentType.PERIODIC) {
-            response = initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
+        TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
+        if (requestParameters.getPaymentType() == PaymentType.SINGLE) {
+            response = createPaymentInitiation((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
+        } else if (requestParameters.getPaymentType() == PaymentType.PERIODIC) {
+            response = initiatePeriodicPayment((PeriodicPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else {
-            response = createBulkPayments((BulkPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
+            response = createBulkPayments((BulkPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         }
-        return response;
+        return response.hasError()
+                   ? response
+                   : pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
     }
 
     /**
@@ -92,13 +96,13 @@ public class PaymentService {
      * @param paymentProduct  The addressed payment product
      * @return Response containing information about created periodic payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, String tppSignatureCertificate, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> initiatePeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
         return validatePayment(periodicPayment, periodicPayment.areValidExecutionAndPeriodDates())
                    .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
                                  .body(paymentMapper.mapToPaymentInitResponseFailedPayment(periodicPayment, e))
                                  .build())
                    .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                               .body(scaPaymentService.createPeriodicPayment(periodicPayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct))
+                               .body(scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentProduct))
                                .build());
     }
 
@@ -109,7 +113,7 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing information about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(BulkPayment bulkPayment, String tppSignatureCertificate, String paymentProduct) {
+    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
         if (bulkPayment == null || CollectionUtils.isEmpty(bulkPayment.getPayments())) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                        .fail(new MessageError(FORMAT_ERROR))
@@ -123,7 +127,8 @@ public class PaymentService {
                 .map(e -> invalidPayments.add(paymentMapper.mapToPaymentInitResponseFailedPayment(payment, e)))
                 .orElseGet(() -> validPayments.add(payment));
         }
-        return processValidPayments(tppSignatureCertificate, paymentProduct, validPayments, invalidPayments, bulkPayment);
+        bulkPayment.setPayments(validPayments);
+        return processValidPayments(tppInfo, paymentProduct, invalidPayments, bulkPayment);
     }
 
     /**
@@ -133,13 +138,13 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return Response containing information about created single payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, String tppSignatureCertificate, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
         return validatePayment(singlePayment, singlePayment.isValidExecutionDateAndTime())
                    .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
                                  .body(paymentMapper.mapToPaymentInitResponseFailedPayment(singlePayment, e))
                                  .build())
                    .orElseGet(() -> ResponseObject.<PaymentInitialisationResponse>builder()
-                                        .body(scaPaymentService.createSinglePayment(singlePayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct))
+                                        .body(scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentProduct))
                                         .build());
     }
 
@@ -161,10 +166,9 @@ public class PaymentService {
                                         .build());
     }
 
-    private ResponseObject<List<PaymentInitialisationResponse>> processValidPayments(String tppSignatureCertificate, String paymentProduct, List<SinglePayment> validPayments, List<PaymentInitialisationResponse> invalidPayments, BulkPayment bulkPayment) {
-        if (CollectionUtils.isNotEmpty(validPayments)) {
-            bulkPayment.setPayments(validPayments);
-            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(bulkPayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct);
+    private ResponseObject<List<PaymentInitialisationResponse>> processValidPayments(TppInfo tppInfo, String paymentProduct, List<PaymentInitialisationResponse> invalidPayments, BulkPayment bulkPayment) {
+        if (CollectionUtils.isNotEmpty(bulkPayment.getPayments())) {
+            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(bulkPayment, tppInfo, paymentProduct);
             if (paymentResponses.stream()
                     .anyMatch(pr -> pr.getTransactionStatus() != RJCT)) {
                 paymentResponses.addAll(invalidPayments);

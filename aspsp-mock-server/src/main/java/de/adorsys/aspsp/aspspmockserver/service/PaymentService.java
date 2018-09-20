@@ -39,6 +39,7 @@ import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType.PERIODIC;
 import static de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType.SINGLE;
@@ -109,8 +110,26 @@ public class PaymentService {
      * @return list of single payments forming bulk payment
      */
     public List<SpiSinglePayment> addBulkPayments(List<SpiSinglePayment> payments) {
-        List<AspspPayment> savedPayments = paymentRepository.save(paymentMapper.mapToAspspPaymentList(payments));
+        List<AspspPayment> aspspPayments = paymentMapper.mapToAspspPaymentList(payments).stream()
+                                               .peek(p -> {
+                                                   if (isNonExistingAccount(p)) {
+                                                       p.setPaymentStatus(SpiTransactionStatus.RJCT);
+                                                   }
+                                               }).collect(Collectors.toList());
+        List<AspspPayment> savedPayments = paymentRepository.save(aspspPayments);
         return paymentMapper.mapToSpiSinglePaymentList(savedPayments);
+    }
+
+    private boolean isNonExistingAccount(AspspPayment p) {
+        String debtorAccountIdFromPayment = getDebtorAccountIdFromPayment(p);
+        return !accountService.getPsuIdByIban(debtorAccountIdFromPayment).isPresent();
+    }
+
+    BigDecimal calculateAmountToBeCharged(String accountId) {
+        return paymentRepository.findAll().stream()
+                   .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
+                   .map(this::getAmountFromPayment)
+                   .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     //TODO Create GlobalExceptionHandler for error 400 from consentManagement https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/158
@@ -127,17 +146,6 @@ public class PaymentService {
 
     public List<AspspPayment> getPaymentById(String paymentId) {
         return paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
-    }
-
-    public List<AspspPayment> getAllPayments() {
-        return paymentRepository.findAll();
-    }
-
-    BigDecimal calculateAmountToBeCharged(String accountId) {
-        return paymentRepository.findAll().stream()
-                   .filter(paym -> getDebtorAccountIdFromPayment(paym).equals(accountId))
-                   .map(this::getAmountFromPayment)
-                   .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private boolean areFundsSufficient(SpiAccountReference reference, BigDecimal amount) {
@@ -177,5 +185,9 @@ public class PaymentService {
         return Optional.ofNullable(amount)
                    .map(SpiAmount::getContent)
                    .orElse(BigDecimal.ZERO);
+    }
+
+    public List<AspspPayment> getAllPayments() {
+        return paymentRepository.findAll();
     }
 }
