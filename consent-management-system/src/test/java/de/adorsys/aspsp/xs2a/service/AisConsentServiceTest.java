@@ -138,7 +138,7 @@ public class AisConsentServiceTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
 
         // Then
-        UpdateConsentAspspDataRequest request = buildUpdateBlobRequest();
+        UpdateConsentAspspDataRequest request = this.buildUpdateBlobRequest();
         Optional<String> consentId = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID, request);
         // Assert
         assertTrue(consentId.isPresent());
@@ -180,7 +180,7 @@ public class AisConsentServiceTest {
         return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
     }
 
-    private static UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
+    private UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
         UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
         request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
         return request;
