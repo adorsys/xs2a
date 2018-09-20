@@ -1,0 +1,23 @@
+{{- if .Values.aspspMock.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.aspspMock.serviceAnnotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "psd2.fullname" . }}-cms-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: aspspMock
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: http
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    app.kubernetes.io/component: aspspMock
+{{- end }}

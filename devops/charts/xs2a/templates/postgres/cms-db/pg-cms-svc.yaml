@@ -1,0 +1,42 @@
+{{- if and .Values.cms.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ template "psd2.fullname" . }}-cms-db-hs"
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: cms-db
+spec:
+  sessionAffinity: ClientIP
+  # StatefulSets require headless services
+  clusterIP: None
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    app.kubernetes.io/component: cms-db
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.cms.serviceAnnotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: "{{ template "psd2.fullname" . }}-cms-db"
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: cms-db
+spec:
+  sessionAffinity: ClientIP
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    app.kubernetes.io/component: cms-db
+{{- end }}

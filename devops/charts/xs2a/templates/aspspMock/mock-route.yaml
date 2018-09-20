@@ -1,0 +1,23 @@
+{{- if .Values.aspspMock.enabled }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ template "psd2.fullname" . }}-cms-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: aspspMock
+spec:
+  host: {{ tpl (required "aspspMock.route.host must be defined" .Values.aspspMock.route.host) . | quote }}
+  port:
+    targetPort: http
+{{- with .Values.aspspMock.route.tls }}
+  tls:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  to:
+    kind: Service
+    name: {{ template "psd2.fullname" . }}-cms-mock
+    weight: 100
+    wildcardPolicy: None
+{{- end }}

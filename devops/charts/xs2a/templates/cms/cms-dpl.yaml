@@ -1,0 +1,78 @@
+{{ if .Values.cms.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.cms.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          {{- if .Values.keycloak.image.namespace }}
+          "namespace": "{{ .Values.cms.image.namespace }}",
+          {{- end }}
+          "name":"{{- if .Values.cms.image.stream }}{{ .Values.cms.image.name }}:{{ default "latest" .Values.cms.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cms:latest{{- end }}"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"cms\")].image"
+      }]
+  name: {{ template "psd2.fullname" . }}-cms
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: ConsentManagementSystem
+spec:
+  replicas: {{ .Values.cms.replicas }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: ConsentManagementSystem
+  template:
+    metadata:
+    {{- if .Values.cms.podAnnotations }}
+      annotations:
+{{ toYaml .Values.cms.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: ConsentManagementSystem
+    spec:
+      containers:
+        - name: cms
+          image: " "
+          imagePullPolicy: {{ .Values.cms.image.pullPolicy }}
+          ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+          env:
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
+          {{- range $name, $value := .Values.cms.env }}
+          {{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ tpl (toString $value) $ | quote }}
+          {{- end }}
+          {{- end }}
+          - name: KEYCLOAK_CREDENTIALS_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: cms
+                name: "{{ template "psd2.fullname" . }}-keycloak"
+          - name: spring_datasource_password
+            valueFrom:
+                secretKeyRef:
+                    key: POSTGRESQL_PASSWORD
+                    name: "{{ template "psd2.fullname" . }}-cms-db"
+          - name: spring_datasource_username
+            valueFrom:
+                secretKeyRef:
+                    key: POSTGRESQL_USER
+                    name: "{{ template "psd2.fullname" . }}-cms-db"
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 10 }}
+{{- end }}
+          resources:
+{{ toYaml .Values.cms.resources | indent 12 }}
+{{- end }}

@@ -1,0 +1,112 @@
+{{- if .Values.aspspMock.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    {{- with .Values.aspspMock.db.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind":"ImageStreamTag",
+          "name":"{{- if .Values.aspspMock.db.image.stream }}{{ .Values.aspspMock.db.image.name }}:{{ .Values.aspspMock.db.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-mock-db:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.containers[?(@.name==\"mongo\")].image"
+      }]
+  name: {{ template "psd2.fullname" . }}-mongo-db
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: mock-db
+    app: mbs-mock
+spec:
+  serviceName: {{ template "psd2.fullname" . }}-mongo-db
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: mock-db
+  replicas: 1
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/aspspMock/mock-secrets.yaml") . | sha256sum }}
+{{- with .Values.keycloak.podAnnotations }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: mock-db
+{{- with .Values.aspspMock.db.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: mongo
+        # redhat hack: invalid image to stop first unused deployment
+        image: " "
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        - name: MONGODB_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: {{ template "psd2.fullname" . }}-cms-mock-db
+{{- if .Values.aspspMock.db.user }}
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: {{ template "psd2.fullname" . }}-cms-mock-db
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: {{ template "psd2.fullname" . }}-cms-mock-db
+        - name: MONGODB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: database
+              name: {{ template "psd2.fullname" . }}-cms-mock-db
+{{- end }}
+{{- with .Values.aspspMock.db.extraEnv }}
+{{ tpl . $ | indent 8 }}
+{{- end }}
+        ports:
+        - name: mongo
+          containerPort: 27017
+          protocol: TCP
+        resources:
+{{ toYaml .Values.aspspMock.db.resources | indent 10 }}
+        livenessProbe:
+{{ toYaml .Values.aspspMock.db.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.aspspMock.db.readinessProbe | indent 10 }}
+{{- if .Values.aspspMock.db.persistence.enabled }}
+        volumeMounts:
+        - mountPath: {{ default "/var/lib/mongodb/data" .Values.aspspMock.db.persistence.mountPath }}
+          name: data
+{{- end }}
+{{- if not (.Values.aspspMock.db.persistence.enabled) }}
+      volumes:
+        - name: queue
+          emptyDir: {}
+{{- else }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+{{- if .Values.aspspMock.db.persistence.storageClass }}
+      storageClassName: "{{ .Values.aspspMock.db.persistence.storageClass }}"
+{{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.aspspMock.db.persistence.size }}
+{{- end }}
+{{- end }}

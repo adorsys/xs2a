@@ -163,37 +163,19 @@ variables: &variables
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
   script:
-    - cd ${CHART_DIR}
+    - cd devops/charts/xs2a
     - helm init --client-only
     - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
     - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
-    - ansible-vault view secret.yaml.enc > secrets.yaml
+    - ansible-vault view env/develop.yaml.enc > env/develop.yaml
     - >-
       helm diff upgrade ${HELM_RELEASE} .
       --allow-unreleased -q
-      -f secrets.yaml -f env/dynamic.yaml
-      --set xs2a.image.tag="${DOCKER_TAG}"
-      --set mock.image.tag="${DOCKER_TAG}"
-      --set cms.image.tag="${DOCKER_TAG}"
-      --set aspsp.image.tag="${DOCKER_TAG}"
-      --set xs2a.route.host="${HOSTNAME_XS2A}"
-      --set mock.route.host="${HOSTNAME_MOCK}"
-      --set cms.route.host="${HOSTNAME_CMS}"
-      --set aspsp.route.host="${HOSTNAME_ASPSP}"
-      --set keycloak.route.host="${HOSTNAME_KEYCLOAK}"
+      -f env/${HELM_VALUE}
     - >-
       helm upgrade -i ${HELM_RELEASE} .
       --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600
-      -f secrets.yaml -f env/${HELM_VALUE}
-      --set xs2a.image.tag="${DOCKER_TAG}"
-      --set mock.image.tag="${DOCKER_TAG}"
-      --set cms.image.tag="${DOCKER_TAG}"
-      --set aspsp.image.tag="${DOCKER_TAG}"
-      --set xs2a.route.host="${HOSTNAME_XS2A}"
-      --set mock.route.host="${HOSTNAME_MOCK}"
-      --set cms.route.host="${HOSTNAME_CMS}"
-      --set aspsp.route.host="${HOSTNAME_ASPSP}"
-      --set keycloak.route.host="${HOSTNAME_KEYCLOAK}"
+      -f env/${HELM_VALUE}
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
@@ -283,13 +265,9 @@ deploy_develop_stage:
     DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
     HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
     HELM_VALUE: develop.yaml
-    HOSTNAME_XS2A: "develop-xs2a-dv.cloud.adorsys.de"
-    HOSTNAME_KEYCLOAK: "develop-keycloak-dv.cloud.adorsys.de"
-    HOSTNAME_MOCK: "develop-mock-dv.cloud.adorsys.de"
-    HOSTNAME_ASPSP: "develop-aspsp-dv.cloud.adorsys.de"
   environment:
     name: dev
-    url: https://develop-xs2a-dv.cloud.adorsys.de
+    url: ~
 
 build_image_integ:
   stage: "build:image"

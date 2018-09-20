@@ -1,0 +1,97 @@
+{{- if .Values.aspspMock.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.aspspMock.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind":"ImageStreamTag",
+          "name":"{{- if .Values.aspspMock.image.stream }}{{ .Values.aspspMock.image.name }}:{{ default "latest" .Values.aspspMock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cms-mock:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.initContainers[?(@.name==\"mockserver\")].image"
+      }]
+    checksum/secret: {{ include (print $.Template.BasePath "/aspspMock/mock-secrets.yaml") . | sha256sum }}
+  name: {{ template "psd2.fullname" . }}-cms-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: aspspMock
+    app: mbs-mock
+spec:
+{{- with .Values.aspspMock.strategy }}
+  strategy:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: aspspMock
+  replicas: {{ default 1 .Values.aspspMock.replicas }}
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: aspspMock
+{{- with .Values.aspspMock.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end}}
+    spec:
+      containers:
+      - name: mockserver
+        # redhat hack: invalid image to stop first unused deployment
+        image: " "
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        - name: KEYCLOAK_CREDENTIALS_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: aspspMock
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        - name: keycloak_username
+          valueFrom:
+            secretKeyRef:
+              key: admin-username
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        - name: keycloak_password
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        {{- range $name, $value := .Values.aspspMock.env }}
+        {{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+        {{- end }}
+        {{- end }}
+        {{- range $name, $value := .Values.aspspMock.secrets }}
+        {{- if not ( empty $value) }}
+        - name: {{ $name | quote }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "psd2.fullname" $ }}-mock-db
+              key: {{ $name | quote }}
+        {{- end }}
+        {{- end }}
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 8 }}
+{{- end }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+{{ toYaml .Values.aspspMock.resources | indent 10 }}
+        volumeMounts:
+        - mountPath: /opt/multibanking-mock/datas
+          name: data
+      volumes:
+      - name: data
+        emptyDir: {}
+{{- end }}
