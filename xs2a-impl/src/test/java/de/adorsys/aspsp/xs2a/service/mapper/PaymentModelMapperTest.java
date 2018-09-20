@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Currency;
@@ -59,6 +60,12 @@ public class PaymentModelMapperTest {
 
     @Mock
     ObjectMapper objectMapper;
+
+    @Mock
+    MessageErrorMapper messageErrorMapper;
+
+    @Spy
+    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
 
     @Test
     public void mapToTransactionStatus12() {

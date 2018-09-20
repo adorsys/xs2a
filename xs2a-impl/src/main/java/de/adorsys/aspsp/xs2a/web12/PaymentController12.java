@@ -45,6 +45,7 @@ public class PaymentController12 implements PaymentApi {
     private final ResponseMapper responseMapper;
     private final PaymentModelMapper paymentModelMapper;
     private final ConsentService consentService;
+    private final ConsentModelMapper consentModelMapper;
 
     @Override
     public ResponseEntity<?> getPaymentInitiationStatus(String paymentService, String paymentId, UUID xRequestID, String digest,
@@ -90,7 +91,7 @@ public class PaymentController12 implements PaymentApi {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         String cert = new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapper.mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), product.get(), cert);
+            xs2aPaymentService.createPayment(paymentModelMapper.mapToXs2aPayment(body, paymentType.get(), product.get()), paymentType.get(), PSU_ID, product.get(), cert);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)
@@ -124,7 +125,7 @@ public class PaymentController12 implements PaymentApi {
 
     @Override
     public ResponseEntity<?> startPaymentAuthorisation(String paymentService, String paymentId, UUID xRequestID, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(consentService.createPisConsentAuthorization(paymentId, PaymentType.getByValue(paymentService).get()), ConsentModelMapper::mapToStartScaProcessResponse);
+        return responseMapper.ok(consentService.createPisConsentAuthorization(paymentId, PaymentType.getByValue(paymentService).get()), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override
@@ -139,6 +140,6 @@ public class PaymentController12 implements PaymentApi {
 
     @Override
     public ResponseEntity<?> updatePaymentPsuData(String paymentService, String paymentId, String authorisationId, UUID xRequestID, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(consentService.updatePisConsentPsuData(ConsentModelMapper.mapToPisUpdatePsuData(PSU_ID, paymentId, authorisationId, paymentService, (HashMap) body)), ConsentModelMapper::mapToUpdatePsuAuthenticationResponse);
+        return responseMapper.ok(consentService.updatePisConsentPsuData(consentModelMapper.mapToPisUpdatePsuData(PSU_ID, paymentId, authorisationId, paymentService, (HashMap) body)), consentModelMapper::mapToUpdatePsuAuthenticationResponse);
     }
 }

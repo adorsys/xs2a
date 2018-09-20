@@ -16,29 +16,36 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
-import lombok.AllArgsConstructor;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.web12.ConsentController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
 @Component
-@AllArgsConstructor
-public class ConsentAspect extends AbstractLinkAspect<ConsentInformationController> {
+public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.web.ConsentInformationController.createAccountConsent(..)) && args(psuId, ..)", returning = "result")
-    public ResponseEntity<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseEntity<CreateConsentResponse> result, String psuId) {
-        if (!hasError(result)) {
+    public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileService aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    }
+
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId)", returning = "result", argNames = "result,request,psuId")
+    public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, String psuId) {
+        if (!result.hasError()) {
             CreateConsentResponse body = result.getBody();
             body.setLinks(buildLinksForConsentResponse(body));
+            return result;
         }
-        return new ResponseEntity<>(result.getBody(), result.getHeaders(), result.getStatusCode());
+        return enrichErrorTextMessage(result);
     }
 
     private Links buildLinksForConsentResponse(CreateConsentResponse response) {

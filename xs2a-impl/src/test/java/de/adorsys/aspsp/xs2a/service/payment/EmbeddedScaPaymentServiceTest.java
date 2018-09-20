@@ -195,7 +195,7 @@ public class EmbeddedScaPaymentServiceTest {
         when(pisAuthorizationService.createConsentAuthorisation(anyString(), any()))
             .thenReturn(getCreateAuth(BULK));
         //When
-        List<PaymentInitialisationResponse> serviceResponse = paymentService.createBulkPayment(Collections.singletonList(getSinglePayment()), getTppInfo(), PAYMENT_PRODUCT);
+        List<PaymentInitialisationResponse> serviceResponse = paymentService.createBulkPayment(getBulkPayment(getSinglePayment(), getReference()), getTppInfo(), PAYMENT_PRODUCT);
 
         //Then
         PaymentInitialisationResponse response = serviceResponse.iterator().next();
@@ -205,6 +205,16 @@ public class EmbeddedScaPaymentServiceTest {
         assertThat(response.getAuthorizationId()).isEqualTo(isImplicit ? AUTH_ID : null);
         assertThat(response.getScaStatus()).isEqualTo(isImplicit ? STARTED.name() : null);
         assertThat(response.getPaymentType()).isEqualTo(BULK.name());
+    }
+
+    private BulkPayment getBulkPayment(SinglePayment singlePayment1, AccountReference reference) {
+        BulkPayment bulkPayment = new BulkPayment();
+        bulkPayment.setPayments(Collections.singletonList(singlePayment1));
+        bulkPayment.setRequestedExecutionDate(LocalDate.now());
+        bulkPayment.setDebtorAccount(reference);
+        bulkPayment.setBatchBookingPreferred(false);
+
+        return bulkPayment;
     }
 
     private Optional<Xsa2CreatePisConsentAuthorisationResponse> getCreateAuth(PaymentType paymentType) {

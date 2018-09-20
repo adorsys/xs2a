@@ -81,7 +81,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     }
 
     private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.toString()))
+        return aisConsentService.createAisConsentAuthorization(consentId, SpiScaStatus.valueOf(scaStatus.name()))
                    .map(authId -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
                        resp.setConsentId(consentId);

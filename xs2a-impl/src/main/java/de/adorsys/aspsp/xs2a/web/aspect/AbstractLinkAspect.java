@@ -22,7 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -34,15 +34,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 @Component
+@RequiredArgsConstructor
 public abstract class AbstractLinkAspect<T> {
-    @Autowired
-    protected int maxNumberOfCharInTransactionJson;
-    @Autowired
-    protected AspspProfileService aspspProfileService;
-    @Autowired
-    protected JsonConverter jsonConverter;
-    @Autowired
-    private MessageService messageService;
+    protected final int maxNumberOfCharInTransactionJson;
+    protected final AspspProfileService aspspProfileService;
+    protected final JsonConverter jsonConverter;
+    private final MessageService messageService;
 
     protected <B> boolean hasError(ResponseEntity<B> target) {
         Optional<B> body = Optional.ofNullable(target.getBody());

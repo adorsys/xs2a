@@ -5,15 +5,15 @@ Feature: Account Information Service
 #    # Consent Requests                                                                                                 #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-#    Scenario Outline: Successful consent request creation (redirect)
-#        Given PSU wants to create a consent <consent-resource>
-#        When PSU sends the create consent request
-#        Then a successful response code and the appropriate consent response data is delivered to the PSU
-#        Examples:
-#            | consent-resource                           |
-#            | consent-dedicated-successful.json          |
+    Scenario Outline: Successful consent request creation (redirect)
+        Given PSU wants to create a consent <consent-resource>
+        When PSU sends the create consent request
+        Then a successful response code and the appropriate consent response data is delivered to the PSU
+        Examples:
+            | consent-resource                           |
+            | consent-dedicated-successful.json          |
 #            | consent-all-psd2-accounts-successful.json  |
-#            | consent-all-accounts-successful.json       |
+            | consent-all-accounts-successful.json       |
 #
 ##    #TODO Errorful Request
 #
@@ -62,64 +62,54 @@ Feature: Account Information Service
 #
 #
 #
-#    ####################################################################################################################
-#    #                                                                                                                  #
-#    # Account Request                                                                                                  #
-#    #                                                                                                                  #
-#    ####################################################################################################################
-#    Scenario: Read account list of regular accounts
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                                                  | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456770}, {iban: DE2310010010123456780}], transactions: [{iban: DE2310010010123456770}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        When AISP requests the list of accounts
-#        Then the following data is delivered to the AISP
-#            | id                                   | iban                  | currency | accountType    | cashAccountType | name            | links                                                                                                                                              |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e80f | DE2310010010123456770 | EUR      | Girokonto      | CurrentAccount  | Main Account    | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/transactions |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e81g | DE2310010010123456780 | EUR      | Tagesgeldkonto | CurrentAccount  | Savings Account | balances /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e81g/balances                                                                                |
+    ####################################################################################################################
+    #                                                                                                                  #
+    # Account Request                                                                                                  #
+    #                                                                                                                  #
+    ####################################################################################################################
+#    Scenario Outline: Request account list successfully
+#        Given PSU already has an existing consent <consent-id> and wants to get a list of accounts using <account-resource>
+#        When PSU requests the list of accounts
+#        Then a successful response code and the appropriate list of accounts get returned
+#        Examples:
+#            | account-resource                               | consent-id        |
+#            | accountList-successful.json                    | to-be-set-in-test |
+#            | accountList-with-more-accounts-successful.json | to-be-set-in-test |
 #
-#    Scenario: Read account list of a multicurrency account with data-access on sub-account level
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                                                                                                                                               | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456760, currency: EUR}, {iban: DE2310010010123456760, currency: USD}], transactions: [{iban: DE2310010010123456760, currrency: EUR}, {iban: DE2310010010123456760, currrency: USD}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        When AISP requests the list of accounts
-#        Then the following data is delivered to the AISP
-#            | id                                   | iban                  | currency | accountType        | cashAccountType | name             | links                                                                                                                                              |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e809 | DE2310010010123456760 | EUR      | Girokonto          | CurrentAccount  | Main Account     | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/transactions |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e810 | DE2310010010123456760 | USD      | Fremdwährungskonto | CurrentAccount  | US Dolar Account | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e810/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e810/transactions |
+#    Scenario Outline: Request account list errorful
+#        Given PSU already has an existing consent <consent-id> and wants to get a list of accounts using <account-resource>
+#        When PSU sends get request
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource                         | consent-id        |
+#            | accountList-no-request-id.json           | to-be-set-in-test |
+#            | accountList-wrong-format-request-id.json | to-be-set-in-test |
+#            | accountList-invalid-request-id.json      | to-be-set-in-test |
+#            | accountList-no-consent.json              | no-consent        |
+#            #| accountList-with-expired-consent.json    | to-be-set-in-test |
+#    # ToDo: expired  PSD-235: Ticket PSD-179 needs to be done first
 #
-#    Scenario: Read account list of a multicurrency account with data-access on aggregation and sub-account level
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                                                                                                                                                                                                             | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456760}, {iban: DE2310010010123456760, currency: EUR}, {iban: DE2310010010123456760, currency: USD}], transactions: [{iban: DE2310010010123456760}, {iban: DE2310010010123456760, currrency: EUR}, {iban: DE2310010010123456760, currrency: USD}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        When AISP requests the list of accounts
-#        Then the following data is delivered to the AISP
-#            | id                                   | iban                  | currency | accountType            | cashAccountType | name                | links                                                                                                                                              |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e809 | DE2310010010123456760 | XXX      | Multi Currency Account | CurrentAccount  | Aggregation Account | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/transactions |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e809 | DE2310010010123456760 | EUR      | Girokonto              | CurrentAccount  | Main Account        | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/transactions |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e810 | DE2310010010123456760 | USD      | Fremdwährungskonto     | CurrentAccount  | US Dolar Account    | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e810/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e810/transactions |
+#    Scenario Outline: Request account details successfully
+#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
+#        When PSU requests the account details
+#        Then a successful response code and the appropriate details of accounts get returned
+#        Examples:
+#            | account-resource              | account-id                           | consent-id        |
+#            | accountDetail-successful.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
 #
-#
-#    Scenario: Read account details of a regular account
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456770}], transactions: [{iban: DE2310010010123456770}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e111 of the required account
-#        When AISP requests account details
-#        Then the following data is delivered to the AISP
-#            | id                                   | iban                  | currency | accountType | cashAccountType | name         | links                                                                                                                                              |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e111 | DE2310010010123456770 | EUR      | Girokonto   | CurrentAccount  | Main Account | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e111/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e111/transactions |
-#
-#    Scenario: Read account details of a multi-currency account
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456760}], transactions: [{iban: DE2310010010123456760}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e809 of the required account
-#        When AISP requests account details
-#        Then the following data is delivered to the AISP
-#            | id                                   | iban                  | currency | accountType           | cashAccountType | name                | links                                                                                                                                              |
-#            | 3dc3d5b3-7023-4848-9853-f5400a64e809 | DE2310010010123456760 | XXX      | Multicurrency Account | CurrentAccount  | Aggregation Account | balances: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/balances, transactions: /v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809/transactions |
-#
-#
+#    Scenario Outline: Request account details errorful
+#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
+#        When PSU requests the account details
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource                        | account-id                           | consent-id        |
+#            | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | accountDetail-no-consent.json           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | no-consent        |
+#            #| accountDetail-with-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#    # ToDo: expired  PSD-235: Ticket PSD-179 needs to be done first
+
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Balance Request                                                                                                  #

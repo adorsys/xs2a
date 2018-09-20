@@ -1,6 +1,5 @@
 package de.adorsys.aspsp.xs2a.integtest.util;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.psd2.model.ScaStatusResponse;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 @Data
 @Component
@@ -46,13 +44,8 @@ public class Context<T, U> {
     public void handleRequestError(RestClientResponseException exceptionObject) throws IOException {
         this.setActualResponseStatus(HttpStatus.valueOf(exceptionObject.getRawStatusCode()));
         String responseBodyAsString = exceptionObject.getResponseBodyAsString();
-        HashMap hashMapResponse = mapper.readValue(responseBodyAsString, HashMap.class);
-        TppMessages tppMessages = transformHashMapToTppMessages(hashMapResponse);
+        TppMessages tppMessages = mapper.readValue(responseBodyAsString, TppMessages.class);
         this.setTppMessages(tppMessages);
-    }
-
-    private TppMessages transformHashMapToTppMessages (HashMap hashMap) {
-        return mapper.convertValue(hashMap.get("tppMessages"), new TypeReference<TppMessages>() {});
     }
 
     public void cleanUp() {

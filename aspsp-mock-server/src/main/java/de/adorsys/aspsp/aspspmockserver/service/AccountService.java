@@ -84,12 +84,11 @@ public class AccountService {
 
     Optional<String> getPsuIdByIban(String iban) {
         return psuRepository.findPsuByAccountDetailsList_Iban(iban)
-                   .map(Psu::getId);
+                   .map(Psu::getPsuId);
     }
 
-    Optional<String> getPsuIdByName(String name) {
-        return psuRepository.findPsuByName(name)
-                   .map(Psu::getId);
+    Optional<Psu> getPsuByPsuId(String psuId) {
+        return psuRepository.findByPsuId(psuId);
     }
 
     /**

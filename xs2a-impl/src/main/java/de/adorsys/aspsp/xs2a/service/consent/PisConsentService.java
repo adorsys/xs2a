@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
@@ -24,6 +25,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreatePisConsentAuthorizationResponse;
@@ -114,68 +116,62 @@ public class PisConsentService {
      * @param request Provides transporting data when updating consent authorization
      * @return sca status
      */
-    //TODO perform save/update of AspspConsent data according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191
-    //TODO change response type of the method to SpiResponse<UpdatePisConsentPsuDataResponse> https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/299
     public UpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
-        GetPisConsentAuthorisationResponse authorizationResponse = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
-                                                                       .getBody();
+        GetPisConsentAuthorisationResponse pisConsentAuthorisation = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
+                                                                         .getBody();
 
-        if (STARTED == authorizationResponse.getScaStatus()) {
-            SpiAuthorisationStatus authorisationStatus = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData()).getPayload();
-            if (SpiAuthorisationStatus.FAILURE == authorisationStatus) {
+        if (STARTED == pisConsentAuthorisation.getScaStatus()) {
+            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData());
+
+            if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
                 return new UpdatePisConsentPsuDataResponse(FAILED);
             }
-            List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(new AspspConsentData()).getPayload();
+            request.setCmsAspspConsentData(new CmsAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData().getBody()));
+            List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(request.getPsuId(), authorisationStatusSpiResponse.getAspspConsentData()).getPayload();
 
             if (CollectionUtils.isEmpty(spiScaMethods)) {
-                paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments(), new AspspConsentData());
                 request.setScaStatus(FINALISED);
-                return executeUpdatePisConsentAuthorisation(request);
+                paymentSpi.executePayment(pisConsentAuthorisation.getPaymentType(), pisConsentAuthorisation.getPayments(), authorisationStatusSpiResponse.getAspspConsentData());
+                return doUpdatePisConsentAuthorisation(request);
 
             } else if (isSingleScaMethod(spiScaMethods)) {
-                return executeSingleScaUpdate(request, spiScaMethods.get(0).name());
+                request.setScaStatus(SCAMETHODSELECTED);
+                request.setAuthenticationMethodId(spiScaMethods.get(0).name());
+                paymentSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData());
+                return doUpdatePisConsentAuthorisation(request);
 
             } else if (isMultipleScaMethods(spiScaMethods)) {
                 request.setScaStatus(PSUAUTHENTICATED);
-                UpdatePisConsentPsuDataResponse response = executeUpdatePisConsentAuthorisation(request);
+                UpdatePisConsentPsuDataResponse response = doUpdatePisConsentAuthorisation(request);
                 response.setAvailableScaMethods(pisConsentMapper.mapToCmsScaMethods(spiScaMethods));
                 return response;
 
             }
-        } else if (SCAMETHODSELECTED == authorizationResponse.getScaStatus()) {
-            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword(), new AspspConsentData());
-            paymentSpi.applyStrongUserAuthorisation(buildSpiPaymentConfirmation(request, authorizationResponse), new AspspConsentData());
-            paymentSpi.executePayment(authorizationResponse.getPaymentType(), authorizationResponse.getPayments(), new AspspConsentData());
+        } else if (SCAMETHODSELECTED == pisConsentAuthorisation.getScaStatus()) {
             request.setScaStatus(FINALISED);
+            paymentSpi.applyStrongUserAuthorisation(buildSpiPaymentConfirmation(request, pisConsentAuthorisation.getConsentId()), new AspspConsentData());
+            paymentSpi.executePayment(pisConsentAuthorisation.getPaymentType(), pisConsentAuthorisation.getPayments(), new AspspConsentData());
+            return doUpdatePisConsentAuthorisation(request);
 
-            UpdatePisConsentPsuDataResponse response = executeUpdatePisConsentAuthorisation(request);
-            response.setChosenScaMethod(response.getChosenScaMethod());
-            return response;
-
-        } else if (PSUAUTHENTICATED == authorizationResponse.getScaStatus()) {
-            paymentSpi.authorisePsu(authorizationResponse.getPsuId(), authorizationResponse.getPassword(), new AspspConsentData());
-            return executeSingleScaUpdate(request, request.getAuthenticationMethodId());
+        } else if (PSUAUTHENTICATED == pisConsentAuthorisation.getScaStatus()) {
+            request.setScaStatus(SCAMETHODSELECTED);
+            paymentSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData());
+            return doUpdatePisConsentAuthorisation(request);
         }
         return new UpdatePisConsentPsuDataResponse(null);
     }
 
-    private UpdatePisConsentPsuDataResponse executeUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+    private UpdatePisConsentPsuDataResponse doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
         return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
             UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
     }
 
-    private UpdatePisConsentPsuDataResponse executeSingleScaUpdate(UpdatePisConsentPsuDataRequest request, String authenticationMethodId) {
-        paymentSpi.performStrongUserAuthorisation(new AspspConsentData());
-        request.setScaStatus(SCAMETHODSELECTED);
-        request.setAuthenticationMethodId(authenticationMethodId);
-        return executeUpdatePisConsentAuthorisation(request);
-    }
-
-    private SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse authorizationResponse) {
+    private SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
         SpiPaymentConfirmation paymentConfirmation = new SpiPaymentConfirmation();
         paymentConfirmation.setTanNumber(request.getPassword());
         paymentConfirmation.setPaymentId(request.getPaymentId());
-        paymentConfirmation.setConsentId(authorizationResponse.getConsentId());
+        paymentConfirmation.setConsentId(consentId);
+        paymentConfirmation.setPsuId(request.getPsuId());
         return paymentConfirmation;
     }
 

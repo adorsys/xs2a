@@ -139,8 +139,8 @@ public class PisConsentService {
         return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(p -> {
                        if (STARTED == p.getScaStatus()) {
-                           p.setPassword(request.getPassword());
-                           p.setPsuId(request.getPsuId());
+                           p.getConsent()
+                               .setAspspConsentData(request.getCmsAspspConsentData().getBody());
                        }
                        if (SCAMETHODSELECTED == request.getScaStatus()) {
                            p.setChosenScaMethod(CmsScaMethod.valueOf(request.getAuthenticationMethodId()));

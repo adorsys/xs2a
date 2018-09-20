@@ -32,9 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
@@ -58,14 +56,14 @@ public class PaymentService {
      * @param tppSignatureCertificate Tpp signature certificate
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject createPayment(Object payment, PaymentType paymentType, PaymentProduct paymentProduct, String tppSignatureCertificate) {
+    public ResponseObject createPayment(Object payment, PaymentType paymentType, String psuId, PaymentProduct paymentProduct, String tppSignatureCertificate) {
         ResponseObject response;
         if (paymentType == PaymentType.SINGLE) {
             response = createPaymentInitiation((SinglePayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         } else if (paymentType == PaymentType.PERIODIC) {
             response = initiatePeriodicPayment((PeriodicPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         } else {
-            response = createBulkPayments((List<SinglePayment>) payment, tppSignatureCertificate, paymentProduct.getCode());
+            response = createBulkPayments((BulkPayment) payment, tppSignatureCertificate, paymentProduct.getCode());
         }
         return response;
     }
@@ -107,24 +105,25 @@ public class PaymentService {
     /**
      * Initiates a bulk payment
      *
-     * @param payments       List of single payments forming bulk payment
+     * @param bulkPayment    BulkPayment information
      * @param paymentProduct The addressed payment product
      * @return List of payment initiation responses containing information about created payments or an error if non of the payments could pass the validation
      */
-    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(List<SinglePayment> payments, String tppSignatureCertificate, String paymentProduct) {
-        if (CollectionUtils.isEmpty(payments)) {
+    public ResponseObject<List<PaymentInitialisationResponse>> createBulkPayments(BulkPayment bulkPayment, String tppSignatureCertificate, String paymentProduct) {
+        if (bulkPayment == null || CollectionUtils.isEmpty(bulkPayment.getPayments())) {
             return ResponseObject.<List<PaymentInitialisationResponse>>builder()
                        .fail(new MessageError(FORMAT_ERROR))
                        .build();
         }
         List<SinglePayment> validPayments = new ArrayList<>();
         List<PaymentInitialisationResponse> invalidPayments = new ArrayList<>();
-        for (SinglePayment payment : payments) {
+        for (SinglePayment payment : bulkPayment.getPayments()) {
+            payment.setDebtorAccount(bulkPayment.getDebtorAccount());
             validatePayment(payment, payment.isValidExecutionDateAndTime())
                 .map(e -> invalidPayments.add(paymentMapper.mapToPaymentInitResponseFailedPayment(payment, e)))
                 .orElseGet(() -> validPayments.add(payment));
         }
-        return processValidPayments(tppSignatureCertificate, paymentProduct, validPayments, invalidPayments);
+        return processValidPayments(tppSignatureCertificate, paymentProduct, validPayments, invalidPayments, bulkPayment);
     }
 
     /**
@@ -155,16 +154,17 @@ public class PaymentService {
         ReadPayment service = readPaymentFactory.getService(paymentType.getValue());
         Optional<Object> payment = Optional.ofNullable(service.getPayment(paymentId, "TMP")); //NOT USED IN 1.2
         return payment.map(p -> ResponseObject.builder()
-                                 .body(p)
-                                 .build())
+                                    .body(p)
+                                    .build())
                    .orElseGet(() -> ResponseObject.builder()
                                         .fail(new MessageError(RESOURCE_UNKNOWN_403))
                                         .build());
     }
 
-    private ResponseObject<List<PaymentInitialisationResponse>> processValidPayments(String tppSignatureCertificate, String paymentProduct, List<SinglePayment> validPayments, List<PaymentInitialisationResponse> invalidPayments) {
+    private ResponseObject<List<PaymentInitialisationResponse>> processValidPayments(String tppSignatureCertificate, String paymentProduct, List<SinglePayment> validPayments, List<PaymentInitialisationResponse> invalidPayments, BulkPayment bulkPayment) {
         if (CollectionUtils.isNotEmpty(validPayments)) {
-            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(validPayments, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct);
+            bulkPayment.setPayments(validPayments);
+            List<PaymentInitialisationResponse> paymentResponses = scaPaymentService.createBulkPayment(bulkPayment, paymentMapper.mapToTppInfo(tppSignatureCertificate), paymentProduct);
             if (paymentResponses.stream()
                     .anyMatch(pr -> pr.getTransactionStatus() != RJCT)) {
                 paymentResponses.addAll(invalidPayments);

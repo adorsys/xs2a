@@ -16,10 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 import de.adorsys.aspsp.xs2a.web12.AccountController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -35,6 +39,9 @@ import java.util.stream.Collectors;
 @Aspect
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController12> {
+    public AccountAspect(int maxNumberOfCharInTransactionJson, AspspProfileService aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetails(..)) && args(consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
     public ResponseObject<Xs2aAccountDetails> getAccountDetailsAspect(ResponseObject<Xs2aAccountDetails> result, String consentId, String accountId, boolean withBalance) {
@@ -66,6 +73,18 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         return enrichErrorTextMessage(result);
     }
 
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
+    public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String accountId, boolean withBalance) {
+        if (!result.hasError()) {
+            Xs2aTransactionsReport transactionsReport = result.getBody();
+            Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
+            accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
+            transactionsReport.setLinks(buildLinksForTransactionReport(accountId));
+            return result;
+        }
+        return enrichErrorTextMessage(result);
+    }
+
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByTransactionId(..)) && args(consentID, accountId, resourceId)", returning = "result", argNames = "result,consentID,accountId,resourceId")
     public ResponseObject<Xs2aAccountReport> getAccountReportByTransactionIdAspect(ResponseObject<Xs2aAccountReport> result, String consentID, String accountId, String resourceId) {
         if (!result.hasError()) {
@@ -89,6 +108,12 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
             // todo further we should implement real flow for downloading file
             links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         }
+        return links;
+    }
+
+    private Links buildLinksForTransactionReport(String accountId) {
+        Links links = new Links();
+        links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         return links;
     }
 

@@ -43,26 +43,26 @@ public class KeycloakService {
     @Value("${keycloak-admin-password}")
     private String keycloakAdminPassword;
 
-    public boolean registerClient(String name, String password, String email) {
+    public boolean registerClient(String psuId, String password, String email) {
         Keycloak keycloak = Keycloak.getInstance(keycloakConfigProperties.getAuthServerUrl(), MASTER_REALM,
             keycloakAdminUsername,
             keycloakAdminPassword,
             ADMIN_CLI);
 
-        try (Response response = keycloak.realm(keycloakConfigProperties.getRealm()).users().create(getUserRepresentation(name, password, email))) {
+        try (Response response = keycloak.realm(keycloakConfigProperties.getRealm()).users().create(getUserRepresentation(psuId, password, email))) {
             log.info("Register keycloak client status: {}", response.getStatus());
             return response.getStatus() == 201;
         }
     }
 
-    private UserRepresentation getUserRepresentation(String name, String password, String email) {
+    private UserRepresentation getUserRepresentation(String psuId, String password, String email) {
         CredentialRepresentation credential = new CredentialRepresentation();
         credential.setType(CredentialRepresentation.PASSWORD);
         credential.setValue(password);
         credential.setTemporary(false);
 
         UserRepresentation user = new UserRepresentation();
-        user.setUsername(name);
+        user.setUsername(psuId);
         user.setEmail(email);
         user.setCredentials(singletonList(credential));
         user.setRealmRoles(singletonList(USER_ROLE));

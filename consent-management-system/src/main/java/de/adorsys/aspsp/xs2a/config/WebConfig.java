@@ -23,19 +23,20 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig extends WebMvcConfigurerAdapter {
+    private final CorsConfigProperties corsConfigProperties;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -59,13 +60,17 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(singletonList("*"));
-        configuration.setAllowedHeaders(asList( "Origin", "Content-Type"));
-        configuration.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE"));
+    public FilterRegistrationBean corsFilterRegistrationBean() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.applyPermitDefaultValues();
+        config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
+        config.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
+        config.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
+        config.setAllowedMethods(corsConfigProperties.getAllowedMethods());
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+        source.registerCorsConfiguration("/**", config);
+
+        return new FilterRegistrationBean(new CorsFilter(source));
     }
 }

@@ -16,11 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
 
 import java.util.Base64;
 import java.util.EnumSet;
@@ -33,34 +36,43 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
 
+    public AbstractPaymentLink(int maxNumberOfCharInTransactionJson, AspspProfileService aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    }
+
     @SuppressWarnings("unchecked")
-    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentType paymentType) {
+    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentType paymentType, String psuId) {
         Object body = result.getBody();
         if (EnumSet.of(SINGLE, PERIODIC).contains(paymentType)) {
-            doEnrichLink(paymentType, (PaymentInitialisationResponse) body);
+            doEnrichLink(paymentType, (PaymentInitialisationResponse) body, psuId);
         } else {
             ((List<PaymentInitialisationResponse>) body)
-                .forEach(r -> doEnrichLink(paymentType, r));
+                .forEach(r -> doEnrichLink(paymentType, r, psuId));
         }
         return result;
     }
 
-    private void doEnrichLink(PaymentType paymentType, PaymentInitialisationResponse body) {
-        body.setLinks(buildPaymentLinks(body, paymentType.getValue()));
+    private void doEnrichLink(PaymentType paymentType, PaymentInitialisationResponse body, String psuId) {
+        body.setLinks(buildPaymentLinks(body, paymentType.getValue(), psuId));
     }
 
-    private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService) {
+    private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService, String psuId) {
         if (RJCT == body.getTransactionStatus()) {
             return null;
         }
         String encodedPaymentId = Base64.getEncoder()
                                       .encodeToString(body.getPaymentId().getBytes());
         Links links = new Links();
-        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
+        links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + psuId);
+
         links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", paymentService, encodedPaymentId));
         links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", paymentService, encodedPaymentId));
-        if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
+        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
             return addEmbeddedRelatedLinks(links, paymentService, encodedPaymentId, body.getAuthorizationId());
+        } else if (aspspProfileService.getScaApproach() == ScaApproach.REDIRECT) {
+            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId);
+        } else if (aspspProfileService.getScaApproach() == ScaApproach.OAUTH) {
+            links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
         return links;
     }
@@ -78,5 +90,3 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         return links;
     }
 }
-
-

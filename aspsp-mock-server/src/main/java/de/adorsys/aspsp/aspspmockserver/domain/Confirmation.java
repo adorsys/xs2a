@@ -29,4 +29,7 @@ public class Confirmation {
 
     @ApiModelProperty(value = "A transaction authentication number (TAN) is used by online banking services as a form of single use one-time passwords", example = "sR111a")
     private String tanNumber;
+
+    @ApiModelProperty(value = "Identification resource of the psu", example = "aspsp")
+    private String psuId;
 }
