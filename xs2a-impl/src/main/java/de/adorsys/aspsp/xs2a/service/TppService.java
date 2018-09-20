@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import no.difi.certvalidator.api.CertificateValidationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +28,19 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TppService {
 
     public String getTppId() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                   .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
-                   .map(credentials -> credentials.get("authorityId"))
-                   .orElse("Test TppId");
+        String tppId = null;
+        try {
+            tppId = Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                        .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
+                        .map(credentials -> credentials.get("authorityId"))
+                        .orElseThrow(() -> new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString()));
+        } catch (CertificateValidationException e) {
+            log.debug(e.getMessage());
+        }
+        return tppId;
     }
 }

@@ -168,6 +168,7 @@ public class ConsentServiceTest {
 
         when(aspspProfileService.isBankOfferedConsentSupported())
             .thenReturn(true);
+        when(tppService.getTppId()).thenReturn(TPP_ID);
 
     }
 

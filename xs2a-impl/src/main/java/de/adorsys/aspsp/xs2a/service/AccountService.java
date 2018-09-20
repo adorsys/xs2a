@@ -60,6 +60,8 @@ public class AccountService {
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper consentMapper;
     private final TppService tppService;
+    public final AspspProfileService aspspProfileService;
+    private final AccountModelMapper accountModelMapper;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
