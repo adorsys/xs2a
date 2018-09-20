@@ -19,10 +19,12 @@ package de.adorsys.aspsp.aspspmockserver.web;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,8 +57,8 @@ public class PaymentController {
         @ApiResponse(code = 204, message = "Payment Failed")})
     @PostMapping(path = "/bulk-payments")
     public ResponseEntity<List<SpiSinglePayment>> createBulkPayments(
-        @RequestBody List<SpiSinglePayment> payments) {
-        List<SpiSinglePayment> saved = paymentService.addBulkPayments(payments);
+        @RequestBody SpiBulkPayment bulkPayment) {
+        List<SpiSinglePayment> saved = paymentService.addBulkPayments(bulkPayment.getPayments());
         return saved.stream()
                    .noneMatch(p -> p.getPaymentStatus() == RJCT)
                    ? new ResponseEntity<>(saved, CREATED)
@@ -94,24 +96,15 @@ public class PaymentController {
         return ResponseEntity.ok(allPayments);
     }
 
-    @ApiOperation(value = "Returns the requested payment by it's paymentId", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = AspspPayment.class)})
-    @GetMapping(path = "/{paymentId}")
-    public ResponseEntity<AspspPayment> getPaymentById(@PathVariable("paymentId") String paymentId) {
-        return paymentService.getPaymentById(paymentId)
-                   .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
-    }
-
     @ApiOperation(value = "Returns the payment requested by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = AspspPayment.class),
         @ApiResponse(code = 204, message = "Payment Not Found")})
     @GetMapping(path = "/{payment-type}/{payment-product}/{paymentId}")
-    public ResponseEntity<AspspPayment> getPaymentByIdAndTypeAndProduct(@PathVariable("payment-type") String paymentType, @PathVariable("payment-product") String paymentProduct, @PathVariable("paymentId") String paymentId) {
-        return paymentService.getPaymentById(paymentId)
-                   .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+    public ResponseEntity<List<AspspPayment>> getPaymentByIdAndTypeAndProduct(@PathVariable("payment-type") String paymentType, @PathVariable("payment-product") String paymentProduct, @PathVariable("paymentId") String paymentId) {
+        List<AspspPayment> response = paymentService.getPaymentById(paymentId);
+        return CollectionUtils.isNotEmpty(response)
+                   ? ResponseEntity.ok(response)
+                   : ResponseEntity.noContent().build();
     }
 }

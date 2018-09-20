@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@ApiModel(description = "BulkPayment Initialisation Request", value = "BulkPayment")
-public class BulkPayment {
+@ApiModel(description = "BulkPayment Initialisation Request", value = "SpiBulkPayment")
+public class SpiBulkPayment {
     @ApiModelProperty(value = "If this element equals \"true\", the PSU prefers only one booking entry. If this element equals \"false\", the PSU prefers individual booking of all contained individual transactions. The ASPSP will follow this preference according to contracts agreed on with the PSU.", example = "true")
     private Boolean batchBookingPreferred;
 
-    @NotNull
     @ApiModelProperty(value = "debtor account", required = true)
-    private AccountReference debtorAccount;
+    private SpiAccountReference debtorAccount;
 
     @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
@@ -43,5 +41,5 @@ public class BulkPayment {
                                   "\uF0B7 requestedExecutionDate,\n" +
                                   "\uF0B7 requestedExecutionTime.\n" +
                                   "These three data elements may not be contained in any bulk entry.", required = true)
-    List<SinglePayment> payments;
+    List<SpiSinglePayment> payments;
 }

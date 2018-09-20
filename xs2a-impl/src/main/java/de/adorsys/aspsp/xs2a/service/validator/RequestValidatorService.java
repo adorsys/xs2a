@@ -27,7 +27,6 @@ import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImp
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
-import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
 import lombok.extern.log4j.Log4j;
@@ -58,7 +57,6 @@ public class RequestValidatorService {
 
     static {
         classMap.put(PaymentInitiationController.class, PisPaymentType.FUTURE_DATED);
-        classMap.put(BulkPaymentInitiationController.class, PisPaymentType.BULK);
         classMap.put(PeriodicPaymentsController.class, PisPaymentType.PERIODIC);
     }
 
