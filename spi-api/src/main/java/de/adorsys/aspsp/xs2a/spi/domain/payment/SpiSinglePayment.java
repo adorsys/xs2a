@@ -45,5 +45,4 @@ public class SpiSinglePayment {
     private LocalDate requestedExecutionDate;
     private LocalDateTime requestedExecutionTime;
     private SpiTransactionStatus paymentStatus;
-
 }

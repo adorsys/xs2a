@@ -24,6 +24,7 @@ import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +57,7 @@ public class PaymentConfirmationController {
         @ApiResponse(code = 400, message = "Bad request")
     })
     public ResponseEntity confirmTan(@RequestBody Confirmation confirmation) {
-        return paymentService.getPaymentById(confirmation.getPaymentId()).isPresent()
+        return CollectionUtils.isNotEmpty(paymentService.getPaymentById(confirmation.getPaymentId()))
                    ? tanConfirmationService.confirmTan(confirmation.getPsuId(), confirmation.getTanNumber(), confirmation.getConsentId(), ConfirmationType.PAYMENT)
                    : new ResponseEntity<>(new ApiError(HttpStatus.BAD_REQUEST, "PAYMENT_MISSING", "Bad request"), HttpStatus.BAD_REQUEST);
     }
@@ -64,7 +65,7 @@ public class PaymentConfirmationController {
     @PutMapping(path = "/{consent-id}/{status}")
     @ApiOperation(value = "Update pis consent status of the corresponding consent", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     public ResponseEntity updatePisConsentStatus(@PathVariable("consent-id") String consentId,
-                                              @PathVariable("status") SpiConsentStatus status) {
+                                                 @PathVariable("status") SpiConsentStatus status) {
         paymentService.updatePaymentConsentStatus(consentId, status);
         return new ResponseEntity<>(HttpStatus.OK);
     }
