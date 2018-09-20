@@ -151,11 +151,14 @@ public class AisConsentService {
      * @param updatePsuData Consent psu data
      */
     public void updateConsentAuthorization(SpiUpdateConsentPsuDataReq updatePsuData) {
-        final String consentId = updatePsuData.getConsentId();
-        final String authorizationId = updatePsuData.getAuthorizationId();
-        final AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorizationRequest(updatePsuData);
+        Optional.ofNullable(updatePsuData)
+            .ifPresent(req -> {
+                final String consentId = req.getConsentId();
+                final String authorizationId = req.getAuthorizationId();
+                final AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorizationRequest(req);
 
-        consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, consentId, authorizationId);
+                consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, consentId, authorizationId);
+            });
     }
 
     private boolean isDirectAccessRequest(CreateConsentReq request) {

@@ -76,9 +76,6 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         }
 
         if (checkPsuAuthentication(request, consentAuthorization)) {
-            response.setPsuId(request.getPsuId());
-            response.setPassword(request.getPassword());
-
             SpiResponse<List<SpiScaMethod>> spiResponse = "PSU_002".equals(request.getPsuId()) // TODO use `accountSpi.readAvailableScaMethods(updatePsuData.getPsuId(), updatePsuData.getPassword());` after #310 is merged
                                                               ? new SpiResponse<>(Collections.singletonList(SpiScaMethod.SMS_OTP), new AspspConsentData())
                                                               : new SpiResponse<>(Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PUSH_OTP), new AspspConsentData());
@@ -86,6 +83,9 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             List<SpiScaMethod> availableMethods = spiResponse.getPayload();
 
             if (CollectionUtils.isNotEmpty(availableMethods)) {
+                response.setPsuId(request.getPsuId());
+                response.setPassword(request.getPassword());
+
                 if (isMultipleScaMethods(availableMethods)) {
                     response.setAvailableScaMethods(aisConsentMapper.mapToCmsScaMethods(availableMethods));
                     response.setScaStatus(ScaStatus.PSUAUTHENTICATED);
