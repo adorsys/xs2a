@@ -45,11 +45,6 @@ variables:
 # reusable yaml anchors
 # ------------------------------------------------------------------
 
-# release on all tags created by mvn release:prepare
-.release_condition: &release_condition
-  only:
-    - develop
-
 .java_artifacts: &java_artifacts
   paths:
     - "spi-mock/target/spi-mock*jar"
@@ -64,14 +59,10 @@ variables:
 .build_java: &build_java
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -DskipTests clean install
 
 .build_image_script: &build_image_script
-  tags:
-    - aws_shell
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
 
@@ -97,8 +88,6 @@ variables:
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
 
 .deploy_image_script: &deploy_image_script
-  tags:
-    - aws_shell
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
@@ -155,8 +144,6 @@ build_package:
 pmd_report:
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -Dmaven.test.skip=true package pmd:pmd
   artifacts:
@@ -170,16 +157,12 @@ pmd_report:
 check_pmd:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -Dmaven.test.skip=true package pmd:check
 
 check_javadoc:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -Dmaven.test.skip=true package javadoc:javadoc
   artifacts:
@@ -191,8 +174,6 @@ check_javadoc:
 unit_tests:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn --fail-at-end clean install
   artifacts:
