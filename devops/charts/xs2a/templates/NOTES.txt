@@ -1,2 +1,17 @@
-Access your app via the link below:
+Deployment done!
 
+{{- if .Values.xsa2.enabled }}
+XS2A URL:  https://{{ tpl .Values.xsa2.route.host $ }}/
+{{- end }}
+{{- if .Values.cmsPortal.enabled }}
+CMS URL: https://{{ tpl .Values.cmsPortal.route.host $ }}/
+{{- end }}
+{{- if .Values.keycloak.enabled }}
+Keycloak URL: https://{{ tpl .Values.keycloak.route.host $ }}/
+{{- end }}
+{{- if and .Values.aspspProfile.enabled }}
+aspspProfile URL:  https://{{ tpl .Values.aspspProfile.route.host $ }}/
+{{- end }}
+{{- if and .Values.aspspMock.enabled }}
+MBS Mock URL: https://{{ tpl .Values.aspspMock.route.host $ }}/
+{{- end }}
