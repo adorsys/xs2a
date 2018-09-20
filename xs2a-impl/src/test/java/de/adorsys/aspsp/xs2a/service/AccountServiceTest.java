@@ -70,6 +70,7 @@ public class AccountServiceTest {
     private final String TRANSACTION_ID = "0001";
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private final String TPP_ID = "Test TppId";
 
     @InjectMocks
     private AccountService accountService;
@@ -86,7 +87,7 @@ public class AccountServiceTest {
     private ValueValidatorService valueValidatorService;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
-    @Spy
+    @Mock
     private TppService tppService;
 
     @Before
@@ -128,6 +129,7 @@ public class AccountServiceTest {
         when(accountSpi.readTransactionById(TRANSACTION_ID, ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Optional.of(getSpiTransaction()), ASPSP_CONSENT_DATA));
 
         when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiTransaction()), ASPSP_CONSENT_DATA));
+        when(tppService.getTppId()).thenReturn(TPP_ID);
     }
 
     //Get Account By AccountId

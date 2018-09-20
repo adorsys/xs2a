@@ -86,7 +86,7 @@ public class ConsentServiceTest {
     Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     AspspProfileService aspspProfileService;
-    @Spy
+    @Mock
     TppService tppService;
 
     @Before
