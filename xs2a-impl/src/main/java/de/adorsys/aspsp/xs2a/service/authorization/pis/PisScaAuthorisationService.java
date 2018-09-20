@@ -23,14 +23,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 
 import java.util.Optional;
 
-public class DecoupledPisAuthorisationService implements PisAuthorisationService {
-    @Override
-    public Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType) {
-        return null;
-    }
+public interface PisScaAuthorisationService {
+    Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType);
 
-    @Override
-    public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
-        return Optional.empty();
-    }
+    Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request);
 }

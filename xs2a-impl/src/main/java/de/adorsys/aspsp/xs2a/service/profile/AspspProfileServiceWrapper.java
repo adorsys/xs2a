@@ -47,7 +47,7 @@ public class AspspProfileServiceWrapper {
     public List<PaymentProduct> getAvailablePaymentProducts() {
         return Optional.ofNullable(readAspspSettings().getAvailablePaymentProducts())
                    .map(list -> list.stream()
-                                    .map(PaymentProduct::getByCode)
+                                    .map(PaymentProduct::getByValue)
                                     .filter(Optional::isPresent)
                                     .map(Optional::get)
                                     .collect(Collectors.toList()))

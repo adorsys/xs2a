@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -33,7 +34,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiCreatePisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiRemittance;
@@ -43,16 +43,19 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
 public class Xs2aPisConsentMapper {
 
-    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData, String paymentId) {
+    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createPisConsentData.getSinglePayment(), paymentId)));
+        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createPisConsentData.getSinglePayment())));
         request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.SINGLE);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
@@ -64,9 +67,9 @@ public class Xs2aPisConsentMapper {
         return request;
     }
 
-    public PisConsentRequest mapToCmsPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData, String paymentId) {
+    public PisConsentRequest mapToCmsPisConsentRequestForPeriodicPayment(CreatePisConsentData createPisConsentData) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment(), paymentId)));
+        request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(createPisConsentData.getPeriodicPayment())));
         request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.PERIODIC);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
@@ -93,17 +96,17 @@ public class Xs2aPisConsentMapper {
 
     }
 
-    public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(SpiCreatePisConsentAuthorizationResponse spi, PaymentType paymentType) {
-        return Optional.ofNullable(spi)
+    public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
+        return Optional.ofNullable(response)
                    .map(s -> new Xsa2CreatePisConsentAuthorisationResponse(s.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
-    private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment, String paymentId) {
+    private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
         return Optional.ofNullable(payment)
                    .map(pmt -> {
                        PisPayment pisPayment = new PisPayment();
 
-                       pisPayment.setPaymentId(Optional.ofNullable(paymentId).orElseGet(() -> UUID.randomUUID().toString()));
+                       pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
                        pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
@@ -127,12 +130,12 @@ public class Xs2aPisConsentMapper {
                    }).orElse(null);
     }
 
-    private PisPayment mapToPisPaymentForPeriodicPayment(PeriodicPayment payment, String paymentId) {
+    private PisPayment mapToPisPaymentForPeriodicPayment(PeriodicPayment payment) {
         return Optional.ofNullable(payment)
                    .map(pmt -> {
                        PisPayment pisPayment = new PisPayment();
 
-                       pisPayment.setPaymentId(Optional.ofNullable(paymentId).orElseGet(() -> UUID.randomUUID().toString()));
+                       pisPayment.setPaymentId(pmt.getPaymentId());
                        pisPayment.setEndToEndIdentification(pmt.getEndToEndIdentification());
                        pisPayment.setDebtorAccount(mapToPisAccountReference(pmt.getDebtorAccount()));
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
@@ -162,7 +165,7 @@ public class Xs2aPisConsentMapper {
 
     private List<PisPayment> mapToPisPaymentForBulkPayment(Map<SinglePayment, PaymentInitialisationResponse> paymentIdentifierMap) {
         return paymentIdentifierMap.entrySet().stream()
-                   .map(etr -> mapToPisPaymentForSinglePayment(etr.getKey(), etr.getValue().getPaymentId()))
+                   .map(etr -> mapToPisPaymentForSinglePayment(etr.getKey()))
                    .collect(Collectors.toList());
     }
 
