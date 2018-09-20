@@ -109,7 +109,7 @@ public class PisConsentService {
      */
     @Transactional
     public Optional<String> updateAspspData(String consentId, UpdateConsentAspspDataRequest request) {
-        return getActualAisConsent(consentId)
+        return getActualPisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }
 
@@ -167,11 +167,6 @@ public class PisConsentService {
         consentAuthorization.setConsent(pisConsent);
         consentAuthorization.setScaStatus(STARTED);
         return pisConsentAuthorizationRepository.save(consentAuthorization);
-    }
-
-    private Optional<PisConsent> getActualAisConsent(String consentId) {
-        return Optional.ofNullable(consentId)
-                   .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
     }
 
     private String updateConsentAspspData(UpdateConsentAspspDataRequest request, PisConsent consent) {
