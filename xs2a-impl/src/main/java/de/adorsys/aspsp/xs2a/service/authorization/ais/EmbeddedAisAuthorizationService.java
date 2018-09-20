@@ -20,9 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.model.ScaStatus;
@@ -69,7 +67,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
         if (checkPsuIdentification(request)) {
             response.setPsuId(request.getPsuId());
-            response.setScaStatus(ScaStatus.PSUIDENTIFIED);
+            response.setScaStatus(Xs2aScaStatus.PSUIDENTIFIED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
             return response;
         }

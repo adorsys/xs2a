@@ -19,15 +19,11 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web12.ConsentController12;
-import de.adorsys.psd2.model.ScaStatus;
-import lombok.AllArgsConstructor;
+import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -90,11 +86,11 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
             .map(status -> {
                 Links links = null;
 
-                if (status == ScaStatus.PSUAUTHENTICATED) {
+                if (status == Xs2aScaStatus.PSUAUTHENTICATED) {
                     links = buildLinksForPsuAuthenticatedConsentResponse(request);
-                } else if (status == ScaStatus.SCAMETHODSELECTED) {
+                } else if (status == Xs2aScaStatus.SCAMETHODSELECTED) {
                     links = buildLinksForScaMethodSelectedConsentResponse(request);
-                } else if (status == ScaStatus.FINALISED) {
+                } else if (status == Xs2aScaStatus.FINALISED) {
                     links = buildLinksForFinalisedConsentResponse(request);
                 }
 

@@ -23,13 +23,11 @@ import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsentAuthorization;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.*;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -102,14 +100,14 @@ public class Xs2aAisConsentMapper {
     }
 
     public UpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateConsentPsuDataResponse updatePsuDataResponse,
-                                                                      UpdateConsentPsuDataReq updatePsuDataRequest) {
+                                                                   UpdateConsentPsuDataReq updatePsuDataRequest) {
         return Optional.ofNullable(updatePsuDataResponse)
                    .map(data -> {
                        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
                        request.setPsuId(updatePsuDataResponse.getPsuId());
                        request.setConsentId(updatePsuDataRequest.getConsentId());
                        request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
-                       request.setAuthenticationMethodId(updatePsuData.getAuthenticationMethodId());
+                       request.setAuthenticationMethodId(updatePsuDataResponse.getAuthenticationMethodId());
                        request.setAuthenticationMethodId(updatePsuDataResponse.getChosenScaMethod());
                        request.setScaAuthenticationData(updatePsuDataResponse.getScaAuthenticationData());
                        request.setPassword(updatePsuDataResponse.getPassword());

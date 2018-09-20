@@ -90,7 +90,11 @@ public class ConsentModelMapper {
                             new UpdatePsuAuthenticationResponse()
                                 ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                                 .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
-                                .scaStatus(r.getScaStatus())
+                                .scaStatus(
+                                    Optional.ofNullable(r.getScaStatus())
+                                        .map(s -> ScaStatus.valueOf(s.name()))
+                                        .orElse(null)
+                                )
                    )
                    .orElse(null);
     }
