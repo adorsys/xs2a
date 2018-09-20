@@ -28,51 +28,15 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 
 @Service
 @RequiredArgsConstructor
-public class AspspProfileService {
+public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
     private final ProfileConfiguration profileConfiguration;
-
-    /**
-     * Reads all aspsp settings (frequency per day, combined service indicator, available payment products, available payment types,
-     * is tpp signature required, PIS redirect URL, AIS redirect URL, multicurrency account level, is bank offered consent supported,
-     * available booking statuses, supported account reference fields, consent lifetime, transaction lifetime, allPsd2 support and
-     * type of authorization start) except SCA approach
-     *
-     * @return aspsp specific settings method which is stored in profile
-     */
-    public AspspSettings getAspspSettings() {
-        return new AspspSettings(
-            profileConfiguration.getFrequencyPerDay(),
-            profileConfiguration.isCombinedServiceIndicator(),
-            profileConfiguration.getAvailablePaymentProducts(),
-            profileConfiguration.getAvailablePaymentTypes(),
-            profileConfiguration.isTppSignatureRequired(),
-            profileConfiguration.getPisRedirectUrlToAspsp(),
-            profileConfiguration.getAisRedirectUrlToAspsp(),
-            profileConfiguration.getMulticurrencyAccountLevel(),
-            profileConfiguration.isBankOfferedConsentSupport(),
-            profileConfiguration.getAvailableBookingStatuses(),
-            profileConfiguration.getSupportedAccountReferenceFields(),
-            profileConfiguration.getConsentLifetime(),
-            profileConfiguration.getTransactionLifetime(),
-            profileConfiguration.isAllPsd2Support(),
-            profileConfiguration.getAuthorisationStartType(),
-            profileConfiguration.isTransactionsWithoutBalancesSupported());
-    }
-
-    /**
-     * Reads sca approach method
-     *
-     * @return sca approach method which is stored in profile
-     */
-    public ScaApproach getScaApproach() {
-        return profileConfiguration.getScaApproach();
-    }
 
     /**
      * Update frequency per day
      *
      * @param frequencyPerDay the new value of frequencyPerDay
      */
+    @Override
     public void updateFrequencyPerDay(int frequencyPerDay) {
         profileConfiguration.setFrequencyPerDay(frequencyPerDay);
     }
@@ -82,6 +46,7 @@ public class AspspProfileService {
      *
      * @param combinedServiceIndicator the new value of combinedServiceIndicator
      */
+    @Override
     public void updateCombinedServiceIndicator(boolean combinedServiceIndicator) {
         profileConfiguration.setCombinedServiceIndicator(combinedServiceIndicator);
     }
@@ -91,6 +56,7 @@ public class AspspProfileService {
      *
      * @param bankOfferedConsentSupport BankOfferedConsentSupport status to substitute existing one
      */
+    @Override
     public void updateBankOfferedConsentSupport(boolean bankOfferedConsentSupport) {
         profileConfiguration.setBankOfferedConsentSupport(bankOfferedConsentSupport);
     }
@@ -100,6 +66,7 @@ public class AspspProfileService {
      *
      * @param availablePaymentProducts List of payment product values
      */
+    @Override
     public void updateAvailablePaymentProducts(List<String> availablePaymentProducts) {
         profileConfiguration.setAvailablePaymentProducts(availablePaymentProducts);
     }
@@ -109,6 +76,7 @@ public class AspspProfileService {
      *
      * @param availablePaymentTypes List of payment type values
      */
+    @Override
     public void updateAvailablePaymentTypes(List<String> availablePaymentTypes) {
         profileConfiguration.setAvailablePaymentTypes(availablePaymentTypes);
     }
@@ -118,6 +86,7 @@ public class AspspProfileService {
      *
      * @param scaApproach the new value of scaApproach
      */
+    @Override
     public void updateScaApproach(ScaApproach scaApproach) {
         profileConfiguration.setScaApproach(scaApproach);
     }
@@ -127,6 +96,7 @@ public class AspspProfileService {
      *
      * @param tppSignatureRequired the new value of tppSignatureRequired
      */
+    @Override
     public void updateTppSignatureRequired(boolean tppSignatureRequired) {
         profileConfiguration.setTppSignatureRequired(tppSignatureRequired);
     }
@@ -136,6 +106,7 @@ public class AspspProfileService {
      *
      * @param redirectUrlToAspsp the new value of Pis redirectUrlToAspsp
      */
+    @Override
     public void updatePisRedirectUrlToAspsp(String redirectUrlToAspsp) {
         profileConfiguration.setPisRedirectUrlToAspsp(redirectUrlToAspsp);
     }
@@ -145,6 +116,7 @@ public class AspspProfileService {
      *
      * @param redirectUrlToAspsp the new value of Ais redirectUrlToAspsp
      */
+    @Override
     public void updateAisRedirectUrlToAspsp(String redirectUrlToAspsp) {
         profileConfiguration.setAisRedirectUrlToAspsp(redirectUrlToAspsp);
     }
@@ -154,6 +126,7 @@ public class AspspProfileService {
      *
      * @param multicurrencyAccountLevel new value of supported multicurrency account levels
      */
+    @Override
     public void updateMulticurrencyAccountLevel(MulticurrencyAccountLevel multicurrencyAccountLevel) {
         profileConfiguration.setMulticurrencyAccountLevel(multicurrencyAccountLevel);
     }
@@ -163,6 +136,7 @@ public class AspspProfileService {
      *
      * @param availableBookingStatuses new value of available booking statuses
      */
+    @Override
     public void updateAvailableBookingStatuses(List<BookingStatus> availableBookingStatuses) {
         if (!availableBookingStatuses.contains(BOOKED)) {
             availableBookingStatuses.add(BOOKED);
@@ -175,6 +149,7 @@ public class AspspProfileService {
      *
      * @param fields list of supported fields to substitute existing one
      */
+    @Override
     public void updateSupportedAccountReferenceFields(List<SupportedAccountReferenceField> fields) {
         if (!fields.contains(IBAN)) {
             fields.add(IBAN);
@@ -187,6 +162,7 @@ public class AspspProfileService {
      *
      * @param consentLifetime the value of a maximum lifetime of consent to substitute existing one
      */
+    @Override
     public void updateConsentLifetime(int consentLifetime) {
         profileConfiguration.setConsentLifetime(consentLifetime);
     }
@@ -196,6 +172,7 @@ public class AspspProfileService {
      *
      * @param transactionLifetime the value of a maximum lifetime of transaction to substitute existing one
      */
+    @Override
     public void updateTransactionLifetime(int transactionLifetime) {
         profileConfiguration.setTransactionLifetime(transactionLifetime);
     }
@@ -205,6 +182,7 @@ public class AspspProfileService {
      *
      * @param allPsd2Support AllPsd2Support status to substitute existing one
      */
+    @Override
     public void updateAllPsd2Support(boolean allPsd2Support) {
         profileConfiguration.setAllPsd2Support(allPsd2Support);
     }
@@ -214,6 +192,7 @@ public class AspspProfileService {
      *
      * @param authorisationStartType AllPsd2Support status to substitute existing one
      */
+    @Override
     public void updateAuthorisationStartType(AuthorisationStartType authorisationStartType) {
         profileConfiguration.setAuthorisationStartType(authorisationStartType);
     }
@@ -223,6 +202,7 @@ public class AspspProfileService {
      *
      * @param transactionsWithoutBalancesSupported the value of transactions without balances supported
      */
+    @Override
     public void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported) {
         profileConfiguration.setTransactionsWithoutBalancesSupported(transactionsWithoutBalancesSupported);
     }

@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.exception;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
+import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
 import de.adorsys.psd2.model.TppMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +78,13 @@ public class GlobalExceptionHandlerController {
         log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
         return new ResponseEntity<>(getTppMessages(ex.getMessageErrorCode()), ex.getHttpStatus());
+    }
+
+    @ExceptionHandler(value = AspspProfileRestException.class)
+    public ResponseEntity aspspProfileRestException(AspspProfileRestException ex, HandlerMethod handlerMethod) {
+        log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+
+        return new ResponseEntity<>(getTppMessages(MessageErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.valueOf(ex.getHttpStatusCode()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)

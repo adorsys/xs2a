@@ -19,11 +19,11 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web12.AccountController12;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -33,13 +33,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Aspect
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController12> {
-    public AccountAspect(int maxNumberOfCharInTransactionJson, AspspProfileService aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+    public AccountAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
 
@@ -57,7 +56,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
     public ResponseObject<Map<String, List<Xs2aAccountDetails>>> getAccountDetailsListAspect(ResponseObject<Map<String, List<Xs2aAccountDetails>>> result, String consentId, boolean withBalance) {
         if (!result.hasError()) {
             Map<String, List<Xs2aAccountDetails>> accountDetails = result.getBody();
-            setLinksToAccountsMap(accountDetails, withBalance);
+            setLinksToAccounts(accountDetails, withBalance);
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -105,7 +104,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         String jsonReport = optionalAccount.orElse("");
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
-            // todo further we should implement real flow for downloading file
+            // todo further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
             links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         }
         return links;
@@ -117,20 +116,20 @@ public class AccountAspect extends AbstractLinkAspect<AccountController12> {
         return links;
     }
 
-    private Map<String, List<Xs2aAccountDetails>> setLinksToAccountsMap(Map<String, List<Xs2aAccountDetails>> map, boolean withBalance) {
-        map.entrySet().forEach(list -> updateAccountLinks(list.getValue(), withBalance));
-        return map;
+    private void setLinksToAccounts(Map<String, List<Xs2aAccountDetails>> accountDetailsMap, boolean withBalance) {
+        for (Map.Entry<String, List<Xs2aAccountDetails>> entry : accountDetailsMap.entrySet()) {
+            updateAccountLinks(entry.getValue(), withBalance);
+        }
     }
 
-    private List<Xs2aAccountDetails> updateAccountLinks(List<Xs2aAccountDetails> accountDetailsList, boolean withBalance) {
-        return accountDetailsList.stream()
-                   .map(acc -> setLinksToAccount(acc, withBalance))
-                   .collect(Collectors.toList());
+    private void updateAccountLinks(List<Xs2aAccountDetails> accountDetailsList, boolean withBalance) {
+        for (Xs2aAccountDetails acc : accountDetailsList) {
+            setLinksToAccount(acc, withBalance);
+        }
     }
 
-    private Xs2aAccountDetails setLinksToAccount(Xs2aAccountDetails accountDetails, boolean withBalance) {
+    private void setLinksToAccount(Xs2aAccountDetails accountDetails, boolean withBalance) {
         accountDetails.setLinks(buildLinksForAccountDetails(accountDetails.getId(), withBalance));
-        return accountDetails;
     }
 
     private Links buildLinksForAccountDetails(String accountId, boolean withBalance) {

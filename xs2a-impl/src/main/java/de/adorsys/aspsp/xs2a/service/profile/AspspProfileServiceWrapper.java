@@ -17,20 +17,17 @@
 package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.cache.CacheConfig;
-import de.adorsys.aspsp.xs2a.config.rest.profile.AspspProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.aspsp.xs2a.domain.aspsp.AspspSettings;
-import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthorisationStartType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,10 +36,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class AspspProfileService {
-    @Qualifier("aspspProfileRestTemplate")
-    private final RestTemplate aspspProfileRestTemplate;
-    private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
+public class AspspProfileServiceWrapper {
+    private final AspspProfileService aspspProfileService;
 
     /**
      * Gets a list of payment products allowed by current ASPSP from ASPSP profile service
@@ -91,8 +86,10 @@ public class AspspProfileService {
      */
     @Cacheable(CacheConfig.ASPSP_PROFILE_CACHE)
     public ScaApproach getScaApproach() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
+        ScaApproach scaApproach = aspspProfileService.getScaApproach();
+        return Optional.ofNullable(scaApproach)
+            .map(approach -> ScaApproach.valueOf(approach.name()))
+            .orElse(ScaApproach.REDIRECT); //default
     }
 
     /**
@@ -128,7 +125,10 @@ public class AspspProfileService {
      * @return List of supported fields
      */
     public List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
-        return readAspspSettings().getSupportedAccountReferenceFields();
+        List<de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField> supportedAccountReferenceFields = readAspspSettings().getSupportedAccountReferenceFields();
+        return supportedAccountReferenceFields.stream()
+            .map(reference -> SupportedAccountReferenceField.valueOf(reference.name()))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -155,7 +155,7 @@ public class AspspProfileService {
      * @return String value of authorisation start type
      */
     public Xs2aAuthorisationStartType getAuthorisationStartType() {
-        return Xs2aAuthorisationStartType.valueOf(readAspspSettings().getAuthorisationStartType());
+        return Xs2aAuthorisationStartType.valueOf(readAspspSettings().getAuthorisationStartType().name());
     }
 
     /**
@@ -177,7 +177,6 @@ public class AspspProfileService {
     }
 
     private AspspSettings readAspspSettings() {
-        return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAspspSettings(), HttpMethod.GET, null, AspspSettings.class).getBody();
+        return aspspProfileService.getAspspSettings();
     }
 }

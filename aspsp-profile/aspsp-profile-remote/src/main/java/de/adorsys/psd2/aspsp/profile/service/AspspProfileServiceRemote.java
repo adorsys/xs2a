@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.psd2.aspsp.profile.service;
 
-
-import de.adorsys.aspsp.xs2a.config.rest.ASPSPProfileRemoteUrls;
-import de.adorsys.aspsp.xs2a.domain.profile.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.config.AspspProfileRemoteUrls;
+import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -27,21 +27,20 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class AspspProfileService {
+public class AspspProfileServiceRemote implements AspspProfileService {
     @Qualifier("aspspProfileRestTemplate")
     private final RestTemplate aspspProfileRestTemplate;
-    private final ASPSPProfileRemoteUrls aspspProfileRemoteUrls;
+    private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
-    public int getMinFrequencyPerDay(int tppFrequency) {
-        return Math.min(Math.abs(tppFrequency), getFrequencyPerDay());
-    }
-
-    private Integer getFrequencyPerDay() {
-        return readAspspSettings().getFrequencyPerDay();
-    }
-
-    private AspspSettings readAspspSettings() {
+    @Override
+    public AspspSettings getAspspSettings() {
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAspspSettingsUrl(), HttpMethod.GET, null, AspspSettings.class).getBody();
+            aspspProfileRemoteUrls.getAspspSettings(), HttpMethod.GET, null, AspspSettings.class).getBody();
+    }
+
+    @Override
+    public ScaApproach getScaApproach() {
+        return aspspProfileRestTemplate.exchange(
+            aspspProfileRemoteUrls.getScaApproach(), HttpMethod.GET, null, ScaApproach.class).getBody();
     }
 }
