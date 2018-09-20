@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.Links;
@@ -48,4 +49,8 @@ public class CreateConsentResponse {
 
     @ApiModelProperty(value = "Text to be displayed to the PSU, e.g. in a Decoupled SCA Approach", required = false)
     private final String psuMessage;
+
+    //For Embedded approach Implicit case
+    @JsonIgnore
+    private String authorizationId;
 }

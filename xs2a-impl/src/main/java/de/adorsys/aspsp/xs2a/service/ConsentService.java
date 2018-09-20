@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -82,9 +83,18 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
         //TODO v1.1 Add balances support
         //TODO v1.2 Add embedded approach specfic links
-        return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build()
-                   : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        if (StringUtils.isBlank(consentId)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        }
+
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
+
+        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED
+                && aspspProfileService.getAuthorisationStartType() == Xs2aAuthorisationStartType.IMPLICIT) {
+            proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuId, consentId);
+        }
+
+        return createConsentResponseObject;
     }
 
     /**
@@ -252,5 +262,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
                    .map(credentials -> credentials.get("authorityId"))
                    .orElse("This is a test TppId");
+    }
+
+    private void proceedEmbeddedImplicitCaseForCreateConsent(CreateConsentResponse response, String psuId, String consentId) {
+        aisAuthorizationService.createConsentAuthorization(psuId, consentId)
+            .ifPresent(a -> {
+                response.setAuthorizationId(a.getAuthorizationId());
+            });
     }
 }

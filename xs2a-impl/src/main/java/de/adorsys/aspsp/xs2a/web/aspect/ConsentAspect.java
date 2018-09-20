@@ -18,10 +18,8 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.web12.ConsentController12;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.AllArgsConstructor;
@@ -60,9 +58,23 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
 
     private Links buildLinksForConsentResponse(CreateConsentResponse response) {
         Links links = new Links();
-        links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
+        ScaApproach scaApproach = aspspProfileService.getScaApproach();
+
+        if (ScaApproach.EMBEDDED == scaApproach) {
+            buildLinkForEmbeddedScaApproach(response, links);
+        } else {
+            links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
+        }
 
         return links;
+    }
+
+    private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links) {
+        if (Xs2aAuthorisationStartType.EXPLICIT == aspspProfileService.getAuthorisationStartType()) {
+            links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
+        } else {
+            links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", response.getConsentId(), response.getAuthorizationId()));
+        }
     }
 
     private Links buildLinksForUpdateConsentResponse(UpdateConsentPsuDataResponse response, UpdateConsentPsuDataReq request) {
