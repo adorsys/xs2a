@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
@@ -146,7 +143,7 @@ public class AisConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> updateAspspData(String consentId, UpdateAisConsentAspspDataRequest request) {
+    public Optional<String> updateAspspData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualAisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }
@@ -201,7 +198,7 @@ public class AisConsentService {
         return holder.getAccountAccesses();
     }
 
-    private String updateConsentAspspData(UpdateAisConsentAspspDataRequest request, AisConsent consent) {
+    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, AisConsent consent) {
         consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();

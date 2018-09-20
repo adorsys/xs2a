@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
+import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -99,19 +100,17 @@ public class PisConsentService {
                    .map(con -> con.getConsentStatus() == status);
     }
 
-    private Optional<PisConsent> getPisConsentById(String consentId) {
-        return Optional.ofNullable(consentId)
-                   .flatMap(pisConsentRepository::findByExternalId);
-    }
-
-    private PisConsent setStatusAndSaveConsent(PisConsent consent, CmsConsentStatus status) {
-        consent.setConsentStatus(status);
-        return pisConsentRepository.save(consent);
-    }
-
-    private Optional<PisConsent> getActualPisConsent(String consentId) {
-        return Optional.ofNullable(consentId)
-                   .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+    /**
+     * Update PIS consent aspsp blob data by id
+     *
+     * @param request   needed parameters for updating PIS consent
+     * @param consentId id of the consent to be updated
+     * @return String consent id
+     */
+    @Transactional
+    public Optional<String> updateAspspData(String consentId, UpdateConsentAspspDataRequest request) {
+        return getActualAisConsent(consentId)
+                   .map(cons -> updateConsentAspspData(request, cons));
     }
 
     /**
@@ -125,14 +124,6 @@ public class PisConsentService {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
                    .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent()))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
-    }
-
-    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
-        PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
-        consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setConsent(pisConsent);
-        consentAuthorization.setScaStatus(STARTED);
-        return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
@@ -153,5 +144,39 @@ public class PisConsentService {
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
         return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
+    }
+
+    private Optional<PisConsent> getPisConsentById(String consentId) {
+        return Optional.ofNullable(consentId)
+                   .flatMap(pisConsentRepository::findByExternalId);
+    }
+
+    private PisConsent setStatusAndSaveConsent(PisConsent consent, CmsConsentStatus status) {
+        consent.setConsentStatus(status);
+        return pisConsentRepository.save(consent);
+    }
+
+    private Optional<PisConsent> getActualPisConsent(String consentId) {
+        return Optional.ofNullable(consentId)
+                   .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+    }
+
+    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
+        PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
+        consentAuthorization.setExternalId(UUID.randomUUID().toString());
+        consentAuthorization.setConsent(pisConsent);
+        consentAuthorization.setScaStatus(STARTED);
+        return pisConsentAuthorizationRepository.save(consentAuthorization);
+    }
+
+    private Optional<PisConsent> getActualAisConsent(String consentId) {
+        return Optional.ofNullable(consentId)
+                   .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
+    }
+
+    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, PisConsent consent) {
+        consent.setAspspConsentData(request.getAspspConsentData());
+        PisConsent savedConsent = pisConsentRepository.save(consent);
+        return savedConsent.getExternalId();
     }
 }

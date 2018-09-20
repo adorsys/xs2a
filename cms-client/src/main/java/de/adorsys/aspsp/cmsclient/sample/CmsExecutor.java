@@ -18,14 +18,14 @@ package de.adorsys.aspsp.cmsclient.sample;
 
 import de.adorsys.aspsp.cmsclient.cms.CmsServiceInvoker;
 import de.adorsys.aspsp.cmsclient.cms.model.ais.*;
-import de.adorsys.aspsp.cmsclient.cms.model.pis.CreatePaymentConsentMethod;
-import de.adorsys.aspsp.cmsclient.cms.model.pis.GetPaymentConsentByIdMethod;
-import de.adorsys.aspsp.cmsclient.cms.model.pis.GetPaymentConsentStatusByIdMethod;
-import de.adorsys.aspsp.cmsclient.cms.model.pis.UpdatePaymentConsentStatusMethod;
+import de.adorsys.aspsp.cmsclient.cms.model.pis.*;
 import de.adorsys.aspsp.cmsclient.core.Configuration;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 import de.adorsys.aspsp.xs2a.consent.api.*;
-import de.adorsys.aspsp.xs2a.consent.api.ais.*;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -64,12 +64,13 @@ public class CmsExecutor {
         getConsentStatusById(cmsServiceInvoker);
         saveConsentActionLog(cmsServiceInvoker);
         updateConsentAccess(cmsServiceInvoker);
-        updateConsentBlob(cmsServiceInvoker);
+        updateAisConsentBlob(cmsServiceInvoker);
         updateConsentStatus(cmsServiceInvoker);
 
         createPaymentConsent(cmsServiceInvoker);
         getPaymentConsentById(cmsServiceInvoker);
         getPaymentConsentStatusById(cmsServiceInvoker);
+        updatePisConsentBlob(cmsServiceInvoker);
         updatePaymentConsentStatus(cmsServiceInvoker);
     }
 
@@ -107,12 +108,12 @@ public class CmsExecutor {
         updateAccessResponse.ifPresent(resp -> logger.info("Access was updated in: " + resp.getConsentId()));
     }
 
-    private static void updateConsentBlob(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+    private static void updateAisConsentBlob(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
                                       .build();
-        Optional<CreateAisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateConsentBlobMethod(buildUpdateBlobRequest(), uriParams)));
-        updateBlobResponse.ifPresent(resp -> logger.info("Blob was updated in: " + resp.getConsentId()));
+        Optional<CreateAisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateAisConsentBlobMethod(buildUpdateBlobRequest(), uriParams)));
+        updateBlobResponse.ifPresent(resp -> logger.info("Ais consent blob was updated in: " + resp.getConsentId()));
     }
 
     private static void updateConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
@@ -142,8 +143,8 @@ public class CmsExecutor {
         return info;
     }
 
-    private static UpdateAisConsentAspspDataRequest buildUpdateBlobRequest() {
-        UpdateAisConsentAspspDataRequest request = new UpdateAisConsentAspspDataRequest();
+    private static UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
+        UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
         request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
         return request;
     }
@@ -168,6 +169,14 @@ public class CmsExecutor {
                                       .build();
         Optional<PisConsentStatusResponse> consentStatusResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new GetPaymentConsentStatusByIdMethod(uriParams)));
         consentStatusResponse.ifPresent(response -> logger.info("Status of the consent: " + response.getConsentStatus().name()));
+    }
+
+    private static void updatePisConsentBlob(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+        HttpUriParams uriParams = HttpUriParams.builder()
+                                      .addPathVariable("consent-id", consentId)
+                                      .build();
+        Optional<CreatePisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentBlobMethod(buildUpdateBlobRequest(), uriParams)));
+        updateBlobResponse.ifPresent(resp -> logger.info("Pis consent blob was updated in: " + resp.getConsentId()));
     }
 
     private static void updatePaymentConsentStatus(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
