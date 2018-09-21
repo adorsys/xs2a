@@ -334,7 +334,7 @@ cmsPortal:
   replicas: 1
 
   image:
-    name: onlinebank
+    name: online-banking-demo
     tag: latest
     namespace: ~
     stream: true
