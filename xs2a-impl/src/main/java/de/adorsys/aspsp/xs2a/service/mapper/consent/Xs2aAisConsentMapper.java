@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
@@ -143,10 +144,11 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(Xs2aScaStatus scaStatus) {
+    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(Xs2aScaStatus scaStatus, String psuId) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
                        AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                       consentAuthorization.setPsuId(psuId);
                        consentAuthorization.setScaStatus(mapToCmsScaStatus(scaStatus));
                        return consentAuthorization;
                    })
@@ -172,6 +174,18 @@ public class Xs2aAisConsentMapper {
         return spiScaMethods.stream()
                    .map(this::mapToCmsScaMethod)
                    .collect(Collectors.toList());
+    }
+
+    public SpiAccountConfirmation mapToSpiAccountConfirmation(UpdateConsentPsuDataReq request) {
+        return Optional.ofNullable(request)
+                   .map(r -> {
+                       SpiAccountConfirmation accountConfirmation = new SpiAccountConfirmation();
+                       accountConfirmation.setConsentId(r.getConsentId());
+                       accountConfirmation.setPsuId(r.getPsuId());
+                       accountConfirmation.setTanNumber(r.getScaAuthenticationData());
+                       return accountConfirmation;
+                   })
+                   .orElse(null);
     }
 
     private CmsScaMethod mapToCmsScaMethod(SpiScaMethod spiScaMethod) {

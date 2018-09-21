@@ -296,7 +296,7 @@ public class AisConsentService {
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuId(consentAuthorization.getPsuId());
+        consentAuthorization.setPsuId(request.getPsuId());
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
