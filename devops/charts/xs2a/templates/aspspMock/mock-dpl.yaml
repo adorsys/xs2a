@@ -11,12 +11,12 @@ metadata:
       [{
         "from": {
           "kind":"ImageStreamTag",
-          "name":"{{- if .Values.aspspMock.image.stream }}{{ .Values.aspspMock.image.name }}:{{ default "latest" .Values.aspspMock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cms-mock:latest{{- end }}"
+          "name":"{{- if .Values.aspspMock.image.stream }}{{ .Values.aspspMock.image.name }}:{{ default "latest" .Values.aspspMock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspsp-mock:latest{{- end }}"
         },
         "fieldPath":"spec.template.spec.initContainers[?(@.name==\"mockserver\")].image"
       }]
     checksum/secret: {{ include (print $.Template.BasePath "/aspspMock/mock-secrets.yaml") . | sha256sum }}
-  name: {{ template "psd2.fullname" . }}-cms-mock
+  name: {{ template "psd2.fullname" . }}-aspsp-mock
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: aspspMock

@@ -97,7 +97,7 @@ xs2a:
       termination: edge
 
   env:
-    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-cms-mock:8080
+    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp-mock:8080
     CONSENT_SERVICE_BASEURL: http://{{ template "psd2.fullname" . }}-cms:8080/api/v1
     ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspspprofile:8080/api/v1
     skip_ssl_certificate_verification: true
@@ -135,7 +135,7 @@ aspspMock:
 
   route:
     host: >-
-      {{ template "psd2.fullname" . }}-cms-mock-{{ .Release.Namespace }}.cloud.adorsys.de
+      {{ template "psd2.fullname" . }}-aspsp-mock-{{ .Release.Namespace }}.cloud.adorsys.de
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -247,7 +247,7 @@ cms:
   env:
     spring_datasource_url: jdbc:postgresql://{{ template "psd2.fullname" . }}-cms-db/cms
     spring_jpa_properties_hibernate_default_schema: cms
-    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-cms-mock:8080
+    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp-mock:8080
     ASPSP_PROFILE_BASEURL: http://{{ template "psd2.fullname" . }}-aspspprofile:8080/api/v1
     skip_ssl_certificate_verification: true
     KEYCLOAK_AUTH_SERVER_URL: https://{{ tpl .Values.keycloak.route.host $ }}/auth
@@ -348,7 +348,7 @@ cmsPortal:
       termination: edge
 
   env:
-    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-cms-mock:8080
+    MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp-mock:8080
     CONSENT_SERVICE_BASEURL: http:/{{ template "psd2.fullname" . }}-cms:8080/api/v1
 
   resources:
@@ -390,7 +390,7 @@ uiapp:
       termination: edge
 
   env:
-    mockServerUrl: http://{{ template "psd2.fullname" . }}-cms-mock:8080
+    mockServerUrl: http://{{ template "psd2.fullname" . }}-aspsp-mock:8080
     apis_dota: https://api.opendota.com/apps/dota2/images
     assets_dotaImages: https://api.opendota.com/api
     production: false

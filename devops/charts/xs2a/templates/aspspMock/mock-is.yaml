@@ -3,7 +3,7 @@
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
-  name: {{ template "psd2.fullname" . }}-cms-mock
+  name: {{ template "psd2.fullname" . }}-aspsp-mock
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app: aspsp-mock

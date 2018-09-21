@@ -56,23 +56,23 @@ spec:
           valueFrom:
             secretKeyRef:
               key: admin-password
-              name: {{ template "psd2.fullname" . }}-cms-mock-db
+              name: {{ template "psd2.fullname" . }}-aspsp-mock-db
 {{- if .Values.aspspMock.db.user }}
         - name: MONGODB_USER
           valueFrom:
             secretKeyRef:
               key: username
-              name: {{ template "psd2.fullname" . }}-cms-mock-db
+              name: {{ template "psd2.fullname" . }}-aspsp-mock-db
         - name: MONGODB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: {{ template "psd2.fullname" . }}-cms-mock-db
+              name: {{ template "psd2.fullname" . }}-aspsp-mock-db
         - name: MONGODB_DATABASE
           valueFrom:
             secretKeyRef:
               key: database
-              name: {{ template "psd2.fullname" . }}-cms-mock-db
+              name: {{ template "psd2.fullname" . }}-aspsp-mock-db
 {{- end }}
 {{- with .Values.aspspMock.db.extraEnv }}
 {{ tpl . $ | indent 8 }}
