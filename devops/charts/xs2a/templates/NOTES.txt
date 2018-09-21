@@ -1,10 +1,10 @@
 Deployment done!
 
 {{- if .Values.xsa2.enabled }}
-XS2A URL:  https://{{ tpl .Values.xsa2.route.host $ }}/
+XS2A URL:  https://{{ tpl .Values.xs2a.route.host $ }}/
 {{- end }}
-{{- if .Values.cmsPortal.enabled }}
-CMS URL: https://{{ tpl .Values.cmsPortal.route.host $ }}/
+{{- if .Values.cms.enabled }}
+CMS URL: https://{{ tpl .Values.cms.route.host $ }}/
 {{- end }}
 {{- if .Values.keycloak.enabled }}
 Keycloak URL: https://{{ tpl .Values.keycloak.route.host $ }}/
