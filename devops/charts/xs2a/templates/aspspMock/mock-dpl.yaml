@@ -20,7 +20,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: aspspMock
-    app: mbs-mock
+    app: aspsp-mock
 spec:
 {{- with .Values.aspspMock.strategy }}
   strategy:
@@ -89,7 +89,7 @@ spec:
         resources:
 {{ toYaml .Values.aspspMock.resources | indent 10 }}
         volumeMounts:
-        - mountPath: /opt/multibanking-mock/datas
+        - mountPath: /opt/aspsp-mock/datas
           name: data
       volumes:
       - name: data

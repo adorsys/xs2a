@@ -19,7 +19,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: mock-db
-    app: mbs-mock
+    app: aspsp-mock
 spec:
   serviceName: {{ template "psd2.fullname" . }}-mongo-db
   updateStrategy:
