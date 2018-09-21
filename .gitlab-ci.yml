@@ -69,16 +69,11 @@ variables: &variables
 # reusable yaml anchors
 # ------------------------------------------------------------------
 
-# release on all tags created by mvn release:prepare
-.release_condition: &release_condition
-  only:
-    - develop
-
 .java_artifacts: &java_artifacts
   paths:
     - "spi-mock/target/spi-mock*jar"
     - "consent-management-system/target/consent-management*jar"
-    - "aspsp-profile/target/aspsp-profile*jar"
+    - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"
     - "integration-tests/target/xs2a-integtests.jar"
@@ -88,8 +83,6 @@ variables: &variables
 .build_java: &build_java
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -DskipTests clean install
 
@@ -110,7 +103,7 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management-system
     - docker push "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
 
-    - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile
+    - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
     - docker push "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
 
     - docker build -t "$GITLAB_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG" integration-tests
@@ -201,8 +194,6 @@ build_package:
 pmd_report:
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -Dmaven.test.skip=true package pmd:pmd
   artifacts:
@@ -216,16 +207,12 @@ pmd_report:
 check_pmd:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -Dmaven.test.skip=true package pmd:check
 
 check_javadoc:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn -Dmaven.test.skip=true package javadoc:javadoc
   artifacts:
@@ -237,8 +224,6 @@ check_javadoc:
 unit_tests:
   stage: "build:qa"
   image: "adorsys/openjdk-build-base:8"
-  tags:
-    - aws_docker
   script:
     - mvn --fail-at-end clean install
   artifacts:

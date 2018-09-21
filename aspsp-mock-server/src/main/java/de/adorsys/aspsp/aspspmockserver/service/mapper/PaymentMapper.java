@@ -24,14 +24,22 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class PaymentMapper {
     public List<AspspPayment> mapToAspspPaymentList(List<SpiSinglePayment> payments) {
+        String bulkId = generateId();
         return payments.stream()
-                   .map(p -> mapToAspspPayment(p, PisPaymentType.BULK))
+                   .map(p -> mapToBulkAspspPayment(p, bulkId))
                    .collect(Collectors.toList());
+    }
+
+    private AspspPayment mapToBulkAspspPayment(SpiSinglePayment spiSinglePayment, String bulkId) {
+        AspspPayment aspspPayment = mapToAspspPayment(spiSinglePayment, PisPaymentType.BULK);
+        aspspPayment.setBulkId(bulkId);
+        return aspspPayment;
     }
 
     public List<SpiSinglePayment> mapToSpiSinglePaymentList(List<AspspPayment> payments) {
@@ -133,5 +141,9 @@ public class PaymentMapper {
                        return periodic;
                    })
                    .orElse(null);
+    }
+
+    private String generateId() {
+        return UUID.randomUUID().toString();
     }
 }

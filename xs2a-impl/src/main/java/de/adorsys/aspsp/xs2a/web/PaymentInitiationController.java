@@ -17,11 +17,12 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.TransactionStatusResponse;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
@@ -39,14 +40,11 @@ import javax.validation.Valid;
 @RequestMapping(path = "api/v1/payments/{payment-product}")
 @Api(value = "api/v1/payments/{payment-product}", tags = "PISP, Payments", description = "Provides access to the PIS")
 public class PaymentInitiationController {
-    private final static String TPP_INFO = "eyJuYXRpb25hbENvbXBldGVudEF1dGhvcml0eSI6ICJOYXRpb25hbCBjb21wZXRlbnQgYXV0aG9yaXR5IiwKICAgICJub2tSZWRpcmVjdFVyaSI6I" +
-                                               "CJOb2sgcmVkaXJlY3QgVVJJIiwKICAgICJyZWRpcmVjdFVyaSI6ICJSZWRpcmVjdCBVUkkiLAogICAgInJlZ2lzdHJhdGlvbk51bWJlciI6IC" +
-                                               "IxMjM0X3JlZ2lzdHJhdGlvbk51bWJlciIsCiAgICAidHBwTmFtZSI6ICJUcHAgY29tcGFueSIsCiAgICAidHBwUm9sZSI6ICJUcHAgcm9sZSIKICB9";
     private final ResponseMapper responseMapper;
     private final PaymentService paymentService;
     private final AccountReferenceValidationService referenceValidationService;
 
-    @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Initialises a new payment ", notes = "debtor account, creditor accout, creditor name, remittance information unstructured")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 400, message = "Bad request")})
     @PostMapping
@@ -75,11 +73,11 @@ public class PaymentInitiationController {
         ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(singlePayment.getAccountReferences());
         ResponseObject<PaymentInitialisationResponse> response = accountReferenceValidationResponse.hasError()
                                                                      ? ResponseObject.<PaymentInitialisationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-                                                                     : paymentService.createPaymentInitiation(singlePayment, tppSignatureCertificate, paymentProduct);
+                                                                     : paymentService.createPaymentInitiation(singlePayment, new TppInfo(), paymentProduct);
         return responseMapper.created(response);
     }
 
-    @ApiOperation(value = "Get information  about the status of a payment initialisation ", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Get information  about the status of a payment initialisation ")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = Xs2aTransactionStatus.class),
         @ApiResponse(code = 403, message = "Not found")})
     @GetMapping(path = "/{paymentId}/status")

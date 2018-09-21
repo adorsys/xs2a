@@ -7,6 +7,10 @@ jdk:
 git:
   submodules: false
 
+cache:
+  directories:
+  - $HOME/.m2
+
 # Schritte um Build-Dependencies herunterladen
 before_install:
   - mvn --version
@@ -23,18 +27,19 @@ script:
   - mvn -B -V javadoc:javadoc
   - mvn -B -V pmd:check
 
-
 # Schritte um Release zu veröffentlichen
 before_deploy:
   - echo $GPG_SECRET_KEY | base64 --decode | $GPG_EXECUTABLE --import
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
 
 deploy:
-  -
-    skip_cleanup: true
+  - skip_cleanup: true
     provider: script
     script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B -U deploy
     on:
-      tags: true
-      # matches: X.Y.Z, X.Y.Z-A, X.Y.Z-RCA, X.Y.Z-A-B.C.D, X.Y.Z-A-B.C.D-E, X.Y.Z-RCA-B.C.D-E
-      condition: "$TRAVIS_TAG =~ ^([[:digit:]]+\\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\\.)+[[:digit:]]+(-[[:digit:]]+)?)?$"
+      repo: adorsys/xs2a
+      all_branches: true
+      # matches: tags with format X.Y.Z, X.Y.Z-A, X.Y.Z-RCA, X.Y.Z-A-B.C.D, X.Y.Z-A-B.C.D-E, X.Y.Z-RCA-B.C.D-E or develop
+      condition: >-
+                  ($TRAVIS_TAG =~ ^([[:digit:]]+\\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?(-([[:digit:]]+\\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
+                  || $TRAVIS_BRANCH = develop)
