@@ -11,6 +11,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: aspspMock
+    app: aspsp-mock
 spec:
   type: ClusterIP
   ports:

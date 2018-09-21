@@ -6,6 +6,7 @@ metadata:
   name: {{ template "psd2.fullname" . }}-cms-mock
   labels:
 {{ include "psd2.labels" . | indent 4 }}
+    app: aspsp-mock
 spec:
   lookupPolicy:
     local: false

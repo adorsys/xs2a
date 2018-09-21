@@ -19,6 +19,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: cmsPortal
+    app: aspsp-mock
 spec:
   replicas: {{ .Values.cmsPortal.replicas }}
   selector:
