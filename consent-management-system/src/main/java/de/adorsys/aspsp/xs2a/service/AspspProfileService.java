@@ -20,13 +20,11 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.config.rest.ASPSPProfileRemoteUrls;
 import de.adorsys.aspsp.xs2a.domain.profile.AspspSettings;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Log4j
 @Service
 @RequiredArgsConstructor
 public class AspspProfileService {

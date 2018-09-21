@@ -1,17 +1,6 @@
 package de.adorsys.psd2.validator.certificate.util;
 
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-
 import com.nimbusds.jose.util.X509CertUtils;
-
 import de.adorsys.psd2.validator.certificate.CertificateErrorMsgCode;
 import de.adorsys.psd2.validator.common.PSD2QCStatement;
 import de.adorsys.psd2.validator.common.PSD2QCType;
@@ -19,6 +8,15 @@ import de.adorsys.psd2.validator.common.RoleOfPSP;
 import de.adorsys.psd2.validator.common.RolesOfPSP;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class CertificateExtractorUtil {
@@ -26,6 +24,11 @@ public class CertificateExtractorUtil {
 	public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
 
 		X509Certificate cert = X509CertUtils.parse(encodedCert);
+
+        if(cert == null) {
+            log.debug("Error reading certificate ");
+            throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
+        }
 
 		List<TppRole> roles = new ArrayList<>();
 
@@ -54,8 +57,9 @@ public class CertificateExtractorUtil {
 		} catch (CertificateEncodingException e) {
 			log.debug(e.getMessage());
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
-		}
-
+		} catch (NoSuchFieldError n) { // TODO fix ORGANIZATION_IDENTIFIER exception  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/325
+            log.error("No such field error: " + n.getMessage());
+        }
 		return tppCertData;
 
 	}

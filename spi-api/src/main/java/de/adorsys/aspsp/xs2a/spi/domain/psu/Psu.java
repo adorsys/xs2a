@@ -30,9 +30,9 @@ import java.util.List;
 @Data
 public class Psu {
     @Id
-    private String id;
+    private String aspspPsuId;
     private String email;
-    private String name;
+    private String psuId;
     private String password;
     private List<SpiAccountDetails> accountDetailsList;
     private List<String> permittedPaymentProducts;
@@ -45,7 +45,7 @@ public class Psu {
                    && StringUtils.isNotBlank(this.accountDetailsList.get(0).getIban())
                    && CollectionUtils.isNotEmpty(this.permittedPaymentProducts)
                    && StringUtils.isNotBlank(this.permittedPaymentProducts.get(0))
-                   && StringUtils.isNotBlank(this.name)
+                   && StringUtils.isNotBlank(this.psuId)
                    && StringUtils.isNotBlank(this.password);
     }
 }

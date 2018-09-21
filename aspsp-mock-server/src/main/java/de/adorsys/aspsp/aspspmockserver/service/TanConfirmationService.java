@@ -18,7 +18,6 @@ package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
-import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
@@ -39,7 +38,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus.REJECTED;
 import static de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus.UNUSED;
@@ -54,7 +52,6 @@ public class TanConfirmationService {
     private int maximumNumberOfTanAttempts;
 
     private final TanRepository tanRepository;
-    private final PsuRepository psuRepository;
     private final static String EMAIL_TEMPLATE_PATH = "email/email-template.html";
     private final JavaMailSender emailSender;
     private final Configuration fmConfiguration;
@@ -65,32 +62,26 @@ public class TanConfirmationService {
     /**
      * Generates new Tan and sends it to psu's email for payment confirmation
      *
-     * @param name of Psu in order to get correct Psu and than get psu's email
+     * @param psuId PSU id
      * @return true if psu was found and new Tan was sent successfully, otherwise return false
      */
-    public boolean generateAndSendTanForPsuByName(String name) {
-        return accountService.getPsuIdByName(name)
-                   .map(this::generateAndSendTanForPsu)
-                   .orElse(false);
-    }
-
-    private boolean generateAndSendTanForPsu(String psuId) {
-        return Optional.ofNullable(psuRepository.findOne(psuId))
-                   .map(psu -> createAndSendTan(psu.getId(), psu.getEmail()))
+    public boolean generateAndSendTanForPsuById(String psuId) {
+        return accountService.getPsuByPsuId(psuId)
+                   .map(psu -> createAndSendTan(psu.getPsuId(), psu.getEmail()))
                    .orElse(false);
     }
 
     /**
      * Gets new Tan and sends it to psu's email for payment confirmation
      *
-     * @param name      Name of Psu in order to get correct Psu
+     * @param psuId PSU id
      * @param tanNumber TAN
      * @return true if Tan has status UNUSED, otherwise return false
      */
-    public ResponseEntity confirmTan(String name, String tanNumber, String consentId, ConfirmationType confirmationType) {
-        if (isTanNumberValid(name, tanNumber)) {
+    public ResponseEntity confirmTan(String psuId, String tanNumber, String consentId, ConfirmationType confirmationType) {
+        if (isTanNumberValid(psuId, tanNumber)) {
             return new ResponseEntity(HttpStatus.OK);
-        } else if (getTanNumberOfAttempts(name) < maximumNumberOfTanAttempts) {
+        } else if (getTanNumberOfAttempts(psuId) < maximumNumberOfTanAttempts) {
             ApiError error = new ApiError(HttpStatus.BAD_REQUEST, "WRONG_TAN", "Bad request");
             return new ResponseEntity<>(error, error.getStatus());
         }
@@ -99,16 +90,15 @@ public class TanConfirmationService {
         return new ResponseEntity<>(error, error.getStatus());
     }
 
-    private boolean isTanNumberValid(String name, String tanNumber) {
-        return accountService.getPsuIdByName(name)
-                   .map(psuId -> isPsuTanNumberValid(psuId, tanNumber))
+    private boolean isTanNumberValid(String psuId, String tanNumber) {
+        return accountService.getPsuByPsuId(psuId)
+                   .map(psu -> isPsuTanNumberValid(psu.getPsuId(), tanNumber))
                    .orElse(false);
     }
 
-    private int getTanNumberOfAttempts(String name) {
-        tanRepository.findAll();
-        return accountService.getPsuIdByName(name)
-                   .flatMap(psuId -> tanRepository.findByPsuIdAndTanStatus(psuId, UNUSED).stream()
+    private int getTanNumberOfAttempts(String psuId) {
+        return accountService.getPsuByPsuId(psuId)
+                   .flatMap(psu -> tanRepository.findByPsuIdAndTanStatus(psu.getPsuId(), UNUSED).stream()
                                          .findFirst()
                                          .map(Tan::getNumberOfAttempts))
                    .orElse(maximumNumberOfTanAttempts);

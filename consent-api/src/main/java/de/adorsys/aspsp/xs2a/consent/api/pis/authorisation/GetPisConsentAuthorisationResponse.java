@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.consent.api.pis.authorisation;
 
+import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -31,4 +32,5 @@ public class GetPisConsentAuthorisationResponse {
     private String password;
     private List<PisPayment> payments;
     private PisPaymentType paymentType;
+    private CmsAspspConsentData cmsAspspConsentData;
 }

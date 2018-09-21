@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -27,6 +28,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
@@ -39,6 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
@@ -46,7 +49,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.mapToAccountDetails;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -85,6 +87,8 @@ public class AccountServiceTest {
     private ValueValidatorService valueValidatorService;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
+    @Spy
+    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
 
     @Before
     public void setUp() {
@@ -143,7 +147,7 @@ public class AccountServiceTest {
         //When:
         ResponseObject<Xs2aAccountDetails> response = accountService.getAccountDetails(CONSENT_ID_WB, ACCOUNT_ID, true);
 
-        de.adorsys.psd2.model.AccountDetails details = mapToAccountDetails(response.getBody());
+        de.adorsys.psd2.model.AccountDetails details = accountModelMapper.mapToAccountDetails(response.getBody());
 
         //Then:
         assertThat(response.getBody().getId()).isEqualTo(ACCOUNT_ID);

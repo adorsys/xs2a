@@ -1,12 +1,14 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import cucumber.api.java.After;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
@@ -22,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
+@Slf4j
 @FeatureFileSteps
 public class GlobalSuccessfulSteps {
     @Autowired
@@ -33,6 +36,15 @@ public class GlobalSuccessfulSteps {
 
     @Autowired
     private AuthConfigProperty authConfigProperty;
+
+    @Before
+    public void loadTestDataIntoDb() {
+        template.exchange(
+            context.getMockUrl() + "/integration-tests/refresh-testing-data",
+            HttpMethod.GET,
+            HttpEntity.EMPTY,
+            String.class);
+    }
 
     @Given("^PSU request access token for oauth approach$")
     public void requestAccessToken() {
@@ -85,6 +97,7 @@ public class GlobalSuccessfulSteps {
 
     @After
     public void afterScenario() {
+        log.debug("Cleaning up context");
         context.cleanUp();
     }
 }

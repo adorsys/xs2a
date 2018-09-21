@@ -16,10 +16,12 @@
 
 package de.adorsys.aspsp.aspspmockserver.exception;
 
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 
 @Value
+@EqualsAndHashCode(callSuper = true)
 public class AspspRestException extends RuntimeException {
     private HttpStatus httpStatus;
     private String message;

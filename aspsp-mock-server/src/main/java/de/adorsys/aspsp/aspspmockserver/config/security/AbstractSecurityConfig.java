@@ -16,11 +16,15 @@
 
 package de.adorsys.aspsp.aspspmockserver.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
+import org.keycloak.adapters.springsecurity.filter.KeycloakPreAuthActionsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,16 +38,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackageClasses = KeycloakSecurityComponents.class)
+@RequiredArgsConstructor
 public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+    protected final CorsConfigProperties corsConfigProperties;
     protected final String[] ALLOW_PATH = {"/swagger-ui.html**", "/o2c.html", "index.html", "/","/api-docs/**", "/v2/api-docs/**",
         "/info", "/error", "/*.js", "/*.css", "/*.ico", "/*.json", "/webjars/**", "/lib/*", "/swagger-resources/**", "/swagger/**", "/auth/**",
         "/sso/**", "/img/*.png"};
+
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) {
@@ -53,7 +57,7 @@ public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigur
     }
 
     @Bean
-    public KeycloakSpringBootConfigResolver KeycloakConfigResolver() {
+    public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
     }
 
@@ -64,11 +68,25 @@ public abstract class AbstractSecurityConfig extends KeycloakWebSecurityConfigur
     }
 
     @Bean
+    public FilterRegistrationBean keycloakAuthenticationProcessingFilterRegistrationBean(KeycloakAuthenticationProcessingFilter filter) {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(filter);
+        registrationBean.setEnabled(false);
+        return registrationBean;
+    }
+
+    @Bean
+    public FilterRegistrationBean keycloakPreAuthActionsFilterRegistrationBean(KeycloakPreAuthActionsFilter filter) {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(filter);
+        registrationBean.setEnabled(false);
+        return registrationBean;
+    }
+
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(singletonList("*"));
-        configuration.setAllowedHeaders(asList( "Origin", "Authorization", "Content-Type"));
-        configuration.setAllowedMethods(asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
+        configuration.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
+        configuration.setAllowedMethods(corsConfigProperties.getAllowedMethods());
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

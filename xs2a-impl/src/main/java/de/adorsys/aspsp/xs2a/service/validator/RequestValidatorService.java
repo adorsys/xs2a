@@ -20,14 +20,13 @@ package de.adorsys.aspsp.xs2a.service.validator;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.HeadersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.header.RequestHeader;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.ErrorMessageHeaderImpl;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.ParametersFactory;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.RequestParameter;
 import de.adorsys.aspsp.xs2a.service.validator.parameter.impl.ErrorMessageParameterImpl;
-import de.adorsys.aspsp.xs2a.web.BulkPaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
 import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
 import lombok.extern.log4j.Log4j;
@@ -51,14 +50,13 @@ public class RequestValidatorService {
     @Autowired
     private Validator validator;
     @Autowired
-    private AspspProfileService aspspProfileService;
+    private AspspProfileServiceWrapper aspspProfileService;
 
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private final static Map<Object, PisPaymentType> classMap = new HashMap<>();
 
     static {
         classMap.put(PaymentInitiationController.class, PisPaymentType.FUTURE_DATED);
-        classMap.put(BulkPaymentInitiationController.class, PisPaymentType.BULK);
         classMap.put(PeriodicPaymentsController.class, PisPaymentType.PERIODIC);
     }
 
@@ -158,7 +156,7 @@ public class RequestValidatorService {
 
     private Map<String, String> checkPaymentProductSupportAndGetViolationMap(String paymentProduct) {
         return Optional.ofNullable(paymentProduct)
-                   .flatMap(PaymentProduct::getByCode)
+                   .flatMap(PaymentProduct::getByValue)
                    .map(this::getViolationMapForPaymentProduct)
                    .orElseGet(() -> Collections.singletonMap(MessageErrorCode.PRODUCT_UNKNOWN.getName(), "Wrong payment product: " + paymentProduct));
     }

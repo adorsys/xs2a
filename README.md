@@ -139,7 +139,7 @@ $ scripts/release-scripts/release.sh 1.0 1.1
 
 ## Authors
 
-* **[Francis Pouchata](mailto:fpo@adorsys.de)** - *Initial work* - [adorsys](https://www.adorsys.de)
+* **[Francis Pouatcha](mailto:fpo@adorsys.de)** - *Initial work* - [adorsys](https://www.adorsys.de)
 
 See also the list of [contributors](doc/contributors.md) who participated in this project.
 

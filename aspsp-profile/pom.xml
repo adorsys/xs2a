@@ -15,95 +15,30 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.7-SNAPSHOT</version>
+        <version>1.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
+    <groupId>de.adorsys.psd2</groupId>
     <artifactId>aspsp-profile</artifactId>
-    <version>1.7-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <version>1.8-SNAPSHOT</version>
+    <modules>
+        <module>aspsp-profile-api</module>
+        <module>aspsp-profile-server</module>
+        <module>aspsp-profile-lib</module>
+        <module>aspsp-profile-remote</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <name>aspsp-profile</name>
-    <description>Aspsp profile service for XS2A and ASPSP </description>
-
+    <description>ASPSP Profile Module for OpenSource PSD2 XS2A API implementation</description>
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-parameter-names</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <finalName>aspsp-profile</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-
 </project>
