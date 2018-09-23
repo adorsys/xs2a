@@ -7,6 +7,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: cms-backup
+    app: consent-management-system
 spec:
   schedule: "{{ .Values.postgres.backup.schedule }}"
   concurrencyPolicy: Forbid

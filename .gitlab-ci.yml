@@ -112,9 +112,6 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
 
-    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-ui
-    - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
-
 # Pull docker images and put them to OPENSHIFT repo
 .push_docker_openshift: &push_docker_openshift
   script:
@@ -148,10 +145,6 @@ variables: &variables
     - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
-
-    - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
-    - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
-    - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
 
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10

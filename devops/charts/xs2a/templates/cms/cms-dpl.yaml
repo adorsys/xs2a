@@ -22,6 +22,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: ConsentManagementSystem
+    app: consent-management-system
 spec:
   replicas: {{ .Values.cms.replicas }}
   selector:
