@@ -35,7 +35,7 @@ public class PaymentUtils {
         return new HttpEntity<>(request != null ? request.getBody() : null, headers);
     }
 
-    public static HttpEntity getHttpEntity(String scaInformation, Context context) {
+    public static HttpEntity getHttpEntityWithScaInformation(String scaInformation, Context context) {
         MultiValueMap<String, String> bodyWithScaData = new LinkedMultiValueMap<>();
         // we need to setup sca info from data file or from other source
         if (scaInformation.contains("Sca-Method")) {
@@ -43,10 +43,10 @@ public class PaymentUtils {
         } else {
             bodyWithScaData.add(scaInformation, context.getTanValue());
         }
-        return new HttpEntity<>(bodyWithScaData, getHeaders(context));
+        return new HttpEntity<>(bodyWithScaData, getHttpHeaders(context));
     }
 
-    private static HttpHeaders getHeaders(Context context) {
+    private static HttpHeaders getHttpHeaders(Context context) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + context.getAccessToken());
         headers.add("Content-Type", "application/json");
