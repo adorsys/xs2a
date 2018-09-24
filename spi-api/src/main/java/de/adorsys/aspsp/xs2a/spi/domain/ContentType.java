@@ -18,6 +18,10 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum ContentType {
 
@@ -26,9 +30,16 @@ public enum ContentType {
     TXT("text/plain"),
     EMPTY("*/*");
 
+    private static final Map<String, ContentType> CONTAINER = new HashMap<>();
+
+    static {
+        for (ContentType t: values()) {
+            CONTAINER.put(t.getType(), t);
+        }
+    }
+
     private String type;
 
-    @JsonCreator
     ContentType(String type) {
         this.type = type;
     }
@@ -36,5 +47,15 @@ public enum ContentType {
     @JsonValue
     public String getType() {
         return type;
+    }
+
+
+    @JsonCreator
+    public static ContentType extract(String type) {
+        if (StringUtils.isNotBlank(type)) {
+            String[] parts = type.split(";");
+            return CONTAINER.get(parts[0]);
+        }
+        return null;
     }
 }
