@@ -16,5 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.config.factory;
 
+/**
+ * This is specific factory intended to retrieve specific payment type dependent service, which retrieves the payment by ID
+ */
 public interface ReadPaymentFactory extends ServiceFactory {
 }

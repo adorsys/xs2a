@@ -17,5 +17,11 @@
 package de.adorsys.aspsp.xs2a.config.factory;
 
 public interface ServiceFactory {
+    /**
+     * Returns a particular service depending on service name provided as a method argument
+     *
+     * @param serviceName String representation of requested service name which should match the value from @Service("serviceName") annotation
+     * @return T particular service
+     */
     <T> T getService(String serviceName);
 }

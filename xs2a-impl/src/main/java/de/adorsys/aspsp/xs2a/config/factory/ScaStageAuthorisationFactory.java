@@ -16,5 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.config.factory;
 
+/**
+ * This is specific factory intended to retrieve specific, stage-dependent SCA update authorisation services
+ */
 public interface ScaStageAuthorisationFactory extends ServiceFactory {
 }
