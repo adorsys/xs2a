@@ -30,4 +30,5 @@ public class UpdatePisConsentPsuDataRequest {
     private CmsScaStatus scaStatus;
     private String paymentService;
     private CmsAspspConsentData cmsAspspConsentData;
+    private String scaAuthenticationData;
 }
