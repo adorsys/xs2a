@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 
 public class UpdateAisAspspConsentDataMethod extends RestCmsRequestMethod<UpdateConsentAspspDataRequest, CreateAisConsentResponse> {
-    private static final String UPDATE_AIS_CONSENT_BLOB_URI = "api/v1/ais/consent/{consent-id}/blob";
+    private static final String UPDATE_AIS_CONSENT_BLOB_URI = "api/v1/ais/consent/{consent-id}/aspspConsentData";
 
     public UpdateAisAspspConsentDataMethod(final UpdateConsentAspspDataRequest request, HttpUriParams uriParams) {
         super(request, HttpMethod.PUT, UPDATE_AIS_CONSENT_BLOB_URI, uriParams);
