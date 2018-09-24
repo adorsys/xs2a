@@ -50,11 +50,11 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(request)", returning = "result")
-    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq request) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
+    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
         if (!result.hasError()) {
             UpdateConsentPsuDataResponse body = result.getBody();
-            body.setLinks(buildLinksForUpdateConsentResponse(body, request));
+            body.setLinks(buildLinksForUpdateConsentResponse(body, updatePsuData));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -62,9 +62,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
 
     private Links buildLinksForConsentResponse(CreateConsentResponse response) {
         Links links = new Links();
-        ScaApproach scaApproach = aspspProfileService.getScaApproach();
 
-        if (ScaApproach.EMBEDDED == scaApproach) {
+        if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
             buildLinkForEmbeddedScaApproach(response, links);
         } else {
             links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
