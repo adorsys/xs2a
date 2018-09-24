@@ -44,7 +44,7 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
 
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData());
+        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
         if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
             return new UpdatePisConsentPsuDataResponse(FAILED);
@@ -53,20 +53,20 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
         List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(request.getPsuId(), authorisationStatusSpiResponse.getAspspConsentData()).getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
-            request.setScaStatus(FINALISED);
             paymentSpi.executePayment(pisConsentAuthorisationResponse.getPaymentType(), pisConsentAuthorisationResponse.getPayments(), authorisationStatusSpiResponse.getAspspConsentData());
+            request.setScaStatus(FINALISED);
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
 
         } else if (isSingleScaMethod(spiScaMethods)) {
+            paymentSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
             request.setScaStatus(SCAMETHODSELECTED);
             request.setAuthenticationMethodId(spiScaMethods.get(0).name());
-            paymentSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData());
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
 
         } else if (isMultipleScaMethods(spiScaMethods)) {
-            request.setScaStatus(PSUAUTHENTICATED);
             UpdatePisConsentPsuDataResponse response = pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
             response.setAvailableScaMethods(xs2aPisConsentMapper.mapToCmsScaMethods(spiScaMethods));
+            request.setScaStatus(PSUAUTHENTICATED);
             return response;
 
         }
