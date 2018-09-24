@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
@@ -195,8 +195,8 @@ public class OauthScaPaymentServiceTest {
         );
     }
 
-    private AccountReference getReference(String iban) {
-        AccountReference reference = new AccountReference();
+    private Xs2aAccountReference getReference(String iban) {
+        Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setCurrency(Currency.getInstance("EUR"));
         return reference;

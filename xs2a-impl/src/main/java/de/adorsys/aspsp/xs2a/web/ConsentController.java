@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -51,7 +51,7 @@ public class ConsentController implements ConsentApi {
     public ResponseEntity<?> createConsent(UUID xRequestID, Consents body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, Boolean tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, Boolean tpPExplicitAuthorisationPreferred, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body);
 
-        Set<AccountReference> references = createConsent.getAccountReferences();
+        Set<Xs2aAccountReference> references = createConsent.getAccountReferences();
         ResponseObject accountReferenceValidationResponse = references.isEmpty()
                                                                 ? ResponseObject.builder().build()
                                                                 : referenceValidationService.validateAccountReferences(createConsent.getAccountReferences());

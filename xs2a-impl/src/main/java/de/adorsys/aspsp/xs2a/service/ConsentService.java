@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -189,7 +189,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
 
-    boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
+    boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getIban().equals(iban)

@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
@@ -303,8 +303,8 @@ public class PaymentServiceTest {
         return singlePayments;
     }
 
-    private AccountReference getReference(String iban) {
-        AccountReference reference = new AccountReference();
+    private Xs2aAccountReference getReference(String iban) {
+        Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setCurrency(CURRENCY);
 
