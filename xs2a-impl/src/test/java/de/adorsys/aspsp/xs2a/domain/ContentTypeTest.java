@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain;
-
+package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
