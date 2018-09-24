@@ -20,6 +20,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.LinksPaymentInitiation;
 import de.adorsys.psd2.model.LinksSelectPsuAuthenticationMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,8 +31,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
 
 @FeatureFileSteps
 public class PaymentAuthorisationSuccessfulSteps {
@@ -41,26 +45,27 @@ public class PaymentAuthorisationSuccessfulSteps {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, LinksSelectPsuAuthenticationMethod> context;
+    private Context<HashMap, LinksPaymentInitiation> context;
 
     @Given("^PSU initiated a payment (.*) with the payment-id (.*)$")
     public void psuInitiatedAPaymentWithThePaymentId(String paymentService, String paymentId) {
         HttpEntity entity = PaymentUtils.getHttpEntity(null, context.getAccessToken());
 
-        ResponseEntity<LinksSelectPsuAuthenticationMethod> response = restTemplate.exchange(
+        ResponseEntity<LinksPaymentInitiation> response = restTemplate.exchange(
             context.getBaseUrl() + paymentService + "/" + paymentId + "/authorisations",
             HttpMethod.POST,
             entity,
-            LinksSelectPsuAuthenticationMethod.class);
+            LinksPaymentInitiation.class);
         context.setActualResponse(response);
     }
 
     @And("^check if authorisationId and SCA status are valid$")
     public void checkAuthorisationIdAndScaStatus() {
-        ResponseEntity<LinksSelectPsuAuthenticationMethod> actualResponse = context.getActualResponse();
-        LinksSelectPsuAuthenticationMethod givenResponseBody = context.getTestData().getResponse().getBody();
+        ResponseEntity<LinksPaymentInitiation> actualResponse = context.getActualResponse();
+        LinksPaymentInitiation givenResponseBody = context.getTestData().getResponse().getBody();
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
+        assertThat(actualResponse.getBody().getStartAuthorisationWithPsuAuthentication(), not(isEmptyString()));
     }
 }

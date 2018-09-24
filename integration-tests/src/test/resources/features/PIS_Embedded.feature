@@ -19,4 +19,4 @@ Feature: Payment Initiation Embedded approach
         Then a successful response code and the appropriate authorization data are received
         Examples:
             | payment-service |	payment-id	                         | authorisation-data               | authorisation-id |                        tan |
-            | payments	      | a9115f14-4f72-4e4e-8798-202808e85238 | authWithPsuIdent-successful.json | a9115f14-4f72-4e4e-8798-202808e85238 | 12345  |
+            | payments	      | a9115f14-4f72-4e4e-8798-202808e85238 | authWithPsuIdent-successful.json | 4b112130-6a96-4941-a220-2da8a4af2c65 | 111111  |
