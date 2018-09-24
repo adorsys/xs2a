@@ -246,7 +246,9 @@ public class ConsentModelMapper {
         return new UpdatePsuAuthenticationResponse()
                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
-                   .scaStatus(ScaStatus.valueOf(response.getScaStatus()));
+                   .scaStatus(Optional.ofNullable(response.getScaStatus())
+                                  .map(ScaStatus::valueOf)
+                                  .orElse(ScaStatus.FAILED));
     }
 
     private ScaMethods getAvailableScaMethods(List<CmsScaMethod> availableScaMethods) {
