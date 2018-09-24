@@ -149,7 +149,7 @@ public class CmsExecutor {
                                       .addPathVariable("consent-id", consentId)
                                       .build();
         Optional<CreateAisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateAisAspspConsentDataMethod(buildUpdateConsentAspspDataRequest(), uriParams)));
-        updateBlobResponse.ifPresent(resp -> logger.info("Ais consent blob was updated in: " + resp.getConsentId()));
+        updateBlobResponse.ifPresent(resp -> logger.info("Ais consent aspsp data was updated in: " + resp.getConsentId()));
     }
 
     /**
@@ -253,7 +253,7 @@ public class CmsExecutor {
                                       .addPathVariable("consent-id", consentId)
                                       .build();
         Optional<CreatePisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentAspspDataMethod(buildUpdateConsentAspspDataRequest(), uriParams)));
-        updateBlobResponse.ifPresent(resp -> logger.info("Pis consent blob was updated in: " + resp.getConsentId()));
+        updateBlobResponse.ifPresent(resp -> logger.info("Pis consent aspsp data was updated in: " + resp.getConsentId()));
     }
 
     /**
