@@ -1,0 +1,39 @@
+{{- if and .Values.aspspMock.enabled (not .Values.aspspMock.image.stream) }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-aspsp-mock
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app: aspsp-mock
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.aspspMock.image.name }}{{ eq (substr 0 1 .Values.aspspMock.image.tag) "@" | ternary "" ":" }}{{ .Values.aspspMock.image.tag }}
+    referencePolicy:
+      type: {{ .Values.pullThrough | ternary "Local" "Source" }}
+{{- end }}
+{{- if .Values.aspspMock.db.image.name }}
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ template "psd2.fullname" . }}-mock-db
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - name: latest
+    from:
+      kind: DockerImage
+      name: {{ .Values.aspspMock.db.image.name }}:{{ .Values.aspspMock.db.image.tag }}
+    referencePolicy:
+      type: {{ .Values.pullThrough | ternary "Local" "Source" }}
+{{- end }}

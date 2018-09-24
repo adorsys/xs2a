@@ -1,0 +1,59 @@
+{{ if .Values.cmsPortal.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.cmsPortal.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          "name":"{{- if .Values.cmsPortal.image.stream }}{{ .Values.cmsPortal.image.name }}:{{ default "latest" .Values.cmsPortal.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-cmsportal:latest{{- end }}"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"cms-portal\")].image"
+      }]
+  name: {{ template "psd2.fullname" . }}-cmsportal
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: cmsPortal
+    app: aspsp-mock
+spec:
+  replicas: {{ .Values.cmsPortal.replicas }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: cmsPortal
+  template:
+    metadata:
+    {{- if .Values.cmsPortal.podAnnotations }}
+      annotations:
+{{ toYaml .Values.cmsPortal.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: cmsPortal
+    spec:
+      containers:
+        - name: cms-portal
+          image: " "
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          env:
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
+{{- range $name, $value := .Values.cmsPortal.env }}
+{{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ tpl (toString $value) $ | quote }}
+{{- end }}
+{{- end }}
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 10 }}
+{{- end }}
+          resources:
+{{ toYaml .Values.cmsPortal.resources | indent 12 }}
+{{- end }}

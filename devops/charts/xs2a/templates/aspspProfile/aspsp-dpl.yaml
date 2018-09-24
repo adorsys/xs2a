@@ -1,0 +1,58 @@
+{{ if .Values.aspspProfile.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.aspspProfile.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          "name":"{{- if .Values.aspspProfile.image.stream }}{{ .Values.aspspProfile.image.name }}:{{ default "latest" .Values.aspspProfile.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspspProfile:latest{{- end }}"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"aspsp-profile\")].image"
+      }]
+  name: {{ template "psd2.fullname" . }}-aspspprofile
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: aspspProfile
+spec:
+  replicas: {{ .Values.aspspProfile.replicas }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: aspspProfile
+  template:
+    metadata:
+    {{- if .Values.aspspProfile.podAnnotations }}
+      annotations:
+{{ toYaml .Values.aspspProfile.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: aspspProfile
+    spec:
+      containers:
+        - name: aspsp-profile
+          image: " "
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          env:
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
+{{- range $name, $value := .Values.aspspProfile.env }}
+{{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+{{- end }}
+{{- end }}
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 10 }}
+{{- end }}
+          resources:
+{{ toYaml .Values.aspspProfile.resources | indent 12 }}
+{{- end }}
