@@ -161,6 +161,12 @@ public class PisConsentService {
                    .flatMap(c -> pisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)));
     }
 
+    /**
+     * Creates PIS consent authorization entity and stores it into database
+     *
+     * @param pisConsent PIS Consent, for which authorization is performing
+     * @return PisConsentAuthorization
+     */
     private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());

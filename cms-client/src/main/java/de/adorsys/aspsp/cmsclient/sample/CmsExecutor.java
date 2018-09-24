@@ -55,6 +55,11 @@ public class CmsExecutor {
     private static final int CONNECTION_REQUEST_TIMEOUT = 5000;
     private static String consentId = "Test consent id";
 
+    /**
+     * Makes calls to CMS PIS and AIS endpoints and logs the response
+     *
+     * @param args Array of strings, provided with main() execution
+     */
     public static void main(String[] args) throws IOException, URISyntaxException {
         Configuration configuration = new Configuration(CMS_BASE_URL, CONNECTION_TIMEOUT, CONNECTION_REQUEST_TIMEOUT);
 
