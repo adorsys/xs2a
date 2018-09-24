@@ -136,7 +136,7 @@ public class AisConsentService {
     }
 
     /**
-     * Update AIS consent aspsp blob data by id
+     * Update AIS consent aspsp consent data by id
      *
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated

@@ -101,7 +101,7 @@ public class PisConsentService {
     }
 
     /**
-     * Update PIS consent aspsp blob data by id
+     * Update PIS consent aspsp consent data by id
      *
      * @param request   needed parameters for updating PIS consent
      * @param consentId id of the consent to be updated
