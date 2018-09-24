@@ -16,139 +16,105 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
-import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.service.AccountService;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.api.AccountApi;
+import de.adorsys.psd2.model.*;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "api/v1/accounts")
-@Api(value = "api/v1/accounts", tags = "AISP, Accounts", description = "Provides access to the Psu account")
-public class AccountController {
+@Api(tags = "AISP, Accounts", description = "Provides access to the Psu account")
+public class AccountController implements AccountApi {
+
     private final AccountService accountService;
     private final ResponseMapper responseMapper;
+    private final AccountModelMapper accountModelMapper;
 
-    @ApiOperation(value = "Reads a list of accounts, with balances where required . It is assumed that a consent of the Psu to this access is already given and stored on the ASPSP system. The addressed list of accounts depends then on the Psu ID and the stored consent addressed by consent-id, respectively the OAuth2 token")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Map.class),
-        @ApiResponse(code = 400, message = "Bad request"),
-        @ApiResponse(code = 401, message = "Consent invalid or expired"),
-        @ApiResponse(code = 429, message = "Access exceeded")})
-    @GetMapping
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<Map<String, List<Xs2aAccountDetails>>> getAccounts(
-        @RequestHeader(name = "consent-id") String consentId,
-        @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-        @RequestParam(name = "with-balance", required = false) boolean withBalance) {
-        ResponseObject<Map<String, List<Xs2aAccountDetails>>> responseObject = accountService.getAccountDetailsList(consentId, withBalance);
-        return responseMapper.ok(responseObject);
+    @Override
+    public ResponseEntity<?> getAccountList(UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return responseMapper.ok(accountService.getAccountDetailsList(consentID, Optional.ofNullable(withBalance).orElse(false)), accountModelMapper::mapToAccountList);
     }
 
-    @ApiOperation(value = "Reads details about an account, with balances where required. It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. The addressed details of this account depends then on the stored consent addressed by consentId, respectively the OAuth2 access token")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Xs2aAccountDetails.class),
-        @ApiResponse(code = 400, message = "Bad request"),
-        @ApiResponse(code = 401, message = "Consent invalid or expired"),
-        @ApiResponse(code = 404, message = "Account not found"),
-        @ApiResponse(code = 429, message = "Access exceeded")})
-    @GetMapping(path = "/{account-id}")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<Xs2aAccountDetails> readAccountDetails(
-        @RequestHeader(name = "consent-id") String consentId,
-        @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed", example = "11111-999999999")
-        @PathVariable(name = "account-id") String accountId,
-        @ApiParam(name = "with-balance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-        @RequestParam(name = "with-balance", required = false) boolean withBalance) {
-        ResponseObject<Xs2aAccountDetails> responseObject = accountService.getAccountDetails(consentId, accountId, withBalance);
-        return responseMapper.ok(responseObject);
+    @Override
+    public ResponseEntity<?> readAccountDetails(String accountId, UUID xRequestID, String consentID, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return responseMapper.ok(accountService.getAccountDetails(consentID, accountId, Optional.ofNullable(withBalance).orElse(false)), accountModelMapper::mapToAccountDetails);
     }
 
-    @ApiOperation(value = "Read a list of the balances for the given account")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = List.class),
-        @ApiResponse(code = 400, message = "Bad request"),
-        @ApiResponse(code = 401, message = "Consent invalid or expired"),
-        @ApiResponse(code = 404, message = "Account not found"),
-        @ApiResponse(code = 429, message = "Access exceeded")})
-    @GetMapping(path = "/{account-id}/balances")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<List<Xs2aBalance>> getBalances(
-        @RequestHeader(name = "consent-id") String consentId,
-        @ApiParam(name = "account-id", required = true, value = "This identification is denoting the addressed account, where the transaction has been performed")
-        @PathVariable(name = "account-id") String accountId) {
-        ResponseObject<List<Xs2aBalance>> responseObject = accountService.getBalances(consentId, accountId);
-        return responseMapper.ok(responseObject);
+    @Override
+    public ResponseEntity<?> getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return responseMapper.ok(accountService.getBalances(consentID, accountId), accountModelMapper::mapToBalance);
     }
 
-    @ApiOperation(value = "Reads account data from a given account addressed by \"account-id\".")
+    @ApiOperation(value = "Read Transaction List", nickname = "getTransactionList", notes = "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. ", response = TransactionsResponse200Json.class, authorizations = {
+        @Authorization(value = "BearerAuthOAuth")}, tags = {"Account Information Service (AIS)",})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Xs2aAccountReport.class),
-        @ApiResponse(code = 400, message = "Bad request"),
-        @ApiResponse(code = 401, message = "Consent invalid or expired"),
-        @ApiResponse(code = 429, message = "Access exceeded")})
-    @GetMapping(path = "/{account-id}/transactions")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "consent-id", value = "7f53031f-3cd8-4270-b07f-4ea1456ba124", required = true, paramType = "header"),
-        @ApiImplicitParam(name = "tpp-transaction-id", value = "16d40f49-a110-4344-a949-f99828ae13c9", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", required = false, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<Xs2aAccountReport> getTransactions(@ApiParam(name = "account-id", required = true, value = "The account consent identification assigned to the created resource")
-                                                             @PathVariable(name = "account-id") String accountId,
-                                                             @RequestHeader(name = "consent-id", required = false) String consentId,
-                                                             @ApiParam(name = "dateFrom", value = "Starting date of the account statement", example = "2017-10-30")
-                                                             @RequestParam(name = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
-                                                             @ApiParam(name = "dateTo", value = "End date of the account statement", example = "2017-11-30")
-                                                             @RequestParam(name = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
-                                                             @ApiParam(name = "transactionId", value = "Transaction identification", example = "1234567")
-                                                             @RequestParam(name = "transactionId", required = false) String transactionId,
-                                                             @ApiParam(name = "psuInvolved", value = "If contained, it is indicating that a Psu has directly asked this account access in real-time. The Psu then might be involved in an additional consent process, if the given consent is not any more sufficient.")
-                                                             @RequestParam(name = "psuInvolved", required = false) boolean psuInvolved,
-                                                             @ApiParam(name = "bookingStatus", example = "both", required = true, allowableValues = "booked, pending, both")
-                                                             @RequestParam(name = "bookingStatus") String bookingStatus,
-                                                             @ApiParam(name = "withBalance", value = "If contained, this function reads the list of accessible payment accounts including the balance.")
-                                                             @RequestParam(name = "withBalance", required = false) boolean withBalance,
-                                                             @ApiParam(name = "deltaList", value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU")
-                                                             @RequestParam(name = "deltaList", required = false) boolean deltaList) {
+        @ApiResponse(code = 200, message = "OK", response = TransactionsResponse200Json.class),
+        @ApiResponse(code = 400, message = "Bad Request", response = TppMessages400.class),
+        @ApiResponse(code = 401, message = "Unauthorized", response = TppMessages401.class),
+        @ApiResponse(code = 403, message = "Forbidden", response = TppMessages403.class),
+        @ApiResponse(code = 404, message = "Not found", response = TppMessages404.class),
+        @ApiResponse(code = 405, message = "Method Not Allowed", response = TppMessages405.class),
+        @ApiResponse(code = 406, message = "Not Acceptable", response = TppMessages406.class),
+        @ApiResponse(code = 408, message = "Request Timeout"),
+        @ApiResponse(code = 415, message = "Unsupported Media Type"),
+        @ApiResponse(code = 429, message = "Too Many Requests", response = TppMessages429.class),
+        @ApiResponse(code = 500, message = "Internal Server Error"),
+        @ApiResponse(code = 503, message = "Service Unavailable")})
+    @RequestMapping(value = "/v1/accounts/{account-id}/transactions",
+        produces = {"application/json", "application/xml"},
+        method = RequestMethod.GET)
+    @Override
+    public ResponseEntity<?> _getTransactionList(@ApiParam(value = "This identification is denoting the addressed account.  The account-id is retrieved by using a \"Read Account List\" call.  The account-id is the \"id\" attribute of the account structure.  Its value is constant at least throughout the lifecycle of a given consent. ", required = true) @PathVariable("account-id") String accountId, @NotNull @ApiParam(value = "Permitted codes are    * \"booked\",   * \"pending\" and    * \"both\" \"booked\" shall be supported by the ASPSP. To support the \"pending\" and \"both\" feature is optional for the ASPSP,  Error code if not supported in the online banking frontend ", required = true, allowableValues = "booked, pending, both") @Valid @RequestParam(value = "bookingStatus", required = true) String bookingStatus,
+                                                 @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
+                                                 @ApiParam(value = "This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. ", required = true) @RequestHeader(value = "Consent-ID", required = true) String consentID,
+                                                 @ApiParam(value = "Conditional: Starting date (inclusive the date dateFrom) of the transaction list, mandated if no delta access is required. ") @Valid @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom,
+                                                 @ApiParam(value = "End date (inclusive the data dateTo) of the transaction list, default is now if not given. ") @Valid @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam(value = "dateTo", required = false) LocalDate dateTo,
+                                                 @ApiParam(value = "This data attribute is indicating that the AISP is in favour to get all transactions after  the transaction with identification entryReferenceFrom alternatively to the above defined period.  This is a implementation of a delta access.  If this data element is contained, the entries \"dateFrom\" and \"dateTo\" might be ignored by the ASPSP  if a delta report is supported.  Optional if supported by API provider. ") @Valid @RequestParam(value = "entryReferenceFrom", required = false) String entryReferenceFrom,
+                                                 @ApiParam(value = "This data attribute is indicating that the AISP is in favour to get all transactions after the last report access for this PSU on the addressed account. This is another implementation of a delta access-report. This delta indicator might be rejected by the ASPSP if this function is not supported. Optional if supported by API provider") @Valid @RequestParam(value = "deltaList", required = false) Boolean deltaList,
+                                                 @ApiParam(value = "If contained, this function reads the list of accessible payment accounts including the booking balance,  if granted by the PSU in the related consent and available by the ASPSP.  This parameter might be ignored by the ASPSP.  ") @Valid @RequestParam(value = "withBalance", required = false) Boolean withBalance,
+                                                 @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
+                                                 @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
+                                                 @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+                                                 @ApiParam(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. ") @RequestHeader(value = "PSU-IP-Address", required = false) String psUIPAddress,
+                                                 @ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. ") @RequestHeader(value = "PSU-IP-Port", required = false) Object psUIPPort,
+                                                 @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept", required = false) String psUAccept,
+                                                 @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Charset", required = false) String psUAcceptCharset,
+                                                 @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Encoding", required = false) String psUAcceptEncoding,
+                                                 @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Language", required = false) String psUAcceptLanguage,
+                                                 @ApiParam(value = "The forwarded Agent header field of the HTTP request between PSU and TPP, if available. ") @RequestHeader(value = "PSU-User-Agent", required = false) String psUUserAgent,
+                                                 @ApiParam(value = "HTTP method used at the PSU ? TPP interface, if available. Valid values are: * GET * POST * PUT * PATCH * DELETE ", allowableValues = "GET, POST, PUT, PATCH, DELETE") @RequestHeader(value = "PSU-Http-Method", required = false) String psUHttpMethod,
+                                                 @ApiParam(value = "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available. UUID identifies either a device or a device dependant application installation. In case of an installation identification this ID need to be unaltered until removal from device. ") @RequestHeader(value = "PSU-Device-ID", required = false) UUID psUDeviceID,
+                                                 @ApiParam(value = "The forwarded Geo Location of the corresponding http request between PSU and TPP if available. ") @RequestHeader(value = "PSU-Geo-Location", required = false) String psUGeoLocation) {
+        return getTransactionList(accountId, bookingStatus, xRequestID, consentID, dateFrom, dateTo, entryReferenceFrom, deltaList, withBalance, digest, signature, tpPSignatureCertificate, psUIPAddress, psUIPPort, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUUserAgent, psUHttpMethod, psUDeviceID, psUGeoLocation);
+    }
+
+    @Override
+    public ResponseEntity<?> getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        ResponseObject<Xs2aTransactionsReport> transactionsReport =
+            accountService.getTransactionsReportByPeriod(accountId, Optional.ofNullable(withBalance).orElse(false), consentID, dateFrom, dateTo, Xs2aBookingStatus.forValue(bookingStatus));
+        return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponse200Json);
+    }
+
+    @Override
+    public ResponseEntity<?> getTransactionDetails(String accountId, String resourceId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Xs2aAccountReport> responseObject =
-            accountService.getAccountReport(consentId, accountId, dateFrom, dateTo, transactionId, psuInvolved, Xs2aBookingStatus.forValue(bookingStatus), withBalance, deltaList);
-        return responseMapper.ok(responseObject);
+            accountService.getAccountReportByTransactionId(consentID, accountId, resourceId);
+        return responseMapper.ok(responseObject, accountModelMapper::mapToAccountReport);
     }
 }

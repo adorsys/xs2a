@@ -18,11 +18,10 @@ package de.adorsys.aspsp.xs2a.service.validator;
 
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
-import de.adorsys.aspsp.xs2a.web.PaymentInitiationController;
-import de.adorsys.aspsp.xs2a.web.PeriodicPaymentsController;
+import de.adorsys.aspsp.xs2a.web.ConsentController;
+import de.adorsys.aspsp.xs2a.web.PaymentController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,10 +34,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PARAMETER_NOT_SUPPORTED;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PRODUCT_UNKNOWN;
@@ -52,11 +48,9 @@ public class RequestValidatorServiceTest {
     @InjectMocks
     private RequestValidatorService requestValidatorService;
     @Mock
-    private ConsentInformationController consentInformationController;
+    private ConsentController consentController;
     @Mock
-    private PaymentInitiationController paymentInitiationController;
-    @Mock
-    private PeriodicPaymentsController periodicPaymentsController;
+    private PaymentController paymentController;
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
 
@@ -69,7 +63,7 @@ public class RequestValidatorServiceTest {
             .thenReturn(Arrays.asList(PaymentProduct.ISCT, PaymentProduct.SCT));
 
         when(aspspProfileService.getAvailablePaymentTypes())
-            .thenReturn(Arrays.asList(PisPaymentType.BULK, PisPaymentType.FUTURE_DATED));
+            .thenReturn(Arrays.asList(PisPaymentType.SINGLE, PisPaymentType.BULK, PisPaymentType.FUTURE_DATED));
     }
 
     @Test
@@ -122,7 +116,7 @@ public class RequestValidatorServiceTest {
         HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -133,11 +127,14 @@ public class RequestValidatorServiceTest {
     public void getRequestPathVariablesViolationMap() throws Exception {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
-        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.SCT.getCode()));
+        Map<String, String> templates = new HashMap<>();
+        templates.put("payment-product", PaymentProduct.SCT.getCode());
+        templates.put("payment-service", PaymentType.SINGLE.getValue());
+        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
         HandlerMethod handler = getPaymentInitiationControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request, handler);
+        Map<String, String> actualViolations = requestValidatorService.getRequestPathVariablesViolationMap(request);
 
         //Then:
         assertThat(actualViolations.isEmpty()).isTrue();
@@ -147,11 +144,14 @@ public class RequestValidatorServiceTest {
     public void getRequestPathVariablesViolationMap_wrongPaymentType() throws Exception {
         //Given:
         HttpServletRequest request = getCorrectRequestForPayment();
-        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, Collections.singletonMap("payment-product", PaymentProduct.SCT.getCode()));
+        Map<String, String> templates = new HashMap<>();
+        templates.put("payment-product", PaymentProduct.SCT.getCode());
+        templates.put("payment-service", PaymentType.PERIODIC.getValue());
+        request.setAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE, templates);
         HandlerMethod handler = getPeriodicPaymentsControllerHandler();
 
         //When:
-        Map<String, String> actualViolations = requestValidatorService.getPaymentTypeViolationMap(handler);
+        Map<String, String> actualViolations = requestValidatorService.getPaymentTypeViolationMap(request);
 
         //Then:
         assertThat(actualViolations.size()).isEqualTo(1);
@@ -198,14 +198,24 @@ public class RequestValidatorServiceTest {
     }
 
     private HandlerMethod getHandler() throws NoSuchMethodException {
-        return new HandlerMethod(consentInformationController, "getAccountConsentsInformationById", String.class);
+        Class<?>[] params = new Class<?>[]{String.class, UUID.class, String.class, String.class, byte[].class,
+            String.class, Object.class, String.class, String.class, String.class, String.class, String.class,
+            String.class, UUID.class, String.class};
+        return new HandlerMethod(consentController, "getConsentInformation", params);
     }
 
     private HandlerMethod getPaymentInitiationControllerHandler() throws NoSuchMethodException {
-        return new HandlerMethod(paymentInitiationController, "getPaymentInitiationStatusById", String.class, String.class);
+        Class<?>[] params = new Class<?>[]{String.class, String.class, UUID.class, String.class, String.class,
+            byte[].class, String.class, Object.class, String.class, String.class, String.class, String.class,
+            String.class, String.class, UUID.class, String.class};
+        return new HandlerMethod(paymentController, "getPaymentInitiationStatus", params);
     }
 
     private HandlerMethod getPeriodicPaymentsControllerHandler() throws NoSuchMethodException {
-        return new HandlerMethod(periodicPaymentsController, "createPeriodicPayment", String.class, String.class, PeriodicPayment.class);
+        Class<?>[] params = new Class<?>[]{Object.class, String.class, String.class, UUID.class, String.class,
+            String.class, String.class, byte[].class, String.class, String.class, String.class, String.class,
+            String.class, Boolean.class, String.class, String.class, Boolean.class, Object.class, String.class,
+            String.class, String.class, String.class, String.class, String.class, UUID.class, String.class};
+        return new HandlerMethod(paymentController, "initiatePayment", params);
     }
 }

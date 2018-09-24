@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.web12;
+package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
@@ -40,8 +40,8 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api(tags = "AISP, Consents version 1.2", description = "Provides access to the Psu Consents")
-public class ConsentController12 implements ConsentApi {
+@Api(tags = "AISP, Consents", description = "Provides access to the Psu Consents")
+public class ConsentController implements ConsentApi {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;
     private final AccountReferenceValidationService referenceValidationService;

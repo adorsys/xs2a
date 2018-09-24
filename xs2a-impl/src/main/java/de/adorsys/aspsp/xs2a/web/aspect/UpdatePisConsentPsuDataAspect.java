@@ -23,14 +23,14 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.aspsp.xs2a.web12.PaymentController12;
+import de.adorsys.aspsp.xs2a.web.PaymentController;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentController12> {
+public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentController> {
     public UpdatePisConsentPsuDataAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }

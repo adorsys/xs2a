@@ -24,7 +24,7 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.aspsp.xs2a.web12.AccountController12;
+import de.adorsys.aspsp.xs2a.web.AccountController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,7 +37,7 @@ import java.util.Optional;
 @Slf4j
 @Aspect
 @Component
-public class AccountAspect extends AbstractLinkAspect<AccountController12> {
+public class AccountAspect extends AbstractLinkAspect<AccountController> {
     public AccountAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
