@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.aspsp.xs2a.config.factory;
 
-public interface ReadPaymentFactory {
-    ReadPayment getService(String serviceName);
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import lombok.RequiredArgsConstructor;
+
+import java.util.function.BiFunction;
+
+@RequiredArgsConstructor
+public abstract class ScaStage<T, U, R> implements BiFunction<T, U, R> {
+    protected final PaymentSpi paymentSpi;
+    protected final PisAuthorisationService pisAuthorisationService;
+    protected final Xs2aPisConsentMapper xs2aPisConsentMapper;
 }
