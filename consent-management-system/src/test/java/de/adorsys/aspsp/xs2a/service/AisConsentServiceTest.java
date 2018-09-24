@@ -50,7 +50,7 @@ public class AisConsentServiceTest {
     @InjectMocks
     private AisConsentService aisConsentService;
     @Mock
-    private AspspProfileService aspspProfileService;
+    private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     @Mock
     private AisConsentMapper consentMapper;
     @Mock
@@ -85,7 +85,7 @@ public class AisConsentServiceTest {
     public void shouldReturnExternalId_WhenCreateConsentIsCalled() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(aspspProfileService.getMinFrequencyPerDay(anyInt())).thenReturn(anyInt());
+        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt())).thenReturn(anyInt());
 
         // Then
         Optional<String> externalId = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
