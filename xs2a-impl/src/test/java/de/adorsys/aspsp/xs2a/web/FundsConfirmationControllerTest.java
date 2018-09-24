@@ -18,11 +18,12 @@ package de.adorsys.aspsp.xs2a.web;
 
 import com.google.gson.Gson;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
-import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
-import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
+import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
+import de.adorsys.aspsp.xs2a.service.mapper.FundsConfirmationModelMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.model.ConfirmationOfFunds;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationControllerTest {
-    private final String FUNDS_REQ_DATA = "/json/FundsConfirmationRequestTestData.json";
+    private final String FUNDS_REQ_DATA = "/json/ConfirmationOfFundsTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
     @InjectMocks
@@ -51,6 +52,8 @@ public class FundsConfirmationControllerTest {
     private FundsConfirmationService fundsConfirmationService;
     @Mock
     private ResponseMapper responseMapper;
+    @Mock
+    private FundsConfirmationModelMapper fundsConfirmationModelMapper;
     @Mock
     private AccountReferenceValidationService referenceValidationService;
 
@@ -63,16 +66,18 @@ public class FundsConfirmationControllerTest {
     @Test
     public void fundConfirmation() throws IOException {
         when(responseMapper.ok(any())).thenReturn(new ResponseEntity<>(readResponseObject().getBody(), HttpStatus.OK));
+
         //Given
-        FundsConfirmationRequest fundsReq = readFundsConfirmationRequest();
+        ConfirmationOfFunds confirmationOfFunds = getConfirmationOfFunds();
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<FundsConfirmationResponse> actualResult = fundsConfirmationController.fundConfirmation(fundsReq);
+        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(confirmationOfFunds, null, null, null, null);
+        FundsConfirmationResponse fundsConfirmationResponse = (FundsConfirmationResponse) actualResult.getBody();
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(actualResult.getBody().isFundsAvailable()).isEqualTo(true);
+        assertThat(fundsConfirmationResponse.isFundsAvailable()).isEqualTo(true);
     }
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {
@@ -80,9 +85,7 @@ public class FundsConfirmationControllerTest {
                    .body(new FundsConfirmationResponse(true)).build();
     }
 
-    private FundsConfirmationRequest readFundsConfirmationRequest() throws IOException {
-
-
-        return new Gson().fromJson(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), FundsConfirmationRequest.class);
+    private ConfirmationOfFunds getConfirmationOfFunds() throws IOException {
+        return new Gson().fromJson(IOUtils.resourceToString(FUNDS_REQ_DATA, UTF_8), ConfirmationOfFunds.class);
     }
 }

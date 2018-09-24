@@ -1,0 +1,15 @@
+{
+  "account": {
+    "iban": "some iban"
+  },
+  "balances": [{
+    "balanceAmount": {
+      "currency": "EUR",
+      "amount": "300.45"
+    },
+    "balanceType": "INTERIM_AVAILABLE",
+    "lastChangeDateTime": "2018-03-31T15:16:16.37Z",
+    "referenceDate": "2018-03-29",
+    "lastCommittedTransaction": "abc"
+  }]
+}

@@ -44,7 +44,6 @@ abstract class CommonRequestHeader implements RequestHeader {
     private String tppSignatureCertificate;
 
     @JsonProperty(value = "tpp-qwac-certificate")
-    @NotNull
     private String tppQwacCertificate;
 
     @JsonProperty(value = "Authorization")
