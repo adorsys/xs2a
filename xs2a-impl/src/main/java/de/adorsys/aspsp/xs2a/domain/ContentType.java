@@ -49,7 +49,13 @@ public enum ContentType {
         return type;
     }
 
-
+    /**
+     * Extracts content-type by deserialization from strings such as "content/type; encoding=utf-8"
+     * For us encoding, boundary etc. are not relevant in this Enum
+     *
+     * @param type input string with full content type (i.e. "text/plain; boundary=-------")
+     * @return mapped enum value. Null if not found
+     */
     @JsonCreator
     public static ContentType extract(String type) {
         if (StringUtils.isNotBlank(type)) {
