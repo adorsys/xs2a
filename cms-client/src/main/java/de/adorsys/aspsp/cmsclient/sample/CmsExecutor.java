@@ -41,6 +41,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Currency;
 import java.util.Optional;
 
@@ -145,7 +146,8 @@ public class CmsExecutor {
 
     private static UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
         UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
-        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        byte[] aspspCnsentData = Base64.getEncoder().encode("zdxcvvzzzxcvzzzz".getBytes());
+        request.setAspspConsentData(aspspCnsentData);
         return request;
     }
 
