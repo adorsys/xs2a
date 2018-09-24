@@ -64,9 +64,9 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
 
         } else if (isMultipleScaMethods(spiScaMethods)) {
+            request.setScaStatus(PSUAUTHENTICATED);
             UpdatePisConsentPsuDataResponse response = pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
             response.setAvailableScaMethods(xs2aPisConsentMapper.mapToCmsScaMethods(spiScaMethods));
-            request.setScaStatus(PSUAUTHENTICATED);
             return response;
 
         }
