@@ -31,6 +31,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: keycloak-db
+    app: aspsp-mock
 spec:
   serviceName: {{ template "psd2.fullname" . }}-keycloak-db-hs
   updateStrategy:

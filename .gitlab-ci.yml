@@ -230,13 +230,30 @@ unit_tests:
 
 deploy_develop_stage:
   stage: "deploy:static"
-  when: manual
   <<: *build_docker_image
   <<: *push_docker_openshift
   <<: *helm_env_deploy
   only:
-    - devops-helm
     - develop
+  variables:
+    <<: *variables
+    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
+    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+    HELM_VALUE: develop.yaml
+  environment:
+    name: dev
+    url: ~
+
+# Branches with -helm- in naming are used for testing deployment scripts
+deploy_branch_stage:
+  stage: "deploy:static"
+  <<: *build_docker_image
+  <<: *push_docker_openshift
+  <<: *helm_env_deploy
+  when: manual
+  only:
+    - /^.*-helm-.*$/
   variables:
     <<: *variables
     OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"

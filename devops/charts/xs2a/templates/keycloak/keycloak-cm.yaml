@@ -8,6 +8,7 @@ metadata:
   labels:
 {{ include "psd2.labels" . | indent 4 }}
     app.kubernetes.io/component: keycloak
+    app: aspsp-mock
 data:
   keycloak.sh: |
     #!/usr/bin/env bash
