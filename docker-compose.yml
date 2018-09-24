@@ -79,7 +79,7 @@ services:
 # ASPSP-PROFILE
   aspsp-profile:
     build:
-      context: aspsp-profile
+      context: aspsp-profile/aspsp-profile-server
       dockerfile: Dockerfile
     restart: on-failure
     environment:
