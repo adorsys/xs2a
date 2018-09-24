@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.exception;
+package de.adorsys.aspsp.xs2a.service;
 
-import lombok.Value;
-import org.springframework.http.HttpStatus;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@Value
-public class AspspProfileRestException extends RuntimeException {
-    private HttpStatus httpStatus;
-    private String message;
+@Service
+@RequiredArgsConstructor
+public class FrequencyPerDateCalculationService {
+    private final AspspProfileService aspspProfileService;
+
+    public int getMinFrequencyPerDay(int tppFrequency) {
+        return Math.min(Math.abs(tppFrequency), getFrequencyPerDay());
+    }
+
+    private Integer getFrequencyPerDay() {
+        return aspspProfileService.getAspspSettings().getFrequencyPerDay();
+    }
 }

@@ -248,6 +248,8 @@ public class ConsentModelMapper {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)
                 .ifPresent(psuData -> request.setAuthenticationMethodId(psuData.get("authenticationMethodId")));
+            Optional.ofNullable(body.get("scaAuthenticationData"))
+                .ifPresent(authData -> request.setScaAuthenticationData((String) authData));
         }
         return request;
     }
@@ -256,7 +258,9 @@ public class ConsentModelMapper {
         return new UpdatePsuAuthenticationResponse()
                    ._links(objectMapper.convertValue(response.getLinks(), Map.class))
                    .scaMethods(getAvailableScaMethods(response.getAvailableScaMethods()))
-                   .scaStatus(ScaStatus.valueOf(response.getScaStatus()));
+                   .scaStatus(Optional.ofNullable(response.getScaStatus())
+                                  .map(ScaStatus::valueOf)
+                                  .orElse(ScaStatus.FAILED));
     }
 
     private ScaMethods getAvailableScaMethods(List<CmsScaMethod> availableScaMethods) {
