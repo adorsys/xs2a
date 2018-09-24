@@ -21,7 +21,6 @@ import cucumber.api.java.en.Given;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.LinksPaymentInitiation;
-import de.adorsys.psd2.model.LinksSelectPsuAuthenticationMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -31,7 +30,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyString;
