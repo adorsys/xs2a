@@ -25,8 +25,8 @@ import java.util.Currency;
 import java.util.Optional;
 
 @Data
-@ApiModel(description = "Account Reference", value = "AccountReference")
-public class AccountReference {
+@ApiModel(description = "Account Reference", value = "Xs2aAccountReference")
+public class Xs2aAccountReference {
     @ApiModelProperty(value = "IBAN: This data element can be used in the body of the CreateConsentReq Request Message for retrieving account access consent from this payment account", example = "DE89370400440532013000")
     private String iban;
 
@@ -46,7 +46,7 @@ public class AccountReference {
     private Currency currency;
 
     @JsonIgnore
-    public boolean matches(AccountReference otherReference) {
+    public boolean matches(Xs2aAccountReference otherReference) {
         return Optional.ofNullable(otherReference.getCurrency())
                    .map(cur -> iban.equals(otherReference.getIban()) && currency == cur)
                    .orElseGet(() -> iban.equals(otherReference.getIban()));

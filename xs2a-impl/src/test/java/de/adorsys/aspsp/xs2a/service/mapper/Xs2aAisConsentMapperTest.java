@@ -19,10 +19,11 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.AccountConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import org.apache.commons.io.IOUtils;
@@ -54,15 +55,15 @@ public class Xs2aAisConsentMapperTest {
     private Xs2aAisConsentMapper aisConsentMapper;
 
     @Mock
-    private AccountMapper accountMapper;
+    private SpiXs2aAccountMapper spiXs2aAccountMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private JsonConverter jsonConverter = new JsonConverter(objectMapper);
 
     @Before
     public void setUp() {
-        when(accountMapper.mapToAccountReferences(any())).thenReturn(getReferences());
-        when(accountMapper.mapToSpiAccountReferences(any())).thenReturn(getSpiReferences());
+        when(spiXs2aAccountMapper.mapToXs2aAccountReferences(any())).thenReturn(getReferences());
+        when(spiXs2aAccountMapper.mapToSpiAccountReferences(any())).thenReturn(getSpiReferences());
     }
 
     @Test
@@ -91,8 +92,8 @@ public class Xs2aAisConsentMapperTest {
         assertThat(actualAccountConsent.getConsentStatus()).isEqualTo(ConsentStatus.VALID);
     }
 
-    private List<AccountReference> getReferences() {
-        List<AccountReference> refs = new ArrayList<>();
+    private List<Xs2aAccountReference> getReferences() {
+        List<Xs2aAccountReference> refs = new ArrayList<>();
         refs.add(getReference("DE2310010010123456789", null, "123456xxxxxx1234"));
         refs.add(getReference("DE2310010010123456790", Currency.getInstance("USD"), "123456xxxxxx1234"));
         refs.add(getReference("DE2310010010123456788", null, null));
@@ -100,8 +101,8 @@ public class Xs2aAisConsentMapperTest {
         return refs;
     }
 
-    private AccountReference getReference(String iban, Currency currency, String masked) {
-        AccountReference ref = new AccountReference();
+    private Xs2aAccountReference getReference(String iban, Currency currency, String masked) {
+        Xs2aAccountReference ref = new Xs2aAccountReference();
         ref.setIban(iban);
         ref.setCurrency(currency);
         ref.setMaskedPan(masked);

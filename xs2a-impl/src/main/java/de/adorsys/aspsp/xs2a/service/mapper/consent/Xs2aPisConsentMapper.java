@@ -24,7 +24,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAutho
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
@@ -186,8 +186,8 @@ public class Xs2aPisConsentMapper {
                    }).orElse(null);
     }
 
-    private CmsAccountReference mapToPisAccountReference(AccountReference accountReference) {
-        return Optional.ofNullable(accountReference)
+    private CmsAccountReference mapToPisAccountReference(Xs2aAccountReference xs2aAccountReference) {
+        return Optional.ofNullable(xs2aAccountReference)
                    .map(ref -> new CmsAccountReference(
                        ref.getIban(),
                        ref.getBban(),

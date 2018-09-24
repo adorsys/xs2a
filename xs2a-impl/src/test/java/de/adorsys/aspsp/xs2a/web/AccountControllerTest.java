@@ -20,8 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
@@ -210,7 +210,7 @@ public class AccountControllerTest {
         amount.setAmount("3000.45");
         amount.setCurrency(Currency.getInstance("EUR"));
         transaction.setAmount(amount);
-        AccountReference debtor = new AccountReference();
+        Xs2aAccountReference debtor = new Xs2aAccountReference();
         debtor.setIban("DE371234599997");
         debtor.setCurrency(Currency.getInstance("EUR"));
         transaction.setDebtorAccount(debtor);
@@ -218,8 +218,8 @@ public class AccountControllerTest {
         transaction.setRemittanceInformationUnstructured("Ref Number Merchant");
         transaction.setPurposeCode(new Xs2aPurposeCode("BKDF"));
         transaction.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
-        Transactions[] booked = { new Transactions() };
-        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, new Transactions[] {});
+        Transactions[] booked = {new Transactions()};
+        Xs2aAccountReport accountReport = new Xs2aAccountReport(booked, new Transactions[]{});
         return ResponseObject.<Xs2aAccountReport>builder().body(accountReport).build();
     }
 

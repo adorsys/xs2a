@@ -18,9 +18,9 @@ package de.adorsys.aspsp.xs2a.integtest.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.integtest.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.integtest.config.rest.consent.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
@@ -74,19 +74,19 @@ public class ConsentTestData {
         return consentResponse.getConsentId();
     }
 
-    private Xs2aAccountAccess createAccountAccessTestData(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions){
+    private Xs2aAccountAccess createAccountAccessTestData(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions){
         return new Xs2aAccountAccess(accounts, balances, transactions, null, null);
     }
 
-    private List<AccountReference> createAccountReferenceListTestData () {
+    private List<Xs2aAccountReference> createAccountReferenceListTestData () {
         final String IBAN = "DE52500105173911841934";
         final String CURRENCY = "EUR";
 
-        AccountReference accountReference1 = new AccountReference();
-        accountReference1.setIban(IBAN);
-        accountReference1.setCurrency(Currency.getInstance(CURRENCY));
+        Xs2aAccountReference xs2aAccountReference1 = new Xs2aAccountReference();
+        xs2aAccountReference1.setIban(IBAN);
+        xs2aAccountReference1.setCurrency(Currency.getInstance(CURRENCY));
 
-        return Collections.singletonList(accountReference1);
+        return Collections.singletonList(xs2aAccountReference1);
     }
 
     public String createConsentTestData () throws IOException {
@@ -94,9 +94,9 @@ public class ConsentTestData {
         final String TTP_ID = "tpp01";
         final int VALID_UNTIL = 30;
 
-        List <AccountReference> accounts = createAccountReferenceListTestData();
-        List <AccountReference> balances = createAccountReferenceListTestData();
-        List <AccountReference> transactions = createAccountReferenceListTestData();
+        List <Xs2aAccountReference> accounts = createAccountReferenceListTestData();
+        List <Xs2aAccountReference> balances = createAccountReferenceListTestData();
+        List <Xs2aAccountReference> transactions = createAccountReferenceListTestData();
         Xs2aAccountAccess accountAccess = createAccountAccessTestData(accounts, balances, transactions);
         CreateConsentReq consentReq = getConsentReq(1, LocalDate.now().plusDays(VALID_UNTIL),false, accountAccess);
         return createConsent(consentReq,PSU_ID, TTP_ID ) ;
