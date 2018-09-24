@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.cmsclient.cms.model.ais;
+package de.adorsys.aspsp.cmsclient.cms.model.pis;
 
 import de.adorsys.aspsp.cmsclient.cms.RestCmsRequestMethod;
 import de.adorsys.aspsp.cmsclient.core.HttpMethod;
 import de.adorsys.aspsp.cmsclient.core.util.HttpUriParams;
 import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 
-public class UpdateAisConsentBlobMethod extends RestCmsRequestMethod<UpdateConsentAspspDataRequest, CreateAisConsentResponse> {
-    private static final String UPDATE_AIS_CONSENT_BLOB_URI = "api/v1/ais/consent/{consent-id}/blob";
+public class UpdatePisConsentAspspDataMethod extends RestCmsRequestMethod<UpdateConsentAspspDataRequest, CreatePisConsentResponse> {
+    private static final String UPDATE_PIS_CONSENT_BLOB_URI = "api/v1/pis/consent/{consent-id}/blob";
 
-    public UpdateAisConsentBlobMethod(final UpdateConsentAspspDataRequest request, HttpUriParams uriParams) {
-        super(request, HttpMethod.PUT, UPDATE_AIS_CONSENT_BLOB_URI, uriParams);
+    public UpdatePisConsentAspspDataMethod(final UpdateConsentAspspDataRequest request, HttpUriParams uriParams) {
+        super(request, HttpMethod.PUT, UPDATE_PIS_CONSENT_BLOB_URI, uriParams);
     }
 }

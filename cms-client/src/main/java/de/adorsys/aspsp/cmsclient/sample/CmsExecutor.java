@@ -64,13 +64,13 @@ public class CmsExecutor {
         getConsentStatusById(cmsServiceInvoker);
         saveConsentActionLog(cmsServiceInvoker);
         updateConsentAccess(cmsServiceInvoker);
-        updateAisConsentBlob(cmsServiceInvoker);
+        updateAisConsentAspspData(cmsServiceInvoker);
         updateConsentStatus(cmsServiceInvoker);
 
         createPaymentConsent(cmsServiceInvoker);
         getPaymentConsentById(cmsServiceInvoker);
         getPaymentConsentStatusById(cmsServiceInvoker);
-        updatePisConsentBlob(cmsServiceInvoker);
+        updatePisConsentAspspData(cmsServiceInvoker);
         updatePaymentConsentStatus(cmsServiceInvoker);
     }
 
@@ -108,11 +108,11 @@ public class CmsExecutor {
         updateAccessResponse.ifPresent(resp -> logger.info("Access was updated in: " + resp.getConsentId()));
     }
 
-    private static void updateAisConsentBlob(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+    private static void updateAisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
                                       .build();
-        Optional<CreateAisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateAisConsentBlobMethod(buildUpdateBlobRequest(), uriParams)));
+        Optional<CreateAisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdateAisAspspConsentDataMethod(buildUpdateBlobRequest(), uriParams)));
         updateBlobResponse.ifPresent(resp -> logger.info("Ais consent blob was updated in: " + resp.getConsentId()));
     }
 
@@ -171,11 +171,11 @@ public class CmsExecutor {
         consentStatusResponse.ifPresent(response -> logger.info("Status of the consent: " + response.getConsentStatus().name()));
     }
 
-    private static void updatePisConsentBlob(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
+    private static void updatePisConsentAspspData(CmsServiceInvoker cmsServiceInvoker) throws IOException, URISyntaxException {
         HttpUriParams uriParams = HttpUriParams.builder()
                                       .addPathVariable("consent-id", consentId)
                                       .build();
-        Optional<CreatePisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentBlobMethod(buildUpdateBlobRequest(), uriParams)));
+        Optional<CreatePisConsentResponse> updateBlobResponse = Optional.ofNullable(cmsServiceInvoker.invoke(new UpdatePisConsentAspspDataMethod(buildUpdateBlobRequest(), uriParams)));
         updateBlobResponse.ifPresent(resp -> logger.info("Pis consent blob was updated in: " + resp.getConsentId()));
     }
 
