@@ -164,7 +164,7 @@ public class PisConsentService {
     /**
      * Creates PIS consent authorization entity and stores it into database
      *
-     * @param pisConsent PIS Consent, for which authorization is performing
+     * @param pisConsent PIS Consent, for which authorization is performed
      * @return PisConsentAuthorization
      */
     private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
