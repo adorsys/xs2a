@@ -1,0 +1,159 @@
+{{- if .Values.keycloak.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    {{- with .Values.keycloak.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+    {{- end }}
+    image.openshift.io/triggers: |
+      [{{- if (eq .Values.keycloak.dbVendor "postgres") }}{
+        "from": {
+          "kind":"ImageStreamTag",
+          {{- if .Values.keycloak.image.namespace }}
+          "namespace": "{{ .Values.keycloak.image.namespace }}",
+          {{- end }}
+          "name":"{{- if .Values.keycloak.image.stream }}{{ .Values.keycloak.image.name }}:{{ default "latest" .Values.keycloak.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-keycloak:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.initContainers[?(@.name==\"wait-for-postgresql\")].image"
+      },{{- end }}{
+        "from": {
+          "kind":"ImageStreamTag",
+          {{- if .Values.keycloak.image.namespace }}
+          "namespace": "{{ .Values.keycloak.image.namespace }}",
+          {{- end }}
+          "name":"{{- if .Values.keycloak.image.stream }}{{ .Values.keycloak.image.name }}:{{ default "latest" .Values.keycloak.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-keycloak:latest{{- end }}"
+        },
+        "fieldPath":"spec.template.spec.containers[?(@.name==\"keycloak\")].image"
+      }]
+  name: {{ template "psd2.fullname" . }}-keycloak
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: keycloak
+spec:
+  serviceName: {{ template "psd2.fullname" . }}-keycloak-hs
+{{- with .Values.keycloak.updateStrategy }}
+  updateStrategy:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: keycloak
+  replicas: {{ default 1 .Values.keycloak.replicas }}
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/keycloak/keycloak-secrets.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/keycloak/keycloak-cm.yaml") . | sha256sum }}
+{{- with .Values.keycloak.podAnnotations }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: keycloak
+{{- with .Values.keycloak.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      {{- if (eq .Values.keycloak.dbVendor "postgres") }}
+      initContainers:
+      - name: wait-for-postgresql
+        image: " "
+        imagePullPolicy: {{ .Values.keycloak.image.pullPolicy }}
+        command:
+          - "timeout"
+          - "60"
+          - "sh"
+          - "-c"
+          - >-
+            until printf '.' && timeout 1 sh -c 'cat < /dev/null > /dev/tcp/{{ template "psd2.fullname" . }}-keycloak-db/5432'; do
+              sleep 2;
+            done &&
+            echo -e '\nPostgreSQL OK ✓'
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+      {{- end }}
+      containers:
+      - name: keycloak
+        # redhat hack: invalid image to stop first unused deployment
+        image: " "
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        - name: KEYCLOAK_USER
+          valueFrom:
+            secretKeyRef:
+              key: admin-username
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        - name: KEYCLOAK_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password
+              name: "{{ template "psd2.fullname" . }}-keycloak"
+        - name: PROXY_ADDRESS_FORWARDING
+          value: "true"
+        - name: DB_VENDOR
+          value: {{ .Values.keycloak.dbVendor }}
+        {{- if not (eq .Values.keycloak.dbVendor "h2") }}
+        - name: DB_ADDR
+          value: "{{ template "psd2.fullname" . }}-keycloak-db"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_USER
+              name: "{{ template "psd2.fullname" . }}-keycloak-db"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_PASSWORD
+              name: "{{ template "psd2.fullname" . }}-keycloak-db"
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRESQL_DATABASE
+              name: "{{ template "psd2.fullname" . }}-keycloak-db"
+        {{- end }}
+{{- range $name, $value := .Values.keycloak.env }}
+{{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+{{- end }}
+{{- end }}
+{{- range $name, $value := .Values.keycloak.secrets }}
+{{- if not ( empty $value) }}
+        - name: {{ $name | quote }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "psd2.fullname" $ }}-keycloak
+              key: {{ $name | quote }}
+{{- end }}
+{{- end }}
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 8 }}
+{{- end }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        resources:
+{{ toYaml .Values.keycloak.resources | indent 10 }}
+        livenessProbe:
+{{ toYaml .Values.keycloak.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.keycloak.readinessProbe | indent 10 }}
+        volumeMounts:
+          - name: scripts
+            mountPath: /scripts
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: scripts
+        configMap:
+          name: "{{ template "psd2.fullname" . }}-keycloak-scripts"
+          defaultMode: 0555
+{{- end }}

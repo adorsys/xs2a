@@ -22,8 +22,8 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.aspsp.xs2a.web12.ConsentController12;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
+import de.adorsys.aspsp.xs2a.web.ConsentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -34,7 +34,7 @@ import java.util.Optional;
 @Slf4j
 @Aspect
 @Component
-public class ConsentAspect extends AbstractLinkAspect<ConsentController12> {
+public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
 
     public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);

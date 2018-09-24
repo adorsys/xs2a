@@ -87,10 +87,10 @@ public class AccountSpiImpl implements AccountSpi {
                                            .queryParam("dateFrom", dateFrom)
                                            .queryParam("dateTo", dateTo);
 
-        List<SpiTransaction> response = aspspRestTemplate.exchange(
+        Optional<List<SpiTransaction>> response = Optional.ofNullable(aspspRestTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
-            }).getBody();
-        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+            }).getBody());
+        return new SpiResponse<>(response.orElseGet(ArrayList::new), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
     /**

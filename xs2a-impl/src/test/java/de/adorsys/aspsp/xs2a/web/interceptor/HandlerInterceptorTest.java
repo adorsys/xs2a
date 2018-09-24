@@ -20,7 +20,7 @@ package de.adorsys.aspsp.xs2a.web.interceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
-import de.adorsys.aspsp.xs2a.web.ConsentInformationController;
+import de.adorsys.aspsp.xs2a.web.ConsentController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,8 +32,10 @@ import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -52,7 +54,7 @@ public class HandlerInterceptorTest {
     private MessageErrorMapper messageErrorMapper;
 
     @InjectMocks
-    private ConsentInformationController consentInformationController;
+    private ConsentController consentController;
 
     @Test
     public void preHandle() throws Exception {
@@ -150,7 +152,10 @@ public class HandlerInterceptorTest {
     }
 
     private Object getHandler() throws NoSuchMethodException {
-        return new HandlerMethod(consentInformationController, "getAccountConsentsInformationById", String.class);
+        Class<?>[] parameters = new Class<?>[] {String.class, UUID.class, String.class, String.class, byte[].class,
+            String.class, Object.class, String.class, String.class, String.class, String.class, String.class,
+            String.class, UUID.class, String.class };
+        return new HandlerMethod(consentController, "getConsentInformation", parameters);
     }
 
     private Map<String, String> getErrorMap() {
