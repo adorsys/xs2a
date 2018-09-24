@@ -61,7 +61,7 @@ public class AccountService {
     private final ConsentService consentService;
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper consentMapper;
-    private final static String TPP_ID = "This is a test TppId"; //TODO v1.1 add corresponding request header Task #149 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/149
+    private final TppService tppService;
     public final AspspProfileServiceWrapper aspspProfileService;
     private final AccountModelMapper accountModelMapper;
 
@@ -91,7 +91,7 @@ public class AccountService {
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
                                                                              .body(Collections.singletonMap("accountList", accountDetails)).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, response));
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, response));
         return response;
     }
 
@@ -129,7 +129,7 @@ public class AccountService {
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
         }
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, builder.build()));
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, TypeAccess.ACCOUNT, builder.build()));
         return builder.build();
     }
 
@@ -157,7 +157,7 @@ public class AccountService {
                                                          : ResponseObject.<List<Xs2aBalance>>builder()
                                                                .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.BALANCE, response));
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false, TypeAccess.BALANCE, response));
         return response;
     }
 
@@ -199,7 +199,7 @@ public class AccountService {
                                                          : ResponseObject.<Xs2aAccountReport>builder()
                                                                .fail(new MessageError(CONSENT_INVALID)).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
     }
 
@@ -246,7 +246,7 @@ public class AccountService {
         }
         ResponseObject<Xs2aTransactionsReport> response = ResponseObject.<Xs2aTransactionsReport>builder().body(transactionsReport).build();
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(withBalance, TypeAccess.TRANSACTION, response));
         return response;
     }
 
@@ -284,7 +284,7 @@ public class AccountService {
             response = ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_403)).build();
         }
 
-        aisConsentService.consentActionLog(TPP_ID, consentId, createActionStatus(false, TypeAccess.TRANSACTION, response));
+        aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false, TypeAccess.TRANSACTION, response));
         return response;
     }
 
