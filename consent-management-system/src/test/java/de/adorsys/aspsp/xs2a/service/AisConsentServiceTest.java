@@ -139,12 +139,12 @@ public class AisConsentServiceTest {
 
         // Then
         UpdateConsentAspspDataRequest request = this.buildUpdateBlobRequest();
-        Optional<String> consentId = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID, request);
+        Optional<String> consentId = aisConsentService.updateConsentAspspData(EXTERNAL_CONSENT_ID, request);
         // Assert
         assertTrue(consentId.isPresent());
 
         //Then
-        Optional<String> consentId_notExists = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
+        Optional<String> consentId_notExists = aisConsentService.updateConsentAspspData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
         // Assert
         assertFalse(consentId_notExists.isPresent());
     }

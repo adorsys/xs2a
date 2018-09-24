@@ -108,7 +108,7 @@ public class PisConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> updateAspspData(String consentId, UpdateConsentAspspDataRequest request) {
+    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualPisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }

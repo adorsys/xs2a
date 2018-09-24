@@ -143,7 +143,7 @@ public class AisConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> updateAspspData(String consentId, UpdateConsentAspspDataRequest request) {
+    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualAisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }

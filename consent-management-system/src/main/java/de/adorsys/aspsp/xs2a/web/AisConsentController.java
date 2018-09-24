@@ -80,16 +80,16 @@ public class AisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "/{consent-id}/blob")
+    @PutMapping(path = "/{consent-id}/aspspConsentData")
     @ApiOperation(value = "Update consent blob data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreateAisConsentResponse> updateAspspBlob(
+    public ResponseEntity<CreateAisConsentResponse> updateAspspConsentData(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestBody UpdateConsentAspspDataRequest request) {
-        return aisConsentService.updateAspspData(consentId, request)
+        return aisConsentService.updateConsentAspspData(consentId, request)
                    .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
