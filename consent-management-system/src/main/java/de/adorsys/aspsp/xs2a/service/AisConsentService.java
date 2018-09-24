@@ -138,7 +138,7 @@ public class AisConsentService {
     /**
      * Update AIS consent aspsp consent data by id
      *
-     * @param request   needed parameters for updating AIS consent
+     * @param request   Bank provided aspsp consent data
      * @param consentId id of the consent to be updated
      * @return String consent id
      */

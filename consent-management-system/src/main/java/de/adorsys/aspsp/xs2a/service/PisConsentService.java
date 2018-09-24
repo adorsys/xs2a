@@ -103,7 +103,7 @@ public class PisConsentService {
     /**
      * Update PIS consent aspsp consent data by id
      *
-     * @param request   needed parameters for updating PIS consent
+     * @param request   Bank provided aspsp consent data
      * @param consentId id of the consent to be updated
      * @return String consent id
      */
