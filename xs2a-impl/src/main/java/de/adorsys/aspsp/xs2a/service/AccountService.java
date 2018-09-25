@@ -19,16 +19,15 @@ package de.adorsys.aspsp.xs2a.service;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
@@ -56,14 +55,13 @@ import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 @AllArgsConstructor
 public class AccountService {
     private final AccountSpi accountSpi;
-    private final AccountMapper accountMapper;
+    private final SpiXs2aAccountMapper spiXs2aAccountMapper;
     private final ValueValidatorService validatorService;
     private final ConsentService consentService;
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper consentMapper;
     private final TppService tppService;
     public final AspspProfileServiceWrapper aspspProfileService;
-    private final AccountModelMapper accountModelMapper;
 
     /**
      * Gets AccountDetails list based on accounts in provided AIS-consent, depending on withBalance variable and
@@ -110,7 +108,7 @@ public class AccountService {
             return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
@@ -123,7 +121,7 @@ public class AccountService {
         if (isValid) {
             builder = withBalance
                           ? builder.body(accountDetails)
-                          : builder.body(accountMapper.mapToAccountDetailNoBalances(accountDetails));
+                          : builder.body(spiXs2aAccountMapper.mapToAccountDetailNoBalances(accountDetails));
         } else {
             builder = builder
                           .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID)));
@@ -146,7 +144,7 @@ public class AccountService {
             return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
             return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
@@ -186,7 +184,7 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
 
-        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
         }
@@ -222,7 +220,7 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
 
-        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
             return ResponseObject.<Xs2aTransactionsReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
         }
@@ -238,7 +236,7 @@ public class AccountService {
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
         transactionsReport.setAccountReport(report.get());
-        transactionsReport.setAccountReference(accountModelMapper.mapToAccountReference(accountDetails));
+        transactionsReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
 
         if (!aspspProfileService.isTransactionsWithoutBalancesSupported()
                 && consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances())) {
@@ -268,7 +266,7 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
 
-        Xs2aAccountDetails accountDetails = accountMapper.mapToAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
         }
@@ -288,18 +286,18 @@ public class AccountService {
         return response;
     }
 
-    Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(AccountReference reference) {
+    Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(Xs2aAccountReference reference) {
         return Optional.ofNullable(reference) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Refactor to procedure style - we read data inside the stream here
                    .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban(), new AspspConsentData()).getPayload()) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
                    .map(Collection::stream)
                    .flatMap(accDts -> accDts
                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
                                           .findFirst())
-                   .map(accountMapper::mapToAccountDetails);
+                   .map(spiXs2aAccountMapper::mapToXs2aAccountDetails);
     }
 
     private List<Xs2aAccountDetails> getAccountDetailsFromReferences(boolean withBalance, Xs2aAccountAccess accountAccess) {
-        List<AccountReference> references = withBalance
+        List<Xs2aAccountReference> references = withBalance
                                                 ? accountAccess.getBalances()
                                                 : accountAccess.getAccounts();
         List<Xs2aAccountDetails> details = getAccountDetailsFromReferences(references);
@@ -310,7 +308,7 @@ public class AccountService {
         SpiAccountConsent spiAccountConsent = aisConsentService.getAccountConsentById(consentId);
         List<SpiAccountDetails> spiAccountDetails = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), new AspspConsentData()).getPayload();
         List<Xs2aAccountDetails> details = spiAccountDetails.stream()
-                                               .map(accountMapper::mapToAccountDetails)
+                                               .map(spiXs2aAccountMapper::mapToXs2aAccountDetails)
                                                .collect(Collectors.toList());
 
         return filterAccountDetailsByWithBalance(withBalance, details);
@@ -319,10 +317,10 @@ public class AccountService {
     private List<Xs2aAccountDetails> filterAccountDetailsByWithBalance(boolean withBalance, List<Xs2aAccountDetails> details) {
         return withBalance
                    ? details
-                   : accountMapper.mapToAccountDetailsListNoBalances(details);
+                   : spiXs2aAccountMapper.mapToAccountDetailsListNoBalances(details);
     }
 
-    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(List<AccountReference> references) {
+    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(List<Xs2aAccountReference> references) {
         return CollectionUtils.isEmpty(references)
                    ? Collections.emptyList()
                    : references.stream()
@@ -344,7 +342,7 @@ public class AccountService {
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
         Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId, new AspspConsentData()).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-        return accountMapper.mapToAccountReport(transaction
+        return spiXs2aAccountMapper.mapToXs2aAccountReport(transaction
                                                     .map(Collections::singletonList)
                                                     .orElseGet(Collections::emptyList));
     }
@@ -353,7 +351,7 @@ public class AccountService {
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
-        return accountMapper.mapToAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateToChecked, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return spiXs2aAccountMapper.mapToXs2aAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateToChecked, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
     }
 
     private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {

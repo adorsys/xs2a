@@ -120,7 +120,7 @@ public class AspspProfileServiceWrapper {
     }
 
     /**
-     * Retrieves list of supported AccountReference fields from ASPSP profile service
+     * Retrieves list of supported Xs2aAccountReference fields from ASPSP profile service
      *
      * @return List of supported fields
      */

@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
@@ -30,13 +30,13 @@ import java.util.List;
 public class Xs2aAccountAccess {
 
     @ApiModelProperty(value = "detailed account information", required = false)
-    private List<AccountReference> accounts;
+    private List<Xs2aAccountReference> accounts;
 
     @ApiModelProperty(value = "balances of the addressed accounts", required = false)
-    private List<AccountReference> balances;
+    private List<Xs2aAccountReference> balances;
 
     @ApiModelProperty(value = "transactions of the addressed accounts", required = false)
-    private List<AccountReference> transactions;
+    private List<Xs2aAccountReference> transactions;
 
     @ApiModelProperty(value = "only the value 'allAccounts' or 'allAccountsWithBalances' is admitted", example = "allAccounts", required = false)
     private Xs2aAccountAccessType availableAccounts;

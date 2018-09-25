@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SupportedAccountReferenceFieldTest {
+public class SupportedXs2aAccountReferenceFieldTest {
     private final String IBAN = "DE 8937 0400 4405 3201 3000";
     private final String WRONG_IBAN = "123456789";
     private final String BBAN = "3704 0044 0532-0130 0000 0000";
@@ -152,8 +152,8 @@ public class SupportedAccountReferenceFieldTest {
         assertThat(result.get()).isFalse();
     }
 
-    private AccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
-        AccountReference reference = new AccountReference();
+    private Xs2aAccountReference getReference(String iban, String bban, String pan, String masked, String msisdn) {
+        Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setBban(bban);
         reference.setPan(pan);

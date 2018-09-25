@@ -24,7 +24,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
-import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
+import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;

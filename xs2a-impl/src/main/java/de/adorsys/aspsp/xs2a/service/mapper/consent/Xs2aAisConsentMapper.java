@@ -19,9 +19,9 @@ package de.adorsys.aspsp.xs2a.service.mapper.consent;
 import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class Xs2aAisConsentMapper {
-    private final AccountMapper accountMapper;
+    private final SpiXs2aAccountMapper spiXs2aAccountMapper;
 
     public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, String psuId, String tppId, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(req)
@@ -202,9 +202,9 @@ public class Xs2aAisConsentMapper {
         return Optional.ofNullable(access)
                    .map(aa ->
                             new Xs2aAccountAccess(
-                                accountMapper.mapToAccountReferences(aa.getAccounts()),
-                                accountMapper.mapToAccountReferences(aa.getBalances()),
-                                accountMapper.mapToAccountReferences(aa.getTransactions()),
+                                spiXs2aAccountMapper.mapToXs2aAccountReferences(aa.getAccounts()),
+                                spiXs2aAccountMapper.mapToXs2aAccountReferences(aa.getBalances()),
+                                spiXs2aAccountMapper.mapToXs2aAccountReferences(aa.getTransactions()),
                                 mapToAccountAccessType(aa.getAvailableAccounts()),
                                 mapToAccountAccessType(aa.getAllPsd2()))
                    )
@@ -241,13 +241,13 @@ public class Xs2aAisConsentMapper {
         return accessInfo;
     }
 
-    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
+    private List<AccountInfo> mapToListAccountInfo(List<Xs2aAccountReference> refs) {
         return refs.stream()
                    .map(this::mapToAccountInfo)
                    .collect(Collectors.toList());
     }
 
-    private AccountInfo mapToAccountInfo(AccountReference ref) {
+    private AccountInfo mapToAccountInfo(Xs2aAccountReference ref) {
         AccountInfo info = new AccountInfo();
         info.setIban(ref.getIban());
         info.setCurrency(Optional.ofNullable(ref.getCurrency())
