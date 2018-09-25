@@ -162,9 +162,10 @@ public class AisConsentService {
 
     private boolean isInvalidSpiAccountAccessRequest(Xs2aAccountAccess requestedAccess) {
         Set<String> ibansFromAccess = getIbansFromAccess(requestedAccess);
+
         List<SpiAccountDetails> accountDetailsList = accountSpi.readAccountDetailsByIbans(
             ibansFromAccess,
-            new AspspConsentData("zzzzzzzzzzzzzz".getBytes())).getPayload();
+            new AspspConsentData("zzzzzzzzzzzzzz".getBytes(), null)).getPayload();
 
         return ibansFromAccess.stream()
                    .map(acc -> filter(acc, accountDetailsList))

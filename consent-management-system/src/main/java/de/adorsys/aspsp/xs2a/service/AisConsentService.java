@@ -138,6 +138,12 @@ public class AisConsentService {
                    });
     }
 
+    @Transactional
+    public Optional<AisConsentAspspDataResponse> getAspspData(String consentId) {
+        return getActualAisConsent(consentId)
+                   .map(cons -> getConsentAspspData(cons));
+    }
+
     /**
      * Update AIS consent aspsp blob data by id
      *
@@ -201,8 +207,16 @@ public class AisConsentService {
         return holder.getAccountAccesses();
     }
 
+    private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
+        AisConsentAspspDataResponse request = new AisConsentAspspDataResponse();
+        request.setBody(consent.getAspspConsentData());
+        request.setConsentId(consent.getExternalId());
+        return request;
+
+    }
+
     private String updateConsentAspspData(UpdateAisConsentAspspDataRequest request, AisConsent consent) {
-        consent.setAspspConsentData(request.getAspspConsentData());
+        consent.setAspspConsentData(request.getBody());
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

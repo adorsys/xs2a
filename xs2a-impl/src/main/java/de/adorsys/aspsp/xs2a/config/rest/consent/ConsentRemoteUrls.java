@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.ais;
+package de.adorsys.aspsp.xs2a.config.rest.consent;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-@Data
-@ApiModel(description = "Ais consent update blob request", value = "AisConsentBlobUpdateRequest")
-public class UpdateAisConsentAspspDataRequest {
-
-    @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
-    private byte[] body;
+public interface ConsentRemoteUrls {
+    String getConsentData();
+    String updateConsentData();
 }

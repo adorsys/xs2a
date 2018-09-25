@@ -167,7 +167,7 @@ public class PaymentSpiImpl implements PaymentSpi {
         byte[] payload = accessToken.flatMap(jsonConverter::toJson)
                              .map(String::getBytes)
                              .orElse(null);
-        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload));
+        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload, null));
     }
 
     /**

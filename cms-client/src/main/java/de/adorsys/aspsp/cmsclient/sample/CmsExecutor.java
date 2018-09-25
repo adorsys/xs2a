@@ -144,7 +144,7 @@ public class CmsExecutor {
 
     private static UpdateAisConsentAspspDataRequest buildUpdateBlobRequest() {
         UpdateAisConsentAspspDataRequest request = new UpdateAisConsentAspspDataRequest();
-        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        request.setBody("zdxcvvzzzxcvzzzz".getBytes());
         return request;
     }
 
