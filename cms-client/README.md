@@ -1,5 +1,9 @@
 # Consent management system client
 
-A module that tests rest endpoints of consent management system for XS2A Interface of Berlin Group
+## Overview 
+A pure java API that provides capabilities to access Consent Management System REST endpoints. 
+It is free from Spring framework and uses Apache HTTP Components library to send Http requests.
 
-FOR TEST PURPOSES ONLY, NOT FOR PRODUCTION!
+##Tesing
+Class de.adorsys.aspsp.cmsclient.sample.CmsExecutor perfroms test calls to all available endpoints.
+FOR TEST PURPOSES ONLY, DON'T USE IN PRODUCTION!
