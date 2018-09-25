@@ -136,14 +136,14 @@ public class AisConsentService {
     }
 
     /**
-     * Update AIS consent aspsp blob data by id
+     * Update AIS consent aspsp consent data by id
      *
-     * @param request   needed parameters for updating AIS consent
+     * @param request   Aspsp provided ais consent data
      * @param consentId id of the consent to be updated
      * @return String   consent id
      */
     @Transactional
-    public Optional<String> updateAspspData(String consentId, UpdateAisConsentAspspDataRequest request) {
+    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualAisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }
@@ -198,7 +198,7 @@ public class AisConsentService {
         return holder.getAccountAccesses();
     }
 
-    private String updateConsentAspspData(UpdateAisConsentAspspDataRequest request, AisConsent consent) {
+    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, AisConsent consent) {
         consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
