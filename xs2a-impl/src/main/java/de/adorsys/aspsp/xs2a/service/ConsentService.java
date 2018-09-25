@@ -81,7 +81,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         String tppId = tppService.getTppId();
         String consentId = aisConsentService.createConsent(request, psuId, tppId, new AspspConsentData());
 
-        //TODO v1.1 Add balances support
         //TODO v1.2 Add embedded approach specfic links
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
