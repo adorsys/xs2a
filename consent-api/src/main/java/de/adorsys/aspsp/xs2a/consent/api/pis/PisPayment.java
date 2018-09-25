@@ -53,7 +53,7 @@ public class PisPayment {
     @ApiModelProperty(value = "Creditor account", required = true)
     private CmsAccountReference creditorAccount;
 
-    @ApiModelProperty(value = "Creditor agent", required = true, example = "Telekom")
+    @ApiModelProperty(value = "Creditor agent", example = "Telekom")
     private String creditorAgent;
 
     @ApiModelProperty(value = "Name of the creditor", required = true, example = "Telekom")

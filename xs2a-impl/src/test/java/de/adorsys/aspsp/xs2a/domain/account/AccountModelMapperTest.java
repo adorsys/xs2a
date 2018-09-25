@@ -139,7 +139,7 @@ public class AccountModelMapperTest {
         assertEquals(bankTransactionCodeCode.getCode(), transactionDetails.getBankTransactionCode());
         assertEquals(transactions.getBookingDate(), transactionDetails.getBookingDate());
 
-        AccountReference expectedCreditorAccount = transactions.getCreditorAccount();
+        Xs2aAccountReference expectedCreditorAccount = transactions.getCreditorAccount();
         assertNotNull(expectedCreditorAccount);
 
         AccountReferenceIban actualCreditorAccount = (AccountReferenceIban) transactionDetails.getCreditorAccount();
@@ -150,7 +150,7 @@ public class AccountModelMapperTest {
         assertEquals(transactions.getCreditorId(), transactionDetails.getCreditorId());
         assertEquals(transactions.getCreditorName(), transactionDetails.getCreditorName());
 
-        AccountReference expectedDebtorAccount = transactions.getDebtorAccount();
+        Xs2aAccountReference expectedDebtorAccount = transactions.getDebtorAccount();
         assertNotNull(expectedDebtorAccount);
 
         AccountReferenceIban actualDebtorAccount = (AccountReferenceIban) transactionDetails.getDebtorAccount();
@@ -219,15 +219,15 @@ public class AccountModelMapperTest {
         return amount;
     }
 
-    private AccountReference createAccountReference() {
-        AccountReference accountReference = new AccountReference();
-        accountReference.setBban("bban");
-        accountReference.setCurrency(Currency.getInstance("EUR"));
-        accountReference.setIban("DE1234");
-        accountReference.setMaskedPan("maskedPan");
-        accountReference.setMsisdn("msisdn");
-        accountReference.setPan("pan");
-        return accountReference;
+    private Xs2aAccountReference createAccountReference() {
+        Xs2aAccountReference xs2aAccountReference = new Xs2aAccountReference();
+        xs2aAccountReference.setBban("bban");
+        xs2aAccountReference.setCurrency(Currency.getInstance("EUR"));
+        xs2aAccountReference.setIban("DE1234");
+        xs2aAccountReference.setMaskedPan("maskedPan");
+        xs2aAccountReference.setMsisdn("msisdn");
+        xs2aAccountReference.setPan("pan");
+        return xs2aAccountReference;
     }
 
     private Transactions createTransactions() {

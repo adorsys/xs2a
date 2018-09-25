@@ -21,13 +21,13 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
@@ -42,14 +42,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.time.LocalDate;
 import java.util.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -59,7 +57,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceTest {
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
-    private final String TPP_ID = "This is a test TppId";
+    private final String TPP_ID = "Test TppId";
     private final String CORRECT_ACCOUNT_ID = "123";
     private final String CORRECT_PSU_ID = "123456789";
     private final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
@@ -79,18 +77,19 @@ public class ConsentServiceTest {
     AccountSpi accountSpi;
     @Mock
     AisConsentService aisConsentService;
-    ;
     @Mock
-    AccountMapper accountMapper;
+    SpiXs2aAccountMapper spiXs2aAccountMapper;
     @Mock
     Xs2aAisConsentMapper aisConsentMapper;
     @Mock
-    AspspProfileService aspspProfileService;
+    AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    TppService tppService;
 
     @Before
     public void setUp() {
         //AccountMapping
-        when(accountMapper.mapToAccountReferencesFromDetails(getSpiDetailsList()))
+        when(spiXs2aAccountMapper.mapToXs2aAccountReferencesFromDetails(getSpiDetailsList()))
             .thenReturn(getReferenceList());
         //ConsentMapping
         when(aisConsentMapper.mapToAccountConsent(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false)))
@@ -166,6 +165,7 @@ public class ConsentServiceTest {
 
         when(aspspProfileService.isBankOfferedConsentSupported())
             .thenReturn(true);
+        when(tppService.getTppId()).thenReturn(TPP_ID);
 
     }
 
@@ -414,20 +414,20 @@ public class ConsentServiceTest {
         return req;
     }
 
-    private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+    private Xs2aAccountAccess getAccess(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private List<AccountReference> getReferenceList() {
-        List<AccountReference> list = new ArrayList<>();
+    private List<Xs2aAccountReference> getReferenceList() {
+        List<Xs2aAccountReference> list = new ArrayList<>();
         list.add(getReference(CORRECT_IBAN, CURRENCY));
         list.add(getReference(CORRECT_IBAN_1, CURRENCY_2));
 
         return list;
     }
 
-    private AccountReference getReference(String iban, Currency currency) {
-        AccountReference ref = new AccountReference();
+    private Xs2aAccountReference getReference(String iban, Currency currency) {
+        Xs2aAccountReference ref = new Xs2aAccountReference();
         ref.setIban(iban);
         ref.setCurrency(currency);
         return ref;

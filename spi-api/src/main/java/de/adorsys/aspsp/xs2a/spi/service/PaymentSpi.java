@@ -51,12 +51,12 @@ public interface PaymentSpi {
     /**
      * Initiates a bulk payment at ASPSP
      *
-     * @param payments         bulk payment to be sent for saving at ASPSP
+     * @param spiBulkPayment         bulk payment to be sent for saving at ASPSP
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
      */
-    SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(List<SpiSinglePayment> payments, AspspConsentData aspspConsentData);
+    SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(SpiBulkPayment spiBulkPayment, AspspConsentData aspspConsentData);
 
     /**
      * Returns a payment status by its ASPSP identifier

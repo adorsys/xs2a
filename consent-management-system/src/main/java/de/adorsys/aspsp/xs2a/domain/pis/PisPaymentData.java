@@ -65,8 +65,8 @@ public class PisPaymentData {
     @ApiModelProperty(value = "Creditor account", required = true)
     private PisAccountReference creditorAccount;
 
-    @Column(name = "creditor_agent", nullable = false)
-    @ApiModelProperty(value = "Creditor agent", required = true, example = "Telekom")
+    @Column(name = "creditor_agent")
+    @ApiModelProperty(value = "Creditor agent", example = "Telekom")
     private String creditorAgent;
 
     @Column(name = "creditor_name", nullable = false)

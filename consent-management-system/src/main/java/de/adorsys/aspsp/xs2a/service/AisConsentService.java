@@ -49,7 +49,7 @@ public class AisConsentService {
     private final AisConsentActionRepository aisConsentActionRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentMapper consentMapper;
-    private final AspspProfileService profileService;
+    private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
 
     /**
      * Create AIS consent
@@ -70,7 +70,7 @@ public class AisConsentService {
     /**
      * Read status of consent by id
      *
-     * @param consentId
+     * @param consentId id of consent
      * @return ConsentStatus
      */
     public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
@@ -82,7 +82,7 @@ public class AisConsentService {
     /**
      * Update consent status by id
      *
-     * @param consentId
+     * @param consentId id of consent
      * @param status    new consent status
      * @return Boolean
      */
@@ -95,7 +95,7 @@ public class AisConsentService {
     /**
      * Read full information of consent by id
      *
-     * @param consentId
+     * @param consentId id of consent
      * @return AisAccountConsent
      */
     public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
@@ -123,7 +123,7 @@ public class AisConsentService {
      *
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated
-     * @return String consent id
+     * @return String   consent id
      */
     @Transactional
     public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
@@ -140,7 +140,7 @@ public class AisConsentService {
      *
      * @param request   Aspsp provided ais consent data
      * @param consentId id of the consent to be updated
-     * @return String consent id
+     * @return String   consent id
      */
     @Transactional
     public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
@@ -151,7 +151,7 @@ public class AisConsentService {
     /**
      * Create consent authorization
      *
-     * @param consentId
+     * @param consentId id of consent
      * @param request   needed parameters for creating consent authorization
      * @return String authorization id
      */
@@ -164,8 +164,8 @@ public class AisConsentService {
     /**
      * Get consent authorization
      *
-     * @param consentId
-     * @param authorizationId
+     * @param consentId       id of consent
+     * @param authorizationId id of authorisation session
      * @return AisConsentAuthorizationResponse
      */
     public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
@@ -178,8 +178,8 @@ public class AisConsentService {
     /**
      * Update consent authorization
      *
-     * @param authorizationId
-     * @param consentId
+     * @param authorizationId id of authorisation session
+     * @param consentId       id of consent
      * @param request         needed parameters for updating consent authorization
      * @return Boolean
      */
@@ -205,7 +205,7 @@ public class AisConsentService {
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        int minFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
         consent.setConsentStatus(RECEIVED);
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);

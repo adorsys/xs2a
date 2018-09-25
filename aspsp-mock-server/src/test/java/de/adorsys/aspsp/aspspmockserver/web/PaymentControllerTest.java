@@ -19,6 +19,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,10 +31,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
@@ -90,9 +89,7 @@ public class PaymentControllerTest {
     public void createBulkPayments() {
         //Given
         HttpStatus expectedStatus = HttpStatus.CREATED;
-        List<SpiSinglePayment> expectedRequest = new ArrayList<>();
-        expectedRequest.add(getSpiSinglePayment());
-
+        SpiBulkPayment expectedRequest = getSpiBulkPayment();
         //When
         ResponseEntity<List<SpiSinglePayment>> actualResponse = paymentController.createBulkPayments(expectedRequest);
 
@@ -126,15 +123,33 @@ public class PaymentControllerTest {
     private SpiSinglePayment getSpiSinglePayment() {
         SpiSinglePayment payment = new SpiSinglePayment();
         SpiAmount amount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(20));
-        SpiAccountReference accountReference = new SpiAccountReference("DE23100120020123456789", null, null, null, null, Currency.getInstance("EUR"));
         payment.setInstructedAmount(amount);
-        payment.setDebtorAccount(accountReference);
+        payment.setDebtorAccount(getReference());
         payment.setCreditorName("Merchant123");
         payment.setPurposeCode("BEQNSD");
         payment.setCreditorAgent("sdasd");
-        payment.setCreditorAccount(accountReference);
+        payment.setCreditorAccount(getReference());
         payment.setRemittanceInformationUnstructured("Ref Number Merchant");
 
         return payment;
+    }
+
+    private SpiBulkPayment getSpiBulkPayment() {
+        SpiBulkPayment spiBulkPayment = new SpiBulkPayment();
+        spiBulkPayment.setBatchBookingPreferred(false);
+        spiBulkPayment.setRequestedExecutionDate(LocalDate.now());
+        spiBulkPayment.setPayments(Collections.singletonList(getSpiSinglePayment()));
+        spiBulkPayment.setDebtorAccount(getReference());
+
+        return spiBulkPayment;
+    }
+
+    private SpiAccountReference getReference() {
+        return new SpiAccountReference("DE23100120020123456789",
+            null,
+            null,
+            null,
+            null,
+            Currency.getInstance("EUR"));
     }
 }

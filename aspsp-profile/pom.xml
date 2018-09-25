@@ -32,6 +32,7 @@
         <module>aspsp-profile-api</module>
         <module>aspsp-profile-server</module>
         <module>aspsp-profile-lib</module>
+        <module>aspsp-profile-remote</module>
     </modules>
     <packaging>pom</packaging>
 

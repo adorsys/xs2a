@@ -16,32 +16,32 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.*;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static de.adorsys.aspsp.xs2a.domain.aspsp.ScaApproach.*;
+import static de.adorsys.psd2.aspsp.profile.domain.ScaApproach.*;
 
 // TODO refactor to AbstractFactory https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/298
 @Configuration
 @RequiredArgsConstructor
 public class ScaAuthorizationConfig {
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileService;
 
     @Bean
-    public ScaPaymentService scaPaymentService(AspspProfileService aspspProfileService, PisAuthorisationService pisAuthorisationService, PisConsentService pisConsentService, PaymentMapper paymentMapper, PaymentSpi paymentSpi) {
+    public ScaPaymentService scaPaymentService(PaymentMapper paymentMapper,
+                                               PaymentSpi paymentSpi) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
             return new OauthScaPaymentService(paymentMapper, paymentSpi);
@@ -50,13 +50,15 @@ public class ScaAuthorizationConfig {
             return new DecoupedScaPaymentService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService(aspspProfileService, pisAuthorisationService, paymentSpi, paymentMapper, pisConsentService);
+            return new EmbeddedScaPaymentService(paymentSpi, paymentMapper);
         }
-        return new RedirectScaPaymentService(aspspProfileService, pisAuthorisationService, paymentSpi, paymentMapper, pisConsentService);
+        return new RedirectScaPaymentService(paymentSpi, paymentMapper);
     }
 
     @Bean
-    public AisAuthorizationService aisAuthorizationService(AccountSpi accountSpi, AisConsentService aisConsentService, Xs2aAisConsentMapper aisConsentMapper) {
+    public AisAuthorizationService aisAuthorizationService(AccountSpi accountSpi, AisConsentService aisConsentService,
+                                                           Xs2aAisConsentMapper aisConsentMapper
+    ) {
         switch (getScaApproach()) {
             case OAUTH:
                 return new OauthAisAuthorizationService();
@@ -70,18 +72,19 @@ public class ScaAuthorizationConfig {
     }
 
     @Bean
-    public PisAuthorisationService pisAuthorizationService(PisConsentService pisConsentService, Xs2aPisConsentMapper pisConsentMapper) {
+    public PisScaAuthorisationService pisAuthorizationService(PisAuthorisationService authorisationService,
+                                                              Xs2aPisConsentMapper pisConsentMapper) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthPisAuthorisationService();
+            return new OauthPisScaAuthorisationService();
         }
         if (DECOUPLED == scaApproach) {
-            return new DecoupledPisAuthorisationService();
+            return new DecoupledPisScaAuthorisationService();
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedPisAuthorisationService(pisConsentService, pisConsentMapper);
+            return new EmbeddedPisScaAuthorisationService(authorisationService, pisConsentMapper);
         }
-        return new RedirectPisAuthorisationService();
+        return new RedirectPisScaAuthorisationService(authorisationService, pisConsentMapper);
     }
 
     private ScaApproach getScaApproach() {

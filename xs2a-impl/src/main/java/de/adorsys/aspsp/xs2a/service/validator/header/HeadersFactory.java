@@ -33,10 +33,7 @@ public class HeadersFactory {
 
     static {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
-        controllerClassMap.put(ConsentInformationController.class, ConsentRequestHeader.class);
-        controllerClassMap.put(PaymentInitiationController.class, PaymentRequestHeader.class);
-        controllerClassMap.put(BulkPaymentInitiationController.class, PaymentInitiationRequestHeader.class);
-        controllerClassMap.put(PeriodicPaymentsController.class, PaymentInitiationRequestHeader.class);
+        controllerClassMap.put(ConsentController.class, ConsentRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
         controllerClassMap.put(PaymentController.class, PaymentInitiationRequestHeader.class);
     }

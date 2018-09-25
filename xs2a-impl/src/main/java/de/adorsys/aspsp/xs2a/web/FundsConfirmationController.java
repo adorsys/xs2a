@@ -16,43 +16,32 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
-import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.service.FundsConfirmationService;
+import de.adorsys.aspsp.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import io.swagger.annotations.*;
+import de.adorsys.psd2.api.FundsConfirmationApi;
+import de.adorsys.psd2.model.ConfirmationOfFunds;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import java.util.UUID;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "api/v1/funds-confirmations")
-@Slf4j
-@Api(value = "api/v1/funds-confirmations", tags = "PIISP, Funds confirmation", description = "Provides access to the funds confirmation")
-public class FundsConfirmationController {
-    private final FundsConfirmationService fundsConfirmationService;
-    private final ResponseMapper responseMapper;
+@Api(tags = "PIISP, Funds confirmation", description = "Provides access to the funds confirmation")
+public class FundsConfirmationController implements FundsConfirmationApi {
 
-    @PostMapping
-    @ApiOperation(value = "Create a confirmation of funds request ", notes = "debtor account, creditor account, creditor name, remittance information unstructured")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "return true or false"),
-        @ApiResponse(code = 400, message = "Bad request")})
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "x-request-id", value = "2f77a125-aa7a-45c0-b414-cea25a116035", required = true, dataType = "UUID", paramType = "header"),
-        @ApiImplicitParam(name = "date", value = "Sun, 11 Aug 2019 15:02:37 GMT", required = true, dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "digest", value = "730f75dafd73e047b86acb2dbd74e75dcb93272fa084a9082848f2341aa1abb6", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "signature", value = "98c0", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-signature-certificate", value = "some certificate", dataType = "String", paramType = "header"),
-        @ApiImplicitParam(name = "tpp-qwac-certificate", value = "qwac certificate", required = true, dataType = "String", paramType = "header")})
-    public ResponseEntity<FundsConfirmationResponse> fundConfirmation(@RequestBody @Valid FundsConfirmationRequest request) {
-        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(request));
+    private final ResponseMapper responseMapper;
+    private final FundsConfirmationService fundsConfirmationService;
+    private final FundsConfirmationModelMapper fundsConfirmationModelMapper;
+
+    @Override
+    public ResponseEntity<?> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
+        return responseMapper.ok(fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
+
     }
 }

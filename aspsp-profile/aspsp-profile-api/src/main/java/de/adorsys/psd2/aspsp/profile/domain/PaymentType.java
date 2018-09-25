@@ -26,7 +26,8 @@ import java.util.Optional;
 public enum PaymentType {
     BULK("bulk"),
     PERIODIC("periodic"),
-    FUTURE_DATED("delayed");
+    FUTURE_DATED("delayed"),
+    SINGLE("single");
 
     private static final Map<String, PaymentType> container = new HashMap<>();
 

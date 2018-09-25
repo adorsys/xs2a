@@ -16,15 +16,57 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
+import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
+import de.adorsys.aspsp.xs2a.config.factory.ScaStageAuthorisationFactory;
+import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
+@Service
+@RequiredArgsConstructor
+public class PisAuthorisationService {
+    @Qualifier("consentRestTemplate")
+    private final RestTemplate consentRestTemplate;
+    private final PisConsentRemoteUrls remotePisConsentUrls;
+    private final ScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
-public interface PisAuthorisationService {
-    Optional<Xsa2CreatePisConsentAuthorisationResponse> createConsentAuthorisation(String paymentId, PaymentType paymentType);
+    /**
+     * Sends a POST request to CMS to store created consent authorization
+     *
+     * @param paymentId String representation of identifier of stored consent
+     * @return long representation of identifier of stored consent authorization
+     */
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisation(String paymentId) {
+        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisation(),
+            null, CreatePisConsentAuthorisationResponse.class, paymentId)
+                   .getBody();
+    }
 
-    Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request);
+    /**
+     * Updates PIS consent authorization according to psu's sca methods
+     *
+     * @param request Provides transporting data when updating consent authorization
+     * @return sca status
+     */
+    //TODO perform save/update of AspspConsent data according to task https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191
+    //TODO change response type of the method to SpiResponse<UpdatePisConsentPsuDataResponse> https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/299
+    public UpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+        GetPisConsentAuthorisationResponse response = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
+                                                                         .getBody();
+        ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(response.getScaStatus().name());
+        return service.apply(request, response);
+    }
+
+    public UpdatePisConsentPsuDataResponse doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
+        return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
+            UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+    }
 }

@@ -52,6 +52,12 @@
         </dependency>
 
         <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-api</artifactId>
+            <version>1.8-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons.io.version}</version>

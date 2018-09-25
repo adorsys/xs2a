@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.exception;
 
+import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

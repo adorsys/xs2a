@@ -18,10 +18,10 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
-import de.adorsys.aspsp.xs2a.web12.PaymentController12;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.aspsp.xs2a.web.PaymentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,15 +30,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController12> {
-    public PaymentInitiationAspect(int maxNumberOfCharInTransactionJson, AspspProfileService aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController> {
+    public PaymentInitiationAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment, paymentType, psuId, ..)", returning = "result", argNames = "result,payment,paymentType,psuId")
-    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentType paymentType, String psuId) {
+    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, psuId, ..)", returning = "result", argNames = "result,payment,requestParameters,psuId")
+    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentRequestParameters requestParameters, String psuId) {
         if (!result.hasError()) {
-            return enrichLink(result, paymentType, psuId);
+            return enrichLink(result, requestParameters.getPaymentType(), psuId);
         }
         return enrichErrorTextMessage(result);
     }

@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.domain.fund;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -40,7 +40,7 @@ public class FundsConfirmationRequest implements AccountReferenceCollector {
 
     @NotNull
     @ApiModelProperty(value = "PSU’s account number.", required = true)
-    private AccountReference psuAccount;
+    private Xs2aAccountReference psuAccount;
 
     @ApiModelProperty(value = "The merchant where the card is accepted as an information to the PSU.", example = "Check24")
     private String payee;
@@ -51,7 +51,7 @@ public class FundsConfirmationRequest implements AccountReferenceCollector {
 
     @JsonIgnore
     @Override
-    public Set<AccountReference> getAccountReferences() {
+    public Set<Xs2aAccountReference> getAccountReferences() {
         return new HashSet<>(Collections.singletonList(this.psuAccount));
     }
 }
