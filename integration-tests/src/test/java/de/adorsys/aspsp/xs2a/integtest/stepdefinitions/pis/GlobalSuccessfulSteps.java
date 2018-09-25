@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import cucumber.api.java.After;
@@ -93,6 +109,30 @@ public class GlobalSuccessfulSteps {
         //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
 
         // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
+    }
+
+    // Embedded Global Step Payment Initiation
+    @And("^PSU sends the single payment initiating request and receives the paymentId$")
+    public void sendSinglePaymentInitiationEmbedded() {
+        // TODO: Implement
+    }
+
+    // Embedded Global Step Payment Initiation
+    @And("^PSU sends the start authorisation request and receives the authorisationId$")
+    public void startAuthorisationRequest() {
+        // TODO: Implement
+    }
+
+    // Embedded Global Step Payment Initiation
+    @And("^PSU wants to update the resource with his (.*)$")
+    public void loadIdentificationData(String identificationData) {
+        // TODO: Implement
+    }
+
+    // Embedded Global Step Payment Initiation
+    @Then("PSU checks if the correct SCA status and response code is received$")
+    public void checkScaStatusAndResponseCode() {
+        // TODO: Implement
     }
 
     @After

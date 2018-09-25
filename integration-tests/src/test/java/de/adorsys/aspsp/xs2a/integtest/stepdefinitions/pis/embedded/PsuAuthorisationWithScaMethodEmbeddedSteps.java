@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.psd2.model.LinksSelectPsuAuthenticationMethod;
 import de.adorsys.psd2.model.ScaStatus;
-import de.adorsys.psd2.model.ScaStatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -36,32 +38,33 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @FeatureFileSteps
-public class PsuAuthorisationWithScaFactorEmbeddedSteps {
+public class PsuAuthorisationWithScaMethodEmbeddedSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, ScaStatusResponse> context;
+    private Context<HashMap, LinksSelectPsuAuthenticationMethod> context;
 
-    @And("^sends the authorisation request with the payment-id (.*) and authorisationId (.*) and the TAN (.*)$")
-    public void psuSendsTheAuthorisationRequestWithTan(String paymentId, String authorisationId, String tan) {
-        context.setTanValue(tan);
-        HttpEntity entityWithTanValue = PaymentUtils.getHttpEntityWithScaInformation("Tan-Value", context);
-        ResponseEntity<ScaStatusResponse> finalScaStatus = restTemplate.exchange(
+    @When("^PSU sends the authorisation request with the payment-id (.*) and authorisationId (.*)$")
+    public void psuSendsTheAuthorisationRequest(String paymentId, String authorisationId) {
+        context.setScaMethod(SpiScaMethod.SMS_OTP.toString());
+        HttpEntity entityWithScaMethod = PaymentUtils.getHttpEntityWithScaInformation("Sca-Method", context);
+
+        ResponseEntity<LinksSelectPsuAuthenticationMethod> authenticationMethodResponseEntity = restTemplate.exchange(
             context.getBaseUrl() + "/" + paymentId + "/authorisations" + authorisationId,
             HttpMethod.PUT,
-            entityWithTanValue,
-            ScaStatusResponse.class);
+            entityWithScaMethod,
+            LinksSelectPsuAuthenticationMethod.class);
 
-        context.setActualResponse(finalScaStatus);
+        context.setActualResponse(authenticationMethodResponseEntity);
     }
 
-    @Then("^a successful response code and the appropriate authorization data are received$")
-    public void checkResponseCodeAndScaStatus() {
-        ResponseEntity<ScaStatusResponse> actualResponse = context.getActualResponse();
+    @And("^check SCA status$")
+    public void checkSCAStatus() {
+        ResponseEntity<LinksSelectPsuAuthenticationMethod> actualResponse = context.getActualResponse();
         assertThat(actualResponse.getStatusCode(), equalTo(HttpStatus.OK));
-        assertThat(actualResponse.getBody().getScaStatus().toString(), equalTo(ScaStatus.FINALISED.toString()));
+        assertThat(actualResponse.getBody().getScaStatus(), equalTo(ScaStatus.SCAMETHODSELECTED.toString()));
     }
 }

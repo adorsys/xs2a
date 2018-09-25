@@ -14,74 +14,73 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import de.adorsys.psd2.model.PaymentInitiationSctJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
 
 @FeatureFileSteps
-public class PaymentInitiationEmbeddedSteps {
+public class SinglePaymentSuccessfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<PaymentInitiationSctJson, LinksPaymentInitiation> context;
+    private Context<PaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to initiate a payment using the payment service (.*) and the payment product (.*)$")
-    public void psuWantsToInitiateAPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
-        context.setPaymentService(paymentService);
+    @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
+        context.setPaymentService(paymentService);
 
-        TestData<PaymentInitiationSctJson, LinksPaymentInitiation> data = mapper.readValue(resourceToString(
+        TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString(
             "/data-input/pis/single/" + dataFileName, UTF_8),
-            new TypeReference<TestData<PaymentInitiationSctJson, LinksPaymentInitiation>>() {
+            new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
             });
 
         context.setTestData(data);
     }
 
-    @When("^PSU sends the payment initiating request$")
-    public void psuSendsThePaymentInitiatingRequest() {
+    @When("^PSU sends the single payment initiating request$")
+    public void sendPaymentInitiatingRequest() {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
-        ResponseEntity<LinksPaymentInitiation> response = restTemplate.exchange(
+        ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
             HttpMethod.POST,
             entity,
-            LinksPaymentInitiation.class);
+            PaymentInitationRequestResponse201.class);
 
         context.setActualResponse(response);
     }
 
-    @Then("^a successful response code and the appropriate authentication URL is delivered to the PSU$")
-    public void checkResponseCodeAndAuthorisationLink() {
-        ResponseEntity<LinksPaymentInitiation> actualResponse = context.getActualResponse();
-        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getStartAuthorisationWithPsuAuthentication(), notNullValue());
-    }
+    // @Then("^a successful response code and the appropriate payment response data are received$")
+    // see ./GlobalSuccessfulSteps.java
+
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }

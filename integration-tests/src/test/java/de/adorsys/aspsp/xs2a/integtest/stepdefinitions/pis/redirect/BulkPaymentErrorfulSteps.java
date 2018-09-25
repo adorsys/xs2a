@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
-
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,44 +40,40 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class SinglePaymentInformationErrorfulSteps {
-
+public class BulkPaymentErrorfulSteps {
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, TppMessages> context;
+    private Context<BulkPaymentInitiationSctJson, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to request the payment information (.*) of a payment with payment-id (.*) by using the payment-service (.*)$")
-    public void setPaymentParametersForRequestingPaymentInformation(String dataFileName, String paymentId, String paymentService) throws IOException {
+    @Given("^PSU loads errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataForErrorfulBulkPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
+        context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
-        context.setPaymentId(paymentId);
 
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
-            "/data-input/pis/information/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, TppMessages>>() {
-            });
+        TestData<BulkPaymentInitiationSctJson, TppMessages> data = mapper.readValue(
+            resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
+            new TypeReference<TestData<BulkPaymentInitiationSctJson, TppMessages>>() {});
 
         context.setTestData(data);
     }
 
-    @When("^PSU requests the information of the payment with error$")
-    public void sendPaymentInformationRequestWithError() throws HttpClientErrorException, IOException {
+    @When("^PSU sends the bulk payment initiating request with error$")
+    public void sendBulkPaymentInitiatingRequest() throws IOException {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
-                HttpMethod.GET,
-                entity,
-                HashMap.class);
-        } catch (RestClientResponseException rex) {
-            context.handleRequestError(rex);
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+                HttpMethod.POST, entity, HashMap.class);
+        } catch (RestClientResponseException restclientResponseException) {
+            context.handleRequestError(restclientResponseException);
         }
     }
 

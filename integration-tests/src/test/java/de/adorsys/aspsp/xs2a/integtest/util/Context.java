@@ -2,7 +2,6 @@ package de.adorsys.aspsp.xs2a.integtest.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.psd2.model.ScaStatusResponse;
 import de.adorsys.psd2.model.TppMessages;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ public class Context<T, U> {
     private String authorisationId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
-    private ResponseEntity<ScaStatusResponse> authorisationResponse;
+    //private ResponseEntity<ScaStatusResponse> authorisationResponse;
     private TppMessages tppMessages;
     private HttpStatus actualResponseStatus;
 

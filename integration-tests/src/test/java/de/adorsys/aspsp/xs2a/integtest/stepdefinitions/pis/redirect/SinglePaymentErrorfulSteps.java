@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.PaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,40 +41,40 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class PaymentCancellationErrorfulSteps {
+public class SinglePaymentErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<HashMap, TppMessages> context;
+    private Context<PaymentInitiationSctJson, TppMessages> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to cancel a payment (.*) with payment-id (.*) using the payment service (.*)$")
-    public void loadTestData(String dataFileName, String paymentId, String paymentService) throws IOException {
+    @Given("^PSU initiates an errorful single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
+        context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
-        context.setPaymentId(paymentId);
 
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
-            "/data-input/pis/cancellation/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, TppMessages>>() {
-            });
+        TestData<PaymentInitiationSctJson, TppMessages> data = mapper.readValue(resourceToString(
+            "/data-input/pis/single/" + dataFileName, UTF_8),
+            new TypeReference<TestData<PaymentInitiationSctJson, TppMessages>>() {
+        });
 
         context.setTestData(data);
     }
 
-    @When("^PSU initiates the cancellation of the payment with error$")
-    public void sendPaymentCancellationRequestWithError() throws HttpClientErrorException, IOException {
+    @When("^PSU sends the single payment initiating request with error$")
+    public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId(),
-                HttpMethod.DELETE,
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+                HttpMethod.POST,
                 entity,
                 HashMap.class);
         } catch (RestClientResponseException rex) {
@@ -82,5 +84,4 @@ public class PaymentCancellationErrorfulSteps {
 
     // @Then("^an error response code and the appropriate error response are received$")
     // See GlobalErrorfulSteps
-
 }

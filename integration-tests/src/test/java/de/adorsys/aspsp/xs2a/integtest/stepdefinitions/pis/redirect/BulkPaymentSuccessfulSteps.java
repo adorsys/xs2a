@@ -14,68 +14,71 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctJson;
-import de.adorsys.psd2.model.TppMessages;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestClientResponseException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class BulkPaymentErrorfulSteps {
+public class BulkPaymentSuccessfulSteps {
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
 
     @Autowired
-    private Context<BulkPaymentInitiationSctJson, TppMessages> context;
+    private Context<BulkPaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU loads errorful multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
-    public void loadTestDataForErrorfulBulkPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
+    @Given("^PSU wants to initiate multiple payments (.*) using the payment service (.*) and the payment product (.*)$")
+    public void loadTestDataBulkPayment(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        TestData<BulkPaymentInitiationSctJson, TppMessages> data = mapper.readValue(
+        TestData<BulkPaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(
             resourceToString("/data-input/pis/bulk/" + dataFileName, UTF_8),
-            new TypeReference<TestData<BulkPaymentInitiationSctJson, TppMessages>>() {});
+            new TypeReference<TestData<BulkPaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {});
 
         context.setTestData(data);
     }
 
-    @When("^PSU sends the bulk payment initiating request with error$")
-    public void sendBulkPaymentInitiatingRequest() throws IOException {
+    @When("^PSU sends the bulk payment initiating request$")
+    public void sendBulkPaymentInitiatingRequest() {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-                HttpMethod.POST, entity, HashMap.class);
-        } catch (RestClientResponseException restclientResponseException) {
-            context.handleRequestError(restclientResponseException);
-        }
+        ResponseEntity<PaymentInitationRequestResponse201> response = restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+            HttpMethod.POST, entity, new ParameterizedTypeReference<PaymentInitationRequestResponse201>() {
+            });
+
+        context.setActualResponse(response);
     }
 
-    // @Then("^an error response code and the appropriate error response are received$")
-    // See GlobalErrorfulSteps
+//    @Then("^a successful response code and the appropriate payment response data are received$")
+//    see ./GlobalSuccessfulSteps.java
+
+    // @And("^a redirect URL is delivered to the PSU$")
+    // See GlobalSuccessfulSteps
 }
