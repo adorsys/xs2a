@@ -29,7 +29,6 @@ import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.model.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,9 +45,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
-        return StringUtils.isBlank(psuId)
-                   ? createConsentAuthorizationAndGetResponse(ScaStatus.STARTED, START_AUTHORISATION_WITH_PSU_IDENTIFICATION, consentId, psuId)
-                   : createConsentAuthorizationAndGetResponse(ScaStatus.STARTED, START_AUTHORISATION_WITH_PSU_AUTHENTICATION, consentId, psuId);
+        return createConsentAuthorizationAndGetResponse(ScaStatus.STARTED, START_AUTHORISATION_WITH_PSU_AUTHENTICATION, consentId, psuId);
     }
 
     @Override
@@ -67,15 +64,8 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     private UpdateConsentPsuDataResponse createResponseFromUpdatePsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
 
-        if (checkPsuIdentification(request)) {
-            response.setPsuId(request.getPsuId());
-            response.setScaStatus(Xs2aScaStatus.PSUIDENTIFIED);
-            response.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
-            return response;
-        }
-
-        if (checkPsuAuthentication(request, consentAuthorization)) {
-            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = accountSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData());
+        if (isPsuAuthenticationStage(request, consentAuthorization)) {
+            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = accountSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
 
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
                 response.setScaStatus(Xs2aScaStatus.FAILED);
@@ -90,16 +80,16 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             return response;
         }
 
-        if (checkScaMethod(request, consentAuthorization)) {
-            accountSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData());
+        if (isScaMethodSelectionStage(request, consentAuthorization)) {
+            accountSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
             response.setChosenScaMethod(request.getAuthenticationMethodId());
             response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
             return response;
         }
 
-        if (checkScaAuthenticationData(request)) {
-            accountSpi.applyStrongUserAuthorisation(aisConsentMapper.mapToSpiAccountConfirmation(request), new AspspConsentData());
+        if (isAuthorizationStage(request)) {
+            accountSpi.applyStrongUserAuthorisation(aisConsentMapper.mapToSpiAccountConfirmation(request), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
             response.setScaAuthenticationData(request.getScaAuthenticationData());
             response.setScaStatus(Xs2aScaStatus.FINALISED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
@@ -117,7 +107,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                 response.setScaStatus(Xs2aScaStatus.PSUAUTHENTICATED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
             } else {
-                accountSpi.performStrongUserAuthorisation(response.getPsuId(), new AspspConsentData());
+                accountSpi.performStrongUserAuthorisation(response.getPsuId(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
                 response.setChosenScaMethod(availableMethods.get(0).name());
                 response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
@@ -143,19 +133,15 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                    });
     }
 
-    private boolean checkPsuIdentification(UpdateConsentPsuDataReq updatePsuData) {
-        return updatePsuData.isUpdatePsuIdentification();
-    }
-
-    private boolean checkPsuAuthentication(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization spiAuthorization) {
+    private boolean isPsuAuthenticationStage(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization spiAuthorization) {
         return spiAuthorization.getPassword() == null && updatePsuData.getPassword() != null;
     }
 
-    private boolean checkScaMethod(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization spiAuthorization) {
+    private boolean isScaMethodSelectionStage(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization spiAuthorization) {
         return spiAuthorization.getAuthenticationMethodId() == null && updatePsuData.getAuthenticationMethodId() != null;
     }
 
-    private boolean checkScaAuthenticationData(UpdateConsentPsuDataReq updatePsuData) {
+    private boolean isAuthorizationStage(UpdateConsentPsuDataReq updatePsuData) {
         return updatePsuData.getScaAuthenticationData() != null;
     }
 
