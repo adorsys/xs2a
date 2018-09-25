@@ -34,7 +34,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +84,7 @@ public class AccountService {
         if (isBankOfferedConsent(allowedAccountData.getBody())) {
             accountDetails = getAccountDetailsByConsentId(withBalance, consentId);
         } else {
-            accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody());
+            accountDetails = getAccountDetailsFromReferences(withBalance, allowedAccountData.getBody(), consentId);
         }
 
         ResponseObject<Map<String, List<Xs2aAccountDetails>>> response = ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()
@@ -110,7 +109,9 @@ public class AccountService {
             return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
@@ -146,7 +147,9 @@ public class AccountService {
             return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
@@ -185,14 +188,15 @@ public class AccountService {
             return ResponseObject.<Xs2aAccountReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-
-        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus);
+        Optional<Xs2aAccountReport> report = getAccountReport(accountId, dateFrom, dateTo, transactionId, bookingStatus, consentId);
 
         ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
                                                          ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
@@ -223,13 +227,13 @@ public class AccountService {
         }
         SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
         aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
-        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aTransactionsReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo)
+        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo, consentId)
                                                  .map(r -> filterByBookingStatus(r, bookingStatus));
 
         if (!(isValid && report.isPresent())) {
@@ -269,13 +273,15 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
 
-        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(accountSpi.readAccountDetails(accountId, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId);
+        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId, consentId);
 
         ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
                                                          ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
@@ -289,9 +295,13 @@ public class AccountService {
         return response;
     }
 
-    Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(Xs2aAccountReference reference) {
+    Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(Xs2aAccountReference reference, String consentId) {
         return Optional.ofNullable(reference) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Refactor to procedure style - we read data inside the stream here
-                   .map(ref -> accountSpi.readAccountDetailsByIban(ref.getIban(), new AspspConsentData()).getPayload()) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+                   .map(ref -> {
+                       SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountDetailsByIban(ref.getIban(), aisConsentDataService.getConsentData(consentId));
+                       aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+                       return spiResponse.getPayload();
+                   })
                    .map(Collection::stream)
                    .flatMap(accDts -> accDts
                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
@@ -299,17 +309,20 @@ public class AccountService {
                    .map(spiXs2aAccountMapper::mapToXs2aAccountDetails);
     }
 
-    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(boolean withBalance, Xs2aAccountAccess accountAccess) {
+    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(boolean withBalance, Xs2aAccountAccess accountAccess, String consentId) {
         List<Xs2aAccountReference> references = withBalance
                                                 ? accountAccess.getBalances()
                                                 : accountAccess.getAccounts();
-        List<Xs2aAccountDetails> details = getAccountDetailsFromReferences(references);
+        List<Xs2aAccountDetails> details = getAccountDetailsFromReferences(references, consentId);
         return filterAccountDetailsByWithBalance(withBalance, details);
     }
 
     private List<Xs2aAccountDetails> getAccountDetailsByConsentId(boolean withBalance, String consentId) {
         SpiAccountConsent spiAccountConsent = aisConsentService.getAccountConsentById(consentId);
-        List<SpiAccountDetails> spiAccountDetails = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), new AspspConsentData()).getPayload();
+
+        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        List<SpiAccountDetails> spiAccountDetails = spiResponse.getPayload();
         List<Xs2aAccountDetails> details = spiAccountDetails.stream()
                                                .map(spiXs2aAccountMapper::mapToXs2aAccountDetails)
                                                .collect(Collectors.toList());
@@ -323,38 +336,42 @@ public class AccountService {
                    : spiXs2aAccountMapper.mapToAccountDetailsListNoBalances(details);
     }
 
-    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(List<Xs2aAccountReference> references) {
+    private List<Xs2aAccountDetails> getAccountDetailsFromReferences(List<Xs2aAccountReference> references, String consentId) {
         return CollectionUtils.isEmpty(references)
                    ? Collections.emptyList()
                    : references.stream()
-                         .map(this::getAccountDetailsByAccountReference)
+                         .map(ref -> getAccountDetailsByAccountReference(ref, consentId))
                          .filter(Optional::isPresent)
                          .map(Optional::get)
                          .collect(Collectors.toList());
     }
 
     private Optional<Xs2aAccountReport> getAccountReport(String accountId, LocalDate dateFrom, LocalDate dateTo, String transactionId,
-                                                         Xs2aBookingStatus bookingStatus) {
+                                                         Xs2aBookingStatus bookingStatus, String consentId) {
         return StringUtils.isNotBlank(transactionId)
-                   ? getAccountReportByTransaction(transactionId, accountId)
-                   : getAccountReportByPeriod(accountId, dateFrom, dateTo)
+                   ? getAccountReportByTransaction(transactionId, accountId, consentId)
+                   : getAccountReportByPeriod(accountId, dateFrom, dateTo, consentId)
                          .map(r -> filterByBookingStatus(r, bookingStatus));
     }
 
-    private Optional<Xs2aAccountReport> getAccountReportByTransaction(String transactionId, String accountId) {
+    private Optional<Xs2aAccountReport> getAccountReportByTransaction(String transactionId, String accountId, String consentId) {
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        Optional<SpiTransaction> transaction = accountSpi.readTransactionById(transactionId, accountId, new AspspConsentData()).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<Optional<SpiTransaction>> spiResponse = accountSpi.readTransactionById(transactionId, accountId, aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        Optional<SpiTransaction> transaction = spiResponse.getPayload();
         return spiXs2aAccountMapper.mapToXs2aAccountReport(transaction
                                                     .map(Collections::singletonList)
                                                     .orElseGet(Collections::emptyList));
     }
 
-    public Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) { //TODO to be reviewed upon change to v1.1
+    public Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.1
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
-        return spiXs2aAccountMapper.mapToXs2aAccountReport(accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateToChecked, new AspspConsentData()).getPayload()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<List<SpiTransaction>> spiResponse = accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateToChecked, aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        return spiXs2aAccountMapper.mapToXs2aAccountReport(spiResponse.getPayload());
     }
 
     private ActionStatus createActionStatus(boolean withBalance, TypeAccess access, ResponseObject response) {

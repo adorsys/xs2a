@@ -16,17 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.config.rest.consent.ConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.WebApplicationContext;
 
 @Service
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class PisConsentDataService extends ConsentDataService{
     private PisConsentRemoteUrls pisConsentRemoteUrls;
 

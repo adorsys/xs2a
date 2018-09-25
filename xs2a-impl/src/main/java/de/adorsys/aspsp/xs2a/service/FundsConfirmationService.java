@@ -76,7 +76,7 @@ public class FundsConfirmationService {
 
     private List<Xs2aBalance> getAccountBalancesByAccountReference(Xs2aAccountReference reference) {
         return Optional.ofNullable(reference)
-                   .map(accountService::getAccountDetailsByAccountReference)
+                   .map(ref -> accountService.getAccountDetailsByAccountReference(ref, null))
                    .filter(Optional::isPresent)
                    .map(Optional::get)
                    .map(Xs2aAccountDetails::getBalances)

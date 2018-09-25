@@ -47,6 +47,7 @@ import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,7 +71,7 @@ public class FundsConfirmationServiceTest {
 
     @Before
     public void setUp() throws IOException {
-        when(accountService.getAccountDetailsByAccountReference(any(Xs2aAccountReference.class)))
+        when(accountService.getAccountDetailsByAccountReference(any(Xs2aAccountReference.class), anyString()))
             .thenReturn(Optional.of(new Xs2aAccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }

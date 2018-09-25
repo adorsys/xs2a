@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.ConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 
 @Data
@@ -34,13 +37,13 @@ public abstract class ConsentDataService {
     private final RestTemplate consentRestTemplate;
 
     public AspspConsentData getConsentData(String consentId) {
-        return consentRestTemplate.getForEntity(getRemoteUrl().getConsentData(), AspspConsentData.class, consentId).getBody();
+        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(getRemoteUrl().getConsentData(), Xs2aConsentData.class, consentId).getBody();
+        return new AspspConsentData(xs2aConsentData.getBody(), consentId);
     }
 
     public void updateConsentData(AspspConsentData consentData) {
-        consentRestTemplate.put(getRemoteUrl().updateConsentData(), consentData, consentData.getConsentId());
-        //consentRestTemplate.exchange(getRemoteUrl().updateConsentData(), HttpMethod.PUT, new HttpEntity<>(consentData), ResponseEntity.class, consentData.getConsentId()).getBody();
-
+        Optional.ofNullable(consentData)
+            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(cd.getBody()), consentData.getConsentId()));
     }
 
     protected abstract ConsentRemoteUrls getRemoteUrl();

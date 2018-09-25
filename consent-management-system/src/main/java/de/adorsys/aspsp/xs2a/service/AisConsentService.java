@@ -210,7 +210,6 @@ public class AisConsentService {
     private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
         AisConsentAspspDataResponse request = new AisConsentAspspDataResponse();
         request.setBody(consent.getAspspConsentData());
-        request.setConsentId(consent.getExternalId());
         return request;
 
     }
