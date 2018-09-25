@@ -84,7 +84,19 @@ public class ConsentModelMapper {
     }
 
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
-        return new UpdatePsuAuthenticationResponse();
+        return Optional.ofNullable(response)
+                   .map(r ->
+                            // TODO add mapping of chosenScaMethod after ChosenScaMethod generated entity will be updated in the specification https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/335
+                            new UpdatePsuAuthenticationResponse()
+                                ._links(objectMapper.convertValue(response.getLinks(), Map.class))
+                                .scaMethods(getAvailableScaMethods(r.getAvailableScaMethods()))
+                                .scaStatus(
+                                    Optional.ofNullable(r.getScaStatus())
+                                        .map(s -> ScaStatus.valueOf(s.name()))
+                                        .orElse(null)
+                                )
+                   )
+                   .orElse(null);
     }
 
     public ConsentsResponse201 mapToConsentsResponse201(CreateConsentResponse createConsentResponse) {
@@ -259,5 +271,4 @@ public class ConsentModelMapper {
         }
         return scaMethods;
     }
-
 }
