@@ -204,9 +204,9 @@ public class PaymentModelMapper {
         return TransactionStatus.valueOf(responseObject.name());
     }
 
-    public Object mapToPaymentInitiationResponse12(Object response,PaymentRequestParameters requestParameters) {
+    public Object mapToPaymentInitiationResponse12(Object response, PaymentRequestParameters requestParameters) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
-        if (EnumSet.of(SINGLE,PERIODIC).contains(requestParameters.getPaymentType())) {
+        if (EnumSet.of(SINGLE, PERIODIC).contains(requestParameters.getPaymentType())) {
             PaymentInitialisationResponse specificResponse = (PaymentInitialisationResponse) response;
             response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
             response201.setPaymentId(specificResponse.getPaymentId());
