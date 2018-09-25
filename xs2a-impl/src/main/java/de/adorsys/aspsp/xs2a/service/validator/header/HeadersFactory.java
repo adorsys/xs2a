@@ -18,7 +18,10 @@ package de.adorsys.aspsp.xs2a.service.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.*;
-import de.adorsys.aspsp.xs2a.web.*;
+import de.adorsys.aspsp.xs2a.web.AccountController;
+import de.adorsys.aspsp.xs2a.web.ConsentController;
+import de.adorsys.aspsp.xs2a.web.FundsConfirmationController;
+import de.adorsys.aspsp.xs2a.web.PaymentController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +38,7 @@ public class HeadersFactory {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
         controllerClassMap.put(ConsentController.class, ConsentRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
-        controllerClassMap.put(PaymentController.class, PaymentInitiationRequestHeader.class);
+        controllerClassMap.put(PaymentController.class, PaymentRequestHeader.class); // TODO Add check whether psu-ip-address is present in payment initiation request header https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/341
     }
 
     public static RequestHeader getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {
