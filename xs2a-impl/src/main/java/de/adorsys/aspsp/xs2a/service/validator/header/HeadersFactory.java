@@ -38,7 +38,7 @@ public class HeadersFactory {
         controllerClassMap.put(AccountController.class, AccountRequestHeader.class);
         controllerClassMap.put(ConsentController.class, ConsentRequestHeader.class);
         controllerClassMap.put(FundsConfirmationController.class, FundsConfirmationRequestHeader.class);
-        controllerClassMap.put(PaymentController.class, PaymentRequestHeader.class); // TODO Add check whether psu-ip-address is present in payment initiation request header https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/341
+        controllerClassMap.put(PaymentController.class, PaymentInitiationRequestHeader.class);
     }
 
     public static RequestHeader getHeadersImpl(Map<String, String> requestHeadersMap, Class controllerClass) {
