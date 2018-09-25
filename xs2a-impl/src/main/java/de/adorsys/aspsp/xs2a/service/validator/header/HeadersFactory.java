@@ -18,7 +18,10 @@ package de.adorsys.aspsp.xs2a.service.validator.header;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.service.validator.header.impl.*;
-import de.adorsys.aspsp.xs2a.web.*;
+import de.adorsys.aspsp.xs2a.web.AccountController;
+import de.adorsys.aspsp.xs2a.web.ConsentController;
+import de.adorsys.aspsp.xs2a.web.FundsConfirmationController;
+import de.adorsys.aspsp.xs2a.web.PaymentController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
