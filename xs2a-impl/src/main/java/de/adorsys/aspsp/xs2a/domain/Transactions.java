@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
@@ -75,7 +75,7 @@ public class Transactions {
     private String creditorName;
 
     @ApiModelProperty(value = "Creditor account")
-    private AccountReference creditorAccount;
+    private Xs2aAccountReference creditorAccount;
 
     @ApiModelProperty(value = "Name of the last creditor", example = "Paul Simpson")
     @Size(max = 70)
@@ -85,7 +85,7 @@ public class Transactions {
     private String debtorName;
 
     @ApiModelProperty(value = "Debtor account")
-    private AccountReference debtorAccount;
+    private Xs2aAccountReference debtorAccount;
 
     @ApiModelProperty(value = "Name of the last debtor", example = "Max")
     @Size(max = 70)

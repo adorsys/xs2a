@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
@@ -41,13 +42,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AccountMapperTest {
+public class SpiXs2aAccountMapperTest {
     private static final String SPI_ACCOUNT_DETAILS_JSON_PATH = "/json/MapSpiAccountDetailsToXs2aAccountDetailsTest.json";
     private static final String SPI_TRANSACTION_JSON_PATH = "/json/AccountReportDataTest.json";
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     @InjectMocks
-    private AccountMapper accountMapper;
+    private SpiXs2aAccountMapper spiXs2aAccountMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private JsonConverter jsonConverter = new JsonConverter(objectMapper);
@@ -60,7 +61,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorAccountDetails);
-        Xs2aAccountDetails actualAccountDetails = accountMapper.mapToAccountDetails(donorAccountDetails);
+        Xs2aAccountDetails actualAccountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(donorAccountDetails);
 
         //Then:
         assertThat(actualAccountDetails.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
@@ -85,7 +86,7 @@ public class AccountMapperTest {
 
         //When:
         assertNotNull(donorSpiTransaction);
-        Optional<Xs2aAccountReport> aAR = accountMapper.mapToAccountReport(donorSpiTransactions);
+        Optional<Xs2aAccountReport> aAR = spiXs2aAccountMapper.mapToXs2aAccountReport(donorSpiTransactions);
         Xs2aAccountReport actualAccountReport;
         actualAccountReport = aAR.orElseGet(() -> new Xs2aAccountReport(new Transactions[]{}, new Transactions[]{}));
 

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.aspsp.xs2a.exception;
 
-public interface ReadPaymentFactory {
-    ReadPayment getService(String serviceName);
+public class CertificateException extends RuntimeException {
 }

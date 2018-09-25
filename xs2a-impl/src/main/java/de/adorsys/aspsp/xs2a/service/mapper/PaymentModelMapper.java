@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
@@ -85,8 +85,8 @@ public class PaymentModelMapper {
         return payment;
     }
 
-    private AccountReference mapToXs2aAccountReference(Object reference12) {
-        return mapper.convertValue(reference12, AccountReference.class);
+    private Xs2aAccountReference mapToXs2aAccountReference(Object reference12) {
+        return mapper.convertValue(reference12, Xs2aAccountReference.class);
     }
 
     private PeriodicPayment mapToXs2aPeriodicPayment(PeriodicPaymentInitiationSctJson paymentRequest) {

@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -35,7 +35,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -53,6 +52,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final AisAuthorizationService aisAuthorizationService;
     private final AspspProfileServiceWrapper aspspProfileService;
     private final PisScaAuthorisationService pisAuthorizationService;
+    private final TppService tppService;
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
@@ -77,7 +77,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
-        String tppId = getTppId();
+        String tppId = tppService.getTppId();
         String consentId = aisConsentService.createConsent(request, psuId, tppId, new AspspConsentData());
 
         //TODO v1.1 Add balances support
@@ -189,7 +189,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
 
-    boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
+    boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getIban().equals(iban)
@@ -243,14 +243,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private SpiAccountConsent getValidatedSpiAccountConsent(String consentId) {
         return Optional.ofNullable(aisConsentService.getAccountConsentById(consentId))
-                   .filter(consent -> getTppId().equals(consent.getTppId()))
+                   .filter(consent -> tppService.getTppId().equals(consent.getTppId()))
                    .orElse(null);
-    }
-
-    private String getTppId() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                   .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
-                   .map(credentials -> credentials.get("authorityId"))
-                   .orElse("This is a test TppId");
     }
 }
