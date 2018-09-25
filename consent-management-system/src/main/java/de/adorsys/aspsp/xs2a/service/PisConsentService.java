@@ -32,6 +32,7 @@ import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.repository.PisPaymentDataRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -136,18 +137,22 @@ public class PisConsentService {
     }
 
     public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
-        return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
-                   .map(p -> {
-                       if (STARTED == p.getScaStatus()) {
-                           p.getConsent()
-                               .setAspspConsentData(request.getCmsAspspConsentData().getBody());
-                       }
-                       if (SCAMETHODSELECTED == request.getScaStatus()) {
-                           p.setChosenScaMethod(CmsScaMethod.valueOf(request.getAuthenticationMethodId()));
-                       }
-                       p.setScaStatus(request.getScaStatus());
-                       return pisConsentAuthorizationRepository.save(p);
-                   }).map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
+        Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalId(
+            authorizationId);
+        if (pisConsentAuthorisationOptional.isPresent()) {
+            PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
+            consentAuthorization.getConsent().setAspspConsentData(request.getCmsAspspConsentData().getBody());
+
+            if (SCAMETHODSELECTED == request.getScaStatus()) {
+                String chosenMethod = request.getAuthenticationMethodId();
+                if (StringUtils.isNotBlank(chosenMethod)) {
+                    consentAuthorization.setChosenScaMethod(CmsScaMethod.valueOf(chosenMethod));
+                }
+            }
+            consentAuthorization.setScaStatus(request.getScaStatus());
+            pisConsentAuthorizationRepository.save(consentAuthorization);
+        }
+        return pisConsentAuthorisationOptional.map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
     }
 
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
