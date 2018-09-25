@@ -63,7 +63,7 @@ public class PisConsentService {
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
         return pisConsentMapper.mapToPisConsent(request)
                    .map(pisConsentRepository::save)
-                   .map(r -> new CreatePisConsentResponse(r.getExternalId(), r.getPayments().iterator().next().getPaymentId()));
+                   .map(r -> new CreatePisConsentResponse(r.getExternalId()));
     }
 
     /**
