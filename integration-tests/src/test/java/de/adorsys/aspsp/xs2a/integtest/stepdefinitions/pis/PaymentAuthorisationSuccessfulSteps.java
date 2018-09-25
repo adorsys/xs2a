@@ -21,6 +21,7 @@ import cucumber.api.java.en.Given;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.LinksPaymentInitiation;
+import de.adorsys.psd2.model.ScaStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -60,10 +61,9 @@ public class PaymentAuthorisationSuccessfulSteps {
     @And("^check if authorisationId and SCA status are valid$")
     public void checkAuthorisationIdAndScaStatus() {
         ResponseEntity<LinksPaymentInitiation> actualResponse = context.getActualResponse();
-        LinksPaymentInitiation givenResponseBody = context.getTestData().getResponse().getBody();
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
-        assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
+        assertThat(actualResponse.getBody().getScaStatus(), equalTo(ScaStatus.RECEIVED.toString()));
         assertThat(actualResponse.getBody().getStartAuthorisationWithPsuAuthentication(), not(isEmptyString()));
     }
 }
