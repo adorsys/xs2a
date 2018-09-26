@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class PisConsentDataService extends ConsentDataService{
+public class PisConsentDataService extends ConsentDataService {
     private PisConsentRemoteUrls pisConsentRemoteUrls;
 
     public PisConsentDataService(RestTemplate consentRestTemplate, PisConsentRemoteUrls pisConsentRemoteUrls) {

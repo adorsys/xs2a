@@ -135,9 +135,15 @@ public class AisConsentService {
                    });
     }
 
-    public Optional<AisConsentAspspDataResponse> getAspspData(String consentId) {
+    /**
+     * Get Ais aspsp consent data by id
+     *
+     * @param consentId id of the consent
+     * @return Response containing aspsp consent data
+     */
+    public Optional<AisConsentAspspDataResponse> getAspspConsentData(String consentId) {
         return getActualAisConsent(consentId)
-                   .map(cons -> getConsentAspspData(cons));
+                   .map(this::getConsentAspspData);
     }
 
     /**
@@ -148,9 +154,9 @@ public class AisConsentService {
      * @return String   consent id
      */
     @Transactional
-    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
+    public Optional<String> updateAspspConsentData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualAisConsent(consentId)
-                   .map(cons -> updateConsentAspspData(request, cons));
+                   .map(cons -> updateAspspConsentData(request, cons));
     }
 
     /**
@@ -204,12 +210,12 @@ public class AisConsentService {
     }
 
     private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
-        AisConsentAspspDataResponse request = new AisConsentAspspDataResponse();
-        request.setAspspConsentData(consent.getAspspConsentData());
-        return request;
+        AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
+        response.setAspspConsentData(consent.getAspspConsentData());
+        return response;
     }
 
-    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, AisConsent consent) {
+    private String updateAspspConsentData(UpdateConsentAspspDataRequest request, AisConsent consent) {
         consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();

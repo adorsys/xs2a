@@ -104,12 +104,24 @@ public class PisConsentService {
                    .map(con -> con.getConsentStatus() == status);
     }
 
-    public Optional<PisConsentAspspDataResponse> getAspspDataByConsentId(String consentId) {
+    /**
+     *
+     * Get Pis aspsp consent data by consent id
+     * @param consentId id of the consent
+     * @return Response containing aspsp consent data
+     */
+    public Optional<PisConsentAspspDataResponse> getAspspConsentDataByConsentId(String consentId) {
         return getPisConsentById(consentId)
                    .map(this::prepareAspspConsentData);
     }
 
-    public Optional<PisConsentAspspDataResponse> getAspspDataByPaymentId(String paymentId) {
+    /**
+     * Get Pis aspsp consent data by payment id
+     *
+     * @param paymentId id of the payment
+     * @return Response containing aspsp consent data
+     */
+    public Optional<PisConsentAspspDataResponse> getAspspConsentDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
                    .map(PisPaymentData::getConsent)
                    .map(this::prepareAspspConsentData);
@@ -130,9 +142,9 @@ public class PisConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
+    public Optional<String> updateAspspConsentData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualPisConsent(consentId)
-                   .map(cons -> updateConsentAspspData(request, cons));
+                   .map(cons -> updateAspspConsentData(request, cons));
     }
 
     /**
@@ -205,7 +217,7 @@ public class PisConsentService {
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 
-    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, PisConsent consent) {
+    private String updateAspspConsentData(UpdateConsentAspspDataRequest request, PisConsent consent) {
         consent.setAspspConsentData(request.getAspspConsentData());
         PisConsent savedConsent = pisConsentRepository.save(consent);
         return savedConsent.getExternalId();

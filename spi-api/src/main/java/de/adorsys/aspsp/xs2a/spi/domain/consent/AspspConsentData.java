@@ -25,7 +25,7 @@ public class AspspConsentData {
 
         AspspConsentData that = (AspspConsentData) o;
 
-        return Arrays.equals(aspspConsentData, that.aspspConsentData)&& Objects.equals(consentId, that.getConsentId());
+        return Arrays.equals(aspspConsentData, that.aspspConsentData) && Objects.equals(consentId, that.getConsentId());
     }
 
     @Override

@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 public class AspspConsentDataController {
     private final PisConsentService pisConsentService;
 
-    @GetMapping(path = "/consent/{consent-id}/aspspConsentData")
+    @GetMapping(path = "/consent/{consent-id}/aspsp-consent-data")
     @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -41,12 +41,12 @@ public class AspspConsentDataController {
     public ResponseEntity<PisConsentAspspDataResponse> getAspspConsentData(
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
-        return pisConsentService.getAspspDataByConsentId(consentId)
+        return pisConsentService.getAspspConsentDataByConsentId(consentId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "/consent/{consent-id}/aspspConsentData")
+    @PutMapping(path = "/consent/{consent-id}/aspsp-consent-data")
     @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -55,12 +55,12 @@ public class AspspConsentDataController {
         @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
         @RequestBody UpdateConsentAspspDataRequest request) {
-        return pisConsentService.updateConsentAspspData(consentId, request)
+        return pisConsentService.updateAspspConsentData(consentId, request)
                    .map(consId -> new ResponseEntity<>(new CreatePisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(path = "/payment/{payment-id}/aspspConsentData")
+    @GetMapping(path = "/payment/{payment-id}/aspsp-consent-data")
     @ApiOperation(value = "Get aspsp consent data identified by given payment id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -68,7 +68,7 @@ public class AspspConsentDataController {
     public ResponseEntity<PisConsentAspspDataResponse> getAspspConsentDataByPaymentId(
         @ApiParam(name = "payment-id", value = "The payment identification.", example = "32454656712432")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getAspspDataByPaymentId(paymentId)
+        return pisConsentService.getAspspConsentDataByPaymentId(paymentId)
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
