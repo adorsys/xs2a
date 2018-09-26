@@ -27,7 +27,7 @@ Feature: Payment Initiation Embedded approach
         Then PSU checks if the correct SCA status and response code is received
         Examples:
             | payment-service                          | payment-product         | single-payment                | identification-data                          |
-            | payments	                               | sepa-credit-transfer    | singlePayInit-successful.json | updateIdentificationNoSca-successful.json    |
+            | payments	                               | sepa-credit-transfers    | singlePayInit-successful.json | updateIdentificationNoSca-successful.json    |
 
     Scenario Outline: Successful update of identification data (one Sca method) (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
@@ -38,7 +38,7 @@ Feature: Payment Initiation Embedded approach
         Then PSU checks if the correct SCA status and response code is received
         Examples:
             | payment-service                          | payment-product         | single-payment                | identification-data                          |
-            | payments	                               | sepa-credit-transfer    | singlePayInit-successful.json | updateIdentificationOneSca-successful.json   |
+            | payments	                               | sepa-credit-transfers    | singlePayInit-successful.json | updateIdentificationOneSca-successful.json   |
 
     Scenario Outline: Successful update of identification data (multiple Sca methods) (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
@@ -49,7 +49,7 @@ Feature: Payment Initiation Embedded approach
         Then PSU checks if the correct SCA status, sca methods and response code is received
         Examples:
             | payment-service                          | payment-product         | single-payment                | identification-data                              |
-            | payments	                               | sepa-credit-transfer    | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  |
+            | payments	                               | sepa-credit-transfers    | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  |
 
     Scenario Outline: Successful Selection of PSU authentication method (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
@@ -62,7 +62,7 @@ Feature: Payment Initiation Embedded approach
         Then PSU checks if the correct SCA status and response code is received
         Examples:
             | payment-service                          | payment-product         | single-payment                | identification-data                              | selection-data                                |
-            | payments	                               | sepa-credit-transfer    | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuthenticationMethod-successful.json    |
+            | payments	                               | sepa-credit-transfers    | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuthenticationMethod-successful.json    |
 
 #   TODO: find a way to test the tan confirmation
 
