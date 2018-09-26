@@ -71,7 +71,7 @@ public class FundsConfirmationServiceTest {
     @Before
     public void setUp() throws IOException {
         when(accountService.getAccountDetailsByAccountReference(any(Xs2aAccountReference.class)))
-            .thenReturn(Optional.of(new Xs2aAccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
+            .thenReturn(Optional.of(new Xs2aAccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 

@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.common;
+package de.adorsys.aspsp.xs2a.spi.domain.account;
 
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Currency;
 
-@Slf4j
 @Value
-public class SpiAmount {
-    private Currency currency;
-    private BigDecimal amount;
+public class SpiExchangeRate {
+    private Currency currencyFrom;
+    private String rateFrom;
+    private Currency currencyTo;
+    private String rateTo;
+    private LocalDate rateDate;
+    private String rateContract;
 }

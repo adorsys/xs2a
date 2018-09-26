@@ -26,7 +26,8 @@ public enum SpiTransactionStatus {
     ACWP("AcceptedWithoutPosting"),  //Payment instruction included in the credit transfer is accepted without being posted to the creditor customer’s account
     RCVD("Received"),  //Payment initiation has been received by the receiving agent
     PDNG("Pending"),  //Payment initiation or individual transaction included in the payment initiation is pending. Further checks and status update will be performed
-    RJCT("Rejected");  //Payment initiation or individual transaction included in the payment initiation has been rejected
+    RJCT("Rejected"),  //Payment initiation or individual transaction included in the payment initiation has been rejected
+    CANC("Canceled");  //Canceled
 
     private String name;
 

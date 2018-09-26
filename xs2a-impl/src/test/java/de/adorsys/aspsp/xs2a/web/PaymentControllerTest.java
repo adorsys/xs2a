@@ -27,7 +27,8 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.AccountReferenceValidationService;
 import de.adorsys.aspsp.xs2a.service.PaymentService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperPsd2;
+import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperXs2a;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
@@ -88,7 +89,9 @@ public class PaymentControllerTest {
     @Mock
     private ResponseMapper responseMapper;
     @Mock
-    private PaymentModelMapper paymentModelMapper;
+    private PaymentModelMapperPsd2 paymentModelMapperPsd2;
+    @Mock
+    private PaymentModelMapperXs2a paymentModelMapperXs2a;
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
