@@ -36,7 +36,7 @@ Feature: Payment Initiation Embedded approach
 #        And PSU sends the single payment initiating request and receives the paymentId
 #        And PSU sends the start authorisation request and receives the authorisationId
 #        And PSU wants to update the resource with his <identification-data>
-#        And PSU sends the update Authorisation request for multiple sca methods
+#        And PSU sends the update identification data request
 #        And PSU wants to select the authentication method using the <selection-data>
 #        When PSU sends the select sca method request
 #        Then PSU checks if the correct SCA status and response code is received
