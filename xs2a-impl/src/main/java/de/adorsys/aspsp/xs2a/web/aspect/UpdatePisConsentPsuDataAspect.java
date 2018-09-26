@@ -46,7 +46,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
             Links links = buildLink(request);
 
-            if (isScaStatusMethodAuthenticated(request.getAuthorizationId(), request.getScaStatus())) {
+            if (isScaStatusMethodAuthenticated(request.getScaStatus())) {
 
                 links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
                 links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
@@ -70,7 +70,6 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
         Links links = new Links();
         links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", request.getPaymentService(), request.getPaymentId()));
         links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", request.getPaymentService(), request.getPaymentId()));
-
         return links;
     }
 
@@ -95,8 +94,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
                    && scaStatus == CmsScaStatus.SCAMETHODSELECTED;
     }
 
-    private boolean isScaStatusMethodAuthenticated(String authorizationId, CmsScaStatus scaStatus) {
-        return StringUtils.isNotBlank(authorizationId)
-                   && scaStatus == CmsScaStatus.PSUAUTHENTICATED;
+    private boolean isScaStatusMethodAuthenticated(CmsScaStatus scaStatus) {
+        return scaStatus == CmsScaStatus.PSUAUTHENTICATED;
     }
 }
