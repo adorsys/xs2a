@@ -41,6 +41,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of transactions
      */
+    @Deprecated
     SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, AspspConsentData aspspConsentData);
 
     /**
@@ -52,6 +53,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Transaction
      */
+    @Deprecated
     SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData);
 
     /**
@@ -62,6 +64,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Account details
      */
+    @Deprecated
     SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData);
 
     /**
@@ -72,6 +75,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
+    @Deprecated
     SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, AspspConsentData aspspConsentData);
 
     /**
@@ -82,6 +86,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
+    @Deprecated
     SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, AspspConsentData aspspConsentData);
 
     /**
@@ -92,6 +97,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
+    @Deprecated
     SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, AspspConsentData aspspConsentData);
 
     /**
@@ -102,8 +108,10 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of allowed payment products
      */
+    @Deprecated
     SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
 
+    @Deprecated
     SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password);
 
     /**
@@ -115,6 +123,7 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return success or failure authorization status
      */
+    @Deprecated
     SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
 
     /**
@@ -124,6 +133,7 @@ public interface AccountSpi {
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      */
+    @Deprecated
     void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
 
     /**
@@ -133,5 +143,6 @@ public interface AccountSpi {
      * @param aspspConsentData       Encrypted data that may be stored in the consent management system in the consent linked to a request.
      *                               May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      */
+    @Deprecated
     void applyStrongUserAuthorisation(SpiAccountConfirmation spiAccountConfirmation, AspspConsentData aspspConsentData);
 }
