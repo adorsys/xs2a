@@ -46,7 +46,11 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
             Xs2aUpdatePisConsentPsuDataResponse body = result.getBody();
             Links links = buildLink(request);
 
-            if (isScaStatusMethodSelected(request.getAuthenticationMethodId(), request.getScaStatus())) {
+            if (isScaStatusMethodAuthenticated(request.getAuthorizationId(), request.getScaStatus())) {
+
+                links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
+                links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
+            } else if (isScaStatusMethodSelected(request.getAuthenticationMethodId(), request.getScaStatus())) {
 
                 links.setAuthoriseTransaction(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
                 body.setChosenScaMethod(getChosenScaMethod(request.getAuthenticationMethodId()));
@@ -66,8 +70,7 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
         Links links = new Links();
         links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", request.getPaymentService(), request.getPaymentId()));
         links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", request.getPaymentService(), request.getPaymentId()));
-        links.setSelectAuthenticationMethod(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
-        links.setUpdatePsuAuthentication(buildAuthorisationLink(request.getPaymentService(), request.getPaymentId(), request.getAuthorizationId()));
+
         return links;
     }
 
@@ -90,5 +93,10 @@ public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentCon
     private boolean isScaStatusMethodSelected(String authenticationMethodId, CmsScaStatus scaStatus) {
         return StringUtils.isNotBlank(authenticationMethodId)
                    && scaStatus == CmsScaStatus.SCAMETHODSELECTED;
+    }
+
+    private boolean isScaStatusMethodAuthenticated(String authorizationId, CmsScaStatus scaStatus) {
+        return StringUtils.isNotBlank(authorizationId)
+                   && scaStatus == CmsScaStatus.PSUAUTHENTICATED;
     }
 }
