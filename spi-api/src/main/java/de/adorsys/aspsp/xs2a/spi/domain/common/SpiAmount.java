@@ -26,5 +26,5 @@ import java.util.Currency;
 @Value
 public class SpiAmount {
     private Currency currency;
-    private BigDecimal content;
+    private BigDecimal amount;
 }

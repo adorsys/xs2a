@@ -1,9 +1,10 @@
 <code_scheme name="Default" version="173">
-  <codeStyleSettings language="JAVA">
-    <indentOptions>
-      <option name="SMART_TABS" value="true" />
-      <option name="LABEL_INDENT_SIZE" value="4" />
-      <option name="USE_RELATIVE_INDENTS" value="true" />
-    </indentOptions>
-  </codeStyleSettings>
+    <codeStyleSettings language="JAVA">
+        <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true"/>
+        <indentOptions>
+            <option name="SMART_TABS" value="true"/>
+            <option name="LABEL_INDENT_SIZE" value="4"/>
+            <option name="USE_RELATIVE_INDENTS" value="true"/>
+        </indentOptions>
+    </codeStyleSettings>
 </code_scheme>

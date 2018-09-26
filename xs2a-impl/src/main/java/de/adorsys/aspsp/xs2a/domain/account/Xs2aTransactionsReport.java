@@ -29,8 +29,8 @@ import java.util.List;
 @ApiModel(description = "Transactions Report", value = "TransactionsReport")
 public class Xs2aTransactionsReport {
 
-    @ApiModelProperty(value = "AccountReference")
-    private AccountReference accountReference;
+    @ApiModelProperty(value = "Xs2aAccountReference")
+    private Xs2aAccountReference xs2aAccountReference;
 
     @ApiModelProperty(value = "AccountReport")
     private Xs2aAccountReport accountReport;

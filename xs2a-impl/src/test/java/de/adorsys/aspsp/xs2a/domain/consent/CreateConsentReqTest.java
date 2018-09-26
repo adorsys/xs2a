@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class CreateConsentReqTest {
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(getAccess(getRefs(1), getRefs(2), getRefs(3)));
         //When:
-        Set<AccountReference> result = req.getAccountReferences();
+        Set<Xs2aAccountReference> result = req.getAccountReferences();
         //Then:
         assertThat(result.size()).isEqualTo(3);
     }
@@ -47,7 +47,7 @@ public class CreateConsentReqTest {
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(getAccess(null, getRefs(2), getRefs(3)));
         //When:
-        Set<AccountReference> result = req.getAccountReferences();
+        Set<Xs2aAccountReference> result = req.getAccountReferences();
         //Then:
         assertThat(result.size()).isEqualTo(3);
     }
@@ -58,19 +58,19 @@ public class CreateConsentReqTest {
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(getAccess(null, null, null));
         //When:
-        Set<AccountReference> result = req.getAccountReferences();
+        Set<Xs2aAccountReference> result = req.getAccountReferences();
         //Then:
         assertThat(result.size()).isEqualTo(0);
     }
 
-    private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {
+    private Xs2aAccountAccess getAccess(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions) {
         return new Xs2aAccountAccess(accounts, balances, transactions, null, null);
     }
 
-    private List<AccountReference> getRefs(int qty) {
-        List<AccountReference> list = new ArrayList<>();
+    private List<Xs2aAccountReference> getRefs(int qty) {
+        List<Xs2aAccountReference> list = new ArrayList<>();
         for (int i = 0; i < qty; i++) {
-            AccountReference reference = new AccountReference();
+            Xs2aAccountReference reference = new Xs2aAccountReference();
             reference.setIban(IBAN + i);
             list.add(reference);
         }

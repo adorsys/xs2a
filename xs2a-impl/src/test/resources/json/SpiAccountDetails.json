@@ -10,7 +10,7 @@
       "interimAvailable": {
         "spiAmount": {
           "currency": "EUR",
-          "content": "1000"
+          "amount": "1000"
         },
         "lastActionDateTime": "2018-05-15T14:42:08.486+0000",
         "date": "2018-05-15T14:42:08.486+0000"

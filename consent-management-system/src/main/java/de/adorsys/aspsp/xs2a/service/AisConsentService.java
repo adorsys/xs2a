@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
@@ -52,7 +49,7 @@ public class AisConsentService {
     private final AisConsentActionRepository aisConsentActionRepository;
     private final AisConsentAuthorizationRepository aisConsentAuthorizationRepository;
     private final AisConsentMapper consentMapper;
-    private final AspspProfileService profileService;
+    private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
 
     /**
      * Create AIS consent
@@ -73,7 +70,7 @@ public class AisConsentService {
     /**
      * Read status of consent by id
      *
-     * @param consentId
+     * @param consentId id of consent
      * @return ConsentStatus
      */
     public Optional<CmsConsentStatus> getConsentStatusById(String consentId) {
@@ -85,7 +82,7 @@ public class AisConsentService {
     /**
      * Update consent status by id
      *
-     * @param consentId
+     * @param consentId id of consent
      * @param status    new consent status
      * @return Boolean
      */
@@ -98,7 +95,7 @@ public class AisConsentService {
     /**
      * Read full information of consent by id
      *
-     * @param consentId
+     * @param consentId id of consent
      * @return AisAccountConsent
      */
     public Optional<AisAccountConsent> getAisAccountConsentById(String consentId) {
@@ -126,7 +123,7 @@ public class AisConsentService {
      *
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated
-     * @return String consent id
+     * @return String   consent id
      */
     @Transactional
     public Optional<String> updateAccountAccess(String consentId, AisAccountAccessInfo request) {
@@ -139,14 +136,14 @@ public class AisConsentService {
     }
 
     /**
-     * Update AIS consent aspsp blob data by id
+     * Update AIS consent aspsp consent data by id
      *
-     * @param request   needed parameters for updating AIS consent
+     * @param request   Aspsp provided ais consent data
      * @param consentId id of the consent to be updated
-     * @return String consent id
+     * @return String   consent id
      */
     @Transactional
-    public Optional<String> updateAspspData(String consentId, UpdateAisConsentAspspDataRequest request) {
+    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualAisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }
@@ -154,7 +151,7 @@ public class AisConsentService {
     /**
      * Create consent authorization
      *
-     * @param consentId
+     * @param consentId id of consent
      * @param request   needed parameters for creating consent authorization
      * @return String authorization id
      */
@@ -167,8 +164,8 @@ public class AisConsentService {
     /**
      * Get consent authorization
      *
-     * @param consentId
-     * @param authorizationId
+     * @param consentId       id of consent
+     * @param authorizationId id of authorisation session
      * @return AisConsentAuthorizationResponse
      */
     public Optional<AisConsentAuthorizationResponse> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
@@ -181,8 +178,8 @@ public class AisConsentService {
     /**
      * Update consent authorization
      *
-     * @param authorizationId
-     * @param consentId
+     * @param authorizationId id of authorisation session
+     * @param consentId       id of consent
      * @param request         needed parameters for updating consent authorization
      * @return Boolean
      */
@@ -201,14 +198,14 @@ public class AisConsentService {
         return holder.getAccountAccesses();
     }
 
-    private String updateConsentAspspData(UpdateAisConsentAspspDataRequest request, AisConsent consent) {
+    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, AisConsent consent) {
         consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
-        int minFrequencyPerDay = profileService.getMinFrequencyPerDay(request.getFrequencyPerDay());
+        int minFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         AisConsent consent = new AisConsent();
         consent.setConsentStatus(RECEIVED);
         consent.setExpectedFrequencyPerDay(minFrequencyPerDay);
@@ -299,7 +296,7 @@ public class AisConsentService {
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuId(consentAuthorization.getPsuId());
+        consentAuthorization.setPsuId(request.getPsuId());
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
@@ -308,10 +305,17 @@ public class AisConsentService {
     private Optional<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
         return aisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(conAuth -> {
+                       if (CmsScaStatus.STARTED == conAuth.getScaStatus()) {
+                           conAuth.setPsuId(request.getPsuId());
+                           conAuth.setPassword(request.getPassword());
+                       }
+
+                       if (CmsScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
+                           conAuth.setAuthenticationMethodId(request.getAuthenticationMethodId());
+                       }
+
                        conAuth.setScaStatus(request.getScaStatus());
-                       conAuth.setPassword(request.getPassword());
-                       conAuth.setAuthenticationMethodId(request.getAuthenticationMethodId());
-                       conAuth.setScaAuthenticationData(request.getScaAuthenticationData());
+
                        return aisConsentAuthorizationRepository.save(conAuth).getExternalId() != null;
                    });
     }

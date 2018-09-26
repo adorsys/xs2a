@@ -20,22 +20,22 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.AisAuthorizationService;
-import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,8 +51,9 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final AisConsentService aisConsentService;
     private final AisAuthorizationService aisAuthorizationService;
-    private final PisAuthorisationService pisAuthorizationService;
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileServiceWrapper aspspProfileService;
+    private final PisScaAuthorisationService pisAuthorizationService;
+    private final TppService tppService;
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
@@ -77,14 +78,22 @@ public class ConsentService { //TODO change format of consentRequest to mandator
             request.setAccess(getAccessForGlobalOrAllAvailableAccountsConsent(request));
         }
 
-        String tppId = getTppId();
+        String tppId = tppService.getTppId();
         String consentId = aisConsentService.createConsent(request, psuId, tppId, new AspspConsentData());
 
-        //TODO v1.1 Add balances support
         //TODO v1.2 Add embedded approach specfic links
-        return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build()
-                   : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        if (StringUtils.isBlank(consentId)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        }
+
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
+
+        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED
+                && aspspProfileService.getAuthorisationStartType() == Xs2aAuthorisationStartType.IMPLICIT) {
+            proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuId, consentId);
+        }
+
+        return createConsentResponseObject;
     }
 
     /**
@@ -162,7 +171,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         UpdateConsentPsuDataResponse response = aisAuthorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
 
         return Optional.ofNullable(response)
-                   .map(s -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build())
+                   .map(s -> Optional.ofNullable(s.getErrorCode())
+                                 .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                               .fail(new MessageError(e))
+                                               .build())
+                                 .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build()))
                    .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                         .build());
@@ -189,7 +202,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
 
-    boolean isValidAccountByAccess(String iban, Currency currency, List<AccountReference> allowedAccountData) {
+    boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()
                           .anyMatch(a -> a.getIban().equals(iban)
@@ -243,14 +256,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     private SpiAccountConsent getValidatedSpiAccountConsent(String consentId) {
         return Optional.ofNullable(aisConsentService.getAccountConsentById(consentId))
-                   .filter(consent -> getTppId().equals(consent.getTppId()))
+                   .filter(consent -> tppService.getTppId().equals(consent.getTppId()))
                    .orElse(null);
     }
 
-    private String getTppId() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                   .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
-                   .map(credentials -> credentials.get("authorityId"))
-                   .orElse("This is a test TppId");
+    private void proceedEmbeddedImplicitCaseForCreateConsent(CreateConsentResponse response, String psuId, String consentId) {
+        aisAuthorizationService.createConsentAuthorization(psuId, consentId)
+            .ifPresent(a -> {
+                response.setAuthorizationId(a.getAuthorizationId());
+            });
     }
 }

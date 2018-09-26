@@ -1,0 +1,79 @@
+{{ if .Values.xs2a.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.xs2a.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          "name":"{{- if .Values.xs2a.image.stream }}{{ .Values.xs2a.image.name }}:{{ default "latest" .Values.xs2a.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-xs2a:latest{{- end }}"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"xs2a\")].image"
+      }]
+  name: {{ template "psd2.fullname" . }}-xs2a
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: xs2a
+spec:
+  replicas: {{ .Values.xs2a.replicas }}
+  selector:
+    matchLabels:
+{{ include "psd2.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: xs2a
+  template:
+    metadata:
+    {{- if .Values.xs2a.podAnnotations }}
+      annotations:
+{{ toYaml .Values.xs2a.podAnnotations | indent 8 }}
+    {{- end }}
+      labels:
+{{ include "psd2.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: xs2a
+    spec:
+      containers:
+        - name: xs2a
+          image: " "
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          env:
+          - name: TZ
+            value: {{ .Values.timezone | quote }}
+          - name: KEYCLOAK_CREDENTIALS_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: xs2a
+                name: "{{ template "psd2.fullname" . }}-keycloak"
+          - name: keycloak_username
+            valueFrom:
+              secretKeyRef:
+                key: admin-username
+                name: "{{ template "psd2.fullname" . }}-keycloak"
+          - name: keycloak_password
+            valueFrom:
+              secretKeyRef:
+                key: admin-password
+                name: "{{ template "psd2.fullname" . }}-keycloak"
+{{- range $name, $value := .Values.xs2a.env }}
+{{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ tpl (toString $value) $ | quote }}
+{{- end }}
+{{- end }}
+{{- with .Values.extraEnv }}
+{{ tpl . $ | indent 10 }}
+{{- end }}
+          resources:
+{{ toYaml .Values.xs2a.resources | indent 12 }}
+          volumeMounts:
+          - mountPath: /opt/aspsp-xs2a/logs
+            name: logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+{{- end  }}

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.aspsp.profile.web;
 
 import de.adorsys.psd2.aspsp.profile.domain.*;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileUpdateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -40,7 +40,7 @@ import java.util.List;
 @Api(value = "Update aspsp profile ", tags = "Update aspsp profile.  Only for DEBUG!",
     description = "Provides access to update aspsp profile")
 public class AspspProfileUpdateController {
-    private final AspspProfileService aspspProfileService;
+    private final AspspProfileUpdateService aspspProfileService;
 
     @PutMapping(path = "/frequency-per-day")
     @ApiOperation(value = "Updates frequency per day. Only for DEBUG!")

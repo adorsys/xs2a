@@ -21,7 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -37,7 +37,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 @RequiredArgsConstructor
 public abstract class AbstractLinkAspect<T> {
     protected final int maxNumberOfCharInTransactionJson;
-    protected final AspspProfileService aspspProfileService;
+    protected final AspspProfileServiceWrapper aspspProfileService;
     protected final JsonConverter jsonConverter;
     private final MessageService messageService;
 

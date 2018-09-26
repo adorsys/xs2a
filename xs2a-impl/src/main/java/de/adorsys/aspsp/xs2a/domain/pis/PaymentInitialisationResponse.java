@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.consent.AuthenticationObject;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,10 +45,10 @@ public class PaymentInitialisationResponse {
     private boolean transactionFeeIndicator;
 
     @ApiModelProperty(value = "This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods")
-    private AuthenticationObject[] scaMethods;
+    private Xs2aAuthenticationObject[] scaMethods;
 
     @ApiModelProperty(value = "This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified e.g. with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected.")
-    private AuthenticationObject chosenScaMethod;
+    private Xs2aAuthenticationObject chosenScaMethod;
 
     @ApiModelProperty(value = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA.")
     private Xs2aChallengeData challengeData;

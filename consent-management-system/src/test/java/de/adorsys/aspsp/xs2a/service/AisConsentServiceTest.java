@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
+import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
 import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.UpdateAisConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
@@ -50,7 +50,7 @@ public class AisConsentServiceTest {
     @InjectMocks
     private AisConsentService aisConsentService;
     @Mock
-    private AspspProfileService aspspProfileService;
+    private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     @Mock
     private AisConsentMapper consentMapper;
     @Mock
@@ -85,7 +85,7 @@ public class AisConsentServiceTest {
     public void shouldReturnExternalId_WhenCreateConsentIsCalled() {
         // When
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
-        when(aspspProfileService.getMinFrequencyPerDay(anyInt())).thenReturn(anyInt());
+        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt())).thenReturn(anyInt());
 
         // Then
         Optional<String> externalId = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
@@ -138,13 +138,13 @@ public class AisConsentServiceTest {
         when(aisConsentRepository.save(any(AisConsent.class))).thenReturn(aisConsent);
 
         // Then
-        UpdateAisConsentAspspDataRequest request = buildUpdateBlobRequest();
-        Optional<String> consentId = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID, request);
+        UpdateConsentAspspDataRequest request = this.buildUpdateBlobRequest();
+        Optional<String> consentId = aisConsentService.updateConsentAspspData(EXTERNAL_CONSENT_ID, request);
         // Assert
         assertTrue(consentId.isPresent());
 
         //Then
-        Optional<String> consentId_notExists = aisConsentService.updateAspspData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
+        Optional<String> consentId_notExists = aisConsentService.updateConsentAspspData(EXTERNAL_CONSENT_ID_NOT_EXIST, request);
         // Assert
         assertFalse(consentId_notExists.isPresent());
     }
@@ -180,8 +180,8 @@ public class AisConsentServiceTest {
         return Collections.singletonList(new AccountInfo("iban-1", "EUR"));
     }
 
-    private static UpdateAisConsentAspspDataRequest buildUpdateBlobRequest() {
-        UpdateAisConsentAspspDataRequest request = new UpdateAisConsentAspspDataRequest();
+    private UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
+        UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
         request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
         return request;
     }

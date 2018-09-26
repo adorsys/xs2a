@@ -17,9 +17,7 @@
 package de.adorsys.aspsp.xs2a.integtest.config.rest.consent;
 
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
@@ -43,11 +41,13 @@ public class AccountMapper {
                            ad.getMsisdn(),
                            ad.getCurrency(),
                            ad.getName(),
-                           ad.getAccountType(),
+                           ad.getProduct(),
                            mapToAccountType(ad.getCashSpiAccountType()),
+                           mapToAccountStatus(ad.getSpiAccountStatus()),
                            ad.getBic(),
-                           null,
-                           null,
+                           ad.getLinkedAccounts(),
+                           mapToUsageType(ad.getUsageType()),
+                           ad.getDetails(),
                            mapToBalancesList(ad.getBalances())
                        )
                    )
@@ -58,7 +58,7 @@ public class AccountMapper {
         return Optional.ofNullable(spiAmount)
                    .map(a -> {
                        Xs2aAmount amount = new Xs2aAmount();
-                       amount.setAmount(a.getContent().toString());
+                       amount.setAmount(a.getAmount().toString());
                        amount.setCurrency(a.getCurrency());
                        return amount;
                    })
@@ -86,14 +86,14 @@ public class AccountMapper {
         return Optional.of(new Xs2aAccountReport(booked, pending));
     }
 
-    public AccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
+    public Xs2aAccountReference mapToAccountReference(SpiAccountReference spiAccountReference) {
         return Optional.ofNullable(spiAccountReference)
                    .map(ar -> getAccountReference(ar.getIban(), ar.getBban(), ar.getPan(), ar.getMaskedPan(), ar.getMsisdn(), ar.getCurrency()))
                    .orElse(null);
 
     }
 
-    public List<SpiAccountReference> mapToSpiAccountReferences(List<AccountReference> references) {
+    public List<SpiAccountReference> mapToSpiAccountReferences(List<Xs2aAccountReference> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
                                    .map(this::mapToSpiAccountReference)
@@ -101,7 +101,7 @@ public class AccountMapper {
                    .orElseGet(Collections::emptyList);
     }
 
-    public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
+    public SpiAccountReference mapToSpiAccountReference(Xs2aAccountReference account) {
         return Optional.ofNullable(account)
                    .map(ac -> new SpiAccountReference(
                        ac.getIban(),
@@ -113,7 +113,7 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public List<AccountReference> mapToAccountReferences(List<SpiAccountReference> references) {
+    public List<Xs2aAccountReference> mapToAccountReferences(List<SpiAccountReference> references) {
         return Optional.ofNullable(references)
                    .map(ref -> ref.stream()
                                    .map(this::mapToAccountReference)
@@ -147,7 +147,7 @@ public class AccountMapper {
                    .orElse(null);
     }
 
-    public List<AccountReference> mapToAccountReferencesFromDetails(List<SpiAccountDetails> details) {
+    public List<Xs2aAccountReference> mapToAccountReferencesFromDetails(List<SpiAccountDetails> details) {
         return Optional.ofNullable(details)
                    .map(det -> det.stream()
                                    .map(this::mapToAccountDetails)
@@ -166,15 +166,15 @@ public class AccountMapper {
                    .collect(Collectors.toList());
     }
 
-    private AccountReference mapToAccountReference(Xs2aAccountDetails details) {
+    private Xs2aAccountReference mapToAccountReference(Xs2aAccountDetails details) {
         return Optional.ofNullable(details)
                    .map(det-> getAccountReference(det.getIban(), det.getBban(), det.getPan(), det.getMaskedPan(), det.getMsisdn(), det.getCurrency()))
                    .orElse(null);
 
     }
 
-    private AccountReference getAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
-        AccountReference reference = new AccountReference();
+    private Xs2aAccountReference getAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
+        Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setBban(bban);
         reference.setPan(pan);
@@ -201,6 +201,19 @@ public class AccountMapper {
                        balance.setLastCommittedTransaction(spiAccountBalance.getLastCommittedTransaction());
                        return balance;
                    })
+                   .orElse(null);
+    }
+
+    private AccountStatus mapToAccountStatus(SpiAccountStatus spiAccountStatus) {
+        return Optional.ofNullable(spiAccountStatus)
+                   .map(SpiAccountStatus::getValue)
+                   .flatMap(AccountStatus::getByValue)
+                   .orElse(null);
+    }
+
+    private Xs2aUsageType mapToUsageType(SpiUsageType spiUsageType) {
+        return Optional.ofNullable(spiUsageType)
+                   .map(usage -> Xs2aUsageType.valueOf(usage.name()))
                    .orElse(null);
     }
 }

@@ -50,7 +50,7 @@ public class TransactionService {
     public List<SpiTransaction> getTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo) {
         Optional<SpiAccountDetails> details = accountService.getAccountById(accountId);
         return details.map(det -> transactionRepository.findAllByDates(det.getIban(), det.getCurrency(), dateFrom, dateTo))
-                   .orElse(Collections.emptyList());
+                   .orElseGet(Collections::emptyList);
     }
 
 }

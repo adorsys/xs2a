@@ -18,9 +18,9 @@
 package de.adorsys.aspsp.xs2a.domain.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.Links;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -72,7 +72,7 @@ public class Xs2aAccountDetails {
     private final CashAccountType cashAccountType;
 
     @ApiModelProperty(value = "Account status")
-    private AccountStatus accountStatus;
+    private final AccountStatus accountStatus;
 
     @ApiModelProperty(value = "BIC: The BIC associated to the account.", example = "EDEKDEHHXXX")
     private final String bic;
@@ -82,7 +82,7 @@ public class Xs2aAccountDetails {
     private final String linkedAccounts;
 
     @ApiModelProperty(value = "Specifies the usage of the account")
-    private UsageEnum usageEnum;
+    private final Xs2aUsageType usageType;
 
     @ApiModelProperty(value = "Specifications that might be provided by the ASPSP", example = "Details")
     private final String details;

@@ -157,7 +157,7 @@ public class PaymentServiceTest {
 
     private List<SpiAccountDetails> getAccountDetails() {
         return Collections.singletonList(
-            new SpiAccountDetails("12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, getBalances())
+            new SpiAccountDetails("12345", IBAN, null, null, null, null, CURRENCY, "Peter", null, null, null, null, null, null, null, getBalances())
         );
     }
 

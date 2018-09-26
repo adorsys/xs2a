@@ -17,13 +17,12 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.domain.OtpFormat;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aChallengeData;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.psd2.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -34,9 +33,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.LinkedHashMap;
+import java.util.List;
 
+import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -52,8 +55,21 @@ public class PaymentModelMapperTest {
     private static final String IBAN = "DE1234567890";
     private static final String CURRENCY = "EUR";
 
+    private static final byte[] IMAGE = "zzz".getBytes();
+    private static final String DATA = "Some data";
+    private static final String IMAGE_LINK = "https:\\image.link.com";
+    private static final int OTP_MAX_LENGTH = 12;
+    private static final String OTP_FORMAT = "characters";
+    private static final String ADDITIONAL_INFORMATION = "additional information";
+
+    private static final String DAY_OF_EXECUTION = "02";
+    private static final boolean BATCH_BOOKING_PREFERRED = true;
+
     @InjectMocks
-    PaymentModelMapper paymentModelMapper;
+    PaymentModelMapperPsd2 paymentModelMapperPsd2;
+
+    @InjectMocks
+    PaymentModelMapperXs2a paymentModelMapperXs2a;
 
     @Mock
     ValueValidatorService validatorService;
@@ -71,7 +87,7 @@ public class PaymentModelMapperTest {
     public void mapToTransactionStatus12() {
         //Given
         Xs2aTransactionStatus[] xs2aStatuses = Xs2aTransactionStatus.values();
-        de.adorsys.psd2.model.TransactionStatus[] statuses12 = de.adorsys.psd2.model.TransactionStatus.values();
+        TransactionStatus[] statuses12 = TransactionStatus.values();
         //When
         assertThat(xs2aStatuses.length).isEqualTo(statuses12.length);
         for (int i = 0; i < xs2aStatuses.length; i++) {
@@ -79,9 +95,9 @@ public class PaymentModelMapperTest {
         }
     }
 
-    private void testTransactionStatus12(Xs2aTransactionStatus status, de.adorsys.psd2.model.TransactionStatus expected) {
+    private void testTransactionStatus12(Xs2aTransactionStatus status, TransactionStatus expected) {
         //When
-        de.adorsys.psd2.model.TransactionStatus result = PaymentModelMapper.mapToTransactionStatus12(status);
+        TransactionStatus result = PaymentModelMapperPsd2.mapToTransactionStatus12(status);
         //Then
         assertThat(result).isEqualTo(expected);
     }
@@ -92,7 +108,7 @@ public class PaymentModelMapperTest {
         PaymentInitialisationResponse givenResponse = getXs2aPaymentResponse();
         PaymentInitationRequestResponse201 expectedResponse = getPaymentResponse12();
         //When
-        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapper.mapToPaymentInitiationResponse12(givenResponse, PaymentType.SINGLE, PaymentProduct.SCT);
+        PaymentInitationRequestResponse201 result = (PaymentInitationRequestResponse201) paymentModelMapperPsd2.mapToPaymentInitiationResponse12(givenResponse, getRequestParameters(SINGLE));
         //Then
         assertThat(result).isEqualTo(expectedResponse);
     }
@@ -100,11 +116,11 @@ public class PaymentModelMapperTest {
     @Test
     public void mapToXs2aPayment_Single_success() {
         when(objectMapper.convertValue(getSinglePayment(true, true, true, true, true, true, true), PaymentInitiationSctJson.class)).thenReturn(getSinglePayment12(true, true, true, true, true, true, true));
-        when(objectMapper.convertValue(getAccountReference12Map(true, true), AccountReference.class)).thenReturn(getAccountReference(true, true));
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class)).thenReturn(getAccountReference(true, true));
         //Given
         Object payment = getSinglePayment(true, true, true, true, true, true, true);
         //When
-        SinglePayment result = (SinglePayment) paymentModelMapper.mapToXs2aPayment(payment, PaymentType.SINGLE, PaymentProduct.SCT);
+        SinglePayment result = (SinglePayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(SINGLE));
         //Then
         assertThat(result.getEndToEndIdentification()).isEqualTo(((LinkedHashMap) payment).get("endToEndIdentification"));
         assertThat(result.getDebtorAccount()).isNotNull();
@@ -123,6 +139,60 @@ public class PaymentModelMapperTest {
         assertThat(result.getDebtorAccount()).isNotNull();
         assertThat(result.getRequestedExecutionDate()).isNotNull();
         assertThat(result.getRequestedExecutionTime()).isNotNull();
+    }
+
+    @Test
+    public void mapToXs2aPayment_Periodic_success() {
+        when(objectMapper.convertValue(getPeriodicPayment(true, true, true, true,
+            true, true, true, true, true, true,
+            true, true), PeriodicPaymentInitiationSctJson.class))
+            .thenReturn(getPeriodicPayment(true, true, true, true, true,
+                true, true, true, true, true, true,
+                true));
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class))
+            .thenReturn(getAccountReference(true, true));
+        //Given
+        Object payment = getPeriodicPayment(true, true, true, true, true,
+            true, true, true, true, true, true,
+            true);
+        //When
+        PeriodicPayment result = (PeriodicPayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(PaymentType.PERIODIC));
+        //Then
+        assertThat(result.getEndToEndIdentification()).isEqualTo(PAYMENT_ID);
+        assertThat(result.getDebtorAccount()).isNotNull();
+        assertThat(result.getDebtorAccount().getIban()).isEqualTo(IBAN);
+        assertThat(result.getDebtorAccount().getCurrency()).isEqualTo(Currency.getInstance(CURRENCY));
+        assertThat(result.getInstructedAmount()).isNotNull();
+        assertThat(result.getCreditorAccount()).isNotNull();
+        assertThat(result.getCreditorAgent()).isNotNull();
+        assertThat(StringUtils.isNotBlank(result.getCreditorName())).isTrue();
+        assertThat(result.getCreditorAddress()).isNotNull();
+        assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
+        assertThat(result.getDebtorAccount()).isNotNull();
+        assertThat(result.getStartDate()).isNotNull();
+        assertThat(result.getExecutionRule()).isNotBlank();
+        assertThat(result.getEndDate()).isNotNull();
+        assertThat(result.getFrequency()).isNotNull();
+        assertThat(result.getDayOfExecution()).isEqualTo(Integer.parseInt(DAY_OF_EXECUTION));
+    }
+
+    @Test
+    public void mapToXs2aPayment_Bulk_success() {
+        when(objectMapper.convertValue(getBulkPayment(true, true, true,
+            true), BulkPaymentInitiationSctJson.class))
+            .thenReturn(getBulkPayment(true, true, true, true));
+        when(objectMapper.convertValue(getAccountReference12Map(true, true), Xs2aAccountReference.class))
+        .thenReturn(getAccountReference(true, true));
+        //Given
+        Object payment = getBulkPayment(true, true, true, true);
+        //When
+        BulkPayment result = (BulkPayment) paymentModelMapperXs2a.mapToXs2aPayment(payment, getRequestParameters(PaymentType.BULK));
+        //Then
+        assertThat(result.getBatchBookingPreferred()).isEqualTo(BATCH_BOOKING_PREFERRED);
+        assertThat(result.getDebtorAccount()).isNotNull();
+        assertThat(result.getRequestedExecutionDate()).isNotNull();
+        assertThat(result.getPayments()).isNotEmpty();
+        assertThat(result.getPayments().get(0).getEndToEndIdentification()).isEqualTo(PAYMENT_ID);
     }
 
     //Static test data
@@ -149,6 +219,49 @@ public class PaymentModelMapperTest {
         payment.setCreditorName(creditorName ? "CreditorName" : null);
         payment.setCreditorAddress(credAddres ? getAddress12(true, true, true, true, true) : null);
         payment.setRemittanceInformationUnstructured(remitance ? "some pmnt info" : null);
+        return payment;
+    }
+
+    private BulkPaymentInitiationSctJson getBulkPayment(boolean batchBooking, boolean executionDate,
+                                                            boolean debtorAcc, boolean payments) {
+        BulkPaymentInitiationSctJson payment = new BulkPaymentInitiationSctJson();
+        payment.setBatchBookingPreferred(batchBooking ? BATCH_BOOKING_PREFERRED : null);
+        payment.setRequestedExecutionDate(executionDate ? LocalDate.of(2017, 1, 1) : null);
+        payment.setDebtorAccount(debtorAcc ? getAccountReference12Map(true, true) : null);
+
+        PaymentInitiationSctBulkElementJson element = new PaymentInitiationSctBulkElementJson();
+        element.setEndToEndIdentification(PAYMENT_ID);
+        element.setInstructedAmount(getAmount12(true, true));
+        element.setCreditorAccount(getAccountReference12Map(true, true));
+        element.setCreditorAgent("Agent");
+        element.setCreditorName("CreditorName");
+        element.setCreditorAddress(getAddress12(true, true, true, true, true));
+        element.setRemittanceInformationUnstructured("some info");
+        List<PaymentInitiationSctBulkElementJson> elements = Collections.singletonList(element);
+
+        payment.setPayments(payments ? elements : null);
+        return payment;
+    }
+
+    private PeriodicPaymentInitiationSctJson getPeriodicPayment(boolean id, boolean acc, boolean amount, boolean agent,
+                                                                boolean creditorName, boolean credAddres,
+                                                                boolean remitance, boolean startDate, boolean endDate,
+                                                                boolean execution, boolean frequency,
+                                                                boolean dayOfExecution) {
+        PeriodicPaymentInitiationSctJson payment = new PeriodicPaymentInitiationSctJson();
+        payment.setEndToEndIdentification(id ? PAYMENT_ID : null);
+        payment.setDebtorAccount(acc ? getAccountReference12Map(true, true) : null);
+        payment.setInstructedAmount(amount ? getAmount12(true, true) : null);
+        payment.setCreditorAccount(getAccountReference12Map(true, true));
+        payment.setCreditorAgent(agent ? "Agent" : null);
+        payment.setCreditorName(creditorName ? "CreditorName" : null);
+        payment.setCreditorAddress(credAddres ? getAddress12(true, true, true, true, true) : null);
+        payment.setRemittanceInformationUnstructured(remitance ? "some pmnt info" : null);
+        payment.setStartDate(startDate ? LocalDate.of(2017, 1, 1) : null);
+        payment.setEndDate(endDate ? LocalDate.of(2017, 1, 2) : null);
+        payment.setExecutionRule(execution ? ExecutionRule.FOLLOWING : null);
+        payment.setFrequency(frequency ? FrequencyCode.DAILY : null);
+        payment.setDayOfExecution(dayOfExecution ? DayOfExecution.fromValue(DAY_OF_EXECUTION) : null);
         return payment;
     }
 
@@ -179,7 +292,7 @@ public class PaymentModelMapperTest {
         return instructedAmount;
     }
 
-    private de.adorsys.psd2.model.Amount getAmount12(boolean currency, boolean toPay) {
+    private Amount getAmount12(boolean currency, boolean toPay) {
         de.adorsys.psd2.model.Amount instructedAmount = new de.adorsys.psd2.model.Amount();
         instructedAmount.setCurrency(currency ? "EUR" : null);
         instructedAmount.setAmount(toPay ? "123456" : null);
@@ -193,8 +306,8 @@ public class PaymentModelMapperTest {
         return ref;
     }
 
-    private AccountReference getAccountReference(boolean iban, boolean currency) {
-        AccountReference ref = new AccountReference();
+    private Xs2aAccountReference getAccountReference(boolean iban, boolean currency) {
+        Xs2aAccountReference ref = new Xs2aAccountReference();
         ref.setIban(iban ? IBAN : null);
         ref.setCurrency(currency ? Currency.getInstance(CURRENCY) : null);
         return ref;
@@ -205,14 +318,21 @@ public class PaymentModelMapperTest {
 
         response.setTransactionStatus(de.adorsys.psd2.model.TransactionStatus.ACCP);
         response.setPaymentId(PAYMENT_ID);
-        de.adorsys.psd2.model.Amount amount = new de.adorsys.psd2.model.Amount();
+        Amount amount = new Amount();
         amount.setAmount(AMOUNT);
         amount.setCurrency(EUR.getCurrencyCode());
         response.setTransactionFees(amount);
         response.setTransactionFeeIndicator(true);
         response.setScaMethods(null);
         response.setChosenScaMethod(null);
-        response.setChallengeData(null);
+        ChallengeData challengeData = new ChallengeData();
+        challengeData.setImage(IMAGE);
+        challengeData.setData(DATA);
+        challengeData.setImageLink(IMAGE_LINK);
+        challengeData.setOtpMaxLength(OTP_MAX_LENGTH);
+        challengeData.setOtpFormat(ChallengeData.OtpFormatEnum.fromValue(OTP_FORMAT));
+        challengeData.setAdditionalInformation(ADDITIONAL_INFORMATION);
+        response.setChallengeData(challengeData);
         response.setLinks(null);
         response.setPsuMessage(PSU_MSG);
 
@@ -236,6 +356,13 @@ public class PaymentModelMapperTest {
         response.setTransactionFees(getXs2aAmount());
         response.setTransactionFeeIndicator(true);
         response.setScaMethods(null);
+        response.setChosenScaMethod(null);
+
+        OtpFormat format = OtpFormat.getByValue(OTP_FORMAT).orElse(null);
+        Xs2aChallengeData challenge =  new Xs2aChallengeData(IMAGE, DATA, IMAGE_LINK, OTP_MAX_LENGTH, format,
+            ADDITIONAL_INFORMATION);
+        response.setChallengeData(challenge);
+
         response.setPsuMessage(PSU_MSG);
         response.setTppMessages(null); //TODO fix this along with creating TppMessage mapper
         response.setLinks(null);
@@ -248,5 +375,14 @@ public class PaymentModelMapperTest {
         amount.setAmount(AMOUNT);
         amount.setCurrency(EUR);
         return amount;
+    }
+
+    private PaymentRequestParameters getRequestParameters(PaymentType paymentType){
+        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+        requestParameters.setPaymentType(paymentType);
+        requestParameters.setQwacCertificate("TEST CERTIFICATE");
+        requestParameters.setPaymentProduct(PaymentProduct.SCT);
+
+        return requestParameters;
     }
 }
