@@ -268,7 +268,7 @@ Attribute | Type  | Condition | Description |
     }
 
 
-## Payment Initiation for Bulk Payments and Multiple Payments 
+## Payment Initiation for Bulk PaymentsNew and Multiple PaymentsNew 
 
 The Online Banking frontends might support the
 * upload of bulks or
@@ -278,7 +278,7 @@ Both functions are modelled as bulk payment in the XS2A interface. The multiple 
 
 
 
-## PIS_01_02 Payment Initiation for Bulk Payments and Multiple Payments
+## PIS_01_02 Payment Initiation for Bulk PaymentsNew and Multiple PaymentsNew
 
 ### Call
 
@@ -295,7 +295,7 @@ Creates a bulk payment initiation request at the ASPSP.
 The same query parameter and http header definition as in section PIS_01_01 applies.
 
 
-## PIS_01_03 Initiation for Standing Orders for Recurring/Periodic Payments
+## PIS_01_03 Initiation for Standing Orders for Recurring/Periodic PaymentsNew
 
 The recurring payments initiation function will be covered in this specification as a specific standing order initiation: The TPP can submit a recurring payment initiation where the starting date, frequency and conditionally an end date is provided. Once authorized by the PSU, the payment then will be executed by the ASPSP, if possible, following this “standing order” as submitted by the TPP. No further TPP action is needed. This payment is called a periodic payment in this context to differentiate the payment from recurring payment types, where third parties are initiating the same amount of money e.g. payees for using credit card transactions or direct debits for reccuring payments of goods or services. These latter types of payment initiations are not part of this interface.
 
