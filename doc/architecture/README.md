@@ -84,36 +84,17 @@ Whitebox Overall System
 
 ![Whitebox overall system](L01-Whitebox.png)
 
-| Component         | Description                                                                                                                                |
-|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| XS2A-Impl         | The service, implementing XS2A interface of Berlin Group and corresponding BL, including Consent Management.                               |
-| CMS               | Third-party provider, acting on behalf of PSU, operating the accounts/payment data of PSU provided by ASPSP through XS2A Interface.        |
-| ASPSP Profile     | Account Servicing Payment Service Provider, normally a banking system that controls accounts of PSU and performs "classic" banking on it.  |
-| SPI-API           | ASPSP Authentification/Authorisation system. Performs a Strong Customer Authorisation using the security mechanisms of concrete ASPSP.     |
-| ASPSP-Connector   | External QWAC Certificate provider for TPPs. Defined by local government authority for each EU country.                                    |
+| Component                                          | Description                                                                                                                                |
+|----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| [XS2A-Impl](../../xs2a-impl/README.md)             | an external interface and corresponding validators and services operating to serve TPPs according to a Berlin Group operational rules      |
+| [CMS](../../consent-management-system/README.md)   | Third-party provider, acting on behalf of PSU, operating the accounts/payment data of PSU provided by ASPSP through XS2A Interface.        |
+| [ASPSP Profile](../../aspsp-profile/README.md)     | a service that provides static configuration of features, those are supported by actual ASPSP                                              |
+| [SPI-API](../../spi-api/README.md)                 | internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems                                     |
+| ASPSP-Connector                                    | an implementation of spi-api interface to connect XS2A-services with ASPSP internal system to process requests                             |
 
-TODO change descriptions accordingly
-### Brief modules description
-The maven modules provided by this implementation are:
-* [**aspsp-idp**](../../aspsp-idp/README.md) - provides identity provider for the service based on 
-[Keycloak](https://www.keycloak.org/) with extension for OpenID dynamic client registration
-* **aspsp-mock-api** - API Domain objects for intercommunication with ASPSP-Mock-Server
-* [**aspsp-mock-server**](../../aspsp-mock-server/README.md) - a mock-implementation of ASPSP for the purposes of 
-testing and introspecting of xs2a-functionality. Provides also a demo TAN application to grant XS2A consents by end-user 
-(PSU)
-* [**aspsp-profile**](../../aspsp-profile/README.md) - a service that provides static configuration of features, those 
-are supported by actual ASPSP 
-* **consent-api** - API Domain objects for intercommunication with Consent Management System
-* [**consent-management-system**](../../consent-management-system/README.md) - a service that stores and manages 
-consents given by the end user
-* **psd2-validator** - a reusable component to verify client certificate and signature according to PSD2 requirements
-* **spi-api** - internal Java interface to provide a universal way to implement connectors to underlying ASPSP Systems
-* **spi-mock** - an implementation of spi-api interface to connect XS2A-services with ASPSP-Mock-Server
-* [**xs2a-impl**](../../xs2a-impl/README.md) - a REST-interface and corresponding validators and services operating to 
-serve TPPs according to a Berlin Group operational rules
+[Old component diagram](Whitebox.png)
 
 ### Components description
-![Component diagram](Whitebox.png)
 
 #### TLS Client Certificate Validator
 According to the operational rules, connections between TPP and ASPSP must be secured by TLS/HTTPS connection with a 
@@ -130,11 +111,6 @@ serving corresponding redirect links in case of need.
 Includes ASPSP-specific implementation of SPI-API interface to communicate processing orders to ASPSP systems.
  
 Technically utilizes connections to ASPSP systems, as well as to ASPSP Profile and Consent Management System.
-
-#### Identity provider (IDP)
-A keycloak based implementation of OAuth2/OpenID Server that may be used as a ready solution to provide authentication 
-to the other components. Depending on the SCA aproach choosen by the ASPSP configuration is used to authorize all 
-connections between services or only access to the data in the mock-implementation.
 
 #### ASPSP-Profile
 ASPSP-Profile serves a configuration of XS2A features and options supported by the actual ASPSP to other components. 
