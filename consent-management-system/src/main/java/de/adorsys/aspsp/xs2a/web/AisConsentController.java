@@ -81,7 +81,7 @@ public class AisConsentController {
     }
 
     @GetMapping(path = "/{consent-id}/aspspConsentData")
-    @ApiOperation(value = "Get consent blob data identified by given consent id.")
+    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
@@ -94,7 +94,7 @@ public class AisConsentController {
     }
 
     @PutMapping(path = "/{consent-id}/aspspConsentData")
-    @ApiOperation(value = "Update consent blob data identified by given consent id.")
+    @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})

@@ -47,7 +47,7 @@ public class AspspConsentDataController {
     }
 
     @PutMapping(path = "/consent/{consent-id}/aspspConsentData")
-    @ApiOperation(value = "Update consent blob data identified by given consent id.")
+    @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
