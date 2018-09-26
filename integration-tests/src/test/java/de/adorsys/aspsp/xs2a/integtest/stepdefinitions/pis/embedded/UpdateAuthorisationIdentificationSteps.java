@@ -20,12 +20,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 @FeatureFileSteps
-public class UpdateAuthorisationOneScaMethod {
+public class UpdateAuthorisationIdentificationSteps {
+
     @Autowired
     @Qualifier("xs2a")
     private RestTemplate restTemplate;
@@ -37,7 +44,7 @@ public class UpdateAuthorisationOneScaMethod {
     private ObjectMapper mapper;
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See GlobalSuccessfulSteps
+    // See SinglePaymentSuccessfulSteps
 
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
@@ -48,9 +55,18 @@ public class UpdateAuthorisationOneScaMethod {
     // @And("^PSU wants to update the resource with his (.*)$")
     // See GlobalSuccessfulSteps
 
-    @When("^PSU sends the update Authorisation request for one sca method$")
-    public void sendUpdateAuthorisationRequestNoSca() {
-        // TODO: Implement
+    @When("^PSU sends the update identification data request$")
+    public void sendUpdateAuthorisationWithIdentificationRequest() {
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        ResponseEntity<UpdatePsuAuthenticationResponse> response = restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId(),
+            HttpMethod.PUT,
+            entity,
+            UpdatePsuAuthenticationResponse.class);
+
+        context.setActualResponse(response);
     }
 
     // @Then("PSU checks if the correct SCA status and response code is received$")

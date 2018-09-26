@@ -27,10 +27,7 @@ import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
-import de.adorsys.psd2.model.StartScaprocessResponse;
-import de.adorsys.psd2.model.UpdatePsuAuthentication;
-import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
+import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -184,6 +181,10 @@ public class GlobalSuccessfulSteps {
 
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
+
+        if ((actualResponse.getBody().getScaStatus()).equals(ScaStatus.PSUAUTHENTICATED)) {
+            assertThat(actualResponse.getBody().getScaMethods(), equalTo(givenResponseBody.getScaMethods()));
+        }
     }
 
     @After
