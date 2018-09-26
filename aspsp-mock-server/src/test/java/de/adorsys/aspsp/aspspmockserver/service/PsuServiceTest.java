@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 public class PsuServiceTest {
     private static final String ASPSP_PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
     private static final String ASPSP_PSU_ID_1 = "zz99999-9999-9999-9999-999999999999";
+    private static final String WRONG_ASPSP_PSU_ID = "WRONG_ASPSP_PSU_ID";
     private static final String WRONG_PSU_ID = "zzz";
     private static final String PSU_ID = "aspsp";
     private static final String E_MAIL = "info@adorsys.ua";
@@ -79,6 +80,8 @@ public class PsuServiceTest {
         //exists
         when(psuRepository.exists(PSU_ID)).thenReturn(true);
         when(psuRepository.exists(WRONG_PSU_ID)).thenReturn(false);
+        when(psuRepository.exists(ASPSP_PSU_ID)).thenReturn(true);
+        when(psuRepository.exists(WRONG_ASPSP_PSU_ID)).thenReturn(false);
         doNothing().when(psuRepository).delete(PSU_ID);
 
         //save
@@ -174,7 +177,7 @@ public class PsuServiceTest {
     @Test
     public void deletePsu_Success() {
         //When
-        boolean actualResult = psuService.deletePsuByPsuId(PSU_ID);
+        boolean actualResult = psuService.deletePsuByAspspPsuId(ASPSP_PSU_ID);
 
         //Then
         assertThat(actualResult).isTrue();
@@ -183,7 +186,7 @@ public class PsuServiceTest {
     @Test
     public void deletePsu_Failure_wrong_id() {
         //When
-        boolean actualResult = psuService.deletePsuByPsuId(WRONG_PSU_ID);
+        boolean actualResult = psuService.deletePsuByAspspPsuId(WRONG_ASPSP_PSU_ID);
 
         //Then
         assertThat(actualResult).isFalse();
