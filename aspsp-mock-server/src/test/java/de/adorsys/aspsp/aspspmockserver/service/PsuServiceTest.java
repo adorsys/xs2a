@@ -174,7 +174,7 @@ public class PsuServiceTest {
     @Test
     public void deletePsu_Success() {
         //When
-        boolean actualResult = psuService.deletePsuByPsuId(PSU_ID);
+        boolean actualResult = psuService.deletePsuByAspspPsuId(PSU_ID);
 
         //Then
         assertThat(actualResult).isTrue();
@@ -183,7 +183,7 @@ public class PsuServiceTest {
     @Test
     public void deletePsu_Failure_wrong_id() {
         //When
-        boolean actualResult = psuService.deletePsuByPsuId(WRONG_PSU_ID);
+        boolean actualResult = psuService.deletePsuByAspspPsuId(WRONG_PSU_ID);
 
         //Then
         assertThat(actualResult).isFalse();

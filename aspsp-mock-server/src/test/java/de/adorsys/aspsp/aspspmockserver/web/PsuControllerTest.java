@@ -67,8 +67,8 @@ public class PsuControllerTest {
         when(psuService.getPsuByPsuId(WRONG_PSU_ID)).thenReturn(Optional.empty());
         when(psuService.getAllowedPaymentProducts(PSU_ID)).thenReturn(getProducts());
         when(psuService.getAllowedPaymentProducts(WRONG_PSU_ID)).thenReturn(null);
-        when(psuService.deletePsuByPsuId(PSU_ID)).thenReturn(true);
-        when(psuService.deletePsuByPsuId(WRONG_PSU_ID)).thenReturn(false);
+        when(psuService.deletePsuByAspspPsuId(PSU_ID)).thenReturn(true);
+        when(psuService.deletePsuByAspspPsuId(WRONG_PSU_ID)).thenReturn(false);
 
     }
 
