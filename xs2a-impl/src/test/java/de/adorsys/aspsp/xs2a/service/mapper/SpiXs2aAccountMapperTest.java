@@ -24,7 +24,11 @@ import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
+import de.adorsys.aspsp.xs2a.domain.Xs2aExchangeRate;
+import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiExchangeRate;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -34,9 +38,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -67,10 +69,18 @@ public class SpiXs2aAccountMapperTest {
         assertThat(actualAccountDetails.getId()).isEqualTo("3dc3d5b3-7023-4848-9853-f5400a64e80f");
         assertThat(actualAccountDetails.getIban()).isEqualTo("DE2310010010123456789");
         assertThat(actualAccountDetails.getBban()).isEqualTo("DE2310010010123452343");
-        assertThat(actualAccountDetails.getProduct()).isEqualTo("Girokonto");
+        assertThat(actualAccountDetails.getPan()).isEqualTo("1111222233334444");
+        assertThat(actualAccountDetails.getMaskedPan()).isEqualTo("111122xxxxxx4444");
+        assertThat(actualAccountDetails.getMsisdn()).isEqualTo("4905123123");
+        assertThat(actualAccountDetails.getCurrency()).isEqualTo(Currency.getInstance("EUR"));
         assertThat(actualAccountDetails.getName()).isEqualTo("Main Account");
-        assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CURRENT_ACCOUNT);
+        assertThat(actualAccountDetails.getProduct()).isEqualTo("Girokonto");
+        assertThat(actualAccountDetails.getCashAccountType()).isEqualTo(CashAccountType.CACC);
+        assertThat(actualAccountDetails.getAccountStatus()).isEqualTo(AccountStatus.ENABLED);
         assertThat(actualAccountDetails.getBic()).isEqualTo("EDEKDEHHXXX");
+        assertThat(actualAccountDetails.getUsageType()).isEqualTo(Xs2aUsageType.PRIV);
+        assertThat(actualAccountDetails.getDetails()).isEqualTo("Some details");
+        assertThat(actualAccountDetails.getBalances()).isEqualTo(Collections.emptyList());
     }
 
     @Test
@@ -89,27 +99,57 @@ public class SpiXs2aAccountMapperTest {
         Optional<Xs2aAccountReport> aAR = spiXs2aAccountMapper.mapToXs2aAccountReport(donorSpiTransactions);
         Xs2aAccountReport actualAccountReport;
         actualAccountReport = aAR.orElseGet(() -> new Xs2aAccountReport(new Transactions[]{}, new Transactions[]{}));
-
+        Transactions actualTransaction = actualAccountReport.getBooked()[0];
+        SpiTransaction expectedTransaction = expectedBooked[0];
 
         //Then:
-        assertThat(actualAccountReport.getBooked()[0].getTransactionId())
-            .isEqualTo(expectedBooked[0].getTransactionId());
-        assertThat(actualAccountReport.getBooked()[0].getBookingDate()).isEqualTo(expectedBooked[0].getBookingDate());
-        assertThat(actualAccountReport.getBooked()[0].getCreditorId()).isEqualTo(expectedBooked[0].getCreditorId());
-        assertThat(actualAccountReport.getBooked()[0].getCreditorName()).isEqualTo(expectedBooked[0].getCreditorName());
-        assertThat(actualAccountReport.getBooked()[0].getDebtorName()).isEqualTo(expectedBooked[0].getDebtorName());
-        assertThat(actualAccountReport.getBooked()[0].getEndToEndId()).isEqualTo(expectedBooked[0].getEndToEndId());
-        assertThat(actualAccountReport.getBooked()[0].getMandateId()).isEqualTo(expectedBooked[0].getMandateId());
-        assertThat(actualAccountReport.getBooked()[0].getRemittanceInformationStructured()).isEqualTo(expectedBooked[0].getRemittanceInformationStructured());
-        assertThat(actualAccountReport.getBooked()[0].getRemittanceInformationUnstructured()).isEqualTo(expectedBooked[0].getRemittanceInformationUnstructured());
-        assertThat(actualAccountReport.getBooked()[0].getUltimateCreditor()).isEqualTo(expectedBooked[0].getUltimateCreditor());
-        assertThat(actualAccountReport.getBooked()[0].getValueDate()).isEqualTo(expectedBooked[0].getValueDate());
-        assertThat(actualAccountReport.getBooked()[0].getAmount().getAmount()).isEqualTo(expectedBooked[0].getSpiAmount()
-                                                                                              .getContent().toString());
-        assertThat(actualAccountReport.getBooked()[0].getAmount().getCurrency()).isEqualTo(expectedBooked[0].getSpiAmount()
-                                                                                               .getCurrency());
-        assertThat(actualAccountReport.getBooked()[0].getBankTransactionCodeCode()
-                       .getCode()).isEqualTo(expectedBooked[0].getBankTransactionCodeCode());
-        assertThat(actualAccountReport.getBooked()[0].getPurposeCode().getCode()).isEqualTo(expectedBooked[0].getPurposeCode());
+        assertThat(actualTransaction.getTransactionId()).isEqualTo(expectedTransaction.getTransactionId());
+        assertThat(actualTransaction.getEntryReference()).isEqualTo(expectedTransaction.getEntryReference());
+        assertThat(actualTransaction.getEndToEndId()).isEqualTo(expectedTransaction.getEndToEndId());
+        assertThat(actualTransaction.getMandateId()).isEqualTo(expectedTransaction.getMandateId());
+        assertThat(actualTransaction.getCheckId()).isEqualTo(expectedTransaction.getCheckId());
+        assertThat(actualTransaction.getCreditorId()).isEqualTo(expectedTransaction.getCreditorId());
+        assertThat(actualTransaction.getBookingDate()).isEqualTo(expectedTransaction.getBookingDate());
+        assertThat(actualTransaction.getValueDate()).isEqualTo(expectedTransaction.getValueDate());
+
+        assertThat(actualTransaction.getAmount().getAmount())
+            .isEqualTo(expectedTransaction.getSpiAmount().getAmount().toString());
+        assertThat(actualTransaction.getAmount().getCurrency())
+            .isEqualTo(expectedTransaction.getSpiAmount().getCurrency());
+
+        Xs2aExchangeRate actualRate = actualTransaction.getExchangeRate().get(0);
+        SpiExchangeRate expectedRate = expectedTransaction.getExchangeRate().get(0);
+        assertThat(actualRate.getCurrencyFrom()).isEqualTo(expectedRate.getCurrencyFrom());
+        assertThat(actualRate.getRateFrom()).isEqualTo(expectedRate.getRateFrom());
+        assertThat(actualRate.getCurrencyTo()).isEqualTo(expectedRate.getCurrencyTo());
+        assertThat(actualRate.getRateTo()).isEqualTo(expectedRate.getRateTo());
+        assertThat(actualRate.getRateDate()).isEqualTo(expectedRate.getRateDate());
+        assertThat(actualRate.getRateContract()).isEqualTo(expectedRate.getRateContract());
+
+        assertThat(actualTransaction.getCreditorName()).isEqualTo(expectedTransaction.getCreditorName());
+        assertAccountReferences(actualTransaction.getCreditorAccount(), expectedTransaction.getCreditorAccount());
+        assertThat(actualTransaction.getUltimateCreditor()).isEqualTo(expectedTransaction.getUltimateCreditor());
+        assertThat(actualTransaction.getDebtorName()).isEqualTo(expectedTransaction.getDebtorName());
+        assertAccountReferences(actualTransaction.getDebtorAccount(), expectedTransaction.getDebtorAccount());
+        assertThat(actualTransaction.getUltimateDebtor()).isEqualTo(expectedTransaction.getUltimateDebtor());
+        assertThat(actualTransaction.getRemittanceInformationStructured())
+            .isEqualTo(expectedTransaction.getRemittanceInformationStructured());
+        assertThat(actualTransaction.getRemittanceInformationUnstructured())
+            .isEqualTo(expectedTransaction.getRemittanceInformationUnstructured());
+        assertThat(actualTransaction.getPurposeCode().getCode()).isEqualTo(expectedTransaction.getPurposeCode());
+        assertThat(actualTransaction.getBankTransactionCodeCode().getCode())
+            .isEqualTo(expectedTransaction.getBankTransactionCodeCode());
+        assertThat(actualTransaction.getProprietaryBankTransactionCode())
+            .isEqualTo(expectedTransaction.getProprietaryBankTransactionCode());
+    }
+
+    private void assertAccountReferences(Xs2aAccountReference xs2aAccountReference,
+                                     SpiAccountReference spiAccountReference) {
+        assertThat(xs2aAccountReference.getIban()).isEqualTo(spiAccountReference.getIban());
+        assertThat(xs2aAccountReference.getBban()).isEqualTo(spiAccountReference.getBban());
+        assertThat(xs2aAccountReference.getPan()).isEqualTo(spiAccountReference.getPan());
+        assertThat(xs2aAccountReference.getMaskedPan()).isEqualTo(spiAccountReference.getMaskedPan());
+        assertThat(xs2aAccountReference.getMsisdn()).isEqualTo(spiAccountReference.getMsisdn());
+        assertThat(xs2aAccountReference.getCurrency()).isEqualTo(spiAccountReference.getCurrency());
     }
 }

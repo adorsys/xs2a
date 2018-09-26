@@ -20,14 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.Transactions;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aTransactionsReport;
+import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.AccountStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -63,7 +61,9 @@ public class AccountModelMapper {
             .currency(accountDetails.getCurrency().getCurrencyCode())
             .cashAccountType(Optional.ofNullable(accountDetails.getCashAccountType())
                                  .map(Enum::name)
-                                 .orElse(null));
+                                 .orElse(null))
+            .usage(mapToAccountDetailsUsageEnum(accountDetails.getUsageType()))
+            .status(mapToAccountStatus(accountDetails.getAccountStatus()));
         return target
                    .balances(mapToBalanceList(accountDetails.getBalances()))
                    ._links(objectMapper.convertValue(accountDetails.getLinks(), Map.class));
@@ -81,6 +81,20 @@ public class AccountModelMapper {
         }
 
         return balanceList;
+    }
+
+    private AccountDetails.UsageEnum mapToAccountDetailsUsageEnum(Xs2aUsageType usageType) {
+        return Optional.ofNullable(usageType)
+                   .map(Xs2aUsageType::getValue)
+                   .map(AccountDetails.UsageEnum::fromValue)
+                   .orElse(null);
+    }
+
+    private AccountStatus mapToAccountStatus(de.adorsys.aspsp.xs2a.domain.account.AccountStatus accountStatus) {
+        return Optional.ofNullable(accountStatus)
+                   .map(de.adorsys.aspsp.xs2a.domain.account.AccountStatus::getValue)
+                   .map(AccountStatus::fromValue)
+                   .orElse(null);
     }
 
     public ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {

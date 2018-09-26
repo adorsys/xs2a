@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.account;
+package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum UsageEnum {
-    PRIV("PRIV"),
-    ORGA("ORGA");
+public enum SpiOtpFormat {
+    CHARACTERS("characters"),
+    INTEGER("integer");
 
-    private final static Map<String, UsageEnum> container = new HashMap<>();
+    private final static Map<String, SpiOtpFormat> container = new HashMap<>();
 
     static {
-        for (UsageEnum usageEnum : values()) {
-            container.put(usageEnum.getValue(), usageEnum);
+        for (SpiOtpFormat otpFormat : values()) {
+            container.put(otpFormat.getValue(), otpFormat);
         }
     }
 
     private String value;
 
-    UsageEnum(String value) {
+    @JsonCreator
+    SpiOtpFormat(String value) {
         this.value = value;
     }
 
@@ -45,13 +47,7 @@ public enum UsageEnum {
     }
 
     @JsonIgnore
-    public static Optional<UsageEnum> getByValue(String name) {
-        return Optional.ofNullable(container.get(name));
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return String.valueOf(value);
+    public static Optional<SpiOtpFormat> getByValue(String value) {
+        return Optional.ofNullable(container.get(value));
     }
 }

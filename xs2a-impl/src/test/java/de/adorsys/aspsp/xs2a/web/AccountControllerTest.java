@@ -20,9 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
+import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.service.AccountService;
@@ -165,7 +163,7 @@ public class AccountControllerTest {
         List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aAccountDetails("33333-999999999", "DE371234599997", null, null, null,
                 null, Currency.getInstance("EUR"), "Schmidt", null,
-                CashAccountType.CURRENT_ACCOUNT, "GENODEF1N02", "", "", null));
+                CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null));
         Map<String, List<Xs2aAccountDetails>> result = new HashMap<>();
         result.put("accountList", accountDetails);
         return ResponseObject.<Map<String, List<Xs2aAccountDetails>>>builder()

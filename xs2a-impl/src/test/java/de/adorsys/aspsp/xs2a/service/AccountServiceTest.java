@@ -363,6 +363,8 @@ public class AccountServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             getBalancesList());
     }
 
@@ -376,6 +378,8 @@ public class AccountServiceTest {
             null,
             CURRENCY,
             "David Muller",
+            null,
+            null,
             null,
             null,
             null,
@@ -408,6 +412,10 @@ public class AccountServiceTest {
             null,
             null,
             null,
+            null,
+            null,
+            null,
+            null,
             getSpiBalances());
     }
 
@@ -434,11 +442,11 @@ public class AccountServiceTest {
 
     private SpiTransaction getSpiTransaction() {
         Transactions t = getTransaction();
-        return new SpiTransaction(t.getTransactionId(), null, null, null, t.getBookingDate(),
-            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getAmount())), null,
+        return new SpiTransaction(t.getTransactionId(), null, null, null, null, null, t.getBookingDate(),
+            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getAmount())), null, null,
             mapToSpiAccountRef(t.getCreditorAccount()), null, null,
             mapToSpiAccountRef(t.getDebtorAccount()), null, null,
-            null, null, null);
+            null, null, null, null);
     }
 
     private SpiAccountReference mapToSpiAccountRef(Xs2aAccountReference reference) {

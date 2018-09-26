@@ -25,7 +25,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @ApiModel(description = "Authentication object", value = "AuthenticationObject")
-public class AuthenticationObject {
+public class Xs2aAuthenticationObject {
 
     @ApiModelProperty(value = "Type of the authentication method", required = true)
     private AuthenticationType authenticationType;
