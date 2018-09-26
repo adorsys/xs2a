@@ -94,9 +94,9 @@ public class PsuController {
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
-    @DeleteMapping(path = "/{psu-id}")
-    public ResponseEntity deletePsu(@PathVariable("psu-id") String psuId) {
-        return psuService.deletePsuByAspspPsuId(psuId)
+    @DeleteMapping(path = "/{aspsp-psu-id}")
+    public ResponseEntity deletePsu(@PathVariable("aspsp-psu-id") String aspspPsuId) {
+        return psuService.deletePsuByAspspPsuId(aspspPsuId)
                    ? ResponseEntity.noContent().build()
                    : ResponseEntity.notFound().build();
     }

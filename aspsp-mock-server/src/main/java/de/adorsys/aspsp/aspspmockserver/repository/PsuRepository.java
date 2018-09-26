@@ -16,6 +16,4 @@ public interface PsuRepository extends MongoRepository<Psu, String> {
     Optional<Psu> findByPsuId(String psuId);
 
     Optional<Psu> findPsuByAccountDetailsList_Id(String accountId);
-
-    void deleteByPsuId(String psuId);
 }
