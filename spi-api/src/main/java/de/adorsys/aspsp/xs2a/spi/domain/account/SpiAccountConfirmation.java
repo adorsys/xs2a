@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.pis.proto;
+package de.adorsys.aspsp.xs2a.spi.domain.account;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class CreatePisConsentResponse {
+public class SpiAccountConfirmation {
     private String consentId;
+    private String tanNumber;
+    private String psuId;
 }

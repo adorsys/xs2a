@@ -32,6 +32,7 @@ public class Xs2aUpdatePisConsentPsuDataResponse {
     private String authorisationId;
     private List<CmsScaMethod> availableScaMethods;
     private Links links = new Links();
+    private Xs2aChosenScaMethod chosenScaMethod;
 
     public Xs2aUpdatePisConsentPsuDataResponse(String scaStatus, List<CmsScaMethod> availableScaMethods) {
         this.scaStatus = scaStatus;
