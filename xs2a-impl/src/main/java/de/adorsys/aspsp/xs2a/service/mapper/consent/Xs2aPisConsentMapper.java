@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
+import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
@@ -124,8 +125,8 @@ public class Xs2aPisConsentMapper {
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                                                     .map(Xs2aPurposeCode::getCode)
-                                                     .orElse(""));
+                           .map(Xs2aPurposeCode::getCode)
+                           .orElse(""));
 
                        return pisPayment;
 
@@ -206,7 +207,7 @@ public class Xs2aPisConsentMapper {
                        cmsAddress.setBuildingNumber(adr.getBuildingNumber());
                        cmsAddress.setCity(adr.getCity());
                        cmsAddress.setPostalCode(adr.getPostalCode());
-                       cmsAddress.setCountry(Optional.ofNullable(adr.getCountry().getCode()).orElse(""));
+                       cmsAddress.setCountry(Optional.ofNullable(adr.getCountry()).map(Xs2aCountryCode::getCode).orElse(null));
                        return cmsAddress;
                    }).orElseGet(CmsAddress::new);
     }
