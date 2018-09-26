@@ -16,14 +16,33 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
+import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import de.adorsys.psd2.model.PaymentInitiationSctJson;
+import de.adorsys.psd2.model.StartScaprocessResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.resourceToString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class StartAuthorisationEmbeddedSteps {
 
@@ -38,23 +57,42 @@ public class StartAuthorisationEmbeddedSteps {
     private ObjectMapper mapper;
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
-    // See GlobalSuccessfulSteps
+    // See SinglePaymentSuccessfulSteps
 
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
     @And("^PSU wants to start the authorisation using the (.*)$")
-    public void loadAuthorisationData(String authorisationData) {
-        // TODO: Implement
+    public void loadAuthorisationData(String authorisationData) throws IOException {
+        TestData<HashMap, StartScaprocessResponse> data = mapper.readValue(resourceToString(
+            "/data-input/pis/embedded/" + authorisationData, UTF_8),
+            new TypeReference<TestData<HashMap, StartScaprocessResponse>>() {
+            });
+
+        context.setTestData(data);
     }
 
     @When("^PSU sends the start authorisation request$")
     public void sendAuthorisationRequest() {
-        // TODO: Implement
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        ResponseEntity<StartScaprocessResponse> response = restTemplate.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations",
+            HttpMethod.POST,
+            entity,
+            StartScaprocessResponse.class);
+
+        context.setActualResponse(response);
     }
 
     @Then("^PSU checks if a link is received and the SCA status is correct$")
     public void checkLinkAndScaStatusEmbedded (){
-        // TODO: Implement
+        ResponseEntity<StartScaprocessResponse> actualResponse = context.getActualResponse();
+        StartScaprocessResponse givenResponseBody = (StartScaprocessResponse) context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+        assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
+        assertThat(actualResponse.getBody().getLinks().get("startAuthorisationWithPsuAuthentication"), notNullValue());
     }
 }

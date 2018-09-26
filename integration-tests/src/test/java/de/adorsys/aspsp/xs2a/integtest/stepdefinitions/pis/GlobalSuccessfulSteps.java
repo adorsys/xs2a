@@ -23,6 +23,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +115,16 @@ public class GlobalSuccessfulSteps {
     // Embedded Global Step Payment Initiation
     @And("^PSU sends the single payment initiating request and receives the paymentId$")
     public void sendSinglePaymentInitiationEmbedded() {
-        // TODO: Implement
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        ResponseEntity<PaymentInitationRequestResponse201> response = template.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
+            HttpMethod.POST,
+            entity,
+            PaymentInitationRequestResponse201.class);
+
+        context.setPaymentId(response.getBody().getPaymentId());
     }
 
     // Embedded Global Step Payment Initiation

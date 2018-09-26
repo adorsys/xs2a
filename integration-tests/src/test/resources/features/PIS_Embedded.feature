@@ -16,7 +16,7 @@ Feature: Payment Initiation Embedded approach
         Then PSU checks if a link is received and the SCA status is correct
         Examples:
             | payment-service                          | authorisation-data               | payment-product         | single-payment                |
-            | payments	                               | authWithPsuIdent-successful.json | sepa-credit-transfer    | singlePayInit-successful.json |
+            | payments	                               | startAuth-successful.json        | sepa-credit-transfers    | singlePayInit-successful.json |
 
     Scenario Outline: Successful update of identification data (no Sca method) (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
