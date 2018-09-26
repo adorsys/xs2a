@@ -31,7 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 @FeatureFileSteps
-public class UpdateAuthorisationIdentificationSteps {
+public class UpdateAuthorisationWithIdentificationSteps {
 
     @Autowired
     @Qualifier("xs2a")
