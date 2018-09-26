@@ -86,7 +86,7 @@ public class PisConsentController {
         @PathVariable("consent-id") String consentId,
         @RequestBody UpdateConsentAspspDataRequest request) {
         return pisConsentService.updateConsentAspspData(consentId, request)
-                   .map(consId -> new ResponseEntity<>(new CreatePisConsentResponse(consId, null), HttpStatus.OK))
+                   .map(consId -> new ResponseEntity<>(new CreatePisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
