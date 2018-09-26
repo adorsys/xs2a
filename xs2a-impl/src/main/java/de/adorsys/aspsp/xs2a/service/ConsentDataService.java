@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.stereotype.Service;
@@ -47,7 +48,8 @@ public abstract class ConsentDataService {
 
     public void updateConsentData(AspspConsentData consentData) {
         Optional.ofNullable(consentData)
-            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(cd.getAspspConsentData()), consentData.getConsentId()));
+            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()))
+            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(cd.getAspspConsentData()), cd.getConsentId()));
     }
 
     protected abstract ConsentRemoteUrls getRemoteUrl();

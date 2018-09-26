@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/pis")
-@Api(value = "api/v1/pis/consent", tags = "PIS, Aspsp Consent Data", description = "Provides access to consent management system for AspspDataConsent")
+@Api(value = "api/v1/pis", tags = "PIS, Aspsp Consent Data", description = "Provides access to consent management system for AspspDataConsent")
 public class AspspConsentDataController {
     private final PisConsentService pisConsentService;
 
