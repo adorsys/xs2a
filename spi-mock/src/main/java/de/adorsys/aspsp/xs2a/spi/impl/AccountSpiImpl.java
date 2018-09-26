@@ -172,7 +172,7 @@ public class AccountSpiImpl implements AccountSpi {
         byte[] payload = accessToken.flatMap(jsonConverter::toJson)
                              .map(String::getBytes)
                              .orElse(null);
-        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload));
+        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload, aspspConsentData.getConsentId()));
     }
 
     /**

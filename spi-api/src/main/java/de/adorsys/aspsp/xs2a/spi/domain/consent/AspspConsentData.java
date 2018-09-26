@@ -9,16 +9,11 @@ import java.util.Objects;
 @Value
 @RequiredArgsConstructor
 public class AspspConsentData {
-    private byte[] body;
+    private final byte[] aspspConsentData;
     private final String consentId;
 
-    public AspspConsentData(String consentId) {
-        this.body = "ewogIHBheW1lbnRUb2tlbjogQUJDRDEyMzE0MSwKICBzeXN0ZW1JZDogREVEQUlKRUosCiAgbXVsdGl1c2U6IHRydWUsCiAgZXhwaXJlczogMCwKICB0cmFuc2FjdGlvbnM6IFsKICAgIHsKICAgICAgdHJhbnNhY3Rpb25JZDogaWppZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllamZ3cndpZTIzcjIsCiAgICAgIHN0YXR1czogRkFJTEVECiAgICB9LAogICAgewogICAgICB0cmFuc2FjdGlvbklkOiBpamllcnQyamZpZTIzcjIsCiAgICAgIHN0YXR1czogT0sKICAgIH0sCiAgICB7CiAgICAgIHRyYW5zYWN0aW9uSWQ6IGlqMzI0MzJpZWpmaWUyM3IyLAogICAgICBzdGF0dXM6IE9LCiAgICB9CiAgXQp9Cg==".getBytes();
-        this.consentId = consentId;
-    }
-
     public AspspConsentData() {
-        this(null);
+        this(null, null);
     }
 
     @Override
@@ -32,11 +27,11 @@ public class AspspConsentData {
 
         AspspConsentData that = (AspspConsentData) o;
 
-        return Arrays.equals(body, that.body)&& Objects.equals(consentId, that.getConsentId());
+        return Arrays.equals(aspspConsentData, that.aspspConsentData)&& Objects.equals(consentId, that.getConsentId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(body, consentId);
+        return Objects.hash(aspspConsentData, consentId);
     }
 }

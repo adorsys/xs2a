@@ -79,11 +79,16 @@ public class PisConsentRemoteUrls implements ConsentRemoteUrls{
 
     @Override
     public String getConsentData() {
-        return consentServiceBaseUrl + "/pis/consent/{consent-id}/blob";
+        return consentServiceBaseUrl + "/pis/consent/{consent-id}/aspspConsentData";
     }
 
     @Override
     public String updateConsentData() {
         return getConsentData();
+    }
+
+    @Override
+    public String getConsentDataByPaymentId() {
+        return consentServiceBaseUrl + "/pis/payment/{payment-id}/aspspConsentData";
     }
 }

@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.ais;
+package de.adorsys.aspsp.xs2a.consent.api.pis;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Ais consent update blob request", value = "AisConsentBlobUpdateRequest")
-public class AisConsentAspspDataResponse {
+@ApiModel(description = "Pis consent update blob request", value = "AisConsentBlobUpdateRequest")
+public class PisConsentAspspDataResponse {
 
     @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
     private byte[] aspspConsentData;
+    @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
+    private String consentId;
 }

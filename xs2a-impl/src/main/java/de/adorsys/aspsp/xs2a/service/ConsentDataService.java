@@ -38,12 +38,16 @@ public abstract class ConsentDataService {
 
     public AspspConsentData getConsentData(String consentId) {
         Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(getRemoteUrl().getConsentData(), Xs2aConsentData.class, consentId).getBody();
-        return new AspspConsentData(xs2aConsentData.getBody(), consentId);
+        return new AspspConsentData(xs2aConsentData.getAspspConsentData(), consentId);
+    }
+
+    public AspspConsentData getConsentDataByPaymentId(String paymentId) {
+        return consentRestTemplate.getForEntity(getRemoteUrl().getConsentDataByPaymentId(), AspspConsentData.class, paymentId).getBody();
     }
 
     public void updateConsentData(AspspConsentData consentData) {
         Optional.ofNullable(consentData)
-            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(cd.getBody()), consentData.getConsentId()));
+            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(cd.getAspspConsentData()), consentData.getConsentId()));
     }
 
     protected abstract ConsentRemoteUrls getRemoteUrl();

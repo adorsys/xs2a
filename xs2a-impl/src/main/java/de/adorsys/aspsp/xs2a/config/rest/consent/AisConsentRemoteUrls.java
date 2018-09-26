@@ -98,11 +98,16 @@ public class AisConsentRemoteUrls implements ConsentRemoteUrls{
 
     @Override
     public String getConsentData() {
-        return consentServiceBaseUrl + "/ais/consent/{consent-id}/blob";
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/aspspConsentData";
     }
 
     @Override
     public String updateConsentData() {
+        return getConsentData();
+    }
+
+    @Override
+    public String getConsentDataByPaymentId() {
         return getConsentData();
     }
 }

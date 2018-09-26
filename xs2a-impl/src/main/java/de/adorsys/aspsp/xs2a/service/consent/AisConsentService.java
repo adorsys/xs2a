@@ -58,7 +58,7 @@ public class AisConsentService {
      * @return String representation of identifier of stored consent
      */
     public String createConsent(CreateConsentReq request, String psuId, String tppId, AspspConsentData aspspConsentData) {
-        if (isDirectAccessRequest(request) && isInvalidSpiAccountAccessRequest(request.getAccess())) {
+        if (isDirectAccessRequest(request) && isInvalidSpiAccountAccessRequest(request.getAccess(), aspspConsentData)) {
             return null;
         }
 
@@ -173,12 +173,12 @@ public class AisConsentService {
                    || CollectionUtils.isNotEmpty(accountAccess.getTransactions());
     }
 
-    private boolean isInvalidSpiAccountAccessRequest(Xs2aAccountAccess requestedAccess) {
+    private boolean isInvalidSpiAccountAccessRequest(Xs2aAccountAccess requestedAccess, AspspConsentData aspspConsentData) {
         Set<String> ibansFromAccess = getIbansFromAccess(requestedAccess);
 
         List<SpiAccountDetails> accountDetailsList = accountSpi.readAccountDetailsByIbans(
             ibansFromAccess,
-            new AspspConsentData("zzzzzzzzzzzzzz".getBytes(), null)).getPayload();
+            aspspConsentData).getPayload();
 
         return ibansFromAccess.stream()
                    .map(acc -> filter(acc, accountDetailsList))

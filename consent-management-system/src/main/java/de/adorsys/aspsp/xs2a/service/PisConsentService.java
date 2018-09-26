@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAspspDataResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -102,6 +103,25 @@ public class PisConsentService {
                    .map(con -> con.getConsentStatus() == status);
     }
 
+    @Transactional
+    public Optional<PisConsentAspspDataResponse> getAspspDataByConsentId(String consentId) {
+        return getPisConsentById(consentId)
+                   .map(cons -> getConsentAspspData(cons));
+    }
+
+    @Transactional
+    public Optional<PisConsentAspspDataResponse> getAspspDataByPaymentId(String paymentId) {
+        return pisPaymentDataRepository.findByPaymentId(paymentId)
+                   .map(pisPaymentData -> pisPaymentData.getConsent())
+                    .map(cons -> getConsentAspspData(cons));
+    }
+
+    private PisConsentAspspDataResponse getConsentAspspData(PisConsent consent) {
+        PisConsentAspspDataResponse response = new PisConsentAspspDataResponse();
+        response.setAspspConsentData(consent.getAspspConsentData());
+        response.setConsentId(consent.getExternalId());
+        return response;
+    }
     /**
      * Update PIS consent aspsp consent data by id
      *

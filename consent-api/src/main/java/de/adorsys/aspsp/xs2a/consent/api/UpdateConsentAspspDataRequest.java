@@ -25,5 +25,5 @@ import lombok.Data;
 public class UpdateConsentAspspDataRequest {
 
     @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
-    private byte[] body;
+    private byte[] aspspConsentData;
 }
