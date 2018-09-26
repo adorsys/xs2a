@@ -79,7 +79,8 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             response.setPsuId(request.getPsuId());
             response.setPassword(request.getPassword());
 
-            SpiResponse<List<SpiScaMethod>> spiResponse = accountSpi.readAvailableScaMethods(request.getPsuId(), request.getPassword());
+            SpiResponse<List<SpiScaMethod>> spiResponse = accountSpi.readAvailableScaMethods(request.getPsuId(), request.getPassword(), aisConsentDataService.getConsentData(request.getConsentId()));
+            aisConsentDataService.updateConsentData(authorisationStatusSpiResponse.getAspspConsentData());
             proceedResponseForAvailableMethods(response, spiResponse.getPayload(), request.getConsentId());
             return response;
         }

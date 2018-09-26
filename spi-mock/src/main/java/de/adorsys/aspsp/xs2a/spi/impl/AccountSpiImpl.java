@@ -152,13 +152,13 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     @Override
-    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password) {
+    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password, AspspConsentData aspspConsentData) {
         ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
             remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
             }, psuId);
         List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
                                                .orElse(Collections.emptyList());
-        return new SpiResponse<>(spiScaMethods, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(spiScaMethods, aspspConsentData);
     }
 
     /**

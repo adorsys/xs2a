@@ -296,23 +296,25 @@ public class AccountService {
     }
 
     Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(Xs2aAccountReference reference, String consentId) {
-        return Optional.ofNullable(reference) // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Refactor to procedure style - we read data inside the stream here
-                   .map(ref -> {
-                       SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountDetailsByIban(ref.getIban(), aisConsentDataService.getConsentData(consentId));
-                       aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
-                       return spiResponse.getPayload();
-                   })
+        if (reference == null) {
+            return Optional.empty();
+        }
+
+        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountDetailsByIban(reference.getIban(), aisConsentDataService.getConsentData(consentId));
+        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        return Optional.of(spiResponse.getPayload())
                    .map(Collection::stream)
                    .flatMap(accDts -> accDts
                                           .filter(spiAcc -> spiAcc.getCurrency() == reference.getCurrency())
                                           .findFirst())
                    .map(spiXs2aAccountMapper::mapToXs2aAccountDetails);
+
     }
 
     private List<Xs2aAccountDetails> getAccountDetailsFromReferences(boolean withBalance, Xs2aAccountAccess accountAccess, String consentId) {
         List<Xs2aAccountReference> references = withBalance
-                                                ? accountAccess.getBalances()
-                                                : accountAccess.getAccounts();
+                                                    ? accountAccess.getBalances()
+                                                    : accountAccess.getAccounts();
         List<Xs2aAccountDetails> details = getAccountDetailsFromReferences(references, consentId);
         return filterAccountDetailsByWithBalance(withBalance, details);
     }
@@ -361,8 +363,8 @@ public class AccountService {
         aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
         Optional<SpiTransaction> transaction = spiResponse.getPayload();
         return spiXs2aAccountMapper.mapToXs2aAccountReport(transaction
-                                                    .map(Collections::singletonList)
-                                                    .orElseGet(Collections::emptyList));
+                                                               .map(Collections::singletonList)
+                                                               .orElseGet(Collections::emptyList));
     }
 
     public Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.1

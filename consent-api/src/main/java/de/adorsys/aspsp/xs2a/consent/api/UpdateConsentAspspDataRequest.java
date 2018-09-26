@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-@ApiModel(description = "Ais/Pis consent ASPSP data update request", value = "ConsentBlobUpdateRequest")
+@ApiModel(description = "Ais/Pis consent aspsp data update request", value = "UpdateConsentAspspDataRequest")
 public class UpdateConsentAspspDataRequest {
 
     @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")

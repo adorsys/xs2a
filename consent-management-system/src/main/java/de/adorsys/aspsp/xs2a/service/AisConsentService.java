@@ -135,7 +135,6 @@ public class AisConsentService {
                    });
     }
 
-    @Transactional
     public Optional<AisConsentAspspDataResponse> getAspspData(String consentId) {
         return getActualAisConsent(consentId)
                    .map(cons -> getConsentAspspData(cons));

@@ -1,5 +1,6 @@
 package de.adorsys.aspsp.xs2a.spi.domain.consent;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
@@ -8,13 +9,10 @@ import java.util.Objects;
 
 @Value
 @RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class AspspConsentData {
     private final byte[] aspspConsentData;
     private final String consentId;
-
-    public AspspConsentData() {
-        this(null, null);
-    }
 
     @Override
     public boolean equals(Object o) {

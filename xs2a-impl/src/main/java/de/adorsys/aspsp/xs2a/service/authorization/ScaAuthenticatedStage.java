@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.service.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +31,8 @@ import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.SCAMETHODSELECTED;
 @Service("PSUAUTHENTICATED")
 public class ScaAuthenticatedStage extends ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
 
-    public ScaAuthenticatedStage(PaymentSpi paymentSpi, PisAuthorisationService pisAuthorisationService, SpiCmsPisMapper spiCmsPisMapper) {
-        super(paymentSpi, pisAuthorisationService, spiCmsPisMapper);
+    public ScaAuthenticatedStage(PaymentSpi paymentSpi, PisAuthorisationService pisAuthorisationService, SpiCmsPisMapper spiCmsPisMapper, PisConsentDataService pisConsentDataService) {
+        super(paymentSpi, pisAuthorisationService, spiCmsPisMapper, pisConsentDataService);
     }
 
     @Override

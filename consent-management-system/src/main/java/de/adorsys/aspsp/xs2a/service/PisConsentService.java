@@ -103,20 +103,18 @@ public class PisConsentService {
                    .map(con -> con.getConsentStatus() == status);
     }
 
-    @Transactional
     public Optional<PisConsentAspspDataResponse> getAspspDataByConsentId(String consentId) {
         return getPisConsentById(consentId)
-                   .map(cons -> getConsentAspspData(cons));
+                   .map(cons -> prepareAspspConsentData(cons));
     }
 
-    @Transactional
     public Optional<PisConsentAspspDataResponse> getAspspDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
                    .map(pisPaymentData -> pisPaymentData.getConsent())
-                    .map(cons -> getConsentAspspData(cons));
+                    .map(cons -> prepareAspspConsentData(cons));
     }
 
-    private PisConsentAspspDataResponse getConsentAspspData(PisConsent consent) {
+    private PisConsentAspspDataResponse prepareAspspConsentData(PisConsent consent) {
         PisConsentAspspDataResponse response = new PisConsentAspspDataResponse();
         response.setAspspConsentData(consent.getAspspConsentData());
         response.setConsentId(consent.getExternalId());
