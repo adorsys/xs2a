@@ -17,16 +17,13 @@
 package de.adorsys.aspsp.xs2a.service.mapper; //NOPMD
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
+import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.aspsp.xs2a.domain.consent.AuthenticationObject;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
@@ -48,7 +45,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class PaymentMapper {
+public class PaymentMapper { // NOPMD TODO fix large amount of methods in PaymentMapper https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/333
     // TODO fix high amount of different objects as members denotes a high coupling https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/322
     private final ObjectMapper objectMapper;
     private final SpiXs2aAccountMapper spiXs2aAccountMapper;
@@ -63,6 +60,7 @@ public class PaymentMapper {
                        spiBulkPayment.setPayments(bulk.getPayments().stream()
                                                       .map(this::mapToSpiSinglePayment)
                                                       .collect(Collectors.toList()));
+                       spiBulkPayment.setPaymentStatus(mapToSpiTransactionStatus(bulk.getTransactionStatus()));
                        return spiBulkPayment;
                    })
                    .orElse(null);
@@ -71,6 +69,12 @@ public class PaymentMapper {
     public Xs2aTransactionStatus mapToTransactionStatus(SpiTransactionStatus spiTransactionStatus) {
         return Optional.ofNullable(spiTransactionStatus)
                    .map(ts -> Xs2aTransactionStatus.valueOf(ts.name()))
+                   .orElse(null);
+    }
+
+    public SpiTransactionStatus mapToSpiTransactionStatus(Xs2aTransactionStatus xs2aTransactionStatus) {
+        return Optional.ofNullable(xs2aTransactionStatus)
+                   .map(ts -> SpiTransactionStatus.valueOf(ts.name()))
                    .orElse(null);
     }
 
@@ -146,6 +150,7 @@ public class PaymentMapper {
                        initialisationResponse.setPsuMessage(pir.getPsuMessage());
                        initialisationResponse.setTppRedirectPreferred(pir.isTppRedirectPreferred());
                        initialisationResponse.setScaMethods(mapToAuthenticationObjects(pir.getScaMethods()));
+                       initialisationResponse.setChallengeData(mapToChallengeData(pir.getChallengeData()));
                        initialisationResponse.setTppMessages(mapToMessageErrorCodes(pir.getTppMessages()));
                        initialisationResponse.setLinks(new Links());
                        return initialisationResponse;
@@ -240,8 +245,8 @@ public class PaymentMapper {
         return spiXs2aAccountMapper.mapToXs2aAccountReference(spiSinglePayments.get(0).getDebtorAccount());
     }
 
-    private AuthenticationObject[] mapToAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
-        return new AuthenticationObject[]{};//TODO Fill in th Linx
+    private Xs2aAuthenticationObject[] mapToAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
+        return new Xs2aAuthenticationObject[]{};//TODO Fill in th Linx
     }
 
     private MessageErrorCode[] mapToMessageErrorCodes(String[] messageCodes) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
@@ -310,12 +315,23 @@ public class PaymentMapper {
                        return address;
                    })
                    .orElseGet(Xs2aAddress::new);
-
     }
 
     private SpiAmount mapToSpiAmount(Xs2aAmount amount) {
         return Optional.ofNullable(amount)
                    .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
+                   .orElse(null);
+    }
+
+    private Xs2aChallengeData mapToChallengeData(SpiChallengeData challengeData) {
+        return Optional.ofNullable(challengeData)
+                   .map(c -> new Xs2aChallengeData(
+                       c.getImage(),
+                       c.getData(),
+                       c.getImageLink(),
+                       c.getOtpMaxLength(),
+                       OtpFormat.getByValue(c.getSpiOtpFormat().getValue()).orElse(null),
+                       c.getAdditionalInformation()))
                    .orElse(null);
     }
 
@@ -331,7 +347,7 @@ public class PaymentMapper {
             tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
             tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
             return tppInfo;
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             log.warn("Error with converting TppInfo from certificate {}", requestParameters.getQwacCertificate());
             return null;
         }

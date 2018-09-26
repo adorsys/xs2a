@@ -10,7 +10,7 @@
       "interimAvailable": {
         "amount": {
           "currency": "EUR",
-          "content": "1000"
+          "amount": "1000"
         }
       }
     }

@@ -89,7 +89,7 @@ public class FutureBookingsControllerTest {
     private Optional<SpiAccountDetails> getSpiAccountDetails(BigDecimal amount) {
         return Optional.of(new SpiAccountDetails("qwertyuiop12345678", "DE99999999999999", null, "4444333322221111",
             "444433xxxxxx1111", null, Currency.getInstance("EUR"), "Emily", "GIRO",
-            null, "ACVB222", getNewBalanceList(amount)));
+            null, null, "ACVB222", null, null, null, getNewBalanceList(amount)));
     }
 
     private List<SpiAccountBalance> getNewBalanceList(BigDecimal amount) {

@@ -21,17 +21,21 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class SpiTransaction {
     @Id
     private final String transactionId;
+    private final String entryReference;
     private final String endToEndId;
     private final String mandateId;
+    private final String checkId;
     private final String creditorId;
     private final LocalDate bookingDate;
     private final LocalDate valueDate;
     private final SpiAmount spiAmount;
+    private final List<SpiExchangeRate> exchangeRate;
     private final String creditorName;
     private final SpiAccountReference creditorAccount;
     private final String ultimateCreditor;
@@ -42,4 +46,5 @@ public class SpiTransaction {
     private final String remittanceInformationStructured;
     private final String purposeCode;
     private final String bankTransactionCodeCode;
+    private final String proprietaryBankTransactionCode;
 }

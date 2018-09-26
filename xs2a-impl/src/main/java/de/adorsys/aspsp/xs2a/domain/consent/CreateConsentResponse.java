@@ -35,10 +35,10 @@ public class CreateConsentResponse {
     private final String consentId;
 
     @ApiModelProperty(value = "This data element might be contained, if SCA is required and if the PSU has a choice between different authentication methods. Depending on the risk management of the ASPSP this choice might be offered before or after the PSU has been identified with the first relevant factor, or if an access token is transported. If this data element is contained, then there is also an hyperlink of type 'selectAuthenticationMethods' contained in the response body.", required = false)
-    private final AuthenticationObject[] scaMethods;
+    private final Xs2aAuthenticationObject[] scaMethods;
 
     @ApiModelProperty(value = "This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected")
-    private final AuthenticationObject chosenScaMethod;
+    private final Xs2aAuthenticationObject chosenScaMethod;
 
     @ApiModelProperty(value = "It is contained in addition to the data element chosenScaMethod if challenge data is needed for SCA")
     private final Xs2aChallengeData challengeData;

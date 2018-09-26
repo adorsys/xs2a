@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.psd2.api.ConsentApi;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.ConsentStatus;
 import lombok.RequiredArgsConstructor;
