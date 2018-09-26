@@ -16,15 +16,21 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
+import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
+import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.model.UpdatePsuAuthentication;
+import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,9 +40,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -50,6 +61,9 @@ public class GlobalSuccessfulSteps {
     @Autowired
     @Qualifier("aspsp-mock")
     private RestTemplate template;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     @Autowired
     private AuthConfigProperty authConfigProperty;
@@ -130,19 +144,46 @@ public class GlobalSuccessfulSteps {
     // Embedded Global Step Payment Initiation
     @And("^PSU sends the start authorisation request and receives the authorisationId$")
     public void startAuthorisationRequest() {
-        // TODO: Implement
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        ResponseEntity<StartScaprocessResponse> response = template.exchange(
+            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations",
+            HttpMethod.POST,
+            entity,
+            StartScaprocessResponse.class);
+
+        extractAuthorisationId(response);
+    }
+
+    private void extractAuthorisationId(ResponseEntity<StartScaprocessResponse> response) {
+        String regex = "\\/authorisations\\/(.*?)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher((CharSequence) response.getBody().getLinks().get("startAuthorisationWithPsuAuthentication"));
+        while(matcher.find()) {
+            context.setAuthorisationId(matcher.group(1));
+        }
     }
 
     // Embedded Global Step Payment Initiation
     @And("^PSU wants to update the resource with his (.*)$")
-    public void loadIdentificationData(String identificationData) {
-        // TODO: Implement
+    public void loadIdentificationData(String identificationData) throws IOException {
+        TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse> data = mapper.readValue(resourceToString(
+            "/data-input/pis/embedded/" + identificationData, UTF_8),
+            new TypeReference<TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse>>() {
+            });
+
+        context.setTestData(data);
     }
 
     // Embedded Global Step Payment Initiation
     @Then("PSU checks if the correct SCA status and response code is received$")
     public void checkScaStatusAndResponseCode() {
-        // TODO: Implement
+        ResponseEntity<UpdatePsuAuthenticationResponse> actualResponse = context.getActualResponse();
+        UpdatePsuAuthenticationResponse givenResponseBody = (UpdatePsuAuthenticationResponse) context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+        assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
     }
 
     @After
