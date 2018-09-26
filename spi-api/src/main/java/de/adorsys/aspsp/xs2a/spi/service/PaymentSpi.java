@@ -35,6 +35,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #initiatePayment(SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<SpiPaymentInitialisationResponse> createPaymentInitiation(SpiSinglePayment spiSinglePayment, AspspConsentData aspspConsentData);
@@ -46,6 +47,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #initiatePayment(SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<SpiPaymentInitialisationResponse> initiatePeriodicPayment(SpiPeriodicPayment periodicPayment, AspspConsentData aspspConsentData);
@@ -57,6 +59,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Response from ASPSP containing information about carried payment initiation operation
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #initiatePayment(SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<List<SpiPaymentInitialisationResponse>> createBulkPayments(SpiBulkPayment spiBulkPayment, AspspConsentData aspspConsentData);
@@ -69,6 +72,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return payment status
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #getPaymentStatusById(String, SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPaymentType paymentType, AspspConsentData aspspConsentData);
@@ -82,6 +86,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return single payment
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #getPaymentById(SpiPayment, String, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<SpiSinglePayment> getSinglePaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
@@ -95,6 +100,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return periodic payment
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #getPaymentById(SpiPayment, String, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<SpiPeriodicPayment> getPeriodicPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
@@ -108,6 +114,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return bulk payment
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #getPaymentById(SpiPayment, String, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<List<SpiSinglePayment>> getBulkPaymentById(SpiPaymentType paymentType, String paymentProduct, String paymentId, AspspConsentData aspspConsentData);
@@ -120,6 +127,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return success or failure authorization status
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #authorisePsu(String psuId, String password, SpiPayment spiPayment, AspspConsentData aspspConsentData)}
      */
     @Deprecated
     SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
@@ -131,6 +139,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #requestAvailableScaMethods(String, SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(String psuId, AspspConsentData aspspConsentData);
@@ -143,6 +152,7 @@ public interface PaymentSpi {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return execution payment id
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #executePaymentWithoutSca(SpiPaymentType, SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments, AspspConsentData aspspConsentData);
@@ -153,15 +163,19 @@ public interface PaymentSpi {
      * @param psuId            ASPSP identifier of the psu
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #requestAuthorisationCode(String, SpiScaMethod, SpiPayment, AspspConsentData)}
      */
     @Deprecated
     void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
 
+    /**
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation, SpiPayment, AspspConsentData)}
+     */
     @Deprecated
     void applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
 
     /**
-     * Initiates a payment at ASPSP. SPI Implementation shall return paymentId here
+     * Initiates a payment at ASPSP. SPI Implementation shall return paymentId here. Used in all SCA approaches.
      *
      * @param spiPayment       payment to be sent for saving at ASPSP
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
@@ -171,7 +185,7 @@ public interface PaymentSpi {
     SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
     /**
-     * Authorises psu and returns current autorisation status
+     * Authorises psu and returns current autorisation status. Used only with embedded SCA Approach.
      *
      * @param psuId            ASPSP identifier of the psu
      * @param password         Psu's password
@@ -183,7 +197,7 @@ public interface PaymentSpi {
     SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
     /**
-     * Returns a list of SCA methods for PSU by its login
+     * Returns a list of SCA methods for PSU by its login. Used only with embedded SCA Approach.
      *
      * @param psuId            ASPSP identifier of the psu
      * @param spiPayment       generic payment object
@@ -194,7 +208,7 @@ public interface PaymentSpi {
     SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
     /**
-     * Performs payment execution at ASPSP side when no SCA method are set for PSU
+     * Performs payment execution at ASPSP side when no SCA method are set for PSU. Used only with embedded SCA Approach.
      *
      * @param spiPaymentType   Type of payment
      * @param spiPayment       generic payment for execution
@@ -205,7 +219,7 @@ public interface PaymentSpi {
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
     /**
-     * Performs strong customer authorisation depending on selected SCA method
+     * Performs strong customer authorisation depending on selected SCA method. Used only with embedded SCA Approach.
      *
      * @param psuId            ASPSP identifier of the psu
      * @param scaMethod        Chosen sca method
@@ -217,7 +231,7 @@ public interface PaymentSpi {
     SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
     /**
-     * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation executes payment at ASPSP
+     * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation executes payment at ASPSP. Used only with embedded SCA Approach.
      *
      * @param spiPaymentConfirmation payment confirmation information
      * @param spiPayment             generic payment object
@@ -228,7 +242,7 @@ public interface PaymentSpi {
     SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation spiPaymentConfirmation, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
     /**
-     * Returns a payment by its ASPSP identifier
+     * Returns a payment by its ASPSP identifier. Used in all SCA Approaches.
      *
      * @param spiPayment       generic payment object
      * @param paymentId        ASPSP identifier of a payment
@@ -239,7 +253,7 @@ public interface PaymentSpi {
     SpiResponse<SpiPayment> getPaymentById(SpiPayment spiPayment, String paymentId, AspspConsentData aspspConsentData);
 
     /**
-     * Returns a payment status by its ASPSP identifier
+     * Returns a payment status by its ASPSP identifier. Used in all SCA Approaches.
      *
      * @param paymentId        ASPSP identifier of a payment
      * @param spiPayment       generic payment object
