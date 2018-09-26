@@ -44,7 +44,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class StartAuthorisationEmbeddedSteps {
+public class StartAuthorisationSuccessfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
