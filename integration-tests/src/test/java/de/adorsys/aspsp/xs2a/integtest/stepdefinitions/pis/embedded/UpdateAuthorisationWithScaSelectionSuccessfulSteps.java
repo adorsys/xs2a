@@ -19,15 +19,13 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
-import de.adorsys.psd2.model.SelectPsuAuthenticationMethod;
-import de.adorsys.psd2.model.SelectPsuAuthenticationMethodResponse;
-import de.adorsys.psd2.model.UpdatePsuAuthentication;
-import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
+import de.adorsys.psd2.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -39,6 +37,8 @@ import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 @FeatureFileSteps
 public class UpdateAuthorisationWithScaSelectionSuccessfulSteps {
@@ -92,6 +92,12 @@ public class UpdateAuthorisationWithScaSelectionSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    // @Then("PSU checks if the correct SCA status and response code is received$")
-    // See GlobalSuccessfulSteps
+    @Then("PSU checks if the correct SCA status and response code is received for the selection$")
+    public void checkScaStatusAndResponseCode() {
+        ResponseEntity<SelectPsuAuthenticationMethodResponse> actualResponse = context.getActualResponse();
+        SelectPsuAuthenticationMethodResponse givenResponseBody = (SelectPsuAuthenticationMethodResponse) context.getTestData().getResponse().getBody();
+
+        assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
+        assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
+    }
 }

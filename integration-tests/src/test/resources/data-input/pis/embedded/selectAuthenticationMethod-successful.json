@@ -5,9 +5,7 @@
       "PSU-ID": "aspsp2"
     },
     "body": {
-
-        "authenticationMethodId": "PUSH_OTP"
-
+      "authenticationMethodId": "PUSH_OTP"
     }
   },
   "response": {
