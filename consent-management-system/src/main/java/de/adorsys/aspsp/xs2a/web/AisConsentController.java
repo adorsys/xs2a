@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
 import io.swagger.annotations.*;
@@ -79,7 +80,7 @@ public class AisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping(path = "/{consent-id}/blob")
+    @GetMapping(path = "/{consent-id}/aspspConsentData")
     @ApiOperation(value = "Get consent blob data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
@@ -92,16 +93,16 @@ public class AisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping(path = "/{consent-id}/blob")
+    @PutMapping(path = "/{consent-id}/aspspConsentData")
     @ApiOperation(value = "Update consent blob data identified by given consent id.")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreateAisConsentResponse> updateAspspBlob(
+    public ResponseEntity<CreateAisConsentResponse> updateAspspConsentData(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
-        @RequestBody UpdateAisConsentAspspDataRequest request) {
-        return aisConsentService.updateAspspData(consentId, request)
+        @RequestBody UpdateConsentAspspDataRequest request) {
+        return aisConsentService.updateConsentAspspData(consentId, request)
                    .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -145,7 +146,7 @@ public class AisConsentController {
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
         return aisConsentService.createAuthorization(consentId, consentAuthorization)
                    .map(authorizationId -> new ResponseEntity<>(new CreateAisConsentAuthorizationResponse(authorizationId), HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/{consent-id}/authorizations/{authorization-id}")
@@ -162,7 +163,7 @@ public class AisConsentController {
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
         return aisConsentService.updateConsentAuthorization(authorizationId, consentId, consentAuthorization)
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/{consent-id}/authorizations/{authorization-id}")
@@ -178,6 +179,6 @@ public class AisConsentController {
 
         return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

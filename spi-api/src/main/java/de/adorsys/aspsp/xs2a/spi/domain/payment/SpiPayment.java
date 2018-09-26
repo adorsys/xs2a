@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api.ais;
+package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
-@Data
-@ApiModel(description = "Ais consent update blob request", value = "AisConsentBlobUpdateRequest")
-public class UpdateAisConsentAspspDataRequest {
-
-    @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
-    private byte[] body;
+public class SpiPayment {
+    //A blank for future implementation of generic payment for spi level
+    SpiPaymentType paymentType;
+    String paymentProduct;
 }

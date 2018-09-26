@@ -36,7 +36,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -67,36 +66,32 @@ public class PisConsentService {
         }
         CreatePisConsentResponse consentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), pisConsentRequest, CreatePisConsentResponse.class).getBody();
 
-        return ResponseObject.builder().body(extendPaymentResponseFields(xs2aResponse, consentResponse, requestParameters.getPaymentType())).build();
+        return ResponseObject.builder().body(extendPaymentResponseFields(xs2aResponse, consentResponse.getConsentId(), requestParameters.getPaymentType())).build();
     }
 
-    private <T> Object extendPaymentResponseFields(T response, CreatePisConsentResponse cmsResponse, PaymentType paymentType) {
+    private <T> Object extendPaymentResponseFields(T response, String consentId, PaymentType paymentType) {
         Object extendedResponse = EnumSet.of(SINGLE, PERIODIC).contains(paymentType)
-                                      ? extendPaymentResponseFieldsSimple((PaymentInitialisationResponse) response, cmsResponse, paymentType)
-                                      : extendPaymentResponseFieldsBulk((List<PaymentInitialisationResponse>) response, cmsResponse);
+                                      ? extendPaymentResponseFieldsSimple((PaymentInitialisationResponse) response, consentId, paymentType)
+                                      : extendPaymentResponseFieldsBulk((List<PaymentInitialisationResponse>) response, consentId);
 
         return IMPLICIT == profileService.getAuthorisationStartType()
                    ? createPisAuthorisationForImplicitApproach(extendedResponse, paymentType)
                    : extendedResponse;
     }
 
-    private List<PaymentInitialisationResponse> extendPaymentResponseFieldsBulk(List<PaymentInitialisationResponse> responses, CreatePisConsentResponse cmsResponse) {
+    private List<PaymentInitialisationResponse> extendPaymentResponseFieldsBulk(List<PaymentInitialisationResponse> responses, String consentId) {
         return responses.stream()
-                   .map(resp -> extendPaymentResponseFieldsSimple(resp, cmsResponse, BULK))
+                   .map(resp -> extendPaymentResponseFieldsSimple(resp, consentId, BULK))
                    .collect(Collectors.toList());
     }
 
-    private PaymentInitialisationResponse extendPaymentResponseFieldsSimple(PaymentInitialisationResponse response, CreatePisConsentResponse cmsResponse, PaymentType paymentType) {
-        return Optional.ofNullable(cmsResponse)
-                   .filter(c -> StringUtils.isNoneBlank(c.getConsentId(), c.getPaymentId()))
-                   .map(c -> {
-                       response.setPaymentId(c.getPaymentId());
-                       response.setTransactionStatus(RCVD);
-                       response.setPisConsentId(c.getConsentId());
-                       response.setPaymentType(paymentType.name());
-                       return response;
-                   })
-                   .orElseGet(() -> response);
+    private PaymentInitialisationResponse extendPaymentResponseFieldsSimple(PaymentInitialisationResponse response, String consentId, PaymentType paymentType) {
+        if (StringUtils.isNotBlank(consentId)) {
+            response.setTransactionStatus(RCVD);
+            response.setPisConsentId(consentId);
+            response.setPaymentType(paymentType.name());
+        }
+        return response;
     }
 
     private <T> Object createPisAuthorisationForImplicitApproach(T response, PaymentType paymentType) {

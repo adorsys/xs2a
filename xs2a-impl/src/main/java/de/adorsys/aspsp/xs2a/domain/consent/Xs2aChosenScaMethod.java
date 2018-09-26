@@ -16,30 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
-import de.adorsys.aspsp.xs2a.domain.Links;
-import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.model.ChosenScaMethod;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class UpdateConsentPsuDataResponse {
-
-    private String psuId;
-    private String consentId;
-    private String authorizationId;
-
-    private Xs2aScaStatus scaStatus;
-    private List<CmsScaMethod> availableScaMethods;
-    private String chosenScaMethod;
+public class Xs2aChosenScaMethod {
+    private String authenticationType;
     private String authenticationMethodId;
-    private String scaAuthenticationData;
-    private String password;
-    private Links links;
 
-    private ConsentAuthorizationResponseLinkType responseLinkType;
-    private String psuMessage;
-
-    private MessageErrorCode errorCode;
+    /*
+    TODO Delete inner class after fixing bug in ChosenScaMethod : https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/343
+     This class was created for extending incorrect class ChosenScaMethod.
+     Because ChosenScaMethod doesn't have any fields
+    */
+    @Data
+    public class ExtendedChosenScaMethod extends ChosenScaMethod {
+        private String authenticationType;
+        private String authenticationMethodId;
+    }
 }

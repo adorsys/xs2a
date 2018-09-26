@@ -17,10 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
+import de.adorsys.aspsp.xs2a.consent.api.*;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
@@ -145,14 +142,14 @@ public class AisConsentService {
     }
 
     /**
-     * Update AIS consent aspsp blob data by id
+     * Update AIS consent aspsp consent data by id
      *
-     * @param request   needed parameters for updating AIS consent
+     * @param request   Aspsp provided ais consent data
      * @param consentId id of the consent to be updated
      * @return String   consent id
      */
     @Transactional
-    public Optional<String> updateAspspData(String consentId, UpdateAisConsentAspspDataRequest request) {
+    public Optional<String> updateConsentAspspData(String consentId, UpdateConsentAspspDataRequest request) {
         return getActualAisConsent(consentId)
                    .map(cons -> updateConsentAspspData(request, cons));
     }
@@ -211,11 +208,10 @@ public class AisConsentService {
         AisConsentAspspDataResponse request = new AisConsentAspspDataResponse();
         request.setBody(consent.getAspspConsentData());
         return request;
-
     }
 
-    private String updateConsentAspspData(UpdateAisConsentAspspDataRequest request, AisConsent consent) {
-        consent.setAspspConsentData(request.getBody());
+    private String updateConsentAspspData(UpdateConsentAspspDataRequest request, AisConsent consent) {
+        consent.setAspspConsentData(request.getAspspConsentData());
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }
@@ -312,7 +308,7 @@ public class AisConsentService {
     private String saveNewAuthorization(AisConsent aisConsent, AisConsentAuthorizationRequest request) {
         AisConsentAuthorization consentAuthorization = new AisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
-        consentAuthorization.setPsuId(consentAuthorization.getPsuId());
+        consentAuthorization.setPsuId(request.getPsuId());
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
@@ -321,10 +317,17 @@ public class AisConsentService {
     private Optional<Boolean> updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
         return aisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(conAuth -> {
+                       if (CmsScaStatus.STARTED == conAuth.getScaStatus()) {
+                           conAuth.setPsuId(request.getPsuId());
+                           conAuth.setPassword(request.getPassword());
+                       }
+
+                       if (CmsScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
+                           conAuth.setAuthenticationMethodId(request.getAuthenticationMethodId());
+                       }
+
                        conAuth.setScaStatus(request.getScaStatus());
-                       conAuth.setPassword(request.getPassword());
-                       conAuth.setAuthenticationMethodId(request.getAuthenticationMethodId());
-                       conAuth.setScaAuthenticationData(request.getScaAuthenticationData());
+
                        return aisConsentAuthorizationRepository.save(conAuth).getExternalId() != null;
                    });
     }

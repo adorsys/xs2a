@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.mapper; //NOPMD
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
@@ -235,15 +234,6 @@ public class PaymentMapper {
             return bulkPayment;
         }
         return null;
-    }
-
-    public SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
-        SpiPaymentConfirmation paymentConfirmation = new SpiPaymentConfirmation();
-        paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
-        paymentConfirmation.setPaymentId(request.getPaymentId());
-        paymentConfirmation.setConsentId(consentId);
-        paymentConfirmation.setPsuId(request.getPsuId());
-        return paymentConfirmation;
     }
 
     private Xs2aAccountReference getDebtorAccountForBulkPayment(List<SpiSinglePayment> spiSinglePayments) {

@@ -32,6 +32,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -80,11 +81,19 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         String tppId = tppService.getTppId();
         String consentId = aisConsentService.createConsent(request, psuId, tppId, new AspspConsentData());
 
-        //TODO v1.1 Add balances support
         //TODO v1.2 Add embedded approach specfic links
-        return !StringUtils.isBlank(consentId)
-                   ? ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build()
-                   : ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        if (StringUtils.isBlank(consentId)) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        }
+
+        ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
+
+        if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED
+                && aspspProfileService.getAuthorisationStartType() == Xs2aAuthorisationStartType.IMPLICIT) {
+            proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuId, consentId);
+        }
+
+        return createConsentResponseObject;
     }
 
     /**
@@ -162,7 +171,11 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         UpdateConsentPsuDataResponse response = aisAuthorizationService.updateConsentPsuData(updatePsuData, consentAuthorization);
 
         return Optional.ofNullable(response)
-                   .map(s -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build())
+                   .map(s -> Optional.ofNullable(s.getErrorCode())
+                                 .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                               .fail(new MessageError(e))
+                                               .build())
+                                 .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build()))
                    .orElseGet(() -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                         .build());
@@ -245,5 +258,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         return Optional.ofNullable(aisConsentService.getAccountConsentById(consentId))
                    .filter(consent -> tppService.getTppId().equals(consent.getTppId()))
                    .orElse(null);
+    }
+
+    private void proceedEmbeddedImplicitCaseForCreateConsent(CreateConsentResponse response, String psuId, String consentId) {
+        aisAuthorizationService.createConsentAuthorization(psuId, consentId)
+            .ifPresent(a -> {
+                response.setAuthorizationId(a.getAuthorizationId());
+            });
     }
 }
