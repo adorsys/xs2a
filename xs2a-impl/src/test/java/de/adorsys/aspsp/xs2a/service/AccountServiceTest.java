@@ -92,6 +92,8 @@ public class AccountServiceTest {
     private TppService tppService;
     @Spy
     AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
+    @Mock
+    AisConsentDataService aisConsentDataService;
 
     @Before
     public void setUp() {
@@ -133,6 +135,7 @@ public class AccountServiceTest {
 
         when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiTransaction()), ASPSP_CONSENT_DATA));
         when(tppService.getTppId()).thenReturn(TPP_ID);
+        when(aisConsentDataService.getConsentData(anyString())).thenReturn(new AspspConsentData());
     }
 
     //Get Account By AccountId

@@ -71,7 +71,7 @@ public class AccountSpiImpl implements AccountSpi {
                 .getBody()
         )
                                                .orElse(Collections.emptyList());
-        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, aspspConsentData);
     }
 
     /**
@@ -90,7 +90,7 @@ public class AccountSpiImpl implements AccountSpi {
         Optional<List<SpiTransaction>> response = Optional.ofNullable(aspspRestTemplate.exchange(
             builder.buildAndExpand(uriParams).toUriString(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiTransaction>>() {
             }).getBody());
-        return new SpiResponse<>(response.orElseGet(ArrayList::new), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response.orElseGet(ArrayList::new), aspspConsentData);
     }
 
     /**
@@ -99,7 +99,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData) {
         Optional<SpiTransaction> response = Optional.ofNullable(aspspRestTemplate.getForObject(remoteSpiUrls.readTransactionById(), SpiTransaction.class, transactionId, accountId));
-        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, aspspConsentData);
     }
 
     /**
@@ -108,7 +108,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Override
     public SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData) {
         SpiAccountDetails response = aspspRestTemplate.getForObject(remoteSpiUrls.getAccountDetailsById(), SpiAccountDetails.class, accountId);
-        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, aspspConsentData);
     }
 
     /**
@@ -120,7 +120,7 @@ public class AccountSpiImpl implements AccountSpi {
             remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             }, psuId).getBody())
                                                .orElse(Collections.emptyList());
-        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, aspspConsentData);
     }
 
     /**
@@ -132,12 +132,12 @@ public class AccountSpiImpl implements AccountSpi {
         for (String iban : ibans) {
             List<SpiAccountDetails> det = readAccountDetailsByIban(iban, aspspConsentData).getPayload();
             if (CollectionUtils.isEmpty(det)) {
-                return new SpiResponse<>(Collections.emptyList(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+                return new SpiResponse<>(Collections.emptyList(), aspspConsentData);
             }
             accountDetails.addAll(det);
         }
 
-        return new SpiResponse<>(accountDetails, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(accountDetails, aspspConsentData);
     }
 
     /**
@@ -148,17 +148,17 @@ public class AccountSpiImpl implements AccountSpi {
         List<String> response = Optional.ofNullable(aspspRestTemplate.exchange(remoteSpiUrls.getAllowedPaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
         }, reference.getIban()).getBody())
                                     .orElse(Collections.emptyList());
-        return new SpiResponse<>(response, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(response, aspspConsentData);
     }
 
     @Override
-    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password) {
+    public SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password, AspspConsentData aspspConsentData) {
         ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
             remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
             }, psuId);
         List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
                                                .orElse(Collections.emptyList());
-        return new SpiResponse<>(spiScaMethods, new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        return new SpiResponse<>(spiScaMethods, aspspConsentData);
     }
 
     /**
@@ -172,7 +172,7 @@ public class AccountSpiImpl implements AccountSpi {
         byte[] payload = accessToken.flatMap(jsonConverter::toJson)
                              .map(String::getBytes)
                              .orElse(null);
-        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload));
+        return new SpiResponse<>(spiAuthorisationStatus, new AspspConsentData(payload, aspspConsentData.getConsentId()));
     }
 
     /**

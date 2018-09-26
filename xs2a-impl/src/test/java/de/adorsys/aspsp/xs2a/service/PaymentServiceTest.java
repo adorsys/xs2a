@@ -95,6 +95,8 @@ public class PaymentServiceTest {
     private ReadSinglePayment readSinglePayment;
     @Mock
     private AccountReferenceValidationService referenceValidationService;
+    @Mock
+    private PisConsentDataService pisConsentDataService;
 
     @Before
     public void setUp() {
@@ -129,6 +131,7 @@ public class PaymentServiceTest {
             .thenReturn(TPP_INFO);
 
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
+        when(pisConsentDataService.getConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
     }
 
     // TODO Update tests after rearranging order of payment creation with pis consent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/159
