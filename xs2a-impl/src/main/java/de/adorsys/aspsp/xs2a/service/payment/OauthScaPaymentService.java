@@ -45,7 +45,7 @@ public class OauthScaPaymentService implements ScaPaymentService {
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
         SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(periodicPayment);
         //TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, new AspspConsentData()).getPayload());
+        return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, new AspspConsentData()).getPayload(), new AspspConsentData());//TODO put real data call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     }
 
@@ -56,7 +56,8 @@ public class OauthScaPaymentService implements ScaPaymentService {
         List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiBulkPayment, new AspspConsentData()).getPayload();
         //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return spiPaymentInitiations.stream()
-                   .map(paymentMapper::mapToPaymentInitializationResponse)
+                   .map((SpiPaymentInitialisationResponse response) -> paymentMapper.mapToPaymentInitializationResponse(
+                       response, new AspspConsentData()))//TODO put real data call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
                    .peek(resp -> {
                        if (StringUtils.isBlank(resp.getPaymentId()) || resp.getTransactionStatus() == Xs2aTransactionStatus.RJCT) {
                            resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
@@ -72,6 +73,6 @@ public class OauthScaPaymentService implements ScaPaymentService {
         //TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayment, new AspspConsentData()).getPayload();
         //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
+        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp, new AspspConsentData());//TODO put real data call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     }
 }

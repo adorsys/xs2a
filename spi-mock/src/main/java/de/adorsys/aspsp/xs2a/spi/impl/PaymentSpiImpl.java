@@ -212,13 +212,15 @@ public class PaymentSpiImpl implements PaymentSpi {
      * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, AspspConsentData)}
      */
     @Override
-    public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
+    public SpiResponse<Void> performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
         aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuId);
+        return new SpiResponse<>(null, aspspConsentData);
     }
 
     @Override
-    public void applyStrongUserAuthorisation(SpiPaymentConfirmation confirmation, AspspConsentData aspspConsentData) {
+    public SpiResponse<Void> applyStrongUserAuthorisation(SpiPaymentConfirmation confirmation, AspspConsentData aspspConsentData) {
         aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(confirmation), ResponseEntity.class);
+        return new SpiResponse<>(null, aspspConsentData);
     }
 
     @Override

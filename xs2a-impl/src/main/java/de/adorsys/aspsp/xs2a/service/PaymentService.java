@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,7 @@ public class PaymentService {
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
 
+
     /**
      * Initiates a payment though "payment service" corresponding service method
      *
@@ -69,9 +71,13 @@ public class PaymentService {
         } else {
             response = createBulkPayments((BulkPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         }
-        return response.hasError()
-                   ? response
-                   : pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
+        if (!response.hasError()) {
+            response = pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
+            PaymentInitialisationResponse paymentInitialisationResponse = (PaymentInitialisationResponse)response.getBody();//TODO Refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            AspspConsentData aspspConsentData = new AspspConsentData(paymentInitialisationResponse.getAspspConsentData().getAspspConsentData(),paymentInitialisationResponse.getPisConsentId());
+            pisConsentDataService.updateConsentData(aspspConsentData);
+        }
+        return response;
     }
 
     /**
