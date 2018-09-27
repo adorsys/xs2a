@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.domain.AccountReferenceCollector;
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import io.swagger.annotations.ApiModel;
@@ -49,7 +49,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @NotNull
     @ApiModelProperty(value = "debtor account", required = true)
-    private AccountReference debtorAccount;
+    private Xs2aAccountReference debtorAccount;
 
     @Deprecated // Since 1.2
     @Size(max = 70)
@@ -63,7 +63,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @NotNull
     @ApiModelProperty(value = "creditor account", required = true)
-    private AccountReference creditorAccount;
+    private Xs2aAccountReference creditorAccount;
 
     @ApiModelProperty(value = "creditor agent")
     private String creditorAgent;
@@ -119,7 +119,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @JsonIgnore
     @Override
-    public Set<AccountReference> getAccountReferences() {
+    public Set<Xs2aAccountReference> getAccountReferences() {
         return new HashSet<>(Arrays.asList(this.debtorAccount, this.creditorAccount));
     }
 }

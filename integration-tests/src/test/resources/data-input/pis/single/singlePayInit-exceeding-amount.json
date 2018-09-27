@@ -19,6 +19,7 @@
         "currency": "EUR",
         "iban": "DE15500105172295759744"
       },
+      "creditorAgent" : "AAAADEBBXXX",
       "creditorAddress": {
         "buildingNumber": "56",
         "city": "Nürnberg",
@@ -31,13 +32,10 @@
     }
   },
   "response": {
-    "code": "400",
+    "code": "201",
     "header": {},
-    "body": [
-      {
-        "category": "ERROR",
-        "code": "PAYMENT_FAILED"
-      }
-    ]
+    "body": {
+      "transactionStatus": "RCVD"
+    }
   }
 }

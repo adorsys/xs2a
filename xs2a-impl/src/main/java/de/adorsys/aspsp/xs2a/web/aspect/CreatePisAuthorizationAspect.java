@@ -16,11 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.web12.PaymentController12;
+import de.adorsys.aspsp.xs2a.service.message.MessageService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.aspsp.xs2a.web.PaymentController;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -29,7 +32,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentController12> {
+public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentController> {
+    public CreatePisAuthorizationAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createPisConsentAuthorization(..)) && args(paymentId, paymentType)", returning = "result", argNames = "result,paymentId,paymentType")
     public ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> createPisConsentAuthorizationAspect(ResponseObject<Xsa2CreatePisConsentAuthorisationResponse> result, String paymentId, PaymentType paymentType) {

@@ -1,0 +1,26 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
+    },
+    "body": {
+    }
+  },
+  "response": {
+    "code": "200",
+    "header": {},
+    "body": {
+      "accounts": [
+        {
+          "iban": "DE52500105173911841934",
+          "name": "Alexander Mueller"
+        },
+        {
+          "iban": "to-be-done",
+          "name": "Alexander Mueller"
+        }
+      ]
+    }
+  }
+}

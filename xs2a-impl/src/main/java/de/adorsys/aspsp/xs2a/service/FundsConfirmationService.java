@@ -16,12 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import lombok.AllArgsConstructor;
@@ -49,11 +49,11 @@ public class FundsConfirmationService {
             return accountReferenceValidationResponse.hasError()
                        ? ResponseObject.<FundsConfirmationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
                        : ResponseObject.<FundsConfirmationResponse>builder()
-                             .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
+                                 .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
     }
 
-    private boolean isFundsAvailable(AccountReference accountReference, Xs2aAmount requiredAmount) {
-        List<Xs2aBalance> balances = getAccountBalancesByAccountReference(accountReference);
+    private boolean isFundsAvailable(Xs2aAccountReference xs2aAccountReference, Xs2aAmount requiredAmount) {
+        List<Xs2aBalance> balances = getAccountBalancesByAccountReference(xs2aAccountReference);
 
         return balances.stream()
                    .filter(bal -> BalanceType.INTERIM_AVAILABLE == bal.getBalanceType())
@@ -74,9 +74,9 @@ public class FundsConfirmationService {
                    .orElse(BigDecimal.ZERO);
     }
 
-    private List<Xs2aBalance> getAccountBalancesByAccountReference(AccountReference reference) {
+    private List<Xs2aBalance> getAccountBalancesByAccountReference(Xs2aAccountReference reference) {
         return Optional.ofNullable(reference)
-                   .map(accountService::getAccountDetailsByAccountReference)
+                   .map(ref -> accountService.getAccountDetailsByAccountReference(ref, null))
                    .filter(Optional::isPresent)
                    .map(Optional::get)
                    .map(Xs2aAccountDetails::getBalances)

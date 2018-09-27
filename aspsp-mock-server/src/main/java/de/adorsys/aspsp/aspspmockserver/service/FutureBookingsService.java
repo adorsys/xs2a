@@ -76,7 +76,7 @@ public class FutureBookingsService {
     }
 
     private BigDecimal getNewBalanceAmount(SpiAccountDetails account, SpiAccountBalance balance) {
-        BigDecimal oldBalanceAmount = balance.getSpiBalanceAmount().getContent();
+        BigDecimal oldBalanceAmount = balance.getSpiBalanceAmount().getAmount();
         return oldBalanceAmount.subtract(paymentService.calculateAmountToBeCharged(account.getId()));
     }
 

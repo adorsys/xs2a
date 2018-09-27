@@ -43,4 +43,25 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to retrieve the AIS consent by its external identifier. 
 - An endpoint to retrieve the AIS consent status by its external identifier.
 - An endpoint to update the AIS consent status by its external identifier. 
-- An endpoint to update the AIS consent blob data.
+- An endpoint to update the AIS consent aspsp data.
+
+##PIS:
+- An endpoint to create PIS consent.
+- An endpoint to retrieve the PIS consent status by its external identifier.
+- An endpoint to retrieve the PIS consent by its external identifier. 
+- An endpoint to update the PIS consent aspsp data.
+- An endpoint to update the PIS consent status by its external identifier.
+
+## CORS
+By default, allow credentials, all origins and all headers are disabled.
+You can override CORS settings by changing values in `application.properties`
+```
+# Whether credentials are supported. When not set, credentials are not supported.
+endpoints.cors.allow-credentials=true
+# Comma-separated list of origins to allow. '*' allows all origins. When not set, CORS support is disabled.
+endpoints.cors.allowed-origins=*
+# Comma-separated list of headers to include in a response.
+endpoints.cors.allowed-headers=Origin,Authorization,Content-Type
+# Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET.
+endpoints.cors.allowed-methods=GET,POST,PUT,DELETE
+```

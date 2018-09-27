@@ -1,0 +1,24 @@
+{{ if .Values.aspspProfile.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.aspspProfile.serviceAnnotations }}
+   annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "psd2.fullname" . }}-aspspprofile
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: aspspProfile
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 48080
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    app.kubernetes.io/component: aspspProfile
+{{- end }}

@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.aspsp</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.7.1</version>
+    <version>1.8</version>
     <modules>
         <module>aspsp-idp</module>
         <module>spi-api</module>
@@ -130,6 +130,7 @@
         <liquibase.version>3.6.2</liquibase.version>
         <apache.httpcomponents.version>4.5.6</apache.httpcomponents.version>
         <commons-validator.version>1.6</commons-validator.version>
+        <swagger.annotations.version>1.5.20</swagger.annotations.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>

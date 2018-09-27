@@ -20,6 +20,9 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <include file="migration/init-schema-1.0.xml"/>
+    <include file="migration/remove_column_pis_consent_authorization-1.1.xml"/>
+    <include file="migration/drop_not_null_constraint_creditor_agent_pis_payment_data-1.2.xml"/>
+    <include file="migration/remove_length_restriction_tpp_id-1.3.xml"/>
 
 
     <include file="migration/remove_length_restriction_tpp_id-1.3.xml"/>

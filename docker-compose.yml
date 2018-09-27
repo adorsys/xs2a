@@ -59,7 +59,7 @@ services:
       - JAVA_TOOL_OPTIONS="-Xmx512M"
       - SPRING_DATA_MONGODB_HOST=aspsp-mock-mongo
       - SPRING_DATA_MONGODB_DATABASE=spimock
-      - ASPSP_PROFILE_BASEURL=http://aspsp-profile:8080/api/v1
+      - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
       - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
       - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_ASPSP_MOCK_CLIENT_SECRET}"
     depends_on:
@@ -79,7 +79,7 @@ services:
 # ASPSP-PROFILE
   aspsp-profile:
     build:
-      context: aspsp-profile
+      context: aspsp-profile/aspsp-profile-server
       dockerfile: Dockerfile
     restart: on-failure
     environment:
@@ -105,7 +105,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://consent-management-postgres/consent
       - SPRING_DATASOURCE_USERNAME=cms
       - SPRING_DATASOURCE_PASSWORD=cms
-      - ASPSP_PROFILE_BASEURL=http://aspsp-profile:8080/api/v1
+      - ASPSP_PROFILE_BASEURL=${ASPSP_PROFILE_BASEURL:-http://aspsp-profile:8080/api/v1}
       - KEYCLOAK_AUTH_SERVER_URL=http://xs2a-idp:8080/auth
       - KEYCLOAK_CREDENTIALS_SECRET="${XS2A_CMS_CLIENT_SECRET}"
     depends_on:

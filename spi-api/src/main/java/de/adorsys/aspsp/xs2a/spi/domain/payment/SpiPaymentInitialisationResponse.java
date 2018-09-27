@@ -27,6 +27,8 @@ public class SpiPaymentInitialisationResponse {
     private SpiAmount spiTransactionFees;
     private boolean spiTransactionFeeIndicator;
     private String[] scaMethods;
+    private String chosenScaMethod;
+    private SpiChallengeData challengeData;
     private String psuMessage;
     private String[] tppMessages;
     private boolean tppRedirectPreferred;

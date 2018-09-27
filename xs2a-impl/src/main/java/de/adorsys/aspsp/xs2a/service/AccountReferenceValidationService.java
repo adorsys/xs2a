@@ -20,11 +20,11 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
-import de.adorsys.aspsp.xs2a.service.profile.AspspProfileService;
+import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -40,9 +40,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AccountReferenceValidationService {
-    private final AspspProfileService profileService;
+    private final AspspProfileServiceWrapper profileService;
 
-    public ResponseObject validateAccountReferences(Set<AccountReference> references) {
+    public ResponseObject validateAccountReferences(Set<Xs2aAccountReference> references) {
         List<SupportedAccountReferenceField> supportedFields = profileService.getSupportedAccountReferenceFields();
 
         boolean isInvalidReferenceSet = references.stream()
@@ -54,7 +54,7 @@ public class AccountReferenceValidationService {
                    : ResponseObject.builder().build();
     }
 
-    private boolean isValidAccountReference(AccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
+    private boolean isValidAccountReference(Xs2aAccountReference reference, List<SupportedAccountReferenceField> supportedFields) {
         Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap = supportedFields.stream()
                                                                               .map(fld -> Pair.of(fld, fld.isValid(reference)))
                                                                               .filter(p -> p.getValue().isPresent())
@@ -62,7 +62,7 @@ public class AccountReferenceValidationService {
         return areValidAllFields(validatedFieldsMap, reference);
     }
 
-    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap, AccountReference reference) {
+    private boolean areValidAllFields(Map<SupportedAccountReferenceField, Boolean> validatedFieldsMap, Xs2aAccountReference reference) {
 
         List<SupportedAccountReferenceField> validFields = getFilteredFields(validatedFieldsMap, true);
         List<SupportedAccountReferenceField> invalidFields = getFilteredFields(validatedFieldsMap, false);

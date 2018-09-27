@@ -64,8 +64,9 @@ public class SpiAccountDetails {
     private String msisdn;
     private Currency currency;
     private String name;
-    private String accountType;
+    private String product;
     private SpiAccountType cashSpiAccountType;
+    private SpiAccountStatus spiAccountStatus;
 
     /**
      * SWIFT
@@ -73,6 +74,10 @@ public class SpiAccountDetails {
      * DEUTDE8EXXX (Deuche Bank AG example)
      */
     private String bic;
+    private String linkedAccounts;
+    private SpiUsageType usageType;
+    private String details;
+
     private List<SpiAccountBalance> balances;
 
     @JsonIgnore

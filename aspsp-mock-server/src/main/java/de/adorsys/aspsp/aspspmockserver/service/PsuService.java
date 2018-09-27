@@ -43,17 +43,17 @@ public class PsuService {
      */
     public String createPsuAndReturnId(Psu psu) {
         if (!psu.isValid()) {
-            log.error("Psu: {} is invalid", psu.getName());
+            log.error("Psu: {} is invalid", psu.getPsuId());
             return null;
-        } else if (psuRepository.findPsuByName(psu.getName()).isPresent()) {
-            log.error("Psu with name: {} is already exist", psu.getName());
+        } else if (psuRepository.findByPsuId(psu.getPsuId()).isPresent()) {
+            log.error("Psu with psuId: {} is already exist", psu.getPsuId());
             return null;
-        } else if (!keycloakService.registerClient(psu.getName(), psu.getPassword(), psu.getEmail())) {
-            log.error("Can't register Psu: {} in Keycloak", psu.getName());
+        } else if (!keycloakService.registerClient(psu.getPsuId(), psu.getPassword(), psu.getEmail())) {
+            log.error("Can't register Psu: {} in Keycloak", psu.getPsuId());
             return null;
         }
         return psuRepository.save(psu)
-                   .getId();
+                   .getAspspPsuId();
     }
 
     /**
@@ -62,8 +62,8 @@ public class PsuService {
      * @param psuId String representation of ASPSP identifier for specific PSU
      * @return PSU
      */
-    public Optional<Psu> getPsuById(String psuId) {
-        return Optional.ofNullable(psuRepository.findOne(psuId));
+    public Optional<Psu> getPsuByPsuId(String psuId) {
+        return psuRepository.findByPsuId(psuId);
     }
 
     /**
@@ -78,12 +78,12 @@ public class PsuService {
     /**
      * Removes PSU for ASPSP by its ASPSP primary identifier
      *
-     * @param psuId String representation of ASPSP identifier for specific PSU
+     * @param aspspPsuId String representation of ASPSP identifier for specific PSU
      * @return boolean representation of successful deletion(true) or its failure(false)
      */
-    public boolean deletePsuById(String psuId) {
-        if (StringUtils.isNotBlank(psuId) && psuRepository.exists(psuId)) {
-            psuRepository.delete(psuId);
+    public boolean deletePsuByAspspPsuId(String aspspPsuId) {
+        if (StringUtils.isNotBlank(aspspPsuId) && psuRepository.exists(aspspPsuId)) {
+            psuRepository.delete(aspspPsuId);
             return true;
         }
         return false;
@@ -108,7 +108,7 @@ public class PsuService {
      * @param product String representation of product to be added
      */
     public void addAllowedProduct(String psuId, String product) {
-        Psu psu = getPsuById(psuId).orElse(null);
+        Psu psu = getPsuByPsuId(psuId).orElse(null);
         if (psu != null && psu.isValid()) {
             List<String> allowedProducts = psu.getPermittedPaymentProducts();
             if (!allowedProducts.contains(product)) {
@@ -123,11 +123,11 @@ public class PsuService {
     /**
      * Returns a List of SCA methods that could be applied to named PSU
      *
-     * @param name User Login
+     * @param psuId PSU id
      * @return list of SCA methods
      */
-    public List<SpiScaMethod> getScaMethods(String name) {
-        return psuRepository.findPsuByName(name)
+    public List<SpiScaMethod> getScaMethods(String psuId) {
+        return psuRepository.findByPsuId(psuId)
                    .map(Psu::getScaMethods)
                    .orElse(null);
     }
@@ -135,11 +135,11 @@ public class PsuService {
     /**
      * Updates allowed PSU`s SCA methods Set
      *
-     * @param name       User Login
+     * @param psuId PSU id
      * @param scaMethods list of SCA methods
      */
-    public void updateScaMethods(String name, List<SpiScaMethod> scaMethods) {
-        psuRepository.findPsuByName(name)
+    public void updateScaMethods(String psuId, List<SpiScaMethod> scaMethods) {
+        psuRepository.findByPsuId(psuId)
             .map(p -> {
                 p.setScaMethods(scaMethods);
                 return psuRepository.save(p);

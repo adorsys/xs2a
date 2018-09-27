@@ -32,18 +32,23 @@ public class SpiSinglePayment {
     private String paymentId;
     private String endToEndIdentification;
     private SpiAccountReference debtorAccount;
+    @Deprecated // Since 1.2
     private String ultimateDebtor;
     private SpiAmount instructedAmount;
     private SpiAccountReference creditorAccount;
     private String creditorAgent;
     private String creditorName;
     private SpiAddress creditorAddress;
+    @Deprecated // Since 1.2
     private String ultimateCreditor;
+    @Deprecated // Since 1.2
     private String purposeCode;
     private String remittanceInformationUnstructured;
+    @Deprecated // Since 1.2
     private SpiRemittance remittanceInformationStructured;
+    @Deprecated // Since 1.2
     private LocalDate requestedExecutionDate;
+    @Deprecated // Since 1.2
     private LocalDateTime requestedExecutionTime;
     private SpiTransactionStatus paymentStatus;
-
 }

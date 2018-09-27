@@ -17,17 +17,18 @@
 package de.adorsys.aspsp.xs2a.config;
 
 import com.google.common.base.Predicates;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import springfox.documentation.builders.*;
-import springfox.documentation.service.*;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.InMemorySwaggerResourcesProvider;
-import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -35,16 +36,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-import static springfox.documentation.swagger.web.SecurityConfigurationBuilder.builder;
-
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
     @Value("${license.url}")
     private String licenseUrl;
-    @Autowired
-    private KeycloakConfigProperties keycloakConfig;
 
     @Bean(name = "api")
     public Docket apiDocklet() {
@@ -55,12 +51,11 @@ public class SwaggerConfig {
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))
                    .paths(Predicates.not(PathSelectors.regex("/connect.*")))
                    .paths(Predicates.not(PathSelectors.regex("/management.*")))
-                   .build()
-                   .securitySchemes(singletonList(securitySchema()));
+                   .build();
     }
 
-    @Primary
     @Bean
+    @Primary
     public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider defaultResourcesProvider) {
         return () -> {
             SwaggerResource swaggerResource = new SwaggerResource();
@@ -81,34 +76,6 @@ public class SwaggerConfig {
                    .version("1.0")
                    .license("Apache License 2.0")
                    .licenseUrl(licenseUrl)
-                   .build();
-    }
-
-    private OAuth securitySchema() {
-        GrantType grantType = new AuthorizationCodeGrantBuilder()
-                                  .tokenEndpoint(new TokenEndpoint(keycloakConfig.getRootPath() + "/protocol/openid-connect/token", "oauthtoken"))
-                                  .tokenRequestEndpoint(new TokenRequestEndpoint(keycloakConfig.getRootPath() + "/protocol/openid-connect/auth", keycloakConfig.getResource(), keycloakConfig.getCredentials().getSecret()))
-                                  .build();
-        return new OAuthBuilder()
-                   .name("oauth2")
-                   .grantTypes(singletonList(grantType))
-                   .scopes(scopes())
-                   .build();
-    }
-
-    private List<AuthorizationScope> scopes() {
-        return singletonList(new AuthorizationScope("read", "Access read API"));
-    }
-
-    @Bean
-    public SecurityConfiguration security() {
-        return builder()
-                   .clientId(keycloakConfig.getResource())
-                   .clientSecret(keycloakConfig.getCredentials().getSecret())
-                   .realm(keycloakConfig.getRealm())
-                   .appName(keycloakConfig.getResource())
-                   .scopeSeparator(",")
-                   .useBasicAuthenticationWithAccessCodeGrant(false)
                    .build();
     }
 }

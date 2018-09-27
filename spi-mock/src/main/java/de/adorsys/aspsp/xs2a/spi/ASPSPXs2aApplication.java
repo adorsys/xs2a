@@ -21,7 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2.validator"})
+@ComponentScan(basePackages = {"de.adorsys.aspsp.xs2a", "de.adorsys.psd2"})
 public class ASPSPXs2aApplication {
 
     public static void main(String[] args) {

@@ -7,7 +7,7 @@ public enum CertificateErrorMsgCode {
 	CERTIFICATE_REVOKED("Corporate seal certificate has been revoked by QSTP."),
 	CERTIFICATE_MISSING("Corporate seal certificate was not available in the request but is mandated for the corresponding."),
 	SIGNATURE_INVALID("Application layer eIDAS Signature for TPP authentication is not correct."),
-	SIGNATURE_MISSING("Apllication layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing."),
+	SIGNATURE_MISSING("Application layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing."),
     FORMAT_ERROR("Format of certain request fields are not matching the XS2A requirements. An explicit path to the corresponding field might be added in the return message.");
 
 	private String description;

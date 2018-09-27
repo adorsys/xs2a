@@ -16,32 +16,35 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.domain.BalanceType;
 import de.adorsys.aspsp.xs2a.domain.CashAccountType;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
+import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.model.*;
 import org.junit.Test;
 
 import java.time.*;
 import java.util.*;
 
-import static de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class AccountModelMapperTest {
 
+    AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
+
     @Test
     public void testBalanceMapping() {
         Xs2aBalance balance = createBalance();
 
-        de.adorsys.psd2.model.Balance result = mapToBalance(balance);
+        Balance result = accountModelMapper.mapToBalance(balance);
         assertNotNull(result);
 
         Xs2aAmount expectedBalanceAmount = balance.getBalanceAmount();
-        de.adorsys.psd2.model.Amount actualBalanceAmount = result.getBalanceAmount();
+        Amount actualBalanceAmount = result.getBalanceAmount();
         assertNotNull(expectedBalanceAmount);
 
         assertEquals(expectedBalanceAmount.getAmount(), actualBalanceAmount.getAmount());
@@ -65,20 +68,26 @@ public class AccountModelMapperTest {
         List<Xs2aAccountDetails> accountDetailsList = new ArrayList<>();
         Xs2aBalance inputBalance = createBalance();
 
-        accountDetailsList.add(new Xs2aAccountDetails("1", "2", "3", "4", "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CURRENT_ACCOUNT, "11", null, null, new ArrayList<>()));
-        accountDetailsList.add(new Xs2aAccountDetails("x1", "x2", "x3", "x4", "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CURRENT_ACCOUNT, "x11", null, null, Arrays.asList(inputBalance)));
-        Xs2aAccountDetails accountDetails = new Xs2aAccountDetails("y1", "y2", "y3", "y4", "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CURRENT_ACCOUNT, "y11", null, null, new ArrayList<>());
+        accountDetailsList.add(new Xs2aAccountDetails("1", "2", "3", "4",
+            "5", "6", Currency.getInstance("EUR"), "8", "9", CashAccountType.CACC,
+            AccountStatus.ENABLED, "11", "linked", Xs2aUsageType.PRIV, "details", new ArrayList<>()));
+        accountDetailsList.add(new Xs2aAccountDetails("x1", "x2", "x3", "x4",
+            "x5", "x6", Currency.getInstance("EUR"), "x8", "x9", CashAccountType.CACC,
+            AccountStatus.ENABLED, "x11", "linked2", Xs2aUsageType.ORGA, "details2", Arrays.asList(inputBalance)));
+        Xs2aAccountDetails accountDetails = new Xs2aAccountDetails("y1", "y2", "y3", "y4",
+            "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CACC,
+            AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>());
         accountDetails.setLinks(createLinks());
         accountDetailsList.add(accountDetails);
         Map<String, List<Xs2aAccountDetails>> accountDetailsMap = Collections.singletonMap("TEST", accountDetailsList);
 
-        AccountList result = mapToAccountList(accountDetailsMap);
+        AccountList result = accountModelMapper.mapToAccountList(accountDetailsMap);
         assertNotNull(result);
 
-        List<de.adorsys.psd2.model.AccountDetails> accounts = result.getAccounts();
+        List<AccountDetails> accounts = result.getAccounts();
         assertNotNull(accounts);
 
-        de.adorsys.psd2.model.AccountDetails secondAccount = accounts.get(1);
+        AccountDetails secondAccount = accounts.get(1);
         assertNotNull(secondAccount);
 
         assertEquals("x2", secondAccount.getIban());
@@ -86,12 +95,12 @@ public class AccountModelMapperTest {
         BalanceList balances = secondAccount.getBalances();
         assertNotNull(balances);
 
-        de.adorsys.psd2.model.Balance balance = balances.get(0);
+        Balance balance = balances.get(0);
         assertNotNull(balance);
 
         assertEquals("4711", balance.getLastCommittedTransaction());
 
-        de.adorsys.psd2.model.Amount balanceAmount = balance.getBalanceAmount();
+        Amount balanceAmount = balance.getBalanceAmount();
         assertNotNull(balanceAmount);
 
         assertEquals("EUR", balanceAmount.getCurrency());
@@ -106,7 +115,7 @@ public class AccountModelMapperTest {
         List<ZoneOffset> validOffsets = ZoneId.systemDefault().getRules().getValidOffsets(expectedLastChangeDateTime); //TODO remove when OffsetDateTime is in xs2a
         assertEquals(expectedLastChangeDateTime, actualLastChangeDateTime.atZoneSameInstant(validOffsets.get(0)).toLocalDateTime());
 
-        de.adorsys.psd2.model.AccountDetails thirdAccount = accounts.get(2);
+        AccountDetails thirdAccount = accounts.get(2);
         assertNotNull(thirdAccount);
 
         Map links = thirdAccount.getLinks();
@@ -115,16 +124,25 @@ public class AccountModelMapperTest {
         assertEquals("http://scaOAuth.xx", links.get("scaOAuth"));
         assertEquals("http://linkToStatus.xx", links.get("status"));
         assertEquals("http://linkToSelf.xx", links.get("self"));
+
+        assertEquals("CACC", secondAccount.getCashAccountType());
+        assertEquals("details2", secondAccount.getDetails());
+        assertEquals("linked2", secondAccount.getLinkedAccounts());
+        assertEquals("x6", secondAccount.getMsisdn());
+        assertEquals("x8", secondAccount.getName());
+        assertEquals("x9", secondAccount.getProduct());
+        assertEquals(de.adorsys.psd2.model.AccountStatus.ENABLED, secondAccount.getStatus());
+        assertEquals(AccountDetails.UsageEnum.ORGA, secondAccount.getUsage());
     }
 
     @Test
     public void testMapToTransaction() {
         Transactions transactions = createTransactions();
-        TransactionDetails transactionDetails = mapToTransaction(transactions);
+        TransactionDetails transactionDetails = accountModelMapper.mapToTransaction(transactions);
         assertNotNull(transactionDetails);
 
         Xs2aAmount amount = transactions.getAmount();
-        de.adorsys.psd2.model.Amount amountTarget = transactionDetails.getTransactionAmount();
+        Amount amountTarget = transactionDetails.getTransactionAmount();
         assertNotNull(amountTarget);
 
         assertEquals(amount.getAmount(), amountTarget.getAmount());
@@ -136,7 +154,9 @@ public class AccountModelMapperTest {
         assertEquals(bankTransactionCodeCode.getCode(), transactionDetails.getBankTransactionCode());
         assertEquals(transactions.getBookingDate(), transactionDetails.getBookingDate());
 
-        AccountReference expectedCreditorAccount = transactions.getCreditorAccount();
+        assertEquals(transactions.getCheckId(), transactionDetails.getCheckId());
+
+        Xs2aAccountReference expectedCreditorAccount = transactions.getCreditorAccount();
         assertNotNull(expectedCreditorAccount);
 
         AccountReferenceIban actualCreditorAccount = (AccountReferenceIban) transactionDetails.getCreditorAccount();
@@ -147,7 +167,7 @@ public class AccountModelMapperTest {
         assertEquals(transactions.getCreditorId(), transactionDetails.getCreditorId());
         assertEquals(transactions.getCreditorName(), transactionDetails.getCreditorName());
 
-        AccountReference expectedDebtorAccount = transactions.getDebtorAccount();
+        Xs2aAccountReference expectedDebtorAccount = transactions.getDebtorAccount();
         assertNotNull(expectedDebtorAccount);
 
         AccountReferenceIban actualDebtorAccount = (AccountReferenceIban) transactionDetails.getDebtorAccount();
@@ -159,7 +179,7 @@ public class AccountModelMapperTest {
         Xs2aPurposeCode expectedPurposeCode = transactions.getPurposeCode();
         assertNotNull(expectedPurposeCode);
 
-        de.adorsys.psd2.model.PurposeCode actualPurposeCode = transactionDetails.getPurposeCode();
+        PurposeCode actualPurposeCode = transactionDetails.getPurposeCode();
         assertNotNull(actualPurposeCode);
 
         assertEquals(expectedPurposeCode.getCode(), actualPurposeCode.name());
@@ -169,6 +189,12 @@ public class AccountModelMapperTest {
         assertEquals(transactions.getUltimateCreditor(), transactionDetails.getUltimateCreditor());
         assertEquals(transactions.getUltimateDebtor(), transactionDetails.getUltimateDebtor());
         assertEquals(transactions.getValueDate(), transactionDetails.getValueDate());
+
+        assertEquals(transactions.getProprietaryBankTransactionCode(),
+            transactionDetails.getProprietaryBankTransactionCode());
+        assertEquals(transactions.getMandateId(), transactionDetails.getMandateId());
+        assertEquals(transactions.getEntryReference(), transactionDetails.getEntryReference());
+        assertEquals(transactions.getEndToEndId(), transactionDetails.getEndToEndId());
     }
 
     @Test
@@ -178,7 +204,7 @@ public class AccountModelMapperTest {
         Xs2aAccountReport accountReport = new Xs2aAccountReport(bookedTransactions, pendingTransactions);
         accountReport.setLinks(createLinks());
 
-        de.adorsys.psd2.model.AccountReport result = mapToAccountReport(accountReport);
+        AccountReport result = accountModelMapper.mapToAccountReport(accountReport);
         assertNotNull(result);
 
         //transactions mapping tested in testMapToTransaction
@@ -216,15 +242,15 @@ public class AccountModelMapperTest {
         return amount;
     }
 
-    private AccountReference createAccountReference() {
-        AccountReference accountReference = new AccountReference();
-        accountReference.setBban("bban");
-        accountReference.setCurrency(Currency.getInstance("EUR"));
-        accountReference.setIban("DE1234");
-        accountReference.setMaskedPan("maskedPan");
-        accountReference.setMsisdn("msisdn");
-        accountReference.setPan("pan");
-        return accountReference;
+    private Xs2aAccountReference createAccountReference() {
+        Xs2aAccountReference xs2aAccountReference = new Xs2aAccountReference();
+        xs2aAccountReference.setBban("bban");
+        xs2aAccountReference.setCurrency(Currency.getInstance("EUR"));
+        xs2aAccountReference.setIban("DE1234");
+        xs2aAccountReference.setMaskedPan("maskedPan");
+        xs2aAccountReference.setMsisdn("msisdn");
+        xs2aAccountReference.setPan("pan");
+        return xs2aAccountReference;
     }
 
     private Transactions createTransactions() {
@@ -233,13 +259,16 @@ public class AccountModelMapperTest {
         transactions.setAmount(amount);
         transactions.setBankTransactionCodeCode(new BankTransactionCode("code"));
         transactions.setBookingDate(LocalDate.now());
+        transactions.setCheckId("Check id");
         transactions.setCreditorAccount(createAccountReference());
         transactions.setCreditorId("creditorId");
         transactions.setCreditorName("Creditor Name");
         transactions.setDebtorAccount(createAccountReference());
         transactions.setDebtorName("Debtor Name");
         transactions.setEndToEndId("endToEndId");
+        transactions.setEntryReference("Entry reference");
         transactions.setMandateId("mandateId");
+        transactions.setProprietaryBankTransactionCode("Proprietary code");
         transactions.setPurposeCode(new Xs2aPurposeCode("BKDF"));
         transactions.setRemittanceInformationStructured("setRemittanceInformationStructured");
         transactions.setRemittanceInformationUnstructured("setRemittanceInformationUnstructured");
@@ -247,6 +276,10 @@ public class AccountModelMapperTest {
         transactions.setUltimateCreditor("ultimateCreditor");
         transactions.setUltimateDebtor("ultimateDebtor");
         transactions.setValueDate(LocalDate.now());
+
+        Xs2aExchangeRate exchangeRate = createExchangeRate();
+        transactions.setExchangeRate(Collections.singletonList(exchangeRate));
+
         return transactions;
     }
 
@@ -256,5 +289,16 @@ public class AccountModelMapperTest {
         links.setStatus("http://linkToStatus.xx");
         links.setSelf("http://linkToSelf.xx");
         return links;
+    }
+
+    private Xs2aExchangeRate createExchangeRate() {
+        Xs2aExchangeRate exchangeRate = new Xs2aExchangeRate();
+        exchangeRate.setCurrencyFrom(Currency.getInstance("EUR"));
+        exchangeRate.setRateFrom("Rate from");
+        exchangeRate.setCurrencyTo(Currency.getInstance("USD"));
+        exchangeRate.setRateTo("Rate to");
+        exchangeRate.setRateDate(LocalDate.of(2017, 1, 1));
+        exchangeRate.setRateContract("Rate contract");
+        return exchangeRate;
     }
 }

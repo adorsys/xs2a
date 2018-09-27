@@ -32,7 +32,7 @@ public enum PaymentProduct {
     T2P("target-2-payments"),
     CBCT("cross-border-credit-transfers");
 
-    private String code;
+    private String value;
 
     private static Map<String, PaymentProduct> container = new HashMap<>();
 
@@ -42,16 +42,16 @@ public enum PaymentProduct {
     }
 
     @JsonCreator
-    PaymentProduct(String code) {
-        this.code = code;
+    PaymentProduct(String value) {
+        this.value = value;
     }
 
     @JsonValue
     public String getCode() {
-        return code;
+        return value;
     }
 
-    public static Optional<PaymentProduct> getByCode(String code) {
-        return Optional.ofNullable(container.get(code));
+    public static Optional<PaymentProduct> getByValue(String value) {
+        return Optional.ofNullable(container.get(value));
     }
 }

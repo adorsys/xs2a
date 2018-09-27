@@ -39,10 +39,11 @@ import static org.springframework.http.HttpStatus.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PsuControllerTest {
-    private static final String PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
-    private static final String WRONG_PSU_ID = "Wrong psu id";
+    private static final String ASPSP_PSU_ID = "ec818c89-4346-4f16-b5c8-d781b040200c";
+    private static final String WRONG_ASPSP_PSU_ID = "WRONG_ASPSP_PSU_ID";
+    private static final String PSU_ID = "aspsp";
+    private static final String WRONG_PSU_ID = "zzz";
     private static final String E_MAIL = "info@adorsys.ua";
-    private static final String PSU_NAME = "aspsp";
     private static final String PSU_PASSWORD = "zzz";
     private static final String WRONG_E_MAIL = "wrong e-mail";
     private static final Currency EUR = Currency.getInstance("EUR");
@@ -63,12 +64,12 @@ public class PsuControllerTest {
         when(psuService.createPsuAndReturnId(getPsu(null, WRONG_E_MAIL, getDetails(false), getProducts())))
             .thenReturn(null);
         when(psuService.getAllPsuList()).thenReturn(Collections.singletonList(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts())));
-        when(psuService.getPsuById(PSU_ID)).thenReturn(Optional.of(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts())));
-        when(psuService.getPsuById(WRONG_PSU_ID)).thenReturn(Optional.empty());
+        when(psuService.getPsuByPsuId(PSU_ID)).thenReturn(Optional.of(getPsu(PSU_ID, E_MAIL, getDetails(false), getProducts())));
+        when(psuService.getPsuByPsuId(WRONG_PSU_ID)).thenReturn(Optional.empty());
         when(psuService.getAllowedPaymentProducts(PSU_ID)).thenReturn(getProducts());
         when(psuService.getAllowedPaymentProducts(WRONG_PSU_ID)).thenReturn(null);
-        when(psuService.deletePsuById(PSU_ID)).thenReturn(true);
-        when(psuService.deletePsuById(WRONG_PSU_ID)).thenReturn(false);
+        when(psuService.deletePsuByAspspPsuId(ASPSP_PSU_ID)).thenReturn(true);
+        when(psuService.deletePsuByAspspPsuId(WRONG_ASPSP_PSU_ID)).thenReturn(false);
 
     }
 
@@ -142,7 +143,7 @@ public class PsuControllerTest {
     @Test
     public void deletePsu_Success() {
         //When
-        ResponseEntity actualResult = psuController.deletePsu(PSU_ID);
+        ResponseEntity actualResult = psuController.deletePsu(ASPSP_PSU_ID);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(NO_CONTENT);
@@ -151,7 +152,7 @@ public class PsuControllerTest {
     @Test
     public void deletePsu_Failure_wrong_id() {
         //When
-        ResponseEntity actualResult = psuController.deletePsu(WRONG_PSU_ID);
+        ResponseEntity actualResult = psuController.deletePsu(WRONG_ASPSP_PSU_ID);
 
         //Then
         assertThat(actualResult.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -163,13 +164,13 @@ public class PsuControllerTest {
     }
 
     private Psu getPsu(String psuId, String email, List<SpiAccountDetails> details, List<String> products) {
-        return new Psu(PSU_ID, email, PSU_NAME, PSU_PASSWORD, details, products, Collections.singletonList(SpiScaMethod.SMS_OTP));
+        return new Psu(ASPSP_PSU_ID, email, PSU_ID, PSU_PASSWORD, details, products, Collections.singletonList(SpiScaMethod.SMS_OTP));
     }
 
     private List<SpiAccountDetails> getDetails(boolean isEmpty) {
         return isEmpty
                    ? Collections.emptyList()
-                   : Collections.singletonList(new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, Collections.emptyList()));
+                   : Collections.singletonList(new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, "Alfred", null, null, null, null, null, null, null, Collections.emptyList()));
 
     }
 }

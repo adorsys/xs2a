@@ -123,12 +123,12 @@ public class AccountMockServerData {
         transactionRepository.save(getTransaction("bb0962ca-f6db-4ba7-b187-2b2e1af25845", psus.get(6), psus.get(3), BigDecimal.valueOf(200), EUR, LocalDate.parse("2018-05-15"), LocalDate.parse("2018-05-15"), "Alles Gute zum Geburtstag"));
     }
 
-    private SpiTransaction getTransaction(String transactionId, Psu creditor, Psu debtor, BigDecimal amount, Currency currency, LocalDate bookingDate, LocalDate valueDate, String purposeCode) {
+    private SpiTransaction getTransaction(String transactionId, Psu psu, Psu debtor, BigDecimal amount, Currency currency, LocalDate bookingDate, LocalDate valueDate, String purposeCode) {
         return new SpiTransaction(
-            transactionId, "", "", creditor.getId(), bookingDate, valueDate,
-            new SpiAmount(currency, amount), getFirstElementName(creditor), getRef(creditor, currency), getFirstElementName(creditor),
+            transactionId, "", "", "", "", psu.getPsuId(), bookingDate, valueDate,
+            new SpiAmount(currency, amount), Collections.emptyList(), getFirstElementName(psu), getRef(psu, currency), getFirstElementName(psu),
             getFirstElementName(debtor), getRef(debtor, currency), getFirstElementName(debtor), "",
-            "", purposeCode, "");
+            "", purposeCode, "", "");
     }
 
     private String getFirstElementName(Psu creditor) {
@@ -143,7 +143,7 @@ public class AccountMockServerData {
 
     private List<Psu> fillPsu() {
         return Arrays.asList(
-            psuRepository.save(new Psu("PSU_001", "fractal567@gmail.com", "aspsp", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS, Collections.emptyList())),
+            psuRepository.save(new Psu("PSU_001", "fractal567@gmail.com", "aspsp", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS,Collections.emptyList())),
             psuRepository.save(new Psu("PSU_002", "fractal567@gmail.com", "aspsp1", "zzz", Arrays.asList(accountDetails.get(0), accountDetails.get(1), accountDetails.get(2)), ALLOWED_PAYMENTS, Arrays.asList(SpiScaMethod.SMS_OTP))),
             psuRepository.save(new Psu("PSU_003", "fractal567@gmail.com", "aspsp2", "zzz", Arrays.asList(accountDetails.get(3), accountDetails.get(4)), ALLOWED_PAYMENTS, Arrays.asList(SpiScaMethod.SMS_OTP, SpiScaMethod.PUSH_OTP))),
             psuRepository.save(new Psu("PSU_004", "fractal567@gmail.com", "aspsp3", "zzz", Arrays.asList(accountDetails.get(5), accountDetails.get(6)), ALLOWED_PAYMENTS, Arrays.asList(SpiScaMethod.PUSH_OTP, SpiScaMethod.CHIP_OTP))),
@@ -195,7 +195,11 @@ public class AccountMockServerData {
             name,
             accountType,
             null,
+            null,
             bic,
+            null,
+            null,
+            null,
             balance
         );
     }
@@ -227,7 +231,11 @@ public class AccountMockServerData {
             name,
             accountType,
             null,
+            null,
             bic,
+            null,
+            null,
+            null,
             balance
         );
     }

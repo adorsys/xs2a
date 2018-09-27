@@ -46,7 +46,7 @@ public class PisConsentController {
     public ResponseEntity<CreatePisConsentResponse> createPaymentConsent(@RequestBody PisConsentRequest request) {
         return pisConsentService.createPaymentConsent(request)
                    .map(c -> new ResponseEntity<>(c, HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping(path = "/{consent-id}/status")
@@ -59,7 +59,7 @@ public class PisConsentController {
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentStatusById(consentId)
                    .map(status -> new ResponseEntity<>(new PisConsentStatusResponse(status), HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @GetMapping(path = "/{consent-id}")
@@ -72,7 +72,7 @@ public class PisConsentController {
         @PathVariable("consent-id") String consentId) {
         return pisConsentService.getConsentById(consentId)
                    .map(pc -> new ResponseEntity<>(pc, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @PutMapping(path = "/{consent-id}/status/{status}")
@@ -87,7 +87,7 @@ public class PisConsentController {
         @PathVariable("status") String status) {
         return pisConsentService.updateConsentStatusById(consentId, CmsConsentStatus.valueOf(status))
                    .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @PostMapping(path = "/{payment-id}/authorizations")
@@ -100,7 +100,7 @@ public class PisConsentController {
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.createAuthorization(paymentId)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/authorizations/{authorization-id}")
@@ -114,7 +114,7 @@ public class PisConsentController {
         @RequestBody UpdatePisConsentPsuDataRequest request) {
         return pisConsentService.updateConsentAuthorization(authorizationId, request)
                    .map(updated -> new ResponseEntity<>(updated, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping(path = "/authorizations/{authorization-id}")
@@ -127,6 +127,6 @@ public class PisConsentController {
         @PathVariable("authorization-id") String authorizationId) {
         return pisConsentService.getPisConsentAuthorizationById(authorizationId)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
-                   .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
