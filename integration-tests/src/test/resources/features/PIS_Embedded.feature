@@ -45,18 +45,18 @@ Feature: Payment Initiation Service Embedded Approach
             | payments	                               | startAuth-successful.json        | sepa-credit-transfers    | singlePayInit-successful.json |
 
 
-#    Scenario Outline: Failed start of authorisation (embedded)
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        And PSU sends the single payment initiating request and receives the paymentId
-#        And PSU wants to start the authorisation using the <authorisation-data>
-#        When PSU sends the errorful start authorisation request
-#        Then an error response code and the appropriate error response are received
-#        Examples:
-#            | payment-service                          | authorisation-data                     | payment-product          | single-payment                |
-#            | payments	                               | startAuth-not-existing-paymentId.json  | sepa-credit-transfers    | singlePayInit-successful.json |
-#            | payments	                               | startAuth-no-request-id.json           | sepa-credit-transfers    | singlePayInit-successful.json |
-#            | payments	                               | startAuth-wrong-format-request-id.json | sepa-credit-transfers    | singlePayInit-successful.json |
-#            | recurring-payments                       | startAuth-wrong-payment-service.json   | sepa-credit-transfers    | singlePayInit-successful.json |
+    Scenario Outline: Failed start of authorisation (embedded)
+        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        And PSU sends the single payment initiating request and receives the paymentId
+        And PSU starts the authorisation using the errorful authorisation data <authorisation-data> and the payment service <second-payment-service>
+        When PSU sends the errorful start authorisation request
+        Then an error response code and the appropriate error response are received
+        Examples:
+            | payment-service    | second-payment-service | authorisation-data                     | payment-product          | single-payment                |
+            | payments	         | payments               | startAuth-not-existing-paymentId.json  | sepa-credit-transfers    | singlePayInit-successful.json |
+            | payments	         | payments               | startAuth-no-request-id.json           | sepa-credit-transfers    | singlePayInit-successful.json |
+            | payments	         | payments               | startAuth-wrong-format-request-id.json | sepa-credit-transfers    | singlePayInit-successful.json |
+#            | payments           | recurring-payments     | startAuth-wrong-payment-service.json   | sepa-credit-transfers    | singlePayInit-successful.json |
 
 
     ####################################################################################################################
