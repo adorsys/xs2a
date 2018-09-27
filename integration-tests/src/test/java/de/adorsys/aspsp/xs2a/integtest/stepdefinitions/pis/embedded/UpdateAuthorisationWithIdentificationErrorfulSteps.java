@@ -39,7 +39,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class StartAuthorisationErrorfulSteps {
+public class UpdateAuthorisationWithIdentificationErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -57,8 +57,11 @@ public class StartAuthorisationErrorfulSteps {
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
-    @And("^PSU prepares the errorful start authorisation data (.*) and the payment service (.*)$")
-    public void loadErrorfulStartAuthorisationData (String authorisationData, String paymentService) throws IOException {
+    // @And("^PSU sends the start authorisation request and receives the authorisationId$")
+    // See GlobalSuccessfulSteps
+
+    @And("^PSU prepares the errorful update authorisation data (.*) and the payment service (.*)$")
+    public void loadErrorfulUpdateAuthorisationData (String authorisationData, String paymentService) throws IOException {
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/embedded/" + authorisationData, UTF_8),
             new TypeReference<TestData<HashMap, TppMessages>>() {
@@ -66,27 +69,25 @@ public class StartAuthorisationErrorfulSteps {
 
         context.setTestData(data);
         context.setPaymentService(paymentService);
-        if (authorisationData.toLowerCase().contains("not-existing-paymentId".toLowerCase())){
-            context.setPaymentId("11111111-aaaa-xxxx-1111-1x1x1x1x1x1x");
+        if (authorisationData.toLowerCase().contains("wrong-authorisation-id".toLowerCase())){
+            context.setAuthorisationId("11111111-aaaa-xxxx-1111-1x1x1x1x1x1x");
         }
     }
 
-    @When("^PSU sends the errorful start authorisation request$")
-    public void sendErrorfulAuthorisationRequest() throws IOException {
+    @When("^PSU sends the errorful update identification data request$")
+    public void sendUpdateAuthorisationWithIdentificationRequest() throws IOException {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations",
-                HttpMethod.POST,
+                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId(),
+                HttpMethod.PUT,
                 entity,
                 HashMap.class);
-        } catch (RestClientResponseException rex) {
-            context.handleRequestError(rex);
+        } catch (RestClientResponseException restClientException) {
+            context.handleRequestError(restClientException);
         }
     }
 
-    // @Then an error response code and the appropriate error response are received
-    // See GlobalErrorfulSteps
 }
