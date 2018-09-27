@@ -18,7 +18,6 @@ package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -74,20 +73,6 @@ public class PisConsentController {
         return pisConsentService.getConsentById(consentId)
                    .map(pc -> new ResponseEntity<>(pc, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
-    }
-
-    @PutMapping(path = "/{consent-id}/aspspConsentData")
-    @ApiOperation(value = "Update consent blob data identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreatePisConsentResponse> updateAspspConsentData(
-        @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @RequestBody UpdateConsentAspspDataRequest request) {
-        return pisConsentService.updateConsentAspspData(consentId, request)
-                   .map(consId -> new ResponseEntity<>(new CreatePisConsentResponse(consId), HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping(path = "/{consent-id}/status/{status}")

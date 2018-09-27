@@ -104,7 +104,7 @@ public interface AccountSpi {
      */
     SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
 
-    SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password);
+    SpiResponse<List<SpiScaMethod>> readAvailableScaMethods(String psuId, String password, AspspConsentData aspspConsentData);
 
     /**
      * Authorises psu and returns current autorization status

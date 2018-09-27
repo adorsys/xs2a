@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,9 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.BULK;
 public class ReadBulkPayment extends ReadPayment<BulkPayment> {
     @Override
     public BulkPayment getPayment(String paymentId, String paymentProduct) {
-        List<SpiSinglePayment> bulkPayments = paymentSpi.getBulkPaymentById(paymentMapper.mapToSpiPaymentType(BULK), paymentProduct, paymentId, new AspspConsentData()).getPayload(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<List<SpiSinglePayment>> spiResponse = paymentSpi.getBulkPaymentById(paymentMapper.mapToSpiPaymentType(BULK), paymentProduct, paymentId, pisConsentDataService.getConsentDataByPaymentId(paymentId));
+        pisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        List<SpiSinglePayment> bulkPayments = spiResponse.getPayload();
         return paymentMapper.mapToBulkPayment(bulkPayments);
     }
 }
