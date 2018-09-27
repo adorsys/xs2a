@@ -35,24 +35,27 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
 
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData();
+        AspspConsentData aspspConsentData = new AspspConsentData();//TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiPaymentInitialisationResponse aspspResponse = paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayment(payment), aspspConsentData).getPayload();
+        //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return paymentMapper.mapToPaymentInitializationResponse(aspspResponse);
     }
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData();
+        AspspConsentData aspspConsentData = new AspspConsentData();//TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiPaymentInitialisationResponse aspspResponse = paymentSpi.initiatePeriodicPayment(paymentMapper.mapToSpiPeriodicPayment(payment), aspspConsentData).getPayload();
+        //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return paymentMapper.mapToPaymentInitializationResponse(aspspResponse);
     }
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData();
+        AspspConsentData aspspConsentData = new AspspConsentData();//TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return paymentSpi.createBulkPayments(paymentMapper.mapToSpiBulkPayment(bulkPayment), aspspConsentData).getPayload()
                    .stream()
                    .map(paymentMapper::mapToPaymentInitializationResponse)
                    .collect(Collectors.toList());
+        //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     }
 }
