@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.v2;
 
+import de.adorsys.aspsp.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,7 +31,7 @@ class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate startDate;
     private LocalDate endDate;
     private String executionRule;
-    private String frequency; // TODO consider using an enum similar to FrequencyCode based on the the "EventFrequency7Code" of ISO 20022
+    private SpiFrequencyCode frequency;
     private int dayOfExecution; //Day here max 31
 
     @Override
