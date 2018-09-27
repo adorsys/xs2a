@@ -32,7 +32,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api(tags = "PIISP, Funds confirmation", description = "Provides access to the funds confirmation")
+@Api(value = "v1", description = "Provides access to the funds confirmation", tags = {"Confirmation of Funds Service"})
 public class FundsConfirmationController implements FundsConfirmationApi {
 
     private final ResponseMapper responseMapper;
@@ -42,6 +42,5 @@ public class FundsConfirmationController implements FundsConfirmationApi {
     @Override
     public ResponseEntity<?> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
         return responseMapper.ok(fundsConfirmationService.fundsConfirmation(fundsConfirmationModelMapper.mapToFundsConfirmationRequest(body)));
-
     }
 }
