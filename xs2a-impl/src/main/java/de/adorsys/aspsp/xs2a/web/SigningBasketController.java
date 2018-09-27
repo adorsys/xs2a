@@ -17,11 +17,13 @@
 package de.adorsys.aspsp.xs2a.web;
 
 import de.adorsys.psd2.api.SigningBasketApi;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
+@Api(value = "v1", description = "Provides access to the signing baskets", tags = {"Signing Baskets"})
 public class SigningBasketController implements SigningBasketApi {
 
 

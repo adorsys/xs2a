@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.service.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
@@ -42,6 +43,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     private final AccountSpi accountSpi;
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
+    private final AisConsentDataService aisConsentDataService;
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
@@ -63,9 +65,11 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     private UpdateConsentPsuDataResponse createResponseFromUpdatePsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
+        AspspConsentData aspspConsentData = aisConsentDataService.getConsentData(request.getConsentId());
 
         if (isPsuAuthenticationStage(request, consentAuthorization)) {
-            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = accountSpi.authorisePsu(request.getPsuId(), request.getPassword(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+            SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = accountSpi.authorisePsu(request.getPsuId(), request.getPassword(), aspspConsentData);
+            aisConsentDataService.updateConsentData(authorisationStatusSpiResponse.getAspspConsentData());
 
             if (authorisationStatusSpiResponse.getPayload() == SpiAuthorisationStatus.FAILURE) {
                 response.setScaStatus(Xs2aScaStatus.FAILED);
@@ -75,13 +79,14 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             response.setPsuId(request.getPsuId());
             response.setPassword(request.getPassword());
 
-            SpiResponse<List<SpiScaMethod>> spiResponse = accountSpi.readAvailableScaMethods(request.getPsuId(), request.getPassword());
+            SpiResponse<List<SpiScaMethod>> spiResponse = accountSpi.readAvailableScaMethods(request.getPsuId(), request.getPassword(), aisConsentDataService.getConsentData(request.getConsentId()));
+            aisConsentDataService.updateConsentData(authorisationStatusSpiResponse.getAspspConsentData());
             proceedResponseForAvailableMethods(response, spiResponse.getPayload(), request.getConsentId());
             return response;
         }
 
         if (isScaMethodSelectionStage(request, consentAuthorization)) {
-            accountSpi.performStrongUserAuthorisation(request.getPsuId(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+            accountSpi.performStrongUserAuthorisation(request.getPsuId(), aspspConsentData);
             response.setChosenScaMethod(request.getAuthenticationMethodId());
             response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);
@@ -89,7 +94,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         }
 
         if (isAuthorizationStage(request)) {
-            accountSpi.applyStrongUserAuthorisation(aisConsentMapper.mapToSpiAccountConfirmation(request), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+            accountSpi.applyStrongUserAuthorisation(aisConsentMapper.mapToSpiAccountConfirmation(request), aspspConsentData);
             response.setScaAuthenticationData(request.getScaAuthenticationData());
             response.setScaStatus(Xs2aScaStatus.FINALISED);
             response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
@@ -107,7 +112,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
                 response.setScaStatus(Xs2aScaStatus.PSUAUTHENTICATED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION);
             } else {
-                accountSpi.performStrongUserAuthorisation(response.getPsuId(), new AspspConsentData()); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+                accountSpi.performStrongUserAuthorisation(response.getPsuId(), aisConsentDataService.getConsentData(consentId));
                 response.setChosenScaMethod(availableMethods.get(0).name());
                 response.setScaStatus(Xs2aScaStatus.SCAMETHODSELECTED);
                 response.setResponseLinkType(START_AUTHORISATION_WITH_TRANSACTION_AUTHORISATION);

@@ -49,7 +49,7 @@ public class FundsConfirmationService {
             return accountReferenceValidationResponse.hasError()
                        ? ResponseObject.<FundsConfirmationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
                        : ResponseObject.<FundsConfirmationResponse>builder()
-                             .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
+                                 .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
     }
 
     private boolean isFundsAvailable(Xs2aAccountReference xs2aAccountReference, Xs2aAmount requiredAmount) {
@@ -76,7 +76,7 @@ public class FundsConfirmationService {
 
     private List<Xs2aBalance> getAccountBalancesByAccountReference(Xs2aAccountReference reference) {
         return Optional.ofNullable(reference)
-                   .map(accountService::getAccountDetailsByAccountReference)
+                   .map(ref -> accountService.getAccountDetailsByAccountReference(ref, null))
                    .filter(Optional::isPresent)
                    .map(Optional::get)
                    .map(Xs2aAccountDetails::getBalances)

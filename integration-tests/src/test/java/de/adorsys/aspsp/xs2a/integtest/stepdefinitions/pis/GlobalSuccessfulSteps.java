@@ -90,7 +90,7 @@ public class GlobalSuccessfulSteps {
 
         // TODO: Take asserts back in when respective response headers are implemented (https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/289)
         // assertThat(actualResponse.getHeaders().get("Location"), equalTo(context.getBaseUrl() + "/" +
-        //    context.getPaymentService() + "/" + actualResponse.getBody().getPaymentId()));
+        //    context.getPaymentService() + "/" + actualResponse.getAspspConsentData().getPaymentId()));
 
         // assertThat(actualResponse.getHeaders().get("X-Request-ID"), equalTo(context.getTestData().getRequest().getHeader().get("x-request-id")));
     }
