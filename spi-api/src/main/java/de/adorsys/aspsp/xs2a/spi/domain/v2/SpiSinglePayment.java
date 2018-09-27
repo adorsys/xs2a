@@ -20,6 +20,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.service.v2.SpiPayment;
 import lombok.Data;
@@ -38,9 +39,19 @@ class SpiSinglePayment implements SpiPayment {
     private SpiAddress creditorAddress;
     private String remittanceInformationUnstructured;
     private SpiTransactionStatus paymentStatus;
+    protected SpiPaymentProduct paymentProduct;
+
+    public SpiSinglePayment(SpiPaymentProduct paymentProduct) {
+        this.paymentProduct = paymentProduct;
+    }
 
     @Override
     public SpiPaymentType getPaymentType() {
         return SINGLE;
+    }
+
+    @Override
+    public SpiPaymentProduct getPaymentProduct() {
+        return paymentProduct;
     }
 }

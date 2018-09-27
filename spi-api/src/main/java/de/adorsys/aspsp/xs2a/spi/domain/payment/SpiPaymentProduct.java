@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.service.v2;
+package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
-
-public interface SpiPayment {
-    SpiPaymentType getPaymentType();
-    SpiPaymentProduct getPaymentProduct();
+public enum SpiPaymentProduct {
+    SCT,
+    ISCT,
+    T2P,
+    CBCT
 }

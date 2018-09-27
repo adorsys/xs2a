@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.domain.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.code.SpiFrequencyCode;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,10 @@ class SpiPeriodicPayment extends SpiSinglePayment {
     private String executionRule;
     private SpiFrequencyCode frequency;
     private int dayOfExecution; //Day here max 31
+
+    public SpiPeriodicPayment(SpiPaymentProduct paymentProduct) {
+        super(paymentProduct);
+    }
 
     @Override
     public final SpiPaymentType getPaymentType() {
