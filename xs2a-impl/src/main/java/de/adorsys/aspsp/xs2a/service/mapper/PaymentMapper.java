@@ -28,6 +28,7 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -138,8 +139,8 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
 
                    }).orElse(null);
     }
-
-    public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response) {
+    //TODO remote AspspConsentData from here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(response)
                    .map(pir -> {
                        PaymentInitialisationResponse initialisationResponse = new PaymentInitialisationResponse();
@@ -153,6 +154,7 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
                        initialisationResponse.setChallengeData(mapToChallengeData(pir.getChallengeData()));
                        initialisationResponse.setTppMessages(mapToMessageErrorCodes(pir.getTppMessages()));
                        initialisationResponse.setLinks(new Links());
+                       initialisationResponse.setAspspConsentData(aspspConsentData);
                        return initialisationResponse;
                    }).orElse(new PaymentInitialisationResponse());
     }

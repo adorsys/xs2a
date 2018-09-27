@@ -166,13 +166,13 @@ public interface PaymentSpi {
      * @deprecated since 1.8. Will be removed in 1.9. Use {@link #requestAuthorisationCode(String, SpiScaMethod, SpiPayment, AspspConsentData)}
      */
     @Deprecated
-    void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
+    SpiResponse<Void> performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
 
     /**
      * @deprecated since 1.8. Will be removed in 1.9. Use {@link #verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation, SpiPayment, AspspConsentData)}
      */
     @Deprecated
-    void applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
+    SpiResponse<Void> applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a payment at ASPSP. SPI Implementation shall return paymentId here. Used in all SCA approaches.
