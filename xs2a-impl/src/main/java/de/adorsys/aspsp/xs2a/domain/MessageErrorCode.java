@@ -47,7 +47,7 @@ public enum MessageErrorCode {
 
     TIMESTAMP_INVALID(400),  //Timestamp not in accepted time period
     PERIOD_INVALID(400),  //Requested time period out of bound
-    SCA_METHOD_UNKNOWN(400),  //Addressed SCA method in the AuthenticationObject Mehtod Select Request is unknown or cannot be matched by the ASPSP with the PSU
+    SCA_METHOD_UNKNOWN(400),  //Addressed SCA method in the AuthenticationObject Method Select Request is unknown or cannot be matched by the ASPSP with the PSU
     TRANSACTION_ID_INVALID(400),  //The TPP-Transaction-ID is not matching the temporary resource
 
     //PIS specific error codes

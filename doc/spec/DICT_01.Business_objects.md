@@ -125,7 +125,7 @@
 | RESOURCE_UNKNOWN | 404 (if account-id in path) <br> 403 (if other resource in path) <br> 400 (if payload) | The addressed resource is associated with the TPP but has expired, not addressable anymore. |
 | TIMESTAMP_INVALID | 400 | Timestamp not in accepted time period. | 
 | PERIOD_INVALID | 400 | Requested time period out of bound. |
-| SCA_METHOD_UNKNOWN | 400 | Addressed SCA method in the Authentication Mehtod Select Request is unknown or cannot be matched by the ASPSP with the PSU. |
+| SCA_METHOD_UNKNOWN | 400 | Addressed SCA method in the Authentication Method Select Request is unknown or cannot be matched by the ASPSP with the PSU. |
 | TRANSACTION_ID_INVALID | 400 | The TPP-Transaction-ID is not matching the temporary resource. |
 
 **PIS specific error codes**
