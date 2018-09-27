@@ -29,9 +29,11 @@ import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
+
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
@@ -182,8 +184,15 @@ public class GlobalSuccessfulSteps {
         assertThat(actualResponse.getStatusCode(), equalTo(context.getTestData().getResponse().getHttpStatus()));
         assertThat(actualResponse.getBody().getScaStatus(), equalTo(givenResponseBody.getScaStatus()));
 
-        if ((actualResponse.getBody().getScaStatus()).equals(ScaStatus.PSUAUTHENTICATED)) {
-            assertThat(actualResponse.getBody().getScaMethods(), equalTo(givenResponseBody.getScaMethods()));
+        if (actualResponse.getBody().getScaStatus().equals(ScaStatus.PSUAUTHENTICATED)) {
+            ScaMethods actualMethods = actualResponse.getBody().getScaMethods();
+
+            assertThat(actualMethods.size(), equalTo(givenResponseBody.getScaMethods().size()));
+
+            for (int i = 0; i < actualMethods.size(); i++) {
+                assertThat(actualMethods.get(i).getAuthenticationType(), equalTo(givenResponseBody.getScaMethods().get(i).getAuthenticationType()));
+                assertThat(actualMethods.get(i).getAuthenticationMethodId(), notNullValue());
+            }
         }
     }
 
