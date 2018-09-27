@@ -23,7 +23,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.9-SNAPSHOT</version>
+        <version>1.8</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -36,25 +36,25 @@
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>xs2a-server-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.8</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.8</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>spi-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.8</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.8</version>
         </dependency>
 
         <dependency>
@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>de.adorsys</groupId>
 			<artifactId>psd2-validator</artifactId>
-			<version>1.9-SNAPSHOT</version>
+			<version>1.8</version>
 		</dependency>
 
         <dependency>
