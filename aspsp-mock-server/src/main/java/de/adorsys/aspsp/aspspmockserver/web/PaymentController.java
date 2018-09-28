@@ -108,7 +108,7 @@ public class PaymentController {
 
     @ApiOperation(value = "Delete payment by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = SpiCancelPayment.class),
+        @ApiResponse(code = 202, message = "ACCEPTED", response = SpiCancelPayment.class),
         @ApiResponse(code = 204, message = "Payment Not Found")})
     @GetMapping(path = "/{paymentId}")
     public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("paymentId") String paymentId) {
