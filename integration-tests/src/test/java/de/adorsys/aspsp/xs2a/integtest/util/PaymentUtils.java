@@ -19,36 +19,45 @@ package de.adorsys.aspsp.xs2a.integtest.util;
 import de.adorsys.aspsp.xs2a.integtest.model.Request;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 public class PaymentUtils {
 
+    /**
+     *
+     * @param request from which to extract the headers (if not null)
+     * @param token for oauth flow
+     * @return HttpEntity
+     */
     public static HttpEntity getHttpEntity(Request request, String token) {
-        HttpHeaders headers = new HttpHeaders();
-        if (request != null)
-            headers.setAll(request.getHeader());
-        headers.add("Authorization", "Bearer " + token);
-        headers.add("Content-Type", "application/json");
-        headers.add("Accept", "application/json");
+        HttpHeaders headers = getHttpHeaders(request, token);
 
         return new HttpEntity<>(request != null ? request.getBody() : null, headers);
     }
 
-    public static HttpEntity getHttpEntityWithScaInformation(String scaInformation, Context context) {
-        MultiValueMap<String, String> bodyWithScaData = new LinkedMultiValueMap<>();
-        // we need to setup sca info from data file or from other source
-        if (scaInformation.contains("Sca-Method")) {
-            bodyWithScaData.add(scaInformation, context.getScaMethod());
-        } else {
-            bodyWithScaData.add(scaInformation, context.getTanValue());
-        }
-        return new HttpEntity<>(bodyWithScaData, getHttpHeaders(context));
+    /**
+     *
+     * @param request from which to extract the headers (if not null)
+     * @param token for oauth flow
+     * @return HttpEntity with null body
+     */
+    public static HttpEntity getHttpEntityWithoutBody(Request request, String token) {
+        HttpHeaders headers = getHttpHeaders(request, token);
+
+        return new HttpEntity<>(null, headers);
     }
 
-    private static HttpHeaders getHttpHeaders(Context context) {
+    /**
+     *
+     * @param request from which to extract the headers (if not null)
+     * @param accessToken for oauth flow
+     * @return HttpHeaders
+     */
+    private static HttpHeaders getHttpHeaders(Request request, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + context.getAccessToken());
+        if (request != null) {
+            headers.setAll(request.getHeader());
+        }
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
 

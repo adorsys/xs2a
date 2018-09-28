@@ -29,11 +29,9 @@ import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
-
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
@@ -143,8 +141,10 @@ public class GlobalSuccessfulSteps {
     // Embedded Global Step Payment Initiation
     @And("^PSU sends the start authorisation request and receives the authorisationId$")
     public void startAuthorisationRequest() {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
+//        HttpEntity entity = PaymentUtils.getHttpEntity(
+//            null, context.getAccessToken());
+
+        HttpEntity entity = PaymentUtils.getHttpEntityWithoutBody(context.getTestData().getRequest(), context.getAccessToken());
 
         ResponseEntity<StartScaprocessResponse> response = template.exchange(
             context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations",

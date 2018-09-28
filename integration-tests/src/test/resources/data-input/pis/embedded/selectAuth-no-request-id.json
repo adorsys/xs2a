@@ -1,0 +1,20 @@
+{
+  "request": {
+    "header": {
+      "PSU-ID": "aspsp2"
+    },
+    "body": {
+      "authenticationMethodId": "PUSH_OTP"
+    }
+  },
+  "response": {
+    "code": "400",
+    "header": {},
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
+      }
+    ]
+  }
+}

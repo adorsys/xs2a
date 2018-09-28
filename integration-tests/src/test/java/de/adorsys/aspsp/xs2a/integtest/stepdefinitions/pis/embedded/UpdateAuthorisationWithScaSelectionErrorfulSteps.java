@@ -16,11 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
-
-@FeatureFileSteps
-public class UpdateAuthorisationWithIdentificationErrorfulSteps {
-
+public class UpdateAuthorisationWithScaSelectionErrorfulSteps {
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps
@@ -30,6 +26,12 @@ public class UpdateAuthorisationWithIdentificationErrorfulSteps {
 
     // @And("^PSU sends the start authorisation request and receives the authorisationId$")
     // See GlobalSuccessfulSteps
+
+    // @And("^PSU wants to update the resource with his (.*)$")
+    // See GlobalSuccessfulSteps
+
+    // @And("^PSU sends the update identification data request$")
+    // See UpdateAuthorisationWithIdentificationSuccessfulSteps
 
     // @And("^PSU prepares the errorful data (.*) with the payment service (.*)$")
     // See GlobalErrorfulSteps
