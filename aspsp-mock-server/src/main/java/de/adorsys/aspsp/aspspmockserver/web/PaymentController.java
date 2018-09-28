@@ -110,8 +110,8 @@ public class PaymentController {
     @ApiResponses(value = {
         @ApiResponse(code = 202, message = "ACCEPTED", response = SpiCancelPayment.class),
         @ApiResponse(code = 204, message = "Payment Not Found")})
-    @GetMapping(path = "/{paymentId}")
-    public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("paymentId") String paymentId) {
+    @GetMapping(path = "/{payment-id}")
+    public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("payment-id") String paymentId) {
         return paymentService.cancelPayment(paymentId)
                    .map(p -> new ResponseEntity<>(p, ACCEPTED))
                    .orElse(ResponseEntity.badRequest().build());
