@@ -10,10 +10,10 @@ Feature: Account Information Service
         When PSU sends the create consent request
         Then a successful response code and the appropriate consent response data is delivered to the PSU
         Examples:
-            | consent-resource                           |
-            | consent-dedicated-successful.json          |
+            | consent-resource                     |
+            | consent-dedicated-successful.json    |
 #            | consent-all-psd2-accounts-successful.json  |
-            | consent-all-accounts-successful.json       |
+            | consent-all-accounts-successful.json |
 #
 ##    #TODO Errorful Request
 #
@@ -115,16 +115,25 @@ Feature: Account Information Service
 #    # Balance Request                                                                                                  #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-#    Scenario: Read balance of a regular account
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456770}], transactions: [{iban: DE2310010010123456770}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e111 of the required account
-#        When AISP requests balance
-#        Then the following balances are delivered to the AISP
-#            | closingBooked                                              | expected                                                                               |
-#            | amount: {currency: EUR, content: 500.00}, date: 2017-10-25 | amount: {currency: EUR, content: 900.00}, lastActionDateTime: 2017-10-25T15:30:35.035Z |
-#
+
+    Scenario Outline: Read balances successfully
+        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <balance-resource>
+        When PSU requests the balances
+        Then a successful response code and the appropriate list of accounts get returned
+        Examples:
+            | consent-id        | account-id                           | balance-resource |
+            | to-be-set-in-test | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |                  |
+
+    Scenario: Read balance of a regular account
+        Given A consent resource with the following data exists at the ASPSP
+            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
+            | balances: [{iban: DE2310010010123456770}], transactions: [{iban: DE2310010010123456770}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
+        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e111 of the required account
+        When AISP requests balance
+        Then the following balances are delivered to the AISP
+            | closingBooked                                              | expected                                                                               |
+            | amount: {currency: EUR, content: 500.00}, date: 2017-10-25 | amount: {currency: EUR, content: 900.00}, lastActionDateTime: 2017-10-25T15:30:35.035Z |
+
 #    Scenario: Read balance of a multi-currency account
 #        Given A consent resource with the following data exists at the ASPSP
 #            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
