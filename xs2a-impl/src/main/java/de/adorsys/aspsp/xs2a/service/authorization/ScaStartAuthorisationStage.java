@@ -78,6 +78,7 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
         } else if (isSingleScaMethod(spiScaMethods)) {
 
             aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(),
+                                                                         spiScaMethods.get(0),
                                                                          aspspConsentData
                                                                          )
                                    .getAspspConsentData();

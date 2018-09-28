@@ -176,7 +176,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, SpiScaMethod, AspspConsentData)}
      */
     @Override
     public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
