@@ -17,8 +17,8 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 public enum SpiPaymentProduct {
-    SCT,
-    ISCT,
-    T2P,
-    CBCT
+    SEPA,
+    INSTANT_SEPA,
+    TARGET2,
+    CROSS_BORDER
 }
