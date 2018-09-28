@@ -128,7 +128,7 @@ public interface PaymentSpi extends AuthorisationSpi<SpiPayment> {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return success or failure authorization status
-     * @deprecated since 1.8. Will be removed in 1.9. Use {@link AuthorisationSpi<SpiPayment>#authorisePsu(String, String, T, AspspConsentData)}
+     * @deprecated since 1.8. Will be removed in 1.9.
      */
     @Deprecated
     SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, AspspConsentData aspspConsentData);
@@ -140,7 +140,7 @@ public interface PaymentSpi extends AuthorisationSpi<SpiPayment> {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of SCA methods applicable for specified PSU
-     * @deprecated since 1.8. Will be removed in 1.9. Use {@link AuthorisationSpi<SpiPayment>#requestAvailableScaMethods(String, T, AspspConsentData)}
+     * @deprecated since 1.8. Will be removed in 1.9.
      */
     @Deprecated
     SpiResponse<List<SpiScaMethod>> readAvailableScaMethod(String psuId, AspspConsentData aspspConsentData);
@@ -153,7 +153,7 @@ public interface PaymentSpi extends AuthorisationSpi<SpiPayment> {
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return execution payment id
-     * @deprecated since 1.8. Will be removed in 1.9. Use {@link AuthorisationSpi<SpiPayment>#executePaymentWithoutSca(SpiPaymentType, T, AspspConsentData)}
+     * @deprecated since 1.8. Will be removed in 1.9. Use {@link #executePaymentWithoutSca(SpiPaymentType, SpiPayment, AspspConsentData)}
      */
     @Deprecated
     SpiResponse<String> executePayment(PisPaymentType pisPaymentType, List<PisPayment> pisPayments, AspspConsentData aspspConsentData);
@@ -164,13 +164,13 @@ public interface PaymentSpi extends AuthorisationSpi<SpiPayment> {
      * @param psuId            ASPSP identifier of the psu
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
-     * @deprecated since 1.8. Will be removed in 1.9. Use {@link AuthorisationSpi<SpiPayment>#requestAuthorisationCode(String, SpiScaMethod, T, AspspConsentData)}
+     * @deprecated since 1.8. Will be removed in 1.9.
      */
     @Deprecated
     void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
 
     /**
-     * @deprecated since 1.8. Will be removed in 1.9. Use {@link AuthorisationSpi<SpiPayment>#verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation, T, AspspConsentData)}
+     * @deprecated since 1.8. Will be removed in 1.9.
      */
     @Deprecated
     void applyStrongUserAuthorisation(SpiScaConfirmation spiScaConfirmation, AspspConsentData aspspConsentData);
