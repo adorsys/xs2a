@@ -41,6 +41,7 @@ import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
+import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.*;
 
 @Slf4j
 @Service
@@ -64,18 +65,18 @@ public class PaymentService {
     public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters, String psuId) {
         ResponseObject response;
         TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
-        if (requestParameters.getPaymentType() == PaymentType.SINGLE) {
+        if (requestParameters.getPaymentType() == SINGLE) {
             response = createPaymentInitiation((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
-        } else if (requestParameters.getPaymentType() == PaymentType.PERIODIC) {
+        } else if (requestParameters.getPaymentType() == PERIODIC) {
             response = initiatePeriodicPayment((PeriodicPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else {
             response = createBulkPayments((BulkPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         }
-        if (!response.hasError()) {
+        if (!response.hasError()) {//TODO Refactor this https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
             response = pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
-            PaymentInitialisationResponse paymentInitialisationResponse = (PaymentInitialisationResponse)response.getBody();//TODO Refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-            AspspConsentData aspspConsentData = new AspspConsentData(paymentInitialisationResponse.getAspspConsentData().getAspspConsentData(),paymentInitialisationResponse.getPisConsentId());
-            pisConsentDataService.updateConsentData(aspspConsentData);
+            getAspspConsentDataFromResponseObject(response, requestParameters.getPaymentType())
+                .ifPresent(pisConsentDataService::updateConsentData);
+
         }
         return response;
     }
@@ -196,5 +197,26 @@ public class PaymentService {
                    ? Optional.ofNullable(referenceValidationService.validateAccountReferences(payment.getAccountReferences()).getError())
                          .map(e -> e.getTppMessage().getMessageErrorCode())
                    : Optional.of(EXECUTION_DATE_INVALID);
+    }
+
+    //TODO Refactor and remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    private Optional<AspspConsentData> getAspspConsentDataFromResponseObject(ResponseObject responseObject, PaymentType paymentType) {
+        if (paymentType == SINGLE ||
+                paymentType == PERIODIC) {
+
+            PaymentInitialisationResponse paymentInitialisationResponse = (PaymentInitialisationResponse) responseObject.getBody();//TODO Refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            AspspConsentData aspspConsentData = paymentInitialisationResponse.getAspspConsentData();
+            return Optional.of(new AspspConsentData(Optional.ofNullable(aspspConsentData).map(AspspConsentData::getAspspConsentData).orElse(null), paymentInitialisationResponse.getPisConsentId()));
+        } else if (paymentType == BULK) {
+
+            List<PaymentInitialisationResponse> paymentInitialisationResponseList = (List<PaymentInitialisationResponse>) responseObject.getBody();//TODO Refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            if (CollectionUtils.isNotEmpty(paymentInitialisationResponseList)) {
+                PaymentInitialisationResponse paymentInitialisationResponse = paymentInitialisationResponseList.get(0);
+                AspspConsentData aspspConsentData = paymentInitialisationResponse.getAspspConsentData();
+                return Optional.of(new AspspConsentData(Optional.ofNullable(aspspConsentData).map(AspspConsentData::getAspspConsentData).orElse(null), paymentInitialisationResponse.getPisConsentId()));
+            }
+        }
+
+        return Optional.empty();
     }
 }
