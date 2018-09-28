@@ -19,12 +19,12 @@ package de.adorsys.aspsp.xs2a.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -47,6 +47,7 @@ import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,8 +71,8 @@ public class FundsConfirmationServiceTest {
 
     @Before
     public void setUp() throws IOException {
-        when(accountService.getAccountDetailsByAccountReference(any(AccountReference.class)))
-            .thenReturn(Optional.of(new Xs2aAccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
+        when(accountService.getAccountDetailsByAccountReference(any(Xs2aAccountReference.class), anyString()))
+            .thenReturn(Optional.of(new Xs2aAccountDetails(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, getBalances())));
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
     }
 

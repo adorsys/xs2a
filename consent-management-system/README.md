@@ -43,7 +43,14 @@ This value should be decremented each time the TPP of PSU requests any consent r
 - An endpoint to retrieve the AIS consent by its external identifier. 
 - An endpoint to retrieve the AIS consent status by its external identifier.
 - An endpoint to update the AIS consent status by its external identifier. 
-- An endpoint to update the AIS consent blob data.
+- An endpoint to update the AIS consent aspsp data.
+
+##PIS:
+- An endpoint to create PIS consent.
+- An endpoint to retrieve the PIS consent status by its external identifier.
+- An endpoint to retrieve the PIS consent by its external identifier. 
+- An endpoint to update the PIS consent aspsp data.
+- An endpoint to update the PIS consent status by its external identifier.
 
 ## CORS
 By default, allow credentials, all origins and all headers are disabled.

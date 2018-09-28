@@ -136,10 +136,28 @@ public class AspspRemoteUrls {
     }
 
     public String getGenerateTanConfirmation() {
-        return spiMockBaseUrl + "/consent/confirmation/pis/{psuId}";
+        return spiMockBaseUrl + "/consent/confirmation/pis/{psuId}/{sca-method-selected}";
     }
 
     public String applyStrongUserAuthorisation() {
         return spiMockBaseUrl + "/consent/confirmation/pis";
+    }
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that generates TAN for ais consent confirmation
+     *
+     * @return URL
+     */
+    public String getGenerateTanConfirmationForAis() {
+        return spiMockBaseUrl + "/consent/confirmation/ais/{psuId}";
+    }
+
+    /**
+     * Returns URL-string to ASPSP-Mock endpoint that validates TAN for consent confirmation
+     *
+     * @return URL
+     */
+    public String applyStrongUserAuthorisationForAis() {
+        return spiMockBaseUrl + "/consent/confirmation/ais";
     }
 }

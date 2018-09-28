@@ -26,6 +26,8 @@ import org.springframework.stereotype.Component;
 public class EnvironmentConfigurationProperties {
     private String mockServerUrl;
     private String xs2aServerUrl;
+    private String aspspProfileServerUrl;
+    private String consentManagementServerUrl;
     private KeycloakConfig keycloakConfig;
 
     @Data

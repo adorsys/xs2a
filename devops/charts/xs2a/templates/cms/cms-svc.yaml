@@ -1,0 +1,25 @@
+{{ if .Values.cms.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+{{- with .Values.cms.serviceAnnotations }}
+   annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "psd2.fullname" . }}-cms
+  labels:
+{{ include "psd2.labels" . | indent 4 }}
+    app.kubernetes.io/component: ConsentManagementSystem
+    app: consent-management-system
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 38080
+  selector:
+{{ include "psd2.matchLabels" . | indent 4 }}
+    app.kubernetes.io/component: ConsentManagementSystem
+{{- end }}

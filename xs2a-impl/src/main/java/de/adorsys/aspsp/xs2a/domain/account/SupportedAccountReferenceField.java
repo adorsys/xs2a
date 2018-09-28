@@ -8,41 +8,41 @@ import java.util.Optional;
 public enum SupportedAccountReferenceField {
     IBAN {
         @Override
-        public Optional<Boolean> isValid(AccountReference reference) {
+        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
             return Optional.ofNullable(reference.getIban())
                        .map(SupportedAccountReferenceField::isValidIban);
         }
     },
     BBAN {
         @Override
-        public Optional<Boolean> isValid(AccountReference reference) {
+        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
             return Optional.ofNullable(reference.getBban())
                        .map(SupportedAccountReferenceField::isValidBban);
         }
     },
     PAN {
         @Override
-        public Optional<Boolean> isValid(AccountReference reference) {
+        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
             return Optional.ofNullable(reference.getPan())
                        .map(SupportedAccountReferenceField::isValidPan);
         }
     },
     MASKEDPAN {
         @Override
-        public Optional<Boolean> isValid(AccountReference reference) {
+        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
             return Optional.ofNullable(reference.getMaskedPan())
                        .map(SupportedAccountReferenceField::isValidMaskedPan);
         }
     },
     MSISDN {
         @Override
-        public Optional<Boolean> isValid(AccountReference reference) {
+        public Optional<Boolean> isValid(Xs2aAccountReference reference) {
             return Optional.ofNullable(reference.getMsisdn())
                        .map(SupportedAccountReferenceField::isValidMsisdn);
         }
     };
 
-    public abstract Optional<Boolean> isValid(AccountReference reference);
+    public abstract Optional<Boolean> isValid(Xs2aAccountReference reference);
 
     private static boolean isValidIban(String iban) {
         IBANValidator validator = IBANValidator.getInstance();

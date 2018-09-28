@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -35,24 +36,26 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
 
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-        SpiPaymentInitialisationResponse aspspResponse = paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayment(payment), aspspConsentData).getPayload();
-        return paymentMapper.mapToPaymentInitializationResponse(aspspResponse);
+        AspspConsentData aspspConsentData = new AspspConsentData();
+        SpiResponse<SpiPaymentInitialisationResponse> response = paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayment(payment), aspspConsentData);
+        return paymentMapper.mapToPaymentInitializationResponse(response.getPayload(), response.getAspspConsentData());
     }
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-        SpiPaymentInitialisationResponse aspspResponse = paymentSpi.initiatePeriodicPayment(paymentMapper.mapToSpiPeriodicPayment(payment), aspspConsentData).getPayload();
-        return paymentMapper.mapToPaymentInitializationResponse(aspspResponse);
+        AspspConsentData aspspConsentData = new AspspConsentData();
+        SpiResponse<SpiPaymentInitialisationResponse> response = paymentSpi.initiatePeriodicPayment(paymentMapper.mapToSpiPeriodicPayment(payment), aspspConsentData);
+        return paymentMapper.mapToPaymentInitializationResponse(response.getPayload(), response.getAspspConsentData());
     }
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
-        return paymentSpi.createBulkPayments(paymentMapper.mapToSpiBulkPayment(bulkPayment), aspspConsentData).getPayload()
+        SpiResponse<List<SpiPaymentInitialisationResponse>> response = paymentSpi.createBulkPayments(paymentMapper.mapToSpiBulkPayment(bulkPayment), new AspspConsentData());
+        final AspspConsentData aspspConsentData = response.getAspspConsentData();
+        return response.getPayload()
                    .stream()
-                   .map(paymentMapper::mapToPaymentInitializationResponse)
+                   .map((SpiPaymentInitialisationResponse resp) ->
+                            paymentMapper.mapToPaymentInitializationResponse(resp, aspspConsentData))
                    .collect(Collectors.toList());
     }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
@@ -24,8 +25,9 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.ReadPayment;
-import de.adorsys.aspsp.xs2a.service.payment.ReadPaymentFactory;
 import de.adorsys.aspsp.xs2a.service.payment.ScaPaymentService;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ import java.util.Optional;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
+import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.*;
 
 @Slf4j
 @Service
@@ -50,6 +53,8 @@ public class PaymentService {
     private final ReadPaymentFactory readPaymentFactory;
     private final AccountReferenceValidationService referenceValidationService;
     private final PisConsentService pisConsentService;
+    private final PisConsentDataService pisConsentDataService;
+
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -60,16 +65,20 @@ public class PaymentService {
     public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters, String psuId) {
         ResponseObject response;
         TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
-        if (requestParameters.getPaymentType() == PaymentType.SINGLE) {
+        if (requestParameters.getPaymentType() == SINGLE) {
             response = createPaymentInitiation((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
-        } else if (requestParameters.getPaymentType() == PaymentType.PERIODIC) {
+        } else if (requestParameters.getPaymentType() == PERIODIC) {
             response = initiatePeriodicPayment((PeriodicPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else {
             response = createBulkPayments((BulkPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         }
-        return response.hasError()
-                   ? response
-                   : pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
+        if (!response.hasError()) {//TODO Refactor this https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            response = pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
+            getAspspConsentDataFromResponseObject(response, requestParameters.getPaymentType())
+                .ifPresent(pisConsentDataService::updateConsentData);
+
+        }
+        return response;
     }
 
     /**
@@ -80,8 +89,9 @@ public class PaymentService {
      * @return Information about the status of a payment
      */
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType) {
-        Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), new AspspConsentData()).getPayload());
-        //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/191 Put a real data here
+        SpiResponse<SpiTransactionStatus> spiResponse = paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), pisConsentDataService.getConsentDataByPaymentId(paymentId));
+        pisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(spiResponse.getPayload());
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
                    .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder()
@@ -187,5 +197,26 @@ public class PaymentService {
                    ? Optional.ofNullable(referenceValidationService.validateAccountReferences(payment.getAccountReferences()).getError())
                          .map(e -> e.getTppMessage().getMessageErrorCode())
                    : Optional.of(EXECUTION_DATE_INVALID);
+    }
+
+    //TODO Refactor and remove this method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    private Optional<AspspConsentData> getAspspConsentDataFromResponseObject(ResponseObject responseObject, PaymentType paymentType) {
+        if (paymentType == SINGLE ||
+                paymentType == PERIODIC) {
+
+            PaymentInitialisationResponse paymentInitialisationResponse = (PaymentInitialisationResponse) responseObject.getBody();//TODO Refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            AspspConsentData aspspConsentData = paymentInitialisationResponse.getAspspConsentData();
+            return Optional.of(new AspspConsentData(Optional.ofNullable(aspspConsentData).map(AspspConsentData::getAspspConsentData).orElse(null), paymentInitialisationResponse.getPisConsentId()));
+        } else if (paymentType == BULK) {
+
+            List<PaymentInitialisationResponse> paymentInitialisationResponseList = (List<PaymentInitialisationResponse>) responseObject.getBody();//TODO Refactor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            if (CollectionUtils.isNotEmpty(paymentInitialisationResponseList)) {
+                PaymentInitialisationResponse paymentInitialisationResponse = paymentInitialisationResponseList.get(0);
+                AspspConsentData aspspConsentData = paymentInitialisationResponse.getAspspConsentData();
+                return Optional.of(new AspspConsentData(Optional.ofNullable(aspspConsentData).map(AspspConsentData::getAspspConsentData).orElse(null), paymentInitialisationResponse.getPisConsentId()));
+            }
+        }
+
+        return Optional.empty();
     }
 }

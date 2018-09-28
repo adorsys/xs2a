@@ -19,17 +19,17 @@ package de.adorsys.aspsp.xs2a.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.*;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.AccountMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
@@ -71,6 +71,7 @@ public class AccountServiceTest {
     private final String TRANSACTION_ID = "0001";
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private final String TPP_ID = "Test TppId";
 
     @InjectMocks
     private AccountService accountService;
@@ -82,28 +83,32 @@ public class AccountServiceTest {
     @Mock
     private AisConsentService aisConsentService;
     @Mock
-    private AccountMapper accountMapper;
+    private SpiXs2aAccountMapper spiXs2aAccountMapper;
     @Mock
     private ValueValidatorService valueValidatorService;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
+    @Mock
+    private TppService tppService;
     @Spy
     AccountModelMapper accountModelMapper = new AccountModelMapper(new ObjectMapper());
+    @Mock
+    AisConsentDataService aisConsentDataService;
 
     @Before
     public void setUp() {
         //Validation
         doNothing().when(valueValidatorService).validate(any(), any());
         //AccountMapping
-        when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID, IBAN));
-        when(accountMapper.mapToAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1, IBAN_1));
-        when(accountMapper.mapToAccountDetailsListNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
+        when(spiXs2aAccountMapper.mapToXs2aAccountDetails(getSpiAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetails(ACCOUNT_ID, IBAN));
+        when(spiXs2aAccountMapper.mapToXs2aAccountDetails(getSpiAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetails(ACCOUNT_ID_1, IBAN_1));
+        when(spiXs2aAccountMapper.mapToAccountDetailsListNoBalances(Arrays.asList(getAccountDetails(ACCOUNT_ID, IBAN), getAccountDetails(ACCOUNT_ID_1, IBAN_1))))
             .thenReturn(Arrays.asList(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN), getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1)));
-        when(accountMapper.mapToAccountDetails(null)).thenReturn(null);
-        when(accountMapper.mapToAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
-        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
-        when(accountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1));
-        when(accountMapper.mapToAccountDetailNoBalances(null)).thenReturn(null);
+        when(spiXs2aAccountMapper.mapToXs2aAccountDetails(null)).thenReturn(null);
+        when(spiXs2aAccountMapper.mapToXs2aAccountReport(Collections.singletonList(getSpiTransaction()))).thenReturn(Optional.of(getReport()));
+        when(spiXs2aAccountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID, IBAN));
+        when(spiXs2aAccountMapper.mapToAccountDetailNoBalances(getAccountDetails(ACCOUNT_ID_1, IBAN_1))).thenReturn(getAccountDetailsNoBalance(ACCOUNT_ID_1, IBAN_1));
+        when(spiXs2aAccountMapper.mapToAccountDetailNoBalances(null)).thenReturn(null);
         //AisReporting
         doNothing().when(aisConsentService).consentActionLog(anyString(), anyString(), any(ActionStatus.class));
         //getAccountDetailsByAccountId_WoB_Success
@@ -129,6 +134,8 @@ public class AccountServiceTest {
         when(accountSpi.readTransactionById(TRANSACTION_ID, ACCOUNT_ID, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Optional.of(getSpiTransaction()), ASPSP_CONSENT_DATA));
 
         when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiTransaction()), ASPSP_CONSENT_DATA));
+        when(tppService.getTppId()).thenReturn(TPP_ID);
+        when(aisConsentDataService.getConsentData(anyString())).thenReturn(new AspspConsentData());
     }
 
     //Get Account By AccountId
@@ -324,17 +331,17 @@ public class AccountServiceTest {
     }
 
     //Test Stuff
-    private ResponseObject<Xs2aAccountAccess> getAccessResponse(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+    private ResponseObject<Xs2aAccountAccess> getAccessResponse(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return ResponseObject.<Xs2aAccountAccess>builder().body(getAccessForMock(accounts, balances, transactions, allAccounts, allPsd2)).build();
     }
 
-    private Xs2aAccountAccess getAccessForMock(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions, boolean allAccounts, boolean allPsd2) {
+    private Xs2aAccountAccess getAccessForMock(List<Xs2aAccountReference> accounts, List<Xs2aAccountReference> balances, List<Xs2aAccountReference> transactions, boolean allAccounts, boolean allPsd2) {
         return new Xs2aAccountAccess(accounts, balances, transactions, allAccounts ? Xs2aAccountAccessType.ALL_ACCOUNTS : null, allPsd2 ? Xs2aAccountAccessType.ALL_ACCOUNTS : null);
     }
 
-    private AccountReference getAccountReference() {
+    private Xs2aAccountReference getAccountReference() {
         Xs2aAccountDetails details = getAccountDetails(ACCOUNT_ID, IBAN);
-        AccountReference rf = new AccountReference();
+        Xs2aAccountReference rf = new Xs2aAccountReference();
         rf.setCurrency(details.getCurrency());
         rf.setIban(details.getIban());
         rf.setPan(details.getPan());
@@ -359,6 +366,8 @@ public class AccountServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             getBalancesList());
     }
 
@@ -372,6 +381,8 @@ public class AccountServiceTest {
             null,
             CURRENCY,
             "David Muller",
+            null,
+            null,
             null,
             null,
             null,
@@ -404,6 +415,10 @@ public class AccountServiceTest {
             null,
             null,
             null,
+            null,
+            null,
+            null,
+            null,
             getSpiBalances());
     }
 
@@ -430,24 +445,24 @@ public class AccountServiceTest {
 
     private SpiTransaction getSpiTransaction() {
         Transactions t = getTransaction();
-        return new SpiTransaction(t.getTransactionId(), null, null, null, t.getBookingDate(),
-            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getAmount())), null,
+        return new SpiTransaction(t.getTransactionId(), null, null, null, null, null, t.getBookingDate(),
+            t.getValueDate(), new SpiAmount(t.getAmount().getCurrency(), new BigDecimal(t.getAmount().getAmount())), null, null,
             mapToSpiAccountRef(t.getCreditorAccount()), null, null,
             mapToSpiAccountRef(t.getDebtorAccount()), null, null,
-            null, null, null);
+            null, null, null, null);
     }
 
-    private SpiAccountReference mapToSpiAccountRef(AccountReference reference) {
+    private SpiAccountReference mapToSpiAccountRef(Xs2aAccountReference reference) {
         return Optional.ofNullable(reference).map(r -> new SpiAccountReference(r.getIban(), r.getBban(), r.getPan(),
             r.getMaskedPan(), r.getMsisdn(), r.getCurrency())).orElse(null);
     }
 
-    private List<AccountReference> getReferences(String iban, String iban1) {
+    private List<Xs2aAccountReference> getReferences(String iban, String iban1) {
         return Arrays.asList(getReference(iban), getReference(iban1));
     }
 
-    private AccountReference getReference(String iban) {
-        AccountReference reference = new AccountReference();
+    private Xs2aAccountReference getReference(String iban) {
+        Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setCurrency(iban.equals(IBAN) ? CURRENCY : CURRENCY_1);
         return reference;

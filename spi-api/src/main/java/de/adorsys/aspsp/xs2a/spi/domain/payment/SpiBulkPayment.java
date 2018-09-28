@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -42,4 +43,7 @@ public class SpiBulkPayment {
                                   "\uF0B7 requestedExecutionTime.\n" +
                                   "These three data elements may not be contained in any bulk entry.", required = true)
     List<SpiSinglePayment> payments;
+
+    @ApiModelProperty(value = "Transaction status", example = "Pending")
+    private SpiTransactionStatus paymentStatus;
 }

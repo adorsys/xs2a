@@ -1,15 +1,25 @@
 {
   "transactionId":"1234567",
+  "entryReference": "11122233",
   "endToEndId": "123456789",
   "mandateId": "12345",
+  "checkId": "1234567",
   "creditorId": "12346",
   "bookingDate": "2017-01-01",
   "valueDate": "2017-01-01",
   "spiAmount":
   {
     "currency": "EUR",
-    "content": "1000.0"
+    "amount": "1000.0"
   },
+  "exchangeRate": [{
+    "currencyFrom": "EUR",
+    "rateFrom": "Rate from",
+    "currencyTo": "USD",
+    "rateTo": "Rate to",
+    "rateDate": "2017-01-01",
+    "rateContract": "Rate contract"
+  }],
   "creditorName": "John Miles",
   "creditorAccount": {},
   "ultimateCreditor": "Paul Simpson",
@@ -19,5 +29,6 @@
   "remittanceInformationUnstructured": "Ref Number Merchant",
   "remittanceInformationStructured": "Ref Number Merchant",
   "purposeCode":  "BCENECEQ",
-  "bankTransactionCodeCode": "123344"
+  "bankTransactionCodeCode": "123344",
+  "proprietaryBankTransactionCode": "12334455"
 }

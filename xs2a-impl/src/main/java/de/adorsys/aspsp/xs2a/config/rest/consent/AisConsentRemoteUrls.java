@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AisConsentRemoteUrls {
+public class AisConsentRemoteUrls implements ConsentRemoteUrls {
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
@@ -94,5 +94,20 @@ public class AisConsentRemoteUrls {
      */
     public String getAisConsentAuthorizationById() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorizations/{authorization-id}";
+    }
+
+    @Override
+    public String getConsentData() {
+        return consentServiceBaseUrl + "/ais/consent/{consent-id}/aspsp-consent-data";
+    }
+
+    @Override
+    public String updateConsentData() {
+        return getConsentData();
+    }
+
+    @Override
+    public String getConsentDataByPaymentId() {
+        return getConsentData();
     }
 }

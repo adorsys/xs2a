@@ -27,12 +27,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
 
 import javax.validation.ValidationException;
 
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CERTIFICATE_INVALID;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
@@ -43,19 +45,25 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 public class GlobalExceptionHandlerController {
     private final MessageErrorMapper messageErrorMapper;
 
-    @ExceptionHandler(value = {ValidationException.class})
+    @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity validationException(ValidationException ex, HandlerMethod handlerMethod) {
         log.warn("Validation exception handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class})
+    @ExceptionHandler(value = ServletRequestBindingException.class)
+    public ResponseEntity servletRequestBindingException(ServletRequestBindingException ex, HandlerMethod handlerMethod) {
+        log.warn("Validation exception handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
     public ResponseEntity illegalArgumentException(IllegalArgumentException ex, HandlerMethod handlerMethod) {
         log.warn("Illegal argument exception handled in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity httpMessageException(HttpMessageNotReadableException ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception handled in Controller: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
@@ -67,7 +75,7 @@ public class GlobalExceptionHandlerController {
         return new ResponseEntity<>(UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(), UNSUPPORTED_MEDIA_TYPE);
     }
 
-    @ExceptionHandler(value = {Exception.class})
+    @ExceptionHandler(value = Exception.class)
     public ResponseEntity exception(Exception ex, HandlerMethod handlerMethod) {
         log.warn("Uncatched exception handled in Controller: {}, message: {}, stackTrace: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage(), ex);
         return new ResponseEntity<>(INTERNAL_SERVER_ERROR.getReasonPhrase(), INTERNAL_SERVER_ERROR);
@@ -92,6 +100,12 @@ public class GlobalExceptionHandlerController {
         log.warn("RequestBodyValidationException handled in controller: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
 
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = CertificateException.class)
+    public ResponseEntity getTppIdException(CertificateException ex, HandlerMethod handlerMethod) {
+        log.warn("Can't find tpp id in SecurityContextHolder in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        return new ResponseEntity<>(getTppMessages(CERTIFICATE_INVALID), HttpStatus.BAD_REQUEST);
     }
 
     private TppMessages getTppMessages(MessageErrorCode errorCode) {

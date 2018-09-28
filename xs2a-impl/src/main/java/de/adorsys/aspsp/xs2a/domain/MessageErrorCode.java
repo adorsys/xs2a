@@ -35,7 +35,7 @@ public enum MessageErrorCode {
     CERTIFICATE_REVOKED(401),  //Signature/corporate seal certificate has been revoked by QSTP
     CERTIFICATE_MISSING(401),  //Signature/corporate seal certificate was not available in the request but is mandated for the corresponding
     SIGNATURE_INVALID(401),  //Application layer eIDAS Signature for TPP authentication is not correct
-    SIGNATURE_MISSING(401),  //Apllication layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing
+    SIGNATURE_MISSING(401),  //Application layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing
     FORMAT_ERROR(400),  //Format of certain request fields are not matching the XS2A requirements. An explicit path to the corresponding field might be added in the return message
     PSU_CREDENTIALS_INVALID(401),  // The PSU-ID cannot be matched by the addressed ASPSP or is blocked, or a password resp. OTP was not correct. Additional information might be added
     CORPORATE_ID_INVALID(401),  //The PSU-Corporate-ID cannot be matched by the addressed ASPSP
@@ -47,7 +47,7 @@ public enum MessageErrorCode {
 
     TIMESTAMP_INVALID(400),  //Timestamp not in accepted time period
     PERIOD_INVALID(400),  //Requested time period out of bound
-    SCA_METHOD_UNKNOWN(400),  //Addressed SCA method in the AuthenticationObject Mehtod Select Request is unknown or cannot be matched by the ASPSP with the PSU
+    SCA_METHOD_UNKNOWN(400),  //Addressed SCA method in the AuthenticationObject Method Select Request is unknown or cannot be matched by the ASPSP with the PSU
     TRANSACTION_ID_INVALID(400),  //The TPP-Transaction-ID is not matching the temporary resource
 
     //PIS specific error codes

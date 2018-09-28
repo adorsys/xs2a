@@ -41,13 +41,9 @@ bin/
 logs
 log
 
-### Web-App ###
-node_modules
-
 .DS_Store
 .springBeans
 
 cms-db-schema/liquibase.properties
 **/META-INF
 **/main/java/META-INF
-xs2a-server-api/.idea

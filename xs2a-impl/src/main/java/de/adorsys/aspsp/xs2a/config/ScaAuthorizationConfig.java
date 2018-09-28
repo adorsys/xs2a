@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
+import de.adorsys.aspsp.xs2a.service.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.*;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
@@ -38,6 +39,7 @@ import static de.adorsys.psd2.aspsp.profile.domain.ScaApproach.*;
 @RequiredArgsConstructor
 public class ScaAuthorizationConfig {
     private final AspspProfileServiceWrapper aspspProfileService;
+    private final AisConsentDataService aisConsentDataService;
 
     @Bean
     public ScaPaymentService scaPaymentService(PaymentMapper paymentMapper,
@@ -65,7 +67,7 @@ public class ScaAuthorizationConfig {
             case DECOUPLED:
                 return new DecoupledAisAuthorizationService();
             case EMBEDDED:
-                return new EmbeddedAisAuthorizationService(accountSpi, aisConsentService, aisConsentMapper);
+                return new EmbeddedAisAuthorizationService(accountSpi, aisConsentService, aisConsentMapper, aisConsentDataService);
             default:
                 return new RedirectAisAuthorizationService();
         }

@@ -6,7 +6,7 @@
       "mandateId": "MandateId",
       "creditorId": "CreditorId",
       "bookingDate": "2018-03-09",
-      "amount": {
+      "transactionAmount": {
         "currency": "EUR",
         "amount": "3000.45"
       },
@@ -19,12 +19,8 @@
       "ultimateDebtor": "",
       "remittanceInformationUnstructured": "Ref Number Merchant",
       "remittanceInformationStructured": "Ref Number Merchant",
-      "purposeCode": {
-        "code": "PurposeCode"
-      },
-      "bankTransactionCodeCode": {
-        "code": "BankTransactionCode"
-      }
+      "purposeCode": "BKDF",
+      "bankTransactionCode": "BankTransactionCode"
     }
   ],
   "pending": [],

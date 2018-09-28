@@ -18,11 +18,12 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.account.AccountReference;
+import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
+import de.adorsys.aspsp.xs2a.service.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
@@ -47,6 +48,7 @@ import java.util.List;
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -67,19 +69,22 @@ public class OauthScaPaymentServiceTest {
     PaymentMapper paymentMapper;
     @Mock
     PaymentSpi paymentSpi;
+    @Mock
+    PisConsentDataService pisConsentDataService;
 
     @Before
     public void setUp() {
         when(paymentMapper.mapToSpiBulkPayment(getBulk(true, true, IBAN))).thenReturn(getSpiBulkPayment(true, true, IBAN));
         when(paymentMapper.mapToSpiBulkPayment(getBulk(true, false, IBAN))).thenReturn(getSpiBulkPayment(true, false, IBAN));
         when(paymentMapper.mapToSpiBulkPayment(getBulk(false, false, WRONG_IBAN))).thenReturn(getSpiBulkPayment(false, false, WRONG_IBAN));
-        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true))).thenReturn(getResp(true));
-        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
+        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true), ASPSP_CONSENT_DATA)).thenReturn(getResp(true));
+        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false), ASPSP_CONSENT_DATA)).thenReturn(getResp(false));
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED))
             .thenReturn(getResp(false));
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, true, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, false, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA));
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(false, false, WRONG_IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA));
+        when(pisConsentDataService.getConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
     }
 
     @Test
@@ -195,8 +200,8 @@ public class OauthScaPaymentServiceTest {
         );
     }
 
-    private AccountReference getReference(String iban) {
-        AccountReference reference = new AccountReference();
+    private Xs2aAccountReference getReference(String iban) {
+        Xs2aAccountReference reference = new Xs2aAccountReference();
         reference.setIban(iban);
         reference.setCurrency(Currency.getInstance("EUR"));
         return reference;

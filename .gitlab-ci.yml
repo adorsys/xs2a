@@ -2,7 +2,12 @@
 # variables
 # ------------------------------------------------------------------
 
-variables:
+variables: &variables
+
+  ###########################
+  # Docker images variables #
+  ###########################
+
   GITLAB_REGISTRY: "gitlab-registry.adorsys.de"
   GITLAB_NAMESPACE: "adorsys/xs2a/aspsp-xs2a"
 
@@ -37,9 +42,28 @@ variables:
   GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo"
   OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-demo"
 
-  JAVA_TOOL_OPTIONS: "-Xmx350M"
+  # Online banking UIapp
+  GITLAB_IMAGE_NAME_ONLINE_BANKING_UI: "${GITLAB_REGISTRY}/${GITLAB_NAMESPACE}/online-banking-demo/src/main/ui"
+  OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI: "${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE}/online-banking-ui"
 
-  GITHUB_REPO: "adorsys/xs2a"
+
+  ###########################
+  # Build variables         #
+  ###########################
+
+  JAVA_TOOL_OPTIONS: "-Xmx350M"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+
+  ###########################
+  # Deployment variables    #
+  ###########################
+
+  DEV_NAMESPACE: adorsys-psd2-develop
+  INTEG_NAMESPACE: adorsys-psd2-integ
+  DEMO_NAMESPACE: adorsys-psd2-demo
+  TILLER_NAMESPACE: adorsys-psd2-tiller
+  ANSIBLE_VAULT_PASSWORD_FILE: /tmp/vault_pass
 
 # ------------------------------------------------------------------
 # reusable yaml anchors
@@ -62,7 +86,8 @@ variables:
   script:
     - mvn -DskipTests clean install
 
-.build_image_script: &build_image_script
+# Build docker images and put them to GITLAB repo
+.build_docker_image: &build_docker_image
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
 
@@ -87,7 +112,8 @@ variables:
     - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
 
-.deploy_image_script: &deploy_image_script
+# Pull docker images and put them to OPENSHIFT repo
+.push_docker_openshift: &push_docker_openshift
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $GITLAB_REGISTRY
     - docker login -u openshift -p $OPENSHIFT_TOKEN $OPENSHIFT_REGISTRY
@@ -120,6 +146,22 @@ variables:
     - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
 
+.helm_env_deploy: &helm_env_deploy
+  image: adorsys/ci-helm:2.10
+  script:
+    - cd devops/charts/xs2a
+    - helm init --client-only
+    - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
+    - ansible-vault view env/develop.yaml.enc > env/develop.yaml
+    - >-
+      helm diff upgrade ${HELM_RELEASE} .
+      --allow-unreleased -q
+      -f env/${HELM_VALUE}
+    - >-
+      helm upgrade -i ${HELM_RELEASE} .
+      --namespace=${OPENSHIFT_NAMESPACE} --wait --timeout=600
+      -f env/${HELM_VALUE}
 # ------------------------------------------------------------------
 # stages
 # ------------------------------------------------------------------
@@ -129,6 +171,7 @@ stages:
   - "build:qa"     # run tests and code quality checks
   - "build:image"  # dockerize jar and push to gitlab registry
   - "deploy"       # push to openshift registry (snapshot deployment) or release registry
+  - "deploy:static"      # push to openshift registry (snapshot deployment) or release registry
 
 
 # ------------------------------------------------------------------
@@ -185,6 +228,42 @@ unit_tests:
 
 # Develop
 
+deploy_develop_stage:
+  stage: "deploy:static"
+  <<: *build_docker_image
+  <<: *push_docker_openshift
+  <<: *helm_env_deploy
+  only:
+    - develop
+  variables:
+    <<: *variables
+    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
+    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+    HELM_VALUE: develop.yaml
+  environment:
+    name: dev
+    url: ~
+
+# Branches with -helm- in naming are used for testing deployment scripts
+deploy_branch_stage:
+  stage: "deploy:static"
+  <<: *build_docker_image
+  <<: *push_docker_openshift
+  <<: *helm_env_deploy
+  when: manual
+  only:
+    - /^.*-helm-.*$/
+  variables:
+    <<: *variables
+    OPENSHIFT_NAMESPACE: "${DEV_NAMESPACE}"
+    DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+    HELM_VALUE: develop.yaml
+  environment:
+    name: dev
+    url: ~
+
 build_image_integ:
   stage: "build:image"
   only:
@@ -194,7 +273,7 @@ build_image_integ:
   environment:
     name: integ
     url: https://xs2a.integ.cloud.adorsys.de
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_integ:
   stage: deploy
@@ -205,7 +284,7 @@ deploy_image_integ:
     url: https://xs2a.integ.cloud.adorsys.de
   variables:
     DOCKER_TAG: integ
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
 
 # Master
 
@@ -218,7 +297,7 @@ build_image_master:
   environment:
     name: demo
     url: https://xs2a.cloud.adorsys.de
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_master:
   stage: deploy
@@ -229,7 +308,7 @@ deploy_image_master:
   environment:
     name: demo
     url: https://xs2a.cloud.adorsys.de
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
 
 # Release
 
@@ -239,7 +318,7 @@ build_image_release:
     - tags
   variables:
     DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_release:
   stage: deploy
@@ -248,7 +327,7 @@ deploy_image_release:
   when: manual
   variables:
     DOCKER_TAG: $CI_COMMIT_TAG
-  <<: *deploy_image_script
+  <<: *push_docker_openshift
 
 # Integ tests
 
@@ -258,7 +337,7 @@ build_image_integtest:
     - schedules
   variables:
     DOCKER_TAG: nightly
-  <<: *build_image_script
+  <<: *build_docker_image
 
 deploy_image_integtest:
   stage: deploy
@@ -266,4 +345,4 @@ deploy_image_integtest:
     - schedules
   variables:
     DOCKER_TAG: nightly
-  <<: *deploy_image_script
+  <<: *push_docker_openshift

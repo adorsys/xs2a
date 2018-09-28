@@ -127,13 +127,13 @@ public class TransactionServiceTest {
     }
 
     private SpiTransaction getTransaction() {
-        return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), "Creditor",
+        return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", null, null, DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
             new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
-            new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode");
+            new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
     }
 
     private SpiAccountDetails getDetails() {
-        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null);
+        return new SpiAccountDetails(ACCOUNT_ID, IBAN, null, null, null, null, EUR, null, null, null, null, null, null, null, null, null);
     }
 
 }
