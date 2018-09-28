@@ -99,13 +99,12 @@ public class GlobalErrorfulSteps {
         HttpStatus httpStatus = context.getTestData().getResponse().getHttpStatus();
         assertThat(context.getActualResponseStatus(), equalTo(httpStatus));
 
-        assertThat(actualTppMessages, is(equalTo(givenTppMessages)));
+        assertThat(actualTppMessages.size(), is(equalTo(givenTppMessages.size())));
 
-        //TODO: refactor to normal for loop
-        actualTppMessages.forEach ((msg) -> {
-            assertThat(msg.getCategory().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCategory().toString()));
-            assertThat(msg.getCode().toString(), equalTo(givenTppMessages.get(msg.getCategory().ordinal()).getCode().toString()));
-        });
+        for(int i = 0; i < actualTppMessages.size(); i++) {
+            assertThat(actualTppMessages.get(i).getCategory(), equalTo(givenTppMessages.get(i).getCategory()));
+            assertThat(actualTppMessages.get(i).getCode(), equalTo(givenTppMessages.get(i).getCode()));
+        }
     }
 
     // @After **** see GlobalSuccessfulSteps
