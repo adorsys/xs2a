@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiCancelPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
@@ -148,6 +149,21 @@ public class PaymentService {
         return paymentRepository.findByPaymentIdOrBulkId(paymentId, paymentId);
     }
 
+    /**
+     * Cancel payment
+     *
+     * @param paymentId Payment identifier
+     * @return SpiCancelPayment of payment
+     */
+    public Optional<SpiCancelPayment> cancelPayment(String paymentId) {
+        return Optional.ofNullable(paymentRepository.findOne(paymentId))
+                   .map(p -> new SpiCancelPayment(true));
+    }
+
+    public List<AspspPayment> getAllPayments() {
+        return paymentRepository.findAll();
+    }
+
     private boolean areFundsSufficient(SpiAccountReference reference, BigDecimal amount) {
         Optional<SpiAccountBalance> balance = Optional.ofNullable(reference)
                                                   .flatMap(this::getInterimAvailableBalanceByReference);
@@ -185,9 +201,5 @@ public class PaymentService {
         return Optional.ofNullable(amount)
                    .map(SpiAmount::getAmount)
                    .orElse(BigDecimal.ZERO);
-    }
-
-    public List<AspspPayment> getAllPayments() {
-        return paymentRepository.findAll();
     }
 }

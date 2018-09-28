@@ -18,10 +18,7 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
@@ -106,5 +104,16 @@ public class PaymentController {
         return CollectionUtils.isNotEmpty(response)
                    ? ResponseEntity.ok(response)
                    : ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "Delete payment by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = SpiCancelPayment.class),
+        @ApiResponse(code = 204, message = "Payment Not Found")})
+    @GetMapping(path = "/{paymentId}")
+    public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("paymentId") String paymentId) {
+        return paymentService.cancelPayment(paymentId)
+                   .map(p -> new ResponseEntity<>(p, ACCEPTED))
+                   .orElse(ResponseEntity.badRequest().build());
     }
 }
