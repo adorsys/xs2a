@@ -11,6 +11,11 @@
     "code": "200",
     "header": {},
     "body": {
+      "balances": [{
+        "balanceAmount": {
+          "currency": "EUR"
+        }
+      }]
     }
   }
 }

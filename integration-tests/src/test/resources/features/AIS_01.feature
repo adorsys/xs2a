@@ -115,30 +115,16 @@ Feature: Account Information Service
 #    # Balance Request                                                                                                  #
 #    #                                                                                                                  #
 #    ####################################################################################################################
+#
+#    Scenario Outline: Read balances successfully
+#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <balance-resource>
+#        When PSU requests the balances
+#        Then a successful response code and the appropriate list of accounts get returned
+#        Examples:
+#            | consent-id        | account-id                           | balance-resource            |
+#            | to-be-set-in-test | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
+#            | to-be-set-in-test | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
 
-    Scenario Outline: Read balances successfully
-        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <balance-resource>
-        When PSU requests the balances
-        Then a successful response code and the appropriate list of accounts get returned
-        Examples:
-            | consent-id        | account-id                           | balance-resource            |
-            | to-be-set-in-test | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
-            | to-be-set-in-test | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
-
-#    Scenario: Read balance of a multi-currency account
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456760}], transactions: [{iban: DE2310010010123456760}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e809 of the required account
-#        When AISP requests balance
-#        Then the following balances are delivered to the AISP
-#            | closingBooked                                              | expected                                                                               |
-#            | amount: {currency: EUR, content: 500.00}, date: 2017-10-25 | amount: {currency: EUR, content: 900.00}, lastActionDateTime: 2017-10-25T15:30:35.035Z |
-#            | amount: {currency: USD, content: 350.00}, date: 2017-10-25 | amount: {currency: USD, content: 350.00}, lastActionDateTime: 2017-10-24T14:30:21Z     |
-#
-#
-#
-#
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Transaction Request                                                                                              #
