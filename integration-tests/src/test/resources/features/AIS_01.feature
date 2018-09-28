@@ -121,8 +121,9 @@ Feature: Account Information Service
         When PSU requests the balances
         Then a successful response code and the appropriate list of accounts get returned
         Examples:
-            | consent-id        | account-id                           | balance-resource |
-            | to-be-set-in-test | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |                  |
+            | consent-id        | account-id                           | balance-resource            |
+            | to-be-set-in-test | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
+            | to-be-set-in-test | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
 
 #    Scenario: Read balance of a multi-currency account
 #        Given A consent resource with the following data exists at the ASPSP
