@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.payment;
+package de.adorsys.aspsp.xs2a.spi.service;
 
-import lombok.Data;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 
-@Data
-public class SpiPaymentConfirmation {
-    private String consentId;
-    private String paymentId;
-    private String tanNumber;
-    private String psuId;
+public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
+
+    SpiResponse<Void> initiateAisConsent(SpiAccountConsent accountConsent);
+
+    SpiResponse<Void> revokeAisConsent(SpiAccountConsent accountConsent, AspspConsentData aspspConsentData);
 }

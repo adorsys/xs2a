@@ -17,13 +17,10 @@
 package de.adorsys.aspsp.xs2a.spi.service;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConfirmation;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -41,7 +38,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of transactions
      */
-    @Deprecated
     SpiResponse<List<SpiTransaction>> readTransactionsByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, AspspConsentData aspspConsentData);
 
     /**
@@ -53,7 +49,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Transaction
      */
-    @Deprecated
     SpiResponse<Optional<SpiTransaction>> readTransactionById(String transactionId, String accountId, AspspConsentData aspspConsentData);
 
     /**
@@ -64,7 +59,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Account details
      */
-    @Deprecated
     SpiResponse<SpiAccountDetails> readAccountDetails(String accountId, AspspConsentData aspspConsentData);
 
     /**
@@ -75,7 +69,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    @Deprecated
     SpiResponse<List<SpiAccountDetails>> readAccountsByPsuId(String psuId, AspspConsentData aspspConsentData);
 
     /**
@@ -86,7 +79,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    @Deprecated
     SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIban(String iban, AspspConsentData aspspConsentData);
 
     /**
@@ -97,7 +89,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return List of account details
      */
-    @Deprecated
     SpiResponse<List<SpiAccountDetails>> readAccountDetailsByIbans(Collection<String> ibans, AspspConsentData aspspConsentData);
 
     /**
@@ -108,7 +99,6 @@ public interface AccountSpi {
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return a list of allowed payment products
      */
-    @Deprecated
     SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData);
 
     @Deprecated

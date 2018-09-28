@@ -24,10 +24,11 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -217,7 +218,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public void applyStrongUserAuthorisation(SpiPaymentConfirmation confirmation, AspspConsentData aspspConsentData) {
+    public void applyStrongUserAuthorisation(SpiScaConfirmation confirmation, AspspConsentData aspspConsentData) {
         aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(confirmation), ResponseEntity.class);
     }
 
@@ -247,11 +248,6 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation spiPaymentConfirmation, SpiPayment spiPayment, AspspConsentData aspspConsentData) {
-        return null; //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-    }
-
-    @Override
     public SpiResponse<SpiPayment> getPaymentById(SpiPayment spiPayment, String paymentId, AspspConsentData aspspConsentData) {
         return null; //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     }
@@ -259,5 +255,10 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPayment spiPayment, AspspConsentData aspspConsentData) {
         return null; //TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    }
+
+    @Override
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPayment busynessObject, AspspConsentData aspspConsentData) {
+        return null; // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
     }
 }
