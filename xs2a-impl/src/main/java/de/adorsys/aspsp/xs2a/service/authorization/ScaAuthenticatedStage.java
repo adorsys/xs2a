@@ -23,8 +23,8 @@ import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDa
 import de.adorsys.aspsp.xs2a.service.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,18 +41,17 @@ public class ScaAuthenticatedStage extends ScaStage<UpdatePisConsentPsuDataReque
 
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
-        AspspConsentData aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(), getMethod(request.getAuthenticationMethodId()),pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId())).getAspspConsentData();
+        AspspConsentData aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(), getMethod(request.getAuthenticationMethodId()), pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId())).getAspspConsentData();
         pisConsentDataService.updateConsentData(aspspConsentData);
         request.setScaStatus(SCAMETHODSELECTED);
         return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
     }
 
-    private SpiScaMethod getMethod(String method){ //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        SpiScaMethod scaMethod =SpiScaMethod.SMS_OTP;
+    private SpiScaMethod getMethod(String method) { //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiScaMethod scaMethod = SpiScaMethod.SMS_OTP;
         try {
             scaMethod = SpiScaMethod.valueOf(method);
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.error("Sca Method could not be parsed", e.getLocalizedMessage());
         }
         return scaMethod;
