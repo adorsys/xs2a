@@ -160,4 +160,8 @@ public class AspspRemoteUrls {
     public String applyStrongUserAuthorisationForAis() {
         return spiMockBaseUrl + "/consent/confirmation/ais";
     }
+
+    public String cancelPayment() {
+        return "/payments/{paymentId}";
+    }
 }
