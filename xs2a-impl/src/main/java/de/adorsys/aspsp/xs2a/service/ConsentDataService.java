@@ -25,6 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -36,7 +39,7 @@ public abstract class ConsentDataService {
 
     public AspspConsentData getConsentData(String consentId) {
         Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(getRemoteUrl().getConsentData(), Xs2aConsentData.class, consentId).getBody();
-        return new AspspConsentData(xs2aConsentData.getAspspConsentData(), consentId);
+        return new AspspConsentData(Base64.getDecoder().decode(xs2aConsentData.getAspspConsentDataBase64()), consentId);
     }
 
     public AspspConsentData getConsentDataByPaymentId(String paymentId) {
@@ -45,8 +48,8 @@ public abstract class ConsentDataService {
 
     public void updateConsentData(AspspConsentData consentData) {
         Optional.ofNullable(consentData)
-            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()))
-            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(cd.getAspspConsentData()), cd.getConsentId()));
+            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()) && Objects.nonNull(cd.getAspspConsentData()))
+            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateConsentData(), new Xs2aConsentData(Base64.getEncoder().encodeToString(cd.getAspspConsentData())), cd.getConsentId()));
     }
 
     protected abstract ConsentRemoteUrls getRemoteUrl();

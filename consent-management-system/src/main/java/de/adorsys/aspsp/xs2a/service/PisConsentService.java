@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Base64;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
@@ -129,7 +130,7 @@ public class PisConsentService {
 
     private PisConsentAspspDataResponse prepareAspspConsentData(PisConsent consent) {
         PisConsentAspspDataResponse response = new PisConsentAspspDataResponse();
-        response.setAspspConsentData(consent.getAspspConsentData());
+        response.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(consent.getAspspConsentData()));
         response.setConsentId(consent.getExternalId());
         return response;
     }
@@ -218,7 +219,7 @@ public class PisConsentService {
     }
 
     private String updateAspspConsentData(UpdateConsentAspspDataRequest request, PisConsent consent) {
-        consent.setAspspConsentData(request.getAspspConsentData());
+        consent.setAspspConsentData(Base64.getDecoder().decode(request.getAspspConsentDataBase64()));
         PisConsent savedConsent = pisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

@@ -87,7 +87,7 @@ public class PisConsentServiceTest {
 
     private UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
         UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
-        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        request.setAspspConsentDataBase64("zdxcvvzzzxcvzzzz");
         return request;
     }
 }

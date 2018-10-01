@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -225,7 +226,7 @@ public class AisConsentControllerTest {
 
     private AisConsentAspspDataResponse getAisConsentAspspDataResponse() {
         AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
-        response.setAspspConsentData(CONSENT_DATA);
+        response.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(CONSENT_DATA));
         return response;
     }
 }

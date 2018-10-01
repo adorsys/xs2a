@@ -34,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
 import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
@@ -211,12 +208,12 @@ public class AisConsentService {
 
     private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
         AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
-        response.setAspspConsentData(consent.getAspspConsentData());
+        response.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(consent.getAspspConsentData()));
         return response;
     }
 
     private String updateAspspConsentData(UpdateConsentAspspDataRequest request, AisConsent consent) {
-        consent.setAspspConsentData(request.getAspspConsentData());
+        consent.setAspspConsentData(Base64.getDecoder().decode(request.getAspspConsentDataBase64()));
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

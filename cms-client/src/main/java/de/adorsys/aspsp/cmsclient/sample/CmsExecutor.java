@@ -202,7 +202,7 @@ public class CmsExecutor {
     private static UpdateConsentAspspDataRequest buildUpdateConsentAspspDataRequest() {
         UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
         byte[] aspspCnsentData = Base64.getEncoder().encode("zdxcvvzzzxcvzzzz".getBytes());
-        request.setAspspConsentData(aspspCnsentData);
+        request.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(aspspCnsentData));
         return request;
     }
 
