@@ -210,16 +210,18 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, SpiScaMethod, AspspConsentData)}
      */
     @Override
-    public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {
-        aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuId);
+    public SpiResponse<Void> performStrongUserAuthorisation(String psuId, SpiScaMethod choosenScaMethod, AspspConsentData aspspConsentData) {
+        aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuId, choosenScaMethod);
+        return new SpiResponse<>(null, aspspConsentData);
     }
 
     @Override
-    public void applyStrongUserAuthorisation(SpiScaConfirmation confirmation, AspspConsentData aspspConsentData) {
+    public SpiResponse<Void> applyStrongUserAuthorisation(SpiScaConfirmation confirmation, AspspConsentData aspspConsentData) {
         aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(confirmation), ResponseEntity.class);
+        return new SpiResponse<>(null, aspspConsentData);
     }
 
     @Override
@@ -260,5 +262,11 @@ public class PaymentSpiImpl implements PaymentSpi {
     @Override
     public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPayment busynessObject, AspspConsentData aspspConsentData) {
         return null; // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+    }
+
+    @Override
+    public SpiResponse<SpiCancelPayment> cancelPayment(String paymentId, AspspConsentData aspspConsentData) {
+        ResponseEntity<SpiCancelPayment> responseEntity = aspspRestTemplate.exchange(aspspRemoteUrls.cancelPayment(), HttpMethod.DELETE, null, SpiCancelPayment.class, paymentId);
+        return new SpiResponse<>(responseEntity.getBody(), aspspConsentData);
     }
 }

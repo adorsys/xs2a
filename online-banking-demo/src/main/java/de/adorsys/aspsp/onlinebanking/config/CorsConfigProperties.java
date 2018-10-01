@@ -20,20 +20,14 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Data
 @Component
-@ConfigurationProperties(prefix = "environment")
-public class EnvironmentConfigurationProperties {
-    private String mockServerUrl;
-    private String xs2aServerUrl;
-    private String aspspProfileServerUrl;
-    private String consentManagementServerUrl;
-    private KeycloakConfig keycloakConfig;
-
-    @Data
-    public static class KeycloakConfig {
-        private String url;
-        private String realm;
-        private String clientId;
-    }
+@ConfigurationProperties(prefix = "endpoints.cors")
+public class CorsConfigProperties {
+    private Boolean allowCredentials;
+    private List<String> allowedOrigins;
+    private List<String> allowedMethods;
+    private List<String> allowedHeaders;
 }

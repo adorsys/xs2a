@@ -162,18 +162,19 @@ public interface PaymentSpi extends AuthorisationSpi<SpiPayment> {
      * Performs strong customer authorization
      *
      * @param psuId            ASPSP identifier of the psu
+     * @param choosenMethod     Chosen SCA Method
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @deprecated since 1.8. Will be removed in 1.9.
      */
     @Deprecated
-    void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
+    SpiResponse<Void> performStrongUserAuthorisation(String psuId, SpiScaMethod choosenMethod, AspspConsentData aspspConsentData);
 
     /**
      * @deprecated since 1.8. Will be removed in 1.9.
      */
     @Deprecated
-    void applyStrongUserAuthorisation(SpiScaConfirmation spiScaConfirmation, AspspConsentData aspspConsentData);
+    SpiResponse<Void> applyStrongUserAuthorisation(SpiScaConfirmation spiScaConfirmation, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a payment at ASPSP. SPI Implementation shall return paymentId here. Used in all SCA approaches.
@@ -218,4 +219,14 @@ public interface PaymentSpi extends AuthorisationSpi<SpiPayment> {
      */
     SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
+
+    /**
+     * Returns a cancel payment information by its ASPSP identifier.
+     *
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return payment cancellation information
+     */
+    SpiResponse<SpiCancelPayment> cancelPayment(String paymentId, AspspConsentData aspspConsentData);
 }
