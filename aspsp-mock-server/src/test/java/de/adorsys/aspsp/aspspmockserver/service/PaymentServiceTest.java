@@ -144,7 +144,7 @@ public class PaymentServiceTest {
     }
 
     private Optional<SpiCancelPayment> buildSpiCancelPayment() {
-        return Optional.of(new SpiCancelPayment(true));
+        return Optional.of(new SpiCancelPayment());
     }
 
     private SpiSinglePayment getSpiSinglePayment(long amountToTransfer) {

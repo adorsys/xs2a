@@ -106,11 +106,11 @@ public class PaymentController {
                    : ResponseEntity.noContent().build();
     }
 
-    @ApiOperation(value = "Delete payment by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiOperation(value = "Cancel payment by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 202, message = "ACCEPTED", response = SpiCancelPayment.class),
         @ApiResponse(code = 204, message = "Payment Not Found")})
-    @GetMapping(path = "/{payment-id}")
+    @DeleteMapping("/{payment-id}")
     public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("payment-id") String paymentId) {
         return paymentService.cancelPayment(paymentId)
                    .map(p -> new ResponseEntity<>(p, ACCEPTED))
