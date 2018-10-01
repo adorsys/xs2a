@@ -44,16 +44,20 @@ public class OauthScaPaymentService implements ScaPaymentService {
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
         SpiPeriodicPayment spiPeriodicPayment = paymentMapper.mapToSpiPeriodicPayment(periodicPayment);
-        return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, new AspspConsentData()).getPayload());
+        //TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        return paymentMapper.mapToPaymentInitializationResponse(paymentSpi.initiatePeriodicPayment(spiPeriodicPayment, new AspspConsentData()).getPayload(), new AspspConsentData());//TODO put real data call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     }
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
         SpiBulkPayment spiBulkPayment = paymentMapper.mapToSpiBulkPayment(bulkPayment);
+        //TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         List<SpiPaymentInitialisationResponse> spiPaymentInitiations = paymentSpi.createBulkPayments(spiBulkPayment, new AspspConsentData()).getPayload();
-
+        //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         return spiPaymentInitiations.stream()
-                   .map(paymentMapper::mapToPaymentInitializationResponse)
+                   .map((SpiPaymentInitialisationResponse response) -> paymentMapper.mapToPaymentInitializationResponse(
+                       response, new AspspConsentData()))//TODO put real data call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
                    .peek(resp -> {
                        if (StringUtils.isBlank(resp.getPaymentId()) || resp.getTransactionStatus() == Xs2aTransactionStatus.RJCT) {
                            resp.setTppMessages(new MessageErrorCode[]{PAYMENT_FAILED});
@@ -66,7 +70,9 @@ public class OauthScaPaymentService implements ScaPaymentService {
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
         SpiSinglePayment spiSinglePayment = paymentMapper.mapToSpiSinglePayment(singlePayment);
+        //TODO put get consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiPaymentInitialisationResponse spiPeriodicPaymentResp = paymentSpi.createPaymentInitiation(spiSinglePayment, new AspspConsentData()).getPayload();
-        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp);
+        //TODO put update consent call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        return paymentMapper.mapToPaymentInitializationResponse(spiPeriodicPaymentResp, new AspspConsentData());//TODO put real data call here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     }
 }

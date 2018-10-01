@@ -29,6 +29,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperPsd2;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentModelMapperXs2a;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.PaymentApi;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,7 @@ import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.FORMAT_ERROR;
 
 @RestController
 @AllArgsConstructor
+@Api(value = "v1", description = "Provides access to the payment initiation", tags = {"Payment Initiation Service (PIS)"})
 public class PaymentController implements PaymentApi {
     private final PaymentService xs2aPaymentService;
     private final ResponseMapper responseMapper;

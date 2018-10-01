@@ -40,7 +40,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@Api(tags = "AISP, Consents", description = "Provides access to the Psu Consents")
+@Api(value = "v1", description = "Provides access to the account information", tags = {"Account Information Service (AIS)"})
 public class ConsentController implements ConsentApi {
     private final ConsentService consentService;
     private final ResponseMapper responseMapper;

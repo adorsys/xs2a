@@ -39,7 +39,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@Api(tags = "AISP, Accounts", description = "Provides access to the Psu account")
+@Api(value = "v1", description = "Provides access to the account information", tags = {"Account Information Service (AIS)"})
 public class AccountController implements AccountApi {
 
     private final AccountService accountService;

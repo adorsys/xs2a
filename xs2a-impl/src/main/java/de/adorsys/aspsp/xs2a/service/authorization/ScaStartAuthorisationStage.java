@@ -26,6 +26,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import org.apache.commons.collections.CollectionUtils;
@@ -45,23 +46,43 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
 
-        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(), request.getPassword(), pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId()));
-        pisConsentDataService.updateConsentData(authorisationStatusSpiResponse.getAspspConsentData());
+        AspspConsentData aspspConsentData = pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId());
+        SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(),
+                                                                                                     request.getPassword(),
+                                                                                                     aspspConsentData
+                                                                                                    );
+        aspspConsentData = authorisationStatusSpiResponse.getAspspConsentData();
+        pisConsentDataService.updateConsentData(aspspConsentData);
 
         if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
             return new UpdatePisConsentPsuDataResponse(FAILED);
         }
-        request.setCmsAspspConsentData(new CmsAspspConsentData(authorisationStatusSpiResponse.getAspspConsentData().getAspspConsentData()));
-        List<SpiScaMethod> spiScaMethods = paymentSpi.readAvailableScaMethod(request.getPsuId(), authorisationStatusSpiResponse.getAspspConsentData()).getPayload();
+        request.setCmsAspspConsentData(new CmsAspspConsentData(aspspConsentData.getAspspConsentData()));
+        SpiResponse<List<SpiScaMethod>> listAvailablescaMethodResponse = paymentSpi.readAvailableScaMethod(request.getPsuId(),
+                                                                                            aspspConsentData
+                                                                                           );
+        aspspConsentData = listAvailablescaMethodResponse.getAspspConsentData();
+        pisConsentDataService.updateConsentData(aspspConsentData);
+        List<SpiScaMethod> spiScaMethods = listAvailablescaMethodResponse.getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
-            paymentSpi.executePayment(pisConsentAuthorisationResponse.getPaymentType(), pisConsentAuthorisationResponse.getPayments(), authorisationStatusSpiResponse.getAspspConsentData());
+            SpiResponse<String> executePaymentResponse = paymentSpi.executePayment(pisConsentAuthorisationResponse.getPaymentType(),
+                                                                              pisConsentAuthorisationResponse.getPayments(),
+                                                                              aspspConsentData
+                                                                             );
+            aspspConsentData = executePaymentResponse.getAspspConsentData();
+            pisConsentDataService.updateConsentData(aspspConsentData);
             request.setScaStatus(FINALISED);
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
 
         } else if (isSingleScaMethod(spiScaMethods)) {
 
-            paymentSpi.performStrongUserAuthorisation(request.getPsuId(), pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId()));
+            aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(),
+                                                                         spiScaMethods.get(0),
+                                                                         aspspConsentData
+                                                                         )
+                                   .getAspspConsentData();
+            pisConsentDataService.updateConsentData(aspspConsentData);
             request.setScaStatus(SCAMETHODSELECTED);
             request.setAuthenticationMethodId(spiScaMethods.get(0).name());
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);

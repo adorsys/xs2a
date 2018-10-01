@@ -161,18 +161,19 @@ public interface PaymentSpi {
      * Performs strong customer authorization
      *
      * @param psuId            ASPSP identifier of the psu
+     * @param choosenMethod     Chosen SCA Method
      * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
      *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @deprecated since 1.8. Will be removed in 1.9. Use {@link #requestAuthorisationCode(String, SpiScaMethod, SpiPayment, AspspConsentData)}
      */
     @Deprecated
-    void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData);
+    SpiResponse<Void> performStrongUserAuthorisation(String psuId, SpiScaMethod choosenMethod, AspspConsentData aspspConsentData);
 
     /**
      * @deprecated since 1.8. Will be removed in 1.9. Use {@link #verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation, SpiPayment, AspspConsentData)}
      */
     @Deprecated
-    void applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
+    SpiResponse<Void> applyStrongUserAuthorisation(SpiPaymentConfirmation spiPaymentConfirmation, AspspConsentData aspspConsentData);
 
     /**
      * Initiates a payment at ASPSP. SPI Implementation shall return paymentId here. Used in all SCA approaches.

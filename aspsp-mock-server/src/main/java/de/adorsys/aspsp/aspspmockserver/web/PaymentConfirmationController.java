@@ -22,6 +22,7 @@ import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,14 +39,14 @@ public class PaymentConfirmationController {
     private final TanConfirmationService tanConfirmationService;
     private final PaymentService paymentService;
 
-    @PostMapping(path = "/{psu-id}")
+    @PostMapping(path = "/{psu-id}/{sca-method-selected}")
     @ApiOperation(value = "Generates TAN for pis consent confirmation", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Success"),
         @ApiResponse(code = 400, message = "Bad request")
     })
-    public ResponseEntity<Void> generateAndSendTan(@PathVariable("psu-id") String psuId) {
-        return tanConfirmationService.generateAndSendTanForPsuById(psuId)
+    public ResponseEntity<Void> generateAndSendTan(@PathVariable("psu-id") String psuId, @PathVariable("sca-method-selected")String scaMethodSelected) {
+        return tanConfirmationService.sendUserAuthRequestWithPreSelectedScaMethod(psuId, SpiScaMethod.valueOf(scaMethodSelected))
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
     }
