@@ -24,13 +24,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
+public class PeriodicPaymentSpiImpl implements PaymentSpi<SpiPeriodicPayment> {
     @Override
     public SpiResponse<SpiPeriodicPayment> initiatePayment(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;

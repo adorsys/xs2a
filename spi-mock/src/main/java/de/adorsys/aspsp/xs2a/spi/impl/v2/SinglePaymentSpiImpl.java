@@ -24,13 +24,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class SinglePaymentSpiImpl implements SinglePaymentSpi {
+public class SinglePaymentSpiImpl implements PaymentSpi<SpiSinglePayment> {
     @Override
     public SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;

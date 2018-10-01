@@ -24,13 +24,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.service.v2.BulkPaymentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class BulkPaymentSpiImpl implements BulkPaymentSpi {
+public class BulkPaymentSpiImpl implements PaymentSpi<SpiBulkPayment> {
     @Override
     public SpiResponse<SpiBulkPayment> initiatePayment(SpiBulkPayment payment, AspspConsentData aspspConsentData) {
         return null;
