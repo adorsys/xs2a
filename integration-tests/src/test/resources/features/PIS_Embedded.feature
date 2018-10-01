@@ -91,6 +91,7 @@ Feature: Payment Initiation Service Embedded Approach
             | payments	                               | payments                      |  updateIdentification-wrong-authorisation-id.json  | sepa-credit-transfers   | singlePayInit-successful.json |
             | payments	                               | payments                      |  updateIdentification-wrong-format-request-id.json | sepa-credit-transfers   | singlePayInit-successful.json |
             | payments	                               | recurring-payments            |  updateIdentification-wrong-payment-service.json   | sepa-credit-transfers   | singlePayInit-successful.json |
+            | payments	                               | recurring-payments            |  updateIdentification-not-existing-paymentId.json   | sepa-credit-transfers   | singlePayInit-successful.json |
 
 #    ####################################################################################################################
     #                                                                                                                  #
@@ -127,7 +128,7 @@ Feature: Payment Initiation Service Embedded Approach
             | payments	                               | payments                       | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuth-wrong-format-request-id.json  |
             | payments	                               | payments                       | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuth-wrong-sca-method.json         |
             | payments	                               | recurring-payments             | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuth-wrong-payment-service.json    |
-
+            | payments	                               | payments                       | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuth-wrong-authorisation-id.json   |
 
 
     ####################################################################################################################
