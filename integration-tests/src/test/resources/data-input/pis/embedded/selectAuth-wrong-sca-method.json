@@ -14,7 +14,7 @@
     "body": [
       {
         "category": "ERROR",
-        "code": "FORMAT_ERROR"
+        "code": "SCA_METHOD_UNKNOWN"
       }
     ]
   }
