@@ -39,7 +39,7 @@ public class ScaMethodSelectedStage extends ScaStage<UpdatePisConsentPsuDataRequ
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse response) {
         AspspConsentData aspspConsentData = pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId());
-        paymentSpi.applyStrongUserAuthorisation(spiCmsPisMapper.buildSpiPaymentConfirmation(request, response.getConsentId()), aspspConsentData);
+        paymentSpi.applyStrongUserAuthorisation(spiCmsPisMapper.buildSpiScaConfirmation(request, response.getConsentId()), aspspConsentData);
         paymentSpi.executePayment(response.getPaymentType(), response.getPayments(), aspspConsentData);
         request.setScaStatus(FINALISED); // TODO check the paymentSpi result first https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/338
         return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);

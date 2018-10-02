@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.psu;
+package de.adorsys.aspsp.xs2a.spi.domain.authorisation;
 
 public enum SpiScaMethod {
     SMS_OTP,
