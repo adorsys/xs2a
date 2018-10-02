@@ -121,6 +121,7 @@ public class AccountMockServerData {
         transactionRepository.save(getTransaction("ba8f7012-bdaf-4ada-bbf7-4c004d046ffe", psus.get(4), psus.get(3), BigDecimal.valueOf(50), EUR, LocalDate.parse("2018-07-05"), LocalDate.parse("2018-07-05"), "Spende Greenpeace"));
         transactionRepository.save(getTransaction("7d12ff85-8ace-4124-877a-6bc3f125e98b", psus.get(5), psus.get(3), BigDecimal.valueOf(45.99), EUR, LocalDate.parse("2018-01-01"), LocalDate.parse("2018-01-01"), "Internet Rechnung Januar 2018 - MC-13058247-00000002"));
         transactionRepository.save(getTransaction("bb0962ca-f6db-4ba7-b187-2b2e1af25845", psus.get(6), psus.get(3), BigDecimal.valueOf(200), EUR, LocalDate.parse("2018-05-15"), LocalDate.parse("2018-05-15"), "Alles Gute zum Geburtstag"));
+        transactionRepository.save(getTransaction("abc962ca-f6db-4ba7-b187-2b2e1af2test", psus.get(4), psus.get(3), BigDecimal.valueOf(70), EUR, LocalDate.parse("2018-11-24"), LocalDate.parse("2018-12-25"), "Spende fuer Nuernberg Bieber"));
     }
 
     private SpiTransaction getTransaction(String transactionId, Psu psu, Psu debtor, BigDecimal amount, Currency currency, LocalDate bookingDate, LocalDate valueDate, String purposeCode) {
@@ -149,8 +150,8 @@ public class AccountMockServerData {
             psuRepository.save(new Psu("PSU_004", "fractal567@gmail.com", "aspsp3", "zzz", Arrays.asList(accountDetails.get(5), accountDetails.get(6)), ALLOWED_PAYMENTS, Arrays.asList(SpiScaMethod.PUSH_OTP, SpiScaMethod.CHIP_OTP))),
 
             // Test User for Cucumber tests //TODO Update Sca Methods for all Cucumber PSUs
-            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp4", "zzz", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
-            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp5", "zzz", Arrays.asList(accountDetails.get(7)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp4", "zzz", Arrays.asList(accountDetails.get(7),accountDetails.get(14)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
+            psuRepository.save(new Psu("d9e71419-24e4-4c5a-8d93-fcc23153aaff", "mueller.alex@web.de", "aspsp5", "zzz", Arrays.asList(accountDetails.get(7),accountDetails.get(14)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
             psuRepository.save(new Psu("PSU_CucumberGreenpeace", "greenpeace@web.de", "aspsp6", "zzz", Arrays.asList(accountDetails.get(8)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
             psuRepository.save(new Psu("PSU_CucumberTelekom", "telekom@telekom.de", "aspsp7", "zzz", Arrays.asList(accountDetails.get(9)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
             psuRepository.save(new Psu("PSU_CucumberJochen", "jochen.mueller@web.de", "aspsp8", "zzz", Arrays.asList(accountDetails.get(10)), ALLOWED_PAYMENTS_CUCUMBER_TESTUSER, Collections.singletonList(SpiScaMethod.SMS_OTP))),
@@ -179,7 +180,8 @@ public class AccountMockServerData {
             getNewAccountCucumberTest("12345-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(20000)), "DE06500105171657611553", null, null, "Jochen Mueller", "GIRO"),
             getNewAccountCucumberTest("23236-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(6500000)), "DE49500105175378548627", null, null, "Amazon", "GIRO"),
             getNewAccountCucumberTest("37289-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(9500000)), "DE21500105176194357737", null, null, "Holidaycheck.com", "GIRO"),
-            getNewAccountCucumberTest("10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE54500105173424724776", null, null, "Eventim", "GIRO")
+            getNewAccountCucumberTest("10023-999999999", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(2500000)), "DE54500105173424724776", null, null, "Eventim", "GIRO"),
+            getNewAccountCucumberTest("868beafc-ef87-4fdb-ac0a-dd6c52b77ee6", getNewBalanceListCucumberTests(EUR, BigDecimal.valueOf(50000)), "DE15086016167627403587", null, null, "Alexander Mueller", "GIRO")
         );
     }
 
