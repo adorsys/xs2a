@@ -97,12 +97,13 @@ public class AccountModelMapper {
                    .orElse(null);
     }
 
-    public ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {
-        BalanceList balancesResponse = new BalanceList();
-        balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
+    public ReadBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport) {
+        BalanceList balanceList = new BalanceList();
+        balancesReport.getBalances().forEach(balance -> balanceList.add(mapToBalance(balance)));
 
         return new ReadBalanceResponse200()
-                   .balances(balancesResponse);
+                   .balances(balanceList)
+                   .account(balancesReport.getXs2aAccountReference());
     }
 
     public Balance mapToBalance(Xs2aBalance balance) {
