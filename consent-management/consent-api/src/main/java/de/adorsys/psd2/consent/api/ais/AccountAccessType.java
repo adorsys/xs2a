@@ -21,5 +21,5 @@ import io.swagger.annotations.ApiModel;
 @ApiModel(description = "AccountAccess type", value = "AccountAccessType")
 public enum AccountAccessType {
     ALL_ACCOUNTS,
-    ALL_ACCOUNTS_WITH_BALANCES;
+    ALL_ACCOUNTS_WITH_BALANCES
 }

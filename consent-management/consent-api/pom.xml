@@ -19,8 +19,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>xs2a</artifactId>
-        <groupId>de.adorsys.aspsp</groupId>
+        <artifactId>consent-management</artifactId>
+        <groupId>de.adorsys.psd2</groupId>
         <version>1.9-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -33,8 +33,7 @@
     <description>Consent API</description>
 
     <properties>
-        <swagger.annotations.version>1.5.19</swagger.annotations.version>
-        <ruleset.basedir>..</ruleset.basedir>
+        <ruleset.basedir>../..</ruleset.basedir>
     </properties>
 
     <dependencies>

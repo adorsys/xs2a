@@ -32,7 +32,7 @@ public enum PisPaymentProduct {
 
     private String code;
 
-    private static Map<String, PisPaymentProduct> container = new HashMap();
+    private static Map<String, PisPaymentProduct> container = new HashMap<>();
 
     static {
         Arrays.stream(values())
