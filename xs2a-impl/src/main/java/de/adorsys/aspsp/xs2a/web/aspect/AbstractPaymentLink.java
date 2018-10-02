@@ -20,7 +20,9 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
@@ -30,19 +32,25 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
-import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthorisationStartType.EXPLICIT;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
+    private boolean tppExplicitAuthorisationPreferred = false;
+    private AuthorizationMethodService authorizationMethodService;
 
-    public AbstractPaymentLink(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+    public AbstractPaymentLink(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorizationMethodService authorizationMethodService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+        this.authorizationMethodService = authorizationMethodService;
     }
 
     @SuppressWarnings("unchecked")
-    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentType paymentType, String psuId) {
+    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentRequestParameters paymentRequestParameters, String psuId) {
         Object body = result.getBody();
+
+        setTppExplicitAuthorisationPreferred(paymentRequestParameters.isTppExplicitAuthorisationPreferred());
+        PaymentType paymentType = paymentRequestParameters.getPaymentType();
+
         if (EnumSet.of(SINGLE, PERIODIC).contains(paymentType)) {
             doEnrichLink(paymentType, (PaymentInitialisationResponse) body, psuId);
         } else {
@@ -68,7 +76,13 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
             return addEmbeddedRelatedLinks(links, paymentService, encodedPaymentId, body.getAuthorizationId());
         } else if (aspspProfileService.getScaApproach() == ScaApproach.REDIRECT) {
-            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + psuId);
+
+            addRedirectRelatedLinks(links, paymentService, encodedPaymentId, body.getPisConsentId(), psuId, body.getAuthorizationId());
+
+            //todo delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + psuId);
+
+
         } else if (aspspProfileService.getScaApproach() == ScaApproach.OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
@@ -76,7 +90,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorisationId) {
-        if (EXPLICIT == aspspProfileService.getAuthorisationStartType()) {
+        if (isExplicitMethod()) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
         } else {
             links.setScaStatus(
@@ -86,5 +100,26 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         }
 
         return links;
+    }
+
+    private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentId, String consentId, String psuId, String authorisationId) {
+        if (isExplicitMethod()) {
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
+        } else {
+            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + consentId + "/" + paymentId + "/" + psuId);
+            links.setScaStatus(
+                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}", paymentService, paymentId, authorisationId));
+        }
+
+        return links;
+    }
+
+    boolean isExplicitMethod() {
+        return authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred) &&
+                   aspspProfileService.isSigningBasketSupported();
+    }
+
+    private void setTppExplicitAuthorisationPreferred(boolean tppExplicitPreferred) {
+        this.tppExplicitAuthorisationPreferred = tppExplicitPreferred;
     }
 }

@@ -38,4 +38,5 @@ public class AspspSettings {
     private boolean allPsd2Support;
     private AuthorisationStartType authorisationStartType;
     private boolean transactionsWithoutBalancesSupported;
+    private boolean signingBasketSupported;
 }

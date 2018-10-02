@@ -54,6 +54,7 @@ public class ConsentControllerTest {
     private final String WRONG_PSU_ID = "ID 666";
     private final String CONSENT_ID = "XXXX-YYYY-XXXX-YYYY";
     private final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
+    private final boolean EXPLICIT_PREFERRED = true;
 
     @InjectMocks
     private ConsentController consentController;
@@ -70,8 +71,8 @@ public class ConsentControllerTest {
     @Before
     public void setUp() {
         when(consentModelMapper.mapToCreateConsentReq(any())).thenReturn(getCreateConsentReq());
-        when(consentService.createAccountConsentsWithResponse(any(), eq(CORRECT_PSU_ID))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
-        when(consentService.createAccountConsentsWithResponse(any(), eq(WRONG_PSU_ID))).thenReturn(createXs2aConsentResponse(null));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(CORRECT_PSU_ID), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(WRONG_PSU_ID), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
         when(consentService.getAccountConsentsStatusById(CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(ConsentStatus.RECEIVED)).build());
         when(consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatusResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build());
         when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(getConsent(CONSENT_ID));
@@ -198,7 +199,7 @@ public class ConsentControllerTest {
 
         return isEmpty(consentId)
                    ? ResponseObject.<ConsentsResponse201>builder().fail(new MessageError(
-                       new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+            new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<ConsentsResponse201>builder().body(response).build();
     }
 
@@ -206,7 +207,7 @@ public class ConsentControllerTest {
     private ResponseObject<CreateConsentResponse> createXs2aConsentResponse(String consentId) {
         return isEmpty(consentId)
                    ? ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(
-                       new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+            new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null)).build();
     }
 

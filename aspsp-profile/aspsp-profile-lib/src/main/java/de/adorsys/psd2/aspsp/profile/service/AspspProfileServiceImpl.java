@@ -45,7 +45,10 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             profileConfiguration.getTransactionLifetime(),
             profileConfiguration.isAllPsd2Support(),
             profileConfiguration.getAuthorisationStartType(),
-            profileConfiguration.isTransactionsWithoutBalancesSupported());
+            profileConfiguration.isTransactionsWithoutBalancesSupported(),
+            true
+
+        );
     }
 
     @Override
