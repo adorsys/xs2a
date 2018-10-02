@@ -18,11 +18,11 @@ package de.adorsys.aspsp.xs2a.spi.service.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public interface PaymentSpi<T> {
 
     SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, T payment, AspspConsentData aspspConsentData);
 
-    SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation spiPaymentConfirmation, T payment, AspspConsentData aspspConsentData);
+    SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation spiScaConfirmation, T payment, AspspConsentData aspspConsentData);
 
     SpiResponse<T> getPaymentById(T payment, String paymentId, AspspConsentData aspspConsentData);
 

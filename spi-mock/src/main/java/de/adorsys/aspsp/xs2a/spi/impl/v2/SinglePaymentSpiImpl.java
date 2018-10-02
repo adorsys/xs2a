@@ -18,12 +18,12 @@ package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +57,7 @@ public class SinglePaymentSpiImpl implements PaymentSpi<SpiSinglePayment> {
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiPaymentConfirmation spiPaymentConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
