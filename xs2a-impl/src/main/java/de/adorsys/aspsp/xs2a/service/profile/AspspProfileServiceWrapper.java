@@ -185,6 +185,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isSigningBasketSupported();
     }
 
+    /**
+     * Reads if is payment cancellation authorization mandated from ASPSP profile service
+     *
+     * @return true if payment cancellation authorization is mandated, false if doesn't
+     */
+    public boolean isPaymentCancellationAuthorizationMandated() {
+        return readAspspSettings().isPaymentCancellationAuthorizationMandated();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }
