@@ -176,6 +176,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().isTransactionsWithoutBalancesSupported();
     }
 
+    /**
+     * Reads if signing basket supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports signing basket , false if doesn't
+     */
+    public boolean isSigningBasketSupported() {
+        return readAspspSettings().isSigningBasketSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }
