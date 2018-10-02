@@ -77,8 +77,8 @@ public class OauthScaPaymentServiceTest {
         when(paymentMapper.mapToSpiBulkPayment(getBulk(true, true, IBAN))).thenReturn(getSpiBulkPayment(true, true, IBAN));
         when(paymentMapper.mapToSpiBulkPayment(getBulk(true, false, IBAN))).thenReturn(getSpiBulkPayment(true, false, IBAN));
         when(paymentMapper.mapToSpiBulkPayment(getBulk(false, false, WRONG_IBAN))).thenReturn(getSpiBulkPayment(false, false, WRONG_IBAN));
-        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true))).thenReturn(getResp(true));
-        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false))).thenReturn(getResp(false));
+        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(true), ASPSP_CONSENT_DATA)).thenReturn(getResp(true));
+        when(paymentMapper.mapToPaymentInitializationResponse(getSpiResp(false), ASPSP_CONSENT_DATA)).thenReturn(getResp(false));
         when(paymentMapper.mapToPaymentInitResponseFailedPayment(getPayment(false), PAYMENT_FAILED))
             .thenReturn(getResp(false));
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, true, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));

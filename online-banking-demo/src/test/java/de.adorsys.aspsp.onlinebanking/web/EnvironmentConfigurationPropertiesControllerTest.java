@@ -33,6 +33,8 @@ import static org.mockito.Mockito.when;
 public class EnvironmentConfigurationPropertiesControllerTest {
     private final String MOCK_SERVER_URL = "http://localhost:28080";
     private final String XS2A_SERVER_URL = "http://localhost:8080";
+    private final String ASPSP_PROFILE_SERVER_URL = "http://localhost:48080";
+    private final String CONSENT_MANAGEMENT_SERVER_URL = "http://localhost:38080";
     private final String KEYCLOAK_URL = "http://localhost:8081/auth";
     private final String KEYCLOAK_REALM = "xs2a";
     private final String KEYCLOAK_CLIENT_ID = "aspsp-mock";
@@ -50,6 +52,10 @@ public class EnvironmentConfigurationPropertiesControllerTest {
             .thenReturn(MOCK_SERVER_URL);
         when(configurationProperties.getXs2aServerUrl())
             .thenReturn(XS2A_SERVER_URL);
+        when(configurationProperties.getAspspProfileServerUrl())
+            .thenReturn(ASPSP_PROFILE_SERVER_URL);
+        when(configurationProperties.getConsentManagementServerUrl())
+            .thenReturn(CONSENT_MANAGEMENT_SERVER_URL);
         when(configurationProperties.getKeycloakConfig())
             .thenReturn(keycloakConfig);
         when(keycloakConfig.getUrl())
@@ -76,6 +82,8 @@ public class EnvironmentConfigurationPropertiesControllerTest {
         assertThat(actualConfigurationProperties).isNotNull();
         assertThat(actualConfigurationProperties.getMockServerUrl()).isEqualTo(MOCK_SERVER_URL);
         assertThat(actualConfigurationProperties.getXs2aServerUrl()).isEqualTo(XS2A_SERVER_URL);
+        assertThat(actualConfigurationProperties.getAspspProfileServerUrl()).isEqualTo(ASPSP_PROFILE_SERVER_URL);
+        assertThat(actualConfigurationProperties.getConsentManagementServerUrl()).isEqualTo(CONSENT_MANAGEMENT_SERVER_URL);
 
         EnvironmentConfigurationProperties.KeycloakConfig actualKeycloackConfig = actualConfigurationProperties.getKeycloakConfig();
 

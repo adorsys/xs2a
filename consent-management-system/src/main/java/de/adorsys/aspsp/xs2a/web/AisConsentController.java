@@ -131,8 +131,8 @@ public class AisConsentController {
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @PathVariable("status") String status) {
         return aisConsentService.updateConsentStatusById(consentId, CmsConsentStatus.valueOf(status))
-                   .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   ? new ResponseEntity<>(HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping(path = "/{consent-id}/authorizations")
@@ -162,8 +162,8 @@ public class AisConsentController {
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
         @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
         return aisConsentService.updateConsentAuthorization(authorizationId, consentId, consentAuthorization)
-                   .map(updated -> new ResponseEntity<Void>(HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                   ? new ResponseEntity<>(HttpStatus.OK)
+                   : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(path = "/{consent-id}/authorizations/{authorization-id}")

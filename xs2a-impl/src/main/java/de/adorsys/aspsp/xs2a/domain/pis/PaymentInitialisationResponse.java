@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -78,5 +79,8 @@ public class PaymentInitialisationResponse {
 
     @JsonIgnore
     private String paymentType;
+
+    @JsonIgnore //TODO remote it from here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    private AspspConsentData aspspConsentData;
 }
 

@@ -23,5 +23,6 @@
     <include file="migration/remove_column_pis_consent_authorization-1.1.xml"/>
     <include file="migration/drop_not_null_constraint_creditor_agent_pis_payment_data-1.2.xml"/>
     <include file="migration/remove_length_restriction_tpp_id-1.3.xml"/>
+    <include file="migration/remove_not_null_constraint_requested_execution_date_time-1.4.xml"/>
 
 </databaseChangeLog>
