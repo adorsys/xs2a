@@ -22,7 +22,6 @@
     "code": "401",
     "header": {},
     "body": {
-      "transactionStatus": "",
       "tppMessage": {
         "category": "ERROR",
         "code": "PSU_CREDENTIALS_INVALID"
