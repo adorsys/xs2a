@@ -76,13 +76,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
             return addEmbeddedRelatedLinks(links, paymentService, encodedPaymentId, body.getAuthorizationId());
         } else if (aspspProfileService.getScaApproach() == ScaApproach.REDIRECT) {
-
             addRedirectRelatedLinks(links, paymentService, encodedPaymentId, body.getPisConsentId(), psuId, body.getAuthorizationId());
-
-            //todo delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + psuId);
-
-
         } else if (aspspProfileService.getScaApproach() == ScaApproach.OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
@@ -90,7 +84,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorisationId) {
-        if (isExplicitMethod()) {
+        if (authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
         } else {
             links.setScaStatus(
@@ -103,7 +97,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentId, String consentId, String psuId, String authorisationId) {
-        if (isExplicitMethod()) {
+        if (authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
         } else {
             links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + consentId + "/" + paymentId + "/" + psuId);
@@ -112,11 +106,6 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         }
 
         return links;
-    }
-
-    boolean isExplicitMethod() {
-        return authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred) &&
-                   aspspProfileService.isSigningBasketSupported();
     }
 
     private void setTppExplicitAuthorisationPreferred(boolean tppExplicitPreferred) {

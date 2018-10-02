@@ -55,7 +55,6 @@ public class AspspProfileServiceTest {
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
-    private static final boolean EXPLICIT_PREFERRED = true;
 
     private AspspProfileService aspspProfileService;
 
@@ -142,8 +141,7 @@ public class AspspProfileServiceTest {
             AUTHORIZATION_START_TYPE,
             TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
             SIGNING_BASKET_SUPPORTED,
-            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
-            EXPLICIT_PREFERRED);
+            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {
