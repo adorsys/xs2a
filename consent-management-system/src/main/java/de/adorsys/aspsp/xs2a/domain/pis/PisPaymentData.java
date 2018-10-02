@@ -87,12 +87,12 @@ public class PisPaymentData {
     @JoinColumn(name = "remittance_id")
     private PisRemittance remittanceInformationStructured;
 
-    @Column(name = "requested_execution_date", nullable = false)
-    @ApiModelProperty(value = "Requested execution date", required = true, example = "2020-01-01")
+    @Column(name = "requested_execution_date")
+    @ApiModelProperty(value = "Requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @Column(name = "requested_execution_time", nullable = false)
-    @ApiModelProperty(value = "Requested execution time", required = true, example = "2020-01-01T15:30:35.035Z")
+    @Column(name = "requested_execution_time")
+    @ApiModelProperty(value = "Requested execution time", example = "2020-01-01T15:30:35.035Z")
     private LocalDateTime requestedExecutionTime;
 
     @Column(name = "ultimate_creditor")

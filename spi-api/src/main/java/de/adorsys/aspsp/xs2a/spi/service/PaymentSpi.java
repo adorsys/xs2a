@@ -264,4 +264,14 @@ public interface PaymentSpi {
      */
     SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPayment spiPayment, AspspConsentData aspspConsentData);
 
+
+    /**
+     * Returns a cancel payment information by its ASPSP identifier.
+     *
+     * @param paymentId        ASPSP identifier of a payment
+     * @param aspspConsentData Encrypted data that may stored in the consent management system in the consent linked to a request.
+     *                         May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return payment cancellation information
+     */
+    SpiResponse<SpiCancelPayment> cancelPayment(String paymentId, AspspConsentData aspspConsentData);
 }
