@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +33,6 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
 public class ConsentInformationResponse200Json {
-
     @JsonProperty("access")
     private AccountAccess access = null;
 
@@ -69,7 +84,6 @@ public class ConsentInformationResponse200Json {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public Boolean getRecurringIndicator() {
         return recurringIndicator;
     }
@@ -111,7 +125,6 @@ public class ConsentInformationResponse200Json {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public Integer getFrequencyPerDay() {
         return frequencyPerDay;
     }
@@ -162,6 +175,7 @@ public class ConsentInformationResponse200Json {
         this.consentStatus = consentStatus;
     }
 
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -171,12 +185,7 @@ public class ConsentInformationResponse200Json {
             return false;
         }
         ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
-        return Objects.equals(this.access, consentInformationResponse200Json.access) &&
-            Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
-            Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
-            Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
-            Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
-            Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus);
+        return Objects.equals(this.access, consentInformationResponse200Json.access) && Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) && Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) && Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) && Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) && Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus);
     }
 
     @Override
@@ -210,3 +219,4 @@ public class ConsentInformationResponse200Json {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

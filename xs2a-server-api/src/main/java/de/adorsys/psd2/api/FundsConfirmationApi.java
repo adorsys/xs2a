@@ -73,22 +73,24 @@ public interface FundsConfirmationApi {
     @RequestMapping(value = "/v1/funds-confirmations",
         produces = {"application/json"},
         method = RequestMethod.POST)
-    default ResponseEntity<?> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. ", required = true) @Valid @RequestBody ConfirmationOfFunds body,
-                                                        @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
-                                                        @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
-                                                        @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-                                                        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
+    default ResponseEntity<InlineResponse200> _checkAvailabilityOfFunds(
+        @ApiParam(value = "Request body for a confirmation of funds request. ", required = true) @Valid @RequestBody ConfirmationOfFunds body,
+        @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
+        @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
+        @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
         return checkAvailabilityOfFunds(body, xRequestID, digest, signature, tpPSignatureCertificate);
     }
 
     // Override this method
-    default ResponseEntity<?> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
+    default ResponseEntity<InlineResponse200> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate) {
         if (getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
         } else {
             log.warn("ObjectMapper or HttpServletRequest not configured in default V1Api interface so no example is generated");
         }
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
+
 
 }
 
