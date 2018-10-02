@@ -34,7 +34,6 @@
         <module>consent-api</module>
         <module>aspsp-profile</module>
         <module>integration-tests</module>
-        <module>cms-db-schema</module>
         <module>online-banking-demo</module>
         <module>consent-management</module>
     </modules>

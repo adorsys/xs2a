@@ -32,6 +32,7 @@
 
     <modules>
         <module>cms-client</module>
+        <module>cms-db-schema</module>
     </modules>
 
 </project>
