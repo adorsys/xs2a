@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.psd2.consent.api.CmsScaStatus;
 import lombok.Data;
 
 import javax.persistence.*;

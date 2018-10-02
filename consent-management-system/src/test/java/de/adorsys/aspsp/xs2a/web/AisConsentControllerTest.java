@@ -16,14 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentAuthorizationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
+import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,13 +35,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 

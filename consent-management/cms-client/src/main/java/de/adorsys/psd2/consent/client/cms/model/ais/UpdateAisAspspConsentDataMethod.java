@@ -16,13 +16,14 @@
 
 package de.adorsys.psd2.consent.client.cms.model.ais;
 
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
 import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
-public class UpdateAisAspspConsentDataMethod extends RestCmsRequestMethod<UpdateConsentAspspDataRequest, CreateAisConsentResponse> {
+public class UpdateAisAspspConsentDataMethod extends
+                                             RestCmsRequestMethod<UpdateConsentAspspDataRequest, CreateAisConsentResponse> {
     private static final String UPDATE_AIS_CONSENT_BLOB_URI = "api/v1/ais/consent/{consent-id}/aspspConsentData";
 
     public UpdateAisAspspConsentDataMethod(final UpdateConsentAspspDataRequest request, HttpUriParams uriParams) {

@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.CmsScaStatus;
 import lombok.Data;
 import lombok.ToString;
 

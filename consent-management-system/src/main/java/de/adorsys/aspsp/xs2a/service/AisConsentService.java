@@ -17,8 +17,6 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
-import de.adorsys.aspsp.xs2a.consent.api.*;
-import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
@@ -27,6 +25,8 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentAuthorizationRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.ais.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -39,8 +39,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
-import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.*;
+import static de.adorsys.psd2.consent.api.TypeAccess.*;
 
 @Service
 @RequiredArgsConstructor

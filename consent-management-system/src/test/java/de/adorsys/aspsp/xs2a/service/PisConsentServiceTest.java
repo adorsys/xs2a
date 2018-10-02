@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
+import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +30,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.EnumSet;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
