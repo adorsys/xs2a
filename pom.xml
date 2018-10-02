@@ -36,7 +36,7 @@
         <module>integration-tests</module>
         <module>cms-db-schema</module>
         <module>online-banking-demo</module>
-        <module>cms-client</module>
+        <module>consent-management</module>
     </modules>
     <packaging>pom</packaging>
 
