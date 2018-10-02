@@ -19,7 +19,7 @@ public enum ExecutionRule {
     @JsonCreator
     public static ExecutionRule fromValue(String text) {
         for (ExecutionRule b : ExecutionRule.values()) {
-            if (String.valueOf(b.value).equals(text)) {
+            if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                 return b;
             }
         }

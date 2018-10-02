@@ -3,6 +3,8 @@ package de.adorsys.psd2.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import java.util.Optional;
+
 /**
  * Day of execution as string in the form DD.  Thes string consists always of two characters.  31 is ultimo of the month.
  */
@@ -48,7 +50,7 @@ public enum DayOfExecution {
     @JsonCreator
     public static DayOfExecution fromValue(String text) {
         for (DayOfExecution b : DayOfExecution.values()) {
-            if (String.valueOf(b.value).equals(text)) {
+            if (Optional.ofNullable(text).map(t -> t.endsWith(String.valueOf(b.value))).orElse(false)) {
                 return b;
             }
         }
