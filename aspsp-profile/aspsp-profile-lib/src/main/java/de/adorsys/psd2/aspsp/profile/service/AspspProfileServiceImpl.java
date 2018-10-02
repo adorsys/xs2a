@@ -46,9 +46,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             profileConfiguration.isAllPsd2Support(),
             profileConfiguration.getAuthorisationStartType(),
             profileConfiguration.isTransactionsWithoutBalancesSupported(),
-            true
-
-        );
+            profileConfiguration.isSigningBasketSupported(),
+            profileConfiguration.isPaymentCancellationAuthorizationMandated());
     }
 
     @Override

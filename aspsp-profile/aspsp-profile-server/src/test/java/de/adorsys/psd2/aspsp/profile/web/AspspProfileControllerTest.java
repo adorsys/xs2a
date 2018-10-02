@@ -56,6 +56,8 @@ public class AspspProfileControllerTest {
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
     private static final AuthorisationStartType AUTHORIZATION_START_TYPE = AuthorisationStartType.IMPLICIT;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
+    private static final boolean SIGNING_BASKET_SUPPORTED = true;
+    private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
     private static final boolean EXPLICIT_PREFERRED = true;
 
     @Autowired
@@ -116,6 +118,8 @@ public class AspspProfileControllerTest {
             ALL_PSD_2_SUPPORT,
             AUTHORIZATION_START_TYPE,
             TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
+            SIGNING_BASKET_SUPPORTED,
+            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
             EXPLICIT_PREFERRED);
     }
 
