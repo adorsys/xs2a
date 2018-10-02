@@ -206,4 +206,14 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     public void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported) {
         profileConfiguration.setTransactionsWithoutBalancesSupported(transactionsWithoutBalancesSupported);
     }
+
+    /**
+     * Update the value of signing basket support
+     *
+     * @param signingBasketSupported the value of signing basket support
+     */
+    @Override
+    public void updateSigningBasketSupported(boolean signingBasketSupported) {
+        profileConfiguration.setSigningBasketSupported(signingBasketSupported);
+    }
 }
