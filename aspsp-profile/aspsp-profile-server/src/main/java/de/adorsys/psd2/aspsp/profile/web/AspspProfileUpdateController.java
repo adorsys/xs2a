@@ -221,4 +221,14 @@ public class AspspProfileUpdateController {
         aspspProfileService.updateSigningBasketSupported(signingBasketSupported);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping(path = "/payment-cancellation-authorization-mandated")
+    @ApiOperation(value = "Update the value of payment cancellation authorization mandated. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok", response = String.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updatePaymentCancellationAuthorizationMandated(@RequestBody boolean paymentCancellationAuthorizationMandated) {
+        aspspProfileService.updatePaymentCancellationAuthorizationMandated(paymentCancellationAuthorizationMandated);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -127,6 +127,11 @@ public class ProfileConfiguration {
      */
     private boolean signingBasketSupported;
 
+    /**
+     * If the option is set to "true", then authorization of the payment cancellation is mandated by the ASPSP
+     */
+    private boolean paymentCancellationAuthorizationMandated;
+
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
         setDefaultPaymentType(PaymentType.FUTURE_DATED);
