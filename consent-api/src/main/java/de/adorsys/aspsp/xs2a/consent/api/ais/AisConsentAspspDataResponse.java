@@ -24,6 +24,8 @@ import lombok.Data;
 @ApiModel(description = "Ais consent aspsp data response", value = "AisConsentAspspDataResponse")
 public class AisConsentAspspDataResponse {
 
+    @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
+    private String consentId;
     @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
     private String aspspConsentDataBase64;
 }

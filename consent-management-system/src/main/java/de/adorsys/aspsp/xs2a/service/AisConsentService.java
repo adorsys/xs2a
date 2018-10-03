@@ -207,12 +207,19 @@ public class AisConsentService {
 
     private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
         AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
-        response.setAspspConsentDataBase64(Base64.getEncoder().encodeToString(consent.getAspspConsentData()));
+        String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
+                                            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                                            .orElse(null);
+        response.setAspspConsentDataBase64(aspspConsentDataBase64);
+        response.setConsentId(consent.getExternalId());
         return response;
     }
 
     private String updateAspspConsentData(UpdateConsentAspspDataRequest request, AisConsent consent) {
-        consent.setAspspConsentData(Base64.getDecoder().decode(request.getAspspConsentDataBase64()));
+        byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                      .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
+                                      .orElse(null);
+        consent.setAspspConsentData(aspspConsentData);
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

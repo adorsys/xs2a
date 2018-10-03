@@ -46,9 +46,13 @@ public abstract class ConsentDataService {
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         Optional.ofNullable(consentData)
-            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()))
-            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateAspspConsentData(), new Xs2aConsentData(cd.getAspspConsentData()), cd.getConsentId()));
+            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()) && Objects.nonNull(cd.getAspspConsentData()))
+            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateAspspConsentData(), new Xs2aConsentData(cd.getConsentId(), base64Encode.apply(cd.getAspspConsentData())), cd.getConsentId()));
     }
 
     protected abstract AspspConsentDataRemoteUrls getRemoteUrl();
+
+    private AspspConsentData mapToAspspConsentData(Xs2aConsentData xs2aConsentData) {
+        return new AspspConsentData(base64Decode.apply(xs2aConsentData.getAspspConsentDataBase64()), xs2aConsentData.getConsentId());
+    }
 }
