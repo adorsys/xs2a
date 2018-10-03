@@ -30,7 +30,7 @@ import java.util.List;
 import static de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType.BULK;
 
 @Data
-class SpiBulkPayment implements SpiPayment {
+public class SpiBulkPayment implements SpiPayment {
     private Boolean batchBookingPreferred;
     private SpiAccountReference debtorAccount;
     private LocalDate requestedExecutionDate;

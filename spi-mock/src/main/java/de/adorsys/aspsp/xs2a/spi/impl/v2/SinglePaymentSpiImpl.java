@@ -23,7 +23,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +42,7 @@ public class SinglePaymentSpiImpl implements PaymentSpi<SpiSinglePayment> {
     }
 
     @Override
-    public SpiResponse<SpiSinglePayment> getPaymentById(SpiSinglePayment payment, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiSinglePayment> getPaymentById(String paymentId, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -52,22 +52,22 @@ public class SinglePaymentSpiImpl implements PaymentSpi<SpiSinglePayment> {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }

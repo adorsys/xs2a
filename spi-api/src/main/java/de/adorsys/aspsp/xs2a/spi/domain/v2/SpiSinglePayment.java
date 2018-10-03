@@ -28,7 +28,7 @@ import lombok.Data;
 import static de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType.SINGLE;
 
 @Data
-class SpiSinglePayment implements SpiPayment {
+public class SpiSinglePayment implements SpiPayment {
     private String paymentId;
     private String endToEndIdentification;
     private SpiAccountReference debtorAccount;

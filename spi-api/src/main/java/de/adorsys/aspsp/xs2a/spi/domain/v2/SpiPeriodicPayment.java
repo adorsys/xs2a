@@ -28,7 +28,7 @@ import static de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType.PERIODIC;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-class SpiPeriodicPayment extends SpiSinglePayment {
+public class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate startDate;
     private LocalDate endDate;
     private String executionRule;

@@ -28,7 +28,7 @@ public interface PaymentSpi<T> extends AuthorisationSpi<T> {
 
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
 
-    SpiResponse<T> getPaymentById(T payment, String paymentId, AspspConsentData aspspConsentData);
+    SpiResponse<T> getPaymentById(String paymentId, T payment, AspspConsentData aspspConsentData);
 
     SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, T payment, AspspConsentData aspspConsentData);
 }

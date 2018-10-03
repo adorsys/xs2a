@@ -22,8 +22,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +42,7 @@ public class BulkPaymentSpiImpl implements PaymentSpi<SpiBulkPayment> {
     }
 
     @Override
-    public SpiResponse<SpiBulkPayment> getPaymentById(SpiBulkPayment payment, String paymentId, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiBulkPayment> getPaymentById(String paymentId, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -52,22 +52,22 @@ public class BulkPaymentSpiImpl implements PaymentSpi<SpiBulkPayment> {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }
