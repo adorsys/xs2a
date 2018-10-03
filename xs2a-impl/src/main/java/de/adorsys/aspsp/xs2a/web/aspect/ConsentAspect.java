@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
-import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationMethodService;
+import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.ConsentController;
@@ -37,11 +37,11 @@ import java.util.Optional;
 @Component
 public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private boolean tppExplicitAuthorisationPreferred = false;
-    private AuthorizationMethodService authorizationMethodService;
+    private AuthorisationMethodService authorisationMethodService;
 
-    public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorizationMethodService authorizationMethodService) {
+    public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
-        this.authorizationMethodService = authorizationMethodService;
+        this.authorisationMethodService = authorisationMethodService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId, explicitPreferred)", returning = "result", argNames = "result,request,psuId,explicitPreferred")
@@ -79,7 +79,7 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     }
 
     private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links) {
-        if (authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
+        if (authorisationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
             links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
         } else {
             links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", response.getConsentId(), response.getAuthorizationId()));

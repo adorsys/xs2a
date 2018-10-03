@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.web.aspect;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
-import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationMethodService;
+import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
@@ -32,8 +32,8 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController> {
-    public PaymentInitiationAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorizationMethodService authorizationMethodService) {
-        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService, authorizationMethodService);
+    public PaymentInitiationAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
+        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService, authorisationMethodService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, psuId, ..)", returning = "result", argNames = "result,payment,requestParameters,psuId")

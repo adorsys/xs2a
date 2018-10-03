@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthorizationMethodService {
+public class AuthorisationMethodService {
     private final AspspProfileServiceWrapper aspspProfileService;
 
     public boolean isExplicitMethod(boolean tppExplicitAuthorisationPreferred) {
@@ -30,7 +30,7 @@ public class AuthorizationMethodService {
                    aspspProfileService.isSigningBasketSupported();
     }
 
-    public boolean isImplicitMethod(boolean tpPExplicitAuthorisationPreferred) {
-        return !isExplicitMethod(tpPExplicitAuthorisationPreferred);
+    public boolean isImplicitMethod(boolean tppExplicitAuthorisationPreferred) {
+        return !isExplicitMethod(tppExplicitAuthorisationPreferred);
     }
 }

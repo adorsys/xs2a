@@ -22,7 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.service.authorization.AuthorizationMethodService;
+import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
@@ -37,11 +37,11 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     private boolean tppExplicitAuthorisationPreferred = false;
-    private AuthorizationMethodService authorizationMethodService;
+    private AuthorisationMethodService authorisationMethodService;
 
-    public AbstractPaymentLink(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorizationMethodService authorizationMethodService) {
+    public AbstractPaymentLink(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
-        this.authorizationMethodService = authorizationMethodService;
+        this.authorisationMethodService = authorisationMethodService;
     }
 
     @SuppressWarnings("unchecked")
@@ -84,25 +84,25 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorisationId) {
-        if (authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
+        if (authorisationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
             links.setScaStatus(
-                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
             links.setStartAuthorisationWithPsuAuthentication(
-                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorizationId}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
         }
 
         return links;
     }
 
     private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentId, String consentId, String psuId, String authorisationId) {
-        if (authorizationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{paymentId}/authorisations", paymentService, paymentId));
+        if (authorisationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
             links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + consentId + "/" + paymentId + "/" + psuId);
             links.setScaStatus(
-                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
         }
 
         return links;
