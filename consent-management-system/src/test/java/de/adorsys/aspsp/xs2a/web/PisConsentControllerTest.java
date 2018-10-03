@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
 import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
@@ -265,7 +264,6 @@ public class PisConsentControllerTest {
         response.setPassword(PASSWORD);
         response.setPayments(Collections.emptyList());
         response.setPaymentType(PisPaymentType.SINGLE);
-        response.setCmsAspspConsentData(new CmsAspspConsentData(CONSENT_DATA));
         return response;
     }
 
