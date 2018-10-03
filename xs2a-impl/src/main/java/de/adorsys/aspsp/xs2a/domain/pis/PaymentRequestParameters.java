@@ -26,4 +26,5 @@ public class PaymentRequestParameters {
     private String tppRedirectUri;
     private String tppNokRedirectUri;
     private boolean tppExplicitAuthorisationPreferred;
+    private String psuId;
 }

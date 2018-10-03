@@ -139,14 +139,15 @@ public class PaymentModelMapperPsd2 {
         return bulkPart;
     }
 
-    public PaymentRequestParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred) {
+    public PaymentRequestParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, String psuId) {
         PaymentRequestParameters parameters = new PaymentRequestParameters();
-        parameters.setPaymentProduct(PaymentProduct.getByValue(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
+        parameters.setPaymentProduct(PaymentProduct.getByValue(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
         parameters.setQwacCertificate(new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8));
         parameters.setTppRedirectUri(tpPRedirectURI);
         parameters.setTppNokRedirectUri(tpPNokRedirectURI);
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
+        parameters.setPsuId(psuId);
         return parameters;
     }
 

@@ -62,7 +62,7 @@ public class PaymentService {
      * @param payment Payment information
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters, String psuId) {
+    public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters) {
         ResponseObject response;
         TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
         if (requestParameters.getPaymentType() == SINGLE) {

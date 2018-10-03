@@ -21,7 +21,6 @@ import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -45,7 +44,7 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentRequestParameters paymentRequestParameters, String psuId) {
+    protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentRequestParameters paymentRequestParameters) {
         Object body = result.getBody();
 
         setTppExplicitAuthorisationPreferred(paymentRequestParameters.isTppExplicitAuthorisationPreferred());
@@ -96,13 +95,16 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         return links;
     }
 
-    private Links addRedirectRelatedLinks(Links links, String paymentService, String paymentId, String consentId, String psuId, String authorisationId) {
-        if (authorisationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
+    private Links addRedirectRelatedLinks(Links links, PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
+        String encodedPaymentId = Base64.getEncoder()
+                                      .encodeToString(body.getPaymentId().getBytes());
+
+        if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId));
         } else {
-            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + consentId + "/" + paymentId + "/" + psuId);
+            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + paymentRequestParameters.getPsuId());
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId, body.getAuthorizationId()));
         }
 
         return links;

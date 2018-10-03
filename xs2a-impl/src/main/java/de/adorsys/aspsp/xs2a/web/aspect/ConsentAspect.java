@@ -36,7 +36,6 @@ import java.util.Optional;
 @Aspect
 @Component
 public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
-    private boolean tppExplicitAuthorisationPreferred = false;
     private AuthorisationMethodService authorisationMethodService;
 
     public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
@@ -47,10 +46,9 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args(request, psuId, explicitPreferred)", returning = "result", argNames = "result,request,psuId,explicitPreferred")
     public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, String psuId, boolean explicitPreferred) {
         if (!result.hasError()) {
-            setTppExplicitAuthorisationPreferred(explicitPreferred);
 
             CreateConsentResponse body = result.getBody();
-            body.setLinks(buildLinksForConsentResponse(body));
+            body.setLinks(buildLinksForConsentResponse(body, explicitPreferred));
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -66,11 +64,11 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLinksForConsentResponse(CreateConsentResponse response) {
+    private Links buildLinksForConsentResponse(CreateConsentResponse response, boolean explicitPreferred) {
         Links links = new Links();
 
         if (ScaApproach.EMBEDDED == aspspProfileService.getScaApproach()) {
-            buildLinkForEmbeddedScaApproach(response, links);
+            buildLinkForEmbeddedScaApproach(response, links, explicitPreferred);
         } else {
             links.setScaRedirect(aspspProfileService.getAisRedirectUrlToAspsp() + response.getConsentId());
         }
@@ -78,8 +76,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         return links;
     }
 
-    private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links) {
-        if (authorisationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
+    private void buildLinkForEmbeddedScaApproach(CreateConsentResponse response, Links links, boolean explicitPreferred) {
+        if (authorisationMethodService.isExplicitMethod(explicitPreferred)) {
             links.setStartAuthorisation(buildPath("/v1/consents/{consentId}/authorisations", response.getConsentId()));
         } else {
             links.setStartAuthorisationWithPsuAuthentication(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", response.getConsentId(), response.getAuthorizationId()));
@@ -123,9 +121,5 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
         links.setScaStatus(buildPath("/v1/consents/{consentId}/authorisations/{authorisationId}", request.getConsentId(), request.getAuthorizationId()));
 
         return links;
-    }
-
-    private void setTppExplicitAuthorisationPreferred(boolean tppExplicitPreferred) {
-        this.tppExplicitAuthorisationPreferred = tppExplicitPreferred;
     }
 }
