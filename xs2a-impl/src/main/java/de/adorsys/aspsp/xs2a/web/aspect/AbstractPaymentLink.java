@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 
-import java.util.Base64;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -56,19 +55,20 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         body.setLinks(buildPaymentLinks(body, paymentType.getValue(), psuId));
     }
 
+    //TODO encode payment id with base64 encoding and add decoders to every endpoint links lead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/382
     private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService, String psuId) {
         if (RJCT == body.getTransactionStatus()) {
             return null;
         }
-        String encodedPaymentId = Base64.getEncoder()
-                                      .encodeToString(body.getPaymentId().getBytes());
+        String paymentId = body.getPaymentId();
+
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", paymentService, encodedPaymentId));
-        links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", paymentService, encodedPaymentId));
+        links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", paymentService, paymentId));
+        links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", paymentService, paymentId));
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
-            return addEmbeddedRelatedLinks(links, paymentService, encodedPaymentId, body.getAuthorizationId());
+            return addEmbeddedRelatedLinks(links, paymentService, paymentId, body.getAuthorizationId());
         } else if (aspspProfileService.getScaApproach() == ScaApproach.REDIRECT) {
-            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + psuId);
+            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + paymentId + "/" + psuId);
         } else if (aspspProfileService.getScaApproach() == ScaApproach.OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
