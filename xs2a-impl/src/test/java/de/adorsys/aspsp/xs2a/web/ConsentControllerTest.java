@@ -20,15 +20,13 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.model.AccountAccess;
-import de.adorsys.psd2.model.ConsentInformationResponse200Json;
-import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +51,7 @@ public class ConsentControllerTest {
     private final String CORRECT_PSU_ID = "ID 777";
     private final String WRONG_PSU_ID = "ID 666";
     private final String CONSENT_ID = "XXXX-YYYY-XXXX-YYYY";
+    private final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
 
     @InjectMocks
@@ -139,6 +138,41 @@ public class ConsentControllerTest {
             null, null);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void startConsentAuthorisation_Success() {
+        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(CONSENT_ID), HttpStatus.CREATED))
+            .when(responseMapper).created(any(), any());
+
+        // Given
+        CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse(CONSENT_ID);
+
+        // When
+        ResponseEntity responseEntity = consentController.startConsentAuthorisation(CONSENT_ID, null,
+            null, null, null, null, null, null,
+            null, null, null, null, null,
+            null, null, null, null, null,
+            null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void startConsentAuthorisation_Failure() {
+        doReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST)).when(responseMapper).created(any(), any());
+
+        // When
+        ResponseEntity responseEntity = consentController.startConsentAuthorisation(CONSENT_ID, null,
+            null, null, null, null, null, null,
+            null, null, null, null, null,
+            null, null, null, null, null,
+            null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -251,5 +285,13 @@ public class ConsentControllerTest {
         AccountAccess access = new AccountAccess();
         consents.setAccess(access);
         return consents;
+    }
+
+    private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse(String consentId) {
+        CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
+        response.setConsentId(consentId);
+        response.setAuthorizationId(AUTHORISATION_ID);
+        response.setScaStatus(ScaStatus.STARTED);
+        return response;
     }
 }
