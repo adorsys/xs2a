@@ -35,7 +35,6 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.PERIODIC;
 import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 
 public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
-    private boolean tppExplicitAuthorisationPreferred = false;
     private AuthorisationMethodService authorisationMethodService;
 
     public AbstractPaymentLink(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
@@ -47,49 +46,50 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     protected ResponseObject<?> enrichLink(ResponseObject<?> result, PaymentRequestParameters paymentRequestParameters) {
         Object body = result.getBody();
 
-        setTppExplicitAuthorisationPreferred(paymentRequestParameters.isTppExplicitAuthorisationPreferred());
-        PaymentType paymentType = paymentRequestParameters.getPaymentType();
-
-        if (EnumSet.of(SINGLE, PERIODIC).contains(paymentType)) {
-            doEnrichLink(paymentType, (PaymentInitialisationResponse) body, psuId);
+        if (EnumSet.of(SINGLE, PERIODIC).contains(paymentRequestParameters.getPaymentType())) {
+            doEnrichLink(paymentRequestParameters, (PaymentInitialisationResponse) body);
         } else {
             ((List<PaymentInitialisationResponse>) body)
-                .forEach(r -> doEnrichLink(paymentType, r, psuId));
+                .forEach(r -> doEnrichLink(paymentRequestParameters, r));
         }
         return result;
     }
 
-    private void doEnrichLink(PaymentType paymentType, PaymentInitialisationResponse body, String psuId) {
-        body.setLinks(buildPaymentLinks(body, paymentType.getValue(), psuId));
+    private void doEnrichLink(PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
+        body.setLinks(buildPaymentLinks(paymentRequestParameters, body));
     }
 
-    private Links buildPaymentLinks(PaymentInitialisationResponse body, String paymentService, String psuId) {
+    private Links buildPaymentLinks(PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
         if (RJCT == body.getTransactionStatus()) {
             return null;
         }
         String encodedPaymentId = Base64.getEncoder()
                                       .encodeToString(body.getPaymentId().getBytes());
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{paymentService}/{paymentId}", paymentService, encodedPaymentId));
-        links.setStatus(buildPath("/v1/{paymentService}/{paymentId}/status", paymentService, encodedPaymentId));
+        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId));
+        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId));
+
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
-            return addEmbeddedRelatedLinks(links, paymentService, encodedPaymentId, body.getAuthorizationId());
+            return addEmbeddedRelatedLinks(links, paymentRequestParameters, body);
         } else if (aspspProfileService.getScaApproach() == ScaApproach.REDIRECT) {
-            addRedirectRelatedLinks(links, paymentService, encodedPaymentId, body.getPisConsentId(), psuId, body.getAuthorizationId());
+            return addRedirectRelatedLinks(links, paymentRequestParameters, body);
         } else if (aspspProfileService.getScaApproach() == ScaApproach.OAUTH) {
             links.setScaOAuth("scaOAuth"); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
         }
         return links;
     }
 
-    private Links addEmbeddedRelatedLinks(Links links, String paymentService, String paymentId, String authorisationId) {
-        if (authorisationMethodService.isExplicitMethod(tppExplicitAuthorisationPreferred)) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
+    private Links addEmbeddedRelatedLinks(Links links, PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
+        String encodedPaymentId = Base64.getEncoder()
+                                      .encodeToString(body.getPaymentId().getBytes());
+
+        if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentRequestParameters.getPaymentType().getValue(), paymentRequestParameters));
         } else {
             links.setScaStatus(
-                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId, body.getAuthorizationId()));
             links.setStartAuthorisationWithPsuAuthentication(
-                buildPath("/v1/{paymentService}/{paymentId}/authorisations/{authorisation-id}", paymentService, paymentId, authorisationId));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId, body.getAuthorizationId()));
         }
 
         return links;
@@ -108,9 +108,5 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         }
 
         return links;
-    }
-
-    private void setTppExplicitAuthorisationPreferred(boolean tppExplicitPreferred) {
-        this.tppExplicitAuthorisationPreferred = tppExplicitPreferred;
     }
 }
