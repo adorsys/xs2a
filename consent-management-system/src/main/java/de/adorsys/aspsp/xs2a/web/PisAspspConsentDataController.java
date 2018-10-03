@@ -30,21 +30,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/pis")
 @Api(value = "api/v1/pis", tags = "PIS, Aspsp Consent Data", description = "Provides access to consent management system for AspspDataConsent")
-public class AspspConsentDataController {
+public class PisAspspConsentDataController {
     private final PisConsentService pisConsentService;
-
-    @GetMapping(path = "/consent/{consent-id}/aspsp-consent-data")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PisConsentAspspDataResponse> getAspspConsentData(
-        @ApiParam(name = "consent-id", value = "The payment consent identification assigned to the created payment consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId) {
-        return pisConsentService.getAspspConsentDataByConsentId(consentId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
 
     @PutMapping(path = "/consent/{consent-id}/aspsp-consent-data")
     @ApiOperation(value = "Update aspsp consent data identified by given consent id.")

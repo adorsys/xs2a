@@ -16,8 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.config.rest.consent;
 
-public interface ConsentRemoteUrls {
-    String getConsentData();
-    String getConsentDataByPaymentId();
-    String updateConsentData();
+public interface AspspConsentDataRemoteUrls {
+    String getAspspConsentData();
+    String updateAspspConsentData();
 }

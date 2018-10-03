@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
@@ -165,11 +164,6 @@ public class PisConsentService {
             authorizationId);
         if (pisConsentAuthorisationOptional.isPresent()) {
             PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
-
-            byte[] bytes = Optional.ofNullable(request.getCmsAspspConsentData())
-                               .map(CmsAspspConsentData::getBody)
-                               .orElse(null);
-            consentAuthorization.getConsent().setAspspConsentData(bytes);
 
             if (SCAMETHODSELECTED == request.getScaStatus()) {
                 String chosenMethod = request.getAuthenticationMethodId();

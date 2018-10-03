@@ -44,7 +44,6 @@ public class AisConsentMapper {
             consent.getConsentStatus(),
             false,
             consent.isTppRedirectPreferred(),
-            consent.getAspspConsentData(),
             consent.getAisConsentRequestType(),
             consent.getPsuId(),
             consent.getTppId());

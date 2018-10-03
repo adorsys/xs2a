@@ -26,6 +26,7 @@ public class PisConsentAspspDataResponse {
 
     @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
     private byte[] aspspConsentData;
+
     @ApiModelProperty(value = "Consent ID", required = true, example = "d2796b05-418e-49bc-84ce-c6728a1b2018")
     private String consentId;
 }

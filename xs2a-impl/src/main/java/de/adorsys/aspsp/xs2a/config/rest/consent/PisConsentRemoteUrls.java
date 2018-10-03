@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PisConsentRemoteUrls implements ConsentRemoteUrls {
+public class PisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
@@ -77,18 +77,23 @@ public class PisConsentRemoteUrls implements ConsentRemoteUrls {
         return consentServiceBaseUrl + "/pis/consent/authorizations/{authorization-id}";
     }
 
+    /**
+     * Returns URL-string to CMS endpoint that gets aspsp consent data by payment ID
+     *
+     * @return String
+     */
     @Override
-    public String getConsentData() {
-        return consentServiceBaseUrl + "/pis/consent/{consent-id}/aspsp-consent-data";
-    }
-
-    @Override
-    public String updateConsentData() {
-        return getConsentData();
-    }
-
-    @Override
-    public String getConsentDataByPaymentId() {
+    public String getAspspConsentData() {
         return consentServiceBaseUrl + "/pis/payment/{payment-id}/aspsp-consent-data";
+    }
+
+    /**
+     * Returns URL-string to CMS endpoint that updates aspsp consent data by consent ID
+     *
+     * @return String
+     */
+    @Override
+    public String updateAspspConsentData() {
+        return consentServiceBaseUrl + "/pis/consent/{consent-id}/aspsp-consent-data";
     }
 }

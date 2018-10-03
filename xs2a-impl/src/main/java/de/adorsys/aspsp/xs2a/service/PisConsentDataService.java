@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.ConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +31,7 @@ public class PisConsentDataService extends ConsentDataService {
     }
 
     @Override
-    protected ConsentRemoteUrls getRemoteUrl() {
+    protected AspspConsentDataRemoteUrls getRemoteUrl() {
         return pisConsentRemoteUrls;
     }
 }

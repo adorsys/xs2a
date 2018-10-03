@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.authorization;
 
 import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
-import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
@@ -46,23 +45,22 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
 
-        AspspConsentData aspspConsentData = pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId());
+        AspspConsentData aspspConsentData = pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId());
         SpiResponse<SpiAuthorisationStatus> authorisationStatusSpiResponse = paymentSpi.authorisePsu(request.getPsuId(),
                                                                                                      request.getPassword(),
                                                                                                      aspspConsentData
                                                                                                     );
         aspspConsentData = authorisationStatusSpiResponse.getAspspConsentData();
-        pisConsentDataService.updateConsentData(aspspConsentData);
+        pisConsentDataService.updateAspspConsentData(aspspConsentData);
 
         if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
             return new UpdatePisConsentPsuDataResponse(FAILED);
         }
-        request.setCmsAspspConsentData(new CmsAspspConsentData(aspspConsentData.getAspspConsentData()));
         SpiResponse<List<SpiScaMethod>> listAvailablescaMethodResponse = paymentSpi.readAvailableScaMethod(request.getPsuId(),
                                                                                             aspspConsentData
                                                                                            );
         aspspConsentData = listAvailablescaMethodResponse.getAspspConsentData();
-        pisConsentDataService.updateConsentData(aspspConsentData);
+        pisConsentDataService.updateAspspConsentData(aspspConsentData);
         List<SpiScaMethod> spiScaMethods = listAvailablescaMethodResponse.getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
@@ -71,7 +69,7 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
                                                                               aspspConsentData
                                                                              );
             aspspConsentData = executePaymentResponse.getAspspConsentData();
-            pisConsentDataService.updateConsentData(aspspConsentData);
+            pisConsentDataService.updateAspspConsentData(aspspConsentData);
             request.setScaStatus(FINALISED);
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
 
@@ -82,7 +80,7 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
                                                                          aspspConsentData
                                                                          )
                                    .getAspspConsentData();
-            pisConsentDataService.updateConsentData(aspspConsentData);
+            pisConsentDataService.updateAspspConsentData(aspspConsentData);
             request.setScaStatus(SCAMETHODSELECTED);
             request.setAuthenticationMethodId(spiScaMethods.get(0).name());
             return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
