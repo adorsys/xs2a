@@ -84,7 +84,7 @@ public class OauthScaPaymentServiceTest {
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, true, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, true), ASPSP_CONSENT_DATA));
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(true, false, IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(true, false), ASPSP_CONSENT_DATA));
         when(paymentSpi.createBulkPayments(getSpiBulkPayment(false, false, WRONG_IBAN), ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(getSpiRespList(false, false), ASPSP_CONSENT_DATA));
-        when(pisConsentDataService.getConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
+        when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);
     }
 
     @Test

@@ -29,8 +29,8 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.BULK;
 public class ReadBulkPayment extends ReadPayment<BulkPayment> {
     @Override
     public BulkPayment getPayment(String paymentId, String paymentProduct) {
-        SpiResponse<List<SpiSinglePayment>> spiResponse = paymentSpi.getBulkPaymentById(paymentMapper.mapToSpiPaymentType(BULK), paymentProduct, paymentId, pisConsentDataService.getConsentDataByPaymentId(paymentId));
-        pisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<List<SpiSinglePayment>> spiResponse = paymentSpi.getBulkPaymentById(paymentMapper.mapToSpiPaymentType(BULK), paymentProduct, paymentId, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         List<SpiSinglePayment> bulkPayments = spiResponse.getPayload();
         return paymentMapper.mapToBulkPayment(bulkPayments);
     }

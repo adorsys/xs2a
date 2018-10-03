@@ -109,8 +109,8 @@ public class AccountService {
             return ResponseObject.<Xs2aAccountDetails>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountDetails>builder()
@@ -147,8 +147,8 @@ public class AccountService {
             return ResponseObject.<List<Xs2aBalance>>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<List<Xs2aBalance>>builder()
@@ -188,8 +188,8 @@ public class AccountService {
             return ResponseObject.<Xs2aAccountReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
@@ -225,8 +225,8 @@ public class AccountService {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(allowedAccountData.getError()).build();
         }
-        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aTransactionsReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
@@ -273,8 +273,8 @@ public class AccountService {
                        .fail(allowedAccountData.getError()).build();
         }
 
-        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
         if (accountDetails == null) {
             return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_404)).build();
@@ -300,8 +300,8 @@ public class AccountService {
             return Optional.empty();
         }
 
-        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountDetailsByIban(reference.getIban(), aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountDetailsByIban(reference.getIban(), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         return Optional.of(spiResponse.getPayload())
                    .map(Collection::stream)
                    .flatMap(accDts -> accDts
@@ -322,8 +322,8 @@ public class AccountService {
     private List<Xs2aAccountDetails> getAccountDetailsByConsentId(boolean withBalance, String consentId) {
         SpiAccountConsent spiAccountConsent = aisConsentService.getAccountConsentById(consentId);
 
-        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<List<SpiAccountDetails>> spiResponse = accountSpi.readAccountsByPsuId(spiAccountConsent.getPsuId(), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         List<SpiAccountDetails> spiAccountDetails = spiResponse.getPayload();
         List<Xs2aAccountDetails> details = spiAccountDetails.stream()
                                                .map(spiXs2aAccountMapper::mapToXs2aAccountDetails)
@@ -359,8 +359,8 @@ public class AccountService {
     private Optional<Xs2aAccountReport> getAccountReportByTransaction(String transactionId, String accountId, String consentId) {
         validatorService.validateAccountIdTransactionId(accountId, transactionId);
 
-        SpiResponse<Optional<SpiTransaction>> spiResponse = accountSpi.readTransactionById(transactionId, accountId, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<Optional<SpiTransaction>> spiResponse = accountSpi.readTransactionById(transactionId, accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Optional<SpiTransaction> transaction = spiResponse.getPayload();
         return spiXs2aAccountMapper.mapToXs2aAccountReport(transaction
                                                                .map(Collections::singletonList)
@@ -371,8 +371,8 @@ public class AccountService {
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
-        SpiResponse<List<SpiTransaction>> spiResponse = accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateToChecked, aisConsentDataService.getConsentData(consentId));
-        aisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<List<SpiTransaction>> spiResponse = accountSpi.readTransactionsByPeriod(accountId, dateFrom, dateToChecked, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         return spiXs2aAccountMapper.mapToXs2aAccountReport(spiResponse.getPayload());
     }
 

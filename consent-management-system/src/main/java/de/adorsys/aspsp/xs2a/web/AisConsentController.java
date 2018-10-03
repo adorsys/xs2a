@@ -19,7 +19,6 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.consent.api.AisConsentStatusResponse;
 import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.consent.api.ConsentActionRequest;
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.service.AisConsentService;
 import io.swagger.annotations.*;
@@ -77,33 +76,6 @@ public class AisConsentController {
         @RequestBody AisAccountAccessInfo request) {
         return aisConsentService.updateAccountAccess(consentId, request)
                    .map(consentIdUpdated -> new ResponseEntity<>(new CreateAisConsentResponse(consentIdUpdated), HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping(path = "/{consent-id}/aspsp-consent-data")
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<AisConsentAspspDataResponse> getAspspConsentData(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId) {
-        return aisConsentService.getAspspConsentData(consentId)
-                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @PutMapping(path = "/{consent-id}/aspsp-consent-data")
-    @ApiOperation(value = "Update aspsp consent data identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreateAisConsentResponse> updateAspspConsentData(
-        @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
-        @PathVariable("consent-id") String consentId,
-        @RequestBody UpdateConsentAspspDataRequest request) {
-        return aisConsentService.updateAspspConsentData(consentId, request)
-                   .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

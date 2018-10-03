@@ -33,7 +33,6 @@ public class AisAccountConsent {
     private CmsConsentStatus consentStatus;
     private boolean withBalance;
     private boolean tppRedirectPreferred;
-    private byte[] aspspConsentData;
     private AisConsentRequestType aisConsentRequestType;
     private String psuId;
     private String tppId;
