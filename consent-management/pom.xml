@@ -32,6 +32,8 @@
 
     <modules>
         <module>cms-client</module>
+        <module>cms-db-schema</module>
+        <module>consent-api</module>
     </modules>
 
 </project>

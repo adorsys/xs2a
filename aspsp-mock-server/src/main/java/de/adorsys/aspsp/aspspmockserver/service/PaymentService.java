@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType.PERIODIC;
-import static de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType.SINGLE;
+import static de.adorsys.psd2.consent.api.pis.PisPaymentType.PERIODIC;
+import static de.adorsys.psd2.consent.api.pis.PisPaymentType.SINGLE;
 
 @Slf4j
 @Service

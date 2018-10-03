@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.account;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
+import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.TypeAccess;
 import lombok.Value;
 import org.apache.commons.collections4.CollectionUtils;
 
