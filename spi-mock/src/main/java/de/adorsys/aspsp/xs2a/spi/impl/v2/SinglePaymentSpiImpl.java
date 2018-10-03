@@ -37,27 +37,7 @@ public class SinglePaymentSpiImpl implements PaymentSpi<SpiSinglePayment> {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
     public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -68,6 +48,26 @@ public class SinglePaymentSpiImpl implements PaymentSpi<SpiSinglePayment> {
 
     @Override
     public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 }

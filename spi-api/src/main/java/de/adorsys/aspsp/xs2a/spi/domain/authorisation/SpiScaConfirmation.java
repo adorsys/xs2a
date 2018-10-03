@@ -21,6 +21,7 @@ import lombok.Data;
 @Data
 public class SpiScaConfirmation {
     private String consentId;
+    private String paymentId;
     private String tanNumber;
     private String psuId;
 }

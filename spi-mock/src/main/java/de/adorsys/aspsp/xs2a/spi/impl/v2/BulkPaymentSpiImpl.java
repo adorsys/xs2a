@@ -37,27 +37,7 @@ public class BulkPaymentSpiImpl implements PaymentSpi<SpiBulkPayment> {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
     public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -68,6 +48,26 @@ public class BulkPaymentSpiImpl implements PaymentSpi<SpiBulkPayment> {
 
     @Override
     public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 }

@@ -37,27 +37,7 @@ public class PeriodicPaymentSpiImpl implements PaymentSpi<SpiPeriodicPayment> {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
     public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
-    }
-
-    @Override
-    public SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -68,6 +48,26 @@ public class PeriodicPaymentSpiImpl implements PaymentSpi<SpiPeriodicPayment> {
 
     @Override
     public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 }

@@ -99,6 +99,7 @@ public class SpiCmsPisMapper {
 
     public SpiScaConfirmation buildSpiScaConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
         SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
+        paymentConfirmation.setPaymentId(request.getPaymentId());
         paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
         paymentConfirmation.setPsuId(request.getPsuId());

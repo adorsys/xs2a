@@ -17,28 +17,16 @@
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
+import de.adorsys.aspsp.xs2a.spi.service.AuthorisationSpi;
 
-import java.util.List;
-
-public interface PaymentSpi<T> {
+public interface PaymentSpi<T> extends AuthorisationSpi<T> {
 
     SpiResponse<T> initiatePayment(T payment, AspspConsentData aspspConsentData);
 
-    SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, T payment, AspspConsentData aspspConsentData);
-
-    SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, T payment, AspspConsentData aspspConsentData);
-
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
-
-    SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, T payment, AspspConsentData aspspConsentData);
-
-    SpiResponse verifyAuthorisationCodeAndExecutePayment(SpiScaConfirmation spiScaConfirmation, T payment, AspspConsentData aspspConsentData);
 
     SpiResponse<T> getPaymentById(T payment, String paymentId, AspspConsentData aspspConsentData);
 

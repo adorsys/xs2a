@@ -266,7 +266,7 @@ public class PaymentSpiImpl implements PaymentSpi {
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPayment busynessObject, AspspConsentData aspspConsentData) {
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPayment businessObject, AspspConsentData aspspConsentData) {
         return null; // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
     }
 }
