@@ -26,7 +26,6 @@ import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 
-import java.util.Base64;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -59,15 +58,17 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         body.setLinks(buildPaymentLinks(paymentRequestParameters, body));
     }
 
+    //TODO encode payment id with base64 encoding and add decoders to every endpoint links lead https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/382
     private Links buildPaymentLinks(PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
         if (RJCT == body.getTransactionStatus()) {
             return null;
         }
-        String encodedPaymentId = Base64.getEncoder()
-                                      .encodeToString(body.getPaymentId().getBytes());
+        String paymentService = paymentRequestParameters.getPaymentType().getValue();
+        String paymentId = body.getPaymentId();
+
         Links links = new Links();
-        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId));
-        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId));
+        links.setSelf(buildPath("/v1/{payment-service}/{payment-id}", paymentService, paymentId));
+        links.setStatus(buildPath("/v1/{payment-service}/{payment-id}/status", paymentService, paymentId));
 
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED) {
             return addEmbeddedRelatedLinks(links, paymentRequestParameters, body);
@@ -80,31 +81,34 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
     }
 
     private Links addEmbeddedRelatedLinks(Links links, PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
-        String encodedPaymentId = Base64.getEncoder()
-                                      .encodeToString(body.getPaymentId().getBytes());
+        String paymentService = paymentRequestParameters.getPaymentType().getValue();
+        String paymentId = body.getPaymentId();
+        String authorizationId = body.getAuthorizationId();
 
         if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentRequestParameters.getPaymentType().getValue(), paymentRequestParameters));
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId, body.getAuthorizationId()));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
             links.setStartAuthorisationWithPsuAuthentication(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId, body.getAuthorizationId()));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
         }
 
         return links;
     }
 
     private Links addRedirectRelatedLinks(Links links, PaymentRequestParameters paymentRequestParameters, PaymentInitialisationResponse body) {
-        String encodedPaymentId = Base64.getEncoder()
-                                      .encodeToString(body.getPaymentId().getBytes());
+        String paymentService = paymentRequestParameters.getPaymentType().getValue();
+        String paymentId = body.getPaymentId();
+        String authorizationId = body.getAuthorizationId();
+        String psuId = paymentRequestParameters.getPsuId();
 
         if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
-            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId));
+            links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
-            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + encodedPaymentId + "/" + paymentRequestParameters.getPsuId());
+            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + paymentId + "/" + psuId);
             links.setScaStatus(
-                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentRequestParameters.getPaymentType().getValue(), encodedPaymentId, body.getAuthorizationId()));
+                buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
         }
 
         return links;
