@@ -58,7 +58,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final AspspProfileServiceWrapper aspspProfileService;
     private final PisScaAuthorisationService pisAuthorizationService;
     private final TppService tppService;
-    private final AuthorisationMethodService authorizationMethodService;
+    private final AuthorisationMethodService authorisationMethodService;
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
@@ -94,7 +94,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
 
         if (aspspProfileService.getScaApproach() == ScaApproach.EMBEDDED
-                && authorizationMethodService.isImplicitMethod(explicitPreferred)) {
+                && authorisationMethodService.isImplicitMethod(explicitPreferred)) {
             proceedEmbeddedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuId, consentId);
         }
 

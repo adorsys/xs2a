@@ -49,7 +49,7 @@ public class PisConsentService {
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;
     private final Xs2aPisConsentMapper pisConsentMapper;
-    private final AuthorisationMethodService authorizationMethodService;
+    private final AuthorisationMethodService authorisationMethodService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
 
     public ResponseObject createPisConsent(Object payment, Object xs2aResponse, PaymentRequestParameters requestParameters, TppInfo tppInfo) {
@@ -73,7 +73,7 @@ public class PisConsentService {
                                       ? extendPaymentResponseFieldsSimple((PaymentInitialisationResponse) response, consentId, paymentType)
                                       : extendPaymentResponseFieldsBulk((List<PaymentInitialisationResponse>) response, consentId);
 
-        return authorizationMethodService.isImplicitMethod(tppExplicitAuthorisationPreferred)
+        return authorisationMethodService.isImplicitMethod(tppExplicitAuthorisationPreferred)
                    ? createPisAuthorisationForImplicitApproach(extendedResponse, paymentType)
                    : extendedResponse;
     }
