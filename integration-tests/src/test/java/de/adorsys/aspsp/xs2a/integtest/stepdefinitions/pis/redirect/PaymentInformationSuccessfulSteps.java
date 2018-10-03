@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
+package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +23,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.BulkPaymentInitiationSctWithStatusResponse;
@@ -46,6 +47,7 @@ import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+@FeatureFileSteps
 public class PaymentInformationSuccessfulSteps {
 
     private static final long DAYS_OFFSET = 100L;
