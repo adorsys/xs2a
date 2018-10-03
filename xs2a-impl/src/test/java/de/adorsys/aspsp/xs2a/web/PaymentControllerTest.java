@@ -104,7 +104,7 @@ public class PaymentControllerTest {
         when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
-        when(paymentService.createPayment(any(), any(), any()))
+        when(paymentService.createPayment(any(), any()))
             .thenReturn(readResponseObject());
 
         when(paymentService.createBulkPayments(any(), any(), any()))

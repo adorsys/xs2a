@@ -31,6 +31,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.api.PaymentApi;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -90,9 +91,9 @@ public class PaymentController implements PaymentApi {
                                              Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                              String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                              String psUGeoLocation) {
-        PaymentRequestParameters requestParams = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI);
+        PaymentRequestParameters requestParams = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), PSU_ID);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, requestParams), requestParams, PSU_ID);
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, requestParams), requestParams);
 
         return serviceResponse.hasError()
                    ? responseMapper.created(serviceResponse)
