@@ -17,3 +17,5 @@ setting:
  allPsd2Support: false
  authorisationStartType: EXPLICIT
  transactionsWithoutBalancesSupported: true
+ signingBasketSupported: true
+ paymentCancellationAuthorizationMandated: false

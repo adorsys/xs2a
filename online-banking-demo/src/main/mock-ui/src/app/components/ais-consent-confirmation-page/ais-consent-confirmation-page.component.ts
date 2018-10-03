@@ -48,7 +48,7 @@ export class AisConsentConfirmationPageComponent implements OnInit {
     }
   }
 
-  onSelectAccount(selectedAccount: Account):void {
+  onSelectAccount(selectedAccount: Account): void {
     if (this.selectedAccounts.includes(selectedAccount)) {
       this.selectedAccounts = this.selectedAccounts.filter(account => account !== selectedAccount);
     } else {
@@ -84,7 +84,7 @@ export class AisConsentConfirmationPageComponent implements OnInit {
   getAccountsWithConsentId() {
     this.aisService.getAccountsWithConsentID()
       .subscribe(accounts => {
-      this.accounts = accounts;
+        this.accounts = accounts;
       });
   }
 }

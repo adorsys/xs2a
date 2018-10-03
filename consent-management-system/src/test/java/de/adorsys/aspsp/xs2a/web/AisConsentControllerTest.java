@@ -87,33 +87,6 @@ public class AisConsentControllerTest {
     }
 
     @Test
-    public void updateAspspConsentData_Success() {
-
-        //Given:
-        UpdateConsentAspspDataRequest expectedRequest = new UpdateConsentAspspDataRequest();
-
-        //When:
-        ResponseEntity<CreateAisConsentResponse> responseEntity = aisConsentController.updateAspspConsentData(CONSENT_ID, expectedRequest);
-
-        //Then:
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody().getConsentId()).isEqualTo(CONSENT_ID);
-    }
-
-    @Test
-    public void updateAspspConsentData_Fail() {
-
-        //Given:
-        UpdateConsentAspspDataRequest expectedRequest = new UpdateConsentAspspDataRequest();
-
-        //When:
-        ResponseEntity responseEntity = aisConsentController.updateAspspConsentData(WRONG_CONSENT_ID, expectedRequest);
-
-        //Then:
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
-
-    @Test
     public void getConsentStatusById_Success() {
 
         //When:

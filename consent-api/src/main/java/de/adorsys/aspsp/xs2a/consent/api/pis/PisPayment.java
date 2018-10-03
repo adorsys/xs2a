@@ -68,10 +68,10 @@ public class PisPayment {
     @ApiModelProperty(value = "remittance information structured")
     private CmsRemittance remittanceInformationStructured;
 
-    @ApiModelProperty(value = "Requested execution date", required = true, example = "2020-01-01")
+    @ApiModelProperty(value = "Requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "Requested execution time", required = true, example = "2020-01-01T15:30:35.035Z")
+    @ApiModelProperty(value = "Requested execution time", example = "2020-01-01T15:30:35.035Z")
     private LocalDateTime requestedExecutionTime;
 
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")

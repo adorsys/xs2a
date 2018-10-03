@@ -27,3 +27,9 @@ be found at the following locations:
 [Test data (JSON Files)](./integration-tests/src/test/resources/data-input)  
 [Implementation of steps](./src/test/java/de/adorsys/aspsp/xs2a/integtest/stepdefinitions/pis) 
 
+## Remarks regarding embedded steps implementation
+
+The embedded integration tests do not mock previous steps. E.g. for a startAuthorisation
+request the pre-condition is a payment initiation. This step can not be mocked, as a consent is 
+required to perform this authorisation (even if a payment is stored in the mock server). It would be 
+possible to save this 

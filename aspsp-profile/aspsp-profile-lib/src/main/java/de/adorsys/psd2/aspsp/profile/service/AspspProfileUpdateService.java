@@ -54,4 +54,8 @@ public interface AspspProfileUpdateService {
     void updateAuthorisationStartType(AuthorisationStartType authorisationStartType);
 
     void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported);
+
+    void updateSigningBasketSupported(boolean signingBasketSupported);
+
+    void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated);
 }
