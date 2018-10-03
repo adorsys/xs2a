@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.payment;
+package de.adorsys.aspsp.xs2a.spi.domain.authorisation;
 
-import lombok.Data;
-
-@Data
-public class SpiPaymentConfirmation {
-    private String consentId;
-    private String paymentId;
-    private String tanNumber;
-    private String psuId;
+public enum SpiScaMethod {
+    SMS_OTP,
+    CHIP_OTP,
+    PHOTO_OTP,
+    PUSH_OTP
 }

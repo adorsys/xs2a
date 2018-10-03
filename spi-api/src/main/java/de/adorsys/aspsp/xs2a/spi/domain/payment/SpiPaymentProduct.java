@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.psu;
+package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-public enum SpiScaMethod {
-    SMS_OTP,
-    CHIP_OTP,
-    PHOTO_OTP,
-    PUSH_OTP
+public enum SpiPaymentProduct {
+    SEPA,
+    INSTANT_SEPA,
+    TARGET2,
+    CROSS_BORDER
 }

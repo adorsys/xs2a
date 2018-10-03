@@ -23,10 +23,11 @@ import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
 import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -96,10 +97,10 @@ public class SpiCmsPisMapper {
         return payment;
     }
 
-    public SpiPaymentConfirmation buildSpiPaymentConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
-        SpiPaymentConfirmation paymentConfirmation = new SpiPaymentConfirmation();
-        paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
+    public SpiScaConfirmation buildSpiScaConfirmation(UpdatePisConsentPsuDataRequest request, String consentId) {
+        SpiScaConfirmation paymentConfirmation = new SpiScaConfirmation();
         paymentConfirmation.setPaymentId(request.getPaymentId());
+        paymentConfirmation.setTanNumber(request.getScaAuthenticationData());
         paymentConfirmation.setConsentId(consentId);
         paymentConfirmation.setPsuId(request.getPsuId());
         return paymentConfirmation;
