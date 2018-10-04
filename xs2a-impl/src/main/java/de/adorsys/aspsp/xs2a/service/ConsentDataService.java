@@ -25,6 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -33,15 +36,13 @@ import java.util.Optional;
 public abstract class ConsentDataService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
-    //TODO use appropriate class for this service, split layers and responsibilities https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, consentId).getBody();
-        return new AspspConsentData(xs2aConsentData.getAspspConsentData(), consentId);
+        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, consentId).getBody());
     }
 
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        return consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), AspspConsentData.class, paymentId).getBody();
+        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, paymentId).getBody());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
