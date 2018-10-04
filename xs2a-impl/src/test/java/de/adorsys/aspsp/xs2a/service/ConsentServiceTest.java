@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
@@ -37,12 +36,12 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.consent.api.ActionStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
@@ -68,6 +67,7 @@ public class ConsentServiceTest {
     private final Currency CURRENCY = Currency.getInstance("EUR");
     private final Currency CURRENCY_2 = Currency.getInstance("USD");
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
+    private final boolean EXPLICIT_PREFERRED = true;
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
 
     @InjectMocks
@@ -178,7 +178,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -193,7 +193,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -211,7 +211,7 @@ public class ConsentServiceTest {
             .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID, EXPLICIT_PREFERRED);
 
         MessageError messageError = responseObj.getError();
 
@@ -234,7 +234,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, null);
+            req, null, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -249,7 +249,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, null);
+            req, null, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -264,7 +264,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, null);
+            req, null, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
         //Then:
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
@@ -279,7 +279,7 @@ public class ConsentServiceTest {
 
         //When:
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
-            req, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID, EXPLICIT_PREFERRED);
         //Then:
         assertThat(responseObj.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
     }
@@ -341,7 +341,7 @@ public class ConsentServiceTest {
         );
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
 
         //Then:
@@ -360,7 +360,7 @@ public class ConsentServiceTest {
             .thenReturn(false);
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
-            req, CORRECT_PSU_ID);
+            req, CORRECT_PSU_ID, EXPLICIT_PREFERRED);
         MessageError messageError = responseObj.getError();
 
         //Then

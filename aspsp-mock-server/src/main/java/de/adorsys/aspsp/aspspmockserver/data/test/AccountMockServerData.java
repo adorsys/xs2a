@@ -20,14 +20,14 @@ import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

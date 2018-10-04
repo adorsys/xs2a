@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.domain.psu;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;

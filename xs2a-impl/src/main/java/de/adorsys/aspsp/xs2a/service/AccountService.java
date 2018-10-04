@@ -16,8 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
@@ -35,6 +33,8 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.TypeAccess;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

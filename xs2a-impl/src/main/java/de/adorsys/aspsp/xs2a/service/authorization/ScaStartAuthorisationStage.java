@@ -17,23 +17,23 @@
 package de.adorsys.aspsp.xs2a.service.authorization;
 
 import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.*;
+import static de.adorsys.psd2.consent.api.CmsScaStatus.*;
 
 @Service("STARTED")
 public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {

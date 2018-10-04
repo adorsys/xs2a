@@ -16,16 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
-import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
@@ -36,6 +26,16 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationRes
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.psd2.consent.api.CmsAccountReference;
+import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.consent.api.CmsRemittance;
+import de.adorsys.psd2.consent.api.CmsTppInfo;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

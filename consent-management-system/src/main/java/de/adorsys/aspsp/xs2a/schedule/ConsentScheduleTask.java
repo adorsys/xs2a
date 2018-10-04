@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.schedule;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.FrequencyPerDateCalculationService;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
 
 @Slf4j
 @Component

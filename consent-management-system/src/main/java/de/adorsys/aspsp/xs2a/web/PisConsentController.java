@@ -16,16 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

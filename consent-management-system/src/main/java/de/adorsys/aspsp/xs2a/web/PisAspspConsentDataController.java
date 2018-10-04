@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAspspDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
+import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.psd2.consent.api.pis.PisConsentAspspDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

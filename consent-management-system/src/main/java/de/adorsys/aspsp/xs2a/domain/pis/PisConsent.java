@@ -17,10 +17,10 @@
 package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.ConsentType;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

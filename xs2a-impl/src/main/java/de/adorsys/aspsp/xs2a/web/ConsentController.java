@@ -30,6 +30,7 @@ import de.adorsys.psd2.model.Consents;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,7 +59,7 @@ public class ConsentController implements ConsentApi {
 
         ResponseObject<CreateConsentResponse> createConsentResponse = accountReferenceValidationResponse.hasError()
                                                                           ? ResponseObject.<CreateConsentResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-                                                                          : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID);
+                                                                          : consentService.createAccountConsentsWithResponse(createConsent, PSU_ID, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred));
 
         return responseMapper.created(createConsentResponse, consentModelMapper::mapToConsentsResponse201);
     }

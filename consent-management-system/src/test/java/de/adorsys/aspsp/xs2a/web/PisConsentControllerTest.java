@@ -16,17 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.web;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus;
-import de.adorsys.aspsp.xs2a.consent.api.PisConsentStatusResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.service.PisConsentService;
+import de.adorsys.psd2.consent.api.CmsScaStatus;
+import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collections;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -48,17 +48,16 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class PisConsentControllerTest {
 
-    private final String AUTHORISATION_ID = "345-9245-2359";
-    private final String PAYMENT_ID = "33333-999999999";
-    private final String CONSENT_ID = "12345";
-    private final String STATUS_RECEIVED = "RECEIVED";
+    private static final String AUTHORISATION_ID = "345-9245-2359";
+    private static final String PAYMENT_ID = "33333-999999999";
+    private static final String CONSENT_ID = "12345";
+    private static final String STATUS_RECEIVED = "RECEIVED";
     private static final String PSU_ID = "testPSU";
     private static final String PASSWORD = "password";
-    private static final byte[] CONSENT_DATA = "consent data".getBytes();
 
-    private final String WRONG_AUTHORISATION_ID = "3254890-5";
-    private final String WRONG_PAYMENT_ID = "32343-999997777";
-    private final String WRONG_CONSENT_ID = "67890";
+    private static final String WRONG_AUTHORISATION_ID = "3254890-5";
+    private static final String WRONG_PAYMENT_ID = "32343-999997777";
+    private static final String WRONG_CONSENT_ID = "67890";
 
     @InjectMocks
     private PisConsentController pisConsentController;
