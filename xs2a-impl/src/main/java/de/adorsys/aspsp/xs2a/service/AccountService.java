@@ -153,17 +153,20 @@ public class AccountService {
         }
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
 
-        Xs2aBalancesReport balancesReport = new Xs2aBalancesReport();
-        balancesReport.setBalances(accountDetails.getBalances());
-        balancesReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
-
         ResponseObject<Xs2aBalancesReport> response = isValid
-                                                         ? ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build()
-                                                         : ResponseObject.<Xs2aBalancesReport>builder()
-                                                               .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+                                                          ? ResponseObject.<Xs2aBalancesReport>builder().body(getXs2aBalancesReport(accountDetails)).build()
+                                                          : ResponseObject.<Xs2aBalancesReport>builder()
+                                                                .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false, TypeAccess.BALANCE, response));
         return response;
+    }
+
+    private Xs2aBalancesReport getXs2aBalancesReport(Xs2aAccountDetails accountDetails) {
+        Xs2aBalancesReport balancesReport = new Xs2aBalancesReport();
+        balancesReport.setBalances(accountDetails.getBalances());
+        balancesReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
+        return balancesReport;
     }
 
     /**
