@@ -188,16 +188,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     }
 
     /**
-     * Update type of authorization start to implicit or explicit
-     *
-     * @param authorisationStartType AllPsd2Support status to substitute existing one
-     */
-    @Override
-    public void updateAuthorisationStartType(AuthorisationStartType authorisationStartType) {
-        profileConfiguration.setAuthorisationStartType(authorisationStartType);
-    }
-
-    /**
      * Update the value of transactions without balances supported
      *
      * @param transactionsWithoutBalancesSupported the value of transactions without balances supported

@@ -113,11 +113,6 @@ public class ProfileConfiguration {
     private boolean allPsd2Support;
 
     /**
-     * Type of authorisation start: IMPLICIT or EXPLICIT
-     */
-    private AuthorisationStartType authorisationStartType;
-
-    /**
      * If "false" indicates that an ASPSP might add balance information to transactions list
      */
     private boolean transactionsWithoutBalancesSupported;
