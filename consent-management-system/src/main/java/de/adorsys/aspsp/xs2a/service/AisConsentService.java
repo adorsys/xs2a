@@ -195,6 +195,7 @@ public class AisConsentService {
      * @param request         needed parameters for updating consent authorization
      * @return boolean
      */
+    @Transactional
     public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
         return aisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(conAuth -> {
