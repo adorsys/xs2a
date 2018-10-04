@@ -34,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.*;
 import static de.adorsys.psd2.consent.api.TypeAccess.*;
@@ -210,12 +207,19 @@ public class AisConsentService {
 
     private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
         AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
-        response.setAspspConsentData(consent.getAspspConsentData());
+        String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
+                                            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                                            .orElse(null);
+        response.setAspspConsentDataBase64(aspspConsentDataBase64);
+        response.setConsentId(consent.getExternalId());
         return response;
     }
 
     private String updateAspspConsentData(UpdateConsentAspspDataRequest request, AisConsent consent) {
-        consent.setAspspConsentData(request.getAspspConsentData());
+        byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                      .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
+                                      .orElse(null);
+        consent.setAspspConsentData(aspspConsentData);
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

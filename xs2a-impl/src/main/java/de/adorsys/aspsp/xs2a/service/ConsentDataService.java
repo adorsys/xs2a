@@ -25,6 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Base64;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -33,22 +36,32 @@ import java.util.Optional;
 public abstract class ConsentDataService {
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
-    //TODO use appropriate class for this service, split layers and responsibilities https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, consentId).getBody();
-        return new AspspConsentData(xs2aConsentData.getAspspConsentData(), consentId);
+        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, consentId).getBody());
     }
 
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        return consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), AspspConsentData.class, paymentId).getBody();
+        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, paymentId).getBody());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
         Optional.ofNullable(consentData)
-            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()))
-            .ifPresent(cd -> consentRestTemplate.put(getRemoteUrl().updateAspspConsentData(), new Xs2aConsentData(cd.getAspspConsentData()), cd.getConsentId()));
+            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()) && Objects.nonNull(cd.getAspspConsentData()))
+            .ifPresent(cd -> {
+                String aspspConsentDataBase64 = Optional.ofNullable(cd.getAspspConsentData())
+                                                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                                                    .orElse(null);
+                consentRestTemplate.put(getRemoteUrl().updateAspspConsentData(), new Xs2aConsentData(cd.getConsentId(), aspspConsentDataBase64), cd.getConsentId());
+            });
     }
 
     protected abstract AspspConsentDataRemoteUrls getRemoteUrl();
+
+    private AspspConsentData mapToAspspConsentData(Xs2aConsentData xs2aConsentData) {
+        byte[] aspspConsentData = Optional.ofNullable(xs2aConsentData.getAspspConsentDataBase64())
+                                      .map(s -> Base64.getDecoder().decode(s))
+                                      .orElse(null);
+        return new AspspConsentData(aspspConsentData, xs2aConsentData.getConsentId());
+    }
 }

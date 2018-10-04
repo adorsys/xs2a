@@ -24,8 +24,8 @@ import lombok.Data;
 @ApiModel(description = "Ais/Pis consent aspsp data update request", value = "UpdateConsentAspspDataRequest")
 public class UpdateConsentAspspDataRequest {
 
-    @ApiModelProperty(value = "ASPSP consent data", required = true, example = "zdxcvvzzzxcvzzzz")
-    private byte[] aspspConsentData;
     @ApiModelProperty(value = "Consent ID", required = true, example = "3e18d032-ee06-4670-b043-9d43ba367db3")
     private String consentId;
+    @ApiModelProperty(value = "ASPSP consent data Base64", required = true, example = "zdxcvvzzzxcvzzzz")
+    private String aspspConsentDataBase64;
 }
