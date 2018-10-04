@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +33,6 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
 public class PaymentInitationRequestResponse201 {
-
     @JsonProperty("transactionStatus")
     private TransactionStatus transactionStatus = null;
 
@@ -81,7 +96,6 @@ public class PaymentInitationRequestResponse201 {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public String getPaymentId() {
         return paymentId;
     }
@@ -249,6 +263,7 @@ public class PaymentInitationRequestResponse201 {
         this.tppMessages = tppMessages;
     }
 
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -258,16 +273,7 @@ public class PaymentInitationRequestResponse201 {
             return false;
         }
         PaymentInitationRequestResponse201 paymentInitationRequestResponse201 = (PaymentInitationRequestResponse201) o;
-        return Objects.equals(this.transactionStatus, paymentInitationRequestResponse201.transactionStatus) &&
-            Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) &&
-            Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) &&
-            Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) &&
-            Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) &&
-            Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) &&
-            Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
-            Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
-            Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
-            Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages);
+        return Objects.equals(this.transactionStatus, paymentInitationRequestResponse201.transactionStatus) && Objects.equals(this.paymentId, paymentInitationRequestResponse201.paymentId) && Objects.equals(this.transactionFees, paymentInitationRequestResponse201.transactionFees) && Objects.equals(this.transactionFeeIndicator, paymentInitationRequestResponse201.transactionFeeIndicator) && Objects.equals(this.scaMethods, paymentInitationRequestResponse201.scaMethods) && Objects.equals(this.chosenScaMethod, paymentInitationRequestResponse201.chosenScaMethod) && Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) && Objects.equals(this._links, paymentInitationRequestResponse201._links) && Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) && Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages);
     }
 
     @Override
@@ -305,3 +311,4 @@ public class PaymentInitationRequestResponse201 {
         return o.toString().replace("\n", "\n    ");
     }
 }
+
