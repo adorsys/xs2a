@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.client.cms.model.ais;
+package de.adorsys.psd2.consent.client.cms.model.pis;
 
 import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
 import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;
 
-public class UpdateAisAspspConsentDataMethod extends
-                                             RestCmsRequestMethod<UpdateConsentAspspDataRequest, CreateAisConsentResponse> {
-    private static final String UPDATE_AIS_CONSENT_BLOB_URI = "api/v1/ais/consent/{consent-id}/aspspConsentData";
+public class GetPisConsentAspspDataMethod extends RestCmsRequestMethod<Void, UpdateConsentAspspDataRequest> {
+    private static final String GET_PIS_CONSENT_ASPSP_DATA_URI = "api/v1/pis/payment/{payment-id}/aspsp-consent-data";
 
-    public UpdateAisAspspConsentDataMethod(final UpdateConsentAspspDataRequest request, HttpUriParams uriParams) {
-        super(request, HttpMethod.PUT, UPDATE_AIS_CONSENT_BLOB_URI, uriParams);
+    public GetPisConsentAspspDataMethod(HttpUriParams uriParams) {
+        super(HttpMethod.GET, GET_PIS_CONSENT_ASPSP_DATA_URI, uriParams);
     }
 }
+
