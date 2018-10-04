@@ -45,6 +45,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,6 +70,8 @@ public class ConsentServiceTest {
     private final LocalDate DATE = LocalDate.parse("2019-03-03");
     private final boolean EXPLICIT_PREFERRED = true;
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
+    private final LocalDate YESTERDAY = LocalDate.now().minus(Period.ofDays(1));
 
     @InjectMocks
     private ConsentService consentService;
@@ -148,6 +151,7 @@ public class ConsentServiceTest {
 
         //GetConsentById
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(getSpiConsent(CONSENT_ID, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID_DATE_VALID_YESTERDAY)).thenReturn(getSpiConsentDateValidYesterday(CONSENT_ID_DATE_VALID_YESTERDAY, getSpiAccountAccess(Collections.singletonList(getSpiReference(CORRECT_IBAN, CURRENCY)), null, null, false, false), false));
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(null);
 
         //GetStatusById
@@ -373,6 +377,15 @@ public class ConsentServiceTest {
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(MessageErrorCode.PARAMETER_NOT_SUPPORTED);
     }
 
+    @Test
+    public void getValidateConsent_DateValidAfter() {
+        //When
+        ResponseObject<Xs2aAccountAccess> xs2aAccountAccessResponseObject = consentService.getValidatedConsent(CONSENT_ID_DATE_VALID_YESTERDAY);
+        //Then
+        assertThat(xs2aAccountAccessResponseObject.getBody()).isNull();
+        assertThat(xs2aAccountAccessResponseObject.getError().getTransactionStatus()).isEqualTo(Xs2aTransactionStatus.RJCT);
+    }
+
     /**
      * Basic test AccountDetails used in all cases
      */
@@ -402,6 +415,10 @@ public class ConsentServiceTest {
 
     private SpiAccountConsent getSpiConsent(String consentId, SpiAccountAccess access, boolean withBalance) {
         return new SpiAccountConsent(consentId, access, false, DATE, 4, null, SpiConsentStatus.VALID, withBalance, false, null, TPP_ID);
+    }
+
+    private SpiAccountConsent getSpiConsentDateValidYesterday(String consentId, SpiAccountAccess access, boolean withBalance) {
+        return new SpiAccountConsent(consentId, access, false, YESTERDAY, 4, null, SpiConsentStatus.VALID, withBalance, false, null, TPP_ID);
     }
 
     private CreateConsentReq getCreateConsentRequest(Xs2aAccountAccess access) {

@@ -142,11 +142,15 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     }
 
     ResponseObject<Xs2aAccountAccess> getValidatedConsent(String consentId) {
-        AccountConsent consent = aisConsentMapper.mapToAccountConsent(getValidatedSpiAccountConsent(consentId));
-        if (consent == null) {
+        SpiAccountConsent spiAccountConsent = getValidatedSpiAccountConsent(consentId);
+
+        if (spiAccountConsent == null || LocalDate.now().compareTo(spiAccountConsent.getValidUntil()) >= 0) {
             return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_UNKNOWN_400))).build();
         }
+
+        AccountConsent consent = aisConsentMapper.mapToAccountConsent(spiAccountConsent);
+
         if (!consent.isValidStatus()) {
             return ResponseObject.<Xs2aAccountAccess>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.CONSENT_EXPIRED))).build();
