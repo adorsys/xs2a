@@ -43,7 +43,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
@@ -140,25 +142,42 @@ public class AccountService {
      */
     public ResponseObject<Xs2aBalancesReport> getBalancesReport(String consentId, String accountId) {
         ResponseObject<Xs2aAccountAccess> allowedAccountData = consentService.getValidatedConsent(consentId);
+
         if (allowedAccountData.hasError()) {
             return ResponseObject.<Xs2aBalancesReport>builder()
-                       .fail(allowedAccountData.getError()).build();
+                       .fail(allowedAccountData.getError())
+                       .build();
         }
+
         SpiResponse<SpiAccountDetails> spiResponse = accountSpi.readAccountDetails(accountId, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
         aisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
+
+        if (spiResponse.hasError()) {
+            return ResponseObject.<Xs2aBalancesReport>builder()
+                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .build();
+        }
+
         Xs2aAccountDetails accountDetails = spiXs2aAccountMapper.mapToXs2aAccountDetails(spiResponse.getPayload());
+
         if (accountDetails == null) {
             return ResponseObject.<Xs2aBalancesReport>builder()
-                       .fail(new MessageError(new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_404))).build();
+                       .fail(new MessageError(RESOURCE_UNKNOWN_404))
+                       .build();
         }
+
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getBalances());
 
-        ResponseObject<Xs2aBalancesReport> response = isValid
-                                                          ? ResponseObject.<Xs2aBalancesReport>builder().body(getXs2aBalancesReport(accountDetails)).build()
-                                                          : ResponseObject.<Xs2aBalancesReport>builder()
-                                                                .fail(new MessageError(new TppMessageInformation(ERROR, CONSENT_INVALID))).build();
+        if (!isValid) {
+            return ResponseObject.<Xs2aBalancesReport>builder()
+                       .fail(new MessageError(CONSENT_INVALID))
+                       .build();
+        }
 
+        Xs2aBalancesReport balancesReport = getXs2aBalancesReport(accountDetails);
+        ResponseObject<Xs2aBalancesReport> response = ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build();
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false, TypeAccess.BALANCE, response));
+
         return response;
     }
 
