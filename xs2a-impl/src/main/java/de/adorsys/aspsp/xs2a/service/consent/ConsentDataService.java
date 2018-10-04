@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
 import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
@@ -35,14 +35,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public abstract class ConsentDataService {
     @Qualifier("consentRestTemplate")
-    private final RestTemplate consentRestTemplate;
+    protected final RestTemplate consentRestTemplate;
 
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
         return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, consentId).getBody());
-    }
-
-    public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, paymentId).getBody());
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
@@ -58,7 +54,7 @@ public abstract class ConsentDataService {
 
     protected abstract AspspConsentDataRemoteUrls getRemoteUrl();
 
-    private AspspConsentData mapToAspspConsentData(Xs2aConsentData xs2aConsentData) {
+    protected AspspConsentData mapToAspspConsentData(Xs2aConsentData xs2aConsentData) {
         byte[] aspspConsentData = Optional.ofNullable(xs2aConsentData.getAspspConsentDataBase64())
                                       .map(s -> Base64.getDecoder().decode(s))
                                       .orElse(null);
