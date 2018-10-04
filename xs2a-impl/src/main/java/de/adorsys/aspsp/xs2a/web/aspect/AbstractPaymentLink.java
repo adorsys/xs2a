@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -106,11 +107,14 @@ public abstract class AbstractPaymentLink<T> extends AbstractLinkAspect<T> {
         if (authorisationMethodService.isExplicitMethod(paymentRequestParameters.isTppExplicitAuthorisationPreferred())) {
             links.setStartAuthorisation(buildPath("/v1/{payment-service}/{payment-id}/authorisations", paymentService, paymentId));
         } else {
-            links.setScaRedirect(aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + paymentId + "/" + psuId);
+            String link = aspspProfileService.getPisRedirectUrlToAspsp() + body.getPisConsentId() + "/" + paymentId;
+            if (StringUtils.isNotBlank(psuId)) {
+                link = link + "/" + psuId;
+            }
+            links.setScaRedirect(link);
             links.setScaStatus(
                 buildPath("/v1/{payment-service}/{payment-id}/authorisations/{authorisation-id}", paymentService, paymentId, authorizationId));
         }
-
         return links;
     }
 }
