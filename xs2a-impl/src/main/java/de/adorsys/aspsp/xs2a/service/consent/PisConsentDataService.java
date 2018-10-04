@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,6 +30,10 @@ public class PisConsentDataService extends ConsentDataService {
     public PisConsentDataService(RestTemplate consentRestTemplate, PisConsentRemoteUrls pisConsentRemoteUrls) {
         super(consentRestTemplate);
         this.pisConsentRemoteUrls = pisConsentRemoteUrls;
+    }
+
+    public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
+        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, paymentId).getBody());
     }
 
     @Override

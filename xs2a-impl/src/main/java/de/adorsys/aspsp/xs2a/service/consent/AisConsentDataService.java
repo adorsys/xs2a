@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
