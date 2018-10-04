@@ -24,13 +24,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.service.v2.PaymentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PeriodicPaymentSpiImpl implements PaymentSpi<SpiPeriodicPayment> {
+public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     @Override
     public SpiResponse<SpiPeriodicPayment> initiatePayment(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
@@ -42,32 +42,32 @@ public class PeriodicPaymentSpiImpl implements PaymentSpi<SpiPeriodicPayment> {
     }
 
     @Override
-    public SpiResponse<SpiPeriodicPayment> getPaymentById(String paymentId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiPeriodicPayment> getPaymentById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 }

@@ -22,13 +22,13 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.service.AuthorisationSpi;
 
-public interface PaymentSpi<T> extends AuthorisationSpi<T> {
+interface PaymentSpi<T> extends AuthorisationSpi<T> {
 
     SpiResponse<T> initiatePayment(T payment, AspspConsentData aspspConsentData);
 
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
 
-    SpiResponse<T> getPaymentById(String paymentId, T payment, AspspConsentData aspspConsentData);
+    SpiResponse<T> getPaymentById(T payment, AspspConsentData aspspConsentData);
 
-    SpiResponse<SpiTransactionStatus> getPaymentStatusById(String paymentId, T payment, AspspConsentData aspspConsentData);
+    SpiResponse<SpiTransactionStatus> getPaymentStatusById(T payment, AspspConsentData aspspConsentData);
 }
