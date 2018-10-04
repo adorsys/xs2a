@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
 import de.adorsys.aspsp.aspspmockserver.keycloak.KeycloakService;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

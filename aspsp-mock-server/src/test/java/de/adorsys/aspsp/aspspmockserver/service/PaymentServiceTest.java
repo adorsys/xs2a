@@ -16,16 +16,16 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountBalance;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiBalanceType;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiCancelPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiCancelPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

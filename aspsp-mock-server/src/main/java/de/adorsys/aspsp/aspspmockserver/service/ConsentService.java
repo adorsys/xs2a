@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.config.rest.consent.AisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.consent.SpiConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;

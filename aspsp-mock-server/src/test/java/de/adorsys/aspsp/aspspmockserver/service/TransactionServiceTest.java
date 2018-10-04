@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiTransaction;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
 import de.adorsys.aspsp.aspspmockserver.repository.TransactionRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -128,8 +128,8 @@ public class TransactionServiceTest {
 
     private SpiTransaction getTransaction() {
         return new SpiTransaction(TRANSACTION_ID, null, null, "Creditor_id", null, null, DATE, DATE, new SpiAmount(EUR, BigDecimal.valueOf(1000)), null, "Creditor",
-            new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
-            new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
+                                  new SpiAccountReference(IBAN, null, null, null, null, EUR), "Ult Creditor", "Debtor",
+                                  new SpiAccountReference(IBAN_2, null, null, null, null, EUR), "Ult Debtor", null, null, "Purpose", "bankTrCode", "propBankTrCode");
     }
 
     private SpiAccountDetails getDetails() {

@@ -33,19 +33,35 @@
     <description>Consent API</description>
 
     <properties>
+        <swagger.annotations.version>1.5.19</swagger.annotations.version>
+        <archunit-junit4.version>0.9.1</archunit-junit4.version>
         <ruleset.basedir>../..</ruleset.basedir>
     </properties>
 
     <dependencies>
+
+        <!--3rd party dependencies -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger.annotations.version}</version>
         </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit4</artifactId>
+            <version>${archunit-junit4.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

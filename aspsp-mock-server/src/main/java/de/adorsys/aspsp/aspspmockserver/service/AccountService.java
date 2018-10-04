@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountBalance;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

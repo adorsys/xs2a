@@ -17,18 +17,18 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.config.rest.consent.PisConsentRemoteUrls;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountBalance;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.consent.SpiConsentStatus;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiCancelPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiCancelPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.consent.api.pis.PisPaymentType.PERIODIC;
-import static de.adorsys.psd2.consent.api.pis.PisPaymentType.SINGLE;
+import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.PERIODIC;
+import static de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType.SINGLE;
 
 @Slf4j
 @Service

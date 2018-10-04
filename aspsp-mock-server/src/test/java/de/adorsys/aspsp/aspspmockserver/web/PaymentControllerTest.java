@@ -16,11 +16,11 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiBulkPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +34,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.ACCP;
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
+import static de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus.ACCP;
+import static de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus.RJCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
