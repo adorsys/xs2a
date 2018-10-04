@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.aspspmockserver.service.mapper;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.aspsp.aspspmockserver.domain.pis.PisPaymentType;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.aspspmockserver.repository;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiTransaction;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

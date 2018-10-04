@@ -18,9 +18,9 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.consent.SpiConsentStatus;
 import de.adorsys.aspsp.aspspmockserver.service.ConsentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

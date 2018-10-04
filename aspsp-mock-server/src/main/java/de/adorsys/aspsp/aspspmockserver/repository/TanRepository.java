@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.aspspmockserver.repository;
 
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Tan;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.TanStatus;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
