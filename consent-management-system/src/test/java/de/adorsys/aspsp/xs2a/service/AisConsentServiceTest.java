@@ -16,14 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.AccountInfo;
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.api.AccountInfo;
+import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +34,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.time.LocalDate;
 import java.util.*;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -182,7 +182,7 @@ public class AisConsentServiceTest {
 
     private UpdateConsentAspspDataRequest buildUpdateBlobRequest() {
         UpdateConsentAspspDataRequest request = new UpdateConsentAspspDataRequest();
-        request.setAspspConsentData("zdxcvvzzzxcvzzzz".getBytes());
+        request.setAspspConsentDataBase64("zdxcvvzzzxcvzzzz");
         return request;
     }
 
@@ -191,6 +191,6 @@ public class AisConsentServiceTest {
             null, false,
             null, 0,
             null, null,
-            false, false, null, null, null, null);
+            false, false, null, null, null);
     }
 }

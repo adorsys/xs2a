@@ -62,7 +62,7 @@ public class PaymentService {
      * @param payment Payment information
      * @return Response containing information about created payment or corresponding error
      */
-    public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters, String psuId) {
+    public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters) {
         ResponseObject response;
         TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
         if (requestParameters.getPaymentType() == SINGLE) {
@@ -75,7 +75,7 @@ public class PaymentService {
         if (!response.hasError()) {//TODO Refactor this https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
             response = pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
             getAspspConsentDataFromResponseObject(response, requestParameters.getPaymentType())
-                .ifPresent(pisConsentDataService::updateConsentData);
+                .ifPresent(pisConsentDataService::updateAspspConsentData);
 
         }
         return response;
@@ -89,8 +89,8 @@ public class PaymentService {
      * @return Information about the status of a payment
      */
     public ResponseObject<Xs2aTransactionStatus> getPaymentStatusById(String paymentId, PaymentType paymentType) {
-        SpiResponse<SpiTransactionStatus> spiResponse = paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), pisConsentDataService.getConsentDataByPaymentId(paymentId));
-        pisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiTransactionStatus> spiResponse = paymentSpi.getPaymentStatusById(paymentId, paymentMapper.mapToSpiPaymentType(paymentType), pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(spiResponse.getPayload());
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())

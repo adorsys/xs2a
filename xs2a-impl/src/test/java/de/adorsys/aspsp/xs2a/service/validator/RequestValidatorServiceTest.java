@@ -16,12 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.service.validator;
 
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.ConsentController;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

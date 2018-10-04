@@ -1,0 +1,23 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "PSU-ID": "d9e71419-24e4-4c5a-8d93-fcc23153aaff"
+    },
+    "body": {
+      "psuData": {
+        "password": "zzz"
+      }
+    }
+  },
+  "response": {
+    "code": "200",
+    "header": {
+    },
+    "body": {
+      "_links": {
+        "startAuthorisationWithAuthorisationMethodSelected": ""
+      }
+    }
+  }
+}

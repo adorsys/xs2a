@@ -16,14 +16,14 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.TypeAccess;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountAccess;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisAccountConsent;
-import de.adorsys.aspsp.xs2a.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAuthorization;
+import de.adorsys.psd2.consent.api.CmsAccountReference;
+import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -44,7 +44,6 @@ public class AisConsentMapper {
             consent.getConsentStatus(),
             false,
             consent.isTppRedirectPreferred(),
-            consent.getAspspConsentData(),
             consent.getAisConsentRequestType(),
             consent.getPsuId(),
             consent.getTppId());

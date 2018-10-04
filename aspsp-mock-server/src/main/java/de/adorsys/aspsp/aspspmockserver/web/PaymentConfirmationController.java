@@ -18,11 +18,11 @@ package de.adorsys.aspsp.aspspmockserver.web;
 
 import de.adorsys.aspsp.aspspmockserver.domain.Confirmation;
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.consent.SpiConsentStatus;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
 import de.adorsys.aspsp.aspspmockserver.exception.ApiError;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
 import de.adorsys.aspsp.aspspmockserver.service.TanConfirmationService;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

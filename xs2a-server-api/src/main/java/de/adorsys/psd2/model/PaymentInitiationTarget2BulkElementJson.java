@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +33,6 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
 public class PaymentInitiationTarget2BulkElementJson {
-
     @JsonProperty("endToEndIdentification")
     private String endToEndIdentification = null;
 
@@ -92,7 +107,6 @@ public class PaymentInitiationTarget2BulkElementJson {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public Object getCreditorAccount() {
         return creditorAccount;
     }
@@ -132,7 +146,6 @@ public class PaymentInitiationTarget2BulkElementJson {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public String getCreditorName() {
         return creditorName;
     }
@@ -181,6 +194,7 @@ public class PaymentInitiationTarget2BulkElementJson {
         this.remittanceInformationUnstructured = remittanceInformationUnstructured;
     }
 
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -190,13 +204,7 @@ public class PaymentInitiationTarget2BulkElementJson {
             return false;
         }
         PaymentInitiationTarget2BulkElementJson paymentInitiationTarget2BulkElementJson = (PaymentInitiationTarget2BulkElementJson) o;
-        return Objects.equals(this.endToEndIdentification, paymentInitiationTarget2BulkElementJson.endToEndIdentification) &&
-            Objects.equals(this.instructedAmount, paymentInitiationTarget2BulkElementJson.instructedAmount) &&
-            Objects.equals(this.creditorAccount, paymentInitiationTarget2BulkElementJson.creditorAccount) &&
-            Objects.equals(this.creditorAgent, paymentInitiationTarget2BulkElementJson.creditorAgent) &&
-            Objects.equals(this.creditorName, paymentInitiationTarget2BulkElementJson.creditorName) &&
-            Objects.equals(this.creditorAddress, paymentInitiationTarget2BulkElementJson.creditorAddress) &&
-            Objects.equals(this.remittanceInformationUnstructured, paymentInitiationTarget2BulkElementJson.remittanceInformationUnstructured);
+        return Objects.equals(this.endToEndIdentification, paymentInitiationTarget2BulkElementJson.endToEndIdentification) && Objects.equals(this.instructedAmount, paymentInitiationTarget2BulkElementJson.instructedAmount) && Objects.equals(this.creditorAccount, paymentInitiationTarget2BulkElementJson.creditorAccount) && Objects.equals(this.creditorAgent, paymentInitiationTarget2BulkElementJson.creditorAgent) && Objects.equals(this.creditorName, paymentInitiationTarget2BulkElementJson.creditorName) && Objects.equals(this.creditorAddress, paymentInitiationTarget2BulkElementJson.creditorAddress) && Objects.equals(this.remittanceInformationUnstructured, paymentInitiationTarget2BulkElementJson.remittanceInformationUnstructured);
     }
 
     @Override
@@ -231,3 +239,4 @@ public class PaymentInitiationTarget2BulkElementJson {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

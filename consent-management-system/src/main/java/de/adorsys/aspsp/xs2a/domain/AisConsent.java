@@ -16,8 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain;
 
-import de.adorsys.aspsp.xs2a.consent.api.AisConsentRequestType;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.consent.api.AisConsentRequestType;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.EXPIRED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.EXPIRED;
 
 @Data
 @ToString(exclude = "accesses")
@@ -113,6 +114,7 @@ public class AisConsent {
     @Lob
     @Column(name = "aspsp_consent_data")
     @Type(type = "org.hibernate.type.BinaryType")
+    @JsonIgnore
     private byte[] aspspConsentData;
 
     @Column(name = "ais_consent_request_type", nullable = false)

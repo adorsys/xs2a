@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiTransaction;
 import de.adorsys.aspsp.aspspmockserver.service.TransactionService;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

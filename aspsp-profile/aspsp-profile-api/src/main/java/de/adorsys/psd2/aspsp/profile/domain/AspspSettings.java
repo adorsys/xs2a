@@ -36,7 +36,7 @@ public class AspspSettings {
     private int consentLifetime;
     private int transactionLifetime;
     private boolean allPsd2Support;
-    private AuthorisationStartType authorisationStartType;
     private boolean transactionsWithoutBalancesSupported;
     private boolean signingBasketSupported;
+    private boolean paymentCancellationAuthorizationMandated;
 }

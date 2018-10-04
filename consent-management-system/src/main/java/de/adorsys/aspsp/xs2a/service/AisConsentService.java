@@ -17,8 +17,6 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.account.AccountAccessHolder;
-import de.adorsys.aspsp.xs2a.consent.api.*;
-import de.adorsys.aspsp.xs2a.consent.api.ais.*;
 import de.adorsys.aspsp.xs2a.domain.AccountAccess;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
 import de.adorsys.aspsp.xs2a.domain.AisConsentAction;
@@ -27,6 +25,8 @@ import de.adorsys.aspsp.xs2a.repository.AisConsentActionRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentAuthorizationRepository;
 import de.adorsys.aspsp.xs2a.repository.AisConsentRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.ais.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -34,13 +34,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.*;
-import static de.adorsys.aspsp.xs2a.consent.api.TypeAccess.*;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.*;
+import static de.adorsys.psd2.consent.api.TypeAccess.*;
 
 @Service
 @RequiredArgsConstructor
@@ -210,12 +207,19 @@ public class AisConsentService {
 
     private AisConsentAspspDataResponse getConsentAspspData(AisConsent consent) {
         AisConsentAspspDataResponse response = new AisConsentAspspDataResponse();
-        response.setAspspConsentData(consent.getAspspConsentData());
+        String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
+                                            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                                            .orElse(null);
+        response.setAspspConsentDataBase64(aspspConsentDataBase64);
+        response.setConsentId(consent.getExternalId());
         return response;
     }
 
     private String updateAspspConsentData(UpdateConsentAspspDataRequest request, AisConsent consent) {
-        consent.setAspspConsentData(request.getAspspConsentData());
+        byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                      .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
+                                      .orElse(null);
+        consent.setAspspConsentData(aspspConsentData);
         AisConsent savedConsent = aisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

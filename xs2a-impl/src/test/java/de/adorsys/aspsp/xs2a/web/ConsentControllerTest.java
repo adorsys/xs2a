@@ -20,15 +20,13 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.ConsentModelMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.ResponseMapper;
-import de.adorsys.psd2.model.AccountAccess;
-import de.adorsys.psd2.model.ConsentInformationResponse200Json;
-import de.adorsys.psd2.model.Consents;
-import de.adorsys.psd2.model.ConsentsResponse201;
+import de.adorsys.psd2.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +51,9 @@ public class ConsentControllerTest {
     private final String CORRECT_PSU_ID = "ID 777";
     private final String WRONG_PSU_ID = "ID 666";
     private final String CONSENT_ID = "XXXX-YYYY-XXXX-YYYY";
+    private final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
+    private final boolean EXPLICIT_PREFERRED = true;
 
     @InjectMocks
     private ConsentController consentController;
@@ -70,8 +70,8 @@ public class ConsentControllerTest {
     @Before
     public void setUp() {
         when(consentModelMapper.mapToCreateConsentReq(any())).thenReturn(getCreateConsentReq());
-        when(consentService.createAccountConsentsWithResponse(any(), eq(CORRECT_PSU_ID))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
-        when(consentService.createAccountConsentsWithResponse(any(), eq(WRONG_PSU_ID))).thenReturn(createXs2aConsentResponse(null));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(CORRECT_PSU_ID), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
+        when(consentService.createAccountConsentsWithResponse(any(), eq(WRONG_PSU_ID), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
         when(consentService.getAccountConsentsStatusById(CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(ConsentStatus.RECEIVED)).build());
         when(consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID)).thenReturn(ResponseObject.<ConsentStatusResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build());
         when(consentService.getAccountConsentById(CONSENT_ID)).thenReturn(getConsent(CONSENT_ID));
@@ -142,6 +142,41 @@ public class ConsentControllerTest {
     }
 
     @Test
+    public void startConsentAuthorisation_Success() {
+        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(CONSENT_ID), HttpStatus.CREATED))
+            .when(responseMapper).created(any(), any());
+
+        // Given
+        CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse(CONSENT_ID);
+
+        // When
+        ResponseEntity responseEntity = consentController.startConsentAuthorisation(CONSENT_ID, null,
+            null, null, null, null, null, null,
+            null, null, null, null, null,
+            null, null, null, null, null,
+            null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    public void startConsentAuthorisation_Failure() {
+        doReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST)).when(responseMapper).created(any(), any());
+
+        // When
+        ResponseEntity responseEntity = consentController.startConsentAuthorisation(CONSENT_ID, null,
+            null, null, null, null, null, null,
+            null, null, null, null, null,
+            null, null, null, null, null,
+            null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
     public void getAccountConsentsInformationById_Success() {
         doReturn(new ResponseEntity<>(getConsentInformationResponse(CONSENT_ID).getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -198,7 +233,7 @@ public class ConsentControllerTest {
 
         return isEmpty(consentId)
                    ? ResponseObject.<ConsentsResponse201>builder().fail(new MessageError(
-                       new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+            new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<ConsentsResponse201>builder().body(response).build();
     }
 
@@ -206,7 +241,7 @@ public class ConsentControllerTest {
     private ResponseObject<CreateConsentResponse> createXs2aConsentResponse(String consentId) {
         return isEmpty(consentId)
                    ? ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(
-                       new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
+            new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_404))).build()
                    : ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null)).build();
     }
 
@@ -251,5 +286,13 @@ public class ConsentControllerTest {
         AccountAccess access = new AccountAccess();
         consents.setAccess(access);
         return consents;
+    }
+
+    private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse(String consentId) {
+        CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
+        response.setConsentId(consentId);
+        response.setAuthorizationId(AUTHORISATION_ID);
+        response.setScaStatus(ScaStatus.STARTED);
+        return response;
     }
 }

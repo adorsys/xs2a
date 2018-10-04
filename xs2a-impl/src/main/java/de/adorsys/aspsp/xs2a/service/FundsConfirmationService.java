@@ -76,7 +76,7 @@ public class FundsConfirmationService {
 
     private List<Xs2aBalance> getAccountBalancesByAccountReference(Xs2aAccountReference reference) {
         return Optional.ofNullable(reference)
-                   .map(ref -> accountService.getAccountDetailsByAccountReference(ref, null))
+                   .map(ref -> accountService.getAccountDetailsByAccountReference(ref, null))   // TODO replace by FundsConfirmationSpi https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/320
                    .filter(Optional::isPresent)
                    .map(Optional::get)
                    .map(Xs2aAccountDetails::getBalances)

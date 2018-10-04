@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -18,7 +34,6 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
 public class TppMessageGENERICCORPORATEIDINVALID401 {
-
     @JsonProperty("category")
     private TppMessageCategory category = null;
     @JsonProperty("code")
@@ -61,7 +76,6 @@ public class TppMessageGENERICCORPORATEIDINVALID401 {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public CodeEnum getCode() {
         return code;
     }
@@ -117,10 +131,7 @@ public class TppMessageGENERICCORPORATEIDINVALID401 {
             return false;
         }
         TppMessageGENERICCORPORATEIDINVALID401 tppMessageGENERICCORPORATEIDINVALID401 = (TppMessageGENERICCORPORATEIDINVALID401) o;
-        return Objects.equals(this.category, tppMessageGENERICCORPORATEIDINVALID401.category) &&
-            Objects.equals(this.code, tppMessageGENERICCORPORATEIDINVALID401.code) &&
-            Objects.equals(this.path, tppMessageGENERICCORPORATEIDINVALID401.path) &&
-            Objects.equals(this.text, tppMessageGENERICCORPORATEIDINVALID401.text);
+        return Objects.equals(this.category, tppMessageGENERICCORPORATEIDINVALID401.category) && Objects.equals(this.code, tppMessageGENERICCORPORATEIDINVALID401.code) && Objects.equals(this.path, tppMessageGENERICCORPORATEIDINVALID401.path) && Objects.equals(this.text, tppMessageGENERICCORPORATEIDINVALID401.text);
     }
 
     @Override
@@ -181,3 +192,4 @@ public class TppMessageGENERICCORPORATEIDINVALID401 {
         }
     }
 }
+

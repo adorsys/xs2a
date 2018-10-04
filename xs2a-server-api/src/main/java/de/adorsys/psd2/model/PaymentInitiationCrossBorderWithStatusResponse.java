@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,7 +33,6 @@ import java.util.Objects;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
 public class PaymentInitiationCrossBorderWithStatusResponse {
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
 
@@ -54,7 +69,6 @@ public class PaymentInitiationCrossBorderWithStatusResponse {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -96,7 +110,6 @@ public class PaymentInitiationCrossBorderWithStatusResponse {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public Object getCreditorAccount() {
         return creditorAccount;
     }
@@ -136,7 +149,6 @@ public class PaymentInitiationCrossBorderWithStatusResponse {
      **/
     @ApiModelProperty(required = true)
     @NotNull
-
     public String getCreditorName() {
         return creditorName;
     }
@@ -205,6 +217,7 @@ public class PaymentInitiationCrossBorderWithStatusResponse {
         this.transactionStatus = transactionStatus;
     }
 
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -214,14 +227,7 @@ public class PaymentInitiationCrossBorderWithStatusResponse {
             return false;
         }
         PaymentInitiationCrossBorderWithStatusResponse paymentInitiationCrossBorderWithStatusResponse = (PaymentInitiationCrossBorderWithStatusResponse) o;
-        return Objects.equals(this.debtorAccount, paymentInitiationCrossBorderWithStatusResponse.debtorAccount) &&
-            Objects.equals(this.instructedAmount, paymentInitiationCrossBorderWithStatusResponse.instructedAmount) &&
-            Objects.equals(this.creditorAccount, paymentInitiationCrossBorderWithStatusResponse.creditorAccount) &&
-            Objects.equals(this.creditorAgent, paymentInitiationCrossBorderWithStatusResponse.creditorAgent) &&
-            Objects.equals(this.creditorName, paymentInitiationCrossBorderWithStatusResponse.creditorName) &&
-            Objects.equals(this.creditorAddress, paymentInitiationCrossBorderWithStatusResponse.creditorAddress) &&
-            Objects.equals(this.remittanceInformationUnstructured, paymentInitiationCrossBorderWithStatusResponse.remittanceInformationUnstructured) &&
-            Objects.equals(this.transactionStatus, paymentInitiationCrossBorderWithStatusResponse.transactionStatus);
+        return Objects.equals(this.debtorAccount, paymentInitiationCrossBorderWithStatusResponse.debtorAccount) && Objects.equals(this.instructedAmount, paymentInitiationCrossBorderWithStatusResponse.instructedAmount) && Objects.equals(this.creditorAccount, paymentInitiationCrossBorderWithStatusResponse.creditorAccount) && Objects.equals(this.creditorAgent, paymentInitiationCrossBorderWithStatusResponse.creditorAgent) && Objects.equals(this.creditorName, paymentInitiationCrossBorderWithStatusResponse.creditorName) && Objects.equals(this.creditorAddress, paymentInitiationCrossBorderWithStatusResponse.creditorAddress) && Objects.equals(this.remittanceInformationUnstructured, paymentInitiationCrossBorderWithStatusResponse.remittanceInformationUnstructured) && Objects.equals(this.transactionStatus, paymentInitiationCrossBorderWithStatusResponse.transactionStatus);
     }
 
     @Override
@@ -257,3 +263,4 @@ public class PaymentInitiationCrossBorderWithStatusResponse {
         return o.toString().replace("\n", "\n    ");
     }
 }
+

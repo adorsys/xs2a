@@ -51,9 +51,9 @@ public class AspspProfileServiceTest {
     private static final int TRANSACTION_LIFETIME = 0;
     private static final boolean ALL_PSD_2_SUPPORT = false;
     private static final boolean BANK_OFFERED_CONSENT_SUPPORT = false;
-    private static final AuthorisationStartType AUTHORIZATION_START_TYPE = AuthorisationStartType.IMPLICIT;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
+    private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
 
     private AspspProfileService aspspProfileService;
 
@@ -92,10 +92,10 @@ public class AspspProfileServiceTest {
             .thenReturn(ALL_PSD_2_SUPPORT);
         Mockito.when(profileConfiguration.isBankOfferedConsentSupport())
             .thenReturn(BANK_OFFERED_CONSENT_SUPPORT);
-        Mockito.when(profileConfiguration.getAuthorisationStartType())
-            .thenReturn(AUTHORIZATION_START_TYPE);
          Mockito.when(profileConfiguration.isSigningBasketSupported()    )
              .thenReturn(SIGNING_BASKET_SUPPORTED);
+        Mockito.when(profileConfiguration.isPaymentCancellationAuthorizationMandated())
+            .thenReturn(PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
 
         aspspProfileService = new AspspProfileServiceImpl(profileConfiguration);
         MockitoAnnotations.initMocks(aspspProfileService);
@@ -135,9 +135,9 @@ public class AspspProfileServiceTest {
             CONSENT_LIFETIME,
             TRANSACTION_LIFETIME,
             ALL_PSD_2_SUPPORT,
-            AUTHORIZATION_START_TYPE,
             TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
-            SIGNING_BASKET_SUPPORTED);
+            SIGNING_BASKET_SUPPORTED,
+            PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

@@ -17,12 +17,12 @@
 package de.adorsys.aspsp.aspspmockserver.service;
 
 import de.adorsys.aspsp.aspspmockserver.domain.ConfirmationType;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Tan;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.TanStatus;
 import de.adorsys.aspsp.aspspmockserver.repository.PsuRepository;
 import de.adorsys.aspsp.aspspmockserver.repository.TanRepository;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Tan;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.TanStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

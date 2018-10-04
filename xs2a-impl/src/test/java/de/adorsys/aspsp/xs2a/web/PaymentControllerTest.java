@@ -49,7 +49,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
@@ -105,7 +104,7 @@ public class PaymentControllerTest {
         when(paymentService.getPaymentById(SINGLE, WRONG_PAYMENT_ID))
             .thenReturn(ResponseObject.builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
-        when(paymentService.createPayment(any(), any(), any()))
+        when(paymentService.createPayment(any(), any()))
             .thenReturn(readResponseObject());
 
         when(paymentService.createBulkPayments(any(), any(), any()))
@@ -258,9 +257,6 @@ public class PaymentControllerTest {
         PaymentInitialisationResponse resp = jsonConverter.toObject(IOUtils.resourceToString(
             CREATE_PAYMENT_INITIATION_RESPONSE_JSON_PATH, UTF_8), PaymentInitialisationResponse.class).get();
         resp.setPisConsentId("932f8184-59dc-4fdb-848e-58b887b3ba02");
-        Links links = new Links();
-        String encodedPaymentId = Base64.getEncoder().encodeToString(resp.getPaymentId().getBytes());
-        links.setScaRedirect(REDIRECT_LINK + "/" + resp.getPisConsentId() + "/" + encodedPaymentId);
 
         return resp;
     }

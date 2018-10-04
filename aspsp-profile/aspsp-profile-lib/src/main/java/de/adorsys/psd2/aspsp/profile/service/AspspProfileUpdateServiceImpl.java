@@ -188,16 +188,6 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     }
 
     /**
-     * Update type of authorization start to implicit or explicit
-     *
-     * @param authorisationStartType AllPsd2Support status to substitute existing one
-     */
-    @Override
-    public void updateAuthorisationStartType(AuthorisationStartType authorisationStartType) {
-        profileConfiguration.setAuthorisationStartType(authorisationStartType);
-    }
-
-    /**
      * Update the value of transactions without balances supported
      *
      * @param transactionsWithoutBalancesSupported the value of transactions without balances supported
@@ -215,5 +205,15 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
     @Override
     public void updateSigningBasketSupported(boolean signingBasketSupported) {
         profileConfiguration.setSigningBasketSupported(signingBasketSupported);
+    }
+
+    /**
+     * Update the value of payment cancellation authorization mandated
+     *
+     * @param paymentCancellationAuthorizationMandated the value of payment cancellation authorization mandated
+     */
+    @Override
+    public void updatePaymentCancellationAuthorizationMandated(boolean paymentCancellationAuthorizationMandated) {
+        profileConfiguration.setPaymentCancellationAuthorizationMandated(paymentCancellationAuthorizationMandated);
     }
 }

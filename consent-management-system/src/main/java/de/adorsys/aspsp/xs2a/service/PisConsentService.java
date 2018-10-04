@@ -16,18 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAspspConsentData;
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
-import de.adorsys.aspsp.xs2a.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisConsentAspspDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.CreatePisConsentResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.PisConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.pis.PisPaymentData;
@@ -35,19 +23,31 @@ import de.adorsys.aspsp.xs2a.repository.PisConsentAuthorizationRepository;
 import de.adorsys.aspsp.xs2a.repository.PisConsentRepository;
 import de.adorsys.aspsp.xs2a.repository.PisPaymentDataRepository;
 import de.adorsys.aspsp.xs2a.service.mapper.PisConsentMapper;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
+import de.adorsys.psd2.consent.api.pis.PisConsentAspspDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Base64;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.RECEIVED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus.VALID;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.SCAMETHODSELECTED;
-import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.STARTED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
+import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
+import static de.adorsys.psd2.consent.api.CmsScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.psd2.consent.api.CmsScaStatus.STARTED;
 
 @Service
 @RequiredArgsConstructor
@@ -129,7 +129,10 @@ public class PisConsentService {
 
     private PisConsentAspspDataResponse prepareAspspConsentData(PisConsent consent) {
         PisConsentAspspDataResponse response = new PisConsentAspspDataResponse();
-        response.setAspspConsentData(consent.getAspspConsentData());
+        String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
+                                            .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                                            .orElse(null);
+        response.setAspspConsentDataBase64(aspspConsentDataBase64);
         response.setConsentId(consent.getExternalId());
         return response;
     }
@@ -165,11 +168,6 @@ public class PisConsentService {
             authorizationId);
         if (pisConsentAuthorisationOptional.isPresent()) {
             PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
-
-            byte[] bytes = Optional.ofNullable(request.getCmsAspspConsentData())
-                               .map(CmsAspspConsentData::getBody)
-                               .orElse(null);
-            consentAuthorization.getConsent().setAspspConsentData(bytes);
 
             if (SCAMETHODSELECTED == request.getScaStatus()) {
                 String chosenMethod = request.getAuthenticationMethodId();
@@ -218,7 +216,10 @@ public class PisConsentService {
     }
 
     private String updateAspspConsentData(UpdateConsentAspspDataRequest request, PisConsent consent) {
-        consent.setAspspConsentData(request.getAspspConsentData());
+        byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
+                                      .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
+                                      .orElse(null);
+        consent.setAspspConsentData(aspspConsentData);
         PisConsent savedConsent = pisConsentRepository.save(consent);
         return savedConsent.getExternalId();
     }

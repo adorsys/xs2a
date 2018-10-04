@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.repository;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsConsentStatus;
 import de.adorsys.aspsp.xs2a.domain.AisConsent;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

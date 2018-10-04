@@ -17,12 +17,10 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.consent.api.ActionStatus;
 import de.adorsys.aspsp.xs2a.domain.*;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReport;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType;
 import de.adorsys.aspsp.xs2a.exception.MessageCategory;
@@ -37,6 +35,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.*;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.consent.api.ActionStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -136,9 +135,7 @@ public class AccountServiceTest {
 
         when(accountSpi.readTransactionsByPeriod(ACCOUNT_ID, DATE, DATE, ASPSP_CONSENT_DATA)).thenReturn(new SpiResponse<>(Collections.singletonList(getSpiTransaction()), ASPSP_CONSENT_DATA));
         when(tppService.getTppId()).thenReturn(TPP_ID);
-        when(aisConsentDataService.getConsentData(anyString())).thenReturn(new AspspConsentData());
-
-        when(spiXs2aAccountMapper.mapToXs2aAccountReference(getAccountDetails(ACCOUNT_ID, IBAN))).thenReturn(getAccountReference());
+        when(aisConsentDataService.getAspspConsentDataByConsentId(anyString())).thenReturn(new AspspConsentData());
     }
 
     //Get Account By AccountId
@@ -230,16 +227,16 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Success_Consent_WB() {
         //When:
-        ResponseObject<Xs2aBalancesReport> response = accountService.getBalancesReport(CONSENT_ID_WB, ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(CONSENT_ID_WB, ACCOUNT_ID);
 
         //Then:
-        assertThat(response.getBody()).isEqualTo(getBalancesReport());
+        assertThat(response.getBody()).isEqualTo(getBalancesList());
     }
 
     @Test
     public void getBalances_Failure_Consent_WOB() {
         //When:
-        ResponseObject<Xs2aBalancesReport> response = accountService.getBalancesReport(CONSENT_ID_WOB, ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(CONSENT_ID_WOB, ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -250,7 +247,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Wrong_Consent() {
         //When:
-        ResponseObject<Xs2aBalancesReport> response = accountService.getBalancesReport(WRONG_CONSENT_ID, ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(WRONG_CONSENT_ID, ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -261,7 +258,7 @@ public class AccountServiceTest {
     @Test
     public void getBalances_Failure_Wrong_Account() {
         //When:
-        ResponseObject<Xs2aBalancesReport> response = accountService.getBalancesReport(CONSENT_ID_WB, WRONG_ACCOUNT_ID);
+        ResponseObject<List<Xs2aBalance>> response = accountService.getBalances(CONSENT_ID_WB, WRONG_ACCOUNT_ID);
 
         //Then:
         assertThat(response.hasError()).isEqualTo(true);
@@ -401,13 +398,6 @@ public class AccountServiceTest {
         amount.setAmount("1000");
         sb.setBalanceAmount(amount);
         return Collections.singletonList(sb);
-    }
-
-    private Xs2aBalancesReport getBalancesReport() {
-        Xs2aBalancesReport balancesReport = new Xs2aBalancesReport();
-        balancesReport.setXs2aAccountReference(getAccountReference());
-        balancesReport.setBalances(getBalancesList());
-        return balancesReport;
     }
 
     private SpiAccountDetails getSpiAccountDetails(String accountId, String iban) {
