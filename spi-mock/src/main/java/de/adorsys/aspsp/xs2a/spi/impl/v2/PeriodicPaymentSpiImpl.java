@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
@@ -32,7 +33,7 @@ import java.util.List;
 @Service
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     @Override
-    public SpiResponse<SpiPeriodicPayment> initiatePayment(SpiPeriodicPayment payment, AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData initialAspspConsentData) {
         return null;
     }
 

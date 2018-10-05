@@ -232,7 +232,7 @@ public class PaymentServiceTest {
     public void createPaymentInitiation() {
         SinglePayment payment = SINGLE_PAYMENT_OK;
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createSinglePayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         //Then:
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
@@ -247,7 +247,7 @@ public class PaymentServiceTest {
 
     private void createPaymentInitiationFailureTests(SinglePayment payment, MessageErrorCode errorCode) {
         //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createPaymentInitiation(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
+        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createSinglePayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
         //Then:
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RJCT);
         assertThat(actualResponse.getBody().getTppMessages()[0].getName()).isEqualTo(errorCode.getName());

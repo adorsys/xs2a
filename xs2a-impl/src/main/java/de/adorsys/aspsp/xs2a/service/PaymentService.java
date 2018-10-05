@@ -67,7 +67,7 @@ public class PaymentService {
         ResponseObject response;
         TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
         if (requestParameters.getPaymentType() == SINGLE) {
-            response = createPaymentInitiation((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
+            response = createSinglePayment((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else if (requestParameters.getPaymentType() == PERIODIC) {
             response = initiatePeriodicPayment((PeriodicPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else {
@@ -149,7 +149,7 @@ public class PaymentService {
      * @param paymentProduct The addressed payment product
      * @return Response containing information about created single payment or corresponding error
      */
-    public ResponseObject<PaymentInitialisationResponse> createPaymentInitiation(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
+    public ResponseObject<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
         return validatePayment(singlePayment, singlePayment.isValidExecutionDateAndTime())
                    .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
                                  .body(paymentMapper.mapToPaymentInitResponseFailedPayment(singlePayment, e))

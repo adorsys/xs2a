@@ -23,8 +23,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import org.jetbrains.annotations.NotNull;
 
 //TODO javadocs!
-interface PaymentSpi<T> extends AuthorisationSpi<T> {
-    @NotNull SpiResponse<T> initiatePayment(T payment, @NotNull AspspConsentData initialAspspConsentData);
+interface PaymentSpi<T, R> extends AuthorisationSpi<T> {
+
+    @NotNull SpiResponse<R> initiatePayment(T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
 

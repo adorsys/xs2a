@@ -20,13 +20,11 @@ import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.*;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.*;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -42,19 +40,22 @@ public class ScaAuthorizationConfig {
     private final AisConsentDataService aisConsentDataService;
 
     @Bean
-    public ScaPaymentService scaPaymentService(PaymentMapper paymentMapper,
-                                               PaymentSpi paymentSpi) {
+    public ScaPaymentService scaPaymentService(
+                                               OauthScaPaymentService oauthScaPaymentService,
+                                               RedirectScaPaymentService redirectScaPaymentService,
+                                               EmbeddedScaPaymentService embeddedScaPaymentService,
+                                               DecoupedScaPaymentService decoupedScaPaymentService) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthScaPaymentService(paymentMapper, paymentSpi);
+            return oauthScaPaymentService;
         }
         if (DECOUPLED == scaApproach) {
-            return new DecoupedScaPaymentService();
+            return decoupedScaPaymentService;
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService(paymentSpi, paymentMapper);
+            return embeddedScaPaymentService;
         }
-        return new RedirectScaPaymentService(paymentSpi, paymentMapper);
+        return redirectScaPaymentService;
     }
 
     @Bean

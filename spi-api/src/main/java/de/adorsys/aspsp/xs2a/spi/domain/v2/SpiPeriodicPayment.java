@@ -33,7 +33,7 @@ public class SpiPeriodicPayment extends SpiSinglePayment {
     private LocalDate endDate;
     private String executionRule;
     private SpiFrequencyCode frequency;
-    private int dayOfExecution; //Day here max 31
+    private int dayOfExecution;
 
     public SpiPeriodicPayment(SpiPaymentProduct paymentProduct) {
         super(paymentProduct);

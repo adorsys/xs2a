@@ -122,7 +122,7 @@ public class PaymentControllerTest {
         when(paymentService.getPaymentStatusById(WRONG_PAYMENT_ID, PaymentType.SINGLE))
             .thenReturn(ResponseObject.<Xs2aTransactionStatus>builder().fail(new MessageError(
                 new TppMessageInformation(ERROR, RESOURCE_UNKNOWN_403))).build());
-        when(paymentService.createPaymentInitiation(any(), any(), any())).thenReturn(readResponseObject());
+        when(paymentService.createSinglePayment(any(), any(), any())).thenReturn(readResponseObject());
     }
 
     @Test

@@ -73,7 +73,7 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
                    .orElse(null);
     }
 
-    public SpiTransactionStatus mapToSpiTransactionStatus(Xs2aTransactionStatus xs2aTransactionStatus) {
+    private SpiTransactionStatus mapToSpiTransactionStatus(Xs2aTransactionStatus xs2aTransactionStatus) {
         return Optional.ofNullable(xs2aTransactionStatus)
                    .map(ts -> SpiTransactionStatus.valueOf(ts.name()))
                    .orElse(null);

@@ -16,9 +16,34 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public enum SpiPaymentProduct {
-    SEPA,
-    INSTANT_SEPA,
-    TARGET2,
-    CROSS_BORDER
+    SEPA("sepa-credit-transfers"),
+    INSTANT_SEPA("instant-sepa-credit-transfers"),
+    TARGET2("target-2-payments"),
+    CROSS_BORDER("cross-border-credit-transfers");
+
+    private String value;
+
+    private static Map<String, SpiPaymentProduct> container = new HashMap<>();
+
+    static {
+        Arrays.stream(values())
+            .forEach(product -> container.put(product.getValue(), product));
+    }
+
+    SpiPaymentProduct(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public static SpiPaymentProduct getByValue(String value) {
+        return container.get(value);
+    }
 }
