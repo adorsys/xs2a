@@ -26,16 +26,16 @@ public class OauthScaPaymentService implements ScaPaymentService {
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
-        return null;
+         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
-        return null;
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
-        return null;
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 }

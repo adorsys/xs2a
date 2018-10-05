@@ -23,8 +23,6 @@ import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
 public class Xs2aToSpiPaymentMapper {
@@ -32,21 +30,17 @@ public class Xs2aToSpiPaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
 
-    public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, SpiPaymentProduct spiPaymentProduct) {
-        return Optional.ofNullable(payment)
-                   .map(p -> {
-                       SpiSinglePayment single = new SpiSinglePayment(spiPaymentProduct);
-                       single.setEndToEndIdentification(p.getEndToEndIdentification());
-                       single.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(p.getDebtorAccount()));
-                       single.setInstructedAmount(xs2aToSpiAmountMapper.mapToSpiAmount(p.getInstructedAmount()));
-                       single.setCreditorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(p.getCreditorAccount()));
-                       single.setCreditorAgent(p.getCreditorAgent());
-                       single.setCreditorName(p.getCreditorName());
-                       single.setCreditorAddress(xs2aToSpiAddressMapper.mapToSpiAddress(p.getCreditorAddress()));
-                       single.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
-                       single.setPaymentStatus(SpiTransactionStatus.RCVD);
-                       return single;
-                   })
-                   .orElse(null);
+    public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
+        SpiSinglePayment single = new SpiSinglePayment(SpiPaymentProduct.getByValue(paymentProduct));
+        single.setEndToEndIdentification(payment.getEndToEndIdentification());
+        single.setDebtorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getDebtorAccount()));
+        single.setInstructedAmount(xs2aToSpiAmountMapper.mapToSpiAmount(payment.getInstructedAmount()));
+        single.setCreditorAccount(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(payment.getCreditorAccount()));
+        single.setCreditorAgent(payment.getCreditorAgent());
+        single.setCreditorName(payment.getCreditorName());
+        single.setCreditorAddress(xs2aToSpiAddressMapper.mapToSpiAddress(payment.getCreditorAddress()));
+        single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        single.setPaymentStatus(SpiTransactionStatus.RCVD);
+        return single;
     }
 }

@@ -27,13 +27,11 @@ import java.util.Optional;
 public class Xs2aToSpiAddressMapper {
 
     public SpiAddress mapToSpiAddress(Xs2aAddress address) {
-        return Optional.ofNullable(address)
-                   .map(a -> new SpiAddress(
-                       a.getStreet(),
-                       a.getBuildingNumber(),
-                       a.getCity(),
-                       a.getPostalCode(),
-                       Optional.ofNullable(a.getCountry()).map(Xs2aCountryCode::getCode).orElse("")))
-                   .orElse(null);
+        return new SpiAddress(
+            address.getStreet(),
+            address.getBuildingNumber(),
+            address.getCity(),
+            address.getPostalCode(),
+            Optional.ofNullable(address.getCountry()).map(Xs2aCountryCode::getCode).orElse(""));
     }
 }

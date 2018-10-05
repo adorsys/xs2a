@@ -21,14 +21,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Component
 public class Xs2aToSpiAmountMapper {
 
     public SpiAmount mapToSpiAmount(Xs2aAmount amount) {
-        return Optional.ofNullable(amount)
-                   .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
-                   .orElse(null);
+        return new SpiAmount(amount.getCurrency(), new BigDecimal(amount.getAmount()));
     }
 }

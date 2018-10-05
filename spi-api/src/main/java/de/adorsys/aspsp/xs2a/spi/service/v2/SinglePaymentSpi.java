@@ -16,11 +16,59 @@
 
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
+
+import java.util.List;
 
 /**
  * Interface to be used for single payment SPI implementation
  */
 public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiPaymentInitialisationResponse> {
+    @Override
+    default SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse<SpiSinglePayment> getPaymentById(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse<SpiTransactionStatus> getPaymentStatusById(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
+        return null;
+    }
+
+    @Override
+    default SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
+        return null;
+    }
 }

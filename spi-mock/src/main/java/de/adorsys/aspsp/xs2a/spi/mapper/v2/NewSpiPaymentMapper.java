@@ -22,8 +22,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+// TODO need to be renamed after removing previous version of SpiPaymentMapper
 @Component
-public class SpiPaymentMapperV2 {
+public class NewSpiPaymentMapper {
 
     public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment mapToSpiSinglePayment(SpiSinglePayment payment) {
         return Optional.ofNullable(payment)

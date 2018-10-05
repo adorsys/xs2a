@@ -26,8 +26,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
-import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.mapper.v2.SpiPaymentMapperV2;
+import de.adorsys.aspsp.xs2a.spi.mapper.v2.NewSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -42,8 +41,8 @@ import java.util.List;
 public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final SpiPaymentMapperV2 newSpiPaymentMapper;
-    private final SpiPaymentMapper spiPaymentMapper;
+    private final NewSpiPaymentMapper newSpiPaymentMapper;
+    private final de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper spiPaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
 
     @Override

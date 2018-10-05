@@ -21,20 +21,16 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 public class Xs2aToSpiAccountReferenceMapper {
 
     public SpiAccountReference mapToSpiAccountReference(Xs2aAccountReference account) {
-        return Optional.ofNullable(account)
-                   .map(ac -> new SpiAccountReference(
-                       ac.getIban(),
-                       ac.getBban(),
-                       ac.getPan(),
-                       ac.getMaskedPan(),
-                       ac.getMsisdn(),
-                       ac.getCurrency()))
-                   .orElse(null);
+        return new SpiAccountReference(
+            account.getIban(),
+            account.getBban(),
+            account.getPan(),
+            account.getMaskedPan(),
+            account.getMsisdn(),
+            account.getCurrency());
     }
 }
