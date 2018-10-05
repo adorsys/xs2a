@@ -152,9 +152,6 @@ public class PisConsentService {
 
     /**
      * Create consent authorization
-     *
-     * @param paymentId
-     * @return String authorization id
      */
     @Transactional
     public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId) {
