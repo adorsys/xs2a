@@ -19,20 +19,15 @@ import { KeycloakService } from 'keycloak-angular';
 })
 export class AisService {
   savedConsentId: string;
-  private MOCK_AIS_URI: string;
-  private XS2A_CONSENT_URI: string;
-  private XS2A_ACCOUNTS_URI: string;
-  private CM_AIS_CONSENT_URI: string;
-  private PROFILE_ASPSP_PROFILE_URI: string;
+  private MOCK_AIS_URI = 'mockserver/consent/confirmation/ais';
+  private XS2A_CONSENT_URI = 'xs2a/v1/consents';
+  private XS2A_ACCOUNTS_URI = 'xs2a/v1/accounts';
+  private CM_AIS_CONSENT_URI = 'consent-management/api/v1/ais/consent';
+  private PROFILE_ASPSP_PROFILE_URI = `profile-server/api/v1/aspsp-profile`;
   private urlConfig: Config;
 
   constructor(private httpClient: HttpClient, private configService: ConfigService, private keycloak: KeycloakService) {
     this.urlConfig = configService.getConfig();
-    this.MOCK_AIS_URI = this.urlConfig.mockServerUrl + '/consent/confirmation/ais';
-    this.XS2A_CONSENT_URI= this.urlConfig.xs2aServerUrl + '/v1/consents';
-    this.XS2A_ACCOUNTS_URI= this.urlConfig.xs2aServerUrl + '/v1/accounts';
-    this.CM_AIS_CONSENT_URI = this.urlConfig.consentManagementServerUrl +'/api/v1/ais/consent';
-    this.PROFILE_ASPSP_PROFILE_URI = `${this.urlConfig.aspspProfileServerUrl}/api/v1/aspsp-profile`;
   }
 
   saveConsentId(consentId) {

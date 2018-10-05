@@ -27,12 +27,10 @@ import { KeycloakService } from 'keycloak-angular';
 })
 export class PisService {
   savedData = new Banking();
-  CM_CONSENT_URI: string;
-  MOCK_CONSENT_CONFIRMATION_URI: string;
+  private CM_CONSENT_URI =  '/consent-management/api/v1/pis/consent';
+  private MOCK_CONSENT_CONFIRMATION_URI = 'mockserver/consent/confirmation/pis';
 
   constructor(private httpClient: HttpClient, private configService: ConfigService, private keycloak: KeycloakService) {
-    this.CM_CONSENT_URI =  configService.getConfig().consentManagementServerUrl +'/api/v1/pis/consent';
-    this.MOCK_CONSENT_CONFIRMATION_URI = configService.getConfig().mockServerUrl + '/consent/confirmation/pis';
   }
 
   validateTan(tan: string): Observable<string> {
@@ -54,10 +52,10 @@ export class PisService {
   }
 
   generateTan(): Observable<string> {
-    return this.httpClient.post<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}` + '/aspsp1/SMS_OTP', {});
+    return this.httpClient.post<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}/aspsp1/SMS_OTP`, {});
   }
 
   getConsentById(): Observable<SinglePayment> {
-    return this.httpClient.get<SinglePayment>(`${this.CM_CONSENT_URI}` + '/' + this.savedData.consentId);
+    return this.httpClient.get<SinglePayment>(`${this.CM_CONSENT_URI}/${this.savedData.consentId}`);
   }
 }

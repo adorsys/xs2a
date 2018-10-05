@@ -31,18 +31,13 @@ export class PisTanConfirmationPageComponent implements OnInit {
   paymentId: string;
   tanError: boolean;
 
-
-
   constructor(private route: ActivatedRoute, private router: Router, private bankingService: PisService) { }
-
 
   ngOnInit() {
     this.route.queryParams
       .subscribe(params => { this.getBankingDetailsFromUrl(params); });
-    let bankingData = <Banking>({ tan: this.tan, consentId: this.consentId, paymentId: this.paymentId });
+    const bankingData = <Banking>({ tan: this.tan, consentId: this.consentId, paymentId: this.paymentId });
     this.bankingService.saveData(bankingData);
-    // this.bankingService.getSinglePayments().subscribe();
-    // this.bankingService.generateTan().subscribe();
   }
 
   getBankingDetailsFromUrl(params: Params) {
