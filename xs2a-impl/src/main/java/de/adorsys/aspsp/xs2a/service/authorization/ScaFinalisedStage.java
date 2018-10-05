@@ -39,7 +39,6 @@ public class ScaFinalisedStage extends ScaStage<UpdatePisConsentPsuDataRequest, 
 
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
-        request.setScaStatus(FINALISED);
-        return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
+        return new UpdatePisConsentPsuDataResponse(FINALISED);
     }
 }
