@@ -8,11 +8,11 @@
     }
   },
   "response": {
-    "code": "400",
+    "code": "401",
     "header": {},
     "body": {
       "category": "ERROR",
-      "code": "to-be-done"
+      "code": "CONSENT_EXPIRED"
     }
   }
 }
