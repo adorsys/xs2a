@@ -150,11 +150,10 @@ public class AisConsentService {
     public void updateConsentAuthorization(UpdateConsentPsuDataReq updatePsuData) {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
-                final String consentId = req.getConsentId();
                 final String authorizationId = req.getAuthorizationId();
                 final AisConsentAuthorizationRequest request = aisConsentMapper.mapToAisConsentAuthorizationRequest(req);
 
-                consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, consentId, authorizationId);
+                consentRestTemplate.put(remoteAisConsentUrls.updateAisConsentAuthorization(), request, authorizationId);
             });
     }
 }

@@ -35,7 +35,7 @@ import java.util.Set;
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.EXPIRED;
 
 @Data
-@ToString(exclude = "accesses")
+@ToString(exclude = {"accesses", "authorizations"})
 @Entity(name = "ais_consent")
 @ApiModel(description = "Ais consent entity", value = "AisConsent")
 public class AisConsent {

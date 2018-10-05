@@ -83,6 +83,7 @@ public class AisConsentService {
      * @param status    new consent status
      * @return Boolean
      */
+    @Transactional
     public boolean updateConsentStatusById(String consentId, CmsConsentStatus status) {
         return getActualAisConsent(consentId)
                    .map(con -> setStatusAndSaveConsent(con, status))
@@ -188,14 +189,36 @@ public class AisConsentService {
      * Update consent authorization
      *
      * @param authorizationId id of authorisation session
-     * @param consentId       id of consent
      * @param request         needed parameters for updating consent authorization
      * @return boolean
      */
     @Transactional
-    public boolean updateConsentAuthorization(String authorizationId, String consentId, AisConsentAuthorizationRequest request) {
-        return aisConsentRepository.findByExternalIdAndConsentStatusIn(consentId, EnumSet.of(RECEIVED, VALID)).isPresent() && updateConsentAuthorizationByAuthorizationId(authorizationId, request);
+    public boolean updateConsentAuthorization(String authorizationId, AisConsentAuthorizationRequest request) {
+        Optional<AisConsentAuthorization> aisConsentAuthorizationOptional = aisConsentAuthorizationRepository.findByExternalId(authorizationId);
+
+        if (!aisConsentAuthorizationOptional.isPresent()) {
+            return false;
+        }
+
+        AisConsentAuthorization aisConsentAuthorization = aisConsentAuthorizationOptional.get();
+
+        if (CmsScaStatus.STARTED == aisConsentAuthorization.getScaStatus()) {
+            aisConsentAuthorization.setPsuId(request.getPsuId());
+            // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
+            aisConsentAuthorization.setPassword(request.getPassword());
+        }
+
+        if (CmsScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
+            // TODO refactor logic and don't save tan and password data in plain text https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/390
+            aisConsentAuthorization.setAuthenticationMethodId(request.getAuthenticationMethodId());
+        }
+
+        aisConsentAuthorization.setScaStatus(request.getScaStatus());
+        aisConsentAuthorization = aisConsentAuthorizationRepository.save(aisConsentAuthorization);
+
+        return aisConsentAuthorization.getExternalId() != null;
     }
+
 
     private Set<AccountAccess> readAccountAccess(AisAccountAccessInfo access) {
         AccountAccessHolder holder = new AccountAccessHolder();
@@ -320,24 +343,5 @@ public class AisConsentService {
         consentAuthorization.setConsent(aisConsent);
         consentAuthorization.setScaStatus(request.getScaStatus());
         return aisConsentAuthorizationRepository.save(consentAuthorization).getExternalId();
-    }
-
-    private boolean updateConsentAuthorizationByAuthorizationId(String authorizationId, AisConsentAuthorizationRequest request) {
-        return aisConsentAuthorizationRepository.findByExternalId(authorizationId)
-                   .map(conAuth -> {
-                       if (CmsScaStatus.STARTED == conAuth.getScaStatus()) {
-                           conAuth.setPsuId(request.getPsuId());
-                           conAuth.setPassword(request.getPassword());
-                       }
-
-                       if (CmsScaStatus.SCAMETHODSELECTED == request.getScaStatus()) {
-                           conAuth.setAuthenticationMethodId(request.getAuthenticationMethodId());
-                       }
-
-                       conAuth.setScaStatus(request.getScaStatus());
-
-                       return aisConsentAuthorizationRepository.save(conAuth).getExternalId() != null;
-                   })
-                   .orElse(false);
     }
 }

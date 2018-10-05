@@ -84,7 +84,7 @@ public class AisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
      * PathVariables: String consentId, String authorizationId
      */
     public String updateAisConsentAuthorization() {
-        return consentServiceBaseUrl + "/ais/consent/{consent-id}/authorizations/{authorization-id}";
+        return consentServiceBaseUrl + "/ais/consent/authorizations/{authorization-id}";
     }
 
     /**
