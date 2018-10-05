@@ -20,11 +20,11 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
-import de.adorsys.aspsp.xs2a.spi.service.AuthorisationSpi;
+import org.jetbrains.annotations.NotNull;
 
+//TODO javadocs!
 interface PaymentSpi<T> extends AuthorisationSpi<T> {
-
-    SpiResponse<T> initiatePayment(T payment, AspspConsentData aspspConsentData);
+    @NotNull SpiResponse<T> initiatePayment(T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
 

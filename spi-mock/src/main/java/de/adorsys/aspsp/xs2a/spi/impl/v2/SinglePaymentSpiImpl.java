@@ -32,7 +32,7 @@ import java.util.List;
 @Service
 public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @Override
-    public SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment payment, AspspConsentData initialAspspConsentData) {
         return null;
     }
 
