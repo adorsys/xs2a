@@ -46,10 +46,10 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     private final AspspRemoteUrls aspspRemoteUrls;
 
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiSinglePayment spiSinglePayment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiSinglePayment spiSinglePayment, AspspConsentData initialAspspConsentData) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = newSpiPaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
         ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
-        return new SpiResponse<>(spiPaymentMapper.mapToSpiPaymentResponse(responseEntity.getBody()), aspspConsentData);
+        return new SpiResponse<>(spiPaymentMapper.mapToSpiPaymentResponse(responseEntity.getBody()), initialAspspConsentData);
     }
 
     @Override

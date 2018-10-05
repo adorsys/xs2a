@@ -33,7 +33,7 @@ import java.util.List;
 @Service
 public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     @Override
-    public SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, AspspConsentData initialAspspConsentData) {
         return null;
     }
 

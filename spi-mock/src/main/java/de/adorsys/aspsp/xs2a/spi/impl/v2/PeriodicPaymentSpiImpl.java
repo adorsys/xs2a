@@ -33,7 +33,7 @@ import java.util.List;
 @Service
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData initialAspspConsentData) {
         return null;
     }
 

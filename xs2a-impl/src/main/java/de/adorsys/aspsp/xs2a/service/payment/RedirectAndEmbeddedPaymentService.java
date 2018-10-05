@@ -42,20 +42,21 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct) {
         // TODO Read and update aspspConsentData before and after initiatePayment  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/391
+        // TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiResponse<SpiPaymentInitialisationResponse> response = singlePaymentSpi.initiatePayment(xs2aToSpiPaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), new AspspConsentData());
         return paymentMapper.mapToPaymentInitializationResponse(response.getPayload(), response.getAspspConsentData());
     }
 
     @Override
     public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment payment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData();
+        AspspConsentData aspspConsentData = new AspspConsentData(); //TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiResponse<SpiPaymentInitialisationResponse> response = paymentSpi.initiatePeriodicPayment(paymentMapper.mapToSpiPeriodicPayment(payment), aspspConsentData);
         return paymentMapper.mapToPaymentInitializationResponse(response.getPayload(), response.getAspspConsentData());
     }
 
     @Override
     public List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct) {
-        SpiResponse<List<SpiPaymentInitialisationResponse>> response = paymentSpi.createBulkPayments(paymentMapper.mapToSpiBulkPayment(bulkPayment), new AspspConsentData());
+        SpiResponse<List<SpiPaymentInitialisationResponse>> response = paymentSpi.createBulkPayments(paymentMapper.mapToSpiBulkPayment(bulkPayment), new AspspConsentData()); //TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         final AspspConsentData aspspConsentData = response.getAspspConsentData();
         return response.getPayload()
                    .stream()
