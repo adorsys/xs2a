@@ -210,6 +210,15 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     }
 
+    public ResponseObject<Xsa2CreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
+        return pisAuthorizationService.createConsentCancellationAuthorisation(paymentId, paymentType)
+                   .map(resp -> ResponseObject.<Xsa2CreatePisConsentCancellationAuthorisationResponse>builder()
+                                    .body(resp)
+                                    .build())
+                   .orElseGet(() -> ResponseObject.<Xsa2CreatePisConsentCancellationAuthorisationResponse>builder()
+                                        .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
+                                        .build());
+    }
 
     boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
