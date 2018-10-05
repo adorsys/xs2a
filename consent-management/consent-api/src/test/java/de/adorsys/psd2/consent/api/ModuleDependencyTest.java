@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.consent.api;
+package de.adorsys.psd2.consent.api;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -29,7 +29,7 @@ public class ModuleDependencyTest {
     private JavaClasses classes;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         classes = new ClassFileImporter().importPackages("de.adorsys.aspsp.xs2a.consent.api");
     }
 
