@@ -18,10 +18,13 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +36,13 @@ import java.util.stream.Collectors;
 public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     private final PaymentSpi paymentSpi;
     private final PaymentMapper paymentMapper;
+    private final SinglePaymentSpi singlePaymentSpi;
+    private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     @Override
     public PaymentInitialisationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct) {
-        AspspConsentData aspspConsentData = new AspspConsentData();
-        SpiResponse<SpiPaymentInitialisationResponse> response = paymentSpi.createPaymentInitiation(paymentMapper.mapToSpiSinglePayment(payment), aspspConsentData);
+        // TODO Read and update aspspConsentData before and after initiatePayment  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/391
+        SpiResponse<SpiPaymentInitialisationResponse> response = singlePaymentSpi.initiatePayment(xs2aToSpiPaymentMapper.mapToSpiSinglePayment(payment, SpiPaymentProduct.getByValue(paymentProduct)), new AspspConsentData());
         return paymentMapper.mapToPaymentInitializationResponse(response.getPayload(), response.getAspspConsentData());
     }
 

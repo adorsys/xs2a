@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.service.v2;
+package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import org.springframework.stereotype.Component;
 
-/**
- * Interface to be used for periodic payment SPI implementation
- */
-public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPaymentInitialisationResponse> {
+@Component
+public class SpiToXs2aPaymentMapper {
+
 }

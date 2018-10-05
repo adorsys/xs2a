@@ -16,10 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 
 /**
  * Interface to be used for single payment SPI implementation
  */
-public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment> {
+public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiPaymentInitialisationResponse> {
 }

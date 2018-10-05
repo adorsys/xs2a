@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.service.v2;
+package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import org.springframework.stereotype.Component;
 
-/**
- * Interface to be used for periodic payment SPI implementation
- */
-public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPaymentInitialisationResponse> {
+import java.math.BigDecimal;
+import java.util.Optional;
+
+@Component
+public class Xs2aToSpiAmountMapper {
+
+    public SpiAmount mapToSpiAmount(Xs2aAmount amount) {
+        return Optional.ofNullable(amount)
+                   .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
+                   .orElse(null);
+    }
 }

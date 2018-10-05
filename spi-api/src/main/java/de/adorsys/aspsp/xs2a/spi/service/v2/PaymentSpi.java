@@ -22,9 +22,9 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.service.AuthorisationSpi;
 
-interface PaymentSpi<T> extends AuthorisationSpi<T> {
+interface PaymentSpi<T, R> extends AuthorisationSpi<T> {
 
-    SpiResponse<T> initiatePayment(T payment, AspspConsentData aspspConsentData);
+    SpiResponse<R> initiatePayment(T payment, AspspConsentData aspspConsentData);
 
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
 

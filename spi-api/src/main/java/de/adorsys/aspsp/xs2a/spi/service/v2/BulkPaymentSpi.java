@@ -16,10 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiBulkPayment;
+
+import java.util.List;
 
 /**
  * Interface to be used for bulk payment SPI implementation
  */
-public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment> {
+public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, List<SpiPaymentInitialisationResponse>> {
 }
