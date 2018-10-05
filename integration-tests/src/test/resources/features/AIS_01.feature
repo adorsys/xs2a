@@ -68,24 +68,33 @@ Feature: Account Information Service
     #                                                                                                                  #
     ####################################################################################################################
 #    Scenario Outline: Request account list successfully
-#        Given PSU already has an existing consent <consent-id> and wants to get a list of accounts using <account-resource>
+#        Given PSU already has an existing consent <consent-id>
+#        And wants to get a list of accounts using <account-resource>
 #        When PSU requests the list of accounts
 #        Then a successful response code and the appropriate list of accounts get returned
 #        Examples:
-#            | account-resource                               | consent-id        |
-#            | accountList-successful.json                    | to-be-set-in-test |
-#            | accountList-with-more-accounts-successful.json | to-be-set-in-test |
+#            | account-resource                               | consent-id                   |
+#            | accountList-successful.json                    | accounts-create-consent.json |
+#            | accountList-with-more-accounts-successful.json | accounts-create-consent.json |
 #
 #    Scenario Outline: Request account list errorful
-#        Given PSU already has an existing consent <consent-id> and wants to get a list of accounts using <account-resource>
+#        Given PSU already has an existing consent <consent-id>
+#        And wants to get a list of accounts using <account-resource>
 #        When PSU sends get request
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
-#            | account-resource                         | consent-id        |
-#            | accountList-no-request-id.json           | to-be-set-in-test |
-#            | accountList-wrong-format-request-id.json | to-be-set-in-test |
-#            | accountList-invalid-request-id.json      | to-be-set-in-test |
-#            | accountList-no-consent.json              | no-consent        | --> Eigenes Scenario
+#            | account-resource                         | consent-id                   |
+#            | accountList-no-request-id.json           | accounts-create-consent.json |
+#            | accountList-wrong-format-request-id.json | accounts-create-consent.json |
+#            | accountList-invalid-request-id.json      | accounts-create-consent.json |
+#
+#    Scenario Outline: Request account list with no consent errorful
+#        Given PSU wants to get a list of accounts using <account-resource>
+#        When PSU sends get request
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource            |
+#            | accountList-no-consent.json |
 #
 #    Scenario Outline: Request account list with expired consent errorful
 #        Given PSU created consent <consent> which is expired
@@ -97,23 +106,34 @@ Feature: Account Information Service
 #            | accountList-with-expired-consent.json | accounts-create-expired-consent.json |
 #
 #    Scenario Outline: Request account details successfully
-#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
+#        Given PSU already has an existing consent <consent-id>
+#        And account id <account-id>
+#        And wants to get a list of accounts using <account-resource>
 #        When PSU requests the account details
 #        Then a successful response code and the appropriate details of accounts get returned
 #        Examples:
-#            | account-resource              | account-id                           | consent-id        |
-#            | accountDetail-successful.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
+#            | account-resource              | account-id                           | consent-id                   |
+#            | accountDetail-successful.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
 #
 #    Scenario Outline: Request account details errorful
-#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
+#        Given PSU already has an existing consent <consent-id>
+#        And account id <account-id>
+#        And wants to get a list of accounts using <account-resource>
 #        When PSU requests the account details
 #        Then an error response code is displayed the appropriate error response
 #        Examples:
 #            | account-resource                        | account-id                           | consent-id        |
-#            | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
-#            | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
-#            | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
-#            | accountDetail-no-consent.json           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | no-consent        |
+#            | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
+#            | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
+#            | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
+#
+#    Scenario Outline: Request account details with no consent errorful
+#        Given PSU wants to get a list of accounts using <account-resource>
+#        When PSU sends get request
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource              |
+#            | accountDetail-no-consent.json |
 #
 #    Scenario Outline: Request account details with expired consent errorful
 #        Given PSU created consent <consent> which is expired
