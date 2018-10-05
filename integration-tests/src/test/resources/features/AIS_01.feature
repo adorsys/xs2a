@@ -85,9 +85,16 @@ Feature: Account Information Service
 #            | accountList-no-request-id.json           | to-be-set-in-test |
 #            | accountList-wrong-format-request-id.json | to-be-set-in-test |
 #            | accountList-invalid-request-id.json      | to-be-set-in-test |
-#            | accountList-no-consent.json              | no-consent        |
-#            #| accountList-with-expired-consent.json    | to-be-set-in-test |
-#    # ToDo: expired  PSD-235: Ticket PSD-179 needs to be done first
+#            | accountList-no-consent.json              | no-consent        | --> Eigenes Scenario
+#
+#    Scenario Outline: Request account list with expired consent errorful
+#        Given PSU created consent <consent> which is expired
+#        And wants to get a list of accounts using <account-resource>
+#        When PSU sends get request
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource                      | consent                              |
+#            | accountList-with-expired-consent.json | accounts-create-expired-consent.json |
 #
 #    Scenario Outline: Request account details successfully
 #        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <account-resource>
@@ -107,8 +114,15 @@ Feature: Account Information Service
 #            | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
 #            | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
 #            | accountDetail-no-consent.json           | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | no-consent        |
-#            #| accountDetail-with-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | to-be-set-in-test |
-#    # ToDo: expired  PSD-235: Ticket PSD-179 needs to be done first
+#
+#    Scenario Outline: Request account details with expired consent errorful
+#        Given PSU created consent <consent> which is expired
+#        And wants to get a list of accounts using <account-resource>
+#        When PSU sends get request
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | account-resource                        | consent                              |
+#            | accountDetail-with-expired-consent.json | accounts-create-expired-consent.json |
 
 #    ####################################################################################################################
 #    #                                                                                                                  #
