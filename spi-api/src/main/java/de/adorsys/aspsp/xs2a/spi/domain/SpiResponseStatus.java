@@ -18,5 +18,8 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 
 public enum SpiResponseStatus {
     SUCCESS,
-    FAILED
+    TECHNICAL_FAILURE,
+    UNAUTHORIZED_FAILURE,
+    LOGICAL_FAILURE,
+    NOT_SUPPORTED
 }
