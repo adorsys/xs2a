@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,22 +34,22 @@ public class SpiXs2aAccountMapper {
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
                    .map(ad -> new Xs2aAccountDetails(
-                       ad.getId(),
-                       ad.getIban(),
-                       ad.getBban(),
-                       ad.getPan(),
-                       ad.getMaskedPan(),
-                       ad.getMsisdn(),
-                       ad.getCurrency(),
-                       ad.getName(),
-                       ad.getProduct(),
-                       mapToAccountType(ad.getCashSpiAccountType()),
-                       mapToAccountStatus(ad.getSpiAccountStatus()),
-                       ad.getBic(),
-                       ad.getLinkedAccounts(),
-                       mapToXs2aUsageType(ad.getUsageType()),
-                       ad.getDetails(),
-                       mapToXs2aBalanceList(ad.getBalances())
+                           ad.getId(),
+                           ad.getIban(),
+                           ad.getBban(),
+                           ad.getPan(),
+                           ad.getMaskedPan(),
+                           ad.getMsisdn(),
+                           ad.getCurrency(),
+                           ad.getName(),
+                           ad.getProduct(),
+                           mapToAccountType(ad.getCashSpiAccountType()),
+                           mapToAccountStatus(ad.getSpiAccountStatus()),
+                           ad.getBic(),
+                           ad.getLinkedAccounts(),
+                           mapToXs2aUsageType(ad.getUsageType()),
+                           ad.getDetails(),
+                           mapToXs2aBalanceList(ad.getBalances())
                        )
                    )
                    .orElse(null);
@@ -62,6 +63,12 @@ public class SpiXs2aAccountMapper {
                        amount.setCurrency(a.getCurrency());
                        return amount;
                    })
+                   .orElse(null);
+    }
+
+    public SpiAmount mapToSpiAmount(Xs2aAmount amount) {
+        return Optional.ofNullable(amount)
+                   .map(am -> new SpiAmount(am.getCurrency(), new BigDecimal(am.getAmount())))
                    .orElse(null);
     }
 
