@@ -151,14 +151,47 @@ Feature: Account Information Service
 #    ####################################################################################################################
 #
 #    Scenario Outline: Read balances successfully
-#        Given PSU already has an existing consent <consent-id> and account id <account-id> and wants to get a list of accounts using <balance-resource>
+#        Given PSU already has an existing consent <consent>
+#        And account id <account-id>
+#        And wants to read all balances using <balance-resource>
 #        When PSU requests the balances
 #        Then a successful response code and the appropriate list of accounts get returned
 #        Examples:
-#            | consent-id        | account-id                           | balance-resource            |
-#            | to-be-set-in-test | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
-#            | to-be-set-in-test | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
-
+#            | consent                     | account-id                           | balance-resource            |
+#            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-successful.json |
+#            | balance-create-consent.json | 868beafc-ef87-4fdb-ac0a-dd6c52b77ee6 | readBalance-successful.json |
+#
+#    Scenario Outline: Read balances errorful
+#        Given PSU already has an existing consent <consent>
+#        And account id <account-id>
+#        And wants to read all balances using <balance-resource>
+#        When PSU requests the balances
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | consent                     | account-id                           | balance-resource                         |
+#            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-invalid-request-id.json      |
+#            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-no-request-id                |
+#            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-wrong-format-request-id.json |
+#
+#    Scenario Outline: Read balances with no consent errorful
+#        Given PSU wants to read all balances using <balance-resource>
+#        And account id <account-id>
+#        When PSU requests the balances
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | balance-resource            | account-id                           |
+#            | readBalance-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add |
+#
+#    Scenario Outline: Read balances with expired consent errorful
+#        Given PSU created consent <consent> which is expired
+#        And account id <account-id>
+#        And wants to read all balances using <balance-resource>
+#        When PSU requests the balances
+#        Then an error response code is displayed the appropriate error response
+#        Examples:
+#            | consent                             | account-id                           | balance-resource                      |
+#            | balance-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-with-expired-consent.json |
+#
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Transaction Request                                                                                              #
