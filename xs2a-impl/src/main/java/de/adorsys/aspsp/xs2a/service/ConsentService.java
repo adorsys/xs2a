@@ -29,9 +29,15 @@ import de.adorsys.aspsp.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
+import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator.ValidationResult;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse.VoidResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.service.v2.AisConsentSpi;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +59,15 @@ import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACC
 @RequiredArgsConstructor
 public class ConsentService { //TODO change format of consentRequest to mandatory obtain PSU-Id and only return data which belongs to certain PSU tobe changed upon v1.1
     private final Xs2aAisConsentMapper aisConsentMapper;
+    private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     private final AisConsentService aisConsentService;
     private final AisAuthorizationService aisAuthorizationService;
     private final AspspProfileServiceWrapper aspspProfileService;
     private final PisScaAuthorisationService pisAuthorizationService;
     private final TppService tppService;
     private final AuthorisationMethodService authorisationMethodService;
+    private final AisConsentSpi aisConsentSpi;
+    private final CreateConsentRequestValidator createConsentRequestValidator;
 
     /**
      * @param request body of create consent request carrying such parameters as AccountAccess, validity terms etc.
@@ -69,14 +78,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * AccountAccess determined by availableAccounts or allPsd2 variables
      */
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId, boolean explicitPreferred) {
-        if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
-        }
-        if (isNotSupportedBankOfferedConsent(request)) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PARAMETER_NOT_SUPPORTED))).build();
-        }
-        if (!isValidExpirationDate(request.getValidUntil())) {
-            return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.PERIOD_INVALID))).build();
+        ValidationResult validationResult = createConsentRequestValidator.validateRequest(request);
+
+        if (!validationResult.isValid()) {
+            return ResponseObject.<CreateConsentResponse>builder().fail(validationResult.getMessageError()).build();
         }
 
         if (isConsentGlobal(request) || isConsentForAllAvailableAccounts(request)) {
@@ -84,11 +89,20 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
 
         String tppId = tppService.getTppId();
-        String consentId = aisConsentService.createConsent(request, psuId, tppId, new AspspConsentData());
+        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        String consentId = aisConsentService.createConsent(request, psuId, tppId, aspspConsentData);
 
         //TODO v1.2 Add embedded approach specfic links
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
+        }
+
+        SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(getValidatedSpiAccountConsent(consentId), aspspConsentData);
+
+        if (initiateAisConsentSpiResponse.hasError()) {
+            return ResponseObject.<CreateConsentResponse>builder()
+                       .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(initiateAisConsentSpiResponse.getResponseStatus()))))
+                       .build();
         }
 
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(new CreateConsentResponse(RECEIVED.getValue(), consentId, null, null, null, null)).build();
@@ -218,29 +232,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                              && a.getCurrency() == currency);
     }
 
-    private boolean isValidExpirationDate(LocalDate validUntil) {
-        int consentLifetime = Math.abs(aspspProfileService.getConsentLifetime());
-        return validUntil.isAfter(LocalDate.now()) && isValidConsentLifetime(consentLifetime, validUntil);
-    }
-
-    private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
-        return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
-    }
-
     private Boolean isNotEmptyAccess(Xs2aAccountAccess access) {
         return Optional.ofNullable(access)
                    .map(Xs2aAccountAccess::isNotEmpty)
                    .orElse(false);
-    }
-
-    private boolean isNotSupportedGlobalConsentForAllPsd2(CreateConsentReq request) {
-        return isConsentGlobal(request)
-                   && !aspspProfileService.getAllPsd2Support();
-    }
-
-    private boolean isNotSupportedBankOfferedConsent(CreateConsentReq request) {
-        return !isNotEmptyAccess(request.getAccess())
-                   && !aspspProfileService.isBankOfferedConsentSupported();
     }
 
     private boolean isConsentGlobal(CreateConsentReq request) {

@@ -24,17 +24,26 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.v2.AisConsentSpi;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 // TODO implement all the methods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 @Component
+@Slf4j
 public class AisConsentSpiImpl implements AisConsentSpi {
+    private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    private static final String TEST_MESSAGE = "Test message";
 
     @Override
     public SpiResponse<VoidResponse> initiateAisConsent(SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
-        return null;
+        log.info("AisConsentSpi initiateAisConsent() mock implementation");
+        return SpiResponse.<VoidResponse>builder()
+                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added to test purposes
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added to test purposes
+                   .success();
     }
 
     @Override
