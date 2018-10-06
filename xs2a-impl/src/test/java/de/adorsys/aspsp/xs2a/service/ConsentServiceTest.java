@@ -368,6 +368,9 @@ public class ConsentServiceTest {
     @Test
     public void deleteAccountConsentsById_Success() {
         //When:
+        when(aisConsentSpi.revokeAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+            .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
+
         ResponseObject response = consentService.deleteAccountConsentsById(CONSENT_ID);
         //Than:
         assertThat(response.hasError()).isEqualTo(false);

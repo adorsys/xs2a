@@ -41,14 +41,18 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     public SpiResponse<VoidResponse> initiateAisConsent(SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
         log.info("AisConsentSpi initiateAisConsent() mock implementation");
         return SpiResponse.<VoidResponse>builder()
-                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added to test purposes
-                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added to test purposes
+                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added for test purposes
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes
                    .success();
     }
 
     @Override
     public SpiResponse<VoidResponse> revokeAisConsent(SpiAccountConsent accountConsent, AspspConsentData aspspConsentData) {
-        return null;
+        log.info("AisConsentSpi revokeAisConsent() mock implementation");
+        return SpiResponse.<VoidResponse>builder()
+                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes
+                   .success();
     }
 
     @Override

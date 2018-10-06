@@ -135,7 +135,17 @@ public class ConsentService { //TODO change format of consentRequest to mandator
      * Revokes account consent on PSU request
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        if (getValidatedSpiAccountConsent(consentId) != null) {
+        SpiAccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
+
+        if (accountConsent != null) {
+            SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(accountConsent, new AspspConsentData(null, consentId));// TODO replace null with real data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+
+            if (revokeAisConsentResponse.hasError()) {
+                return ResponseObject.<Void>builder()
+                           .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(revokeAisConsentResponse.getResponseStatus()))))
+                           .build();
+            }
+
             aisConsentService.revokeConsent(consentId);
             return ResponseObject.<Void>builder().build();
         }
