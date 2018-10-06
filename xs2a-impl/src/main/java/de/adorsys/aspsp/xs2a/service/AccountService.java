@@ -320,7 +320,7 @@ public class AccountService {
         return response;
     }
 
-    Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(Xs2aAccountReference reference, String consentId) {
+    private Optional<Xs2aAccountDetails> getAccountDetailsByAccountReference(Xs2aAccountReference reference, String consentId) {
         if (reference == null) {
             return Optional.empty();
         }
