@@ -16,13 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.exception.CertificateException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -32,8 +32,14 @@ public class TppService {
 
     public String getTppId() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                   .map(authentication -> (HashMap<String, String>) authentication.getCredentials())
-                   .map(credentials -> credentials.get("authorityId"))
-                   .orElseThrow(() -> new CertificateException());
+                   .map(authentication -> (TppInfo) authentication.getCredentials())
+                   .map(TppInfo::getAuthorisationNumber)
+                   .orElseThrow(CertificateException::new);
+    }
+
+    public TppInfo getTppInfo() {
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                   .map(authentication -> (TppInfo) authentication.getCredentials())
+                   .orElseThrow(CertificateException::new);
     }
 }

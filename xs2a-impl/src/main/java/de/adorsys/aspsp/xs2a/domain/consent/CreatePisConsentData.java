@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.aspsp.xs2a.domain.pis.TppInfo;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.Value;
 
