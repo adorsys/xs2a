@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.service;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
+import de.adorsys.aspsp.xs2a.service.consent.ConsentDataService;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
