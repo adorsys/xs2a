@@ -93,7 +93,7 @@ services:
 # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
     build:
-      context: consent-management-system
+      context: consent-management/consent-management-system
       dockerfile: Dockerfile
     restart: on-failure
     ports:

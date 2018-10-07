@@ -100,7 +100,7 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG" aspsp-idp
     - docker push "$GITLAB_IMAGE_NAME_KEYCLOAK:$DOCKER_TAG"
 
-    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management-system
+    - docker build -t "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG" consent-management/consent-management-system
     - docker push "$GITLAB_IMAGE_NAME_CNT_MGMNT:$DOCKER_TAG"
 
     - docker build -t "$GITLAB_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
