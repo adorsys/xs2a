@@ -249,3 +249,15 @@ Feature: Account Information Service
         Examples:
             | transaction-resource            | account-id                           | booking-status |
             | transactionList-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | booked         |
+
+    @ignore
+    Scenario Outline: Read transaction list with expired consent errorful
+        Given PSU created consent <consent> which is expired
+        And account id <account-id>
+        And wants to read all transactions using <transaction-resource>
+        And booking status <booking-status>
+        When PSU requests the transactions
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | consent                                  | account-id                           | transaction-resource                      | booking-status |
+            | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-with-expired-consent.json | booked         |
