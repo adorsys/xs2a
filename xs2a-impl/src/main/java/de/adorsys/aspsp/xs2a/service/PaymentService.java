@@ -112,9 +112,9 @@ public class PaymentService {
                    .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
                                  .body(paymentMapper.mapToPaymentInitResponseFailedPayment(periodicPayment, e))
                                  .build())
-                   .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                               .body(scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentProduct))
-                               .build());
+                   .orElseGet(() -> ResponseObject.<PaymentInitialisationResponse>builder()
+                                        .body(scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentProduct))
+                                        .build());
     }
 
     /**

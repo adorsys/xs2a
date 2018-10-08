@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.code;
+package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
-public enum Xs2aFrequencyCode {
-    DAILY,
-    WEEKLY,
-    EVERYTWOWEEKS,
-    MONTHLY,
-    EVERYTWOMONTHS,
-    QUARTERLY,
-    SEMIANNUAL,
-    ANNUAL
+import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SpiToXs2aAmountMapper {
+    public Xs2aAmount mapToXs2aAmount(SpiAmount spiAmount) {
+        Xs2aAmount amount = new Xs2aAmount();
+
+        amount.setAmount(spiAmount.getAmount().toString());
+        amount.setCurrency(spiAmount.getCurrency());
+
+        return amount;
+    }
 }

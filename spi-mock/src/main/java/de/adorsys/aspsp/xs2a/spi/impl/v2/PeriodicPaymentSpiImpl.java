@@ -16,7 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
+import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
@@ -25,31 +27,82 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.mapper.v2.NewSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
+import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
+    @Qualifier("aspspRestTemplate")
+    private final RestTemplate aspspRestTemplate;
+    private final NewSpiPaymentMapper newSpiPaymentMapper;
+    private final SpiPaymentMapper spiPaymentMapper;
+    private final AspspRemoteUrls aspspRemoteUrls;
+
+    @NotNull
     @Override
     public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData initialAspspConsentData) {
-        return null;
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = newSpiPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
+        ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment> aspspResponse =
+            aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
+
+        if (aspspResponse.getStatusCode() != HttpStatus.CREATED) {
+            return SpiResponse.<SpiPaymentInitialisationResponse>builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
+        }
+
+        SpiPaymentInitialisationResponse spiPaymentInitialisationResponse = spiPaymentMapper.mapToSpiPaymentResponse(aspspResponse.getBody());
+
+        return new SpiResponse<>(spiPaymentInitialisationResponse, initialAspspConsentData);
     }
 
     @Override
     public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        //TODO Rework
+        return initiatePayment(payment, aspspConsentData);
     }
 
     @Override
     public SpiResponse<SpiPeriodicPayment> getPaymentById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        ResponseEntity<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment>> aspspResponse =
+            aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment>>() {
+            }, SpiPaymentType.PERIODIC, payment.getPaymentProduct(), payment.getPaymentId());
+
+        if (aspspResponse.getStatusCode() != HttpStatus.OK) {
+            return SpiResponse.<SpiPeriodicPayment>builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
+        }
+
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment periodic = aspspResponse.getBody().get(0);
+        SpiPeriodicPayment spiPeriodicPayment = newSpiPaymentMapper.mapToSpiPeriodicPayment(periodic, payment.getPaymentProduct());
+
+        return new SpiResponse<>(spiPeriodicPayment, aspspConsentData);
     }
 
     @Override
     public SpiResponse<SpiTransactionStatus> getPaymentStatusById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        ResponseEntity<SpiTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), SpiTransactionStatus.class, payment.getPaymentId());
+
+        if (aspspResponse.getStatusCode() != HttpStatus.OK) {
+            return SpiResponse.<SpiTransactionStatus>builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
+        }
+
+        SpiTransactionStatus status = aspspResponse.getBody();
+
+        return new SpiResponse<>(status, aspspConsentData);
     }
 
     @Override
@@ -59,16 +112,34 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
     @Override
     public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        ResponseEntity<List<SpiScaMethod>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+        }, psuId);
+
+        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
+                                               .orElseGet(Collections::emptyList);
+
+        return new SpiResponse<>(spiScaMethods, aspspConsentData);
     }
 
     @Override
     public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        ResponseEntity<Void> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuId, scaMethod);
+
+        if (aspspResponse.getStatusCode() != HttpStatus.OK) {
+            return SpiResponse.builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
+        }
+
+        return new SpiResponse<>(null, aspspConsentData);
     }
 
     @Override
     public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        ResponseEntity<ResponseEntity> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
+
+        if (aspspResponse.getStatusCode() != HttpStatus.OK) {
+            return SpiResponse.builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
+        }
+
+        return new SpiResponse<>(null, aspspConsentData);
     }
 }

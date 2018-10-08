@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper.v2;
 
+import de.adorsys.aspsp.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
+import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +45,47 @@ public class NewSpiPaymentMapper {
                        return single;
                    })
                    .orElse(null);
+    }
+
+    public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment mapToAspspSpiPeriodicPayment(SpiPeriodicPayment payment) {
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment periodic = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment();
+        periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
+        periodic.setDebtorAccount(payment.getDebtorAccount());
+        periodic.setInstructedAmount(payment.getInstructedAmount());
+        periodic.setCreditorAccount(payment.getCreditorAccount());
+        periodic.setCreditorAgent(payment.getCreditorAgent());
+        periodic.setCreditorName(payment.getCreditorName());
+        periodic.setCreditorAddress(payment.getCreditorAddress());
+        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        periodic.setPaymentStatus(SpiTransactionStatus.RCVD);
+        periodic.setStartDate(payment.getStartDate());
+        periodic.setEndDate(payment.getEndDate());
+        periodic.setExecutionRule(payment.getExecutionRule());
+        periodic.setFrequency(payment.getFrequency().name());
+        periodic.setDayOfExecution(payment.getDayOfExecution());
+
+        return periodic;
+    }
+
+    public SpiPeriodicPayment mapToSpiPeriodicPayment(de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment payment, SpiPaymentProduct paymentProduct) {
+        SpiPeriodicPayment periodic = new SpiPeriodicPayment(paymentProduct);
+
+        periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
+        periodic.setDebtorAccount(payment.getDebtorAccount());
+        periodic.setInstructedAmount(payment.getInstructedAmount());
+        periodic.setCreditorAccount(payment.getCreditorAccount());
+        periodic.setCreditorAgent(payment.getCreditorAgent());
+        periodic.setCreditorName(payment.getCreditorName());
+        periodic.setCreditorAddress(payment.getCreditorAddress());
+        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        periodic.setPaymentStatus(SpiTransactionStatus.RCVD);
+        periodic.setStartDate(payment.getStartDate());
+        periodic.setEndDate(payment.getEndDate());
+        periodic.setExecutionRule(payment.getExecutionRule());
+        periodic.setFrequency(SpiFrequencyCode.valueOf(payment.getFrequency()));
+        periodic.setDayOfExecution(payment.getDayOfExecution());
+
+        return periodic;
     }
 
 }

@@ -18,13 +18,15 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedScaPaymentService extends RedirectAndEmbeddedPaymentService {
-    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper) {
-        super(paymentSpi, paymentMapper, singlePaymentSpi, xs2aToSpiPaymentMapper);
+    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper) {
+        super(paymentSpi, paymentMapper, singlePaymentSpi, periodicPaymentSpi, xs2aToSpiPaymentMapper, xs2aToSpiPeriodicPaymentMapper);
     }
 }
