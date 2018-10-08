@@ -92,7 +92,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         AspspConsentData aspspConsentData = new AspspConsentData(); // TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         String consentId = aisConsentService.createConsent(request, psuId, tppId, aspspConsentData);
 
-        //TODO v1.2 Add embedded approach specfic links
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
         }
