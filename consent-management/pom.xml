@@ -31,9 +31,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>cms-client</module>
         <module>cms-db-schema</module>
         <module>consent-api</module>
+        <module>cms-client</module>
+        <module>consent-management-system</module>
     </modules>
 
 </project>

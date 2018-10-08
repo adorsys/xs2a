@@ -70,7 +70,7 @@ public class AccountSpiImpl implements AccountSpi {
                 }, iban)
                 .getBody()
         )
-                                               .orElse(Collections.emptyList());
+                                               .orElseGet(Collections::emptyList);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
