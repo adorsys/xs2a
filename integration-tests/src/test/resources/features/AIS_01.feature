@@ -23,11 +23,11 @@ Feature: Account Information Service
         When PSU sends the create consent request with error
         Then an error response code is displayed the appropriate error response
         Examples:
-            | consent-resource                           |
-            | consent-all-psd2-no-psu-id.json            |
-            | consent-all-psd2-wrong-psu-id.json         |
+            | consent-resource                      |
+            | consent-all-psd2-no-psu-id.json       |
+            | consent-all-psd2-wrong-psu-id.json    |
             #| consent-all-psd2-wrong-value.json          |
-            | consent-dedicated-incorrect-iban.json      |
+            | consent-dedicated-incorrect-iban.json |
 
 
     @ignore
@@ -132,7 +132,7 @@ Feature: Account Information Service
         When PSU requests the account details
         Then an error response code is displayed the appropriate error response
         Examples:
-            | account-resource                        | account-id                           | consent-id        |
+            | account-resource                        | account-id                           | consent-id                   |
             | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
             | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
             | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
@@ -212,37 +212,15 @@ Feature: Account Information Service
 #    # Transaction Request                                                                                              #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-#    Scenario: Read transaction list of a regular account
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456770}], transactions: [{iban: DE2310010010123456770}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e111 of the required account
-#        When AISP requests transaction list
-#        Then response code 200
-#        And an array of booked transactions
-#            | transactionId | creditorName  | creditorAccount              | amount                            | bookingDate | value_Date | remittanceInformationUnstructured |
-#            | 1234567       | John Miles    | iban: DE43533700240123456900 | {currency: EUR, content: -256.67} | 2017-10-25  | 2017-10-26 | Example 1                         |
-#            | 1234568       | Paul Simpsons | iban: NL354543123456900      | {currency: EUR, content: 343.01}  | 2017-10-25  | 2017-10-26 | Example 2                         |
-#        And an array of pending transactions
-#            | transactionId | creditorName   | creditorAccount           | amount                           | bookingDate | value_Date | remittanceInformationUnstructured |
-#            | 1234569       | Claude Renault | iban: FR33554543123456900 | {currency: EUR, content: -100.03 | 2017-10-25  | 2017-10-26 | Example 3                         |
-#        And the link viewAccount = "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e111" is delivered to the AISP
 #
-#
-#    Scenario: Read transaction list of a multi-currency account
-#        Given A consent resource with the following data exists at the ASPSP
-#            | access                                                                                   | recurringIndicator | validUntil | frequencyPerDay | transactionStatus           | consentStatus | links                      |
-#            | balances: [{iban: DE2310010010123456760}], transactions: [{iban: DE2310010010123456760}] | true               | 2017-11-01 | 4               | AcceptedTechnicalValidation | valid         | viewAccounts: /v1/accounts |
-#        And AISP knows the account-id 3dc3d5b3-7023-4848-9853-f5400a64e809 of the required account
-#        When AISP requests transaction list
-#        Then response code 200
-#        And an array of booked transactions
-#            | transactionId | creditorName  | creditorAccount              | amount                            | bookingDate | value_Date | remittanceInformationUnstructured |
-#            | 1234567       | John Miles    | iban: DE43533700240123456900 | {currency: EUR, content: -256.67} | 2017-10-25  | 2017-10-26 | Example 1                         |
-#            | 1234568       | Paul Simpsons | iban: NL354543123456900      | {currency: EUR, content: 343.01}  | 2017-10-25  | 2017-10-26 | Example 2                         |
-#            | 1234569       | Pepe Martin   | iban: SE1234567891234        | {currency: USD, content: 100.00}  | 2017-10-25  | 2017-10-26 | Example 3                         |
-#        And an array of pending transactions
-#            | transactionId | creditorName   | creditorAccount           | amount                           | bookingDate | value_Date | remittanceInformationUnstructured |
-#            | 1234569       | Claude Renault | iban: FR33554543123456900 | {currency: EUR, content: -100.03 | 2017-10-25  | 2017-10-26 | Example 3                         |
-#        And the link viewAccount = "/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e809" is delivered to the AISP
-#
+    @ignore
+    Scenario Outline: Read transaction list successfully
+        Given PSU already has an existing consent <consent-id>
+        And account id <account-id>
+        And wants to read all transactions using <transaction-resource>
+        And booking status <booking-status>
+        When PSU requests the transactions
+        Then a successful response code and the appropriate list of accounts get returned
+        Examples:
+            | consent-id                       | account-id                           | transaction-resource            | booking-status |
+            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json | booked         |
