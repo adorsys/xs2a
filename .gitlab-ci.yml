@@ -72,7 +72,7 @@ variables: &variables
 .java_artifacts: &java_artifacts
   paths:
     - "spi-mock/target/spi-mock*jar"
-    - "consent-management-system/target/consent-management*jar"
+    - "consent-management/consent-management-system/target/consent-management*jar"
     - "aspsp-profile/aspsp-profile-server/target/aspsp-profile*jar"
     - "aspsp-mock-server/target/aspsp-mock-server*jar"
     - "aspsp-idp/keycloak-provider-extension/keycloak-clientregistration-provider/target/keycloak-clientregistration-provider.jar"

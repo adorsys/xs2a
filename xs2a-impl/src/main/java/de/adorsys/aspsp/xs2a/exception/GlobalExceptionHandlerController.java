@@ -60,12 +60,13 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ResponseEntity illegalArgumentException(IllegalArgumentException ex, HandlerMethod handlerMethod) {
         log.warn("Illegal argument exception handled in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.debug("Stacktrace: {}", ex);
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity httpMessageException(HttpMessageNotReadableException ex, HandlerMethod handlerMethod) {
-        log.warn("Uncatched exception handled in Controller: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.warn("Uncatched exception of HttpMessageNotReadableException class handled in Controller: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
@@ -84,27 +85,28 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(value = RestException.class)
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-
+        log.debug("Stacktrace: {}", ex);
         return new ResponseEntity<>(getTppMessages(ex.getMessageErrorCode()), ex.getHttpStatus());
     }
 
     @ExceptionHandler(value = AspspProfileRestException.class)
     public ResponseEntity aspspProfileRestException(AspspProfileRestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-
+        log.debug("Stacktrace: {}", ex);
         return new ResponseEntity<>(getTppMessages(MessageErrorCode.INTERNAL_SERVER_ERROR), HttpStatus.valueOf(ex.getHttpStatusCode()));
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity requestBodyValidationException(MethodArgumentNotValidException ex, HandlerMethod handlerMethod) {
         log.warn("RequestBodyValidationException handled in controller: {}, message: {} ", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-
+        log.debug("Stacktrace: {}", ex);
         return new ResponseEntity<>(getTppMessages(FORMAT_ERROR), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = CertificateException.class)
     public ResponseEntity getTppIdException(CertificateException ex, HandlerMethod handlerMethod) {
         log.warn("Can't find tpp id in SecurityContextHolder in: {}, message: {}", handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        log.debug("Stacktrace: {}", ex);
         return new ResponseEntity<>(getTppMessages(CERTIFICATE_INVALID), HttpStatus.BAD_REQUEST);
     }
 

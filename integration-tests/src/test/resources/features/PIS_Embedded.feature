@@ -34,15 +34,16 @@ Feature: Payment Initiation Service Embedded Approach
 #    # Start of Authorisation                                                                                           #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-#    Scenario Outline: Successful start of authorisation (embedded)
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        And PSU sends the single payment initiating request and receives the paymentId
-#        And PSU wants to start the authorisation using the <authorisation-data>
-#        When PSU sends the start authorisation request
-#        Then PSU checks if a link is received and the SCA status is correct
-#        Examples:
-#            | payment-service                          | authorisation-data               | payment-product          | single-payment                |
-#            | payments	                               | startAuth-successful.json        | sepa-credit-transfers    | singlePayInit-successful.json |
+    @ignore
+    Scenario Outline: Successful start of authorisation (embedded)
+        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        And PSU sends the single payment initiating request and receives the paymentId
+        And PSU wants to start the authorisation using the <authorisation-data>
+        When PSU sends the start authorisation request
+        Then PSU checks if a link is received and the SCA status is correct
+        Examples:
+            | payment-service                          | authorisation-data               | payment-product          | single-payment                |
+            | payments	                               | startAuth-successful.json        | sepa-credit-transfers    | singlePayInit-successful.json |
 
 
     Scenario Outline: Failed start of authorisation (embedded)
@@ -99,18 +100,19 @@ Feature: Payment Initiation Service Embedded Approach
     # Selection of the sca method of PSU                                                                               #
     #                                                                                                                  #
     ####################################################################################################################
-#    Scenario Outline: Successful selection of PSU sca method (embedded)
-#        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
-#        And PSU sends the single payment initiating request and receives the paymentId
-#        And PSU sends the start authorisation request and receives the authorisationId
-#        And PSU wants to update the resource with his <identification-data>
-#        And PSU sends the update identification data request
-#        And PSU wants to select the authentication method using the <selection-data>
-#        When PSU sends the select sca method request
-#        Then PSU checks if the correct SCA status and response code is received for the selection
-#        Examples:
-#            | payment-service                          | payment-product         | single-payment                | identification-data                              | selection-data                                |
-#            | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuthenticationMethod-successful.json    |
+    @ignore
+    Scenario Outline: Successful selection of PSU sca method (embedded)
+        Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
+        And PSU sends the single payment initiating request and receives the paymentId
+        And PSU sends the start authorisation request and receives the authorisationId
+        And PSU wants to update the resource with his <identification-data>
+        And PSU sends the update identification data request
+        And PSU wants to select the authentication method using the <selection-data>
+        When PSU sends the select sca method request
+        Then PSU checks if the correct SCA status and response code is received for the selection
+        Examples:
+            | payment-service                          | payment-product         | single-payment                | identification-data                              | selection-data                                |
+            | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuthenticationMethod-successful.json    |
 #   REMARK: Update Identification with one sca only works when email server is running
 
         Scenario Outline: Errorful selection of PSU sca method (embedded)
