@@ -22,11 +22,15 @@ import org.jetbrains.annotations.Nullable;
 
 @Value
 public class ValidationResult {
-    private boolean isValid;
+    private boolean valid;
 
     /**
-     * Could be null for valid request (isValid == true case)
+     * Could be null for valid request (valid == true case)
      */
     @Nullable
     private MessageError messageError;
+
+    public boolean isNotValid() {
+        return !valid;
+    }
 }

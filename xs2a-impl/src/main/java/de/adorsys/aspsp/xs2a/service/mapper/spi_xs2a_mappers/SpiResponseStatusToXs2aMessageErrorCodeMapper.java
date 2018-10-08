@@ -39,6 +39,6 @@ public class SpiResponseStatusToXs2aMessageErrorCodeMapper {
     }
 
     public MessageErrorCode mapToMessageErrorCode(SpiResponseStatus responseStatus) {
-        return spiResponseStatusToMessageErrorCode.get(responseStatus);
+        return spiResponseStatusToMessageErrorCode.getOrDefault(responseStatus, INTERNAL_SERVER_ERROR);
     }
 }

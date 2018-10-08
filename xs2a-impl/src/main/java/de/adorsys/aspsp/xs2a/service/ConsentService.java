@@ -80,7 +80,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, String psuId, boolean explicitPreferred) {
         ValidationResult validationResult = createConsentRequestValidator.validateRequest(request);
 
-        if (!validationResult.isValid()) {
+        if (validationResult.isNotValid()) {
             return ResponseObject.<CreateConsentResponse>builder().fail(validationResult.getMessageError()).build();
         }
 
