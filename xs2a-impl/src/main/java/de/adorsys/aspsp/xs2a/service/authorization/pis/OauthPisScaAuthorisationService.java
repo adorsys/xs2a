@@ -37,6 +37,6 @@ public class OauthPisScaAuthorisationService implements PisScaAuthorisationServi
 
     @Override
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
-        return null;
+        return Optional.empty();
     }
 }

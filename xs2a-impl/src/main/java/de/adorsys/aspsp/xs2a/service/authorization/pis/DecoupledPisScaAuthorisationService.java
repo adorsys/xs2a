@@ -37,6 +37,6 @@ public class DecoupledPisScaAuthorisationService implements PisScaAuthorisationS
 
     @Override
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
-        return null;
+        return Optional.empty();
     }
 }
