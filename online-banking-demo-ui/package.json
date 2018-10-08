@@ -4,7 +4,8 @@
   "scripts": {
     "tslint": "tslint -p tsconfig.json",
     "tslint-fix": "tslint --fix -p tsconfig.json",
-    "start": "ng serve --proxy-config proxy.conf.json"
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build"
   },
   "private": true,
   "dependencies": {

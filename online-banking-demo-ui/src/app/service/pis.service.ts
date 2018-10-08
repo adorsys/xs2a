@@ -26,8 +26,8 @@ import { ConfigService } from './config.service';
 })
 export class PisService {
   savedData = new Banking();
-  private CM_CONSENT_URI =  '/consent-management/api/v1/pis/consent';
-  private MOCK_CONSENT_CONFIRMATION_URI = 'mockserver/consent/confirmation/pis';
+  private CM_CONSENT_URI =  '/mockserver/api/v1/pis/consent';
+  private MOCK_CONSENT_CONFIRMATION_URI = '/mockserver/consent/confirmation/pis';
 
   constructor(private httpClient: HttpClient, private configService: ConfigService) {
   }
