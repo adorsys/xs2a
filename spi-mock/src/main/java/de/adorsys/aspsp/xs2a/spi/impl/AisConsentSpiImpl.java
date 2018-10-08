@@ -41,8 +41,8 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     public SpiResponse<VoidResponse> initiateAisConsent(SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
         log.info("AisConsentSpi initiateAisConsent() mock implementation");
         return SpiResponse.<VoidResponse>builder()
-                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added for test purposes
-                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes
+                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                    .success();
     }
 
@@ -50,8 +50,8 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     public SpiResponse<VoidResponse> revokeAisConsent(SpiAccountConsent accountConsent, AspspConsentData aspspConsentData) {
         log.info("AisConsentSpi revokeAisConsent() mock implementation");
         return SpiResponse.<VoidResponse>builder()
-                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes
-                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes
+                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
                    .success();
     }
 
