@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiBulkPayment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,8 +33,9 @@ import java.util.List;
  * Interface to be used for bulk payment SPI implementation
  */
 public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, List<SpiPaymentInitialisationResponse>> {
+    @NotNull
     @Override
-    default SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    default SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return null;
     }
 

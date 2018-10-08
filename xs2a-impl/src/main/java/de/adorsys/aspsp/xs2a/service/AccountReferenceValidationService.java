@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 public class AccountReferenceValidationService {
     private final AspspProfileServiceWrapper profileService;
 
+    @Deprecated
     public ResponseObject validateAccountReferences(Set<Xs2aAccountReference> references) {
         List<SupportedAccountReferenceField> supportedFields = profileService.getSupportedAccountReferenceFields();
 
@@ -52,6 +53,13 @@ public class AccountReferenceValidationService {
         return isInvalidReferenceSet
                    ? ResponseObject.builder().fail(new MessageError(Xs2aTransactionStatus.RJCT, new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.FORMAT_ERROR))).build()
                    : ResponseObject.builder().build();
+    }
+
+    public boolean isValidateAccountReferences(Set<Xs2aAccountReference> references) {
+        List<SupportedAccountReferenceField> supportedFields = profileService.getSupportedAccountReferenceFields();
+        return references.stream()
+                   .map(ar -> isValidAccountReference(ar, supportedFields))
+                   .anyMatch(Predicate.isEqual(false));
     }
 
     private boolean isValidAccountReference(Xs2aAccountReference reference, List<SupportedAccountReferenceField> supportedFields) {

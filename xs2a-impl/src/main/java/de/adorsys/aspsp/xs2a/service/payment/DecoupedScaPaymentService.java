@@ -39,7 +39,7 @@ public class DecoupedScaPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public PaymentInitialisationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
-        return new PaymentInitialisationResponse();
+    public SinglePayment createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
+        return new SinglePayment();
     }
 }

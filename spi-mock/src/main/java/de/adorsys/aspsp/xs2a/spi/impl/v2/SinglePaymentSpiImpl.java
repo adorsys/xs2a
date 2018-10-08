@@ -23,12 +23,12 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.mapper.v2.NewSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,11 +45,12 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     private final de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper spiPaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
 
+    @NotNull
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiSinglePayment spiSinglePayment, AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData initialAspspConsentData) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = newSpiPaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
         ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
-        return new SpiResponse<>(spiPaymentMapper.mapToSpiPaymentResponse(responseEntity.getBody()), initialAspspConsentData);
+        return new SpiResponse<>(newSpiPaymentMapper.mapToSpiSinglePayment(responseEntity.getBody(), spiSinglePayment.getPaymentProduct()), initialAspspConsentData);
     }
 
     @Override

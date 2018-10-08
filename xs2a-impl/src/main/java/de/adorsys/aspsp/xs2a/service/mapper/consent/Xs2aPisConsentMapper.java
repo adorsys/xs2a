@@ -51,17 +51,13 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aPisConsentMapper {
 
-    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData) {
+    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(SinglePayment singlePayment, String paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createPisConsentData.getSinglePayment())));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
-        request.setPaymentType(PisPaymentType.SINGLE);
-        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
-        request.setAspspConsentData(
-            Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
-                .orElse(null));
-
+        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct).orElse(null));
+        // TODO put real tppInfo data
+        request.setTppInfo(new CmsTppInfo());
+        request.setAspspConsentData(new AspspConsentData().getAspspConsentData());
         return request;
     }
 

@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.mapper.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import org.springframework.stereotype.Component;
 
@@ -27,9 +28,25 @@ import java.util.Optional;
 public class NewSpiPaymentMapper {
 
     public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment mapToSpiSinglePayment(SpiSinglePayment payment) {
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment single = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment();
+        single.setEndToEndIdentification(payment.getEndToEndIdentification());
+        single.setDebtorAccount(payment.getDebtorAccount());
+        single.setInstructedAmount(payment.getInstructedAmount());
+        single.setCreditorAccount(payment.getCreditorAccount());
+        single.setCreditorAgent(payment.getCreditorAgent());
+        single.setCreditorName(payment.getCreditorName());
+        single.setCreditorAddress(payment.getCreditorAddress());
+        single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
+        single.setPaymentStatus(SpiTransactionStatus.RCVD);
+        return single;
+
+    }
+
+    public SpiSinglePayment mapToSpiSinglePayment(de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment payment, SpiPaymentProduct paymentProduct) {
         return Optional.ofNullable(payment)
                    .map(p -> {
-                       de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment single = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment();
+                       SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
+                       single.setPaymentId(p.getPaymentId());
                        single.setEndToEndIdentification(p.getEndToEndIdentification());
                        single.setDebtorAccount(p.getDebtorAccount());
                        single.setInstructedAmount(p.getInstructedAmount());
@@ -43,5 +60,4 @@ public class NewSpiPaymentMapper {
                    })
                    .orElse(null);
     }
-
 }

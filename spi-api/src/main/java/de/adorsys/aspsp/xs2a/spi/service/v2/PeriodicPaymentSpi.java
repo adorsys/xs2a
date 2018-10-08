@@ -25,6 +25,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,8 +33,9 @@ import java.util.List;
  * Interface to be used for periodic payment SPI implementation
  */
 public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPaymentInitialisationResponse> {
+    @NotNull
     @Override
-    default SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return null;
     }
 

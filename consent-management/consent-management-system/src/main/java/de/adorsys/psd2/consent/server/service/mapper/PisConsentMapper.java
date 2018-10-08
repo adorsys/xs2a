@@ -24,8 +24,10 @@ import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentResponse;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
 import de.adorsys.psd2.consent.server.domain.payment.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,29 +36,33 @@ import java.util.stream.Collectors;
 @Service
 public class PisConsentMapper {
 
-    public Optional<PisConsent> mapToPisConsent(PisConsentRequest request) {
-        return Optional.ofNullable(request.getPayments())
-                   .map(pmt -> {
-                       PisConsent consent = new PisConsent();
-                       consent.setExternalId(UUID.randomUUID().toString());
-                       consent.addPaymentsData(mapToPisPaymentDataList(pmt));
-                       consent.setPisTppInfo(mapToPisTppInfo(request.getTppInfo()));
-                       consent.setPisPaymentType(request.getPaymentType());
-                       consent.setPisPaymentProduct(request.getPaymentProduct());
-                       consent.setConsentType(ConsentType.PIS);
-                       consent.setConsentStatus(CmsConsentStatus.RECEIVED);
-                       consent.setAspspConsentData(request.getAspspConsentData());
-                       return consent;
-                   });
+    public PisConsent mapToPisConsent(PisConsentRequest request) {
+        PisConsent consent = new PisConsent();
+        consent.setExternalId(UUID.randomUUID().toString());
+        consent.addPaymentsData(mapToPisPaymentDataList(request.getPayments()));
+        consent.setPisTppInfo(mapToPisTppInfo(request.getTppInfo()));
+        consent.setPisPaymentType(request.getPaymentType());
+        consent.setPisPaymentProduct(request.getPaymentProduct());
+        consent.setConsentType(ConsentType.PIS);
+        consent.setConsentStatus(CmsConsentStatus.RECEIVED);
+        consent.setAspspConsentData(request.getAspspConsentData());
+        return consent;
     }
 
     private List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments) {
+        return mapToPisPaymentDataList(payments, null);
+    }
+
+    public List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments, PisConsent consent) {
+        if (CollectionUtils.isEmpty(payments)) {
+            return Collections.emptyList();
+        }
         return payments.stream()
-                   .map(this::mapToPisPaymentData)
+                   .map(p -> mapToPisPaymentData(p, consent))
                    .collect(Collectors.toList());
     }
 
-    private PisPaymentData mapToPisPaymentData(PisPayment payment) {
+    private PisPaymentData mapToPisPaymentData(PisPayment payment, PisConsent consent) {
         return Optional.ofNullable(payment)
                    .map(pm -> {
                        PisPaymentData pisPaymentData = new PisPaymentData();
@@ -81,6 +87,7 @@ public class PisConsentMapper {
                        pisPaymentData.setExecutionRule(pm.getExecutionRule());
                        pisPaymentData.setFrequency(pm.getFrequency());
                        pisPaymentData.setDayOfExecution(pm.getDayOfExecution());
+                       pisPaymentData.setConsent(consent);
 
                        return pisPaymentData;
                    }).orElse(null);

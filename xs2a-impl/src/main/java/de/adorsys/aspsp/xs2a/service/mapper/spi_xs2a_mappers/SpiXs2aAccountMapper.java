@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Deprecated
 public class SpiXs2aAccountMapper {
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)

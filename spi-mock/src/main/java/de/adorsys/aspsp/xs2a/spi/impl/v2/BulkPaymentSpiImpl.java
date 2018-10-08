@@ -26,14 +26,16 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.service.v2.BulkPaymentSpi;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class BulkPaymentSpiImpl implements BulkPaymentSpi {
+    @NotNull
     @Override
-    public SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, AspspConsentData initialAspspConsentData) {
+    public SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return null;
     }
 

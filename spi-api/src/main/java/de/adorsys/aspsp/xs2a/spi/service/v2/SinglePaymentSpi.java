@@ -22,18 +22,19 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
  * Interface to be used for single payment SPI implementation
  */
-public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiPaymentInitialisationResponse> {
+public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSinglePayment> {
+    @NotNull
     @Override
-    default SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    default SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
         return null;
     }
 

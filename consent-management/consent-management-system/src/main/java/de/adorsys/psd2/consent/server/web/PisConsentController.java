@@ -129,4 +129,13 @@ public class PisConsentController {
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @PutMapping(path = "/{consent-id}/payment")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CreatePisConsentResponse.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> updatePaymentConsent(@RequestBody PisConsentRequest request, @PathVariable("consent-id") String consentId) {
+        pisConsentService.updatePaymentConsent(request, consentId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
