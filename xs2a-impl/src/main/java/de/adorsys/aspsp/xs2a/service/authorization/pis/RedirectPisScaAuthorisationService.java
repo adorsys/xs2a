@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -51,5 +52,17 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
     @Override
     public Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request) {
         return pisConsentMapper.mapToXs2aUpdatePisConsentPsuDataResponse(authorisationService.updatePisConsentAuthorisation(request));
+    }
+
+    /**
+     * Creates authorization cancellation for pis consent
+     *
+     * @param paymentId ASPSP identifier of a payment
+     * @param paymentType Type of payment
+     * @return
+     */
+    @Override
+    public Optional<Xsa2CreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
+        return pisConsentMapper.mapToXsa2CreatePisConsentCancellationAuthorizationResponse(authorisationService.createPisConsentAuthorisation(paymentId), paymentType);
     }
 }
