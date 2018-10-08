@@ -24,8 +24,6 @@ import de.adorsys.aspsp.xs2a.exception.MessageCategory;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -93,16 +91,5 @@ public class CreateConsentRequestValidator {
 
     private boolean isValidConsentLifetime(int consentLifetime, LocalDate validUntil) {
         return consentLifetime == 0 || validUntil.isBefore(LocalDate.now().plusDays(consentLifetime));
-    }
-
-    @Value
-    public class ValidationResult {
-        private boolean isValid;
-
-        /**
-         * Could be null for valid request (isValid == true case)
-         */
-        @Nullable
-        private MessageError messageError;
     }
 }

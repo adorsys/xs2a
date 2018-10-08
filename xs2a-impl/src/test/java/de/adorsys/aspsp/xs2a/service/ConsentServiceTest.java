@@ -29,7 +29,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
-import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator.ValidationResult;
+import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
@@ -507,7 +507,7 @@ public class ConsentServiceTest {
     }
 
     private ValidationResult createValidationResult(boolean isValid, MessageError messageError) {
-        return createConsentRequestValidator.new ValidationResult(isValid, messageError);
+        return new ValidationResult(isValid, messageError);
     }
 
     private MessageError createMessageError(MessageErrorCode errorCode) {
