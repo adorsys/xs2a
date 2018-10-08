@@ -238,3 +238,14 @@ Feature: Account Information Service
             | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-invalid-request-id.json      | booked         |
             | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-no-request-id.json           | booked         |
             | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-wrong-format-request-id.json | booked         |
+
+    @ignore
+    Scenario Outline: Read transaction list with no consent errorful
+        Given PSU wants to read all transactions using <transaction-resource>
+        And account id <account-id>
+        And booking status <booking-status>
+        When PSU requests the transactions
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | transaction-resource            | account-id                           | booking-status |
+            | transactionList-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | booked         |
