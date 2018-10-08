@@ -34,6 +34,9 @@ import java.util.List;
 @Component
 @Slf4j
 public class AisConsentSpiImpl implements AisConsentSpi {
+
+    // Test data is used there for testing purposes to have the possibility to see if AisConsentSpiImpl is being invoked from xs2a.
+    // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final String TEST_MESSAGE = "Test message";
 
