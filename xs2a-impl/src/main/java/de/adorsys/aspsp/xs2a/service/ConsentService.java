@@ -27,6 +27,7 @@ import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
@@ -36,7 +37,6 @@ import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse.VoidResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.service.v2.AisConsentSpi;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
@@ -62,6 +62,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper;
     private final AisConsentService aisConsentService;
+    private final AisConsentDataService aisConsentDataService;
     private final AisAuthorizationService aisAuthorizationService;
     private final AspspProfileServiceWrapper aspspProfileService;
     private final PisScaAuthorisationService pisAuthorizationService;
@@ -90,14 +91,14 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         }
 
         String tppId = tppService.getTppId();
-        AspspConsentData aspspConsentData = new AspspConsentData(); // TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        String consentId = aisConsentService.createConsent(request, psuId, tppId, aspspConsentData);
+        String consentId = aisConsentService.createConsent(request, psuId, tppId);
 
         if (StringUtils.isBlank(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, MessageErrorCode.RESOURCE_UNKNOWN_400))).build();
         }
 
-        SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(getValidatedSpiAccountConsent(consentId), aspspConsentData);
+        SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(getValidatedSpiAccountConsent(consentId), aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+        aisConsentDataService.updateAspspConsentData(initiateAisConsentSpiResponse.getAspspConsentData());
 
         if (initiateAisConsentSpiResponse.hasError()) {
             aisConsentService.updateConsentStatus(consentId, SpiConsentStatus.REJECTED);
@@ -139,7 +140,8 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         SpiAccountConsent accountConsent = getValidatedSpiAccountConsent(consentId);
 
         if (accountConsent != null) {
-            SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(accountConsent, new AspspConsentData(null, consentId));// TODO replace null with real data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+            SpiResponse<VoidResponse> revokeAisConsentResponse = aisConsentSpi.revokeAisConsent(accountConsent, aisConsentDataService.getAspspConsentDataByConsentId(consentId));
+            aisConsentDataService.updateAspspConsentData(revokeAisConsentResponse.getAspspConsentData());
 
             if (revokeAisConsentResponse.hasError()) {
                 return ResponseObject.<Void>builder()

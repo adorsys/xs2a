@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.spi.domain;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.NonNull;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class SpiResponse<T> {
      * Consent data - a binary data that is stored in a consent management system. Is not parsed by XS2A layer.
      * May be used by SPI layer to store state information linked to a workflow. May be encrypted in case of need.
      */
+    @NotNull
     private AspspConsentData aspspConsentData;
 
     /**
@@ -51,7 +53,7 @@ public class SpiResponse<T> {
      */
     private List<String> messages;
 
-    public SpiResponse(T payload, AspspConsentData aspspConsentData, SpiResponseStatus responseStatus, List<String> messages) {
+    public SpiResponse(T payload, @NotNull AspspConsentData aspspConsentData, SpiResponseStatus responseStatus, List<String> messages) {
         this.payload = payload;
         this.aspspConsentData = aspspConsentData;
         this.responseStatus = responseStatus;
