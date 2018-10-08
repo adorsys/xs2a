@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
+import org.apache.commons.collections4.iterators.FilterIterator;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -52,13 +53,35 @@ public class PSD2QCStatement {
 			log.debug("Error reading qcstatement " + e);
 			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
 		}
-		QCStatement qcStatement = QCStatement.getInstance(qcStatements);
-		if (!idEtsiPsd2QcStatement.getId().equals(qcStatement.getStatementId().getId())) {
-			log.debug("Wrong statement type in psd2 certificate. expected is {} but found {}",
-					idEtsiPsd2QcStatement.getId(), qcStatement.getStatementId().getId());
-			throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
-		}
 
-		return qcStatement;
-	}
+        if (qcStatements.size() <= 0) {
+            log.debug("No ETSI PSD2 QcStatement in psd2 certificate");
+            throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
+        }
+
+        ASN1Encodable object = qcStatements.getObjectAt(0);
+        if (object.toASN1Primitive() instanceof ASN1ObjectIdentifier) {
+            // We have a single entity with oid and value direct
+            QCStatement qcStatement = QCStatement.getInstance(qcStatements);
+            if (!idEtsiPsd2QcStatement.getId().equals(qcStatement.getStatementId().getId())) {
+                log.debug("Wrong statement type in psd2 certificate. expected is {} but found {}",
+                    idEtsiPsd2QcStatement.getId(), qcStatement.getStatementId().getId());
+                throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
+            }
+
+            return qcStatement;
+        }
+
+        FilterIterator<ASN1Encodable> filteredIterator = new FilterIterator<>(qcStatements.iterator(), item -> {
+            QCStatement qcStatement = QCStatement.getInstance(item);
+            return qcStatement.getStatementId().getId().equals(idEtsiPsd2QcStatement.getId());
+        });
+
+        if (!filteredIterator.hasNext()) {
+            log.debug("No ETSI PSD2 QcStatement in psd2 certificate");
+            throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
+        }
+
+        return QCStatement.getInstance(filteredIterator.next());
+    }
 }
