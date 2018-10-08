@@ -37,6 +37,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse.VoidResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.aspsp.xs2a.spi.service.v2.AisConsentSpi;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -99,6 +100,7 @@ public class ConsentService { //TODO change format of consentRequest to mandator
         SpiResponse<VoidResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(getValidatedSpiAccountConsent(consentId), aspspConsentData);
 
         if (initiateAisConsentSpiResponse.hasError()) {
+            aisConsentService.updateConsentStatus(consentId, SpiConsentStatus.REJECTED);
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(new MessageError(new TppMessageInformation(MessageCategory.ERROR, messageErrorCodeMapper.mapToMessageErrorCode(initiateAisConsentSpiResponse.getResponseStatus()))))
                        .build();
