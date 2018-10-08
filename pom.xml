@@ -23,20 +23,17 @@
     <artifactId>xs2a</artifactId>
     <version>1.9-SNAPSHOT</version>
     <modules>
-        <module>aspsp-idp</module>
+        <module>xs2a-server-api</module>
+        <module>aspsp-profile</module>
+        <module>xs2a-impl</module>
         <module>spi-api</module>
         <module>spi-mock</module>
+        <module>consent-management</module>
+        <module>aspsp-idp</module>
         <module>aspsp-mock-server</module>
-        <module>xs2a-server-api</module>
-        <module>xs2a-impl</module>
         <module>psd2-validator</module>
-        <module>consent-management-system</module>
-        <module>consent-api</module>
-        <module>aspsp-profile</module>
         <module>integration-tests</module>
-        <module>cms-db-schema</module>
         <module>online-banking-demo</module>
-        <module>cms-client</module>
     </modules>
     <packaging>pom</packaging>
 

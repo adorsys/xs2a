@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Category of the TPP message category
  */
 public enum TppMessageCategory {
+
     ERROR("ERROR"),
+
     WARNING("WARNING");
 
     private String value;
@@ -32,3 +34,4 @@ public enum TppMessageCategory {
         return String.valueOf(value);
     }
 }
+

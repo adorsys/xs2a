@@ -9,7 +9,6 @@
     "code": "404",
     "header": {},
     "body": {
-      "transactionStatus": "",
       "tppMessage": {
         "category": "ERROR",
         "code": "RESOURCE_UNKNOWN"

@@ -17,15 +17,12 @@
 package de.adorsys.aspsp.xs2a.config;
 
 import com.google.common.base.Predicates;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.InMemorySwaggerResourcesProvider;
@@ -33,19 +30,17 @@ import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    @Value("${license.url}")
-    private String licenseUrl;
-
+    @SuppressWarnings("Guava") // Intellij IDEA claims that Guava predicates could be replaced with Java API,
+                               // but actually it is not possible
     @Bean(name = "api")
     public Docket apiDocklet() {
         return new Docket(DocumentationType.SWAGGER_2)
-                   .apiInfo(getApiInfo())
+                   .apiInfo(new ApiInfoBuilder().build())
                    .select()
                    .apis(RequestHandlerSelectors.basePackage("de.adorsys.aspsp.xs2a.web"))
                    .paths(Predicates.not(PathSelectors.regex("/error.*?")))
@@ -59,23 +54,9 @@ public class SwaggerConfig {
     public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider defaultResourcesProvider) {
         return () -> {
             SwaggerResource swaggerResource = new SwaggerResource();
-            swaggerResource.setName("XS2A API");
-            swaggerResource.setSwaggerVersion("2.0");
-            swaggerResource.setLocation("/psd2-api-1.2-2018-07-26.yaml");
+            swaggerResource.setLocation("/psd2-api-1.2-Update-2018-08-17.yaml");
 
-            List<SwaggerResource> resources = new ArrayList<>(defaultResourcesProvider.get());
-            resources.add(swaggerResource);
-            return resources;
+            return Collections.singletonList(swaggerResource);
         };
-    }
-
-    private ApiInfo getApiInfo() {
-        return new ApiInfoBuilder()
-                   .title("XS2A REST API")
-                   .contact(new Contact("adorsys GmbH & Co. KG", "http://www.github.com/adorsys/xs2a", "fpo@adorsys.de"))
-                   .version("1.0")
-                   .license("Apache License 2.0")
-                   .licenseUrl(licenseUrl)
-                   .build();
     }
 }

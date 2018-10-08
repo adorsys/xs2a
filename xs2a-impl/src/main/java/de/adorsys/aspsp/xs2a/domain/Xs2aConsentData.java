@@ -24,5 +24,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Xs2aConsentData {
-    private byte[] aspspConsentData;
+    private String consentId;
+    private String aspspConsentDataBase64;
 }

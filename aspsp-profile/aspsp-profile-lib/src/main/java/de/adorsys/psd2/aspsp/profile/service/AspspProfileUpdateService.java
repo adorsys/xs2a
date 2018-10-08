@@ -51,8 +51,6 @@ public interface AspspProfileUpdateService {
 
     void updateAllPsd2Support(boolean allPsd2Support);
 
-    void updateAuthorisationStartType(AuthorisationStartType authorisationStartType);
-
     void updateTransactionsWithoutBalancesSupported(boolean transactionsWithoutBalancesSupported);
 
     void updateSigningBasketSupported(boolean signingBasketSupported);

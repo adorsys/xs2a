@@ -44,7 +44,6 @@ public class AspspProfileServiceImpl implements AspspProfileService {
             profileConfiguration.getConsentLifetime(),
             profileConfiguration.getTransactionLifetime(),
             profileConfiguration.isAllPsd2Support(),
-            profileConfiguration.getAuthorisationStartType(),
             profileConfiguration.isTransactionsWithoutBalancesSupported(),
             profileConfiguration.isSigningBasketSupported(),
             profileConfiguration.isPaymentCancellationAuthorizationMandated());

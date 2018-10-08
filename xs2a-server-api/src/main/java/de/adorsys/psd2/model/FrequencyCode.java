@@ -7,13 +7,21 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * The following codes from the \"EventFrequency7Code\" of ISO 20022 are supported. - \"Daily\" - \"Weekly\" - \"EveryTwoWeeks\" - \"Monthly\" - \"EveryTwoMonths\" - \"Quarterly\" - \"SemiAnnual\" - \"Annual\"
  */
 public enum FrequencyCode {
+
     DAILY("Daily"),
+
     WEEKLY("Weekly"),
+
     EVERYTWOWEEKS("EveryTwoWeeks"),
+
     MONTHLY("Monthly"),
+
     EVERYTWOMONTHS("EveryTwoMonths"),
+
     QUARTERLY("Quarterly"),
+
     SEMIANNUAL("SemiAnnual"),
+
     ANNUAL("Annual");
 
     private String value;
@@ -25,7 +33,7 @@ public enum FrequencyCode {
     @JsonCreator
     public static FrequencyCode fromValue(String text) {
         for (FrequencyCode b : FrequencyCode.values()) {
-            if (String.valueOf(b.value).equals(text)) {
+            if (String.valueOf(b.value).equalsIgnoreCase(text)) {
                 return b;
             }
         }
@@ -37,4 +45,7 @@ public enum FrequencyCode {
     public String toString() {
         return String.valueOf(value);
     }
+
+
 }
+

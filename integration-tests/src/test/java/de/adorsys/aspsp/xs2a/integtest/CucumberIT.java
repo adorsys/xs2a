@@ -7,5 +7,7 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
     features = "src/test/resources/features",
-    glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions")
+    glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions",
+    format = {"pretty", "html:target/report"},
+    tags = {"~@ignore"})
 public class CucumberIT { }

@@ -16,16 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
-import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
@@ -36,6 +28,17 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationRes
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.psd2.consent.api.CmsAccountReference;
+import de.adorsys.psd2.consent.api.CmsAddress;
+import de.adorsys.psd2.consent.api.CmsRemittance;
+import de.adorsys.psd2.consent.api.CmsTppInfo;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -117,8 +120,8 @@ public class Xs2aPisConsentMapper {
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                           .map(Xs2aPurposeCode::getCode)
-                           .orElse(""));
+                                                     .map(Xs2aPurposeCode::getCode)
+                                                     .orElse(""));
 
                        return pisPayment;
 
@@ -169,10 +172,15 @@ public class Xs2aPisConsentMapper {
                    .map(tpp -> {
                        CmsTppInfo cmsTppInfo = new CmsTppInfo();
 
-                       cmsTppInfo.setRegistrationNumber(tpp.getRegistrationNumber());
+                       cmsTppInfo.setRegistrationNumber(tpp.getAuthorisationNumber());
                        cmsTppInfo.setTppName(tpp.getTppName());
-                       cmsTppInfo.setTppRole(tpp.getTppRole());
-                       cmsTppInfo.setNationalCompetentAuthority(tpp.getNationalCompetentAuthority());
+
+                       List<Xs2aTppRole> tppRoles = tpp.getTppRoles();
+                       if (CollectionUtils.isNotEmpty(tppRoles)) {
+                           cmsTppInfo.setTppRole(tppRoles.get(0).name()); // TODO properly map tppRoles to CmsTppInfo https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/266
+                       }
+
+                       cmsTppInfo.setNationalCompetentAuthority(tpp.getAuthorityName());
                        cmsTppInfo.setRedirectUri(tpp.getRedirectUri());
                        cmsTppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
                        return cmsTppInfo;
