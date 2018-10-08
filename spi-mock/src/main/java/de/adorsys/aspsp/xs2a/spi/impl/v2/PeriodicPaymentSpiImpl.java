@@ -16,9 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
+import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
@@ -27,6 +29,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.mapper.v2.NewSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
@@ -45,6 +48,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
+import static de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
+
 @Service
 @AllArgsConstructor
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
@@ -53,6 +59,8 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     private final NewSpiPaymentMapper newSpiPaymentMapper;
     private final SpiPaymentMapper spiPaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
+    private final KeycloakInvokerService keycloakInvokerService;
+    private final JsonConverter jsonConverter;
 
     @NotNull
     @Override
@@ -72,7 +80,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
     @Override
     public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        //TODO Rework
+        //TODO Rework after purpose is clarified
         return initiatePayment(payment, aspspConsentData);
     }
 
@@ -107,7 +115,13 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
     @Override
     public SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
+        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
+                                                            .orElse(FAILURE);
+        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
+                             .map(String::getBytes)
+                             .orElse(null);
+        return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
     }
 
     @Override
