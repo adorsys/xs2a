@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.authorisation;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 public class SpiAspspAuthorisationData {
     private String psuId;
     private String password;
