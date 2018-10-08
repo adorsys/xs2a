@@ -34,7 +34,6 @@ Feature: Payment Initiation Service Embedded Approach
 #    # Start of Authorisation                                                                                           #
 #    #                                                                                                                  #
 #    ####################################################################################################################
-    @ignore
     Scenario Outline: Successful start of authorisation (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
@@ -49,7 +48,7 @@ Feature: Payment Initiation Service Embedded Approach
     Scenario Outline: Failed start of authorisation (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <paymentInitiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
-        And PSU prepares the errorful data <authorisation-data> with the payment service <startAuth-payment-service>
+        And PSU prepares the errorful authorisation data <authorisation-data> with the payment service <startAuth-payment-service>
         When PSU sends the errorful start authorisation request
         Then an error response code and the appropriate error response are received
         Examples:
@@ -84,7 +83,7 @@ Feature: Payment Initiation Service Embedded Approach
         Given PSU wants to initiate a single payment <single-payment> using the payment service <paymentInitiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
         And PSU sends the start authorisation request and receives the authorisationId
-        And PSU prepares the errorful data <identification-data> with the payment service <updateAuth-payment-service>
+        And PSU prepares the errorful identification data <identification-data> with the payment service <updateAuth-payment-service>
         When PSU sends the errorful update authorisation data request
         Then an error response code and the appropriate error response are received
         Examples:
@@ -113,7 +112,7 @@ Feature: Payment Initiation Service Embedded Approach
         Examples:
             | payment-service                          | payment-product         | single-payment                | identification-data                              | selection-data                                |
             | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  | selectAuthenticationMethod-successful.json    |
-#   REMARK: Update Identification with one sca only works when email server is running
+#   REMARK: Selection of sca method only works when email server is running
 
         Scenario Outline: Errorful selection of PSU sca method (embedded)
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-service> and the payment product <payment-product>
@@ -121,7 +120,7 @@ Feature: Payment Initiation Service Embedded Approach
         And PSU sends the start authorisation request and receives the authorisationId
         And PSU wants to update the resource with his <identification-data>
         And PSU sends the update identification data request
-        And PSU prepares the errorful data <selection-data> with the payment service <selectionSCAPayment-service>
+        And PSU prepares the errorful selection data <selection-data> with the payment service <selectionSCAPayment-service>
         When PSU sends the errorful update authorisation data request
         Then an error response code and the appropriate error response are received
         Examples:
