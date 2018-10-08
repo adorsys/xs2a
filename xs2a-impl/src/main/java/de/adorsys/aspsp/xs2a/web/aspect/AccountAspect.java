@@ -62,23 +62,19 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
-    public ResponseObject<Xs2aAccountReport> getAccountReportByPeriodAspect(ResponseObject<Xs2aAccountReport> result, String accountId, boolean withBalance) {
-        if (!result.hasError()) {
-            Xs2aAccountReport accountReport = result.getBody();
-            accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
-            return result;
-        }
-        return enrichErrorTextMessage(result);
-    }
-
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getTransactionsReportByPeriod(..)) && args(accountId, withBalance, ..)", returning = "result", argNames = "result,accountId,withBalance")
     public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aTransactionsReport> result, String accountId, boolean withBalance) {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
-            Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
-            accountReport.setLinks(buildLinksForAccountReport(accountReport, accountId));
-            transactionsReport.setLinks(buildLinksForTransactionReport(accountId));
+
+            if (hasTransactionReportHugeSize(transactionsReport)) {
+                // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/400
+                transactionsReport.setLinks(buildLinksForTransactionReport(accountId, transactionsReport));
+            } else {
+                Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
+                accountReport.setLinks(buildLinksForAccountReport(accountId));
+            }
+
             return result;
         }
         return enrichErrorTextMessage(result);
@@ -96,23 +92,24 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return enrichErrorTextMessage(result);
     }
 
-    private Links buildLinksForAccountReport(Xs2aAccountReport accountReport, String accountId) {
+    private Links buildLinksForAccountReport(String accountId) {
         Links links = new Links();
         links.setViewAccount(buildPath("/v1/accounts/{accountId}", accountId));
 
-        Optional<String> optionalAccount = jsonConverter.toJson(accountReport);
-        String jsonReport = optionalAccount.orElse("");
+        return links;
+    }
+
+    private Links buildLinksForTransactionReport(String accountId, Xs2aTransactionsReport transactionsReport) {
+        Links links = new Links();
+        String jsonReport = Optional.ofNullable(transactionsReport)
+                                .flatMap(jsonConverter::toJson)
+                                .orElse("");
 
         if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
             // todo further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
             links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         }
-        return links;
-    }
 
-    private Links buildLinksForTransactionReport(String accountId) {
-        Links links = new Links();
-        links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
         return links;
     }
 
@@ -139,5 +136,15 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         }
         links.setViewTransactions(buildPath("/v1/accounts/{accountId}/transactions", accountId));
         return links;
+    }
+
+
+    private boolean hasTransactionReportHugeSize(Xs2aTransactionsReport transactionsReport) {
+
+        String jsonReport = Optional.ofNullable(transactionsReport)
+                                .flatMap(jsonConverter::toJson)
+                                .orElse("");
+
+        return jsonReport.length() > maxNumberOfCharInTransactionJson;
     }
 }

@@ -258,16 +258,17 @@ public class AccountService {
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo, consentId)
-                                                 .map(r -> filterByBookingStatus(r, bookingStatus));
 
-        if (!(isValid && report.isPresent())) {
+        if (!(isValid)) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(new MessageError(CONSENT_INVALID)).build();
         }
 
+        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo, consentId)
+                                                 .map(r -> filterByBookingStatus(r, bookingStatus));
+
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(report.get());
+        transactionsReport.setAccountReport(report.orElse(getEmptyXs2aAccountReport()));
         transactionsReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
 
         if (!aspspProfileService.isTransactionsWithoutBalancesSupported()
@@ -392,7 +393,7 @@ public class AccountService {
                                                                .orElseGet(Collections::emptyList));
     }
 
-    public Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.1
+    private Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.1
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
@@ -419,5 +420,9 @@ public class AccountService {
         return CollectionUtils.isEmpty(accountAccess.getBalances())
                    && CollectionUtils.isEmpty(accountAccess.getTransactions())
                    && CollectionUtils.isEmpty(accountAccess.getAccounts());
+    }
+
+    private Xs2aAccountReport getEmptyXs2aAccountReport(){
+        return new Xs2aAccountReport(new Transactions[0], new Transactions[0]);
     }
 }
