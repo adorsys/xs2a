@@ -62,14 +62,14 @@ public class PaymentInformationSuccessfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^Psu wants to request the payment information of a payment with payment-id (.*) by using the payment-service (.*)$")
-    public void setPaymentParametersforRequestingPaymentInformation(String paymentId, String paymentService) {
-        context.setPaymentId(paymentId);
-        context.setPaymentService(paymentService);
-    }
+    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    // See SinglePaymentSuccessfulSteps
 
-    //Default Case: Single Payment Information
-    @And("^the set of payment information data (.*)$")
+    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
+    // See GlobalSuccessfulSteps
+
+
+    @And("^Psu wants to request the payment information by using the set of data (.*)$")
     public void loadPaymentInformationTestData(String dataFileName) throws IOException {
         TestData data;
         switch (context.getPaymentService()) {

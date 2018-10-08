@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -54,11 +55,14 @@ public class PaymentCancellationSuccessfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("PSU wants to cancel an existing payment (.*) with payment-id (.*) using the payment service (.*)$")
-    public void loadTestData(String dataFileName, String paymentId ,String paymentService ) throws IOException {
-        context.setPaymentService(paymentService);
-        context.setPaymentId(paymentId);
+    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    // See SinglePaymentSuccessfulSteps
 
+    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
+    // See GlobalSuccessfulSteps
+
+    @And("PSU wants to cancel the payment by using the set of data (.*)$")
+    public void loadPaymentCancellationTestData(String dataFileName) throws IOException {
         TestData<HashMap, PaymentInitiationCancelResponse200202> data = mapper.readValue(resourceToString(
             "/data-input/pis/cancellation/" + dataFileName, UTF_8),
             new TypeReference<TestData<HashMap, PaymentInitiationCancelResponse200202>>() {
