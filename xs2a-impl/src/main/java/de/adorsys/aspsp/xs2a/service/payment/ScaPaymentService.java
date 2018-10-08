@@ -16,7 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 
 import java.util.List;
 

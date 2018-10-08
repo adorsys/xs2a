@@ -59,7 +59,7 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getBalances(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return responseMapper.ok(accountService.getBalances(consentID, accountId), accountModelMapper::mapToBalance);
+        return responseMapper.ok(accountService.getBalancesReport(consentID, accountId), accountModelMapper::mapToBalance);
     }
 
     @ApiOperation(value = "Read Transaction List", nickname = "getTransactionList", notes = "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. ", response = TransactionsResponse200Json.class, authorizations = {
