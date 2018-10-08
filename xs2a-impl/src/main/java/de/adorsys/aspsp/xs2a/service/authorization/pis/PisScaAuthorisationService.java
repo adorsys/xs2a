@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 
@@ -29,5 +29,5 @@ public interface PisScaAuthorisationService {
 
     Optional<Xs2aUpdatePisConsentPsuDataResponse> updateConsentPsuData(UpdatePisConsentPsuDataRequest request);
 
-    Optional<Xsa2CreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType);
+    Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType);
 }

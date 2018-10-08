@@ -210,12 +210,12 @@ public class ConsentService { //TODO change format of consentRequest to mandator
 
     }
 
-    public ResponseObject<Xsa2CreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
+    public ResponseObject<Xs2aCreatePisConsentCancellationAuthorisationResponse> createPisConsentCancellationAuthorization(String paymentId, PaymentType paymentType) {
         return pisAuthorizationService.createConsentCancellationAuthorisation(paymentId, paymentType)
-                   .map(resp -> ResponseObject.<Xsa2CreatePisConsentCancellationAuthorisationResponse>builder()
+                   .map(resp -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(() -> ResponseObject.<Xsa2CreatePisConsentCancellationAuthorisationResponse>builder()
+                   .orElseGet(() -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
                                         .build());
     }
