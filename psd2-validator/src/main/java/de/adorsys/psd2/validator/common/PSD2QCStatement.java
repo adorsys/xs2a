@@ -3,6 +3,7 @@ package de.adorsys.psd2.validator.common;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 
 import org.apache.commons.collections4.iterators.FilterIterator;
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -20,7 +21,10 @@ import no.difi.certvalidator.api.CertificateValidationException;
 @Slf4j
 public class PSD2QCStatement {
 
-	private static final ASN1ObjectIdentifier idEtsiPsd2QcStatement = new ASN1ObjectIdentifier("0.4.0.19495.2");
+    private PSD2QCStatement() {
+    }
+
+    private static final ASN1ObjectIdentifier idEtsiPsd2QcStatement = new ASN1ObjectIdentifier("0.4.0.19495.2");
 
 	public static QCStatement psd2QCStatement() {
 		return new QCStatement(idEtsiPsd2QcStatement);
@@ -42,7 +46,7 @@ public class PSD2QCStatement {
 
 	}
 
-	public static QCStatement readQCStatement(byte[] extensionValue) throws CertificateValidationException {
+	private static QCStatement readQCStatement(byte[] extensionValue) throws CertificateValidationException {
 
 		ASN1Sequence qcStatements;
 		try {
@@ -61,17 +65,19 @@ public class PSD2QCStatement {
 
         ASN1Encodable object = qcStatements.getObjectAt(0);
         if (object.toASN1Primitive() instanceof ASN1ObjectIdentifier) {
-            // We have a single entity with oid and value direct
-            QCStatement qcStatement = QCStatement.getInstance(qcStatements);
-            if (!idEtsiPsd2QcStatement.getId().equals(qcStatement.getStatementId().getId())) {
-                log.debug("Wrong statement type in psd2 certificate. expected is {} but found {}",
-                    idEtsiPsd2QcStatement.getId(), qcStatement.getStatementId().getId());
-                throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
-            }
-
-            return qcStatement;
+            return getSingleQcStatement(qcStatements);
         }
 
+        return getEtsiPsd2QcStatement(qcStatements)
+            .orElseThrow(() -> new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString()));
+    }
+
+    /** Iterate the list of qcStatements and try to find teh EtsiPsd2 statenent
+     *
+     * @param qcStatements
+     * @return Etsi Pds2 Statement or Optional.empty if not found
+     */
+    private static Optional<QCStatement> getEtsiPsd2QcStatement(ASN1Sequence qcStatements) {
         FilterIterator<ASN1Encodable> filteredIterator = new FilterIterator<>(qcStatements.iterator(), item -> {
             QCStatement qcStatement = QCStatement.getInstance(item);
             return qcStatement.getStatementId().getId().equals(idEtsiPsd2QcStatement.getId());
@@ -79,9 +85,28 @@ public class PSD2QCStatement {
 
         if (!filteredIterator.hasNext()) {
             log.debug("No ETSI PSD2 QcStatement in psd2 certificate");
+            return Optional.empty();
+        }
+
+        return Optional.of(QCStatement.getInstance(filteredIterator.next()));
+    }
+
+    /** This is a fallback for the cases where a single qcStatement with PSD2 items is added without wrapping it
+     * in a SEQUENCE.
+     *
+     * @param qcStatements
+     * @return QCStatement
+     * @throws CertificateValidationException
+     */
+    private static QCStatement getSingleQcStatement(ASN1Sequence qcStatements) throws CertificateValidationException {
+        // We have a single entity with oid and value direct
+        QCStatement qcStatement = QCStatement.getInstance(qcStatements);
+        if (!idEtsiPsd2QcStatement.getId().equals(qcStatement.getStatementId().getId())) {
+            log.debug("Wrong statement type in psd2 certificate. expected is {} but found {}",
+                idEtsiPsd2QcStatement.getId(), qcStatement.getStatementId().getId());
             throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
         }
 
-        return QCStatement.getInstance(filteredIterator.next());
+        return qcStatement;
     }
 }
