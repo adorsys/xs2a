@@ -8,5 +8,6 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
     features = "src/test/resources/features",
     glue = "de.adorsys.aspsp.xs2a.integtest.stepdefinitions",
-    format = {"pretty", "html:target/report"})
+    format = {"pretty", "html:target/report"},
+    tags = {"~@ignore"})
 public class CucumberIT { }
