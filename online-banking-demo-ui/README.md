@@ -71,11 +71,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 9. After clicking on the Submit button your payment will be confirmed and you should be redirected to the swagger page.
     
 
-
-
-
-
-
 ## Setup
 
 ### Development server
@@ -101,3 +96,20 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ### Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Deployment
+To deploy the webapp on a deployment environment, the following steps are needed:
+- The webapp uses a proxy (e.g. nginx ) which redirects backend service calls to the correct urls.
+- The following services are available and must be redirected: 
+``` 
+  - xs2a
+  - mockserver
+  - online-banking-server
+  - consent-management
+  - profile-server
+  ```
+  You can find a working nginx configuration "**nginx.conf**" in the root folder of the project
+
+- To build plain html and js files from our app, use the `ng build` command.
+- Copy the generated files to the webserver folder to serve the content
+- Start the webserver
