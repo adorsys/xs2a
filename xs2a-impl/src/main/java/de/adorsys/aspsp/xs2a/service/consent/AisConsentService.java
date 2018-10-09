@@ -23,7 +23,6 @@ import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
@@ -50,11 +49,10 @@ public class AisConsentService {
      * @param request          Request body storing main consent details
      * @param psuId            String representation of PSU`s identifier at ASPSP
      * @param tppId            String representation of TPP`s identifier from TPP Certificate
-     * @param aspspConsentData Aspsp private binary data
      * @return String representation of identifier of stored consent
      */
-    public String createConsent(CreateConsentReq request, String psuId, String tppId, AspspConsentData aspspConsentData) {
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuId, tppId, aspspConsentData);
+    public String createConsent(CreateConsentReq request, String psuId, String tppId) {
+        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuId, tppId);
         CreateAisConsentResponse createAisConsentResponse = consentRestTemplate.postForEntity(remoteAisConsentUrls.createAisConsent(), createAisConsentRequest, CreateAisConsentResponse.class).getBody();
 
         return Optional.ofNullable(createAisConsentResponse)

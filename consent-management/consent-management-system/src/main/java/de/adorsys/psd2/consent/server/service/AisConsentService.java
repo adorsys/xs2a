@@ -262,7 +262,6 @@ public class AisConsentService {
         consent.setRecurringIndicator(request.isRecurringIndicator());
         consent.setTppRedirectPreferred(request.isTppRedirectPreferred());
         consent.setCombinedServiceIndicator(request.isCombinedServiceIndicator());
-        consent.setAspspConsentData(request.getAspspConsentData());
         consent.setAisConsentRequestType(getRequestTypeFromAccess(request.getAccess()));
 
         return consent;
