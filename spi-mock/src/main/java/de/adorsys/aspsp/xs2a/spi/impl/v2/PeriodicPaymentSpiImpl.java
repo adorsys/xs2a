@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,6 +122,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
         byte[] payload = accessToken.flatMap(jsonConverter::toJson)
                              .map(String::getBytes)
                              .orElse(null);
+
         return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
     }
 
@@ -128,6 +130,10 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         ResponseEntity<List<SpiScaMethod>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
         }, psuId);
+
+        if (!EnumSet.of(HttpStatus.OK, HttpStatus.NO_CONTENT).contains(aspspResponse.getStatusCode())) {
+            return SpiResponse.<List<SpiScaMethod>>builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
+        }
 
         List<SpiScaMethod> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
                                                .orElseGet(Collections::emptyList);
