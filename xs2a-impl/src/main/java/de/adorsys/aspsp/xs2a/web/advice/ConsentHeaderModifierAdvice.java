@@ -52,7 +52,8 @@ public class ConsentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
                                                           .map(Object::toString)
                                                           .orElse(null));
             }
-        } else if ("_startConsentAuthorisation".equals(methodName) || "_updateConsentsPsuData".equals(methodName)) {
+        } else if ("_startConsentAuthorisation".equals(methodName)
+                       || "_updateConsentsPsuData".equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
         }
 

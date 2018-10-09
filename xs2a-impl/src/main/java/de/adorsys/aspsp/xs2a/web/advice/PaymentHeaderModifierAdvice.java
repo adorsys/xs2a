@@ -46,8 +46,10 @@ public class PaymentHeaderModifierAdvice extends CommonHeaderModifierAdvice {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         String methodName = returnType.getMethod().getName();
 
-        if ("_startPaymentAuthorisation".equals(methodName) || "_startPaymentInitiationCancellationAuthorisation".equals(methodName)
-                || "_updatePaymentCancellationPsuData".equals(methodName) || "_updatePaymentPsuData".equals(methodName)) {
+        if ("_startPaymentAuthorisation".equals(methodName)
+                || "_startPaymentInitiationCancellationAuthorisation".equals(methodName)
+                || "_updatePaymentCancellationPsuData".equals(methodName)
+                || "_updatePaymentPsuData".equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
         } else if ("_initiatePayment".equals(methodName)) {
             response.getHeaders().add("Aspsp-Sca-Approach", getScaApproach().name());
