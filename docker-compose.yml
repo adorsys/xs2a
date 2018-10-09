@@ -136,6 +136,12 @@ services:
       - "4200:4200"
     networks:
       - xs2a-net
+    environment:
+      - XS2A_URL=http://localhost:8080
+      - MOCKSERVER_URL=http://localhost:28080
+      - ONLINE_BANKING_SERVER_URL=http://localhost:28081
+      - CONSENT_MANAGEMENT_URL=http://localhost:38080
+      - PROFILE_SERVER_URL=http://localhost:48080
     expose:
       - 4200
 
