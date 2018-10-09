@@ -20,22 +20,25 @@ import { Observable } from 'rxjs';
 import { Banking } from '../model/banking.model';
 import { SinglePayment } from '../model/singlePayment';
 import { ConfigService } from './config.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PisService {
   savedData = new Banking();
+  psuId: string;
   private CM_CONSENT_URI =  '/consent-management/api/v1/pis/consent';
   private MOCK_CONSENT_CONFIRMATION_URI = '/mockserver/consent/confirmation/pis';
 
-  constructor(private httpClient: HttpClient, private configService: ConfigService) {
+  constructor(private httpClient: HttpClient, private configService: ConfigService, private keycloak: KeycloakService) {
+    this.psuId = keycloak.getUsername();
   }
 
   validateTan(tan: string): Observable<string> {
     const body = {
       tanNumber: tan,
-      psuId: 'aspsp1',
+      psuId: this.psuId,
       consentId: this.savedData.consentId,
       paymentId: this.savedData.paymentId
     };
@@ -51,7 +54,7 @@ export class PisService {
   }
 
   generateTan(): Observable<string> {
-    return this.httpClient.post<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}/aspsp1/SMS_OTP`, {});
+    return this.httpClient.post<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}/${this.psuId}/SMS_OTP`, {});
   }
 
   getConsentById(): Observable<SinglePayment> {
