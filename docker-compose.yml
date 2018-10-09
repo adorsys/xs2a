@@ -128,3 +128,14 @@ services:
       - POSTGRESQL_PASSWORD=cms
     expose:
       - 5432
+
+  online-banking-demo-ui:
+    image: online-banking-demo-ui
+    restart: on-failure
+    ports:
+      - "4200:4200"
+    networks:
+      - xs2a-net
+    expose:
+      - 4200
+
