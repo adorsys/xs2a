@@ -224,3 +224,40 @@ Feature: Account Information Service
         Examples:
             | consent-id                       | account-id                           | transaction-resource            | booking-status |
             | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-successful.json | booked         |
+
+    @ignore
+    Scenario Outline: Read transaction list erroful
+        Given PSU already has an existing consent <consent-id>
+        And account id <account-id>
+        And wants to read all transactions using <transaction-resource>
+        And booking status <booking-status>
+        When PSU requests the transactions
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | consent-id                      | account-id                           | transaction-resource                         | booking-status |
+            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-invalid-request-id.json      | booked         |
+            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-no-request-id.json           | booked         |
+            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-wrong-format-request-id.json | booked         |
+
+    @ignore
+    Scenario Outline: Read transaction list with no consent errorful
+        Given PSU wants to read all transactions using <transaction-resource>
+        And account id <account-id>
+        And booking status <booking-status>
+        When PSU requests the transactions
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | transaction-resource            | account-id                           | booking-status |
+            | transactionList-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | booked         |
+
+    @ignore
+    Scenario Outline: Read transaction list with expired consent errorful
+        Given PSU created consent <consent> which is expired
+        And account id <account-id>
+        And wants to read all transactions using <transaction-resource>
+        And booking status <booking-status>
+        When PSU requests the transactions
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | consent                                  | account-id                           | transaction-resource                      | booking-status |
+            | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-with-expired-consent.json | booked         |
