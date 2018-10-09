@@ -93,7 +93,7 @@ services:
 # CONSENT-MANAGEMENT-SYSTEM
   consent-management:
     build:
-      context: consent-management-system
+      context: consent-management/consent-management-system
       dockerfile: Dockerfile
     restart: on-failure
     ports:
@@ -115,7 +115,7 @@ services:
     image: centos/postgresql-95-centos7
     volumes:
       - consent-management-data:/var/lib/pgsql/data
-      - ./cms-db-schema/util/pg-create-schema.sh:/usr/share/container-scripts/postgresql/start/zzz-create-schema.sh
+      - ./consent-management/cms-db-schema/util/pg-create-schema.sh:/usr/share/container-scripts/postgresql/start/zzz-create-schema.sh
     restart: on-failure
     ports:
       - "5432:5432"

@@ -16,19 +16,13 @@
 
 package de.adorsys.aspsp.xs2a.web.filter;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
+import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
+import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
+import de.adorsys.psd2.validator.certificate.util.TppRole;
+import lombok.extern.slf4j.Slf4j;
+import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,10 +33,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
-import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
-import lombok.extern.slf4j.Slf4j;
-import no.difi.certvalidator.api.CertificateValidationException;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * The intent of this Class is to get the Qwac certificate from header, extract
@@ -56,58 +56,68 @@ import no.difi.certvalidator.api.CertificateValidationException;
 @Slf4j
 public class QwacCertificateFilter extends GenericFilterBean {
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+        throws IOException, ServletException {
 
-		if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
-			throw new ServletException("OncePerRequestFilter just supports HTTP requests");
-		}
+        if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse)) {
+            throw new ServletException("OncePerRequestFilter just supports HTTP requests");
+        }
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (Objects.isNull(authentication)) {
-			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			String encodedTppQwacCert = getEncodedTppQwacCert(httpRequest);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-			if (StringUtils.isNotBlank(encodedTppQwacCert)) {
+        if (Objects.isNull(authentication)) {
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            String encodedTppQwacCert = getEncodedTppQwacCert(httpRequest);
 
-				try {
-					TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
-					HashMap<String, String> credential = new HashMap<>();
-					credential.put("authorityCountry", tppCertificateData.getPspAuthorityCountry());
-					credential.put("authorityId", tppCertificateData.getPspAuthorityId());
-					credential.put("authorityName", tppCertificateData.getPspAuthorityName());
-					credential.put("authorizationNumber", tppCertificateData.getPspAuthorizationNumber());
-					credential.put("name", tppCertificateData.getPspName());
+            if (StringUtils.isNotBlank(encodedTppQwacCert)) {
+                try {
+                    TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
+                    TppInfo tppInfo = new TppInfo();
+                    tppInfo.setAuthorisationNumber(tppCertificateData.getPspAuthorisationNumber());
+                    tppInfo.setTppName(tppCertificateData.getName());
+                    tppInfo.setAuthorityId(tppCertificateData.getPspAuthorityId());
+                    tppInfo.setAuthorityName(tppCertificateData.getPspAuthorityName());
+                    tppInfo.setCountry(tppCertificateData.getCountry());
+                    tppInfo.setOrganisation(tppCertificateData.getOrganisation());
+                    tppInfo.setOrganisationUnit(tppCertificateData.getOrganisationUnit());
+                    tppInfo.setCity(tppCertificateData.getCity());
+                    tppInfo.setState(tppCertificateData.getState());
 
-					List<GrantedAuthority> authorities = tppCertificateData.getPspRoles().stream()
-							.map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-							.collect(Collectors.toList());
+                    List<TppRole> tppRoles = tppCertificateData.getPspRoles();
+                    List<Xs2aTppRole> xs2aTppRoles = tppRoles.stream()
+                                                         .map(role -> Xs2aTppRole.valueOf(role.name()))
+                                                         .collect(Collectors.toList());
+                    tppInfo.setTppRoles(xs2aTppRoles);
 
-					authentication = new UsernamePasswordAuthenticationToken(
-							tppCertificateData.getPspAuthorizationNumber(), credential, authorities);
+                    List<GrantedAuthority> authorities = tppRoles.stream()
+                                                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                                                             .collect(Collectors.toList());
 
-					SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(tppCertificateData.getPspAuthorisationNumber(),
+                            tppInfo, authorities);
 
-				} catch (CertificateValidationException e) {
-					log.debug(e.getMessage());
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
-					return;
-				}
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-			}
-		}
+                } catch (CertificateValidationException e) {
+                    log.debug(e.getMessage());
+                    ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                    return;
+                }
 
-		chain.doFilter(request, response);
+            }
+        }
 
-	}
+        chain.doFilter(request, response);
 
-	@Override
-	public void destroy() {
-	}
+    }
 
-	public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {
-		return httpRequest.getHeader("tpp-qwac-certificate");
-	}
+    @Override
+    public void destroy() {
+    }
 
+    public String getEncodedTppQwacCert(HttpServletRequest httpRequest) {
+        return httpRequest.getHeader("tpp-qwac-certificate");
+    }
 }
