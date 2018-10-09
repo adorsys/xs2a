@@ -54,9 +54,8 @@ public class CommonHeaderModifierAdvice implements ResponseBodyAdvice<Object> {
         return scaApproach;
     }
 
-    protected <B> boolean hasError(Object body) {
+    protected boolean hasError(Object body) {
         return Optional.ofNullable(body).isPresent() && body.getClass()
                                                             .isAssignableFrom(TppMessages.class);
     }
-
 }
