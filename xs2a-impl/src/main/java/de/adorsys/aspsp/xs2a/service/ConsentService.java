@@ -40,10 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentStatus.RECEIVED;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccessType.ALL_ACCOUNTS;
@@ -216,9 +213,22 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                     .body(resp)
                                     .build())
                    .orElseGet(() -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
-                                        .fail(new MessageError(MessageErrorCode.PAYMENT_FAILED))
+                                        .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
                                         .build());
     }
+
+    public ResponseObject<PaymentInitiationCancellationAuthorizationInformationResponse> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
+        return pisAuthorizationService.getCancellationAuthorisationSubResources(paymentId)
+                   .map(resp -> {
+                       PaymentInitiationCancellationAuthorizationInformationResponse response = new PaymentInitiationCancellationAuthorizationInformationResponse();
+                       response.setCancellationIds(Arrays.asList(resp.getAuthorizationId()));
+                       return ResponseObject.<PaymentInitiationCancellationAuthorizationInformationResponse>builder().body(response).build();
+                   })
+                   .orElseGet(() -> ResponseObject.<PaymentInitiationCancellationAuthorizationInformationResponse>builder()
+                                        .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                                        .build());
+    }
+
 
     boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)

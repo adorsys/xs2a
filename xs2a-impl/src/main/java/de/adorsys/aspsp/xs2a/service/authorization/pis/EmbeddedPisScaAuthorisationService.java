@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
@@ -63,6 +64,17 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
      */
     @Override
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
-        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorizationResponse(authorisationService.createPisConsentAuthorisation(paymentId), paymentType);
+        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorizationResponse(authorisationService.createPisConsentAuthorisationCancellation(paymentId), paymentType);
+    }
+
+    /**
+     * Gets authorization cancellation sub resources
+     *
+     * @param paymentId ASPSP identifier of a payment
+     * @return authorization cancellation sub resources
+     */
+    @Override
+    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
+        return pisConsentMapper.mapToXs2aPaymentCancellationAuthorisationSubResource(authorisationService.getCancellationAuthorisationSubResources(paymentId));
     }
 }

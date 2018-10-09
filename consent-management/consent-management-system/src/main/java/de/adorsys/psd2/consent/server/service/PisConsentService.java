@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.server.service;
 
+import de.adorsys.psd2.consent.api.CmsAuthorizationType;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
@@ -154,15 +155,15 @@ public class PisConsentService {
      * Create consent authorization
      */
     @Transactional
-    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId) {
+    public Optional<CreatePisConsentAuthorisationResponse> createAuthorization(String paymentId, CmsAuthorizationType authorizationType) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent()))
+                   .map(pisConsent -> saveNewAuthorization(pisConsent.getConsent(), authorizationType))
                    .map(c -> new CreatePisConsentAuthorisationResponse(c.getExternalId()));
     }
 
-    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request) {
-        Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalId(
-            authorizationId);
+    public Optional<UpdatePisConsentPsuDataResponse> updateConsentAuthorization(String authorizationId, UpdatePisConsentPsuDataRequest request, CmsAuthorizationType authorizationType) {
+        Optional<PisConsentAuthorization> pisConsentAuthorisationOptional = pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(
+            authorizationId, authorizationType);
         if (pisConsentAuthorisationOptional.isPresent()) {
             PisConsentAuthorization consentAuthorization = pisConsentAuthorisationOptional.get();
 
@@ -178,9 +179,16 @@ public class PisConsentService {
         return pisConsentAuthorisationOptional.map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
     }
 
-    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
-        return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
+    public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId, CmsAuthorizationType authorizationType) {
+        return pisConsentAuthorizationRepository.findByExternalIdAndAuthorizationType(authorizationId, authorizationType)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
+    }
+
+    public Optional<CreatePisConsentAuthorisationResponse> getAuthorizationByPaymentId(String paymentId) {
+        return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
+                   .map(paymentData -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(paymentData.getConsent().getId(), CmsAuthorizationType.CANCELLED))
+                   .filter(pca -> pca.isPresent() && !pca.get().isEmpty())
+                   .map(pca -> new CreatePisConsentAuthorisationResponse(pca.get().get(0).getExternalId()));
     }
 
     private Optional<PisConsent> getPisConsentById(String consentId) {
@@ -204,11 +212,12 @@ public class PisConsentService {
      * @param pisConsent PIS Consent, for which authorization is performed
      * @return PisConsentAuthorization
      */
-    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent) {
+    private PisConsentAuthorization saveNewAuthorization(PisConsent pisConsent, CmsAuthorizationType authorizationType) {
         PisConsentAuthorization consentAuthorization = new PisConsentAuthorization();
         consentAuthorization.setExternalId(UUID.randomUUID().toString());
         consentAuthorization.setConsent(pisConsent);
         consentAuthorization.setScaStatus(STARTED);
+        consentAuthorization.setAuthorizationType(authorizationType);
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 

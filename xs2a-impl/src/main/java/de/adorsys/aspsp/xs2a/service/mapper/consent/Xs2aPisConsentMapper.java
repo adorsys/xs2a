@@ -22,10 +22,7 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
@@ -37,6 +34,7 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.PaymentCancellationAuthorisationSubResourceResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.apache.commons.collections4.CollectionUtils;
@@ -103,6 +101,11 @@ public class Xs2aPisConsentMapper {
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> mapToXs2aCreatePisConsentCancellationAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
         return Optional.ofNullable(response)
                    .map(createPisConsentAuthorisationResponse -> new Xs2aCreatePisConsentCancellationAuthorisationResponse(createPisConsentAuthorisationResponse.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+    }
+
+    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource (PaymentCancellationAuthorisationSubResourceResponse response) {
+        return Optional.ofNullable(response)
+            .map(subResourceResponse -> new Xs2aPaymentCancellationAuthorisationSubResource(subResourceResponse.getAuthorizationId()));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {

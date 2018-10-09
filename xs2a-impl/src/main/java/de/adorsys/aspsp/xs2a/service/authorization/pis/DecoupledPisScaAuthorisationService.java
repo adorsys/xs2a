@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aCreatePisConsentCancellationAuthorisationResponse;
@@ -37,6 +38,11 @@ public class DecoupledPisScaAuthorisationService implements PisScaAuthorisationS
 
     @Override
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
         return Optional.empty();
     }
 }

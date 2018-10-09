@@ -19,10 +19,7 @@ package de.adorsys.aspsp.xs2a.service.authorization.pis;
 import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.config.factory.ScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -67,5 +64,27 @@ public class PisAuthorisationService {
     public UpdatePisConsentPsuDataResponse doUpdatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
         return consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentAuthorisation(), HttpMethod.PUT, new HttpEntity<>(request),
             UpdatePisConsentPsuDataResponse.class, request.getAuthorizationId()).getBody();
+    }
+
+    /**
+     * Sends a POST request to CMS to store created consent authorization cancellation
+     *
+     * @param paymentId String representation of identifier of payment ID
+     * @return long representation of identifier of stored consent authorization cancellation
+     */
+    public CreatePisConsentAuthorisationResponse createPisConsentAuthorisationCancellation(String paymentId) {
+        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsentAuthorisationCancellation(),
+            null, CreatePisConsentAuthorisationResponse.class, paymentId)
+                   .getBody();
+    }
+
+    /**
+     * Sends a GET request to CMS to get authorization sub resources
+     *
+     * @param paymentId String representation of identifier of payment ID
+     * @return long representation of identifier of stored consent authorization cancellation
+     */
+    public PaymentCancellationAuthorisationSubResourceResponse getCancellationAuthorisationSubResources(String paymentId) {
+        return consentRestTemplate.getForEntity(remotePisConsentUrls.getCancellationAuthorisationSubResources(), PaymentCancellationAuthorisationSubResourceResponse.class, paymentId).getBody();
     }
 }
