@@ -89,7 +89,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     public SpiResponse<SpiPeriodicPayment> getPaymentById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         ResponseEntity<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment>> aspspResponse =
             aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment>>() {
-            }, SpiPaymentType.PERIODIC, payment.getPaymentProduct(), payment.getPaymentId());
+            }, payment.getPaymentType(), payment.getPaymentProduct(), payment.getPaymentId());
 
         if (aspspResponse.getStatusCode() != HttpStatus.OK) {
             return SpiResponse.<SpiPeriodicPayment>builder().fail(SpiResponseStatus.TECHNICAL_FAILURE);
