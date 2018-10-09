@@ -94,18 +94,15 @@ public class Xs2aPisConsentMapper {
     }
 
     public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.ofNullable(response)
-                   .map(createPisConsentAuthorisationResponse -> new Xsa2CreatePisConsentAuthorisationResponse(createPisConsentAuthorisationResponse.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+        return Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(response.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> mapToXs2aCreatePisConsentCancellationAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.ofNullable(response)
-                   .map(createPisConsentAuthorisationResponse -> new Xs2aCreatePisConsentCancellationAuthorisationResponse(createPisConsentAuthorisationResponse.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+        return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource (PaymentCancellationAuthorisationSubResourceResponse response) {
-        return Optional.ofNullable(response)
-            .map(subResourceResponse -> new Xs2aPaymentCancellationAuthorisationSubResource(subResourceResponse.getAuthorizationId()));
+        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(response.getAuthorizationId()));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
