@@ -63,13 +63,9 @@ public class PisConsentService {
      * @param request Consists information about payments.
      * @return Response containing identifier of consent
      */
-    // TODO need to be refactored
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
         PisConsent consent = pisConsentRepository.save(pisConsentMapper.mapToPisConsent(request));
-        if (consent.getId() != null) {
-            return Optional.of(new CreatePisConsentResponse(consent.getExternalId()));
-        }
-        return Optional.empty();
+        return Optional.of(new CreatePisConsentResponse(consent.getExternalId()));
     }
 
     /**
@@ -181,6 +177,18 @@ public class PisConsentService {
         return pisConsentAuthorisationOptional.map(pisConsentMapper::mapToUpdatePisConsentPsuDataResponse);
     }
 
+    /**
+     * Update PIS consent payment data and stores it into database
+     *
+     * @param request PIS consent request for update payment data
+     * @param consentId Consent ID
+     */
+    @Transactional
+    public void updatePaymentConsent(PisConsentRequest request, String consentId) {
+        Optional<PisConsent> pisConsentById = getPisConsentById(consentId);
+        pisConsentById.ifPresent(pisConsent -> pisPaymentDataRepository.save(pisConsentMapper.mapToPisPaymentDataList(request.getPayments(), pisConsent)));
+    }
+
     public Optional<GetPisConsentAuthorisationResponse> getPisConsentAuthorizationById(String authorizationId) {
         return pisConsentAuthorizationRepository.findByExternalId(authorizationId)
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
@@ -222,16 +230,5 @@ public class PisConsentService {
         consent.setAspspConsentData(aspspConsentData);
         PisConsent savedConsent = pisConsentRepository.save(consent);
         return savedConsent.getExternalId();
-    }
-
-    /**
-     * Update PIS consent payment data and stores it into database
-     *
-     * @param request PIS consent request for update payment data
-     * @param consentId Consent ID
-     */
-    public void updatePaymentConsent(PisConsentRequest request, String consentId) {
-        Optional<PisConsent> pisConsentById = getPisConsentById(consentId);
-        pisConsentById.ifPresent(pisConsent -> pisPaymentDataRepository.save(pisConsentMapper.mapToPisPaymentDataList(request.getPayments(), pisConsent)));
     }
 }

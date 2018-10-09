@@ -20,29 +20,16 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import org.springframework.stereotype.Component;
 
-import java.util.Currency;
-import java.util.Optional;
-
 @Component
 public class SpiToXs2aAccountReferenceMapper {
 
-    public Xs2aAccountReference mapToXs2aAccountReference(SpiAccountReference spiAccountReference) {
-        return Optional.ofNullable(spiAccountReference)
-                   .map(r -> getXs2aAccountReference(r.getIban(), r.getBban(),
-                       r.getPan(), r.getMaskedPan(), r.getMsisdn(),
-                       r.getCurrency()))
-                   .orElse(null);
-
-    }
-
-    private Xs2aAccountReference getXs2aAccountReference(String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
-        Xs2aAccountReference reference = new Xs2aAccountReference();
-        reference.setIban(iban);
-        reference.setBban(bban);
-        reference.setPan(pan);
-        reference.setMaskedPan(maskedPan);
-        reference.setMsisdn(msisdn);
-        reference.setCurrency(currency);
-        return reference;
+    public Xs2aAccountReference mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
+        return new Xs2aAccountReference(
+            spiAccountRef.getIban(),
+            spiAccountRef.getBban(),
+            spiAccountRef.getPan(),
+            spiAccountRef.getMaskedPan(),
+            spiAccountRef.getMsisdn(),
+            spiAccountRef.getCurrency());
     }
 }

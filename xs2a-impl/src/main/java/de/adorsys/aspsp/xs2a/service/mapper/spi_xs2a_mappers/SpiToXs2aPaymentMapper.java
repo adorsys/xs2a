@@ -40,7 +40,7 @@ public class SpiToXs2aPaymentMapper {
         single.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setPaymentId(payment.getPaymentId());
-        single.setTransactionStatus(Xs2aTransactionStatus.valueOf(payment.getPaymentStatus().toString()));
+        single.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
         return single;
     }
 }

@@ -39,18 +39,13 @@ public class PisConsentMapper {
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
         consent.setExternalId(UUID.randomUUID().toString());
-        consent.addPaymentsData(mapToPisPaymentDataList(request.getPayments()));
+        consent.setPayments(mapToPisPaymentDataList(request.getPayments(), consent));
         consent.setPisTppInfo(mapToPisTppInfo(request.getTppInfo()));
         consent.setPisPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentType(ConsentType.PIS);
         consent.setConsentStatus(CmsConsentStatus.RECEIVED);
-        consent.setAspspConsentData(request.getAspspConsentData());
         return consent;
-    }
-
-    private List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments) {
-        return mapToPisPaymentDataList(payments, null);
     }
 
     public List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments, PisConsent consent) {

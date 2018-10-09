@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
@@ -35,41 +36,41 @@ public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSingle
     @NotNull
     @Override
     default SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment payment, @NotNull AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiSinglePayment>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<SpiSinglePayment> getPaymentById(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiSinglePayment>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<SpiTransactionStatus> getPaymentStatusById(SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiTransactionStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiAuthorisationStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<List<SpiScaMethod>>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

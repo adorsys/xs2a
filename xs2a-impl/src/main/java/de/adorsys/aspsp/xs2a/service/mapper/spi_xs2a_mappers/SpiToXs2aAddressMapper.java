@@ -21,24 +21,23 @@ import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiAddress;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Component
 public class SpiToXs2aAddressMapper {
 
-    public Xs2aAddress mapToAddress(SpiAddress creditorAddress) {
+    public Xs2aAddress mapToAddress(@NotNull SpiAddress creditorAddress) {
         return Optional.ofNullable(creditorAddress)
-                   .map(a -> {
-                       Xs2aAddress address = new Xs2aAddress();
-                       Xs2aCountryCode code = new Xs2aCountryCode();
-                       code.setCode(Optional.ofNullable(a.getCountry()).orElse(null));
-                       address.setCountry(code);
-                       address.setPostalCode(a.getPostalCode());
-                       address.setCity(a.getCity());
-                       address.setStreet(a.getStreet());
-                       address.setBuildingNumber(a.getBuildingNumber());
-                       return address;
-                   })
-                   .orElseGet(Xs2aAddress::new);
+            .map(a -> {
+                Xs2aAddress address = new Xs2aAddress();
+                address.setCountry(new Xs2aCountryCode(a.getCountry()));
+                address.setPostalCode(a.getPostalCode());
+                address.setCity(a.getCity());
+                address.setStreet(a.getStreet());
+                address.setBuildingNumber(a.getBuildingNumber());
+                return address;
+            })
+            .orElseGet(Xs2aAddress::new);
     }
 }

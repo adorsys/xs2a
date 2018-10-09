@@ -51,7 +51,7 @@ public class PisPaymentData {
     private PisAccountReference debtorAccount;
 
     @Column(name = "ultimate_debtor")
-    @ApiModelProperty(value = "Name of the ultimate debtor", required = true, example = "Mueller")
+    @ApiModelProperty(value = "Name of the ultimate debtor", example = "Mueller")
     private String ultimateDebtor;
 
     @Column(name = "currency", nullable = false)

@@ -57,16 +57,22 @@ public class PisConsentService {
     private final AuthorisationMethodService authorisationMethodService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
 
+    /**
+     * Creates PIS consent
+     *
+     * @param parameters Payment request parameters to get needed payment info
+     * @return String consentId
+     */
+    // TODO will be renamed in the next merge request
     public String createPisConsentV2(PaymentRequestParameters parameters) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPaymentProduct(PisPaymentProduct.getByCode(parameters.getPaymentProduct().getCode()).orElse(null));
-        request.setPaymentType(PisPaymentType.valueOf(parameters.getPaymentType().toString()));
-        request.setAspspConsentData(new AspspConsentData().getAspspConsentData());
+        request.setPaymentType(PisPaymentType.valueOf(parameters.getPaymentType().name()));
         CreatePisConsentResponse consentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
         return consentResponse.getConsentId();
     }
 
-    public void updatePisConsentSinglePayment(SinglePayment singlePayment, String paymentProduct, String consentId) {
+    public void updateSinglePaymentInPisConsent(SinglePayment singlePayment, PaymentProduct paymentProduct, String consentId) {
         PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForSinglePayment(singlePayment, paymentProduct);
         consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
     }
