@@ -24,22 +24,38 @@ import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.v2.AisConsentSpi;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 // TODO implement all the methods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 @Component
+@Slf4j
 public class AisConsentSpiImpl implements AisConsentSpi {
+
+    // Test data is used there for testing purposes to have the possibility to see if AisConsentSpiImpl is being invoked from xs2a.
+    // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+    private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    private static final String TEST_MESSAGE = "Test message";
 
     @Override
     public SpiResponse<VoidResponse> initiateAisConsent(SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
-        return null;
+        log.info("AisConsentSpi initiateAisConsent() mock implementation");
+        return SpiResponse.<VoidResponse>builder()
+                   .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))     // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                   .success();
     }
 
     @Override
     public SpiResponse<VoidResponse> revokeAisConsent(SpiAccountConsent accountConsent, AspspConsentData aspspConsentData) {
-        return null;
+        log.info("AisConsentSpi revokeAisConsent() mock implementation");
+        return SpiResponse.<VoidResponse>builder()
+                   .aspspConsentData(aspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))            // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                   .message(Collections.singletonList(TEST_MESSAGE))                                      // added for test purposes TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
+                   .success();
     }
 
     @Override
