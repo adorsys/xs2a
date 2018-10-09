@@ -394,7 +394,7 @@ public class AccountService {
                                                                .orElseGet(Collections::emptyList));
     }
 
-    private Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.1
+    private Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.2
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
