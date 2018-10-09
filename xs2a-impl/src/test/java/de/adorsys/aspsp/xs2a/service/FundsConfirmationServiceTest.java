@@ -85,7 +85,7 @@ public class FundsConfirmationServiceTest {
     public void fundsConfirmation_success() {
         //Given:
         FundsConfirmationResponse successResponse = new FundsConfirmationResponse(true);
-        ResponseObject<FundsConfirmationResponse> expected = new ResponseObject.ResponseBuilder<FundsConfirmationResponse>()
+        ResponseObject<FundsConfirmationResponse> expected = ResponseObject.<FundsConfirmationResponse>builder()
                                                                  .body(successResponse)
                                                                  .build();
 
@@ -100,7 +100,7 @@ public class FundsConfirmationServiceTest {
     public void fundsConfirmation_notEnoughMoney() {
         //Given:
         FundsConfirmationResponse failureResponse = new FundsConfirmationResponse(false);
-        ResponseObject<FundsConfirmationResponse> expected = new ResponseObject.ResponseBuilder<FundsConfirmationResponse>()
+        ResponseObject<FundsConfirmationResponse> expected = ResponseObject.<FundsConfirmationResponse>builder()
                                                                  .body(failureResponse)
                                                                  .build();
 
