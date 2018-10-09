@@ -26,20 +26,20 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SpiToXs2aPaymentMapper {
-    private final SpiToXs2aAccountReferenceMapper accountReferenceMapper;
-    private final SpiToXs2aAmountMapper amountMapper;
-    private final SpiToXs2aAddressMapper addressMapper;
+    private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
+    private final SpiToXs2aAmountMapper spiToXs2aAmountMapper;
+    private final SpiToXs2aAddressMapper spiToXs2aAddressMapper;
 
     public PeriodicPayment mapToXs2aPeriodicPayment(SpiPeriodicPayment payment) {
         PeriodicPayment periodic = new PeriodicPayment();
 
         periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
-        periodic.setDebtorAccount(accountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
-        periodic.setInstructedAmount(amountMapper.mapToXs2aAmount(payment.getInstructedAmount()));
-        periodic.setCreditorAccount(accountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()));
+        periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
+        periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(payment.getInstructedAmount()));
+        periodic.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()));
         periodic.setCreditorAgent(payment.getCreditorAgent());
         periodic.setCreditorName(payment.getCreditorName());
-        periodic.setCreditorAddress(addressMapper.mapToXs2aAddress(payment.getCreditorAddress()));
+        periodic.setCreditorAddress(spiToXs2aAddressMapper.mapToXs2aAddress(payment.getCreditorAddress()));
         periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         periodic.setTransactionStatus(Xs2aTransactionStatus.RCVD);
         periodic.setStartDate(payment.getStartDate());
