@@ -102,14 +102,13 @@ To deploy the webapp on a deployment environment, the following steps are needed
 - The webapp uses a proxy (e.g. nginx ) which redirects backend service calls to the correct urls.
 - The following services are available and must be redirected: 
 ``` 
-  - xs2a
-  - mockserver
-  - online-banking-server
-  - consent-management
-  - profile-server
+  - XS2A_URL
+  - MOCKSERVER_URL
+  - ONLINE_BANKING_SERVER_URL
+  - CONSENT_MANAGEMENT_URL
+  - PROFILE_SERVER_URL
   ```
-  You can find a working nginx configuration "**nginx.conf**" in the root folder of the project
-
-- To build plain html and js files from our app, use the `ng build` command.
-- Copy the generated files to the webserver folder to serve the content
-- Start the webserver
+- Build the docker container: `docker build -t online-banking-demo-ui .`
+- Run the docker container with the environment variables you need: 
+`docker run -e XS2A_URL='http://docker.for.mac.localhost:8080' -e MOCKSERVER_URL='http://docker.for.mac.localhost:28080' -e ONLINE_BANKING_SERVER_URL='http://docker.for.mac.localhost:28081' -e CONSENT_MANAGEMENT_URL='http://docker.for.mac.localhost:38080' -e PROFILE_SERVER_URL='http://docker.for.mac.localhost:48080' -p 4200:4200 --name online-banking-demo-ui -d online-banking-demo-ui`
+- The docker container should now serve the content on port 4200
