@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -44,9 +47,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
@@ -268,7 +269,7 @@ public class AccountService {
                                                  .map(r -> filterByBookingStatus(r, bookingStatus));
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(report.orElse(new Xs2aAccountReport(new Transactions[0], new Transactions[0])));
+        transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(new Transactions[0], new Transactions[0])));
         transactionsReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
 
         if (!aspspProfileService.isTransactionsWithoutBalancesSupported()
