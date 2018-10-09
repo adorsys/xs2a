@@ -259,7 +259,7 @@ public class AccountService {
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
 
-        if (!(isValid)) {
+        if (!isValid) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(new MessageError(CONSENT_INVALID)).build();
         }
@@ -268,7 +268,7 @@ public class AccountService {
                                                  .map(r -> filterByBookingStatus(r, bookingStatus));
 
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(report.orElse(getEmptyXs2aAccountReport()));
+        transactionsReport.setAccountReport(report.orElse(new Xs2aAccountReport(new Transactions[0], new Transactions[0])));
         transactionsReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
 
         if (!aspspProfileService.isTransactionsWithoutBalancesSupported()
@@ -420,9 +420,5 @@ public class AccountService {
         return CollectionUtils.isEmpty(accountAccess.getBalances())
                    && CollectionUtils.isEmpty(accountAccess.getTransactions())
                    && CollectionUtils.isEmpty(accountAccess.getAccounts());
-    }
-
-    private Xs2aAccountReport getEmptyXs2aAccountReport(){
-        return new Xs2aAccountReport(new Transactions[0], new Transactions[0]);
     }
 }

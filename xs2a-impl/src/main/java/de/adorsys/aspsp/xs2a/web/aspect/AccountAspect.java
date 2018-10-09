@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
@@ -32,14 +31,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Aspect
 @Component
 public class AccountAspect extends AbstractLinkAspect<AccountController> {
-    public AccountAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
-        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    public AccountAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
+        super(aspspProfileService, messageService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.AccountService.getAccountDetails(..)) && args(consentId, accountId, withBalance)", returning = "result", argNames = "result,consentId,accountId,withBalance")
@@ -67,9 +65,12 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
 
-            if (hasTransactionReportHugeSize(transactionsReport)) {
+            if (transactionsReport.isTransactionReportHuge()) {
                 // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/400
-                transactionsReport.setLinks(buildLinksForTransactionReport(accountId, transactionsReport));
+
+                Links links = new Links();
+                links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
+                transactionsReport.setLinks(links);
             } else {
                 Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
                 accountReport.setLinks(buildLinksForAccountReport(accountId));
@@ -99,20 +100,6 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         return links;
     }
 
-    private Links buildLinksForTransactionReport(String accountId, Xs2aTransactionsReport transactionsReport) {
-        Links links = new Links();
-        String jsonReport = Optional.ofNullable(transactionsReport)
-                                .flatMap(jsonConverter::toJson)
-                                .orElse("");
-
-        if (jsonReport.length() > maxNumberOfCharInTransactionJson) {
-            // todo further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
-            links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
-        }
-
-        return links;
-    }
-
     private void setLinksToAccounts(Map<String, List<Xs2aAccountDetails>> accountDetailsMap, boolean withBalance) {
         for (Map.Entry<String, List<Xs2aAccountDetails>> entry : accountDetailsMap.entrySet()) {
             updateAccountLinks(entry.getValue(), withBalance);
@@ -136,15 +123,5 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
         }
         links.setViewTransactions(buildPath("/v1/accounts/{accountId}/transactions", accountId));
         return links;
-    }
-
-
-    private boolean hasTransactionReportHugeSize(Xs2aTransactionsReport transactionsReport) {
-
-        String jsonReport = Optional.ofNullable(transactionsReport)
-                                .flatMap(jsonConverter::toJson)
-                                .orElse("");
-
-        return jsonReport.length() > maxNumberOfCharInTransactionJson;
     }
 }
