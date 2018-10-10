@@ -84,7 +84,7 @@ public class PisAuthorisationService {
      * @param paymentId String representation of identifier of payment ID
      * @return long representation of identifier of stored consent authorization cancellation
      */
-    public PaymentCancellationAuthorisationSubResourceResponse getCancellationAuthorisationSubResources(String paymentId) {
-        return consentRestTemplate.getForEntity(remotePisConsentUrls.getCancellationAuthorisationSubResources(), PaymentCancellationAuthorisationSubResourceResponse.class, paymentId).getBody();
+    public String getCancellationAuthorisationSubResources(String paymentId) {
+        return consentRestTemplate.getForEntity(remotePisConsentUrls.getCancellationAuthorisationSubResources(), String.class, paymentId).getBody();
     }
 }

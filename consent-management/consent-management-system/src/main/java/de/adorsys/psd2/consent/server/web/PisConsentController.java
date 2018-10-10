@@ -105,12 +105,12 @@ public class PisConsentController {
     }
 
     @PostMapping(path = "/{payment-id}/cancellation-authorisations")
-    @ApiOperation(value = "Create consent authorization for given consent id.")
+    @ApiOperation(value = "Create payment authorization cancellation for given payment id.")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 404, message = "Not Found")})
     public ResponseEntity<CreatePisConsentAuthorisationResponse> createConsentAuthorizationCancellation(
-        @ApiParam(name = "payment-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.createAuthorization(paymentId, CmsAuthorizationType.CANCELLED)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
@@ -145,12 +145,12 @@ public class PisConsentController {
     }
 
     @GetMapping(path = "/{payment-id}/cancellation-authorisations")
-    @ApiOperation(value = "Getting pis consent authorization by paymentId")
+    @ApiOperation(value = "Getting payment authorization cancellation by paymentId")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreatePisConsentAuthorisationResponse> getConsentAuthorizationCancellation(
-        @ApiParam(name = "payment-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+    public ResponseEntity<String> getConsentAuthorizationCancellation(
+        @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
         return pisConsentService.getAuthorizationByPaymentId(paymentId)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))

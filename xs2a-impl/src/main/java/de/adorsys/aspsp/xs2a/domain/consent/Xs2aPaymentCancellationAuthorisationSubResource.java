@@ -19,8 +19,10 @@ package de.adorsys.aspsp.xs2a.domain.consent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class Xs2aPaymentCancellationAuthorisationSubResource {
-    private String authorizationId;
+    private List<String> cancellationIds;
 }

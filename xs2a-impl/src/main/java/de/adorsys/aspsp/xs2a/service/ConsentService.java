@@ -217,14 +217,10 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                         .build());
     }
 
-    public ResponseObject<PaymentInitiationCancellationAuthorizationInformationResponse> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
+    public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
         return pisAuthorizationService.getCancellationAuthorisationSubResources(paymentId)
-                   .map(resp -> {
-                       PaymentInitiationCancellationAuthorizationInformationResponse response = new PaymentInitiationCancellationAuthorizationInformationResponse();
-                       response.setCancellationIds(Arrays.asList(resp.getAuthorizationId()));
-                       return ResponseObject.<PaymentInitiationCancellationAuthorizationInformationResponse>builder().body(response).build();
-                   })
-                   .orElseGet(() -> ResponseObject.<PaymentInitiationCancellationAuthorizationInformationResponse>builder()
+                   .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
+                   .orElseGet(() -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                                         .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
                                         .build());
     }

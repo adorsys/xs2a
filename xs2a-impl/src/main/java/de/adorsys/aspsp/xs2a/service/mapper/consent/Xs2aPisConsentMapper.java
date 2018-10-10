@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.CmsRemittance;
@@ -34,7 +33,6 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.PaymentCancellationAuthorisationSubResourceResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.apache.commons.collections4.CollectionUtils;
@@ -94,15 +92,15 @@ public class Xs2aPisConsentMapper {
     }
 
     public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(response.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+        return Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(response.getAuthorizationId(), Xs2aScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> mapToXs2aCreatePisConsentCancellationAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+        return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), Xs2aScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
-    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource (PaymentCancellationAuthorisationSubResourceResponse response) {
-        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(response.getAuthorizationId()));
+    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource (String response) {
+        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(response)));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {

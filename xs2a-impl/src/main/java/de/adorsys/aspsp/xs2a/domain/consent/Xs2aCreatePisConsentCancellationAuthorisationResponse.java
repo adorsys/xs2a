@@ -17,11 +17,9 @@
 package de.adorsys.aspsp.xs2a.domain.consent;
 
 import de.adorsys.aspsp.xs2a.domain.Links;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class Xs2aCreatePisConsentCancellationAuthorisationResponse {
     private String authorizationId;
     private String scaStatus;

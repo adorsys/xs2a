@@ -36,14 +36,12 @@ import de.adorsys.psd2.consent.server.repository.PisConsentRepository;
 import de.adorsys.psd2.consent.server.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.server.service.mapper.PisConsentMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Base64;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
@@ -106,8 +104,8 @@ public class PisConsentService {
     }
 
     /**
-     *
      * Get Pis aspsp consent data by consent id
+     *
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
      */
@@ -184,11 +182,11 @@ public class PisConsentService {
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 
-    public Optional<CreatePisConsentAuthorisationResponse> getAuthorizationByPaymentId(String paymentId) {
+    public Optional<String> getAuthorizationByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .map(paymentData -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(paymentData.getConsent().getId(), CmsAuthorizationType.CANCELLED))
-                   .filter(pca -> pca.isPresent() && !pca.get().isEmpty())
-                   .map(pca -> new CreatePisConsentAuthorisationResponse(pca.get().get(0).getExternalId()));
+                   .flatMap(paymentData -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(paymentData.getConsent().getId(), CmsAuthorizationType.CANCELLED))
+                   .filter(CollectionUtils::isNotEmpty)
+                   .map(lst -> lst.get(0).getExternalId());
     }
 
     private Optional<PisConsent> getPisConsentById(String consentId) {
