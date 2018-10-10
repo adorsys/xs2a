@@ -43,12 +43,12 @@ export class PisConsentConfirmationPageComponent implements OnInit {
         this.getBankingDetailsFromUrl(params);
       });
 
-    let bankingData = <Banking>({tan: this.tan, consentId: this.consentId, paymentId: this.paymentId});
+    const bankingData = <Banking>({tan: this.tan, consentId: this.consentId, paymentId: this.paymentId});
     this.bankingService.saveData(bankingData);
     this.getSinglePayments();
   }
 
-  getSinglePayments(){
+  getSinglePayments() {
     this.bankingService.getConsentById().subscribe(data => {
       this.singlePayments = data;
     });
@@ -56,7 +56,7 @@ export class PisConsentConfirmationPageComponent implements OnInit {
 
   getBankingDetailsFromUrl(params: UrlSegment[]) {
     this.consentId = params[1].toString();
-    this.paymentId = atob(params[2].toString());
+    this.paymentId = params[2].toString();
   }
 
   createQueryParams() {

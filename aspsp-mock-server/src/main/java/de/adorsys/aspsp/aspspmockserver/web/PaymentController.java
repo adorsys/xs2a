@@ -46,7 +46,7 @@ public class PaymentController {
     public ResponseEntity<SpiSinglePayment> createPayment(@RequestBody SpiSinglePayment payment) {
         return paymentService.addPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Creates a bulk payment(list of single payments) based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -71,7 +71,7 @@ public class PaymentController {
     public ResponseEntity<SpiTransactionStatus> getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentStatusById(paymentId)
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -82,7 +82,7 @@ public class PaymentController {
     public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
-                   .orElse(ResponseEntity.badRequest().build());
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 
     @ApiOperation(value = "Returns all payments present at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -114,6 +114,6 @@ public class PaymentController {
     public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("payment-id") String paymentId) {
         return paymentService.cancelPayment(paymentId)
                    .map(p -> new ResponseEntity<>(p, ACCEPTED))
-                   .orElse(ResponseEntity.badRequest().build());
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 }
