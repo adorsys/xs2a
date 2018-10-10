@@ -12,6 +12,7 @@ import { SelectedAccountConsent } from '../model/aspsp/selectedAccountConsent';
 import { AccountAccess } from '../model/aspsp/accountAccess';
 import { ConfigService } from './config.service';
 import { Config } from '../model/Config';
+import { KeycloakService } from 'keycloak-angular';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class AisService {
   private PROFILE_ASPSP_PROFILE_URI: string;
   private urlConfig: Config;
 
-  constructor(private httpClient: HttpClient, private configService: ConfigService) {
+  constructor(private httpClient: HttpClient, private configService: ConfigService, private keycloak: KeycloakService) {
     this.urlConfig = configService.getConfig();
     this.MOCK_AIS_URI = this.urlConfig.mockServerUrl + '/consent/confirmation/ais';
     this.XS2A_CONSENT_URI= this.urlConfig.xs2aServerUrl + '/v1/consents';
@@ -78,7 +79,7 @@ export class AisService {
     const body = {
       tanNumber: tan,
       consentId: this.savedConsentId,
-      psuId: 'aspsp1'
+      psuId: this.keycloak.getUsername(),
     };
     return this.httpClient.put<string>(this.MOCK_AIS_URI, body);
   }
