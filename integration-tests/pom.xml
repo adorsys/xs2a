@@ -165,7 +165,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cluecumber-report-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>reporting</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceJsonReportDirectory>${project.basedir}/cucumber-report</sourceJsonReportDirectory>
+                    <generatedHtmlReportDirectory>${project.build.directory}/generated-report</generatedHtmlReportDirectory>
+                    <customParameters>
+                        <Custom_Parameter>Please check the timestamp above to ensure it is the latest report</Custom_Parameter>
+                    </customParameters>
+                </configuration>
 
+            </plugin>
         </plugins>
     </build>
 </project>
