@@ -29,7 +29,7 @@ export class ConfigService {
   }
 
   loadConfig(): Promise<Config> {
-    return this.httpClient.get<Config>(`${environment.onlineBankingUrl}/configuration/properties`)
+    return this.httpClient.get<Config>(`online-banking-server/configuration/properties`)
       .toPromise();
   }
 
