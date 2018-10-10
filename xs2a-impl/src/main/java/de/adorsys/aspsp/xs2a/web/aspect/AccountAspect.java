@@ -67,7 +67,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
             if (transactionsReport.isTransactionReportHuge()) {
                 // TODO we need return only download link without transactions info https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/400
-
+                // TODO further we should implement real flow for downloading file https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/286
                 Links links = new Links();
                 links.setDownload(buildPath("/v1/accounts/{accountId}/transactions/download", accountId));
                 transactionsReport.setLinks(links);
@@ -95,7 +95,7 @@ public class AccountAspect extends AbstractLinkAspect<AccountController> {
 
     private Links buildLinksForAccountReport(String accountId) {
         Links links = new Links();
-        links.setViewAccount(buildPath("/v1/accounts/{accountId}", accountId));
+        links.setAccount(buildPath("/v1/accounts/{accountId}", accountId));
 
         return links;
     }

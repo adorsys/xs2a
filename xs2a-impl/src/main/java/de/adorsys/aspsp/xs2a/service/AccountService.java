@@ -308,16 +308,19 @@ public class AccountService {
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId, consentId);
 
-        ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
-                                                         ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
-                                                         : ResponseObject.<Xs2aAccountReport>builder()
-                                                               .fail(new MessageError(CONSENT_INVALID)).build();
-        if (!report.isPresent()) {
-            response = ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_403)).build();
+        if (!isValid) {
+            return ResponseObject.<Xs2aAccountReport>builder()
+                       .fail(new MessageError(CONSENT_INVALID)).build();
         }
 
+        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId, consentId);
+
+        if (!report.isPresent()) {
+            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_403)).build();
+        }
+
+        ResponseObject<Xs2aAccountReport> response = ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build();
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false, TypeAccess.TRANSACTION, response));
         return response;
     }
