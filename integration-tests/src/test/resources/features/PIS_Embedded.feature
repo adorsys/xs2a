@@ -29,7 +29,7 @@ Feature: Payment Initiation Service Embedded Approach
 #            | recurring-payments  | sepa-credit-transfers | singlePayInit-wrong-payment-service.json       |
 #            | payments            | sepa-credit-transfers         | singlePayInit-incorrect-syntax.json
 
-#
+
 #    ####################################################################################################################
 #    #                                                                                                                  #
 #    # Start of Authorisation                                                                                           #
@@ -76,7 +76,7 @@ Feature: Payment Initiation Service Embedded Approach
             | payment-service                          | payment-product         | single-payment                | identification-data                              |
             | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationNoSca-successful.json        |
 #   REMARK: Update Identification with one sca only works when email server is running
-            | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationOneSca-successful.json       |
+#            | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationOneSca-successful.json       |
 #            | payments	                               | sepa-credit-transfers   | singlePayInit-successful.json | updateIdentificationMultipleSca-successful.json  |
 
 
