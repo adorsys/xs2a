@@ -152,7 +152,7 @@ public class PisConsentController {
     public ResponseEntity<String> getConsentAuthorisationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getAuthorisationByPaymentId(paymentId)
+        return pisConsentService.getAuthorisationByPaymentId(paymentId, CmsAuthorisationType.CANCELLED)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

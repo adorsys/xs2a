@@ -87,8 +87,6 @@ public class PisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
         return consentServiceBaseUrl + "/pis/consent/{payment-id}/cancellation-authorisations";
     }
 
-
-
     public String updatePisConsentAuthorisation() {
         return consentServiceBaseUrl + "/pis/consent/authorizations/{authorization-id}";
     }

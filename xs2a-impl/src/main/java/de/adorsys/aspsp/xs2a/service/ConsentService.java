@@ -225,7 +225,6 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                                         ::build);
     }
 
-
     boolean isValidAccountByAccess(String iban, Currency currency, List<Xs2aAccountReference> allowedAccountData) {
         return CollectionUtils.isNotEmpty(allowedAccountData)
                    && allowedAccountData.stream()

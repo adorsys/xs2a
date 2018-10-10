@@ -99,8 +99,8 @@ public class Xs2aPisConsentMapper {
         return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), Xs2aScaStatus.RECEIVED.name(), paymentType.getValue()));
     }
 
-    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource (String response) {
-        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(response)));
+    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource(String authorisationId) {
+        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -238,6 +238,5 @@ public class Xs2aPisConsentMapper {
                    .map(Enum::name)
                    .orElse(null);
     }
-
 
 }

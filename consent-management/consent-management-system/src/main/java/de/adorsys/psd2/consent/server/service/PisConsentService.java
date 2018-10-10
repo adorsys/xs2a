@@ -182,9 +182,9 @@ public class PisConsentService {
                    .map(pisConsentMapper::mapToGetPisConsentAuthorizationResponse);
     }
 
-    public Optional<String> getAuthorisationByPaymentId(String paymentId) {
+    public Optional<String> getAuthorisationByPaymentId(String paymentId, CmsAuthorisationType authorizationType) {
         return pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)
-                   .flatMap(paymentData -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(paymentData.getConsent().getId(), CmsAuthorisationType.CANCELLED))
+                   .flatMap(paymentData -> pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(paymentData.getConsent().getId(), authorizationType))
                    .filter(CollectionUtils::isNotEmpty)
                    .map(lst -> lst.get(0).getExternalId());
     }
