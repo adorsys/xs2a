@@ -8,32 +8,33 @@
     "body": {}
   },
   "response": {
+    "code": "200",
     "header": {
     },
     "body": {
-      "endToEndIdentification": "Mueller-123456789",
+      "endToEndIdentification": "WBG-123456789",
       "debtorAccount": {
         "currency": "EUR",
         "iban": "DE52500105173911841934"
       },
       "instructedAmount": {
         "currency": "EUR",
-        "amount": "150.00"
+        "amount": "520.00"
       },
       "creditorAccount": {
         "currency": "EUR",
-        "iban": "DE06500105171657611553"
+        "iban": "DE15500105172295759744"
       },
       "creditorAgent": "AAAADEBBXXX",
-      "creditorName": "Jochen Mueller",
+      "creditorName": "WBG",
       "creditorAddress": {
-        "buildingNumber": "1",
+        "buildingNumber": "56",
         "city": "Nürnberg",
         "country": "DE",
-        "postalCode": "90429",
-        "street": "Fürther Straße"
+        "postalCode": "90543",
+        "street": "WBG Straße"
       },
-      "remittanceInformationUnstructured": "Ref. Number Mueller-1111",
+      "remittanceInformationUnstructured": "Ref. Number WBG-1222",
       "transactionStatus": "RCVD"
     }
   }
