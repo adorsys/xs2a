@@ -64,8 +64,10 @@ public class PisConsentService {
      * @return Response containing identifier of consent
      */
     public Optional<CreatePisConsentResponse> createPaymentConsent(PisConsentRequest request) {
-        PisConsent consent = pisConsentRepository.save(pisConsentMapper.mapToPisConsent(request));
-        return Optional.of(new CreatePisConsentResponse(consent.getExternalId()));
+        PisConsent consent = pisConsentMapper.mapToPisConsent(request);
+        consent.setExternalId(UUID.randomUUID().toString());
+        PisConsent saved = pisConsentRepository.save(consent);
+        return Optional.of(new CreatePisConsentResponse(saved.getExternalId()));
     }
 
     /**
@@ -183,6 +185,7 @@ public class PisConsentService {
      * @param request PIS consent request for update payment data
      * @param consentId Consent ID
      */
+    // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @Transactional
     public void updatePaymentConsent(PisConsentRequest request, String consentId) {
         Optional<PisConsent> pisConsentById = getPisConsentById(consentId);

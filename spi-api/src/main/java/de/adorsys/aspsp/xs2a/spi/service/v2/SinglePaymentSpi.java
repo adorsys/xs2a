@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse.VoidResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -40,8 +41,8 @@ public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSingle
     }
 
     @Override
-    default SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
-        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
@@ -65,12 +66,12 @@ public interface SinglePaymentSpi extends PaymentSpi<SpiSinglePayment, SpiSingle
     }
 
     @Override
-    default SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
-        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<VoidResponse> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    default SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
-        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

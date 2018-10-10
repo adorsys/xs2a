@@ -35,12 +35,12 @@ import java.util.List;
 public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     @NotNull
     @Override
-    public SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
+    public SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(@NotNull SpiBulkPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -65,12 +65,12 @@ public class BulkPaymentSpiImpl implements BulkPaymentSpi {
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }

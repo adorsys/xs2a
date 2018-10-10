@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse.VoidResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
@@ -36,13 +37,13 @@ import java.util.List;
 public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, List<SpiPaymentInitialisationResponse>> {
     @NotNull
     @Override
-    default SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    default SpiResponse<List<SpiPaymentInitialisationResponse>> initiatePayment(@NotNull SpiBulkPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return SpiResponse.<List<SpiPaymentInitialisationResponse>>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    default SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
-        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiBulkPayment payment, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
@@ -66,12 +67,12 @@ public interface BulkPaymentSpi extends PaymentSpi<SpiBulkPayment, List<SpiPayme
     }
 
     @Override
-    default SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
-        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<VoidResponse> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
+       return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    default SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
-        return SpiResponse.builder().fail(SpiResponseStatus.NOT_SUPPORTED);
+    default SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiBulkPayment businessObject, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

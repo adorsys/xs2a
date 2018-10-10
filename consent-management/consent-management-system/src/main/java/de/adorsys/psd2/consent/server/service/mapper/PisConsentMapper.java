@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +37,6 @@ public class PisConsentMapper {
 
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
-        consent.setExternalId(UUID.randomUUID().toString());
         consent.setPayments(mapToPisPaymentDataList(request.getPayments(), consent));
         consent.setPisTppInfo(mapToPisTppInfo(request.getTppInfo()));
         consent.setPisPaymentType(request.getPaymentType());

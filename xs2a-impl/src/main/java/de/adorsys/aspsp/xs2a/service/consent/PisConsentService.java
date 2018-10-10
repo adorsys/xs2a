@@ -63,7 +63,7 @@ public class PisConsentService {
      * @param parameters Payment request parameters to get needed payment info
      * @return String consentId
      */
-    // TODO will be renamed in the next merge request
+    // TODO rename method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/409
     public String createPisConsentV2(PaymentRequestParameters parameters) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPaymentProduct(PisPaymentProduct.getByCode(parameters.getPaymentProduct().getCode()).orElse(null));

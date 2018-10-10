@@ -130,6 +130,7 @@ public class PisConsentController {
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    // TODO return correct error code in case consent was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
     @PutMapping(path = "/{consent-id}/payment")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = CreatePisConsentResponse.class),

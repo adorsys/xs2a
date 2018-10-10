@@ -35,12 +35,12 @@ import java.util.List;
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     @NotNull
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -65,12 +65,12 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }

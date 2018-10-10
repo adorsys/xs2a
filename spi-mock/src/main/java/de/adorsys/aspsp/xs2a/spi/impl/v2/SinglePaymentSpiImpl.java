@@ -53,7 +53,7 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     }
 
     @Override
-    public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -78,12 +78,12 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }
