@@ -19,16 +19,17 @@ package de.adorsys.aspsp.xs2a.spi.impl.v2;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
-import de.adorsys.aspsp.xs2a.spi.mapper.v2.NewSpiPaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,19 +42,19 @@ import java.util.List;
 public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final NewSpiPaymentMapper newSpiPaymentMapper;
-    private final de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper spiPaymentMapper;
+    private final SpiPaymentMapper spiPaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
 
+    @NotNull
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiSinglePayment spiSinglePayment, AspspConsentData initialAspspConsentData) {
-        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = newSpiPaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
+    public SpiResponse<SpiSinglePayment> initiatePayment(SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData initialAspspConsentData) {
+        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = spiPaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
         ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
-        return new SpiResponse<>(spiPaymentMapper.mapToSpiPaymentResponse(responseEntity.getBody()), initialAspspConsentData);
+        return new SpiResponse<>(spiPaymentMapper.mapToSpiSinglePayment(responseEntity.getBody(), spiSinglePayment.getPaymentProduct()), initialAspspConsentData);
     }
 
     @Override
-    public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -78,12 +79,12 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiSinglePayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }

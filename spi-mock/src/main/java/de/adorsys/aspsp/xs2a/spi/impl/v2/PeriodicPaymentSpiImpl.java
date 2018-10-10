@@ -22,6 +22,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -33,6 +34,7 @@ import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.mapper.v2.NewSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
+import org.jetbrains.annotations.NotNull;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,6 +66,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     private final JsonConverter jsonConverter;
 
     @NotNull
+    @NotNull
     @Override
     public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData initialAspspConsentData) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = newSpiPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
@@ -77,12 +80,16 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
         SpiPaymentInitialisationResponse spiPaymentInitialisationResponse = spiPaymentMapper.mapToSpiPaymentResponse(aspspResponse.getBody());
 
         return new SpiResponse<>(spiPaymentInitialisationResponse, initialAspspConsentData);
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
+        return null;
     }
 
     @Override
     public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         //TODO Rework after purpose is clarified
         return initiatePayment(payment, aspspConsentData);
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+        return null;
     }
 
     @Override
@@ -150,6 +157,8 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
         }
 
         return new SpiResponse<>(null, aspspConsentData);
+    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+        return null;
     }
 
     @Override
@@ -161,5 +170,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
         }
 
         return new SpiResponse<>(null, aspspConsentData);
+    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+        return null;
     }
 }

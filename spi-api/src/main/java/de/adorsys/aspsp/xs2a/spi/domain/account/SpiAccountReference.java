@@ -18,10 +18,12 @@ package de.adorsys.aspsp.xs2a.spi.domain.account;
 
 import lombok.*;
 import lombok.experimental.NonFinal;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.Id;
 
 import java.util.Currency;
 
+@NotNull
 @Value
 @AllArgsConstructor
 public class SpiAccountReference {

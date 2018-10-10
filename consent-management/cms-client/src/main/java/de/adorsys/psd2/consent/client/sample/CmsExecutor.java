@@ -311,7 +311,6 @@ public class CmsExecutor {
         request.setPaymentType(PisPaymentType.SINGLE);
         request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company", "Tpp role",
             "National competent authority", "Redirect URI", "Nok redirect URI"));
-        request.setAspspConsentData("zzzzzzzz".getBytes());
         return request;
     }
 

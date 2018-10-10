@@ -23,16 +23,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpiToXs2aAccountReferenceMapper {
 
-    public Xs2aAccountReference mapToXs2aAccountReference(SpiAccountReference spiReference) {
-        Xs2aAccountReference reference = new Xs2aAccountReference();
-
-        reference.setIban(spiReference.getIban());
-        reference.setBban(spiReference.getBban());
-        reference.setPan(spiReference.getPan());
-        reference.setMaskedPan(spiReference.getMaskedPan());
-        reference.setMsisdn(spiReference.getMsisdn());
-        reference.setCurrency(spiReference.getCurrency());
-
-        return reference;
+    public Xs2aAccountReference mapToXs2aAccountReference(SpiAccountReference spiAccountRef) {
+        return new Xs2aAccountReference(
+            spiAccountRef.getIban(),
+            spiAccountRef.getBban(),
+            spiAccountRef.getPan(),
+            spiAccountRef.getMaskedPan(),
+            spiAccountRef.getMsisdn(),
+            spiAccountRef.getCurrency());
     }
 }

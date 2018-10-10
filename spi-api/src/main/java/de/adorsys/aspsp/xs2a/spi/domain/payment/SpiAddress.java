@@ -17,8 +17,10 @@
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 
 @Value
+@NotNull
 public class SpiAddress {
     private String street;
     private String buildingNumber;

@@ -20,14 +20,18 @@ import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class SpiToXs2aAmountMapper {
     public Xs2aAmount mapToXs2aAmount(SpiAmount spiAmount) {
-        Xs2aAmount amount = new Xs2aAmount();
-
-        amount.setAmount(spiAmount.getAmount().toString());
-        amount.setCurrency(spiAmount.getCurrency());
-
-        return amount;
+        return Optional.ofNullable(spiAmount)
+                   .map(a -> {
+                       Xs2aAmount amount = new Xs2aAmount();
+                       amount.setAmount(a.getAmount().toString());
+                       amount.setCurrency(a.getCurrency());
+                       return amount;
+                   })
+                   .orElse(null);
     }
 }

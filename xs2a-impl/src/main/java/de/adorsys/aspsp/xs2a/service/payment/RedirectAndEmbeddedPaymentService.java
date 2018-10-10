@@ -17,11 +17,9 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
@@ -29,6 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
 import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
@@ -49,13 +48,14 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
 
+    private final SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
 
     @Override
-    public PaymentInitialisationResponse createSinglePayment(SinglePayment payment, TppInfo tppInfo, String paymentProduct) {
+    public SinglePayment createSinglePayment(SinglePayment payment, TppInfo tppInfo, PaymentProduct paymentProduct) {
         // TODO Read and update aspspConsentData before and after initiatePayment  https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/391
         // TODO don't create AspspConsentData without consentId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        SpiResponse<SpiPaymentInitialisationResponse> response = singlePaymentSpi.initiatePayment(xs2aToSpiPaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), new AspspConsentData());
-        return paymentMapper.mapToPaymentInitializationResponse(response.getPayload(), response.getAspspConsentData());
+        SpiResponse<SpiSinglePayment> response = singlePaymentSpi.initiatePayment(xs2aToSpiPaymentMapper.mapToSpiSinglePayment(payment, paymentProduct), new AspspConsentData());
+        return spiToXs2aPaymentMapper.mapToSinglePayment(response.getPayload());
     }
 
     @Override

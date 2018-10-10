@@ -56,12 +56,12 @@ public class ScaStartAuthorisationStage extends ScaStage<UpdatePisConsentPsuData
         if (SpiAuthorisationStatus.FAILURE == authorisationStatusSpiResponse.getPayload()) {
             return new UpdatePisConsentPsuDataResponse(FAILED);
         }
-        SpiResponse<List<SpiScaMethod>> listAvailablescaMethodResponse = paymentSpi.readAvailableScaMethod(request.getPsuId(),
+        SpiResponse<List<SpiScaMethod>> listAvailableScaMethodResponse = paymentSpi.readAvailableScaMethod(request.getPsuId(),
                                                                                             aspspConsentData
                                                                                            );
-        aspspConsentData = listAvailablescaMethodResponse.getAspspConsentData();
+        aspspConsentData = listAvailableScaMethodResponse.getAspspConsentData();
         pisConsentDataService.updateAspspConsentData(aspspConsentData);
-        List<SpiScaMethod> spiScaMethods = listAvailablescaMethodResponse.getPayload();
+        List<SpiScaMethod> spiScaMethods = listAvailableScaMethodResponse.getPayload();
 
         if (CollectionUtils.isEmpty(spiScaMethods)) {
             SpiResponse<String> executePaymentResponse = paymentSpi.executePayment(pisConsentAuthorisationResponse.getPaymentType(),
