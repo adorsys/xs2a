@@ -89,7 +89,7 @@ Feature: Payment Initiation Service
             | periodic-payments | sepa-credit-transfers | recPayInit-no-frequency.json                |
             | periodic-payments | sepa-credit-transfers | recPayInit-not-defined-frequency.json       |
             | periodic-payments | sepa-credit-transfers | recPayInit-no-request-id.json               |
-#            | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
+            | periodic-payments | sepa-credit-transfers | recPayInit-no-ip-address.json               |
             | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-request-id.json     |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-wrong-format-psu-ip-address.json |
 #            | periodic-payments | sepa-credit-transfers | recPayInit-start-date-in-past.json          |
@@ -120,10 +120,10 @@ Feature: Payment Initiation Service
         Then an error response code and the appropriate error response are received
         Examples:
             | single-payment                | payment-initiation-service | payment-product       | payment-status-data                       | payment-status-service |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-not-existing-paymentId.json  | payments               |
+#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-not-existing-paymentId.json  | payments               |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-no-request-id.json           | payments               |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-wrong-format-request-id.json | payments               |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-wrong-payment-service.json   | recurring-payments     |
+#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers |paymentStatus-wrong-payment-service.json   | recurring-payments     |
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -149,10 +149,10 @@ Feature: Payment Initiation Service
         Then an error response code and the appropriate error response are received
         Examples:
             | single-payment                | payment-initiation-service | payment-product       | payment-information-data                          | payment-information-service |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-not-existing-paymentId.json  | payments                    |
+#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-not-existing-paymentId.json  | payments                    |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-wrong-format-request-id.json | payments                    |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-no-request-id.json           | payments                    |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-wrong-payment-service.json   | recurring-payments          |
+#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-wrong-payment-service.json   | recurring-payments          |
 
 
     ####################################################################################################################
@@ -179,7 +179,7 @@ Feature: Payment Initiation Service
         Then an error response code and the appropriate error response are received
         Examples:
             | single-payment                | payment-initiation-service | payment-product       | payment-cancellation-data                        | payment-cancellation-service |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-not-existing-paymentId.json  | payments                    |
+#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-not-existing-paymentId.json  | payments                    |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-wrong-format-request-id.json | payments                    |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-no-request-id.json           | payments                    |
-            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-wrong-payment-service.json   | recurring-payments          |
+#            | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentCancellation-wrong-payment-service.json   | recurring-payments          |
