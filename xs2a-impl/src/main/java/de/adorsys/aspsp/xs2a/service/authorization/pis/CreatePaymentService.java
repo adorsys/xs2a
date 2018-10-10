@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis.authorisation;
+package de.adorsys.aspsp.xs2a.service.authorization.pis;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 
-@Data
-@AllArgsConstructor
-@ApiModel(description = "PIS consent authorisation", value = "PisConsentAuthorisation")
-public class CreatePisConsentAuthorisationResponse {
-    @NotNull
-    @ApiModelProperty(value = "ID of the Authorisation", required = true, example = "6dc3d5b3-5023-7848-3853-f7200a64e80d")
-    private String authorizationId;
+public interface CreatePaymentService<R, T> {
+    ResponseObject<R> createPayment(T payment, PaymentProduct paymentProduct, boolean isTppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo);
 }

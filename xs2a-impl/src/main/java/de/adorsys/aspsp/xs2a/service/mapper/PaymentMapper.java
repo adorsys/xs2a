@@ -307,9 +307,7 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
         return Optional.ofNullable(creditorAddress)
                    .map(a -> {
                        Xs2aAddress address = new Xs2aAddress();
-                       Xs2aCountryCode code = new Xs2aCountryCode();
-                       code.setCode(Optional.ofNullable(a.getCountry()).orElse(null));
-                       address.setCountry(code);
+                       address.setCountry(new Xs2aCountryCode(a.getCountry()));
                        address.setPostalCode(a.getPostalCode());
                        address.setCity(a.getCity());
                        address.setStreet(a.getStreet());

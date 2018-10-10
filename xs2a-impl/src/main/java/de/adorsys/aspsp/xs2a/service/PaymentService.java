@@ -23,6 +23,7 @@ import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.authorization.pis.CreateSinglePaymentService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
@@ -35,6 +36,7 @@ import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ public class PaymentService {
     private final AccountReferenceValidationService referenceValidationService;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
-
+    private final CreateSinglePaymentService createSinglePaymentService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -65,10 +67,16 @@ public class PaymentService {
      * @return Response containing information about created payment or corresponding error
      */
     public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters) {
+        String consentId = pisConsentService.createPisConsentV2(requestParameters);
+        if (StringUtils.isBlank(consentId)) {
+            return ResponseObject.builder()
+                       .fail(new MessageError(CONSENT_UNKNOWN_400))
+                       .build();
+        }
         ResponseObject response;
         TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
         if (requestParameters.getPaymentType() == SINGLE) {
-            response = createSinglePayment((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
+            return createSinglePaymentService.createPayment((SinglePayment) payment, requestParameters.getPaymentProduct(), requestParameters.isTppExplicitAuthorisationPreferred(), consentId, tppInfo);
         } else if (requestParameters.getPaymentType() == PERIODIC) {
             response = initiatePeriodicPayment((PeriodicPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else {
@@ -141,23 +149,6 @@ public class PaymentService {
         }
         bulkPayment.setPayments(validPayments);
         return processValidPayments(tppInfo, paymentProduct, invalidPayments, bulkPayment);
-    }
-
-    /**
-     * Initiates a single payment
-     *
-     * @param singlePayment  Single payment information
-     * @param paymentProduct The addressed payment product
-     * @return Response containing information about created single payment or corresponding error
-     */
-    public ResponseObject<PaymentInitialisationResponse> createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, String paymentProduct) {
-        return validatePayment(singlePayment, singlePayment.isValidExecutionDateAndTime())
-                   .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
-                                 .body(paymentMapper.mapToPaymentInitResponseFailedPayment(singlePayment, e))
-                                 .build())
-                   .orElseGet(() -> ResponseObject.<PaymentInitialisationResponse>builder()
-                                        .body(scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentProduct))
-                                        .build());
     }
 
     /**

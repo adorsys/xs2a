@@ -18,6 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -26,19 +27,21 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.service.v2.PeriodicPaymentSpi;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
+    @NotNull
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
         return null;
     }
 
@@ -63,12 +66,12 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+    public SpiResponse<SpiResponse.VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
         return null;
     }
 }

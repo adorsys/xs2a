@@ -18,9 +18,11 @@ package de.adorsys.aspsp.xs2a.domain.address;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 @ApiModel(description = "Country code", value = "49")
 public class Xs2aCountryCode {
 

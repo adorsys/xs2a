@@ -17,7 +17,10 @@
 package de.adorsys.aspsp.xs2a.spi.service.v2;
 
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse.VoidResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
@@ -25,6 +28,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -32,43 +36,44 @@ import java.util.List;
  * Interface to be used for periodic payment SPI implementation
  */
 public interface PeriodicPaymentSpi extends PaymentSpi<SpiPeriodicPayment, SpiPaymentInitialisationResponse> {
+    @NotNull
     @Override
-    default SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+    default SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiPaymentInitialisationResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    default SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+    default SpiResponse<VoidResponse> executePaymentWithoutSca(SpiPaymentType spiPaymentType, SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<SpiPeriodicPayment> getPaymentById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiPeriodicPayment>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<SpiTransactionStatus> getPaymentStatusById(SpiPeriodicPayment payment, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiTransactionStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<SpiAuthorisationStatus> authorisePsu(String psuId, String password, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<SpiAuthorisationStatus>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
     default SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(String psuId, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+        return SpiResponse.<List<SpiScaMethod>>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    default SpiResponse requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+    default SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(String psuId, SpiScaMethod scaMethod, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+        return SpiResponse.<SpiAuthorizationCodeResult>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
     @Override
-    default SpiResponse verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
-        return null;
+    default SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(SpiScaConfirmation spiScaConfirmation, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+        return SpiResponse.<VoidResponse>builder().fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 }

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 //TODO javadocs!
 interface PaymentSpi<T, R> extends AuthorisationSpi<T> {
 
-    @NotNull SpiResponse<R> initiatePayment(T payment, @NotNull AspspConsentData initialAspspConsentData);
+    @NotNull SpiResponse<R> initiatePayment(@NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     SpiResponse executePaymentWithoutSca(SpiPaymentType spiPaymentType, T payment, AspspConsentData aspspConsentData);
 

@@ -115,12 +115,6 @@ public class PaymentServiceTest {
         when(paymentSpi.getPaymentStatusById(WRONG_PAYMENT_ID, SpiPaymentType.SINGLE, ASPSP_CONSENT_DATA))
             .thenReturn(new SpiResponse<>(null, ASPSP_CONSENT_DATA));
 
-        //ScaPayService
-        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getPaymentResponse(RCVD, null));
-        when(scaPaymentService.createSinglePayment(SINGLE_PAYMENT_NOK_AMOUNT, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
-            .thenReturn(getPaymentInitiationResponseRJCT());
-
         when(scaPaymentService.createBulkPayment(BULK_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RCVD, null)));
         when(scaPaymentService.createBulkPayment(getBulkPayment(SINGLE_PAYMENT_NOK_AMOUNT, WRONG_IBAN), TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
@@ -222,33 +216,6 @@ public class PaymentServiceTest {
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getError().getTppMessage().getMessageErrorCode()).isEqualTo(errorCode);
         assertThat(actualResponse.getError().getTransactionStatus()).isEqualTo(RJCT);
-    }
-
-    //SinglePayment tests
-    @Test
-    public void createPaymentInitiation() {
-        SinglePayment payment = SINGLE_PAYMENT_OK;
-        //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createSinglePayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then:
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void createPaymentInitiation_Failure_ASPSP_RJCT() {
-        SinglePayment payment = SINGLE_PAYMENT_NOK_AMOUNT;
-        createPaymentInitiationFailureTests(payment, PAYMENT_FAILED);
-    }
-
-    private void createPaymentInitiationFailureTests(SinglePayment payment, MessageErrorCode errorCode) {
-        //When:
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.createSinglePayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then:
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RJCT);
-        assertThat(actualResponse.getBody().getTppMessages()[0].getName()).isEqualTo(errorCode.getName());
-
     }
 
     @Test

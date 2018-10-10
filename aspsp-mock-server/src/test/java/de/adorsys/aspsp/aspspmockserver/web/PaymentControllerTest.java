@@ -76,7 +76,7 @@ public class PaymentControllerTest {
         HttpStatus expectedStatus = HttpStatus.CREATED;
 
         //When
-        ResponseEntity<SpiSinglePayment> actualResponse = paymentController.createPayment(getSpiSinglePayment());
+        ResponseEntity<SpiSinglePayment> actualResponse = paymentController.createSinglePayment(getSpiSinglePayment());
 
         //Then
         HttpStatus actualStatus = actualResponse.getStatusCode();
