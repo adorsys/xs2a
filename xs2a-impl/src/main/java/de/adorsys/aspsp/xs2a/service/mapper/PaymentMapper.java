@@ -156,7 +156,7 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
                        initialisationResponse.setLinks(new Links());
                        initialisationResponse.setAspspConsentData(aspspConsentData);
                        return initialisationResponse;
-                   }).orElse(new PaymentInitialisationResponse());
+                   }).orElseGet(PaymentInitialisationResponse::new);
     }
 
     public PaymentInitialisationResponse mapToPaymentInitResponseFailedPayment(SinglePayment payment, MessageErrorCode error) {

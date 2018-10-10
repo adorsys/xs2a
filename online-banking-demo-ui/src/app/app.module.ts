@@ -63,7 +63,7 @@ registerLocaleData(localeDE);
     provide: APP_INITIALIZER,
     useFactory: initializer,
     multi: true,
-    deps: [KeycloakService, ConfigService],
+    deps: [KeycloakService],
   }, {
     provide: LOCALE_ID, useValue: 'de'
   }],

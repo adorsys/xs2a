@@ -61,8 +61,8 @@ public class PaymentController implements PaymentApi {
 
         ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
             .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
-            .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder()
-                .fail(new MessageError(FORMAT_ERROR)).build());
+            .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                .fail(new MessageError(FORMAT_ERROR))::build);
 
         return responseMapper.ok(response, PaymentModelMapperPsd2::mapToStatusResponse12);
     }
@@ -75,8 +75,8 @@ public class PaymentController implements PaymentApi {
                                                 UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject response = PaymentType.getByValue(paymentService)
             .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
-            .orElseGet(() -> ResponseObject.builder()
-                .fail(new MessageError(FORMAT_ERROR)).build());
+            .orElseGet(ResponseObject.builder()
+                .fail(new MessageError(FORMAT_ERROR))::build);
 
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         return response.hasError()
