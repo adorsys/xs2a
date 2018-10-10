@@ -16,7 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.*;
+import de.adorsys.aspsp.xs2a.domain.ResponseObject;
+import de.adorsys.aspsp.xs2a.domain.TppMessageInformation;
+import de.adorsys.aspsp.xs2a.domain.Transactions;
+import de.adorsys.aspsp.xs2a.domain.Xs2aBookingStatus;
 import de.adorsys.aspsp.xs2a.domain.account.*;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
@@ -44,9 +47,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.CONSENT_INVALID;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_403;
-import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.RESOURCE_UNKNOWN_404;
+import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.exception.MessageCategory.ERROR;
 
 @Slf4j
@@ -258,16 +259,17 @@ public class AccountService {
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo, consentId)
-                                                 .map(r -> filterByBookingStatus(r, bookingStatus));
 
-        if (!(isValid && report.isPresent())) {
+        if (!isValid) {
             return ResponseObject.<Xs2aTransactionsReport>builder()
                        .fail(new MessageError(CONSENT_INVALID)).build();
         }
 
+        Optional<Xs2aAccountReport> report = getAccountReportByPeriod(accountId, dateFrom, dateTo, consentId)
+                                                 .map(r -> filterByBookingStatus(r, bookingStatus));
+
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
-        transactionsReport.setAccountReport(report.get());
+        transactionsReport.setAccountReport(report.orElseGet(() -> new Xs2aAccountReport(new Transactions[0], new Transactions[0])));
         transactionsReport.setXs2aAccountReference(spiXs2aAccountMapper.mapToXs2aAccountReference(accountDetails));
 
         if (!aspspProfileService.isTransactionsWithoutBalancesSupported()
@@ -306,16 +308,19 @@ public class AccountService {
         }
 
         boolean isValid = consentService.isValidAccountByAccess(accountDetails.getIban(), accountDetails.getCurrency(), allowedAccountData.getBody().getTransactions());
-        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId, consentId);
 
-        ResponseObject<Xs2aAccountReport> response = isValid && report.isPresent()
-                                                         ? ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build()
-                                                         : ResponseObject.<Xs2aAccountReport>builder()
-                                                               .fail(new MessageError(CONSENT_INVALID)).build();
-        if (!report.isPresent()) {
-            response = ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_403)).build();
+        if (!isValid) {
+            return ResponseObject.<Xs2aAccountReport>builder()
+                       .fail(new MessageError(CONSENT_INVALID)).build();
         }
 
+        Optional<Xs2aAccountReport> report = getAccountReportByTransaction(transactionId, accountId, consentId);
+
+        if (!report.isPresent()) {
+            return ResponseObject.<Xs2aAccountReport>builder().fail(new MessageError(RESOURCE_UNKNOWN_403)).build();
+        }
+
+        ResponseObject<Xs2aAccountReport> response = ResponseObject.<Xs2aAccountReport>builder().body(report.get()).build();
         aisConsentService.consentActionLog(tppService.getTppId(), consentId, createActionStatus(false, TypeAccess.TRANSACTION, response));
         return response;
     }
@@ -392,7 +397,7 @@ public class AccountService {
                                                                .orElseGet(Collections::emptyList));
     }
 
-    public Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.1
+    private Optional<Xs2aAccountReport> getAccountReportByPeriod(String accountId, LocalDate dateFrom, LocalDate dateTo, String consentId) { //TODO to be reviewed upon change to v1.2
         LocalDate dateToChecked = Optional.ofNullable(dateTo)
                                       .orElseGet(LocalDate::now);
         validatorService.validateAccountIdPeriod(accountId, dateFrom, dateToChecked);
