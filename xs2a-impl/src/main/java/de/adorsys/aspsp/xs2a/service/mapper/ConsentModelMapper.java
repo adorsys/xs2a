@@ -82,6 +82,12 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
+    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisConsentCancellationAuthorisationResponse response) {
+        return new StartScaprocessResponse()
+                        .scaStatus(ScaStatus.valueOf(response.getScaStatus()))
+                        ._links(objectMapper.convertValue(response.getLinks(), Map.class));
+    }
+
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r ->
