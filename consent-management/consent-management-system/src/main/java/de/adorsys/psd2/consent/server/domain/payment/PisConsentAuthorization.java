@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.server.domain.payment;
 
-import de.adorsys.psd2.consent.api.CmsAuthorizationType;
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.CmsScaStatus;
 import lombok.Data;
@@ -51,5 +51,5 @@ public class PisConsentAuthorization {
 
     @Column(name = "authorization_type")
     @Enumerated(value = EnumType.STRING)
-    private CmsAuthorizationType authorizationType;
+    private CmsAuthorisationType authorizationType;
 }

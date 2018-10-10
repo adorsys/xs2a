@@ -64,7 +64,7 @@ public class RedirectPisScaAuthorisationService implements PisScaAuthorisationSe
      */
     @Override
     public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> createConsentCancellationAuthorisation(String paymentId, PaymentType paymentType) {
-        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorizationResponse(authorisationService.createPisConsentAuthorisationCancellation(paymentId), paymentType);
+        return pisConsentMapper.mapToXs2aCreatePisConsentCancellationAuthorisationResponse(authorisationService.createPisConsentAuthorisationCancellation(paymentId), paymentType);
     }
 
     /**

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.server.service;
 
-import de.adorsys.psd2.consent.api.CmsAuthorizationType;
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
 import de.adorsys.psd2.consent.server.domain.payment.PisConsent;
 import de.adorsys.psd2.consent.server.domain.payment.PisConsentAuthorization;
@@ -72,7 +72,7 @@ public class PisConsentServiceTest {
     public void setUp() {
         pisConsent = buildConsent();
         pisPaymentData = buildPaymentData(pisConsent);
-        pisConsentAuthorizationList.add(buildPisConsentAuthorization("906a08bc-8347-4f08-8c24-eda17b1f4c57"));
+        pisConsentAuthorizationList.add(buildPisConsentAuthorisation("906a08bc-8347-4f08-8c24-eda17b1f4c57"));
     }
 
     @Test
@@ -96,22 +96,22 @@ public class PisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorizationByPaymentIdSuccess(){
+    public void getAuthorisationByPaymentIdSuccess(){
         //When
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentId, RECEIVED)).thenReturn(Optional.of(pisPaymentData));
-        when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorizationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
+        when(pisConsentAuthorizationRepository.findByConsentIdAndAuthorizationType(CONSENT_ID, CmsAuthorisationType.CANCELLED)).thenReturn(Optional.of(pisConsentAuthorizationList));
         //Then
-        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorizationByPaymentId(paymentId);
+        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentId);
         //Assert
         assertEquals(authorizationByPaymentId.get(), pisConsentAuthorizationList.get(0).getExternalId());
     }
 
     @Test
-    public void getAuthorizationByPaymentIdWrongPaymentId(){
+    public void getAuthorisationByPaymentIdWrongPaymentId(){
         //When
         when(pisPaymentDataRepository.findByPaymentIdAndConsent_ConsentStatus(paymentIdWrong, RECEIVED)).thenReturn(Optional.empty());
         //Then
-        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorizationByPaymentId(paymentIdWrong);
+        Optional<String> authorizationByPaymentId = pisConsentService.getAuthorisationByPaymentId(paymentIdWrong);
         //Assert
         assertFalse(authorizationByPaymentId.isPresent());
     }
@@ -130,7 +130,7 @@ public class PisConsentServiceTest {
         return request;
     }
 
-    private PisConsentAuthorization buildPisConsentAuthorization(String externalId) {
+    private PisConsentAuthorization buildPisConsentAuthorisation(String externalId) {
         PisConsentAuthorization pisConsentAuthorization = new PisConsentAuthorization();
         pisConsentAuthorization.setExternalId(externalId);
         return pisConsentAuthorization;

@@ -32,8 +32,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class CreatePisAuthorizationCancellationAspect extends AbstractLinkAspect<PaymentController> {
-    public CreatePisAuthorizationCancellationAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
+public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect<PaymentController> {
+    public CreatePisAuthorisationCancellationAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
         super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
     }
 

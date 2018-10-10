@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.api;
 
-public enum CmsAuthorizationType {
+public enum CmsAuthorisationType {
     CREATED,
     CANCELLED
 }

@@ -212,17 +212,17 @@ public class ConsentService { //TODO change format of consentRequest to mandator
                    .map(resp -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
                                     .body(resp)
                                     .build())
-                   .orElseGet(() -> ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
+                   .orElseGet(ResponseObject.<Xs2aCreatePisConsentCancellationAuthorisationResponse>builder()
                                         .fail(new MessageError(MessageErrorCode.FORMAT_ERROR))
-                                        .build());
+                                        ::build);
     }
 
     public ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId) {
         return pisAuthorizationService.getCancellationAuthorisationSubResources(paymentId)
                    .map(resp -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder().body(resp).build())
-                   .orElseGet(() -> ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
+                   .orElseGet(ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                                         .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
-                                        .build());
+                                        ::build);
     }
 
 

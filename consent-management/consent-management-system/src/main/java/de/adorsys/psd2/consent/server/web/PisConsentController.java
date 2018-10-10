@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.CmsAuthorizationType;
+import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
@@ -99,7 +99,7 @@ public class PisConsentController {
     public ResponseEntity<CreatePisConsentAuthorisationResponse> createConsentAuthorization(
         @ApiParam(name = "payment-id", value = "The consent identification assigned to the created consent authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorizationType.CREATED)
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CREATED)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -112,7 +112,7 @@ public class PisConsentController {
     public ResponseEntity<CreatePisConsentAuthorisationResponse> createConsentAuthorizationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.createAuthorization(paymentId, CmsAuthorizationType.CANCELLED)
+        return pisConsentService.createAuthorization(paymentId, CmsAuthorisationType.CANCELLED)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.CREATED))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -126,7 +126,7 @@ public class PisConsentController {
         @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId,
         @RequestBody UpdatePisConsentPsuDataRequest request) {
-        return pisConsentService.updateConsentAuthorization(authorizationId, request, CmsAuthorizationType.CREATED)
+        return pisConsentService.updateConsentAuthorization(authorizationId, request, CmsAuthorisationType.CREATED)
                    .map(updated -> new ResponseEntity<>(updated, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -139,7 +139,7 @@ public class PisConsentController {
     public ResponseEntity<GetPisConsentAuthorisationResponse> getConsentAuthorization(
         @ApiParam(name = "authorization-id", value = "The consent authorization identification assigned to the created authorization.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("authorization-id") String authorizationId) {
-        return pisConsentService.getPisConsentAuthorizationById(authorizationId, CmsAuthorizationType.CREATED)
+        return pisConsentService.getPisConsentAuthorizationById(authorizationId, CmsAuthorisationType.CREATED)
                    .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -149,10 +149,10 @@ public class PisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<String> getConsentAuthorizationCancellation(
+    public ResponseEntity<String> getConsentAuthorisationCancellation(
         @ApiParam(name = "payment-id", value = "The payment identification of the related payment.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("payment-id") String paymentId) {
-        return pisConsentService.getAuthorizationByPaymentId(paymentId)
+        return pisConsentService.getAuthorisationByPaymentId(paymentId)
                    .map(authorization -> new ResponseEntity<>(authorization, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
