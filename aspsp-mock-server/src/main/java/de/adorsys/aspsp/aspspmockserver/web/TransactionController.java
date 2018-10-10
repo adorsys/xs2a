@@ -57,7 +57,7 @@ public class TransactionController {
     public ResponseEntity<SpiTransaction> readTransactionById(@PathVariable("transaction-id") String transactionId, @PathVariable("account-id") String accountId) {
         return transactionService.getTransactionById(transactionId, accountId)
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Creates a transaction at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -68,7 +68,7 @@ public class TransactionController {
     public ResponseEntity createTransaction(@RequestBody SpiTransaction transaction) {
         return transactionService.saveTransaction(transaction)
                    .map(transactionId -> new ResponseEntity<>(transactionId, CREATED))
-                   .orElse(ResponseEntity.badRequest().build());
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 
     @ApiOperation(value = "Returns a list of transactions for account by its ASPSP identifier for a certain period of time bounded by dates from/to", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
