@@ -61,7 +61,7 @@ public class PaymentCancellationSuccessfulSteps {
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
-    @And("PSU wants to cancel the payment by using the set of data (.*)$")
+    @And("PSU wants to cancel the payment by using a set of data (.*)$")
     public void loadPaymentCancellationTestData(String dataFileName) throws IOException {
         TestData<HashMap, PaymentInitiationCancelResponse200202> data = mapper.readValue(resourceToString(
             "/data-input/pis/cancellation/" + dataFileName, UTF_8),

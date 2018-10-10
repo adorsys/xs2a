@@ -60,7 +60,7 @@ public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
-    @And("^PSU prepares the errorful status request data (.*) with the payment service (.*)$")
+    @And("^PSU prepares the errorful payment status request data (.*) with the payment service (.*)$")
     public void loadErrorfulPaymentStatusTestData (String dataFileName, String paymentService) throws IOException {
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/status/" + dataFileName, UTF_8),

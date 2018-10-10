@@ -54,7 +54,7 @@ public class UpdateAuthorisationWithScaSelectionErrorfulSteps extends AbstractEr
     // @And("^PSU sends the update identification data request$")
     // See UpdateAuthorisationWithIdentificationSuccessfulSteps
 
-    @And("^PSU prepares the errorful selection data (.*) with the payment service (.*)$")
+    @And("^PSU prepares the errorful sca selection data (.*) with the payment service (.*)$")
     public void loadErrorfulSelectScaData (String dataFileName, String paymentService) throws IOException {
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/embedded/" + dataFileName, UTF_8),

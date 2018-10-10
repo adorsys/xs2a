@@ -62,7 +62,7 @@ public class PaymentStatusSuccessfulSteps {
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
-    @And("^Psu wants to request the payment status by using the set of data (.*)$")
+    @And("^PSU wants to request the payment status by using a set of data (.*)$")
     public void loadPaymentStatusTestData(String dataFileName) throws IOException {
         TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString(
             "/data-input/pis/status/" + dataFileName, UTF_8),
@@ -85,8 +85,8 @@ public class PaymentStatusSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^an appropriate response code and the status is delivered to the PSU$")
-    public void checkStatus() {
+    @Then("^a successful response code and the correct payment status is delivered to the PSU$")
+    public void checkResponseCodeAndPaymentStatus() {
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse = context.getActualResponse();
         PaymentInitiationStatusResponse200Json givenResponseBody = context.getTestData().getResponse().getBody();
 

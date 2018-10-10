@@ -61,7 +61,7 @@ public class SinglePaymentInformationErrorfulSteps extends AbstractErrorfulSteps
     // @And("^PSU sends the single payment initiating request and receives the paymentId$")
     // See GlobalSuccessfulSteps
 
-    @And("^PSU prepares the errorful information request data (.*) with the payment service (.*)$")
+    @And("^PSU prepares the errorful payment information request data (.*) with the payment service (.*)$")
     public void loadErrorfulPaymentInformationTestData (String dataFileName, String paymentService) throws IOException {
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/information/" + dataFileName, UTF_8),

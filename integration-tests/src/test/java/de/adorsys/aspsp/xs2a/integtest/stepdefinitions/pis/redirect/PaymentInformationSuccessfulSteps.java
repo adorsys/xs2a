@@ -69,7 +69,7 @@ public class PaymentInformationSuccessfulSteps {
     // See GlobalSuccessfulSteps
 
 
-    @And("^Psu wants to request the payment information by using the set of data (.*)$")
+    @And("^PSU wants to request the payment information by using a set of data (.*)$")
     public void loadPaymentInformationTestData(String dataFileName) throws IOException {
         TestData data;
         switch (context.getPaymentService()) {
@@ -129,7 +129,7 @@ public class PaymentInformationSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^an appropriate response code and the payment information is delivered to the PSU$")
+    @Then("^a successful response code and the payment information is delivered to the PSU$")
     public void checkResponseCodeAndPaymentInformation() {
         PaymentInitiationSctWithStatusResponse givenResponseBody = context.getTestData().getResponse().getBody();
         ResponseEntity<PaymentInitiationSctWithStatusResponse> actualResponseEntity = context.getActualResponse();

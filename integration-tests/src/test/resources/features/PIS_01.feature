@@ -104,9 +104,9 @@ Feature: Payment Initiation Service
     Scenario Outline: Successful payment status request
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
-        And Psu wants to request the payment status by using the set of data <payment-status-data>
+        And PSU wants to request the payment status by using a set of data <payment-status-data>
         When PSU requests the status of the payment
-        Then an appropriate response code and the status is delivered to the PSU
+        Then a successful response code and the correct payment status is delivered to the PSU
         Examples:
             | single-payment                | payment-initiation-service | payment-product       | payment-status-data                     |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers | paymentStatus-RCVD-successful.json      |
@@ -115,7 +115,7 @@ Feature: Payment Initiation Service
     Scenario Outline: Failed payment status request
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
-        And PSU prepares the errorful status request data <payment-status-data> with the payment service <payment-status-service>
+        And PSU prepares the errorful payment status request data <payment-status-data> with the payment service <payment-status-service>
         When PSU requests the status of the payment with error
         Then an error response code and the appropriate error response are received
         Examples:
@@ -133,9 +133,9 @@ Feature: Payment Initiation Service
     Scenario Outline: Successful Single Payment Information Request
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
-        And Psu wants to request the payment information by using the set of data <payment-information-data>
+        And PSU wants to request the payment information by using a set of data <payment-information-data>
         When PSU requests the information of the payment
-        Then an appropriate response code and the payment information is delivered to the PSU
+        Then a successful response code and the payment information is delivered to the PSU
         Examples:
             | single-payment                | payment-initiation-service | payment-product       | payment-information-data             |
             | singlePayInit-successful.json | payments                   | sepa-credit-transfers | singlePayInformation-successful.json |
@@ -144,7 +144,7 @@ Feature: Payment Initiation Service
     Scenario Outline: Failed Payment Information Request
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
-        And PSU prepares the errorful information request data <payment-information-data> with the payment service <payment-information-service>
+        And PSU prepares the errorful payment information request data <payment-information-data> with the payment service <payment-information-service>
         When PSU requests the information of the payment with error
         Then an error response code and the appropriate error response are received
         Examples:
@@ -164,7 +164,7 @@ Feature: Payment Initiation Service
     Scenario Outline: Successful payment cancellation request
         Given PSU wants to initiate a single payment <single-payment> using the payment service <payment-initiation-service> and the payment product <payment-product>
         And PSU sends the single payment initiating request and receives the paymentId
-        And PSU wants to cancel the payment by using the set of data <payment-cancellation-data>
+        And PSU wants to cancel the payment by using a set of data <payment-cancellation-data>
         When PSU initiates the cancellation of the payment
         Then an successful response code and the appropriate transaction status is delivered to the PSU
         Examples:

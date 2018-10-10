@@ -120,7 +120,7 @@ Feature: Payment Initiation Service Embedded Approach
         And PSU sends the start authorisation request and receives the authorisationId
         And PSU wants to update the resource with his <identification-data>
         And PSU sends the update identification data request
-        And PSU prepares the errorful selection data <selection-data> with the payment service <selectionSCAPayment-service>
+        And PSU prepares the errorful sca selection data <selection-data> with the payment service <selectionSCAPayment-service>
         When PSU sends the errorful update authorisation data request
         Then an error response code and the appropriate error response are received
         Examples:
