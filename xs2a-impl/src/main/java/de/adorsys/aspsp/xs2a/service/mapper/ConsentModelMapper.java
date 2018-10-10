@@ -135,7 +135,7 @@ public class ConsentModelMapper {
                                                                                  .name(au.getName())
                                                                                  .explanation(au.getExplanation()))
                                                                   .collect(Collectors.toList()))
-                                                  .orElse(Collections.emptyList());
+                                                  .orElseGet(Collections::emptyList);
         ScaMethods scaMethods = new ScaMethods();
         scaMethods.addAll(authList);
 

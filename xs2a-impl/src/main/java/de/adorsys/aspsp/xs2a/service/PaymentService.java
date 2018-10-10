@@ -96,9 +96,9 @@ public class PaymentService {
         Xs2aTransactionStatus transactionStatus = paymentMapper.mapToTransactionStatus(spiResponse.getPayload());
         return Optional.ofNullable(transactionStatus)
                    .map(tr -> ResponseObject.<Xs2aTransactionStatus>builder().body(tr).build())
-                   .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder()
-                                        .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                                        .build());
+                   .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
+                                  ::build);
     }
 
     /**
@@ -113,9 +113,9 @@ public class PaymentService {
                    .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
                                  .body(paymentMapper.mapToPaymentInitResponseFailedPayment(periodicPayment, e))
                                  .build())
-                   .orElse(ResponseObject.<PaymentInitialisationResponse>builder()
-                               .body(scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentProduct))
-                               .build());
+                   .orElseGet(ResponseObject.<PaymentInitialisationResponse>builder()
+                                  .body(scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentProduct))
+                                  ::build);
     }
 
     /**
@@ -155,9 +155,9 @@ public class PaymentService {
                    .map(e -> ResponseObject.<PaymentInitialisationResponse>builder()
                                  .body(paymentMapper.mapToPaymentInitResponseFailedPayment(singlePayment, e))
                                  .build())
-                   .orElseGet(() -> ResponseObject.<PaymentInitialisationResponse>builder()
-                                        .body(scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentProduct))
-                                        .build());
+                   .orElseGet(ResponseObject.<PaymentInitialisationResponse>builder()
+                                  .body(scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentProduct))
+                                  ::build);
     }
 
     /**
@@ -173,9 +173,9 @@ public class PaymentService {
         return payment.map(p -> ResponseObject.builder()
                                     .body(p)
                                     .build())
-                   .orElseGet(() -> ResponseObject.builder()
-                                        .fail(new MessageError(RESOURCE_UNKNOWN_403))
-                                        .build());
+                   .orElseGet(ResponseObject.builder()
+                                  .fail(new MessageError(RESOURCE_UNKNOWN_403))
+                                  ::build);
     }
 
     private ResponseObject<List<PaymentInitialisationResponse>> processValidPayments(TppInfo tppInfo, String paymentProduct, List<PaymentInitialisationResponse> invalidPayments, BulkPayment bulkPayment) {
