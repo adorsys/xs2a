@@ -24,7 +24,6 @@ import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.CmsRemittance;
@@ -37,7 +36,6 @@ import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResp
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 
 import java.math.BigDecimal;
 import java.util.Collections;
