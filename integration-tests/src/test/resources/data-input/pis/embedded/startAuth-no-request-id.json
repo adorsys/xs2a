@@ -1,0 +1,16 @@
+{
+  "request": {
+    "header": {},
+    "body": {}
+  },
+  "response": {
+    "code": "400",
+    "header": {},
+    "body": [
+      {
+        "category": "ERROR",
+        "code": "FORMAT_ERROR"
+      }
+    ]
+  }
+}

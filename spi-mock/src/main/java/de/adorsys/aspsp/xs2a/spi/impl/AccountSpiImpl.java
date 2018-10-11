@@ -27,7 +27,7 @@ import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.aspsp.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -70,7 +70,7 @@ public class AccountSpiImpl implements AccountSpi {
                 }, iban)
                 .getBody()
         )
-                                               .orElse(Collections.emptyList());
+                                               .orElseGet(Collections::emptyList);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
@@ -119,7 +119,7 @@ public class AccountSpiImpl implements AccountSpi {
         List<SpiAccountDetails> response = Optional.ofNullable(aspspRestTemplate.exchange(
             remoteSpiUrls.getAccountDetailsByPsuId(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiAccountDetails>>() {
             }, psuId).getBody())
-                                               .orElse(Collections.emptyList());
+                                               .orElseGet(Collections::emptyList);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
@@ -147,7 +147,7 @@ public class AccountSpiImpl implements AccountSpi {
     public SpiResponse<List<String>> readPsuAllowedPaymentProductList(SpiAccountReference reference, AspspConsentData aspspConsentData) {
         List<String> response = Optional.ofNullable(aspspRestTemplate.exchange(remoteSpiUrls.getAllowedPaymentProducts(), HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
         }, reference.getIban()).getBody())
-                                    .orElse(Collections.emptyList());
+                                    .orElseGet(Collections::emptyList);
         return new SpiResponse<>(response, aspspConsentData);
     }
 
@@ -157,7 +157,7 @@ public class AccountSpiImpl implements AccountSpi {
             remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
             }, psuId);
         List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
-                                               .orElse(Collections.emptyList());
+                                               .orElseGet(Collections::emptyList);
         return new SpiResponse<>(spiScaMethods, aspspConsentData);
     }
 
@@ -176,7 +176,7 @@ public class AccountSpiImpl implements AccountSpi {
     }
 
     /**
-     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, AspspConsentData)}
+     * For detailed description see {@link PaymentSpi#performStrongUserAuthorisation(String, SpiScaMethod, AspspConsentData)}
      */
     @Override
     public void performStrongUserAuthorisation(String psuId, AspspConsentData aspspConsentData) {

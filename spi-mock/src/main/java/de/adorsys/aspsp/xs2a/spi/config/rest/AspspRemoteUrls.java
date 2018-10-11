@@ -136,7 +136,7 @@ public class AspspRemoteUrls {
     }
 
     public String getGenerateTanConfirmation() {
-        return spiMockBaseUrl + "/consent/confirmation/pis/{psuId}";
+        return spiMockBaseUrl + "/consent/confirmation/pis/{psuId}/{sca-method-selected}";
     }
 
     public String applyStrongUserAuthorisation() {
@@ -159,5 +159,9 @@ public class AspspRemoteUrls {
      */
     public String applyStrongUserAuthorisationForAis() {
         return spiMockBaseUrl + "/consent/confirmation/ais";
+    }
+
+    public String cancelPayment() {
+        return "/payments/{paymentId}";
     }
 }

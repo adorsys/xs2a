@@ -17,18 +17,21 @@
 package de.adorsys.aspsp.xs2a.service.authorization;
 
 import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.service.PisConsentDataService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static de.adorsys.aspsp.xs2a.consent.api.CmsScaStatus.SCAMETHODSELECTED;
+import static de.adorsys.psd2.consent.api.CmsScaStatus.SCAMETHODSELECTED;
 
+@Slf4j
 @Service("PSUAUTHENTICATED")
 public class ScaAuthenticatedStage extends ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
 
@@ -38,9 +41,20 @@ public class ScaAuthenticatedStage extends ScaStage<UpdatePisConsentPsuDataReque
 
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
-        AspspConsentData aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(), pisConsentDataService.getConsentDataByPaymentId(request.getPaymentId())).getAspspConsentData();
-        pisConsentDataService.updateConsentData(aspspConsentData);
+        AspspConsentData aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(), getMethod(request.getAuthenticationMethodId()),pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId())).getAspspConsentData();
+        pisConsentDataService.updateAspspConsentData(aspspConsentData);
         request.setScaStatus(SCAMETHODSELECTED);
         return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
+    }
+
+    private SpiScaMethod getMethod(String method){ //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiScaMethod scaMethod =SpiScaMethod.SMS_OTP;
+        try {
+            scaMethod = SpiScaMethod.valueOf(method);
+        }
+        catch (IllegalArgumentException e){
+            log.error("Sca Method could not be parsed", e.getLocalizedMessage());
+        }
+        return scaMethod;
     }
 }

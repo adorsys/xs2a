@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
 import lombok.Data;
 
 import java.util.List;

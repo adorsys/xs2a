@@ -27,8 +27,8 @@ import static de.adorsys.aspsp.xs2a.domain.pis.PaymentType.SINGLE;
 public class ReadSinglePayment extends ReadPayment<SinglePayment> {
     @Override
     public SinglePayment getPayment(String paymentId, String paymentProduct) {
-        SpiResponse<SpiSinglePayment> spiResponse = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, pisConsentDataService.getConsentDataByPaymentId(paymentId));
-        pisConsentDataService.updateConsentData(spiResponse.getAspspConsentData());
+        SpiResponse<SpiSinglePayment> spiResponse = paymentSpi.getSinglePaymentById(paymentMapper.mapToSpiPaymentType(SINGLE), paymentProduct, paymentId, pisConsentDataService.getAspspConsentDataByPaymentId(paymentId));
+        pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         SpiSinglePayment singlePayment = spiResponse.getPayload();
         return paymentMapper.mapToSinglePayment(singlePayment);
     }

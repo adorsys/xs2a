@@ -22,13 +22,45 @@ import org.springframework.http.HttpHeaders;
 
 public class PaymentUtils {
 
+    /**
+     *
+     * @param request from which to extract the headers (if not null)
+     * @param token for oauth flow
+     * @return HttpEntity
+     */
     public static HttpEntity getHttpEntity(Request request, String token) {
+        HttpHeaders headers = getHttpHeaders(request, token);
+
+        return new HttpEntity<>(request != null ? request.getBody() : null, headers);
+    }
+
+    /**
+     *
+     * @param request from which to extract the headers (if not null)
+     * @param token for oauth flow
+     * @return HttpEntity with null body
+     */
+    public static HttpEntity getHttpEntityWithoutBody(Request request, String token) {
+        HttpHeaders headers = getHttpHeaders(request, token);
+
+        return new HttpEntity<>(null, headers);
+    }
+
+    /**
+     *
+     * @param request from which to extract the headers (if not null)
+     * @param accessToken for oauth flow
+     * @return HttpHeaders
+     */
+    private static HttpHeaders getHttpHeaders(Request request, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setAll(request.getHeader());
-        headers.add("Authorization", "Bearer " + token);
+        if (request != null) {
+            headers.setAll(request.getHeader());
+        }
+        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-Type", "application/json");
         headers.add("Accept", "application/json");
 
-        return new HttpEntity<>(request.getBody(), headers);
+        return headers;
     }
 }

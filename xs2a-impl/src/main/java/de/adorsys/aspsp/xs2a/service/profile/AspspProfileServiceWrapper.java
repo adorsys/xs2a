@@ -17,13 +17,12 @@
 package de.adorsys.aspsp.xs2a.service.profile;
 
 import de.adorsys.aspsp.xs2a.config.cache.CacheConfig;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
 import de.adorsys.aspsp.xs2a.domain.account.SupportedAccountReferenceField;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthorisationStartType;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -150,15 +149,6 @@ public class AspspProfileServiceWrapper {
     }
 
     /**
-     * Reads value Authorisation start type (Explicit/Implicit) from ASPSP profile service
-     *
-     * @return String value of authorisation start type
-     */
-    public Xs2aAuthorisationStartType getAuthorisationStartType() {
-        return Xs2aAuthorisationStartType.valueOf(readAspspSettings().getAuthorisationStartType().name());
-    }
-
-    /**
      * Reads value BankOfferedConsentSupported
      *
      * @return boolean representation of support of Bank Offered Consent
@@ -174,6 +164,24 @@ public class AspspProfileServiceWrapper {
      */
     public boolean isTransactionsWithoutBalancesSupported() {
         return readAspspSettings().isTransactionsWithoutBalancesSupported();
+    }
+
+    /**
+     * Reads if signing basket supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports signing basket , false if doesn't
+     */
+    public boolean isSigningBasketSupported() {
+        return readAspspSettings().isSigningBasketSupported();
+    }
+
+    /**
+     * Reads if is payment cancellation authorization mandated from ASPSP profile service
+     *
+     * @return true if payment cancellation authorization is mandated, false if doesn't
+     */
+    public boolean isPaymentCancellationAuthorizationMandated() {
+        return readAspspSettings().isPaymentCancellationAuthorizationMandated();
     }
 
     private AspspSettings readAspspSettings() {

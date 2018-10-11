@@ -16,12 +16,9 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.*;
 import de.adorsys.aspsp.aspspmockserver.service.PaymentService;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,7 +27,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus.RJCT;
+import static de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiTransactionStatus.RJCT;
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
@@ -48,7 +46,7 @@ public class PaymentController {
     public ResponseEntity<SpiSinglePayment> createPayment(@RequestBody SpiSinglePayment payment) {
         return paymentService.addPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Creates a bulk payment(list of single payments) based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -73,7 +71,7 @@ public class PaymentController {
     public ResponseEntity<SpiTransactionStatus> getPaymentStatusById(@PathVariable("paymentId") String paymentId) {
         return paymentService.getPaymentStatusById(paymentId)
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Creates a periodic payment based on request body", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -84,7 +82,7 @@ public class PaymentController {
     public ResponseEntity<SpiPeriodicPayment> createPeriodicPayment(@RequestBody SpiPeriodicPayment payment) {
         return paymentService.addPeriodicPayment(payment)
                    .map(saved -> new ResponseEntity<>(saved, CREATED))
-                   .orElse(ResponseEntity.badRequest().build());
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 
     @ApiOperation(value = "Returns all payments present at ASPSP", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -106,5 +104,16 @@ public class PaymentController {
         return CollectionUtils.isNotEmpty(response)
                    ? ResponseEntity.ok(response)
                    : ResponseEntity.noContent().build();
+    }
+
+    @ApiOperation(value = "Cancel payment by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
+    @ApiResponses(value = {
+        @ApiResponse(code = 202, message = "ACCEPTED", response = SpiCancelPayment.class),
+        @ApiResponse(code = 204, message = "Payment Not Found")})
+    @DeleteMapping("/{payment-id}")
+    public ResponseEntity<SpiCancelPayment> cancelPayment(@PathVariable("payment-id") String paymentId) {
+        return paymentService.cancelPayment(paymentId)
+                   .map(p -> new ResponseEntity<>(p, ACCEPTED))
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 }

@@ -16,26 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
-import de.adorsys.aspsp.xs2a.consent.api.CmsAccountReference;
-import de.adorsys.aspsp.xs2a.consent.api.CmsAddress;
-import de.adorsys.aspsp.xs2a.consent.api.CmsRemittance;
-import de.adorsys.aspsp.xs2a.consent.api.CmsTppInfo;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPayment;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentProduct;
-import de.adorsys.aspsp.xs2a.consent.api.pis.PisPaymentType;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.Xs2aTppRole;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
-import de.adorsys.aspsp.xs2a.domain.consent.CreatePisConsentData;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aUpdatePisConsentPsuDataResponse;
-import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
+import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiScaStatus;
+import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
+import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -92,8 +88,15 @@ public class Xs2aPisConsentMapper {
     }
 
     public Optional<Xsa2CreatePisConsentAuthorisationResponse> mapToXsa2CreatePisConsentAuthorizationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
-        return Optional.ofNullable(response)
-                   .map(s -> new Xsa2CreatePisConsentAuthorisationResponse(s.getAuthorizationId(), SpiScaStatus.RECEIVED.name(), paymentType.getValue()));
+        return Optional.of(new Xsa2CreatePisConsentAuthorisationResponse(response.getAuthorizationId(), Xs2aScaStatus.RECEIVED.name(), paymentType.getValue()));
+    }
+
+    public Optional<Xs2aCreatePisConsentCancellationAuthorisationResponse> mapToXs2aCreatePisConsentCancellationAuthorisationResponse(CreatePisConsentAuthorisationResponse response, PaymentType paymentType) {
+        return Optional.of(new Xs2aCreatePisConsentCancellationAuthorisationResponse(response.getAuthorizationId(), Xs2aScaStatus.RECEIVED.name(), paymentType.getValue()));
+    }
+
+    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource(String authorisationId) {
+        return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -117,8 +120,8 @@ public class Xs2aPisConsentMapper {
                        pisPayment.setRequestedExecutionTime(pmt.getRequestedExecutionTime());
                        pisPayment.setUltimateCreditor(pmt.getUltimateCreditor());
                        pisPayment.setPurposeCode(Optional.ofNullable(pmt.getPurposeCode())
-                           .map(Xs2aPurposeCode::getCode)
-                           .orElse(""));
+                                                     .map(Xs2aPurposeCode::getCode)
+                                                     .orElse(""));
 
                        return pisPayment;
 
@@ -168,15 +171,28 @@ public class Xs2aPisConsentMapper {
         return Optional.ofNullable(tppInfo)
                    .map(tpp -> {
                        CmsTppInfo cmsTppInfo = new CmsTppInfo();
-
-                       cmsTppInfo.setRegistrationNumber(tpp.getRegistrationNumber());
+                       cmsTppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
                        cmsTppInfo.setTppName(tpp.getTppName());
-                       cmsTppInfo.setTppRole(tpp.getTppRole());
-                       cmsTppInfo.setNationalCompetentAuthority(tpp.getNationalCompetentAuthority());
+                       cmsTppInfo.setTppRoles(mapToTppRoles(tpp.getTppRoles()));
+                       cmsTppInfo.setAuthorityId(tpp.getAuthorityId());
+                       cmsTppInfo.setAuthorityName(tpp.getAuthorityName());
+                       cmsTppInfo.setCountry(tpp.getCountry());
+                       cmsTppInfo.setOrganisation(tpp.getOrganisation());
+                       cmsTppInfo.setOrganisationUnit(tpp.getOrganisationUnit());
+                       cmsTppInfo.setCity(tpp.getCity());
+                       cmsTppInfo.setState(tpp.getState());
                        cmsTppInfo.setRedirectUri(tpp.getRedirectUri());
                        cmsTppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
                        return cmsTppInfo;
                    }).orElse(null);
+    }
+
+    private List<CmsTppRole> mapToTppRoles(List<Xs2aTppRole> tppRoles) {
+        return Optional.ofNullable(tppRoles)
+                   .map(roles -> roles.stream()
+                                     .map(role -> CmsTppRole.valueOf(role.name()))
+                                     .collect(Collectors.toList()))
+                   .orElseGet(Collections::emptyList);
     }
 
     private CmsAccountReference mapToPisAccountReference(Xs2aAccountReference xs2aAccountReference) {
@@ -226,6 +242,5 @@ public class Xs2aPisConsentMapper {
                    .map(Enum::name)
                    .orElse(null);
     }
-
 
 }

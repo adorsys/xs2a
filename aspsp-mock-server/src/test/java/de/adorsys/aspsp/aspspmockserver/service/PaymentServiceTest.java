@@ -16,15 +16,16 @@
 
 package de.adorsys.aspsp.aspspmockserver.service;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountBalance;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountDetails;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiAccountReference;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.account.SpiBalanceType;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.common.SpiAmount;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.AspspPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiCancelPayment;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.payment.SpiSinglePayment;
 import de.adorsys.aspsp.aspspmockserver.repository.PaymentRepository;
 import de.adorsys.aspsp.aspspmockserver.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountBalance;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiBalanceType;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.AspspPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,6 +69,8 @@ public class PaymentServiceTest {
         when(accountService.getAccountsByIban(WRONG_IBAN)).thenReturn(null);
         when(paymentMapper.mapToAspspPayment(any(), any())).thenReturn(new AspspPayment());
         when(paymentMapper.mapToSpiSinglePayment(any(AspspPayment.class))).thenReturn(getSpiSinglePayment(50));
+        when(paymentService.cancelPayment(PAYMENT_ID)).thenReturn(buildSpiCancelPayment());
+        when(paymentRepository.findOne(PAYMENT_ID)).thenReturn(new AspspPayment());
     }
 
     @Test
@@ -126,6 +129,22 @@ public class PaymentServiceTest {
 
         //Then
         assertThat(actualPayments).isNotNull();
+    }
+
+    @Test
+    public void cancelPaymentSuccess() {
+        //Given
+        Optional<SpiCancelPayment> given = buildSpiCancelPayment();
+
+        //When
+        Optional<SpiCancelPayment> actual = paymentService.cancelPayment(PAYMENT_ID);
+
+        //Then
+        assertThat(given).isEqualTo(actual);
+    }
+
+    private Optional<SpiCancelPayment> buildSpiCancelPayment() {
+        return Optional.of(new SpiCancelPayment());
     }
 
     private SpiSinglePayment getSpiSinglePayment(long amountToTransfer) {

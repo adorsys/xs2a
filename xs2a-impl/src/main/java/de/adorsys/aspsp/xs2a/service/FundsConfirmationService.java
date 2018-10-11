@@ -16,27 +16,28 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.domain.BalanceType;
+import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountDetails;
-import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
+import de.adorsys.aspsp.xs2a.exception.MessageError;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.aspsp.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class FundsConfirmationService {
-    private final AccountService accountService;
     private final AccountReferenceValidationService referenceValidationService;
+    private final FundsConfirmationSpi fundsConfirmationSpi;
+    private final SpiXs2aAccountMapper accountMapper;
+    private final FundsConfirmationConsentDataService fundsConfirmationConsentDataService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -45,41 +46,38 @@ public class FundsConfirmationService {
      * @return Response with result 'true' if there are enough funds on the account, 'false' if not
      */
     public ResponseObject<FundsConfirmationResponse> fundsConfirmation(FundsConfirmationRequest request) {
-            ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(request.getAccountReferences());
-            return accountReferenceValidationResponse.hasError()
-                       ? ResponseObject.<FundsConfirmationResponse>builder().fail(accountReferenceValidationResponse.getError()).build()
-                       : ResponseObject.<FundsConfirmationResponse>builder()
-                                 .body(new FundsConfirmationResponse(isFundsAvailable(request.getPsuAccount(), request.getInstructedAmount()))).build();
-    }
+        ResponseObject accountReferenceValidationResponse = referenceValidationService.validateAccountReferences(request.getAccountReferences());
 
-    private boolean isFundsAvailable(Xs2aAccountReference xs2aAccountReference, Xs2aAmount requiredAmount) {
-        List<Xs2aBalance> balances = getAccountBalancesByAccountReference(xs2aAccountReference);
+        if (accountReferenceValidationResponse.hasError()) {
+            return ResponseObject.<FundsConfirmationResponse>builder()
+                       .fail(accountReferenceValidationResponse.getError())
+                       .build();
+        }
 
-        return balances.stream()
-                   .filter(bal -> BalanceType.INTERIM_AVAILABLE == bal.getBalanceType())
-                   .findFirst()
-                   .map(Xs2aBalance::getBalanceAmount)
-                   .map(am -> isRequiredAmountEnough(requiredAmount, am))
-                   .orElse(false);
-    }
+        SpiAccountReference accountReference = accountMapper.mapToSpiAccountReference(request.getPsuAccount());
+        SpiAmount amount = accountMapper.mapToSpiAmount(request.getInstructedAmount());
+        AspspConsentData aspspConsentData = fundsConfirmationConsentDataService.getAspspConsentDataByConsentId("Put here actual consent data"); // TODO Read it by actual consent_id https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
 
-    private boolean isRequiredAmountEnough(Xs2aAmount requiredAmount, Xs2aAmount availableAmount) {
-        return convertToBigDecimal(availableAmount.getAmount()).compareTo(convertToBigDecimal(requiredAmount.getAmount())) >= 0 &&
-                   availableAmount.getCurrency() == requiredAmount.getCurrency();
-    }
+        SpiResponse<Boolean> fundsSufficientCheck = fundsConfirmationSpi.peformFundsSufficientCheck(
+            null, //TODO Put here actual FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
+            accountReference,
+            amount,
+            aspspConsentData
+        );
 
-    private BigDecimal convertToBigDecimal(String content) {
-        return Optional.ofNullable(content)
-                   .map(BigDecimal::new)
-                   .orElse(BigDecimal.ZERO);
-    }
+        aspspConsentData = fundsSufficientCheck.getAspspConsentData();
+        fundsConfirmationConsentDataService.updateAspspConsentData(aspspConsentData);
 
-    private List<Xs2aBalance> getAccountBalancesByAccountReference(Xs2aAccountReference reference) {
-        return Optional.ofNullable(reference)
-                   .map(ref -> accountService.getAccountDetailsByAccountReference(ref, null))
-                   .filter(Optional::isPresent)
-                   .map(Optional::get)
-                   .map(Xs2aAccountDetails::getBalances)
-                   .orElseGet(Collections::emptyList);
+        if (fundsSufficientCheck.hasError()) {
+            return ResponseObject.<FundsConfirmationResponse>builder()
+                       .fail(new MessageError(MessageErrorCode.RESOURCE_UNKNOWN_404))
+                       .build();
+        }
+
+        FundsConfirmationResponse fundsConfirmationResponse = new FundsConfirmationResponse(BooleanUtils.isTrue(fundsSufficientCheck.getPayload()));
+
+        return ResponseObject.<FundsConfirmationResponse>builder()
+                   .body(fundsConfirmationResponse)
+                   .build();
     }
 }

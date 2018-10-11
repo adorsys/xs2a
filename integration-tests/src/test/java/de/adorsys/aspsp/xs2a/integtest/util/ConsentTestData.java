@@ -17,13 +17,13 @@
 package de.adorsys.aspsp.xs2a.integtest.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.aspsp.xs2a.integtest.config.rest.consent.AisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.integtest.config.rest.consent.ConsentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

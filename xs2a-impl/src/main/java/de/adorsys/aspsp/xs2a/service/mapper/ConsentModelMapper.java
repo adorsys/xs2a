@@ -17,11 +17,11 @@
 package de.adorsys.aspsp.xs2a.service.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.adorsys.aspsp.xs2a.consent.api.CmsScaMethod;
-import de.adorsys.aspsp.xs2a.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.psd2.api.ConsentApi;
+import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.model.AuthenticationType;
 import de.adorsys.psd2.model.ConsentStatus;
@@ -82,6 +82,12 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
+    public StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisConsentCancellationAuthorisationResponse response) {
+        return new StartScaprocessResponse()
+                        .scaStatus(ScaStatus.valueOf(response.getScaStatus()))
+                        ._links(objectMapper.convertValue(response.getLinks(), Map.class));
+    }
+
     public UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r ->
@@ -135,7 +141,7 @@ public class ConsentModelMapper {
                                                                                  .name(au.getName())
                                                                                  .explanation(au.getExplanation()))
                                                                   .collect(Collectors.toList()))
-                                                  .orElse(Collections.emptyList());
+                                                  .orElseGet(Collections::emptyList);
         ScaMethods scaMethods = new ScaMethods();
         scaMethods.addAll(authList);
 

@@ -97,12 +97,13 @@ public class AccountModelMapper {
                    .orElse(null);
     }
 
-    public ReadBalanceResponse200 mapToBalance(List<Xs2aBalance> balances) {
-        BalanceList balancesResponse = new BalanceList();
-        balances.forEach(balance -> balancesResponse.add(mapToBalance(balance)));
+    public ReadBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport) {
+        BalanceList balanceList = new BalanceList();
+        balancesReport.getBalances().forEach(balance -> balanceList.add(mapToBalance(balance)));
 
         return new ReadBalanceResponse200()
-                   .balances(balancesResponse);
+                   .balances(balanceList)
+                   .account(balancesReport.getXs2aAccountReference());
     }
 
     public Balance mapToBalance(Xs2aBalance balance) {
@@ -127,13 +128,13 @@ public class AccountModelMapper {
         TransactionList booked = new TransactionList();
         List<TransactionDetails> bookedTransactions = Optional.ofNullable(accountReport.getBooked())
                                                           .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
-                                                          .orElse(new ArrayList<>());
+                                                          .orElseGet(ArrayList::new);
         booked.addAll(bookedTransactions);
 
         TransactionList pending = new TransactionList();
         List<TransactionDetails> pendingTransactions = Optional.ofNullable(accountReport.getPending())
                                                            .map(ts -> Arrays.stream(ts).map(this::mapToTransaction).collect(Collectors.toList()))
-                                                           .orElse(new ArrayList<>());
+                                                           .orElseGet(ArrayList::new);
         pending.addAll(pendingTransactions);
 
         return new AccountReport()
@@ -212,7 +213,7 @@ public class AccountModelMapper {
                        targetAddress.setCountry(code);
                        return targetAddress;
                    })
-                   .orElse(new Xs2aAddress());
+                   .orElseGet(Xs2aAddress::new);
     }
 
     public Xs2aAmount mapToXs2aAmount(Amount amount) {
@@ -223,7 +224,7 @@ public class AccountModelMapper {
                        targetAmount.setCurrency(Currency.getInstance(a.getCurrency()));
                        return targetAmount;
                    })
-                   .orElse(new Xs2aAmount());
+                   .orElseGet(Xs2aAmount::new);
 
     }
 

@@ -77,11 +77,7 @@ public class AccountControllerTest {
     @Before
     public void setUp() throws Exception {
         when(accountService.getAccountDetailsList(anyString(), anyBoolean())).thenReturn(getXs2aAccountDetailsList());
-        ResponseObject<List<Xs2aBalance>> balances = getXs2aBalances();
-        when(accountService.getBalances(anyString(), anyString())).thenReturn(balances);
-        when(accountService.getAccountReport(any(String.class), any(String.class), any(LocalDate.class),
-            any(LocalDate.class), any(String.class), anyBoolean(), any(), anyBoolean(), anyBoolean()))
-            .thenReturn(getXs2aAccountReport());
+        when(accountService.getBalancesReport(anyString(), anyString())).thenReturn(getBalanceReport());
         when(accountService.getAccountDetails(anyString(), any(), anyBoolean())).thenReturn(getXs2aAccountDetails());
     }
 
@@ -241,5 +237,11 @@ public class AccountControllerTest {
         balance.setLastCommittedTransaction("abc");
         List<Xs2aBalance> balances = Collections.singletonList(balance);
         return ResponseObject.<List<Xs2aBalance>>builder().body(balances).build();
+    }
+
+    private ResponseObject<Xs2aBalancesReport> getBalanceReport() {
+        Xs2aBalancesReport balancesReport = new Xs2aBalancesReport();
+        balancesReport.setBalances(getXs2aBalances().getBody());
+        return ResponseObject.<Xs2aBalancesReport>builder().body(balancesReport).build();
     }
 }

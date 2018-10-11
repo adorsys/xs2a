@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.aspspmockserver.web;
 
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.Psu;
+import de.adorsys.aspsp.aspspmockserver.domain.spi.psu.SpiScaMethod;
 import de.adorsys.aspsp.aspspmockserver.service.PsuService;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.Psu;
-import de.adorsys.aspsp.xs2a.spi.domain.psu.SpiScaMethod;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -56,7 +56,7 @@ public class PsuController {
     public ResponseEntity<Psu> readPsuById(@PathVariable("psu-id") String psuId) {
         return psuService.getPsuByPsuId(psuId)
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Returns a list of allowed payment products for PSU by its ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -67,7 +67,7 @@ public class PsuController {
     public ResponseEntity<List<String>> readPaymentProductsById(@PathVariable("iban") String iban) {
         return Optional.ofNullable(psuService.getAllowedPaymentProducts(iban))
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Adds a payment product to the list of allowed products for PSU specified by its ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -109,7 +109,7 @@ public class PsuController {
     public ResponseEntity<List<SpiScaMethod>> readScaMethods(@PathVariable("psu-id") String psuId) {
         return Optional.ofNullable(psuService.getScaMethods(psuId))
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Updates list of SCA methods for PSU specified by its login", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

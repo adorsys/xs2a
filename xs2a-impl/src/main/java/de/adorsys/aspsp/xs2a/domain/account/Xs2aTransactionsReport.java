@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.domain.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.Xs2aBalance;
@@ -41,4 +42,7 @@ public class Xs2aTransactionsReport {
     @ApiModelProperty(value = "Links")
     @JsonProperty("_links")
     private Links links;
+
+    @JsonIgnore
+    private boolean transactionReportHuge;
 }

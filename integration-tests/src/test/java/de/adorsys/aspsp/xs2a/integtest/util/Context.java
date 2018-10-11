@@ -27,12 +27,16 @@ public class Context<T, U> {
     private ObjectMapper mapper;
 
     private String scaApproach;
+    private String scaMethod;
+    private String tanValue;
     private String paymentProduct;
     private String paymentService;
     private String accessToken;
     private String paymentId;
+    private String authorisationId;
     private TestData<T, U> testData;
     private ResponseEntity<U> actualResponse;
+    //private ResponseEntity<ScaStatusResponse> authorisationResponse;
     private TppMessages tppMessages;
     private HttpStatus actualResponseStatus;
 

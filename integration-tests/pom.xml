@@ -23,7 +23,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.aspsp</groupId>
-        <version>1.8</version>
+        <version>1.9</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -124,7 +124,7 @@
         <dependency>
             <groupId>de.adorsys.aspsp</groupId>
             <artifactId>xs2a-impl</artifactId>
-            <version>1.8</version>
+            <version>1.9</version>
         </dependency>
 
         <dependency>
@@ -134,9 +134,9 @@
         </dependency>
 
         <dependency>
-            <groupId>de.adorsys.aspsp</groupId>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.8</version>
+            <version>1.9</version>
         </dependency>
 
         <dependency>
@@ -165,7 +165,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cluecumber-report-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>reporting</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceJsonReportDirectory>${project.basedir}/cucumber-report</sourceJsonReportDirectory>
+                    <generatedHtmlReportDirectory>${project.build.directory}/generated-report</generatedHtmlReportDirectory>
+                    <customParameters>
+                        <Custom_Parameter>Please check the timestamp above to ensure it is the latest report</Custom_Parameter>
+                    </customParameters>
+                </configuration>
 
+            </plugin>
         </plugins>
     </build>
 </project>
