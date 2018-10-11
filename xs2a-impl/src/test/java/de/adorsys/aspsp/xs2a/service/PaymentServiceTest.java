@@ -66,7 +66,6 @@ public class PaymentServiceTest {
     private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
     private static final TppInfo TPP_INFO = getTppInfo();
-    private static final String TPP_INFO_STR = "tpp info";
 
     private final PeriodicPayment PERIODIC_PAYMENT_OK = getPeriodicPayment(IBAN, AMOUNT);
     private final PeriodicPayment PERIODIC_PAYMENT_NOK_AMOUNT = getPeriodicPayment(IBAN, EXCESSIVE_AMOUNT);
@@ -77,7 +76,6 @@ public class PaymentServiceTest {
 
     private final BulkPayment BULK_PAYMENT_OK = getBulkPayment(SINGLE_PAYMENT_OK, IBAN);
     private final BulkPayment BULK_PAYMENT_NOT_OK = getBulkPayment(SINGLE_PAYMENT_OK, WRONG_IBAN);
-
 
     @InjectMocks
     private PaymentService paymentService;
@@ -125,8 +123,6 @@ public class PaymentServiceTest {
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RCVD, null)));
         when(scaPaymentService.createBulkPayment(getBulkPayment(SINGLE_PAYMENT_NOK_AMOUNT, WRONG_IBAN), TPP_INFO, ALLOWED_PAYMENT_PRODUCT))
             .thenReturn(getBulkResponses(getPaymentResponse(RCVD, null), getPaymentResponse(RJCT, PAYMENT_FAILED)));
-        when(paymentMapper.mapToTppInfo(getRequestParameters()))
-            .thenReturn(TPP_INFO);
 
         when(referenceValidationService.validateAccountReferences(any())).thenReturn(ResponseObject.builder().build());
         when(pisConsentDataService.getAspspConsentDataByPaymentId(anyString())).thenReturn(ASPSP_CONSENT_DATA);

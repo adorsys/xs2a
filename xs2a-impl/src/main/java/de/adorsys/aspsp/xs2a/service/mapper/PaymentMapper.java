@@ -33,12 +33,10 @@ import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -139,6 +137,7 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
 
                    }).orElse(null);
     }
+
     //TODO remote AspspConsentData from here https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
     public PaymentInitialisationResponse mapToPaymentInitializationResponse(SpiPaymentInitialisationResponse response, AspspConsentData aspspConsentData) {
         return Optional.ofNullable(response)
@@ -335,23 +334,5 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
                        OtpFormat.getByValue(c.getSpiOtpFormat().getValue()).orElse(null),
                        c.getAdditionalInformation()))
                    .orElse(null);
-    }
-
-    public TppInfo mapToTppInfo(PaymentRequestParameters requestParameters) {
-        if (StringUtils.isBlank(requestParameters.getQwacCertificate())) {
-            return null;
-        }
-
-        try {
-            byte[] decodedBytes = Base64.getDecoder().decode(requestParameters.getQwacCertificate());
-            String decodedJson = new String(decodedBytes);
-            TppInfo tppInfo = objectMapper.readValue(decodedJson, TppInfo.class);
-            tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
-            tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
-            return tppInfo;
-        } catch (java.lang.Exception e) {
-            log.warn("Error with converting TppInfo from certificate {}", requestParameters.getQwacCertificate());
-            return null;
-        }
     }
 }

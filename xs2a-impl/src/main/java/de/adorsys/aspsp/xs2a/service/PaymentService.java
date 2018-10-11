@@ -56,7 +56,7 @@ public class PaymentService {
     private final AccountReferenceValidationService referenceValidationService;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
-
+    private final TppService tppService;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -66,7 +66,10 @@ public class PaymentService {
      */
     public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters) {
         ResponseObject response;
-        TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
+        TppInfo tppInfo = tppService.getTppInfo();
+        tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
+        tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
+
         if (requestParameters.getPaymentType() == SINGLE) {
             response = createPaymentInitiation((SinglePayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         } else if (requestParameters.getPaymentType() == PERIODIC) {
