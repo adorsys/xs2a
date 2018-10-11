@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPeriodicPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service("periodic-payments")
 @RequiredArgsConstructor
 public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
-    private final SpiToXs2aPaymentMapper xs2aPaymentMapper;
+    private final SpiToXs2aPeriodicPaymentMapper xs2aPeriodicPaymentMapper;
 
     @Override
     public PeriodicPayment getPayment(String paymentId, String paymentProduct) {
@@ -37,6 +37,6 @@ public class ReadPeriodicPayment extends ReadPayment<PeriodicPayment> {
         pisConsentDataService.updateAspspConsentData(spiResponse.getAspspConsentData());
         SpiPeriodicPayment periodicPayment = spiResponse.getPayload();
 
-        return xs2aPaymentMapper.mapToXs2aPeriodicPayment(periodicPayment);
+        return xs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(periodicPayment);
     }
 }

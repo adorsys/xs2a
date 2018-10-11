@@ -24,6 +24,7 @@ import java.util.Optional;
 
 @Component
 public class SpiToXs2aAmountMapper {
+
     public Xs2aAmount mapToXs2aAmount(SpiAmount spiAmount) {
         return Optional.ofNullable(spiAmount)
                    .map(a -> {

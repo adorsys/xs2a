@@ -18,8 +18,6 @@ package de.adorsys.aspsp.xs2a.spi.mapper;
 
 import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import org.jetbrains.annotations.NotNull;
@@ -43,21 +41,6 @@ public class SpiPaymentMapper {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
             paymentResponse.setPaymentId(spiSinglePayment.getPaymentId());
         }
-        return paymentResponse;
-    }
-
-    public SpiPaymentInitialisationResponse mapToSpiPaymentResponse(@NotNull SpiPeriodicPayment spiPeriodicPayment) {
-        SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-
-        if (spiPeriodicPayment.getPaymentId() == null) {
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
-            paymentResponse.setPaymentId(spiPeriodicPayment.getEndToEndIdentification());
-            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"}); //TODO Create ENUM and update everywhere applicable https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/348
-        } else {
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-            paymentResponse.setPaymentId(spiPeriodicPayment.getPaymentId());
-        }
-
         return paymentResponse;
     }
 
@@ -91,3 +74,4 @@ public class SpiPaymentMapper {
         return single;
     }
 }
+

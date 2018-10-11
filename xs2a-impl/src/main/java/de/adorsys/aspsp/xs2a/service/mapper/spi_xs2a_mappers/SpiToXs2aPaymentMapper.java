@@ -17,9 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.code.Xs2aFrequencyCode;
-import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
@@ -45,24 +42,5 @@ public class SpiToXs2aPaymentMapper {
         single.setPaymentId(payment.getPaymentId());
         single.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
         return single;
-    public PeriodicPayment mapToXs2aPeriodicPayment(SpiPeriodicPayment payment) {
-        PeriodicPayment periodic = new PeriodicPayment();
-
-        periodic.setEndToEndIdentification(payment.getEndToEndIdentification());
-        periodic.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
-        periodic.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(payment.getInstructedAmount()));
-        periodic.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()));
-        periodic.setCreditorAgent(payment.getCreditorAgent());
-        periodic.setCreditorName(payment.getCreditorName());
-        periodic.setCreditorAddress(spiToXs2aAddressMapper.mapToXs2aAddress(payment.getCreditorAddress()));
-        periodic.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        periodic.setTransactionStatus(Xs2aTransactionStatus.RCVD);
-        periodic.setStartDate(payment.getStartDate());
-        periodic.setEndDate(payment.getEndDate());
-        periodic.setExecutionRule(payment.getExecutionRule());
-        periodic.setFrequency(Xs2aFrequencyCode.valueOf(payment.getFrequency().name()));
-        periodic.setDayOfExecution(payment.getDayOfExecution());
-
-        return periodic;
     }
 }

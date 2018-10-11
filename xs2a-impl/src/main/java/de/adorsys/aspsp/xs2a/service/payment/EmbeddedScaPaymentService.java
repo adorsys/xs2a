@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedScaPaymentService extends RedirectAndEmbeddedPaymentService {
-    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper) {
-        super(paymentSpi, paymentMapper, singlePaymentSpi, xs2aToSpiPaymentMapper, spiToXs2aPaymentMapper);
+    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper) {
+        super(paymentSpi, paymentMapper, singlePaymentSpi, periodicPaymentSpi, xs2aToSpiPaymentMapper, xs2aToSpiPeriodicPaymentMapper, spiToXs2aPaymentMapper);
     }
 }

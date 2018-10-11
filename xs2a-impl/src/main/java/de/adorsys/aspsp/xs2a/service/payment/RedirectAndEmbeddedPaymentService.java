@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPa
 import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
@@ -47,7 +46,6 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
     private final PeriodicPaymentSpi periodicPaymentSpi;
     private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     private final Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper;
-
     private final SpiToXs2aPaymentMapper spiToXs2aPaymentMapper;
 
     @Override
@@ -64,11 +62,6 @@ public class RedirectAndEmbeddedPaymentService implements ScaPaymentService {
         AspspConsentData aspspConsentData = new AspspConsentData();
         SpiPeriodicPayment spiPeriodicPayment = xs2aToSpiPeriodicPaymentMapper.mapToSpiPeriodicPayment(payment, paymentProduct);
         SpiResponse<SpiPaymentInitialisationResponse> response = periodicPaymentSpi.initiatePayment(spiPeriodicPayment, aspspConsentData);
-
-        if (response.hasError()) {
-            return new PaymentInitialisationResponse();
-        }
-
         SpiPaymentInitialisationResponse paymentInitialisationResponse = response.getPayload();
 
         return paymentMapper.mapToPaymentInitializationResponse(paymentInitialisationResponse, response.getAspspConsentData());
