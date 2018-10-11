@@ -20,6 +20,10 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+/**
+ * @deprecated since 1.8. Will be removed in 1.10
+ * @see de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment
+ */
 @Data
 public class SpiPeriodicPayment extends SpiSinglePayment {
 

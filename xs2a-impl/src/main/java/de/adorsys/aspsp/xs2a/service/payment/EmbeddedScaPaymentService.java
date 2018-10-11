@@ -20,7 +20,7 @@ import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
-import de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi;
+import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -16,21 +16,22 @@
 
 package de.adorsys.aspsp.xs2a.spi.service;
 
-import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiScaMethod;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 
 import java.util.List;
 
 /**
  * @deprecated since 1.8. Will be removed in 1.10
- * @see de.adorsys.aspsp.xs2a.spi.service.v2.SinglePaymentSpi
+ * @see de.adorsys.psd2.xs2a.spi.service.PaymentSpi
  */
 @Deprecated
 public interface PaymentSpi {
