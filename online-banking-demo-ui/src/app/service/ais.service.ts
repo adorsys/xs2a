@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AccountConsent } from '../model/aspsp/accountConsent';
@@ -11,29 +11,25 @@ import { AccountReference } from '../model/aspsp/accountReference';
 import { SelectedAccountConsent } from '../model/aspsp/selectedAccountConsent';
 import { AccountAccess } from '../model/aspsp/accountAccess';
 import { ConfigService } from './config.service';
-import { Config } from '../model/Config';
 import { KeycloakService } from 'keycloak-angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AisService {
-  savedConsentId: string;
+  consentId: string;
   private MOCK_AIS_URI = 'mockserver/consent/confirmation/ais';
   private XS2A_CONSENT_URI = 'xs2a/v1/consents';
   private XS2A_ACCOUNTS_URI = 'xs2a/v1/accounts';
   private CM_AIS_CONSENT_URI = 'consent-management/api/v1/ais/consent';
   private PROFILE_ASPSP_PROFILE_URI = `profile-server/api/v1/aspsp-profile`;
-  private urlConfig: Config;
   private psuId: string;
 
   constructor(private httpClient: HttpClient, private configService: ConfigService, private keycloak: KeycloakService) {
-    this.urlConfig = configService.getConfig();
-    this.psuId = keycloak.getUsername();
   }
 
-  saveConsentId(consentId) {
-    this.savedConsentId = consentId;
+  setConsentId(consentId) {
+    this.consentId = consentId;
   }
 
   getConsent(consentId): Observable<AccountConsent> {
@@ -48,7 +44,7 @@ export class AisService {
   getAccountsWithConsentID(): Observable<Account[]> {
     const headers = new HttpHeaders({
       'x-request-id': environment.xRequestId,
-      'consent-id': this.savedConsentId,
+      'consent-id': this.consentId,
       'tpp-qwac-certificate': environment.tppQwacCertificate,
       'accept': 'application/json'
     });
@@ -65,25 +61,25 @@ export class AisService {
   }
 
   generateTan(): Observable<string> {
-    return this.httpClient.post<string>(`${this.MOCK_AIS_URI}/${this.psuId}`, {});
+    return this.httpClient.post<string>(`${this.MOCK_AIS_URI}/${this.keycloak.getUsername()}`, {});
   }
 
   updateConsentStatus(consentStatus): Observable<any> {
-    return this.httpClient.put(`${this.MOCK_AIS_URI}/${this.savedConsentId}/${consentStatus}`, {});
+    return this.httpClient.put(`${this.MOCK_AIS_URI}/${this.consentId}/${consentStatus}`, {});
   }
 
   validateTan(tan: string): Observable<string> {
     const body = {
       tanNumber: tan,
-      consentId: this.savedConsentId,
-      psuId: this.psuId
+      consentId: this.consentId,
+      psuId: this.keycloak.getUsername()
     };
     return this.httpClient.put<string>(this.MOCK_AIS_URI, body);
   }
 
   updateConsent(selectedAccounts: Account[]) {
     const selectedAccountConsent: SelectedAccountConsent = this.buildAccountConsent(selectedAccounts);
-    return this.httpClient.put(`${this.CM_AIS_CONSENT_URI}/${this.savedConsentId}/${'access'}`, selectedAccountConsent);
+    return this.httpClient.put(`${this.CM_AIS_CONSENT_URI}/${this.consentId}/${'access'}`, selectedAccountConsent);
   }
 
   private buildAccountConsent(selectedAccounts: Account[]) {
@@ -106,5 +102,9 @@ export class AisService {
       accountReferencesArray.push(accountReference);
     });
     return accountReferencesArray;
+  }
+
+  setPsuId(psuId: string) {
+    this.psuId = psuId;
   }
 }
