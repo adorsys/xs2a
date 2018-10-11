@@ -25,7 +25,6 @@ import de.adorsys.aspsp.xs2a.spi.mapper.SpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
@@ -85,7 +84,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPaymentType spiPaymentType, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    public SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return null;
     }
 
