@@ -35,7 +35,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.spi.domain.constant.AuthorizationConstant.*;
+import static de.adorsys.psd2.xs2a.spi.domain.constant.AuthorizationConstant.*;
 
 @Service
 @RequiredArgsConstructor

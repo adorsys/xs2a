@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.Xs2aAmount;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

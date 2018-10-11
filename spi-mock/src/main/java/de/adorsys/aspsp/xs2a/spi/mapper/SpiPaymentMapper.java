@@ -16,10 +16,10 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
-import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiSinglePayment;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

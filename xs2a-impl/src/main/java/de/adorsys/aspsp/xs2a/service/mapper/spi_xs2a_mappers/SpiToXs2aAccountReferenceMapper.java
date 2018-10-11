@@ -17,7 +17,7 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import org.springframework.stereotype.Component;
 
 @Component
