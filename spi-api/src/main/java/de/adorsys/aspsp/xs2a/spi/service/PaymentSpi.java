@@ -31,7 +31,6 @@ import java.util.List;
 
 /**
  * @deprecated since 1.8. Will be removed in 1.10
- * @see de.adorsys.psd2.xs2a.spi.service.PaymentSpi
  */
 @Deprecated
 public interface PaymentSpi {

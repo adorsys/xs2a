@@ -26,6 +26,7 @@ public interface FundsConfirmationSpi {
     /**
      * Queries ASPSP to check the sufficiency of requested account funds
      *
+     * @param consent          Consent for funds confirmation
      * @param reference        PSU account data
      * @param amount           Requested amount of funds
      * @param aspspConsentData Encrypted data that may be stored in the consent management system in the consent linked to a request.<br>
