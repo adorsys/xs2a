@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {KeycloakService} from 'keycloak-angular';
-import {ConfigService} from '../service/config.service';
-import {Config} from '../model/Config';
+import { KeycloakService } from 'keycloak-angular';
+import { ConfigService } from '../service/config.service';
+import { Config } from '../model/Config';
 
 export function initializer(keycloakService: KeycloakService, configService: ConfigService): () => Promise<any> {
   return (): Promise<any> => configService.loadConfig().then((config: Config) => {
