@@ -41,9 +41,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
-import java.util.Currency;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Collections.singletonList;
 
@@ -309,8 +307,11 @@ public class CmsExecutor {
         request.setPayments(singletonList(buildPisPayment()));
         request.setPaymentProduct(PisPaymentProduct.SCT);
         request.setPaymentType(PisPaymentType.SINGLE);
-        request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company", "Tpp role",
-            "National competent authority", "Redirect URI", "Nok redirect URI"));
+        request.setTppInfo(buildCmsTppInfo("1234_registrationNumber", "Tpp company",
+            Arrays.asList(CmsTppRole.PISP, CmsTppRole.AISP, CmsTppRole.PIISP, CmsTppRole.ASPSP),
+            "authority id", "authority name", "Germany", "Organisation",
+            "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
+            "Nok redirect URI"));
         request.setAspspConsentData("zzzzzzzz".getBytes());
         return request;
     }
@@ -387,23 +388,37 @@ public class CmsExecutor {
     }
 
     /**
-     * Creates CMS tpp info entity for a PIS cosent request
+     * Creates CMS tpp info entity for a PIS consent request
      *
-     * @param registrationNumber         Registration number
-     * @param tppName                    Tpp name
-     * @param tppRole                    Tpp role
-     * @param nationalCompetentAuthority National competent authority
-     * @param redirectUri                Redirect URI
-     * @param nokRedirectUri             Nok redirect URI
+     * @param authorisationNumber Authorisation number
+     * @param tppName             Tpp name
+     * @param tppRoles            Tpp roles
+     * @param authorityId         National competent authority id
+     * @param authorityName       National competent authority name
+     * @param country             Country
+     * @param organisation        Organisation
+     * @param organisationUnit    Organisation unit
+     * @param city                City
+     * @param state               State
+     * @param redirectUri         Redirect URI
+     * @param nokRedirectUri      Nok redirect URI
      * @return CmsTppInfo
      */
-    private static CmsTppInfo buildCmsTppInfo(String registrationNumber, String tppName, String tppRole,
-                                              String nationalCompetentAuthority, String redirectUri, String nokRedirectUri) {
+    private static CmsTppInfo buildCmsTppInfo(String authorisationNumber, String tppName, List<CmsTppRole> tppRoles,
+                                              String authorityId, String authorityName, String country,
+                                              String organisation, String organisationUnit, String city, String state,
+                                              String redirectUri, String nokRedirectUri) {
         CmsTppInfo tppInfo = new CmsTppInfo();
-        tppInfo.setRegistrationNumber(registrationNumber);
+        tppInfo.setAuthorisationNumber(authorisationNumber);
         tppInfo.setTppName(tppName);
-        tppInfo.setTppRole(tppRole);
-        tppInfo.setNationalCompetentAuthority(nationalCompetentAuthority);
+        tppInfo.setTppRoles(tppRoles);
+        tppInfo.setAuthorityId(authorityId);
+        tppInfo.setAuthorityName(authorityName);
+        tppInfo.setCountry(country);
+        tppInfo.setOrganisation(organisation);
+        tppInfo.setOrganisationUnit(organisationUnit);
+        tppInfo.setCity(city);
+        tppInfo.setState(state);
         tppInfo.setRedirectUri(redirectUri);
         tppInfo.setNokRedirectUri(nokRedirectUri);
         return tppInfo;
