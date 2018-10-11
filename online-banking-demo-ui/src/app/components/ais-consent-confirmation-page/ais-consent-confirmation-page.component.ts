@@ -28,7 +28,7 @@ export class AisConsentConfirmationPageComponent implements OnInit {
       .subscribe(params => {
         this.getConsentIdFromUrl(params);
       });
-    this.aisService.saveConsentId(this.consentId);
+    this.aisService.setConsentId(this.consentId);
     this.getAccountsWithConsentId();
     this.aisService.getConsent(this.consentId)
       .subscribe(consent => {

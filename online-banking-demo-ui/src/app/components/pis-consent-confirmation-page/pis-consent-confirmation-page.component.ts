@@ -33,9 +33,8 @@ export class PisConsentConfirmationPageComponent implements OnInit {
   consentId: string;
   amount: number;
 
-  constructor(private route: ActivatedRoute, private router: Router, private bankingService: PisService) {
+  constructor(private route: ActivatedRoute, private router: Router, private pisService: PisService) {
   }
-
 
   ngOnInit() {
     this.route.url
@@ -44,12 +43,12 @@ export class PisConsentConfirmationPageComponent implements OnInit {
       });
 
     const bankingData = <Banking>({tan: this.tan, consentId: this.consentId, paymentId: this.paymentId});
-    this.bankingService.saveData(bankingData);
+    this.pisService.setData(bankingData);
     this.getSinglePayments();
   }
 
   getSinglePayments() {
-    this.bankingService.getConsentById().subscribe(data => {
+    this.pisService.getConsentById().subscribe(data => {
       this.singlePayments = data;
     });
   }
@@ -67,16 +66,16 @@ export class PisConsentConfirmationPageComponent implements OnInit {
   }
 
   onClickContinue() {
-    this.bankingService.updateConsentStatus(ConsentStatusEnum.RECEIVED)
+    this.pisService.updateConsentStatus(ConsentStatusEnum.RECEIVED)
       .subscribe();
-    this.bankingService.generateTan().subscribe();
+    this.pisService.generateTan().subscribe();
     this.router.navigate(['pis/tanconfirmation'], {
       queryParams: this.createQueryParams()
     });
   }
 
   onClickCancel() {
-    this.bankingService.updateConsentStatus(ConsentStatusEnum.REVOKEDBYPSU)
+    this.pisService.updateConsentStatus(ConsentStatusEnum.REVOKEDBYPSU)
       .subscribe();
     this.router.navigate(['pis/consentconfirmationdenied']);
   }

@@ -37,7 +37,7 @@ export class PisTanConfirmationPageComponent implements OnInit {
     this.route.queryParams
       .subscribe(params => { this.getBankingDetailsFromUrl(params); });
     const bankingData = <Banking>({ tan: this.tan, consentId: this.consentId, paymentId: this.paymentId });
-    this.bankingService.saveData(bankingData);
+    this.bankingService.setData(bankingData);
   }
 
   getBankingDetailsFromUrl(params: Params) {

@@ -17,7 +17,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Config } from '../model/Config';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +39,4 @@ export class ConfigService {
   setConfig(config: Config) {
     this.config = config;
   }
-
 }
