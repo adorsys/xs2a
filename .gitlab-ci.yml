@@ -103,11 +103,24 @@ variables: &variables
     - "online-banking-demo/target/online-banking-demo*jar"
   name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
 
+.angular_artifacts: &angular_artifacts
+  paths:
+    - "online-banking-demo-ui/dist"
+  name: "$CI_PROJECT_NAME-${CI_BUILD_REF_NAME#*v}"
+
 .build_java: &build_java
   stage: "build:src"
   image: "adorsys/openjdk-build-base:8"
   script:
     - mvn -DskipTests clean install
+
+.build_angular: &build_angular
+  stage: "build:src"
+  image: "alexsuch/angular-cli:6.0.1"
+  script:
+    - cd online-banking-demo-ui
+    - npm install
+    - npm run build --prod
 
 # Build docker images and put them to GITLAB repo
 # TODO remove when docker hub images will be applied to deployment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/169
@@ -136,6 +149,10 @@ variables: &variables
     - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
     - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
 
+    - docker build -t "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
+    - docker push "$GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
+
+
 # Build docker images and put them to DOCKER HUB repo
 .build_dockerhub_image: &build_dockerhub_image
   script:
@@ -146,6 +163,7 @@ variables: &variables
     - docker build -t "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG" aspsp-profile/aspsp-profile-server
     - docker build -t "$DOCKER_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG" integration-tests
     - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG" online-banking-demo
+    - docker build -t "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG" online-banking-demo-ui
 
     - docker login -u $DOCKER_HUB_LOGIN -p $DOCKER_HUB_PASS
 
@@ -156,6 +174,7 @@ variables: &variables
     - docker push "$DOCKER_IMAGE_NAME_ASPSP_PROFILE:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_INTEG_TESTS:$DOCKER_TAG"
     - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG"
+    - docker push "$DOCKER_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG"
 
     - docker logout
 
@@ -194,6 +213,10 @@ variables: &variables
     - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
     - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_DEMO:$DOCKER_TAG
 
+    - docker pull $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+    - docker tag $GITLAB_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+    - docker push $OPENSHIFT_IMAGE_NAME_ONLINE_BANKING_UI:$DOCKER_TAG
+
 .helm_env_deploy: &helm_env_deploy
   image: adorsys/ci-helm:2.10
   script:
@@ -219,6 +242,12 @@ build_package:
   <<: *build_java
   artifacts:
     <<: *java_artifacts
+    expire_in: "1 day"
+
+build_frontend:
+  <<: *build_angular
+  artifacts:
+    <<: *angular_artifacts
     expire_in: "1 day"
 
 pmd_report:
@@ -268,7 +297,6 @@ unit_tests:
 deploy_dockerhub_stage:
   stage: "build:image"
   only:
-    - dgo_push_images_docker_hub
     - develop
   variables:
     DOCKER_TAG: develop
