@@ -56,7 +56,6 @@ public class SpiPaymentMapper {
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setPaymentStatus(SpiTransactionStatus.RCVD);
         return single;
-
     }
 
     public SpiSinglePayment mapToSpiSinglePayment(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment payment, SpiPaymentProduct paymentProduct) {
