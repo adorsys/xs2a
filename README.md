@@ -135,6 +135,9 @@ Example
 ```bash
 $ scripts/release-scripts/release.sh 1.0 1.1
 ```
+## Release notes
+  
+  * [Release notes](doc/releasenotes.md) 
  
 ### Testing API with Postman json collections
  
@@ -148,6 +151,9 @@ $ scripts/release-scripts/release.sh 1.0 1.1
  
  To start testing with Postman collections it is necessary to have all services running.
  
+## Roadmap
+ 
+ * [Roadmap](doc/roadmap.md) - The up-to-date project's roadmap
 
 ## Authors
 
