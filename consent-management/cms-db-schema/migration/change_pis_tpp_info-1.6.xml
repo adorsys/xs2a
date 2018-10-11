@@ -44,25 +44,25 @@
                                tableName="tpp_info"/>
 
         <addColumn tableName="tpp_info">
-            <column name="authority_id" type="VARCHAR">
+            <column defaultValue="12345987" name="authority_id" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="authority_name" type="VARCHAR">
+            <column defaultValue="authority name" name="authority_name" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="country" type="VARCHAR">
+            <column defaultValue="Germany" name="country" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="organisation" type="VARCHAR">
+            <column defaultValue="Organisation" name="organisation" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="organisation_unit" type="VARCHAR">
+            <column defaultValue="Organisation unit" name="organisation_unit" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="city" type="VARCHAR">
+            <column defaultValue="Nuremberg" name="city" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
-            <column name="state" type="VARCHAR">
+            <column defaultValue="Bayern" name="state" type="VARCHAR">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
