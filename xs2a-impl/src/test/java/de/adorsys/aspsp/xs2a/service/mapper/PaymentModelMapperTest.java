@@ -137,8 +137,8 @@ public class PaymentModelMapperTest {
         assertThat(result.getUltimateCreditor()).isNotBlank();
         assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
         assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getRequestedExecutionDate()).isNotNull();
-        assertThat(result.getRequestedExecutionTime()).isNotNull();
+        assertThat(result.getRequestedExecutionDate()).isNull();
+        assertThat(result.getRequestedExecutionTime()).isNull();
     }
 
     @Test

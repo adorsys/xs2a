@@ -25,7 +25,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Currency;
 
 @Data
@@ -95,7 +95,7 @@ public class PisPaymentData {
 
     @Column(name = "requested_execution_time")
     @ApiModelProperty(value = "Requested execution time", example = "2020-01-01T15:30:35.035Z")
-    private LocalDateTime requestedExecutionTime;
+    private OffsetDateTime requestedExecutionTime;
 
     @Column(name = "ultimate_creditor")
     @ApiModelProperty(value = "Ultimate creditor", example = "Telekom")

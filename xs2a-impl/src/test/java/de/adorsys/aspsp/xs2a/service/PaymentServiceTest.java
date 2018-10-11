@@ -38,7 +38,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
@@ -263,7 +263,7 @@ public class PaymentServiceTest {
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
         singlePayments.setRequestedExecutionDate(LocalDate.now());
-        singlePayments.setRequestedExecutionTime(LocalDateTime.now());
+        singlePayments.setRequestedExecutionTime(OffsetDateTime.now());
         return singlePayments;
     }
 
@@ -290,7 +290,7 @@ public class PaymentServiceTest {
         payment.setStartDate(LocalDate.now());
         payment.setEndDate(LocalDate.now().plusMonths(4));
         payment.setRequestedExecutionDate(LocalDate.now());
-        payment.setRequestedExecutionTime(LocalDateTime.now());
+        payment.setRequestedExecutionTime(OffsetDateTime.now());
         return payment;
     }
 
