@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,71 +17,51 @@ import java.util.Objects;
  */
 @ApiModel(description = "Transaction details")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TransactionDetails {
     @JsonProperty("transactionId")
     private String transactionId = null;
-
     @JsonProperty("entryReference")
     private String entryReference = null;
-
     @JsonProperty("endToEndId")
     private String endToEndId = null;
-
     @JsonProperty("mandateId")
     private String mandateId = null;
-
     @JsonProperty("checkId")
     private String checkId = null;
-
     @JsonProperty("creditorId")
     private String creditorId = null;
-
     @JsonProperty("bookingDate")
     private LocalDate bookingDate = null;
-
     @JsonProperty("valueDate")
     private LocalDate valueDate = null;
-
     @JsonProperty("transactionAmount")
     private Amount transactionAmount = null;
-
     @JsonProperty("exchangeRate")
     private ExchangeRateList exchangeRate = null;
-
     @JsonProperty("creditorName")
     private String creditorName = null;
-
     @JsonProperty("creditorAccount")
     private Object creditorAccount = null;
-
     @JsonProperty("ultimateCreditor")
     private String ultimateCreditor = null;
-
     @JsonProperty("debtorName")
     private String debtorName = null;
-
     @JsonProperty("debtorAccount")
     private Object debtorAccount = null;
-
     @JsonProperty("ultimateDebtor")
     private String ultimateDebtor = null;
-
     @JsonProperty("remittanceInformationUnstructured")
     private String remittanceInformationUnstructured = null;
-
     @JsonProperty("remittanceInformationStructured")
     private String remittanceInformationStructured = null;
-
     @JsonProperty("purposeCode")
     private PurposeCode purposeCode = null;
-
     @JsonProperty("bankTransactionCode")
     private String bankTransactionCode = null;
-
     @JsonProperty("proprietaryBankTransactionCode")
     private String proprietaryBankTransactionCode = null;
-
     @JsonProperty("_links")
     private Map _links = null;
 
@@ -107,13 +71,15 @@ public class TransactionDetails {
     }
 
     /**
-     * the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered.  If this data attribute is provided this shows that the AIS can get access on more details about this  transaction using the GET Transaction Details Request
+     * the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered. If
+     * this data attribute is provided this shows that the AIS can get access on more details about this transaction
+     * using the GET Transaction Details Request
      *
      * @return transactionId
      **/
-    @ApiModelProperty(value = "the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered.  If this data attribute is provided this shows that the AIS can get access on more details about this  transaction using the GET Transaction Details Request  ")
-
-
+    @ApiModelProperty(value = "the Transaction Id can be used as access-ID in the API, where more details on an " +
+        "transaction is offered. If this data attribute is provided this shows that the AIS can get access on more " +
+        "details about this transaction using the GET Transaction Details Request ")
     public String getTransactionId() {
         return transactionId;
     }
@@ -128,12 +94,13 @@ public class TransactionDetails {
     }
 
     /**
-     * Is the identification of the transaction as used e.g. for reference for deltafunction on application level.  The same identification as for example used within camt.05x messages.
+     * Is the identification of the transaction as used e.g. for reference for deltafunction on application level.
+     * The same identification as for example used within camt.05x messages.
      *
      * @return entryReference
      **/
-    @ApiModelProperty(value = "Is the identification of the transaction as used e.g. for reference for deltafunction on application level.  The same identification as for example used within camt.05x messages. ")
-
+    @ApiModelProperty(value = "Is the identification of the transaction as used e.g. for reference for deltafunction " +
+        "on application level. The same identification as for example used within camt.05x messages. ")
     @Size(max = 35)
     public String getEntryReference() {
         return entryReference;
@@ -154,7 +121,6 @@ public class TransactionDetails {
      * @return endToEndId
      **/
     @ApiModelProperty(value = "Unique end to end identity.")
-
     @Size(max = 35)
     public String getEndToEndId() {
         return endToEndId;
@@ -175,7 +141,6 @@ public class TransactionDetails {
      * @return mandateId
      **/
     @ApiModelProperty(value = "Identification of Mandates, e.g. a SEPA Mandate ID.")
-
     @Size(max = 35)
     public String getMandateId() {
         return mandateId;
@@ -196,7 +161,6 @@ public class TransactionDetails {
      * @return checkId
      **/
     @ApiModelProperty(value = "Identification of a Cheque.")
-
     @Size(max = 35)
     public String getCheckId() {
         return checkId;
@@ -217,7 +181,6 @@ public class TransactionDetails {
      * @return creditorId
      **/
     @ApiModelProperty(value = "Identification of Creditors, e.g. a SEPA Creditor ID.")
-
     @Size(max = 35)
     public String getCreditorId() {
         return creditorId;
@@ -237,7 +200,7 @@ public class TransactionDetails {
      *
      * @return bookingDate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public LocalDate getBookingDate() {
         return bookingDate;
@@ -258,7 +221,6 @@ public class TransactionDetails {
      * @return valueDate
      **/
     @ApiModelProperty(value = "The Date at which assets become available to the account owner in case of a credit.")
-
     @Valid
     public LocalDate getValueDate() {
         return valueDate;
@@ -278,7 +240,7 @@ public class TransactionDetails {
      *
      * @return transactionAmount
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public Amount getTransactionAmount() {
@@ -299,7 +261,7 @@ public class TransactionDetails {
      *
      * @return exchangeRate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ExchangeRateList getExchangeRate() {
         return exchangeRate;
@@ -319,7 +281,7 @@ public class TransactionDetails {
      *
      * @return creditorName
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCreditorName() {
         return creditorName;
     }
@@ -338,7 +300,7 @@ public class TransactionDetails {
      *
      * @return creditorAccount
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Object getCreditorAccount() {
         return creditorAccount;
     }
@@ -357,7 +319,7 @@ public class TransactionDetails {
      *
      * @return ultimateCreditor
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getUltimateCreditor() {
         return ultimateCreditor;
     }
@@ -376,7 +338,7 @@ public class TransactionDetails {
      *
      * @return debtorName
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getDebtorName() {
         return debtorName;
     }
@@ -395,7 +357,7 @@ public class TransactionDetails {
      *
      * @return debtorAccount
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Object getDebtorAccount() {
         return debtorAccount;
     }
@@ -414,7 +376,7 @@ public class TransactionDetails {
      *
      * @return ultimateDebtor
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getUltimateDebtor() {
         return ultimateDebtor;
     }
@@ -433,7 +395,7 @@ public class TransactionDetails {
      *
      * @return remittanceInformationUnstructured
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Size(max = 140)
     public String getRemittanceInformationUnstructured() {
         return remittanceInformationUnstructured;
@@ -449,12 +411,14 @@ public class TransactionDetails {
     }
 
     /**
-     * Reference as contained in the structured remittance reference structure (without the surrounding XML structure).  Different from other places the content is containt in plain form not in form of a structered field.
+     * Reference as contained in the structured remittance reference structure (without the surrounding XML
+     * structure).  Different from other places the content is containt in plain form not in form of a structered field.
      *
      * @return remittanceInformationStructured
      **/
-    @ApiModelProperty(value = "Reference as contained in the structured remittance reference structure (without the surrounding XML structure).  Different from other places the content is containt in plain form not in form of a structered field. ")
-
+    @ApiModelProperty(value = "Reference as contained in the structured remittance reference structure (without the " +
+        "surrounding XML structure).  Different from other places the content is containt in plain form not in form " +
+        "of a structered field. ")
     @Size(max = 140)
     public String getRemittanceInformationStructured() {
         return remittanceInformationStructured;
@@ -474,7 +438,7 @@ public class TransactionDetails {
      *
      * @return purposeCode
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public PurposeCode getPurposeCode() {
         return purposeCode;
@@ -494,7 +458,7 @@ public class TransactionDetails {
      *
      * @return bankTransactionCode
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getBankTransactionCode() {
         return bankTransactionCode;
     }
@@ -513,7 +477,7 @@ public class TransactionDetails {
      *
      * @return proprietaryBankTransactionCode
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getProprietaryBankTransactionCode() {
         return proprietaryBankTransactionCode;
     }
@@ -532,7 +496,7 @@ public class TransactionDetails {
      *
      * @return _links
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public Map getLinks() {
         return _links;
@@ -541,7 +505,6 @@ public class TransactionDetails {
     public void setLinks(Map _links) {
         this._links = _links;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -557,14 +520,16 @@ public class TransactionDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, exchangeRate, creditorName, creditorAccount, ultimateCreditor, debtorName, debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, _links);
+        return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate,
+            valueDate, transactionAmount, exchangeRate, creditorName, creditorAccount, ultimateCreditor, debtorName,
+            debtorAccount, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationStructured,
+            purposeCode, bankTransactionCode, proprietaryBankTransactionCode, _links);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TransactionDetails {\n");
-
         sb.append("    transactionId: ").append(toIndentedString(transactionId)).append("\n");
         sb.append("    entryReference: ").append(toIndentedString(entryReference)).append("\n");
         sb.append("    endToEndId: ").append(toIndentedString(endToEndId)).append("\n");

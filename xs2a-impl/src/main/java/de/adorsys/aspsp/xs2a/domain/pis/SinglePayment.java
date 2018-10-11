@@ -32,6 +32,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -101,7 +103,7 @@ public class SinglePayment implements AccountReferenceCollector {
 
     @Deprecated // Since 1.2
     @ApiModelProperty(value = "requested execution time", example = "2020-01-01T15:30:35.035Z")
-    private LocalDateTime requestedExecutionTime;
+    private OffsetDateTime requestedExecutionTime;
 
     @ApiModelProperty(value = "Transaction status", example = "Pending")
     private Xs2aTransactionStatus transactionStatus;
@@ -113,7 +115,7 @@ public class SinglePayment implements AccountReferenceCollector {
                    .orElse(true)
                    &&
                    Optional.ofNullable(this.requestedExecutionTime)
-                       .map(d -> d.isAfter(LocalDate.now().atTime(0, 0)))
+                       .map(d -> d.isAfter(LocalDate.now().atTime(0, 0).atOffset(this.requestedExecutionTime.getOffset())))
                        .orElse(true);
     }
 

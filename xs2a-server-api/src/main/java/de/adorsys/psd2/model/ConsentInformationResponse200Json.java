@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,23 +15,19 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successfull get consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class ConsentInformationResponse200Json {
     @JsonProperty("access")
     private AccountAccess access = null;
-
     @JsonProperty("recurringIndicator")
     private Boolean recurringIndicator = null;
-
     @JsonProperty("validUntil")
     private LocalDate validUntil = null;
-
     @JsonProperty("frequencyPerDay")
     private Integer frequencyPerDay = null;
-
     @JsonProperty("lastActionDate")
     private LocalDate lastActionDate = null;
-
     @JsonProperty("consentStatus")
     private ConsentStatus consentStatus = null;
 
@@ -61,7 +41,7 @@ public class ConsentInformationResponse200Json {
      *
      * @return access
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public AccountAccess getAccess() {
@@ -82,7 +62,7 @@ public class ConsentInformationResponse200Json {
      *
      * @return recurringIndicator
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public Boolean getRecurringIndicator() {
         return recurringIndicator;
@@ -102,7 +82,7 @@ public class ConsentInformationResponse200Json {
      *
      * @return validUntil
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public LocalDate getValidUntil() {
@@ -123,7 +103,7 @@ public class ConsentInformationResponse200Json {
      *
      * @return frequencyPerDay
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public Integer getFrequencyPerDay() {
         return frequencyPerDay;
@@ -143,7 +123,7 @@ public class ConsentInformationResponse200Json {
      *
      * @return lastActionDate
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public LocalDate getLastActionDate() {
@@ -164,7 +144,7 @@ public class ConsentInformationResponse200Json {
      *
      * @return consentStatus
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public ConsentStatus getConsentStatus() {
@@ -174,7 +154,6 @@ public class ConsentInformationResponse200Json {
     public void setConsentStatus(ConsentStatus consentStatus) {
         this.consentStatus = consentStatus;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -197,7 +176,6 @@ public class ConsentInformationResponse200Json {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ConsentInformationResponse200Json {\n");
-
         sb.append("    access: ").append(toIndentedString(access)).append("\n");
         sb.append("    recurringIndicator: ").append(toIndentedString(recurringIndicator)).append("\n");
         sb.append("    validUntil: ").append(toIndentedString(validUntil)).append("\n");

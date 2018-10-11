@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,11 +12,14 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * The parameter is not supported by the API provider. This code should only be used for parameters that are described as
+ * The parameter is not supported by the API provider. This code should only be used for parameters that are
+ * described as
  */
-@ApiModel(description = "The parameter is not supported by the API provider. This code should only be used for parameters that are described as ")
+@ApiModel(description = "The parameter is not supported by the API provider. This code should only be used for " +
+    "parameters that are described as ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
     @JsonProperty("category")
     private TppMessageCategory category = null;
@@ -53,7 +40,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -74,7 +61,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public CodeEnum getCode() {
         return code;
@@ -94,7 +81,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -113,7 +100,7 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -130,7 +117,8 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TppMessageGENERICPARAMETERNOTSUPPORTED400 tppMessageGENERICPARAMETERNOTSUPPORTED400 = (TppMessageGENERICPARAMETERNOTSUPPORTED400) o;
+        TppMessageGENERICPARAMETERNOTSUPPORTED400 tppMessageGENERICPARAMETERNOTSUPPORTED400 =
+            (TppMessageGENERICPARAMETERNOTSUPPORTED400) o;
         return Objects.equals(this.category, tppMessageGENERICPARAMETERNOTSUPPORTED400.category) && Objects.equals(this.code, tppMessageGENERICPARAMETERNOTSUPPORTED400.code) && Objects.equals(this.path, tppMessageGENERICPARAMETERNOTSUPPORTED400.path) && Objects.equals(this.text, tppMessageGENERICPARAMETERNOTSUPPORTED400.text);
     }
 
@@ -143,7 +131,6 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICPARAMETERNOTSUPPORTED400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -168,7 +155,6 @@ public class TppMessageGENERICPARAMETERNOTSUPPORTED400 {
      */
     public enum CodeEnum {
         SUPPORTED("PARAMETER_NOT_SUPPORTED");
-
         private String value;
 
         CodeEnum(String value) {

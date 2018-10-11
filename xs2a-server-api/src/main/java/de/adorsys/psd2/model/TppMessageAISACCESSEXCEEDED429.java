@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,11 +12,13 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Message to the TPP:  The access on the account has been exceeding the consented multiplicity per day.
+ * Message to the TPP: The access on the account has been exceeding the consented multiplicity per day.
  */
-@ApiModel(description = "Message to the TPP:  The access on the account has been exceeding the consented multiplicity per day. ")
+@ApiModel(description = "Message to the TPP: The access on the account has been exceeding the consented multiplicity " +
+    "per day. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageAISACCESSEXCEEDED429 {
     @JsonProperty("category")
     private TppMessageCategory category = null;
@@ -53,7 +39,7 @@ public class TppMessageAISACCESSEXCEEDED429 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -74,7 +60,7 @@ public class TppMessageAISACCESSEXCEEDED429 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public CodeEnum getCode() {
         return code;
@@ -94,7 +80,7 @@ public class TppMessageAISACCESSEXCEEDED429 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -113,7 +99,7 @@ public class TppMessageAISACCESSEXCEEDED429 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -131,7 +117,8 @@ public class TppMessageAISACCESSEXCEEDED429 {
             return false;
         }
         TppMessageAISACCESSEXCEEDED429 tppMessageAISACCESSEXCEEDED429 = (TppMessageAISACCESSEXCEEDED429) o;
-        return Objects.equals(this.category, tppMessageAISACCESSEXCEEDED429.category) && Objects.equals(this.code, tppMessageAISACCESSEXCEEDED429.code) && Objects.equals(this.path, tppMessageAISACCESSEXCEEDED429.path) && Objects.equals(this.text, tppMessageAISACCESSEXCEEDED429.text);
+        return Objects.equals(this.category, tppMessageAISACCESSEXCEEDED429.category) && Objects.equals(this.code,
+            tppMessageAISACCESSEXCEEDED429.code) && Objects.equals(this.path, tppMessageAISACCESSEXCEEDED429.path) && Objects.equals(this.text, tppMessageAISACCESSEXCEEDED429.text);
     }
 
     @Override
@@ -143,7 +130,6 @@ public class TppMessageAISACCESSEXCEEDED429 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageAISACCESSEXCEEDED429 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -168,7 +154,6 @@ public class TppMessageAISACCESSEXCEEDED429 {
      */
     public enum CodeEnum {
         EXCEEDED("ACCESS_EXCEEDED");
-
         private String value;
 
         CodeEnum(String value) {
