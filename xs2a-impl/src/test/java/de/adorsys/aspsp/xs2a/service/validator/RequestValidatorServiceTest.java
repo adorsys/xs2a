@@ -63,7 +63,7 @@ public class RequestValidatorServiceTest {
             .thenReturn(Arrays.asList(PaymentProduct.ISCT, PaymentProduct.SCT));
 
         when(aspspProfileService.getAvailablePaymentTypes())
-            .thenReturn(Arrays.asList(PisPaymentType.SINGLE, PisPaymentType.BULK, PisPaymentType.FUTURE_DATED));
+            .thenReturn(Arrays.asList(PisPaymentType.SINGLE, PisPaymentType.BULK));
     }
 
     @Test
