@@ -26,5 +26,5 @@ public interface ScaPaymentService {
 
     List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct);
 
-    SinglePayment createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct);
+    SinglePaymentInitiateResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct);
 }
