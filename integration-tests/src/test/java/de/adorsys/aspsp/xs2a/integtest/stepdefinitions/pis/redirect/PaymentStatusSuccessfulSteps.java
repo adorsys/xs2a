@@ -56,14 +56,14 @@ public class PaymentStatusSuccessfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^Psu wants to request the payment status of a payment with payment-id (.*) by using the payment-service (.*)$")
-    public void setPaymentParameters(String paymentId, String paymentService) {
-        context.setPaymentId(paymentId);
-        context.setPaymentService(paymentService);
-    }
+    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    // See SinglePaymentSuccessfulSteps
 
-    @And("^the set of data (.*)$")
-    public void loadTestData(String dataFileName) throws IOException {
+    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
+    // See GlobalSuccessfulSteps
+
+    @And("^PSU wants to request the payment status by using a set of data (.*)$")
+    public void loadPaymentStatusTestData(String dataFileName) throws IOException {
         TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString(
             "/data-input/pis/status/" + dataFileName, UTF_8),
             new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
@@ -85,8 +85,8 @@ public class PaymentStatusSuccessfulSteps {
         context.setActualResponse(response);
     }
 
-    @Then("^an appropriate response code and the status is delivered to the PSU$")
-    public void checkStatus() {
+    @Then("^a successful response code and the correct payment status is delivered to the PSU$")
+    public void checkResponseCodeAndPaymentStatus() {
         ResponseEntity<PaymentInitiationStatusResponse200Json> actualResponse = context.getActualResponse();
         PaymentInitiationStatusResponse200Json givenResponseBody = context.getTestData().getResponse().getBody();
 

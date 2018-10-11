@@ -61,8 +61,8 @@ public class PaymentController implements PaymentApi {
 
         ResponseObject<Xs2aTransactionStatus> response = PaymentType.getByValue(paymentService)
             .map(pt -> xs2aPaymentService.getPaymentStatusById(paymentId, pt))
-            .orElseGet(() -> ResponseObject.<Xs2aTransactionStatus>builder()
-                .fail(new MessageError(FORMAT_ERROR)).build());
+            .orElseGet(ResponseObject.<Xs2aTransactionStatus>builder()
+                .fail(new MessageError(FORMAT_ERROR))::build);
 
         return responseMapper.ok(response, PaymentModelMapperPsd2::mapToStatusResponse12);
     }
@@ -75,8 +75,8 @@ public class PaymentController implements PaymentApi {
                                                 UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject response = PaymentType.getByValue(paymentService)
             .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentId))
-            .orElseGet(() -> ResponseObject.builder()
-                .fail(new MessageError(FORMAT_ERROR)).build());
+            .orElseGet(ResponseObject.builder()
+                .fail(new MessageError(FORMAT_ERROR))::build);
 
         //TODO check for Optional.get() without check for value presence https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/380
         return response.hasError()
@@ -122,7 +122,8 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity getPaymentInitiationCancellationAuthorisationInformation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        //Todo map response to CancellationList, when it will be possible https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/402
+        return responseMapper.ok(consentService.getPaymentInitiationCancellationAuthorisationInformation(paymentId));
     }
 
     @Override
@@ -138,7 +139,7 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity startPaymentInitiationCancellationAuthorisation(String paymentService, String paymentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null; //TODO implement
+        return responseMapper.created(consentService.createPisConsentCancellationAuthorization(paymentId, PaymentType.getByValue(paymentService).get()), consentModelMapper::mapToStartScaProcessResponse);
     }
 
     @Override

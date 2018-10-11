@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
@@ -38,8 +37,8 @@ import java.util.Optional;
 public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private AuthorisationMethodService authorisationMethodService;
 
-    public ConsentAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
-        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    public ConsentAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService, AuthorisationMethodService authorisationMethodService) {
+        super(aspspProfileService, messageService);
         this.authorisationMethodService = authorisationMethodService;
     }
 

@@ -18,9 +18,11 @@ package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -40,7 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class PaymentCancellationErrorfulSteps {
+public class PaymentCancellationErrorfulSteps extends AbstractErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -52,10 +54,14 @@ public class PaymentCancellationErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^PSU wants to cancel a payment (.*) with payment-id (.*) using the payment service (.*)$")
-    public void loadTestData(String dataFileName, String paymentId, String paymentService) throws IOException {
-        context.setPaymentService(paymentService);
-        context.setPaymentId(paymentId);
+    // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    // See SinglePaymentSuccessfulSteps
+
+    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
+    // See GlobalSuccessfulSteps
+
+    @And("^PSU prepares the errorful cancellation request data (.*) with the payment service (.*)$")
+    public void loadErrorfulPaymentCancellationTestData(String dataFileName, String paymentService) throws IOException {
 
         TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
             "/data-input/pis/cancellation/" + dataFileName, UTF_8),
@@ -63,6 +69,8 @@ public class PaymentCancellationErrorfulSteps {
             });
 
         context.setTestData(data);
+        context.setPaymentService(paymentService);
+        this.setErrorfulIds(dataFileName);
     }
 
     @When("^PSU initiates the cancellation of the payment with error$")

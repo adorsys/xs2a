@@ -22,6 +22,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -41,7 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
-public class PaymentStatusErrorfulSteps {
+public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
 
     @Autowired
     @Qualifier("xs2a")
@@ -53,18 +54,22 @@ public class PaymentStatusErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
-    @Given("^Psu requests the payment status of a payment with payment-id (.*) by using the payment-service (.*)$")
-    public void setPaymentParameters(String paymentId, String paymentService) {
-        context.setPaymentId(paymentId);
-        context.setPaymentService(paymentService);
-    }
+    //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
+    // See SinglePaymentSuccessfulSteps
 
-    @And("^the errorful set of data (.*)$")
-    public void loadErrorfulTestData(String dataFileName) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString("/data-input/pis/status/" + dataFileName, UTF_8), new TypeReference<TestData<HashMap, TppMessages>>() {
-        });
+    // @And("^PSU sends the single payment initiating request and receives the paymentId$")
+    // See GlobalSuccessfulSteps
+
+    @And("^PSU prepares the errorful payment status request data (.*) with the payment service (.*)$")
+    public void loadErrorfulPaymentStatusTestData (String dataFileName, String paymentService) throws IOException {
+        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
+            "/data-input/pis/status/" + dataFileName, UTF_8),
+            new TypeReference<TestData<HashMap, TppMessages>>() {
+            });
 
         context.setTestData(data);
+        context.setPaymentService(paymentService);
+        this.setErrorfulIds(dataFileName);
     }
 
     @When("^PSU requests the status of the payment with error$")
