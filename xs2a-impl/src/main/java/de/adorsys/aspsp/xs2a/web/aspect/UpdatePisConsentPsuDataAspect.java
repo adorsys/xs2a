@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web.aspect;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aChosenScaMethod;
@@ -36,8 +35,8 @@ import org.springframework.stereotype.Component;
 public class UpdatePisConsentPsuDataAspect extends AbstractLinkAspect<PaymentController> {
     private final static String PSU_AUTHORISATION_URL = "/v1/{paymentService}/{paymentId}/authorisations/{authorisationId}";
 
-    public UpdatePisConsentPsuDataAspect(int maxNumberOfCharInTransactionJson, AspspProfileServiceWrapper aspspProfileService, JsonConverter jsonConverter, MessageService messageService) {
-        super(maxNumberOfCharInTransactionJson, aspspProfileService, jsonConverter, messageService);
+    public UpdatePisConsentPsuDataAspect(AspspProfileServiceWrapper aspspProfileService, MessageService messageService) {
+        super(aspspProfileService, messageService);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.ConsentService.updatePisConsentPsuData(..)) && args(request)", returning = "result", argNames = "result,request")

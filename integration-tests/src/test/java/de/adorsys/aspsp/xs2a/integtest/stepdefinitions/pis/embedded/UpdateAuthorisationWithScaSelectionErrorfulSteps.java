@@ -16,7 +16,28 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
-public class UpdateAuthorisationWithScaSelectionErrorfulSteps {
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.java.en.And;
+import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
+import de.adorsys.aspsp.xs2a.integtest.util.Context;
+import de.adorsys.psd2.model.TppMessages;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.util.HashMap;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.resourceToString;
+
+public class UpdateAuthorisationWithScaSelectionErrorfulSteps extends AbstractErrorfulSteps {
+
+    @Autowired
+    private Context<HashMap, TppMessages> context;
+
+    @Autowired
+    private ObjectMapper mapper;
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps
@@ -33,8 +54,17 @@ public class UpdateAuthorisationWithScaSelectionErrorfulSteps {
     // @And("^PSU sends the update identification data request$")
     // See UpdateAuthorisationWithIdentificationSuccessfulSteps
 
-    // @And("^PSU prepares the errorful data (.*) with the payment service (.*)$")
-    // See GlobalErrorfulSteps
+    @And("^PSU prepares the errorful sca selection data (.*) with the payment service (.*)$")
+    public void loadErrorfulSelectScaData (String dataFileName, String paymentService) throws IOException {
+        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
+            "/data-input/pis/embedded/" + dataFileName, UTF_8),
+            new TypeReference<TestData<HashMap, TppMessages>>() {
+            });
+
+        context.setTestData(data);
+        context.setPaymentService(paymentService);
+        this.setErrorfulIds(dataFileName);
+    }
 
     // @When("^PSU sends the errorful update authorisation data request$")
     // See GlobalErrorfulSteps

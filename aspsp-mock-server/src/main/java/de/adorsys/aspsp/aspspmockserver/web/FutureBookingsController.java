@@ -41,6 +41,6 @@ public class FutureBookingsController {
     public ResponseEntity<SpiAccountDetails> changeBalances(@PathVariable("iban") String iban, @PathVariable("currency") String currency) {
         return futureBookingsService.changeBalances(iban, currency)
                    .map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 }

@@ -47,7 +47,7 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
     public ResponseEntity<List<SpiAccountDetails>> readAllAccounts() {
         return Optional.ofNullable(accountService.getAllAccounts())
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Returns account details specified by ASPSP account identifier.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -58,7 +58,7 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
     public ResponseEntity<SpiAccountDetails> readAccountById(@PathVariable("accountId") String accountId) {
         return accountService.getAccountById(accountId)
                    .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.noContent().build());
+                   .orElseGet(ResponseEntity.noContent()::build);
     }
 
     @ApiOperation(value = "Creates an account for a specific PSU.", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})
@@ -69,7 +69,7 @@ public class AccountController { //TODO: Remove unnecessary endpoints and servic
     public ResponseEntity createAccount(@RequestParam String psuId, @RequestBody SpiAccountDetails account) {
         return accountService.addAccount(psuId, account)
                    .map(acc -> new ResponseEntity<>(acc, CREATED))
-                   .orElse(ResponseEntity.badRequest().build());
+                   .orElseGet(ResponseEntity.badRequest()::build);
     }
 
     @ApiOperation(value = "Removes PSU account by it`s ASPSP identifier", authorizations = {@Authorization(value = "oauth2", scopes = {@AuthorizationScope(scope = "read", description = "Access read API")})})

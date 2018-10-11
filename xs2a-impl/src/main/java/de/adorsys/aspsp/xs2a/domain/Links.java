@@ -49,7 +49,7 @@ public class Links {
     private String status;
 
     @ApiModelProperty(value = "account link", example = "api/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f")
-    private String viewAccount;
+    private String account;
 
     @ApiModelProperty(value = "balances: A link to the resource providing the balance of a dedicated account.", example = "api/v1/accounts/3dc3d5b3-7023-4848-9853-f5400a64e80f/balances")
     private String viewBalances;
