@@ -17,11 +17,8 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPeriodicPaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentProduct;
-import de.adorsys.aspsp.xs2a.spi.domain.v2.SpiPeriodicPayment;
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import org.springframework.stereotype.Service;
 
 @Service("periodic-payments")

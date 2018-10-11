@@ -17,14 +17,14 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
-import static de.adorsys.aspsp.xs2a.spi.domain.SpiResponseStatus.*;
+import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus.*;
 
 @Component
 public class SpiResponseStatusToXs2aMessageErrorCodeMapper {

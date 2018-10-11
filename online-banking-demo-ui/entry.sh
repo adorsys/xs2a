@@ -1,6 +1,7 @@
 #!/bin/sh
 
 envsubst '$XS2A_URL
+          $KEYCLOAK_URL
           $MOCKSERVER_URL
           $ONLINE_BANKING_SERVER_URL
           $CONSENT_MANAGEMENT_URL

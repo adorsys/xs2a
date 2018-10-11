@@ -16,8 +16,8 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,6 +25,10 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * @deprecated since 1.8. Will be removed in 1.10
+ * @see de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment
+ */
 @Data
 @ApiModel(description = "BulkPayment Initialisation Request", value = "SpiBulkPayment")
 public class SpiBulkPayment {

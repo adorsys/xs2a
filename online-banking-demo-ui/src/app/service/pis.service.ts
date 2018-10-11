@@ -26,38 +26,37 @@ import { KeycloakService } from 'keycloak-angular';
   providedIn: 'root'
 })
 export class PisService {
-  savedData = new Banking();
+  data = new Banking();
   psuId: string;
   private CM_CONSENT_URI =  '/consent-management/api/v1/pis/consent';
   private MOCK_CONSENT_CONFIRMATION_URI = '/mockserver/consent/confirmation/pis';
 
   constructor(private httpClient: HttpClient, private configService: ConfigService, private keycloak: KeycloakService) {
-    this.psuId = keycloak.getUsername();
   }
 
   validateTan(tan: string): Observable<string> {
     const body = {
       tanNumber: tan,
-      psuId: this.psuId,
-      consentId: this.savedData.consentId,
-      paymentId: this.savedData.paymentId
+      psuId: this.keycloak.getUsername(),
+      consentId: this.data.consentId,
+      paymentId: this.data.paymentId
     };
     return this.httpClient.put<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}`, body);
   }
 
   updateConsentStatus(status: string) {
-    return this.httpClient.put(`${this.MOCK_CONSENT_CONFIRMATION_URI}/${this.savedData.consentId}/${status}`, {});
+    return this.httpClient.put(`${this.MOCK_CONSENT_CONFIRMATION_URI}/${this.data.consentId}/${status}`, {});
   }
 
-  saveData(data) {
-    this.savedData = data;
+  setData(data) {
+    this.data = data;
   }
 
   generateTan(): Observable<string> {
-    return this.httpClient.post<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}/${this.psuId}/SMS_OTP`, {});
+    return this.httpClient.post<string>(`${this.MOCK_CONSENT_CONFIRMATION_URI}/${this.keycloak.getUsername()}/SMS_OTP`, {});
   }
 
   getConsentById(): Observable<SinglePayment> {
-    return this.httpClient.get<SinglePayment>(`${this.CM_CONSENT_URI}/${this.savedData.consentId}`);
+    return this.httpClient.get<SinglePayment>(`${this.CM_CONSENT_URI}/${this.data.consentId}`);
   }
 }
