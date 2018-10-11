@@ -1,21 +1,35 @@
-import { KeycloakService } from 'keycloak-angular';
-import { ConfigService } from '../service/config.service';
-import { Config } from '../model/Config';
-import { environment } from '../../environments/environment';
+/*
+ * Copyright 2018-2018 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-// export function initializer(keycloakService: KeycloakService, configService: ConfigService): () => Promise<any> {
-//   return (): Promise<any> => configService.loadConfig().then((config: Config) => {
-//     configService.setConfig(config);
-//     keycloakInit(keycloakService, configService).then();
-//   });
-// }
+import {KeycloakService} from 'keycloak-angular';
+import {ConfigService} from '../service/config.service';
+import {Config} from '../model/Config';
 
-export function initializer(keycloak: KeycloakService): () => Promise<any> {
-  return (): Promise<any> => {
+export function initializer(keycloakService: KeycloakService, configService: ConfigService): () => Promise<any> {
+  return (): Promise<any> => configService.loadConfig().then((config: Config) => {
+    configService.setConfig(config);
+    keycloakInit(keycloakService, configService).then();
+  });
+}
+
+export function keycloakInit(keycloak: KeycloakService, configService: ConfigService): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         await keycloak.init({
-          config: environment.keycloak,
+          config: configService.getConfig().keycloakConfig,
           initOptions: {
             onLoad: 'login-required',
             checkLoginIframe: false,
@@ -29,5 +43,4 @@ export function initializer(keycloak: KeycloakService): () => Promise<any> {
         reject(error);
       }
     });
-  };
 }

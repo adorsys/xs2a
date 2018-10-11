@@ -110,5 +110,5 @@ To deploy the webapp on a deployment environment, the following steps are needed
   ```
 - Build the docker container: `docker build -t online-banking-demo-ui .`
 - Run the docker container with the environment variables you need: 
-`docker run -e XS2A_URL='http://docker.for.mac.localhost:8080' -e MOCKSERVER_URL='http://docker.for.mac.localhost:28080' -e ONLINE_BANKING_SERVER_URL='http://docker.for.mac.localhost:28081' -e CONSENT_MANAGEMENT_URL='http://docker.for.mac.localhost:38080' -e PROFILE_SERVER_URL='http://docker.for.mac.localhost:48080' -p 4200:4200 --name online-banking-demo-ui -d online-banking-demo-ui`
+`docker run -e XS2A_URL='http://docker.for.mac.localhost:8080' -e KEYCLOAK_URL='http://docker.for.mac.localhost:8081' -e MOCKSERVER_URL='http://docker.for.mac.localhost:28080' -e ONLINE_BANKING_SERVER_URL='http://docker.for.mac.localhost:28081' -e CONSENT_MANAGEMENT_URL='http://docker.for.mac.localhost:38080' -e PROFILE_SERVER_URL='http://docker.for.mac.localhost:48080' -p 4200:4200 --name online-banking-demo-ui -d online-banking-demo-ui`
 - The docker container should now serve the content on port 4200
