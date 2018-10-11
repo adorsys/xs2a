@@ -31,15 +31,16 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMappe
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.service.validator.CreateConsentRequestValidator;
 import de.adorsys.aspsp.xs2a.service.validator.ValidationResult;
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
+import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccessType;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import org.junit.Before;
@@ -62,21 +63,21 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ConsentServiceTest {
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
-    private final String TPP_ID = "Test TppId";
-    private final String CORRECT_ACCOUNT_ID = "123";
-    private final String CORRECT_PSU_ID = "123456789";
-    private final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
-    private final String WRONG_PSU_ID = "WRONG PSU ID";
-    private final String CORRECT_IBAN = "DE123456789";
-    private final String CORRECT_IBAN_1 = "DE987654321";
-    private final String WRONG_IBAN = "WRONG IBAN";
-    private final Currency CURRENCY = Currency.getInstance("EUR");
-    private final Currency CURRENCY_2 = Currency.getInstance("USD");
-    private final LocalDate DATE = LocalDate.parse("2019-03-03");
-    private final boolean EXPLICIT_PREFERRED = true;
-    private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
-    private final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
-    private final LocalDate YESTERDAY = LocalDate.now().minus(Period.ofDays(1));
+    private static final String TPP_ID = "Test TppId";
+    private static final String CORRECT_ACCOUNT_ID = "123";
+    private static final String CORRECT_PSU_ID = "123456789";
+    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
+    private static final String WRONG_PSU_ID = "WRONG PSU ID";
+    private static final String CORRECT_IBAN = "DE123456789";
+    private static final String CORRECT_IBAN_1 = "DE987654321";
+    private static final String WRONG_IBAN = "WRONG IBAN";
+    private static final Currency CURRENCY = Currency.getInstance("EUR");
+    private static final Currency CURRENCY_2 = Currency.getInstance("USD");
+    private static final LocalDate DATE = LocalDate.parse("2019-03-03");
+    private static final boolean EXPLICIT_PREFERRED = true;
+    private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
+    private static final String CONSENT_ID_DATE_VALID_YESTERDAY = "c966f143-f6a2-41db-9036-8abaeeef3af8";
+    private static final LocalDate YESTERDAY = LocalDate.now().minus(Period.ofDays(1));
 
     @InjectMocks
     private ConsentService consentService;
@@ -200,7 +201,7 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validateRequest(req))
             .thenReturn(createValidationResult(true, null));
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.initiateAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -221,7 +222,7 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validateRequest(req))
             .thenReturn(createValidationResult(true, null));
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.initiateAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -271,7 +272,7 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validateRequest(req))
             .thenReturn(createValidationResult(true, null));
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.initiateAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -292,7 +293,7 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validateRequest(req))
             .thenReturn(createValidationResult(true, null));
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.initiateAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -313,7 +314,7 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validateRequest(req))
             .thenReturn(createValidationResult(true, null));
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.initiateAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -376,7 +377,7 @@ public class ConsentServiceTest {
     @Test
     public void deleteAccountConsentsById_Success() {
         //When:
-        when(aisConsentSpi.revokeAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.revokeAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject response = consentService.deleteAccountConsentsById(CONSENT_ID);
@@ -402,7 +403,7 @@ public class ConsentServiceTest {
         when(createConsentRequestValidator.validateRequest(req))
             .thenReturn(createValidationResult(true, null));
 
-        when(aisConsentSpi.initiateAisConsent(any(SpiAccountConsent.class), any(AspspConsentData.class)))
+        when(aisConsentSpi.initiateAisConsent(any(SpiPsuData.class), any(SpiAccountConsent.class), any(AspspConsentData.class)))
             .thenReturn(SpiResponse.<SpiResponse.VoidResponse>builder().success());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(

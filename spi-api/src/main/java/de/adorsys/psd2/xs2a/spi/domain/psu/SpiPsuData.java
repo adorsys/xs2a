@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.impl.v2;
+package de.adorsys.psd2.xs2a.spi.domain.psu;
 
-import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
-import org.springframework.stereotype.Service;
+import lombok.Value;
 
-@Service
-public class BulkPaymentSpiImpl implements BulkPaymentSpi {
+/**
+ * Contains data about PSU known in scope of the request
+ */
+@Value
+public class SpiPsuData {
+    private String psuId;
+    private String psuIdType;
+    private String psuCorporateId;
+    private String psuCorporateIdType;
 }
