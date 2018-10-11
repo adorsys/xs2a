@@ -18,7 +18,7 @@ package de.adorsys.aspsp.xs2a.spi.impl.service;
 
 import de.adorsys.aspsp.xs2a.spi.config.keycloak.BearerToken;
 import de.adorsys.aspsp.xs2a.spi.config.keycloak.KeycloakConfigProperties;
-import de.adorsys.aspsp.xs2a.spi.domain.authorisation.SpiAspspAuthorisationData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAspspAuthorisationData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
