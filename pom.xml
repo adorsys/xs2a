@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.aspsp</groupId>
     <artifactId>xs2a</artifactId>
-    <version>1.9-SNAPSHOT</version>
+    <version>1.9</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>aspsp-profile</module>
