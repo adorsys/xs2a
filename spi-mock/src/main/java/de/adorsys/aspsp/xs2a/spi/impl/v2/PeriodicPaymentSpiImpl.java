@@ -19,6 +19,7 @@ package de.adorsys.aspsp.xs2a.spi.impl.v2;
 import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPeriodicPaymentMapper;

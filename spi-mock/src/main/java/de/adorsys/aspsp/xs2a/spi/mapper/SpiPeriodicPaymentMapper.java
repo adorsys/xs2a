@@ -32,7 +32,7 @@ public class SpiPeriodicPaymentMapper {
         if (spiPeriodicPayment.getPaymentId() == null) {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
             paymentResponse.setPaymentId(spiPeriodicPayment.getEndToEndIdentification());
-            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"}); //TODO Create ENUM and update everywhere applicable https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/348
+            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"});
         } else {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
             paymentResponse.setPaymentId(spiPeriodicPayment.getPaymentId());

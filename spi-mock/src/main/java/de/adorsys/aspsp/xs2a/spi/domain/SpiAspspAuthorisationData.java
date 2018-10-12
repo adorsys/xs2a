@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.authorisation;
+package de.adorsys.aspsp.xs2a.spi.domain;
 
 import lombok.Value;
 

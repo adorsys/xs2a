@@ -26,7 +26,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAspspAuthorisationData;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;

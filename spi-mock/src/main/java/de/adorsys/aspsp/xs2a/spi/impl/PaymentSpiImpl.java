@@ -28,7 +28,7 @@ import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAspspAuthorisationData;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
