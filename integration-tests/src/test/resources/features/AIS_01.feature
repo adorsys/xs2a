@@ -92,7 +92,6 @@ Feature: Account Information Service
             | account-resource                         | consent-id                   |
             | accountList-no-request-id.json           | accounts-create-consent.json |
             | accountList-wrong-format-request-id.json | accounts-create-consent.json |
-            | accountList-invalid-request-id.json      | accounts-create-consent.json |
 
     @ignore
     Scenario Outline: Request account list with no consent errorful
@@ -134,7 +133,6 @@ Feature: Account Information Service
         Examples:
             | account-resource                        | account-id                           | consent-id                   |
             | accountDetail-wrong-format-request.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
-            | accountDetail-invalid-request-id.json   | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
             | accountDetail-no-request-id.json        | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | accounts-create-consent.json |
 
     @ignore
@@ -182,7 +180,6 @@ Feature: Account Information Service
         Then an error response code is displayed the appropriate error response
         Examples:
             | consent                     | account-id                           | balance-resource                         |
-            | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-invalid-request-id.json      |
             | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-no-request-id                |
             | balance-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | readBalance-wrong-format-request-id.json |
 
@@ -235,7 +232,6 @@ Feature: Account Information Service
         Then an error response code is displayed the appropriate error response
         Examples:
             | consent-id                      | account-id                           | transaction-resource                         | booking-status |
-            | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-invalid-request-id.json      | booked         |
             | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-no-request-id.json           | booked         |
             | transaction-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-wrong-format-request-id.json | booked         |
 
