@@ -36,7 +36,7 @@ public class SpiPaymentMapper {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
             paymentResponse.setPaymentId(spiSinglePayment.getEndToEndIdentification());
             paymentResponse.setPsuMessage(null);
-            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"}); //TODO Create ENUM and update everywhere applicable https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/348
+            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"});
         } else {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
             paymentResponse.setPaymentId(spiSinglePayment.getPaymentId());
@@ -56,7 +56,6 @@ public class SpiPaymentMapper {
         single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
         single.setPaymentStatus(SpiTransactionStatus.RCVD);
         return single;
-
     }
 
     public SpiSinglePaymentInitiateResponse mapToSpiSinglePaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment payment) {
@@ -74,3 +73,4 @@ public class SpiPaymentMapper {
         return spi;
     }
 }
+

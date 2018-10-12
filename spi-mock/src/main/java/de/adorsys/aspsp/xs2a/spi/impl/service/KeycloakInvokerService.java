@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl.service;
 
-import de.adorsys.aspsp.xs2a.domain.security.AspspAuthorisationData;
 import de.adorsys.aspsp.xs2a.spi.config.keycloak.BearerToken;
 import de.adorsys.aspsp.xs2a.spi.config.keycloak.KeycloakConfigProperties;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,20 +57,20 @@ public class KeycloakInvokerService {
 
     private String getAccessToken() {
         return obtainAuthorisationData()
-                   .map(AspspAuthorisationData::getAccessToken)
+                   .map(SpiAspspAuthorisationData::getAccessToken)
                    .map(t -> AUTHORIZATION_HEADER + ": " + BEARER_TOKEN_PREFIX + t)
                    .orElseThrow(IllegalArgumentException::new);
     }
 
-    private Optional<AspspAuthorisationData> obtainAuthorisationData() {
+    private Optional<SpiAspspAuthorisationData> obtainAuthorisationData() {
         return doObtainAccessToken(keycloakUsername, keycloakPassword);
     }
 
-    public Optional<AspspAuthorisationData> obtainAuthorisationData(String psuId, String password) {
+    public Optional<SpiAspspAuthorisationData> obtainAuthorisationData(String psuId, String password) {
         return doObtainAccessToken(psuId, password);
     }
 
-    private Optional<AspspAuthorisationData> doObtainAccessToken(String psuId, String password) {
+    private Optional<SpiAspspAuthorisationData> doObtainAccessToken(String psuId, String password) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("client_id", keycloakConfig.getResource());
@@ -89,6 +89,6 @@ public class KeycloakInvokerService {
         }
         return Optional.ofNullable(response.getBody())
                    .filter(body -> StringUtils.isNotBlank(body.get(ACCESS_TOKEN)) || StringUtils.isNotBlank(body.get(REFRESH_TOKEN)))
-                   .map(body -> new AspspAuthorisationData(psuId, password, body.get(ACCESS_TOKEN), body.get(REFRESH_TOKEN)));
+                   .map(body -> new SpiAspspAuthorisationData(psuId, password, body.get(ACCESS_TOKEN), body.get(REFRESH_TOKEN)));
     }
 }

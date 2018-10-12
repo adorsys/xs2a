@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.security;
+package de.adorsys.aspsp.xs2a.spi.domain;
 
 import lombok.Value;
 
 @Value
-public class AspspAuthorisationData {
+public class SpiAspspAuthorisationData {
     private String psuId;
     private String password;
     private String accessToken;
     private String refreshToken;
 
-    public AspspAuthorisationData(String psuId, String password, String accessToken, String refreshToken) {
+    public SpiAspspAuthorisationData(String psuId, String password, String accessToken, String refreshToken) {
         this.psuId = psuId;
         this.password = password;
         this.accessToken = accessToken;
