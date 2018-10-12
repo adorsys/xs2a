@@ -16,6 +16,11 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.exception.RestException;
+import de.adorsys.aspsp.xs2a.spi.component.SpiMockJsonConverter;
+import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
+import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
+import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
@@ -27,17 +32,34 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-// TODO implement all the methods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
+import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.FAILURE;
+import static de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus.SUCCESS;
+
 @Component
 @Slf4j
+@AllArgsConstructor
 public class AisConsentSpiImpl implements AisConsentSpi {
+    private final AspspRemoteUrls remoteSpiUrls;
+    @Qualifier("aspspRestTemplate")
+    private final RestTemplate aspspRestTemplate;
+    private final KeycloakInvokerService keycloakInvokerService;
+    private final SpiMockJsonConverter jsonConverter;
 
     // Test data is used there for testing purposes to have the possibility to see if AisConsentSpiImpl is being invoked from xs2a.
     // TODO remove if some requirements will be received https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/394
@@ -63,41 +85,67 @@ public class AisConsentSpiImpl implements AisConsentSpi {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password,
-                                                            SpiAccountConsent businessObject,
-                                                            AspspConsentData aspspConsentData
-                                                           ) {
-        return SpiResponse.<SpiAuthorisationStatus>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiAccountConsent accountConsent, AspspConsentData aspspConsentData) {
+        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
+        SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
+                                                            .orElse(FAILURE);
+        byte[] payload = accessToken.flatMap(jsonConverter::toJson)
+                             .map(String::getBytes)
+                             .orElse(null);
+        return new SpiResponse<>(spiAuthorisationStatus, aspspConsentData.respondWith(payload));
 
     }
 
     @Override
     public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData,
-                                                                      SpiAccountConsent businessObject,
-                                                                      AspspConsentData aspspConsentData
-                                                                     ) {
-        return SpiResponse.<List<SpiScaMethod>>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
+                                                                      SpiAccountConsent accountConsent,
+                                                                      AspspConsentData aspspConsentData) {
+        ResponseEntity<List<SpiScaMethod>> response = aspspRestTemplate.exchange(
+            remoteSpiUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
+            }, psuData.getPsuId());
+        List<SpiScaMethod> spiScaMethods = Optional.ofNullable(response.getBody())
+                                               .orElseGet(Collections::emptyList);
+        return new SpiResponse<>(spiScaMethods, aspspConsentData);
+
     }
 
     @Override
     public @NotNull SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData,
                                                                                      @NotNull SpiScaMethod scaMethod,
-                                                                                     @NotNull SpiAccountConsent businessObject,
-                                                                                     @NotNull AspspConsentData aspspConsentData
-                                                                                    ) {
-        return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
+                                                                                     @NotNull SpiAccountConsent accountConsent,
+                                                                                     @NotNull AspspConsentData aspspConsentData) {
+        try {
+            aspspRestTemplate.exchange(remoteSpiUrls.getGenerateTanConfirmationForAis(), HttpMethod.POST, null, Void.class, psuData.getPsuId());
+            return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<SpiAuthorizationCodeResult>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 
     @Override
     public @NotNull SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData,
                                                                          @NotNull SpiScaConfirmation spiScaConfirmation,
                                                                          @NotNull SpiAccountConsent businessObject,
-                                                                         @NotNull AspspConsentData aspspConsentData
-                                                                        ) {
-        return SpiResponse.<VoidResponse>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
+                                                                         @NotNull AspspConsentData aspspConsentData) {
+        try {
+            aspspRestTemplate.exchange(remoteSpiUrls.applyStrongUserAuthorisationForAis(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), Void.class);
+            return SpiResponse.<VoidResponse>builder()
+                       .success();
+        } catch (RestException e) {
+            if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                return SpiResponse.<VoidResponse>builder()
+                           .fail(SpiResponseStatus.TECHNICAL_FAILURE);
+            }
+
+            return SpiResponse.<VoidResponse>builder()
+                       .fail(SpiResponseStatus.LOGICAL_FAILURE);
+        }
     }
 }
