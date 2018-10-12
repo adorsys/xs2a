@@ -23,12 +23,10 @@ import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.psd2.consent.api.CmsScaStatus.FINALISED;
 
-@Slf4j
 @Service("PIS_FINALISED")
 public class PisScaFinalisedStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
 

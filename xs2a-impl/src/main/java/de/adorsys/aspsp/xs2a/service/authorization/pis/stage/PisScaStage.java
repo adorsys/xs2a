@@ -16,15 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import lombok.RequiredArgsConstructor;
 
+import java.util.function.BiFunction;
+
 @RequiredArgsConstructor
-public abstract class PisScaStage<T, U, R> extends ScaStage<T, U, R> {
+public abstract class PisScaStage<T, U, R> implements BiFunction<T, U, R> {
     protected final PaymentSpi paymentSpi;
     protected final PisAuthorisationService pisAuthorisationService;
     protected final SpiCmsPisMapper spiCmsPisMapper;

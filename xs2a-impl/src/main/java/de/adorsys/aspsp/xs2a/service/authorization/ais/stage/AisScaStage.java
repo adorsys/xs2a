@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -24,8 +23,10 @@ import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusTo
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 
+import java.util.function.Function;
+
 @RequiredArgsConstructor
-public abstract class AisScaStage<T, U, R> extends ScaStage<T, U, R> {
+public abstract class AisScaStage<T, R> implements Function<T, R> {
     protected final AisConsentService aisConsentService;
     protected final AisConsentDataService aisConsentDataService;
     protected final AisConsentSpi aisConsentSpi;

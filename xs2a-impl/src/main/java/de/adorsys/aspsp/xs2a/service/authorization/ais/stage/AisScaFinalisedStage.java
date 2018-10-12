@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
-import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
@@ -29,14 +28,14 @@ import org.springframework.stereotype.Service;
 import static de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus.FINALISED;
 
 @Service("AIS_FINALISED")
-public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> {
+public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
 
     public AisScaFinalisedStage(AisConsentService aisConsentService, AisConsentDataService aisConsentDataService, AisConsentSpi aisConsentSpi, Xs2aAisConsentMapper aisConsentMapper, SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper) {
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper);
     }
 
     @Override
-    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request, AccountConsentAuthorization accountConsentAuthorization) {
+    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         return new UpdateConsentPsuDataResponse(FINALISED);
     }
 }

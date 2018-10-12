@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais.stage;
 
-import de.adorsys.aspsp.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aScaStatus;
@@ -34,14 +33,14 @@ import org.springframework.stereotype.Service;
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_AUTHENTICATION_METHOD_SELECTION;
 
 @Service("AIS_SCAMETHODSELECTED")
-public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> {
+public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> {
 
     public AisScaAuthenticatedStage(AisConsentService aisConsentService, AisConsentDataService aisConsentDataService, AisConsentSpi aisConsentSpi, Xs2aAisConsentMapper aisConsentMapper, SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper) {
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper);
     }
 
     @Override
-    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request, AccountConsentAuthorization accountConsentAuthorization) {
+    public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse();
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());
 

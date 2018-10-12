@@ -16,9 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
 import de.adorsys.aspsp.xs2a.config.factory.ScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
+import de.adorsys.aspsp.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.model.ScaStatus;
@@ -51,8 +51,8 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     // TODO cover with unit tests https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/334
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
-        ScaStage<UpdateConsentPsuDataReq, AccountConsentAuthorization, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(AIS_PREFIX + consentAuthorization.getScaStatus().name());
-        UpdateConsentPsuDataResponse response = service.apply(request, consentAuthorization);
+        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(AIS_PREFIX + consentAuthorization.getScaStatus().name());
+        UpdateConsentPsuDataResponse response = service.apply(request);
 
         if (!response.hasError()) {
             aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(response, request));
