@@ -261,3 +261,16 @@ Feature: Account Information Service
         Examples:
             | consent                                  | account-id                           | transaction-resource                      | booking-status |
             | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionList-with-expired-consent.json | booked         |
+
+    @ignore
+    Scenario Outline: Read transaction details successfully
+        Given PSU already has an existing consent <consent-id>
+        And account id <account-id>
+        And wants to read the transaction details using <transaction-resource>
+        And and resource id <resource-id>
+        When PSU requests the transactions
+        Then a successful response code and the appropriate list of accounts get returned
+        Examples:
+            | consent-id                      | account-id                           | transaction-resource              | resource-id                          |
+            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-successful.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+
