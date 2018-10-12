@@ -26,8 +26,8 @@ import java.util.List;
 public class OauthScaPaymentService implements ScaPaymentService {
 
     @Override
-    public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
-         throw new UnsupportedOperationException("Unsupported operation");
+    public PeriodicPaymentInitiateResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct) {
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override

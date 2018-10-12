@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization.pis;
+package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
 
-public interface CreatePaymentService<R, T> {
+public interface CreatePaymentService<T, R> {
     ResponseObject<R> createPayment(T payment, PaymentProduct paymentProduct, boolean isTppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo);
 }

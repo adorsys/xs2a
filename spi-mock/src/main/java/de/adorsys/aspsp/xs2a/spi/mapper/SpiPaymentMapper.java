@@ -61,15 +61,7 @@ public class SpiPaymentMapper {
     public SpiSinglePaymentInitiateResponse mapToSpiSinglePaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment payment) {
         SpiSinglePaymentInitiateResponse spi = new SpiSinglePaymentInitiateResponse();
         spi.setPaymentId(payment.getPaymentId());
-        spi.setEndToEndIdentification(payment.getEndToEndIdentification());
-        spi.setDebtorAccount(payment.getDebtorAccount());
-        spi.setInstructedAmount(payment.getInstructedAmount());
-        spi.setCreditorAccount(payment.getCreditorAccount());
-        spi.setCreditorAgent(payment.getCreditorAgent());
-        spi.setCreditorName(payment.getCreditorName());
-        spi.setCreditorAddress(payment.getCreditorAddress());
-        spi.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        spi.setPaymentStatus(SpiTransactionStatus.RCVD);
+        spi.setTransactionStatus(payment.getPaymentStatus());
         return spi;
     }
 }

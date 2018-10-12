@@ -16,21 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiChallengeData;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiateResponse;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class SpiPaymentInitialisationResponse {
-    private SpiTransactionStatus transactionStatus;
-    private String paymentId;
-    private SpiAmount spiTransactionFees;
-    private boolean spiTransactionFeeIndicator;
-    private String[] scaMethods;
-    private String chosenScaMethod;
-    private SpiChallengeData challengeData;
-    private String psuMessage;
-    private String[] tppMessages;
-    private boolean tppRedirectPreferred;
+@EqualsAndHashCode(callSuper = true)
+public class SpiPaymentInitialisationResponse extends SpiPaymentInitiateResponse {
+
 }

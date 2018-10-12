@@ -72,8 +72,8 @@ public class PisConsentService {
         return consentResponse.getConsentId();
     }
 
-    public void updateSinglePaymentInPisConsent(SinglePayment singlePayment, PaymentProduct paymentProduct, String consentId) {
-        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequestForSinglePayment(singlePayment, paymentProduct);
+    public void updatePaymentInPisConsent(SinglePayment singlePayment, PaymentProduct paymentProduct, String consentId) {
+        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequest(singlePayment, paymentProduct);
         consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
     }
 

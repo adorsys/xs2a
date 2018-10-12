@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aPisConsentMapper {
 
-    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(SinglePayment singlePayment, PaymentProduct paymentProduct) {
+    public PisConsentRequest mapToCmsPisConsentRequest(SinglePayment singlePayment, PaymentProduct paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));

@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
-public interface ScaPaymentService {
-    PeriodicPaymentInitiateResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct);
-
-    List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct);
-
-    SinglePaymentInitiateResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct);
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class SpiPeriodicPaymentInitiateResponse extends SpiPaymentInitiateResponse {
 }

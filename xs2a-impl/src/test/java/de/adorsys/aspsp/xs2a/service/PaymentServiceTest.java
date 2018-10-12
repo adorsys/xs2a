@@ -143,41 +143,6 @@ public class PaymentServiceTest {
         assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
-    //PeriodicPayment Tests
-    @Test
-    public void initiatePeriodicPayment() {
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT)).thenReturn(getPaymentResponse(RCVD, null));
-        PeriodicPayment payment = PERIODIC_PAYMENT_OK;
-        //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void initiatePeriodicPayment_Failure_ASPSP_RJCT() {
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT, TPP_INFO, ALLOWED_PAYMENT_PRODUCT)).thenReturn(getPaymentInitiationResponseRJCT());
-        PeriodicPayment payment = PERIODIC_PAYMENT_NOK_AMOUNT;
-        initiatePeriodicPaymentFailureTest(payment, PAYMENT_FAILED);
-    }
-
-    private PaymentInitialisationResponse getPaymentInitiationResponseRJCT() {
-        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-        response.setTransactionStatus(RJCT);
-        response.setTppMessages(new MessageErrorCode[]{MessageErrorCode.PAYMENT_FAILED});
-        return response;
-    }
-
-    private void initiatePeriodicPaymentFailureTest(PeriodicPayment payment, MessageErrorCode errorCode) {
-        //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RJCT);
-        assertThat(actualResponse.getBody().getTppMessages()[0].getName()).isEqualTo(errorCode.getName());
-    }
-
     //Bulk Tests
     @Test
     public void createBulkPayments() {

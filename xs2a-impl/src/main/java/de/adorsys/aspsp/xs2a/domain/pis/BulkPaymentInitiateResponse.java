@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.payment;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
-public interface ScaPaymentService {
-    PeriodicPaymentInitiateResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct);
-
-    List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct);
-
-    SinglePaymentInitiateResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct);
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ApiModel(description = "Initiate bulk payment response body")
+public class BulkPaymentInitiateResponse extends PaymentInitiateResponse {
+    @JsonIgnore
+    private PaymentType paymentType = PaymentType.BULK;
 }

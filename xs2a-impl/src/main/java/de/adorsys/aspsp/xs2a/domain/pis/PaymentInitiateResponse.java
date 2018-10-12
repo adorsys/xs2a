@@ -27,6 +27,15 @@ import lombok.Data;
 @Data
 public abstract class PaymentInitiateResponse {
 
+    @ApiModelProperty(value = "This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified e.g. with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected.")
+    private Xs2aAuthenticationObject chosenScaMethod;
+
+    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
+    private boolean tppRedirectPreferred;
+
+    @JsonIgnore
+    private String scaStatus;
+
     @JsonUnwrapped
     @ApiModelProperty(value = "The transaction status is filled with value of the ISO20022 data table", required = true, example = "ACCP")
     private Xs2aTransactionStatus transactionStatus;

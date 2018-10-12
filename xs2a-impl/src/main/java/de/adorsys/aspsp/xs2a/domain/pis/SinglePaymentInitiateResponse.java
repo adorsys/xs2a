@@ -17,9 +17,7 @@
 package de.adorsys.aspsp.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,15 +25,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "Initiate single payment response body")
 public class SinglePaymentInitiateResponse extends PaymentInitiateResponse {
-
-    @ApiModelProperty(value = "This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach, if the PSU is already identified e.g. with the first relevant factor or alternatively an access token, if SCA is required and if the authentication method is implicitly selected.")
-    private Xs2aAuthenticationObject chosenScaMethod;
-
-    @ApiModelProperty(name = "tppRedirectPreferred", value = "If it equals “true”, the TPP prefers a redirect over an embedded SCA approach.")
-    private boolean tppRedirectPreferred;
-
-    @JsonIgnore
-    private String scaStatus;
 
     @JsonIgnore
     private PaymentType paymentType = PaymentType.SINGLE;
