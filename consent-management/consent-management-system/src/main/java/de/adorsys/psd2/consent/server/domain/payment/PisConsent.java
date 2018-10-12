@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.server.domain.ConsentType;
+import de.adorsys.psd2.consent.server.domain.TppInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -54,7 +55,7 @@ public class PisConsent {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "tpp_info_id")
     @ApiModelProperty(value = "Information about TPP", required = true)
-    private PisTppInfo pisTppInfo;
+    private TppInfo tppInfo;
 
     @Column(name = "payment_type", nullable = false)
     @Enumerated(value = EnumType.STRING)

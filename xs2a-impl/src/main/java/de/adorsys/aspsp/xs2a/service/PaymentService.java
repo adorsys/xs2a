@@ -58,6 +58,7 @@ public class PaymentService {
     private final AccountReferenceValidationService referenceValidationService;
     private final PisConsentService pisConsentService;
     private final PisConsentDataService pisConsentDataService;
+    private final TppService tppService;
     private final CreateSinglePaymentService createSinglePaymentService;
 
     /**
@@ -74,7 +75,10 @@ public class PaymentService {
                        .build();
         }
         ResponseObject response;
-        TppInfo tppInfo = paymentMapper.mapToTppInfo(requestParameters);
+        TppInfo tppInfo = tppService.getTppInfo();
+        tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
+        tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
+
         if (requestParameters.getPaymentType() == SINGLE) {
             return createSinglePaymentService.createPayment((SinglePayment) payment, requestParameters.getPaymentProduct(), requestParameters.isTppExplicitAuthorisationPreferred(), consentId, tppInfo);
         } else if (requestParameters.getPaymentType() == PERIODIC) {

@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>1.9-SNAPSHOT</version>
+        <version>1.10-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -39,18 +39,18 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.10-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-api</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.10-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-remote</artifactId>
-            <version>1.9-SNAPSHOT</version>
+            <version>1.10-SNAPSHOT</version>
         </dependency>
 
 
