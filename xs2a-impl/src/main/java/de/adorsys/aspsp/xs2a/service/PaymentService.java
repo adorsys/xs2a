@@ -39,9 +39,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.*;
 import static de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus.RJCT;
@@ -86,7 +85,7 @@ public class PaymentService {
         } else {
             response = createBulkPayments((BulkPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
         }
-        if (!response.hasError()) {//TODO Refactor this https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        if (!response.hasError() && paymentHasNoTppMessages(response, requestParameters.getPaymentType())) {//TODO Refactor this https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
             response = pisConsentService.createPisConsent(payment, response.getBody(), requestParameters, tppInfo);
             getAspspConsentDataFromResponseObject(response, requestParameters.getPaymentType())
                 .ifPresent(pisConsentDataService::updateAspspConsentData);
@@ -215,5 +214,23 @@ public class PaymentService {
         }
 
         return Optional.empty();
+    }
+
+    //TODO remove response object casting https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/428
+    private  <T> boolean paymentHasNoTppMessages(ResponseObject<T> responseObject, PaymentType paymentType) {
+        switch (paymentType) {
+            case SINGLE:
+            case PERIODIC:
+                PaymentInitialisationResponse paymentInitialisationResponse = (PaymentInitialisationResponse) responseObject.getBody();
+                return paymentInitialisationResponse.getTppMessages() == null;
+            case BULK:
+                List<PaymentInitialisationResponse> bulkPaymentResponse = (List<PaymentInitialisationResponse>) responseObject.getBody();
+                List<PaymentInitialisationResponse> responsesWithoutErrors = bulkPaymentResponse.stream()
+                                                                                 .filter(r -> r.getTppMessages() == null)
+                                                                                 .collect(Collectors.toList());
+                return CollectionUtils.isNotEmpty(responsesWithoutErrors);
+            default:
+                return false;
+        }
     }
 }
