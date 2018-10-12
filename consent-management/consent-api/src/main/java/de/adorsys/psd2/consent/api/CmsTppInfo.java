@@ -19,23 +19,43 @@ package de.adorsys.psd2.consent.api;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class CmsTppInfo {
-    @ApiModelProperty(value = "Registration number", required = true, example = "1234_registrationNumber")
-    private String registrationNumber;
+    @ApiModelProperty(value = "Authorisation number", required = true, example = "12345987")
+    private String authorisationNumber;
 
     @ApiModelProperty(value = "Tpp name", required = true, example = "Tpp company")
     private String tppName;
 
-    @ApiModelProperty(value = "Tpp role", required = true, example = "Tpp role")
-    private String tppRole;
+    @ApiModelProperty(value = "Tpp roles", required = true, dataType = "array")
+    private List<CmsTppRole> tppRoles;
 
-    @ApiModelProperty(value = "National competent authority", required = true, example = "National competent authority")
-    private String nationalCompetentAuthority;
+    @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
+    private String authorityId;
 
-    @ApiModelProperty(value = "Redirect URI", required = true, example = "Redirect URI")
+    @ApiModelProperty(value = "National competent authority name", required = true, example = "authority name")
+    private String authorityName;
+
+    @ApiModelProperty(value = "Country", required = true, example = "Germany")
+    private String country;
+
+    @ApiModelProperty(value = "Organisation", required = true, example = "Organisation")
+    private String organisation;
+
+    @ApiModelProperty(value = "Organisation unit", required = true, example = "Organisation unit")
+    private String organisationUnit;
+
+    @ApiModelProperty(value = "City", required = true, example = "Nuremberg")
+    private String city;
+
+    @ApiModelProperty(value = "State", required = true, example = "Bayern")
+    private String state;
+
+    @ApiModelProperty(value = "Redirect URI", example = "Redirect URI")
     private String redirectUri;
 
-    @ApiModelProperty(value = "Nok redirect URI", required = true, example = "Nok redirect URI")
+    @ApiModelProperty(value = "Nok redirect URI", example = "Nok redirect URI")
     private String nokRedirectUri;
 }

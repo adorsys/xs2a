@@ -19,16 +19,24 @@ package de.adorsys.psd2.xs2a.spi.service;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import org.jetbrains.annotations.NotNull;
 
 //TODO javadocs!
 interface PaymentSpi<T, R> extends AuthorisationSpi<T> {
 
-    @NotNull SpiResponse<R> initiatePayment(@NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
+    @NotNull
+    SpiResponse<R> initiatePayment(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);
 
     SpiResponse executePaymentWithoutSca(T payment, AspspConsentData aspspConsentData);
+    @NotNull
+    SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 
-    SpiResponse<T> getPaymentById(T payment, AspspConsentData aspspConsentData);
+    @NotNull
+    SpiResponse<T> getPaymentById(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 
-    SpiResponse<SpiTransactionStatus> getPaymentStatusById(T payment, AspspConsentData aspspConsentData);
+    @NotNull
+    SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 }

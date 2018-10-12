@@ -1,0 +1,28 @@
+{
+  "request": {
+    "header": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "date": "Sun, 11 Aug 2019 15:02:37 GMT"
+    },
+    "body": {
+    }
+  },
+  "response": {
+    "code": "200",
+    "header": {},
+    "body": {
+      "transactions": {
+        "booked": [
+          {
+            "transactionId": "ba8f7012-bdaf-4ada-bbf7-4c004d046ffe",
+            "transactionAmount": {
+              "currency": "EUR"
+            },
+            "creditorName": "Greenpeace",
+            "debtorName": "Alexander Mueller"
+          }
+        ]
+      }
+    }
+  }
+}

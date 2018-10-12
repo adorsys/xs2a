@@ -20,10 +20,7 @@ import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentService;
@@ -35,7 +32,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CreateSinglePaymentService implements CreatePaymentService<PaymentInitialisationResponse, SinglePayment> {
+public class CreateSinglePaymentService implements CreatePaymentService<SinglePaymentInitiateResponse, SinglePayment> {
     private final ScaPaymentService scaPaymentService;
     private final PisConsentService pisConsentService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
@@ -49,22 +46,17 @@ public class CreateSinglePaymentService implements CreatePaymentService<PaymentI
      * @return Response containing information about created single payment or corresponding error
      */
     @Override
-    public ResponseObject<PaymentInitialisationResponse> createPayment(SinglePayment payment, PaymentProduct paymentProduct, boolean tppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo) {
-        SinglePayment singlePayment = scaPaymentService.createSinglePayment(payment, tppInfo, paymentProduct);
-
-        pisConsentService.updateSinglePaymentInPisConsent(singlePayment, paymentProduct, consentId);
-
-        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-        response.setPaymentId(singlePayment.getPaymentId());
+    public ResponseObject<SinglePaymentInitiateResponse> createPayment(SinglePayment payment, PaymentProduct paymentProduct, boolean tppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo) {
+        SinglePaymentInitiateResponse response = scaPaymentService.createSinglePayment(payment, tppInfo, paymentProduct);
         response.setPisConsentId(consentId);
-        response.setPaymentType(PaymentType.SINGLE.name());
-        response.setTransactionStatus(singlePayment.getTransactionStatus());
+
+        updateSinglePaymentInPisConsent(payment, paymentProduct, consentId, response);
 
         boolean implicitMethod = authorisationMethodService.isImplicitMethod(tppExplicitAuthorisationPreferred);
         if (implicitMethod) {
-            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(singlePayment.getPaymentId(), PaymentType.SINGLE);
+            Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.SINGLE);
             if (!consentAuthorisation.isPresent()) {
-                return ResponseObject.<PaymentInitialisationResponse>builder()
+                return ResponseObject.<SinglePaymentInitiateResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
                            .build();
             }
@@ -72,8 +64,15 @@ public class CreateSinglePaymentService implements CreatePaymentService<PaymentI
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
-        return ResponseObject.<PaymentInitialisationResponse>builder()
+        return ResponseObject.<SinglePaymentInitiateResponse>builder()
                    .body(response)
                    .build();
+    }
+
+    private void updateSinglePaymentInPisConsent(SinglePayment payment, PaymentProduct paymentProduct, String consentId, SinglePaymentInitiateResponse response) {
+        payment.setPaymentId(response.getPaymentId());
+        payment.setTransactionStatus(response.getTransactionStatus());
+
+        pisConsentService.updateSinglePaymentInPisConsent(payment, paymentProduct, consentId);
     }
 }

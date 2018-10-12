@@ -16,23 +16,25 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Spi interface to be used for AIS consent initiating and revoking, and authorising process through AuthorisationSpi interface.
  */
 public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
 
-    default SpiResponse<VoidResponse> initiateAisConsent(SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
+    default SpiResponse<VoidResponse> initiateAisConsent(@NotNull SpiPsuData psuData, SpiAccountConsent accountConsent, AspspConsentData initialAspspConsentData) {
         return SpiResponse.<VoidResponse>builder()
             .fail(SpiResponseStatus.NOT_SUPPORTED);
     }
 
-    default SpiResponse<VoidResponse> revokeAisConsent(SpiAccountConsent accountConsent, AspspConsentData aspspConsentData){
+    default SpiResponse<VoidResponse> revokeAisConsent(@NotNull SpiPsuData psuData, SpiAccountConsent accountConsent, AspspConsentData aspspConsentData){
         return SpiResponse.<VoidResponse>builder()
                    .fail(SpiResponseStatus.NOT_SUPPORTED);
     }
