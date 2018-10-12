@@ -82,13 +82,4 @@ public class PisConsent {
     @Type(type = "org.hibernate.type.BinaryType")
     @JsonIgnore
     private byte[] aspspConsentData;
-
-    public void addPaymentsData(List<PisPaymentData> pisPaymentsData) {
-        pisPaymentsData.forEach(this::addPisPaymentData);
-    }
-
-    private void addPisPaymentData(PisPaymentData pisPaymentData) {
-        payments.add(pisPaymentData);
-        pisPaymentData.setConsent(this);
-    }
 }

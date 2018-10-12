@@ -16,18 +16,17 @@
 
 package de.adorsys.aspsp.xs2a.config;
 
-import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.*;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.*;
+import de.adorsys.aspsp.xs2a.service.consent.AisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
-import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
+import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiResponseStatusToXs2aMessageErrorCodeMapper;
 import de.adorsys.aspsp.xs2a.service.payment.*;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.aspsp.profile.domain.ScaApproach;
+import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,24 +41,27 @@ public class ScaAuthorizationConfig {
     private final AisConsentDataService aisConsentDataService;
 
     @Bean
-    public ScaPaymentService scaPaymentService(PaymentMapper paymentMapper,
-                                               PaymentSpi paymentSpi) {
+    public ScaPaymentService scaPaymentService(
+                                               OauthScaPaymentService oauthScaPaymentService,
+                                               RedirectScaPaymentService redirectScaPaymentService,
+                                               EmbeddedScaPaymentService embeddedScaPaymentService,
+                                               DecoupedScaPaymentService decoupedScaPaymentService) {
         ScaApproach scaApproach = getScaApproach();
         if (OAUTH == scaApproach) {
-            return new OauthScaPaymentService(paymentMapper, paymentSpi);
+            return oauthScaPaymentService;
         }
         if (DECOUPLED == scaApproach) {
-            return new DecoupedScaPaymentService();
+            return decoupedScaPaymentService;
         }
         if (EMBEDDED == scaApproach) {
-            return new EmbeddedScaPaymentService(paymentSpi, paymentMapper);
+            return embeddedScaPaymentService;
         }
-        return new RedirectScaPaymentService(paymentSpi, paymentMapper);
+        return redirectScaPaymentService;
     }
 
     @Bean
-    public AisAuthorizationService aisAuthorizationService(AccountSpi accountSpi, AisConsentService aisConsentService,
-                                                           Xs2aAisConsentMapper aisConsentMapper
+    public AisAuthorizationService aisAuthorizationService(AisConsentSpi aisConsentSpi, AisConsentService aisConsentService,
+                                                           Xs2aAisConsentMapper aisConsentMapper, SpiResponseStatusToXs2aMessageErrorCodeMapper messageErrorCodeMapper
     ) {
         switch (getScaApproach()) {
             case OAUTH:
@@ -67,7 +69,7 @@ public class ScaAuthorizationConfig {
             case DECOUPLED:
                 return new DecoupledAisAuthorizationService();
             case EMBEDDED:
-                return new EmbeddedAisAuthorizationService(accountSpi, aisConsentService, aisConsentMapper, aisConsentDataService);
+                return new EmbeddedAisAuthorizationService(aisConsentService, aisConsentMapper, aisConsentDataService, aisConsentSpi, messageErrorCodeMapper);
             default:
                 return new RedirectAisAuthorizationService();
         }

@@ -42,4 +42,8 @@ public class UpdateConsentPsuDataResponse {
     private String psuMessage;
 
     private MessageErrorCode errorCode;
+
+    public boolean hasError() {
+        return errorCode != null;
+    }
 }

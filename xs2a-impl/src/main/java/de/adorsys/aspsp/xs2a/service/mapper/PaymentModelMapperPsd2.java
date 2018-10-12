@@ -98,19 +98,19 @@ public class PaymentModelMapperPsd2 {
     public Object mapToPaymentInitiationResponse12(Object response, PaymentRequestParameters requestParameters) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         if (EnumSet.of(SINGLE, PERIODIC).contains(requestParameters.getPaymentType())) {
-            PaymentInitialisationResponse specificResponse = (PaymentInitialisationResponse) response;
+            PaymentInitiateResponse specificResponse = (PaymentInitiateResponse) response;
             response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
             response201.setPaymentId(specificResponse.getPaymentId());
             response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
             response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
             response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
             response201.setChallengeData(mapToChallengeData(specificResponse.getChallengeData()));
-            response201.setLinks(mapper.convertValue(((PaymentInitialisationResponse) response).getLinks(), Map.class));
+            response201.setLinks(mapper.convertValue(((PaymentInitiateResponse) response).getLinks(), Map.class));
             response201.setPsuMessage(specificResponse.getPsuMessage());
             response201.setTppMessages(messageErrorMapper.mapToTppMessages(specificResponse.getTppMessages()));
             return response201;
         } else {
-            List<PaymentInitialisationResponse> specificResponse = (List<PaymentInitialisationResponse>) response;
+            List<PaymentInitiateResponse> specificResponse = (List<PaymentInitiateResponse>) response;
             return specificResponse.stream()
                        .peek(r -> {
                            PaymentRequestParameters parameters = new PaymentRequestParameters();

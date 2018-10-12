@@ -312,7 +312,6 @@ public class CmsExecutor {
             "authority id", "authority name", "Germany", "Organisation",
             "Organisation unit", "Nuremberg", "Bayern", "Redirect URI",
             "Nok redirect URI"));
-        request.setAspspConsentData("zzzzzzzz".getBytes());
         return request;
     }
 

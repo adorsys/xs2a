@@ -18,6 +18,10 @@ package de.adorsys.aspsp.xs2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public enum Xs2aTransactionStatus {
 
     ACCP("AcceptedCustomerProfile"),  //Preceding check of technical validation was successful. Customer profile check was also successful
@@ -31,6 +35,13 @@ public enum Xs2aTransactionStatus {
     RJCT("Rejected"),  //Payment initiation or individual transaction included in the payment initiation has been rejected
     CANC("Canceled"); //Canceled
 
+    private static Map<String, Xs2aTransactionStatus> container = new HashMap<>();
+
+    static {
+        Arrays.stream(values())
+            .forEach(status -> container.put(status.getTransactionStatus(), status));
+    }
+
     private String transactionStatus;
 
     @JsonCreator
@@ -40,5 +51,9 @@ public enum Xs2aTransactionStatus {
 
     public String getTransactionStatus() {
         return transactionStatus;
+    }
+
+    public static Xs2aTransactionStatus getByValue(String value) {
+        return container.get(value);
     }
 }

@@ -208,9 +208,7 @@ public class AccountModelMapper {
                        targetAddress.setBuildingNumber(a.getBuildingNumber());
                        targetAddress.setCity(a.getCity());
                        targetAddress.setPostalCode(a.getPostalCode());
-                       Xs2aCountryCode code = new Xs2aCountryCode();
-                       code.setCode(a.getCountry());
-                       targetAddress.setCountry(code);
+                       targetAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return targetAddress;
                    })
                    .orElseGet(Xs2aAddress::new);

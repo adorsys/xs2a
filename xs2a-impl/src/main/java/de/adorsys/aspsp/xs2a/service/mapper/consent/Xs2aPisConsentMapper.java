@@ -24,7 +24,6 @@ import de.adorsys.aspsp.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
@@ -44,17 +43,12 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aPisConsentMapper {
 
-    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(CreatePisConsentData createPisConsentData) {
+    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(SinglePayment singlePayment, PaymentProduct paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
-        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(createPisConsentData.getSinglePayment())));
-        request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
-        request.setPaymentType(PisPaymentType.SINGLE);
-        request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
-        request.setAspspConsentData(
-            Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
-                .orElse(null));
-
+        request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
+        request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
+        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
+        request.setTppInfo(new CmsTppInfo());
         return request;
     }
 
@@ -64,11 +58,6 @@ public class Xs2aPisConsentMapper {
         request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.PERIODIC);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
-        request.setAspspConsentData(
-            Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
-                .orElse(null));
-
         return request;
     }
 
@@ -78,11 +67,6 @@ public class Xs2aPisConsentMapper {
         request.setPaymentProduct(PisPaymentProduct.getByCode(createPisConsentData.getPaymentProduct()).orElse(null));
         request.setPaymentType(PisPaymentType.BULK);
         request.setTppInfo(mapToTppInfo(createPisConsentData.getTppInfo()));
-        request.setAspspConsentData(
-            Optional.ofNullable(createPisConsentData.getAspspConsentData())
-                .map(AspspConsentData::getAspspConsentData)
-                .orElse(null));
-
         return request;
 
     }
@@ -97,6 +81,11 @@ public class Xs2aPisConsentMapper {
 
     public Optional<Xs2aPaymentCancellationAuthorisationSubResource> mapToXs2aPaymentCancellationAuthorisationSubResource(String authorisationId) {
         return Optional.of(new Xs2aPaymentCancellationAuthorisationSubResource(Collections.singletonList(authorisationId)));
+    }
+
+    public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
+        return Optional.ofNullable(response)
+                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response), response.getAvailableScaMethods()));
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -230,11 +219,6 @@ public class Xs2aPisConsentMapper {
                        return cmsRemittance;
                    })
                    .orElseGet(CmsRemittance::new);
-    }
-
-    public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
-        return Optional.ofNullable(response)
-                   .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response), response.getAvailableScaMethods()));
     }
 
     private String getScaStatus(UpdatePisConsentPsuDataResponse response) {

@@ -28,16 +28,16 @@ import java.util.Optional;
 public class OauthAisAuthorizationService implements AisAuthorizationService {
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData, AccountConsentAuthorization consentAuthorization) {
-        return null;
+        return new UpdateConsentPsuDataResponse();
     }
 
     @Override
     public AccountConsentAuthorization getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return null;
+        return new AccountConsentAuthorization();
     }
 }

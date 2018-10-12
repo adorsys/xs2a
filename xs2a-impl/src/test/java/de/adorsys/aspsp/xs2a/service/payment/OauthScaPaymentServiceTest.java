@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.pis.BulkPayment;
@@ -25,10 +24,10 @@ import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
 import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
-import de.adorsys.aspsp.xs2a.spi.domain.SpiResponse;
-import de.adorsys.aspsp.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.aspsp.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.aspsp.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -46,8 +45,6 @@ import java.util.Currency;
 import java.util.List;
 
 import static de.adorsys.aspsp.xs2a.domain.MessageErrorCode.PAYMENT_FAILED;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -56,8 +53,6 @@ public class OauthScaPaymentServiceTest {
     private static final String OK_CREDITOR = "OK";
     private static final String WRONG_CREDITOR = "NOK";
     private static final String PAYMENT_ID = "123456789";
-    private static final String ALLOWED_PAYMENT_PRODUCT = "sepa-credit-transfers";
-    private static final TppInfo TPP_INFO = new TppInfo();
     private final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData();
     private static final String IBAN = "DE89370400440532013000";
     private static final String WRONG_IBAN = "NOK";
@@ -90,42 +85,6 @@ public class OauthScaPaymentServiceTest {
     @Test
     public void createPeriodicPayment() {
         //Nothing to be tested here
-    }
-
-    @Test
-    public void createBulkPayment() {
-        //Given
-        BulkPayment payment = getBulk(true, true, IBAN);
-        //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        assertNotNull(actualResponse);
-        assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId().equals(PAYMENT_ID));
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD));
-        assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages() == null);
-    }
-
-    @Test
-    public void createBulkPayment_Failure_partial() {
-        //Given
-        BulkPayment payment = getBulk(true, false, IBAN);
-        //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        assertNotNull(actualResponse);
-        assertTrue(actualResponse.get(0).getPaymentId().equals(PAYMENT_ID) && actualResponse.get(1).getPaymentId() == null);
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RCVD) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
-        assertTrue(actualResponse.get(0).getTppMessages() == null && actualResponse.get(1).getTppMessages()[0] == PAYMENT_FAILED);
-    }
-
-    @Test
-    public void createBulkPayment_Failure_total() {
-        //Given
-        BulkPayment payment = getBulk(false, false, WRONG_IBAN);
-        //When
-        List<PaymentInitialisationResponse> actualResponse = oauthScaPaymentService.createBulkPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        assertNotNull(actualResponse);
-        assertTrue(actualResponse.get(0).getPaymentId() == null && actualResponse.get(1).getPaymentId() == null);
-        assertTrue(actualResponse.get(0).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT) && actualResponse.get(1).getTransactionStatus().equals(Xs2aTransactionStatus.RJCT));
-        assertTrue(actualResponse.get(0).getTppMessages()[0] == PAYMENT_FAILED && actualResponse.get(1).getTppMessages()[0] == PAYMENT_FAILED);
     }
 
     @Test
