@@ -22,6 +22,8 @@ keycloak:
   route:
     host: >-
       {{ template "psd2.fullname" . }}-keycloak-{{ .Release.Namespace }}.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -85,13 +87,17 @@ xs2a:
   replicas: 1
 
   image:
-    name: aspspProfile-xs2a
-    tag: latest
-    stream: true
+    name: adorsys/xs2a-service
+    tag: develop
+    stream: false
+    namespace: ~
+    pullPolicy: IfNotPresent
 
   route:
     host: >-
       {{ template "psd2.fullname" . }}-xs2a-{{ .Release.Namespace }}.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -129,13 +135,17 @@ aspspMock:
   replicas: 1
 
   image:
-    name: aspspProfile-mock-server
-    tag: latest
-    stream: true
+    name: adorsys/xs2a-mock-server
+    tag: develop
+    stream: false
+    namespace: ~
+    pullPolicy: IfNotPresent
 
   route:
     host: >-
       {{ template "psd2.fullname" . }}-aspsp-mock-{{ .Release.Namespace }}.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -162,8 +172,6 @@ aspspMock:
 
   secrets:
     db_secret: ~
-    mongo_userName: ~
-    mongo_password: ~
 
   deploymentAnnotations: {}
   podAnnotations: {}
@@ -230,9 +238,9 @@ cms:
   replicas: 1
 
   image:
-    name: xs2a-cnt-mgmnt
-    tag: latest
-    stream: true
+    name: adorsys/xs2a-consent-management
+    tag: develop
+    stream: false
     pullPolicy: IfNotPresent
     namespace: ~
 
@@ -240,6 +248,8 @@ cms:
     enabled: true
     host: >-
       {{ template "psd2.fullname" . }}-cms-{{ .Release.Namespace }}.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -292,14 +302,18 @@ aspspProfile:
   replicas: 1
 
   image:
-    name: xs2a-aspsp-profile
-    tag: integ
-    stream: true
+    name: adorsys/xs2a-aspsp-profile
+    tag: develop
+    stream: false
+    namespace: ~
+    pullPolicy: IfNotPresent
 
   route:
     enabled: true
     host: >-
       {{ template "psd2.fullname" . }}-aspspprofile-{{ .Release.Namespace }}.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -334,15 +348,18 @@ cmsPortal:
   replicas: 1
 
   image:
-    name: online-banking-demo
-    tag: latest
+    name: adorsys/xs2a-mock-online-banking-backend
+    tag: develop
+    stream: false
     namespace: ~
-    stream: true
+    pullPolicy: IfNotPresent
 
   route:
     enabled: true
     host: >-
       {{ template "psd2.fullname" . }}-cmsportal-{{ .Release.Namespace }}.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
     tls:
       insecureEdgeTerminationPolicy: Redirect
       termination: edge
@@ -350,54 +367,6 @@ cmsPortal:
   env:
     MOCKSPI_BASEURL: http://{{ template "psd2.fullname" . }}-aspsp-mock:8080
     CONSENT_SERVICE_BASEURL: http:/{{ template "psd2.fullname" . }}-cms:8080/api/v1
-
-  resources:
-    limits:
-      memory: 500Mi
-    requests:
-      memory: 128Mi
-
-  livenessProbe:
-    httpGet:
-      path: /
-      port: http
-    initialDelaySeconds: 120
-  readinessProbe:
-    httpGet:
-      path: /
-      port: http
-    initialDelaySeconds: 15
-
-  deploymentAnnotations: {}
-  podAnnotations: {}
-  serviceAnnotations: {}
-
-uiapp:
-  enabled: true
-  replicas: 1
-
-  image:
-    name: uiapp
-    tag: latest
-    stream: true
-
-  route:
-    enabled: false
-    host: >-
-      {{ template "psd2.fullname" . }}-uiapp-{{ .Release.Namespace }}.cloud.adorsys.de
-    tls:
-      insecureEdgeTerminationPolicy: Redirect
-      termination: edge
-
-  env:
-    mockServerUrl: http://{{ template "psd2.fullname" . }}-aspsp-mock:8080
-    apis_dota: https://api.opendota.com/apps/dota2/images
-    assets_dotaImages: https://api.opendota.com/api
-    production: false
-    KEYCLOAK_AUTH_SERVER_URL: https://{{ tpl .Values.keycloak.route.host $ }}/auth
-    realm: xs2a
-    clientId: account
-
 
   resources:
     limits:
@@ -564,8 +533,6 @@ postgres:
   podAnnotations: {}
   serviceAnnotations: {}
 
-#  Not implemented @ mock
-#  because the java is too old.
 extraEnv: |
   - name: JAVA_OPTS
     value: >-
