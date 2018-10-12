@@ -31,6 +31,8 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 //TODO this class takes low-level communication to Consent-management-system. Should be migrated to consent-services package. All XS2A business-logic should be removed from here to XS2A services. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class PisAuthorisationService {
+    private static final String PIS_PREFIX = "PIS_";
+
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final PisConsentRemoteUrls remotePisConsentUrls;
@@ -57,7 +59,7 @@ public class PisAuthorisationService {
     public UpdatePisConsentPsuDataResponse updatePisConsentAuthorisation(UpdatePisConsentPsuDataRequest request) {
         GetPisConsentAuthorisationResponse response = consentRestTemplate.exchange(remotePisConsentUrls.getPisConsentAuthorisationById(), HttpMethod.GET, new HttpEntity<>(request), GetPisConsentAuthorisationResponse.class, request.getAuthorizationId())
                                                                          .getBody();
-        ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(response.getScaStatus().name());
+        ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(PIS_PREFIX + response.getScaStatus().name());
         return service.apply(request, response);
     }
 

@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization;
+package de.adorsys.aspsp.xs2a.service.authorization.pis.stage;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStage;
-import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisAuthorisationService;
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.SpiCmsPisMapper;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.aspsp.xs2a.spi.service.PaymentSpi;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static de.adorsys.psd2.consent.api.CmsScaStatus.SCAMETHODSELECTED;
 
 @Slf4j
-@Service("PSUAUTHENTICATED")
-public class ScaAuthenticatedStage extends ScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
+@Service("PIS_PSUAUTHENTICATED")
+public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDataRequest, GetPisConsentAuthorisationResponse, UpdatePisConsentPsuDataResponse> {
 
-    public ScaAuthenticatedStage(PaymentSpi paymentSpi, PisAuthorisationService pisAuthorisationService, SpiCmsPisMapper spiCmsPisMapper, PisConsentDataService pisConsentDataService) {
+    public PisScaAuthenticatedStage(PaymentSpi paymentSpi, PisAuthorisationService pisAuthorisationService, SpiCmsPisMapper spiCmsPisMapper, PisConsentDataService pisConsentDataService) {
         super(paymentSpi, pisAuthorisationService, spiCmsPisMapper, pisConsentDataService);
     }
 
@@ -47,7 +46,7 @@ public class ScaAuthenticatedStage extends ScaStage<UpdatePisConsentPsuDataReque
         return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
     }
 
-    private SpiScaMethod getMethod(String method){ //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+    private SpiScaMethod getMethod(String method){ // TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
         SpiScaMethod scaMethod =SpiScaMethod.SMS_OTP;
         try {
             scaMethod = SpiScaMethod.valueOf(method);

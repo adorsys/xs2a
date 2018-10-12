@@ -20,10 +20,12 @@ import de.adorsys.aspsp.xs2a.domain.Links;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class UpdateConsentPsuDataResponse {
 
     private String psuId;
@@ -42,6 +44,10 @@ public class UpdateConsentPsuDataResponse {
     private String psuMessage;
 
     private MessageErrorCode errorCode;
+
+    public UpdateConsentPsuDataResponse(Xs2aScaStatus scaStatus) {
+        this.scaStatus = scaStatus;
+    }
 
     public boolean hasError() {
         return errorCode != null;
