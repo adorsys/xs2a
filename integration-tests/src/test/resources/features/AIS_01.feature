@@ -263,10 +263,46 @@ Feature: Account Information Service
         Given PSU already has an existing consent <consent-id>
         And account id <account-id>
         And wants to read the transaction details using <transaction-resource>
-        And and resource id <resource-id>
-        When PSU requests the transactions
+        And resource id <resource-id>
+        When PSU requests the transaction details
         Then a successful response code and the appropriate list of accounts get returned
         Examples:
-            | consent-id                      | account-id                           | transaction-resource              | resource-id                          |
+            | consent-id                       | account-id                           | transaction-resource              | resource-id                          |
             | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-successful.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+
+    @ignore
+    Scenario Outline: Read transaction details errorful
+        Given PSU already has an existing consent <consent-id>
+        And account id <account-id>
+        And wants to read the transaction details using <transaction-resource>
+        And resource id <resource-id>
+        When PSU requests the transaction details
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | consent-id                       | account-id                           | transaction-resource                           | resource-id                          |
+            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-no-request-id.json           | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+            | transactions-create-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-wrong-format-request-id.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+
+    @ignore
+    Scenario Outline: Read transaction detail with no consent errorful
+        Given PSU wants to read the transaction details using <transaction-resource>
+        And account id <account-id>
+        And resource id <resource-id>
+        When PSU requests the transaction details
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | transaction-resource              | account-id                           | resource-id                          |
+            | transactionDetail-no-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
+
+    @ignore
+    Scenario Outline: Read transaction details with expired consent errorful
+        Given PSU created consent <consent> which is expired
+        And account id <account-id>
+        And wants to read the transaction details using <transaction-resource>
+        And resource id <resource-id>
+        When PSU requests the transaction details
+        Then an error response code is displayed the appropriate error response
+        Examples:
+            | consent                                  | account-id                           | transaction-resource                        | resource-id                          |
+            | transactions-create-expired-consent.json | 42fb4cc3-91cb-45ba-9159-b87acf6d8add | transactionDetail-with-expired-consent.json | ba8f7012-bdaf-4ada-bbf7-4c004d046ffe |
 
