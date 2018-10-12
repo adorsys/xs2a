@@ -130,7 +130,9 @@ services:
       - 5432
 
   online-banking-demo-ui:
-    image: online-banking-demo-ui
+    build:
+      context: online-banking-demo-ui
+      dockerfile: Dockerfile
     restart: on-failure
     ports:
       - "4200:4200"
