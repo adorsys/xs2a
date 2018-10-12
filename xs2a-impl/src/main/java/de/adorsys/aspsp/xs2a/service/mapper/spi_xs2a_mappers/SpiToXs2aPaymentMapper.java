@@ -17,30 +17,19 @@
 package de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
-import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePaymentInitiateResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class SpiToXs2aPaymentMapper {
-    private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
-    private final SpiToXs2aAmountMapper spiToXs2aAmountMapper;
-    private final SpiToXs2aAddressMapper spiToXs2aAddressMapper;
 
-    public SinglePayment mapToSinglePayment(SpiSinglePayment payment) {
-        SinglePayment single = new SinglePayment();
-        single.setEndToEndIdentification(payment.getEndToEndIdentification());
-        single.setDebtorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getDebtorAccount()));
-        single.setInstructedAmount(spiToXs2aAmountMapper.mapToXs2aAmount(payment.getInstructedAmount()));
-        single.setCreditorAccount(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(payment.getCreditorAccount()));
-        single.setCreditorAgent(payment.getCreditorAgent());
-        single.setCreditorName(payment.getCreditorName());
-        single.setCreditorAddress(spiToXs2aAddressMapper.mapToAddress(payment.getCreditorAddress()));
-        single.setRemittanceInformationUnstructured(payment.getRemittanceInformationUnstructured());
-        single.setPaymentId(payment.getPaymentId());
-        single.setTransactionStatus(Xs2aTransactionStatus.getByValue(payment.getPaymentStatus().getName()));
-        return single;
+    public SinglePaymentInitiateResponse mapToSinglePaymentResponse(SpiSinglePaymentInitiateResponse spi) {
+        SinglePaymentInitiateResponse xs2a = new SinglePaymentInitiateResponse();
+        xs2a.setPaymentId(spi.getPaymentId());
+        xs2a.setTransactionStatus(Xs2aTransactionStatus.getByValue(spi.getPaymentStatus().getName()));
+        return xs2a;
     }
 }

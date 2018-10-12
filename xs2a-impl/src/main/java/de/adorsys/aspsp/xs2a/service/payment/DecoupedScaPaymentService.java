@@ -36,7 +36,7 @@ public class DecoupedScaPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public SinglePayment createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct) {
-        return new SinglePayment();
+    public SinglePaymentInitiateResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct) {
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 }

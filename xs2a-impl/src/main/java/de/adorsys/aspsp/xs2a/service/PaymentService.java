@@ -68,11 +68,15 @@ public class PaymentService {
      * @return Response containing information about created payment or corresponding error
      */
     public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters) {
-        String consentId = pisConsentService.createPisConsentV2(requestParameters);
-        if (StringUtils.isBlank(consentId)) {
-            return ResponseObject.builder()
-                       .fail(new MessageError(CONSENT_UNKNOWN_400))
-                       .build();
+        String consentId = null;
+        if (requestParameters.getPaymentType() == SINGLE) {
+            // TODO Remove unnecessary 'if' statement after fully moving on the new payment spi interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/427
+            consentId = pisConsentService.createPisConsentV2(requestParameters);
+            if (StringUtils.isBlank(consentId)) {
+                return ResponseObject.builder()
+                           .fail(new MessageError(CONSENT_UNKNOWN_400))
+                           .build();
+            }
         }
         ResponseObject response;
         TppInfo tppInfo = tppService.getTppInfo();

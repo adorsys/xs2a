@@ -21,6 +21,7 @@ import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiateResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import lombok.AllArgsConstructor;
@@ -40,9 +41,9 @@ public class SinglePaymentSpiImpl implements SinglePaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiSinglePayment> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiSinglePaymentInitiateResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData initialAspspConsentData) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = spiPaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
         ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
-        return new SpiResponse<>(spiPaymentMapper.mapToSpiSinglePayment(responseEntity.getBody(), spiSinglePayment.getPaymentProduct()), initialAspspConsentData);
+        return new SpiResponse<>(spiPaymentMapper.mapToSpiSinglePaymentResponse(responseEntity.getBody()), initialAspspConsentData);
     }
 }
