@@ -29,6 +29,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Data
+//TODO Refactor it or move to ais explicitly https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
 public class Psu {
     @Id
     private String aspspPsuId;

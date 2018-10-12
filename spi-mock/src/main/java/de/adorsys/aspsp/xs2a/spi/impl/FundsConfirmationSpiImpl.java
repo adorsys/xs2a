@@ -16,17 +16,19 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
+import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceType;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
-import de.adorsys.aspsp.xs2a.spi.service.AccountSpi;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -39,7 +41,8 @@ public class FundsConfirmationSpiImpl implements FundsConfirmationSpi {
     private final AccountSpi accountSpi;
 
     @Override
-    public SpiResponse<Boolean> peformFundsSufficientCheck(SpiFundsConfirmationConsent consent, SpiAccountReference reference, SpiAmount amount, AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<Boolean> peformFundsSufficientCheck(@NotNull SpiPsuData psuData, SpiFundsConfirmationConsent consent, SpiAccountReference reference, SpiAmount amount, AspspConsentData aspspConsentData) {
         //TODO Account data reads should be performed through specially created endpoint https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/383
         List<SpiAccountDetails> accounts = accountSpi.readAccountDetailsByIban(reference.getIban(), aspspConsentData).getPayload();
         List<SpiAccountBalance> balances = extractAccountBalancesByCurrency(accounts, reference.getCurrency());

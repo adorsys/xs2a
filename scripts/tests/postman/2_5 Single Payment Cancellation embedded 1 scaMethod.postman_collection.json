@@ -1,0 +1,1404 @@
+{
+	"info": {
+		"_postman_id": "a7cef6ba-81b5-4746-94ba-a2348121bd48",
+		"name": "2_5 Single Payment Cancellation embedded 1 scaMethod",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1 Payment initiation request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f7611098-dd39-46aa-bdfa-e2280fb9dab2",
+						"type": "text/javascript",
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"",
+							"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+							"pm.globals.set(\"startAuthorisation\", jsonData.links.startAuthorisation);",
+							"",
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2691de1f-ad62-453d-94bc-a4c3d121f9fb",
+						"type": "text/javascript",
+						"exec": [
+							"pm.globals.unset(\"payment_id\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Consent-ID",
+						"value": "{{Consent-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{ip_address}}"
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Explicit-Authorisation-Preferred",
+						"value": "{{TPP-Explicit-Authorisation-Preferred}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Nok-Redirect-URI",
+						"value": "{{TPP-Nok-Redirect-URI}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Redirect-Preferred",
+						"value": "{{TPP-Redirect-Preferred}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Redirect-URI",
+						"value": "{{TPP-Redirect-URI}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"DE52500105173911841934\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"20.00\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"DE15500105172295759744\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"city\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postalCode\": \"90543\",\n      \"street\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_product}}"
+					]
+				},
+				"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+			},
+			"response": []
+		},
+		{
+			"name": "2 Start the authorisation process for a payment initiation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9b76bd79-643e-4dac-9c0d-60dab7120135",
+						"type": "text/javascript",
+						"exec": [
+							"pm.globals.unset(\"authorisation_id\");"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
+						"type": "text/javascript",
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+							"",
+							"pm.globals.set(\"authorisation_id\", authorisationId);",
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/authorisations",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}",
+						"authorisations"
+					]
+				},
+				"description": "Create an authorisation sub-resource and start the authorisation process.  The message might in addition transmit authentication and authorisation related data.   This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the transaction.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+			},
+			"response": []
+		},
+		{
+			"name": "3 Update PSU data for payment initiation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}",
+						"authorisations",
+						"{{authorisation_id}}"
+					]
+				},
+				"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+			},
+			"response": []
+		},
+		{
+			"name": "4 Update PSU data for payment initiation finalized",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d693df74-3b1a-40b9-a82f-f65b91a356d5",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{ip_address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"scaAuthenticationData\": \"d0PHQv\"\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/authorisations/{{authorisation_id}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}",
+						"authorisations",
+						"{{authorisation_id}}"
+					]
+				},
+				"description": "This methods updates PSU data on the authorisation resource if needed.  It may authorise a payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  There are several possible Update PSU Data requests in the context of payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+			},
+			"response": []
+		},
+		{
+			"name": "5 Payment Cancellation Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8e1c6b8c-f0fe-4f85-9cb8-48eb53b3f925",
+						"type": "text/javascript",
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"pm.globals.set(\"startAuthorisation\", jsonData.links.startAuthorisation);",
+							"",
+							"",
+							"pm.test(\"Status code is 202\", function () {",
+							"    pm.response.to.have.status(202);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}"
+					]
+				},
+				"description": "This method initiates the cancellation of a payment.  Depending on the payment-service, the payment-product and the ASPSP's implementation,  this TPP call might be sufficient to cancel a payment.  If an authorisation of the payment cancellation is mandated by the ASPSP,  a corresponding hyperlink will be contained in the response message.  Cancels the addressed payment with resource identification paymentId if applicable to the payment-service, payment-product and received in product related timelines (e.g. before end of business day for scheduled payments of the last business day before the scheduled execution day).   The response to this DELETE command will tell the TPP whether the    * access method was rejected   * access method was successful, or   * access method is generally applicable, but further authorisation processes are needed. "
+			},
+			"response": []
+		},
+		{
+			"name": "6 Start the authorisation process for the cancellation of the addressed payment",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "60ce38ea-64a8-4a15-95e1-c49fcc3da2fb",
+						"type": "text/javascript",
+						"exec": [
+							"pm.globals.unset(\"cancellation_id\");"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e368e41a-cc30-418b-bcc5-02c19e956066",
+						"type": "text/javascript",
+						"exec": [
+							"const jsonData = pm.response.json();",
+							"",
+							"const authorisationId = jsonData.links.startAuthorisationWithPsuAuthentication.split('/').pop();",
+							"",
+							"pm.globals.set(\"cancellation_id\", authorisationId);",
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/cancellation-authorisations",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}",
+						"cancellation-authorisations"
+					]
+				},
+				"description": "Creates an authorisation sub-resource and start the authorisation process of the cancellation of the addressed payment.  The message might in addition transmit authentication and authorisation related data.  This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the cancellation-authorisation.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST payments/{payment-product} call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+			},
+			"response": []
+		},
+		{
+			"name": "7 Update PSU Data for payment initiation cancellation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "29b73c1d-6706-47d0-9be6-856d7b988186",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment-service}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment-service}}",
+						"{{payment_id}}",
+						"cancellation-authorisations",
+						"{{cancellation_id}}"
+					]
+				},
+				"description": "This method updates PSU data on the cancellation authorisation resource if needed.  It may authorise a cancellation of the payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a cancellation authorisation within the payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+			},
+			"response": []
+		},
+		{
+			"name": "8 Update PSU Data for payment initiation cancellation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "29b73c1d-6706-47d0-9be6-856d7b988186",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID",
+						"value": "{{PSU-Corporate-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Corporate-ID-Type",
+						"value": "{{PSU-Corporate-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-ID",
+						"value": "{{psu_id_single}}"
+					},
+					{
+						"key": "PSU-ID-Type",
+						"value": "{{PSU-ID-Type}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"scaAuthenticationData\": \"d0PHQv\"\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment-service}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment-service}}",
+						"{{payment_id}}",
+						"cancellation-authorisations",
+						"{{cancellation_id}}"
+					]
+				},
+				"description": "This method updates PSU data on the cancellation authorisation resource if needed.  It may authorise a cancellation of the payment within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a cancellation authorisation within the payment initiation services needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+			},
+			"response": []
+		},
+		{
+			"name": "9 Read the SCA status of the payment cancellation's authorisation.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5592955d-6971-48a3-82e0-4e4f49d29331",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/cancellation-authorisations/{{cancellation_id}}",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}",
+						"cancellation-authorisations",
+						"{{cancellation_id}}"
+					]
+				},
+				"description": "This method returns the SCA status of a payment initiation's authorisation sub-resource. "
+			},
+			"response": []
+		},
+		{
+			"name": "10 Payment initiation status request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "44164aa7-9d6b-4d33-8082-657e52e264b9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, application/xml"
+					},
+					{
+						"key": "Digest",
+						"value": "{{Digest}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept",
+						"value": "{{PSU-Accept}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Charset",
+						"value": "{{PSU-Accept-Charset}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Encoding",
+						"value": "{{PSU-Accept-Encoding}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Accept-Language",
+						"value": "{{PSU-Accept-Language}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Device-ID",
+						"value": "{{PSU-Device-ID}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Geo-Location",
+						"value": "{{PSU-Geo-Location}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-Http-Method",
+						"value": "{{PSU-Http-Method}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Address",
+						"value": "{{PSU-IP-Address}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-IP-Port",
+						"value": "{{PSU-IP-Port}}",
+						"disabled": true
+					},
+					{
+						"key": "PSU-User-Agent",
+						"value": "{{PSU-User-Agent}}",
+						"disabled": true
+					},
+					{
+						"key": "Signature",
+						"value": "{{Signature}}",
+						"disabled": true
+					},
+					{
+						"key": "TPP-Signature-Certificate",
+						"value": "{{TPP-Signature-Certificate}}",
+						"disabled": true
+					},
+					{
+						"key": "X-Request-ID",
+						"value": "{{x_request_id}}"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_id}}/status",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{url_xs2a}}"
+					],
+					"path": [
+						"v1",
+						"{{payment_service}}",
+						"{{payment_id}}",
+						"status"
+					]
+				},
+				"description": "Check the transaction status of a payment initiation."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7f015d39-61e0-43de-93b5-719fb362484d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "5579793b-4637-4696-82b0-515d87105457",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

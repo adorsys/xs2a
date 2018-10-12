@@ -23,10 +23,11 @@ import de.adorsys.aspsp.xs2a.domain.account.Xs2aAccountReference;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.aspsp.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationConsent;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import org.junit.Before;
@@ -46,9 +47,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FundsConfirmationServiceTest {
-    private final Currency EUR = Currency.getInstance("EUR");
-    private final String AMOUNT_1600 = "1600.00";
-    private final String AMOUNT_160 = "160.00";
+    private static final Currency EUR = Currency.getInstance("EUR");
+    private static final String AMOUNT_1600 = "1600.00";
+    private static final String AMOUNT_160 = "160.00";
+    private static final SpiPsuData PSU_DATA = new SpiPsuData(null, null, null, null);
 
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
@@ -75,9 +77,9 @@ public class FundsConfirmationServiceTest {
         when(accountMapper.mapToSpiAmount(getSufficientFundsConfirmationRequest().getInstructedAmount())).thenReturn(getSufficientSpiAmount());
         when(accountMapper.mapToSpiAmount(getInSufficientFundsConfirmationRequest().getInstructedAmount())).thenReturn(getInsufficientSpiAmount());
 
-        when(fundsConfirmationSpi.peformFundsSufficientCheck(null, getValidSpiAccountReference(), getSufficientSpiAmount(), getAspspConsentData()))
+        when(fundsConfirmationSpi.peformFundsSufficientCheck(PSU_DATA, null, getValidSpiAccountReference(), getSufficientSpiAmount(), getAspspConsentData()))
             .thenReturn(new SpiResponse<>(Boolean.TRUE, getAspspConsentData()));
-        when(fundsConfirmationSpi.peformFundsSufficientCheck(null, getValidSpiAccountReference(), getInsufficientSpiAmount(), getAspspConsentData()))
+        when(fundsConfirmationSpi.peformFundsSufficientCheck(PSU_DATA, null, getValidSpiAccountReference(), getInsufficientSpiAmount(), getAspspConsentData()))
             .thenReturn(new SpiResponse<>(Boolean.FALSE, getAspspConsentData()));
     }
 
