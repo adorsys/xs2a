@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.spi.impl;
 
-import de.adorsys.aspsp.xs2a.component.JsonConverter;
+import de.adorsys.aspsp.xs2a.spi.component.SpiMockJsonConverter;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.ObjectHolder;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
@@ -55,7 +55,7 @@ public class AccountSpiImpl implements AccountSpi {
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
     private final KeycloakInvokerService keycloakInvokerService;
-    private final JsonConverter jsonConverter;
+    private final SpiMockJsonConverter jsonConverter;
 
     /**
      * For detailed description see {@link AccountSpi#readAccountDetailsByIban(String, AspspConsentData)}
