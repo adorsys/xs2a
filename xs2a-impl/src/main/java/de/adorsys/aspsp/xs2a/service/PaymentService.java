@@ -68,22 +68,18 @@ public class PaymentService {
      * @return Response containing information about created payment or corresponding error
      */
     public ResponseObject createPayment(Object payment, PaymentRequestParameters requestParameters) {
-        String consentId = null;
-        if (requestParameters.getPaymentType() == SINGLE) {
-            // TODO Remove unnecessary 'if' statement after fully moving on the new payment spi interface https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/427
-            consentId = pisConsentService.createPisConsentV2(requestParameters);
-            if (StringUtils.isBlank(consentId)) {
-                return ResponseObject.builder()
-                           .fail(new MessageError(CONSENT_UNKNOWN_400))
-                           .build();
-            }
-        }
         ResponseObject response;
         TppInfo tppInfo = tppService.getTppInfo();
         tppInfo.setRedirectUri(requestParameters.getTppRedirectUri());
         tppInfo.setNokRedirectUri(requestParameters.getTppNokRedirectUri());
 
         if (requestParameters.getPaymentType() == SINGLE) {
+            String consentId = pisConsentService.createPisConsentV2(requestParameters);
+            if (StringUtils.isBlank(consentId)) {
+                return ResponseObject.builder()
+                           .fail(new MessageError(CONSENT_UNKNOWN_400))
+                           .build();
+            }
             return createSinglePaymentService.createPayment((SinglePayment) payment, requestParameters.getPaymentProduct(), requestParameters.isTppExplicitAuthorisationPreferred(), consentId, tppInfo);
         } else if (requestParameters.getPaymentType() == PERIODIC) {
             response = initiatePeriodicPayment((PeriodicPayment) payment, tppInfo, requestParameters.getPaymentProduct().getCode());
