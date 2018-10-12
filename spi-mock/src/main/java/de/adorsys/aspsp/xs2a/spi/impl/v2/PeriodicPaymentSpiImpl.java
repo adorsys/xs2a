@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
@@ -58,9 +59,9 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     private final KeycloakInvokerService keycloakInvokerService;
     private final JsonConverter jsonConverter;
 
-    @NotNull
     @Override
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
+    @NotNull
+    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
 
         try {
@@ -68,7 +69,7 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
                 aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
             SpiPaymentInitialisationResponse spiPaymentInitialisationResponse = spiPeriodicPaymentMapper.mapToSpiPaymentResponse(aspspResponse.getBody());
 
-            return new SpiResponse<>(spiPaymentInitialisationResponse, initialAspspConsentData);
+            return new SpiResponse<>(spiPaymentInitialisationResponse, aspspConsentData);
 
         } catch (RestException e) {
 
@@ -84,12 +85,14 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         return null;
     }
 
     @Override
-    public SpiResponse<SpiPeriodicPayment> getPaymentById(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<SpiPeriodicPayment> getPaymentById(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment>> aspspResponse =
                 aspspRestTemplate.exchange(aspspRemoteUrls.getPaymentById(), HttpMethod.GET, null, new ParameterizedTypeReference<List<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment>>() {
@@ -113,7 +116,8 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<SpiTransactionStatus> getPaymentStatusById(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
         try {
             ResponseEntity<SpiTransactionStatus> aspspResponse = aspspRestTemplate.getForEntity(aspspRemoteUrls.getPaymentStatus(), SpiTransactionStatus.class, payment.getPaymentId());
             SpiTransactionStatus status = aspspResponse.getBody();
@@ -134,8 +138,9 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull String psuId, @NotNull String password, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
-        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuId, password);
+    @NotNull
+    public SpiResponse<SpiAuthorisationStatus> authorisePsu(@NotNull SpiPsuData psuData, String password, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
+        Optional<SpiAspspAuthorisationData> accessToken = keycloakInvokerService.obtainAuthorisationData(psuData.getPsuId(), password);
         SpiAuthorisationStatus spiAuthorisationStatus = accessToken.map(t -> SUCCESS)
                                                             .orElse(FAILURE);
         byte[] payload = accessToken.flatMap(jsonConverter::toJson)
@@ -146,9 +151,10 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull String psuId, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<List<SpiScaMethod>> requestAvailableScaMethods(@NotNull SpiPsuData psuData, SpiPeriodicPayment businessObject, AspspConsentData aspspConsentData) {
         ResponseEntity<List<SpiScaMethod>> aspspResponse = aspspRestTemplate.exchange(aspspRemoteUrls.getScaMethods(), HttpMethod.GET, null, new ParameterizedTypeReference<List<SpiScaMethod>>() {
-        }, psuId);
+        }, psuData.getPsuId());
 
         List<SpiScaMethod> spiScaMethods = Optional.ofNullable(aspspResponse.getBody())
                                                .orElseGet(Collections::emptyList);
@@ -157,9 +163,10 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull String psuId, @NotNull SpiScaMethod scaMethod, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiPsuData psuData, @NotNull SpiScaMethod scaMethod, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
         try {
-            aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuId, scaMethod);
+            aspspRestTemplate.exchange(aspspRemoteUrls.getGenerateTanConfirmation(), HttpMethod.POST, null, Void.class, psuData.getPsuId(), scaMethod);
 
             return SpiResponse.<SpiAuthorizationCodeResult>builder()
                        .success();
@@ -177,7 +184,8 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
     }
 
     @Override
-    public SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
+    @NotNull
+    public SpiResponse<VoidResponse> verifyAuthorisationCodeAndExecuteRequest(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPeriodicPayment businessObject, @NotNull AspspConsentData aspspConsentData) {
         try {
             aspspRestTemplate.exchange(aspspRemoteUrls.applyStrongUserAuthorisation(), HttpMethod.PUT, new HttpEntity<>(spiScaConfirmation), ResponseEntity.class);
 
