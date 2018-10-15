@@ -30,6 +30,7 @@ import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.springframework.stereotype.Component;
 
@@ -86,6 +87,10 @@ public class Xs2aPisConsentMapper {
     public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response), response.getAvailableScaMethods()));
+    }
+
+    public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response) {
+        return new Xs2aPisConsent(response.getConsentId());
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -226,5 +231,4 @@ public class Xs2aPisConsentMapper {
                    .map(Enum::name)
                    .orElse(null);
     }
-
 }

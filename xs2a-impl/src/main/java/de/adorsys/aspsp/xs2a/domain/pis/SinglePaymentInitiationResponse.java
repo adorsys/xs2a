@@ -16,15 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.domain.pis;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(description = "Initiate periodic payment response body")
-public class PeriodicPaymentInitiateResponse extends PaymentInitiateResponse {
-    @JsonIgnore
-    private PaymentType paymentType = PaymentType.PERIODIC;
+public class SinglePaymentInitiationResponse extends PaymentInitiationResponse {
+
+    private PaymentType paymentType = PaymentType.SINGLE;
 }

@@ -26,10 +26,13 @@ import de.adorsys.aspsp.xs2a.domain.code.Xs2aPurposeCode;
 import de.adorsys.aspsp.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiXs2aAccountMapper;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentType;
@@ -40,7 +43,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +54,12 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
     // TODO fix high amount of different objects as members denotes a high coupling https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/322
     private final ObjectMapper objectMapper;
     private final SpiXs2aAccountMapper spiXs2aAccountMapper;
+
+    private static MessageErrorCode[] apply(List<String> codes) {
+        return codes.stream()
+                   .map(MessageErrorCode::valueOf)
+                   .toArray(MessageErrorCode[]::new);
+    }
 
     public SpiBulkPayment mapToSpiBulkPayment(BulkPayment bulkPayment) {
         return Optional.ofNullable(bulkPayment)
@@ -250,15 +258,13 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
         return spiXs2aAccountMapper.mapToXs2aAccountReference(spiSinglePayments.get(0).getDebtorAccount());
     }
 
-    private Xs2aAuthenticationObject[] mapToAuthenticationObjects(String[] authObjects) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
+    private Xs2aAuthenticationObject[] mapToAuthenticationObjects(List<String> authObjects) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
         return new Xs2aAuthenticationObject[]{};//TODO Fill in th Linx
     }
 
-    private MessageErrorCode[] mapToMessageErrorCodes(String[] messageCodes) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
+    private MessageErrorCode[] mapToMessageErrorCodes(List<String> messageCodes) { //NOPMD TODO review and check PMD assertion https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/115
         return Optional.ofNullable(messageCodes)
-                   .map(codes -> Arrays.stream(codes)
-                                     .map(MessageErrorCode::valueOf)
-                                     .toArray(MessageErrorCode[]::new))
+                   .map(PaymentMapper::apply)
                    .orElseGet(() -> new MessageErrorCode[]{});
     }
 

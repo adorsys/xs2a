@@ -377,8 +377,8 @@ public class PaymentModelMapperTest {
         return amount;
     }
 
-    private PaymentRequestParameters getRequestParameters(PaymentType paymentType){
-        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+    private PaymentInitiationParameters getRequestParameters(PaymentType paymentType){
+        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(paymentType);
         requestParameters.setQwacCertificate("TEST CERTIFICATE");
         requestParameters.setPaymentProduct(PaymentProduct.SCT);

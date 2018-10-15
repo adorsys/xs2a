@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Value;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@ApiModel(description = "Initiate bulk payment response body")
-public class BulkPaymentInitiateResponse extends PaymentInitiateResponse {
-    @JsonIgnore
-    private PaymentType paymentType = PaymentType.BULK;
+@Value
+public class Xs2aPisConsent {
+    private String consentId;
 }

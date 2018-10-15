@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.payment.response;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class SpiPeriodicPaymentInitiateResponse extends SpiPaymentInitiateResponse {
+public class PaymentInitiationParameters {
+    private PaymentType paymentType;
+    private PaymentProduct paymentProduct;
+    private String qwacCertificate;
+    private String tppRedirectUri;
+    private String tppNokRedirectUri;
+    private boolean tppExplicitAuthorisationPreferred;
+    private String psuId;
 }

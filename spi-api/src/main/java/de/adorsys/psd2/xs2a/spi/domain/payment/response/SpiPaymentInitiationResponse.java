@@ -21,16 +21,18 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiChallengeData;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public abstract class SpiPaymentInitiateResponse {
+public abstract class SpiPaymentInitiationResponse {
     private SpiTransactionStatus transactionStatus;
     private String paymentId;
     private SpiAmount spiTransactionFees;
     private boolean spiTransactionFeeIndicator;
-    private String[] scaMethods;
+    private List<String> scaMethods;
     private String chosenScaMethod;
     private SpiChallengeData challengeData;
     private String psuMessage;
-    private String[] tppMessages;
+    private List<String> tppMessages;
     private boolean tppRedirectPreferred;
 }

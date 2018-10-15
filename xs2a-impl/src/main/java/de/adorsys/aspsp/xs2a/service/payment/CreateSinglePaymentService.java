@@ -19,8 +19,12 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePayment;
+import de.adorsys.aspsp.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
@@ -32,7 +36,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CreateSinglePaymentService implements CreatePaymentService<SinglePayment, SinglePaymentInitiateResponse> {
+public class CreateSinglePaymentService implements CreatePaymentService<SinglePayment, SinglePaymentInitiationResponse> {
     private final ScaPaymentService scaPaymentService;
     private final PisConsentService pisConsentService;
     private final PisScaAuthorisationService pisScaAuthorisationService;
@@ -42,25 +46,26 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
      * Initiates single payment
      *
      * @param singlePayment Single payment information
-     * @param paymentProduct  The addressed payment product
-     * @param tppExplicitAuthorisationPreferred  If it equals "true", the TPP prefers a redirect over an embedded SCA approach.
-     * If it equals "false", the TPP prefers not to be redirected for SCA.
-     * @param consentId  consent identification
+     * @param paymentInitiationParameters  payment initiation parameters
+     * @param pisConsent PIS consent information
      * @param tppInfo  information about particular TPP
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<SinglePaymentInitiateResponse> createPayment(SinglePayment singlePayment, PaymentProduct paymentProduct, boolean tppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo) {
-        SinglePaymentInitiateResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentProduct);
-        response.setPisConsentId(consentId);
+    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, Xs2aPisConsent pisConsent, TppInfo tppInfo) {
+        SinglePaymentInitiationResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentInitiationParameters.getPaymentProduct());
+        response.setPisConsentId(pisConsent.getConsentId());
 
-        updateSinglePaymentInPisConsent(singlePayment, paymentProduct, consentId, response);
+        singlePayment.setPaymentId(response.getPaymentId());
+        singlePayment.setTransactionStatus(response.getTransactionStatus());
 
-        boolean implicitMethod = authorisationMethodService.isImplicitMethod(tppExplicitAuthorisationPreferred);
+        pisConsentService.updatePaymentInPisConsent(singlePayment, paymentInitiationParameters, pisConsent.getConsentId());
+
+        boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
             Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.SINGLE);
             if (!consentAuthorisation.isPresent()) {
-                return ResponseObject.<SinglePaymentInitiateResponse>builder()
+                return ResponseObject.<SinglePaymentInitiationResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
                            .build();
             }
@@ -68,15 +73,8 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
-        return ResponseObject.<SinglePaymentInitiateResponse>builder()
+        return ResponseObject.<SinglePaymentInitiationResponse>builder()
                    .body(response)
                    .build();
-    }
-
-    private void updateSinglePaymentInPisConsent(SinglePayment singlePayment, PaymentProduct paymentProduct, String consentId, SinglePaymentInitiateResponse response) {
-        singlePayment.setPaymentId(response.getPaymentId());
-        singlePayment.setTransactionStatus(response.getTransactionStatus());
-
-        pisConsentService.updatePaymentInPisConsent(singlePayment, paymentProduct, consentId);
     }
 }

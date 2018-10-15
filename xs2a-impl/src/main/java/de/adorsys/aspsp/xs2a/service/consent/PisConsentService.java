@@ -64,20 +64,24 @@ public class PisConsentService {
      * @return String consentId
      */
     // TODO rename method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/409
-    public String createPisConsentV2(PaymentRequestParameters parameters) {
+    public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPaymentProduct(PisPaymentProduct.getByCode(parameters.getPaymentProduct().getCode()).orElse(null));
         request.setPaymentType(PisPaymentType.valueOf(parameters.getPaymentType().name()));
-        CreatePisConsentResponse consentResponse = consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
-        return consentResponse.getConsentId();
+        return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
     }
 
-    public void updatePaymentInPisConsent(SinglePayment singlePayment, PaymentProduct paymentProduct, String consentId) {
-        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequest(singlePayment, paymentProduct);
+    public void updatePaymentInPisConsent(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String consentId) {
+        PisConsentRequest pisConsentRequest = pisConsentMapper.mapToCmsPisConsentRequest(singlePayment, paymentInitiationParameters.getPaymentProduct());
         consentRestTemplate.exchange(remotePisConsentUrls.updatePisConsentPayment(), HttpMethod.PUT, new HttpEntity<>(pisConsentRequest), Void.class, consentId);
     }
 
-    public ResponseObject createPisConsent(Object payment, Object xs2aResponse, PaymentRequestParameters requestParameters, TppInfo tppInfo) {
+    /**
+     * @deprecated since 1.8. Will be removed in 1.10
+     * {@link de.adorsys.aspsp.xs2a.service.consent.PisConsentService#createPisConsent(PaymentInitiationParameters)}
+     */
+    @Deprecated
+    public ResponseObject createPisConsent(Object payment, Object xs2aResponse, PaymentInitiationParameters requestParameters, TppInfo tppInfo) {
         CreatePisConsentData consentData = getPisConsentData(payment, xs2aResponse, tppInfo, requestParameters, new AspspConsentData());
 
         PisConsentRequest pisConsentRequest;
@@ -138,7 +142,7 @@ public class PisConsentService {
         return response;
     }
 
-    private CreatePisConsentData getPisConsentData(Object payment, Object xs2aResponse, TppInfo tppInfo, PaymentRequestParameters requestParameters, AspspConsentData aspspConsentData) {
+    private CreatePisConsentData getPisConsentData(Object payment, Object xs2aResponse, TppInfo tppInfo, PaymentInitiationParameters requestParameters, AspspConsentData aspspConsentData) {
         CreatePisConsentData pisConsentData;
         if (requestParameters.getPaymentType() == SINGLE) {
             SinglePayment singlePayment = (SinglePayment) payment;

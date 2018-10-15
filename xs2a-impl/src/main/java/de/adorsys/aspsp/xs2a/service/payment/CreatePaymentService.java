@@ -18,8 +18,9 @@ package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 
 public interface CreatePaymentService<T, R> {
-    ResponseObject<R> createPayment(T payment, PaymentProduct paymentProduct, boolean isTppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo);
+    ResponseObject<R> createPayment(T payment, PaymentInitiationParameters paymentInitiationParameters, Xs2aPisConsent pisConsent, TppInfo tppInfo);
 }

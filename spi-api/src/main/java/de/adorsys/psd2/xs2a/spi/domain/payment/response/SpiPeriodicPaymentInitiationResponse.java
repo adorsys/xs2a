@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(description = "Initiate single payment response body")
-public class SinglePaymentInitiateResponse extends PaymentInitiateResponse {
-
-    @JsonIgnore
-    private PaymentType paymentType = PaymentType.SINGLE;
+public class SpiPeriodicPaymentInitiationResponse extends SpiPaymentInitiationResponse {
 }

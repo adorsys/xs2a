@@ -19,8 +19,12 @@ package de.adorsys.aspsp.xs2a.service.payment;
 import de.adorsys.aspsp.xs2a.domain.MessageErrorCode;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.consent.Xsa2CreatePisConsentAuthorisationResponse;
-import de.adorsys.aspsp.xs2a.domain.pis.*;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.aspsp.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
@@ -32,7 +36,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CreatePeriodicPaymentService implements CreatePaymentService<PeriodicPayment, PeriodicPaymentInitiateResponse> {
+public class CreatePeriodicPaymentService implements CreatePaymentService<PeriodicPayment, PeriodicPaymentInitiationResponse> {
     private final ScaPaymentService scaPaymentService;
     private final PisConsentService pisConsentService;
     private final AuthorisationMethodService authorisationMethodService;
@@ -42,25 +46,26 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
      * Initiates periodic payment
      *
      * @param periodicPayment Periodic payment information
-     * @param paymentProduct  The addressed payment product
-     * @param tppExplicitAuthorisationPreferred  If it equals "true", the TPP prefers a redirect over an embedded SCA approach.
-     * If it equals "false", the TPP prefers not to be redirected for SCA.
-     * @param consentId  consent identification
+     * @param paymentInitiationParameters  payment initiation parameters
+     * @param pisConsent  consent information
      * @param tppInfo  information about particular TPP
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<PeriodicPaymentInitiateResponse> createPayment(PeriodicPayment periodicPayment, PaymentProduct paymentProduct, boolean tppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo) {
-        PeriodicPaymentInitiateResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentProduct);
-        response.setPisConsentId(consentId);
+    public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, Xs2aPisConsent pisConsent, TppInfo tppInfo) {
+        PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct());
+        response.setPisConsentId(pisConsent.getConsentId());
 
-        updateSinglePaymentInPisConsent(periodicPayment, paymentProduct, consentId, response);
+        periodicPayment.setPaymentId(response.getPaymentId());
+        periodicPayment.setTransactionStatus(response.getTransactionStatus());
 
-        boolean implicitMethod = authorisationMethodService.isImplicitMethod(tppExplicitAuthorisationPreferred);
+        pisConsentService.updatePaymentInPisConsent(periodicPayment, paymentInitiationParameters, pisConsent.getConsentId());
+
+        boolean implicitMethod = authorisationMethodService.isImplicitMethod(paymentInitiationParameters.isTppExplicitAuthorisationPreferred());
         if (implicitMethod) {
             Optional<Xsa2CreatePisConsentAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createConsentAuthorisation(response.getPaymentId(), PaymentType.PERIODIC);
             if (!consentAuthorisation.isPresent()) {
-                return ResponseObject.<PeriodicPaymentInitiateResponse>builder()
+                return ResponseObject.<PeriodicPaymentInitiationResponse>builder()
                            .fail(new MessageError(MessageErrorCode.CONSENT_INVALID))
                            .build();
             }
@@ -68,15 +73,8 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
             response.setAuthorizationId(authorisationResponse.getAuthorizationId());
             response.setScaStatus(authorisationResponse.getScaStatus());
         }
-        return ResponseObject.<PeriodicPaymentInitiateResponse>builder()
+        return ResponseObject.<PeriodicPaymentInitiationResponse>builder()
                    .body(response)
                    .build();
-    }
-
-    private void updateSinglePaymentInPisConsent(PeriodicPayment payment, PaymentProduct paymentProduct, String consentId, PeriodicPaymentInitiateResponse response) {
-        payment.setPaymentId(response.getPaymentId());
-        payment.setTransactionStatus(response.getTransactionStatus());
-
-        pisConsentService.updatePaymentInPisConsent(payment, paymentProduct, consentId);
     }
 }

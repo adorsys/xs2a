@@ -291,8 +291,8 @@ public class PaymentServiceTest {
     }
 
 
-    private PaymentRequestParameters getRequestParameters(){
-        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+    private PaymentInitiationParameters getRequestParameters(){
+        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
 
         return requestParameters;
     }

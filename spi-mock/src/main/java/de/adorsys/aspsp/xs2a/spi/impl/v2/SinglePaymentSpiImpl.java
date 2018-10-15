@@ -18,10 +18,10 @@ package de.adorsys.aspsp.xs2a.spi.impl.v2;
 
 import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
-import de.adorsys.aspsp.xs2a.spi.mapper.SpiPaymentMapper;
+import de.adorsys.aspsp.xs2a.spi.mapper.SpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiateResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
@@ -37,24 +37,36 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @AllArgsConstructor
 public class SinglePaymentSpiImpl implements SinglePaymentSpi {
+    private static final String TEST_ASPSP_DATA = "Test aspsp data";
+
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
-    private final SpiPaymentMapper spiPaymentMapper;
+    private final SpiSinglePaymentMapper spiSinglePaymentMapper;
     private final AspspRemoteUrls aspspRemoteUrls;
 
     @Override
     @NotNull
-    public SpiResponse<SpiSinglePaymentInitiateResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData initialAspspConsentData) {
+    public SpiResponse<SpiSinglePaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiSinglePayment spiSinglePayment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
-            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = spiPaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
-            ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> responseEntity = aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
-            return new SpiResponse<>(spiPaymentMapper.mapToSpiSinglePaymentResponse(responseEntity.getBody()), initialAspspConsentData);
+            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment request = spiSinglePaymentMapper.mapToSpiSinglePayment(spiSinglePayment);
+
+            ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment> responseEntity =
+                aspspRestTemplate.postForEntity(aspspRemoteUrls.createPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiSinglePayment.class);
+
+            return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(spiSinglePaymentMapper.mapToSpiSinglePaymentResponse(responseEntity.getBody()))
+                       .success();
+
         } catch (RestException e) {
+
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return SpiResponse.<SpiSinglePaymentInitiateResponse>builder()
+                return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
+                           .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
-            return SpiResponse.<SpiSinglePaymentInitiateResponse>builder()
+            return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }

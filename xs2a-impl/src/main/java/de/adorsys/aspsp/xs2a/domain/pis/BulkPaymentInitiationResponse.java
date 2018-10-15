@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.payment.response;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SpiSinglePaymentInitiateResponse extends SpiPaymentInitiateResponse {
+public class BulkPaymentInitiationResponse extends PaymentInitiationResponse {
 
+    private PaymentType paymentType = PaymentType.BULK;
 }
