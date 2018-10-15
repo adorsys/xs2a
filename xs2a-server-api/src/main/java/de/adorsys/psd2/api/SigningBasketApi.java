@@ -53,7 +53,7 @@ public interface SigningBasketApi {
         return getRequest().map(r -> r.getHeader("Accept"));
     }
 
-    @ApiOperation(value = "Create a signing basket resource", nickname = "createSigningBasket", notes = "Create a signing basket resource for authorising several transactions with one SCA method.  The resource identifications of these transactions are contained in the  payload of this access method ", response = SigningBasketResponse201.class, authorizations = {
+    @ApiOperation(value = "Create a signing basket resource", nickname = "createSigningBasket", notes = "Create a signing basket resource for authorising several transactions with one SCA method. The resource identifications of these transactions are contained in the  payload of this access method ", response = SigningBasketResponse201.class, authorizations = {
         @Authorization(value = "BearerAuthOAuth")
     }, tags = {"Signing Baskets",})
     @ApiResponses(value = {
@@ -78,16 +78,16 @@ public interface SigningBasketApi {
         @ApiParam(value = "Request body for a confirmation of an establishing signing basket request ") @Valid @RequestBody SigningBasket body,
         @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
         @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ") @RequestHeader(value = "PSU-ID", required = false) String PSU_ID,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ") @RequestHeader(value = "PSU-ID-Type", required = false) String psUIDType,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ") @RequestHeader(value = "PSU-Corporate-ID", required = false) String psUCorporateID,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ") @RequestHeader(value = "PSU-Corporate-ID-Type", required = false) String psUCorporateIDType,
         @ApiParam(value = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. ") @RequestHeader(value = "Consent-ID", required = false) String consentID,
         @ApiParam(value = "If it equals \"true\", the TPP prefers a redirect over an embedded SCA approach. If it equals \"false\", the TPP prefers not to be redirected for SCA. The ASPSP will then choose between the Embedded or the Decoupled SCA approach, depending on the choice of the SCA procedure by the TPP/PSU. If the parameter is not used, the ASPSP will choose the SCA approach to be applied depending on the SCA method chosen by the TPP/PSU. ") @RequestHeader(value = "TPP-Redirect-Preferred", required = false) Boolean tpPRedirectPreferred,
-        @ApiParam(value = "URI of the TPP, where the transaction flow shall be redirected to after a Redirect.  Mandated for the Redirect SCA Approach (including OAuth2 SCA approach), specifically  when TPP-Redirect-Preferred equals \"true\". It is recommended to always use this header field.  **Remark for Future:**  This field might be changed to mandatory in the next version of the specification. ") @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
+        @ApiParam(value = "URI of the TPP, where the transaction flow shall be redirected to after a Redirect.  Mandated for the Redirect SCA Approach (including OAuth2 SCA approach), specifically when TPP-Redirect-Preferred equals \"true\". It is recommended to always use this header field.  **Remark for Future:** This field might be changed to mandatory in the next version of the specification. ") @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
         @ApiParam(value = "If this URI is contained, the TPP is asking to redirect the transaction flow to this address instead of the TPP-Redirect-URI in case of a negative result of the redirect SCA method. This might be ignored by the ASPSP. ") @RequestHeader(value = "TPP-Nok-Redirect-URI", required = false) String tpPNokRedirectURI,
-        @ApiParam(value = "If it equals \"true\", the TPP prefers to start the authorisation process separately,  e.g. because of the usage of a signing basket.  This preference might be ignored by the ASPSP, if a signing basket is not supported as functionality.  If it equals \"false\" or if the parameter is not used, there is no preference of the TPP.  This especially indicates that the TPP assumes a direct authorisation of the transaction in the next step,  without using a signing basket. ") @RequestHeader(value = "TPP-Explicit-Authorisation-Preferred", required = false) Boolean tpPExplicitAuthorisationPreferred,
+        @ApiParam(value = "If it equals \"true\", the TPP prefers to start the authorisation process separately, e.g. because of the usage of a signing basket. This preference might be ignored by the ASPSP, if a signing basket is not supported as functionality.  If it equals \"false\" or if the parameter is not used, there is no preference of the TPP. This especially indicates that the TPP assumes a direct authorisation of the transaction in the next step, without using a signing basket. ") @RequestHeader(value = "TPP-Explicit-Authorisation-Preferred", required = false) Boolean tpPExplicitAuthorisationPreferred,
         @ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. ") @RequestHeader(value = "PSU-IP-Port", required = false) Object psUIPPort,
         @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept", required = false) String psUAccept,
         @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Charset", required = false) String psUAcceptCharset,
@@ -108,54 +108,6 @@ public interface SigningBasketApi {
         }
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
-
-    @ApiOperation(value = "Get Signing Basket Authorisation Sub-Resources Request", nickname = "getSigningBasketAuthorisation", notes = "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. ", response = Authorisations.class, authorizations = {
-        @Authorization(value = "BearerAuthOAuth")
-    }, tags = {"Signing Baskets", "Common AIS and PIS Services",})
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Authorisations.class),
-        @ApiResponse(code = 400, message = "Bad Request", response = TppMessages400.class),
-        @ApiResponse(code = 401, message = "Unauthorized", response = TppMessages401.class),
-        @ApiResponse(code = 403, message = "Forbidden", response = TppMessages403.class),
-        @ApiResponse(code = 404, message = "Not found", response = TppMessages404.class),
-        @ApiResponse(code = 405, message = "Method Not Allowed", response = TppMessages405.class),
-        @ApiResponse(code = 406, message = "Not Acceptable", response = TppMessages406.class),
-        @ApiResponse(code = 408, message = "Request Timeout"),
-        @ApiResponse(code = 415, message = "Unsupported Media Type"),
-        @ApiResponse(code = 429, message = "Too Many Requests", response = TppMessages429.class),
-        @ApiResponse(code = 500, message = "Internal Server Error"),
-        @ApiResponse(code = 503, message = "Service Unavailable")})
-    @RequestMapping(value = "/v1/signing-baskets/{basketId}/authorisations",
-        produces = {"application/json"},
-        method = RequestMethod.GET)
-    default ResponseEntity<Authorisations> _getSigningBasketAuthorisation(
-        @ApiParam(value = "This identification of the corresponding signing basket object. ", required = true) @PathVariable("basketId") String basketId,
-        @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
-        @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
-        @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
-        @ApiParam(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. ") @RequestHeader(value = "PSU-IP-Address", required = false) String psUIPAddress,
-        @ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. ") @RequestHeader(value = "PSU-IP-Port", required = false) Object psUIPPort,
-        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept", required = false) String psUAccept,
-        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Charset", required = false) String psUAcceptCharset,
-        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Encoding", required = false) String psUAcceptEncoding,
-        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Language", required = false) String psUAcceptLanguage,
-        @ApiParam(value = "The forwarded Agent header field of the HTTP request between PSU and TPP, if available. ") @RequestHeader(value = "PSU-User-Agent", required = false) String psUUserAgent,
-        @ApiParam(value = "HTTP method used at the PSU ? TPP interface, if available. Valid values are: * GET * POST * PUT * PATCH * DELETE ", allowableValues = "GET, POST, PUT, PATCH, DELETE") @RequestHeader(value = "PSU-Http-Method", required = false) String psUHttpMethod,
-        @ApiParam(value = "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available. UUID identifies either a device or a device dependant application installation. In case of an installation identification this ID need to be unaltered until removal from device. ") @RequestHeader(value = "PSU-Device-ID", required = false) UUID psUDeviceID,
-        @ApiParam(value = "The forwarded Geo Location of the corresponding http request between PSU and TPP if available. ") @RequestHeader(value = "PSU-Geo-Location", required = false) String psUGeoLocation) {
-        return getSigningBasketAuthorisation(basketId, xRequestID, digest, signature, tpPSignatureCertificate, psUIPAddress, psUIPPort, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUUserAgent, psUHttpMethod, psUDeviceID, psUGeoLocation);
-    }
-
-    // Override this method
-    default ResponseEntity<Authorisations> getSigningBasketAuthorisation(String basketId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        if (getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
-        } else {
-            log.warn("ObjectMapper or HttpServletRequest not configured in default V1Api interface so no example is generated");
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
 
     @ApiOperation(value = "Returns the content of an signing basket object.", nickname = "getSigningBasket", notes = "Returns the content of an signing basket object.", response = SigningBasketResponse200.class, authorizations = {
         @Authorization(value = "BearerAuthOAuth")
@@ -181,7 +133,7 @@ public interface SigningBasketApi {
         @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
         @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
         @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
         @ApiParam(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. ") @RequestHeader(value = "PSU-IP-Address", required = false) String psUIPAddress,
         @ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. ") @RequestHeader(value = "PSU-IP-Port", required = false) Object psUIPPort,
         @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept", required = false) String psUAccept,
@@ -204,6 +156,52 @@ public interface SigningBasketApi {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @ApiOperation(value = "Get Signing Basket Authorisation Sub-Resources Request", nickname = "getSigningBasketAuthorisations", notes = "Read a list of all authorisation subresources IDs which have been created.  This function returns an array of hyperlinks to all generated authorisation sub-resources. ", response = Authorisations.class, authorizations = {
+        @Authorization(value = "BearerAuthOAuth")
+    }, tags = {"Signing Baskets", "Common AIS and PIS Services",})
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = Authorisations.class),
+        @ApiResponse(code = 400, message = "Bad Request", response = TppMessages400.class),
+        @ApiResponse(code = 401, message = "Unauthorized", response = TppMessages401.class),
+        @ApiResponse(code = 403, message = "Forbidden", response = TppMessages403.class),
+        @ApiResponse(code = 404, message = "Not found", response = TppMessages404.class),
+        @ApiResponse(code = 405, message = "Method Not Allowed", response = TppMessages405.class),
+        @ApiResponse(code = 406, message = "Not Acceptable", response = TppMessages406.class),
+        @ApiResponse(code = 408, message = "Request Timeout"),
+        @ApiResponse(code = 415, message = "Unsupported Media Type"),
+        @ApiResponse(code = 429, message = "Too Many Requests", response = TppMessages429.class),
+        @ApiResponse(code = 500, message = "Internal Server Error"),
+        @ApiResponse(code = 503, message = "Service Unavailable")})
+    @RequestMapping(value = "/v1/signing-baskets/{basketId}/authorisations",
+        produces = {"application/json"},
+        method = RequestMethod.GET)
+    default ResponseEntity<Authorisations> _getSigningBasketAuthorisations(
+        @ApiParam(value = "This identification of the corresponding signing basket object. ", required = true) @PathVariable("basketId") String basketId,
+        @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
+        @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
+        @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+        @ApiParam(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. ") @RequestHeader(value = "PSU-IP-Address", required = false) String psUIPAddress,
+        @ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. ") @RequestHeader(value = "PSU-IP-Port", required = false) Object psUIPPort,
+        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept", required = false) String psUAccept,
+        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Charset", required = false) String psUAcceptCharset,
+        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Encoding", required = false) String psUAcceptEncoding,
+        @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept-Language", required = false) String psUAcceptLanguage,
+        @ApiParam(value = "The forwarded Agent header field of the HTTP request between PSU and TPP, if available. ") @RequestHeader(value = "PSU-User-Agent", required = false) String psUUserAgent,
+        @ApiParam(value = "HTTP method used at the PSU ? TPP interface, if available. Valid values are: * GET * POST * PUT * PATCH * DELETE ", allowableValues = "GET, POST, PUT, PATCH, DELETE") @RequestHeader(value = "PSU-Http-Method", required = false) String psUHttpMethod,
+        @ApiParam(value = "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available. UUID identifies either a device or a device dependant application installation. In case of an installation identification this ID need to be unaltered until removal from device. ") @RequestHeader(value = "PSU-Device-ID", required = false) UUID psUDeviceID,
+        @ApiParam(value = "The forwarded Geo Location of the corresponding http request between PSU and TPP if available. ") @RequestHeader(value = "PSU-Geo-Location", required = false) String psUGeoLocation) {
+        return getSigningBasketAuthorisations(basketId, xRequestID, digest, signature, tpPSignatureCertificate, psUIPAddress, psUIPPort, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUUserAgent, psUHttpMethod, psUDeviceID, psUGeoLocation);
+    }
+
+    // Override this method
+    default ResponseEntity<Authorisations> getSigningBasketAuthorisations(String basketId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, Object psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        if (getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
+        } else {
+            log.warn("ObjectMapper or HttpServletRequest not configured in default V1Api interface so no example is generated");
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
 
     @ApiOperation(value = "Read the SCA status of the signing basket authorisation", nickname = "getSigningBasketScaStatus", notes = "This method returns the SCA status of a signing basket's authorisation sub-resource. ", response = ScaStatusResponse.class, authorizations = {
         @Authorization(value = "BearerAuthOAuth")
@@ -230,7 +228,7 @@ public interface SigningBasketApi {
         @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
         @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
         @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
         @ApiParam(value = "The forwarded IP Address header field consists of the corresponding http request IP Address field between PSU and TPP. ") @RequestHeader(value = "PSU-IP-Address", required = false) String psUIPAddress,
         @ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. ") @RequestHeader(value = "PSU-IP-Port", required = false) Object psUIPPort,
         @ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. ") @RequestHeader(value = "PSU-Accept", required = false) String psUAccept,
@@ -253,8 +251,7 @@ public interface SigningBasketApi {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
-    @ApiOperation(value = "Start the authorisation process for a signing basket", nickname = "startSigningBasketAuthorisation", notes = "Create an authorisation sub-resource and start the authorisation process of a signing basket.  The message might in addition transmit authentication and authorisation related data.  This method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the signing-baskets.  The ASPSP might make the usage of this access method unnecessary in case  of only one SCA process needed, since the related authorisation resource  might be automatically created by the ASPSP after the submission of the  payment data with the first POST signing basket call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. ", response = StartScaprocessResponse.class, authorizations = {
+    @ApiOperation(value = "Start the authorisation process for a signing basket", nickname = "startSigningBasketAuthorisation", notes = "Create an authorisation sub-resource and start the authorisation process of a signing basket. The message might in addition transmit authentication and authorisation related data.  This method is iterated n times for a n times SCA authorisation in a corporate context, each creating an own authorisation sub-endpoint for the corresponding PSU authorising the signing-baskets.  The ASPSP might make the usage of this access method unnecessary in case of only one SCA process needed, since the related authorisation resource might be automatically created by the ASPSP after the submission of the payment data with the first POST signing basket call.  The start authorisation process is a process which is needed for creating a new authorisation or cancellation sub-resource.  This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding Payment     Initiation Response that an explicit start of the authorisation process is needed by the TPP.     The 'startAuthorisation' hyperlink can transport more information about data which needs to be     uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',     * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'   * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceeding     Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.     The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded     by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for     executing the cancellation.   * The signing basket needs to be authorised yet. ", response = StartScaprocessResponse.class, authorizations = {
         @Authorization(value = "BearerAuthOAuth")
     }, tags = {"Signing Baskets", "Common AIS and PIS Services",})
     @ApiResponses(value = {
@@ -278,7 +275,7 @@ public interface SigningBasketApi {
         @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID,
         @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
         @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ") @RequestHeader(value = "PSU-ID", required = false) String PSU_ID,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ") @RequestHeader(value = "PSU-ID-Type", required = false) String psUIDType,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ") @RequestHeader(value = "PSU-Corporate-ID", required = false) String psUCorporateID,
@@ -305,8 +302,7 @@ public interface SigningBasketApi {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-
-    @ApiOperation(value = "Update PSU Data for signing basket", nickname = "updateSigningBasketPsuData", notes = "This method update PSU data on the signing basket resource if needed.  It may authorise a igning basket within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. ", response = Object.class, authorizations = {
+    @ApiOperation(value = "Update PSU Data for signing basket", nickname = "updateSigningBasketPsuData", notes = "This method update PSU data on the signing basket resource if needed. It may authorise a igning basket within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.  There are several possible Update PSU Data requests in the context of a consent request if needed, which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for     * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:   The Update PSU Data Request might be used   * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method. For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method     WARNING: This method need a reduced header,     therefore many optional elements are not present.     Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,     therefore many optional elements are not present.     Maybe in a later version the access path will change. ", response = Object.class, authorizations = {
         @Authorization(value = "BearerAuthOAuth")
     }, tags = {"Signing Baskets", "Common AIS and PIS Services",})
     @ApiResponses(value = {
@@ -333,7 +329,7 @@ public interface SigningBasketApi {
         @ApiParam(value = "") @Valid @RequestBody Object body,
         @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest,
         @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature,
-        @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
+        @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate,
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceeding AIS service in the same session. ") @RequestHeader(value = "PSU-ID", required = false) String PSU_ID,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ") @RequestHeader(value = "PSU-ID-Type", required = false) String psUIDType,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ") @RequestHeader(value = "PSU-Corporate-ID", required = false) String psUCorporateID,

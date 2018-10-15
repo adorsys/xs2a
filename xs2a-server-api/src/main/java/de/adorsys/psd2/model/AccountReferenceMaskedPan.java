@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,11 +13,11 @@ import java.util.Objects;
  */
 @ApiModel(description = "Reference to an account by the Primary Account Number (PAN) of a card in a masked form. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class AccountReferenceMaskedPan {
     @JsonProperty("maskedPan")
     private String maskedPan = null;
-
     @JsonProperty("currency")
     private String currency = null;
 
@@ -47,7 +31,7 @@ public class AccountReferenceMaskedPan {
      *
      * @return maskedPan
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public String getMaskedPan() {
         return maskedPan;
@@ -67,7 +51,7 @@ public class AccountReferenceMaskedPan {
      *
      * @return currency
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getCurrency() {
         return currency;
     }
@@ -75,7 +59,6 @@ public class AccountReferenceMaskedPan {
     public void setCurrency(String currency) {
         this.currency = currency;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -86,7 +69,8 @@ public class AccountReferenceMaskedPan {
             return false;
         }
         AccountReferenceMaskedPan accountReferenceMaskedPan = (AccountReferenceMaskedPan) o;
-        return Objects.equals(this.maskedPan, accountReferenceMaskedPan.maskedPan) && Objects.equals(this.currency, accountReferenceMaskedPan.currency);
+        return Objects.equals(this.maskedPan, accountReferenceMaskedPan.maskedPan) && Objects.equals(this.currency,
+            accountReferenceMaskedPan.currency);
     }
 
     @Override
@@ -98,7 +82,6 @@ public class AccountReferenceMaskedPan {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class AccountReferenceMaskedPan {\n");
-
         sb.append("    maskedPan: ").append(toIndentedString(maskedPan)).append("\n");
         sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
         sb.append("}");

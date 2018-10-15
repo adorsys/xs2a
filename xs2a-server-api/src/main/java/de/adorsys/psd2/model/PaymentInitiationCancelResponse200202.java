@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,20 +15,17 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PaymentInitiationCancelResponse200202 {
     @JsonProperty("transactionStatus")
     private TransactionStatus transactionStatus = null;
-
     @JsonProperty("scaMethods")
     private ScaMethods scaMethods = null;
-
     @JsonProperty("chosenScaMethod")
     private ChosenScaMethod chosenScaMethod = null;
-
     @JsonProperty("challengeData")
     private ChallengeData challengeData = null;
-
     @JsonProperty("_links")
     private Map _links = null;
 
@@ -58,7 +39,7 @@ public class PaymentInitiationCancelResponse200202 {
      *
      * @return transactionStatus
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TransactionStatus getTransactionStatus() {
@@ -79,7 +60,7 @@ public class PaymentInitiationCancelResponse200202 {
      *
      * @return scaMethods
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ScaMethods getScaMethods() {
         return scaMethods;
@@ -99,7 +80,7 @@ public class PaymentInitiationCancelResponse200202 {
      *
      * @return chosenScaMethod
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ChosenScaMethod getChosenScaMethod() {
         return chosenScaMethod;
@@ -119,7 +100,7 @@ public class PaymentInitiationCancelResponse200202 {
      *
      * @return challengeData
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ChallengeData getChallengeData() {
         return challengeData;
@@ -139,7 +120,7 @@ public class PaymentInitiationCancelResponse200202 {
      *
      * @return _links
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public Map getLinks() {
         return _links;
@@ -149,7 +130,6 @@ public class PaymentInitiationCancelResponse200202 {
         this._links = _links;
     }
 
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -158,7 +138,8 @@ public class PaymentInitiationCancelResponse200202 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PaymentInitiationCancelResponse200202 paymentInitiationCancelResponse200202 = (PaymentInitiationCancelResponse200202) o;
+        PaymentInitiationCancelResponse200202 paymentInitiationCancelResponse200202 =
+            (PaymentInitiationCancelResponse200202) o;
         return Objects.equals(this.transactionStatus, paymentInitiationCancelResponse200202.transactionStatus) && Objects.equals(this.scaMethods, paymentInitiationCancelResponse200202.scaMethods) && Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse200202.chosenScaMethod) && Objects.equals(this.challengeData, paymentInitiationCancelResponse200202.challengeData) && Objects.equals(this._links, paymentInitiationCancelResponse200202._links);
     }
 
@@ -171,7 +152,6 @@ public class PaymentInitiationCancelResponse200202 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PaymentInitiationCancelResponse200202 {\n");
-
         sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
         sb.append("    scaMethods: ").append(toIndentedString(scaMethods)).append("\n");
         sb.append("    chosenScaMethod: ").append(toIndentedString(chosenScaMethod)).append("\n");

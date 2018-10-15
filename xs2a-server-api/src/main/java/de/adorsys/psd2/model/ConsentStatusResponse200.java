@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,7 +14,8 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful get status request for a consent.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class ConsentStatusResponse200 {
     @JsonProperty("consentStatus")
     private ConsentStatus consentStatus = null;
@@ -45,7 +30,7 @@ public class ConsentStatusResponse200 {
      *
      * @return consentStatus
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public ConsentStatus getConsentStatus() {
@@ -55,7 +40,6 @@ public class ConsentStatusResponse200 {
     public void setConsentStatus(ConsentStatus consentStatus) {
         this.consentStatus = consentStatus;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -78,7 +62,6 @@ public class ConsentStatusResponse200 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ConsentStatusResponse200 {\n");
-
         sb.append("    consentStatus: ").append(toIndentedString(consentStatus)).append("\n");
         sb.append("}");
         return sb.toString();

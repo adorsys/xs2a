@@ -25,7 +25,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @deprecated since 1.8. Will be removed in 1.10
@@ -55,6 +55,6 @@ public class SpiSinglePayment {
     @Deprecated // Since 1.2
     private LocalDate requestedExecutionDate;
     @Deprecated // Since 1.2
-    private LocalDateTime requestedExecutionTime;
+    private OffsetDateTime requestedExecutionTime;
     private SpiTransactionStatus paymentStatus;
 }

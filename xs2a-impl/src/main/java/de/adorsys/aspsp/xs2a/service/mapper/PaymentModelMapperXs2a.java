@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,8 +73,8 @@ public class PaymentModelMapperXs2a {
         payment.setPurposeCode(new Xs2aPurposeCode("N/A"));
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
         payment.setRemittanceInformationStructured(new Remittance());
-        payment.setRequestedExecutionDate(LocalDate.now());
-        payment.setRequestedExecutionTime(LocalDateTime.now().plusHours(1));
+        payment.setRequestedExecutionDate(paymentRequest.getRequestedExecutionDate());
+        payment.setRequestedExecutionTime(paymentRequest.getRequestedExecutionTime());
         return payment;
     }
 
@@ -98,7 +98,7 @@ public class PaymentModelMapperXs2a {
         payment.setRemittanceInformationUnstructured(paymentRequest.getRemittanceInformationUnstructured());
         payment.setRemittanceInformationStructured(new Remittance());
         payment.setRequestedExecutionDate(LocalDate.now());
-        payment.setRequestedExecutionTime(LocalDateTime.now().plusHours(1));
+        payment.setRequestedExecutionTime(OffsetDateTime.now().plusHours(1));
 
         payment.setStartDate(paymentRequest.getStartDate());
         payment.setExecutionRule(Optional.ofNullable(paymentRequest.getExecutionRule()).map(ExecutionRule::toString).orElse(null));
@@ -138,7 +138,7 @@ public class PaymentModelMapperXs2a {
                        payment.setPurposeCode(new Xs2aPurposeCode(null));
                        payment.setRemittanceInformationUnstructured(p.getRemittanceInformationUnstructured());
                        payment.setRemittanceInformationStructured(new Remittance());
-                       payment.setRequestedExecutionTime(LocalDateTime.now().plusHours(1));
+                       payment.setRequestedExecutionTime(OffsetDateTime.now().plusHours(1));
                        return payment;
                    })
                    .collect(Collectors.toList());
