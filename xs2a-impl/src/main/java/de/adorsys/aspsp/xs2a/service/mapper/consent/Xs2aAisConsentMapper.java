@@ -110,7 +110,6 @@ public class Xs2aAisConsentMapper {
                        request.setAuthenticationMethodId(updatePsuDataResponse.getAuthenticationMethodId());
                        request.setAuthenticationMethodId(updatePsuDataResponse.getChosenScaMethod());
                        request.setScaAuthenticationData(updatePsuDataResponse.getScaAuthenticationData());
-                       request.setPassword(updatePsuDataResponse.getPassword());
                        request.setScaStatus(
                            Optional.ofNullable(data.getScaStatus())
                                .map(status -> Xs2aScaStatus.valueOf(status.name()))

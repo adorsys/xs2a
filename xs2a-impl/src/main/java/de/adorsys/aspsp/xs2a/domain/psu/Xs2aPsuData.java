@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.config.factory;
+package de.adorsys.aspsp.xs2a.domain.psu;
 
-/**
- * This is specific factory intended to retrieve specific, stage-dependent SCA update authorisation services
- */
-public interface ScaStageAuthorisationFactory extends ServiceFactory {
+import lombok.Value;
+
+@Value
+public class Xs2aPsuData {
+    private String psuId;
+    private String psuIdType;
+    private String psuCorporateId;
+    private String psuCorporateIdType;
 }

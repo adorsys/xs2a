@@ -24,6 +24,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+// Class can't be immutable, because it it used in aspect (links setting)
 @Data
 @NoArgsConstructor
 public class UpdateConsentPsuDataResponse {
@@ -37,7 +38,6 @@ public class UpdateConsentPsuDataResponse {
     private String chosenScaMethod;
     private String authenticationMethodId;
     private String scaAuthenticationData;
-    private String password;
     private Links links;
 
     private ConsentAuthorizationResponseLinkType responseLinkType;

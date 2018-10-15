@@ -31,9 +31,16 @@ public class ServiceLocatorFactoryConfiguration {
     }
 
     @Bean
-    public ServiceLocatorFactoryBean scaUpdateAuthorisationFactory() {
+    public ServiceLocatorFactoryBean pisScaUpdateAuthorisationFactory() {
         ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
-        serviceLocatorFactoryBean.setServiceLocatorInterface(ScaStageAuthorisationFactory.class);
+        serviceLocatorFactoryBean.setServiceLocatorInterface(PisScaStageAuthorisationFactory.class);
+        return serviceLocatorFactoryBean;
+    }
+
+    @Bean
+    public ServiceLocatorFactoryBean aisScaUpdateAuthorisationFactory() {
+        ServiceLocatorFactoryBean serviceLocatorFactoryBean = new ServiceLocatorFactoryBean();
+        serviceLocatorFactoryBean.setServiceLocatorInterface(AisScaStageAuthorisationFactory.class);
         return serviceLocatorFactoryBean;
     }
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.authorization.ais;
 
-import de.adorsys.aspsp.xs2a.config.factory.ScaStageAuthorisationFactory;
+import de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.aspsp.xs2a.domain.consent.*;
 import de.adorsys.aspsp.xs2a.service.authorization.ais.stage.AisScaStage;
 import de.adorsys.aspsp.xs2a.service.consent.AisConsentService;
@@ -27,16 +27,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory.*;
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
 
 @Service
 @RequiredArgsConstructor
 public class EmbeddedAisAuthorizationService implements AisAuthorizationService {
-    private static final String AIS_PREFIX = "AIS_";
-
     private final AisConsentService aisConsentService;
     private final Xs2aAisConsentMapper aisConsentMapper;
-    private final ScaStageAuthorisationFactory scaStageAuthorisationFactory;
+    private final AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
@@ -51,7 +50,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     // TODO cover with unit tests https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/334
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
-        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(AIS_PREFIX + consentAuthorization.getScaStatus().name());
+        AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + consentAuthorization.getScaStatus().name());
         UpdateConsentPsuDataResponse response = service.apply(request);
 
         if (!response.hasError()) {
