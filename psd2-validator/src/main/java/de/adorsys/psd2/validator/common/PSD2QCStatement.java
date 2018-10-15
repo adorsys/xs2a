@@ -20,11 +20,10 @@ import no.difi.certvalidator.api.CertificateValidationException;
 
 @Slf4j
 public class PSD2QCStatement {
+    private static final ASN1ObjectIdentifier idEtsiPsd2QcStatement = new ASN1ObjectIdentifier("0.4.0.19495.2");
 
     private PSD2QCStatement() {
     }
-
-    private static final ASN1ObjectIdentifier idEtsiPsd2QcStatement = new ASN1ObjectIdentifier("0.4.0.19495.2");
 
 	public static QCStatement psd2QCStatement() {
 		return new QCStatement(idEtsiPsd2QcStatement);
