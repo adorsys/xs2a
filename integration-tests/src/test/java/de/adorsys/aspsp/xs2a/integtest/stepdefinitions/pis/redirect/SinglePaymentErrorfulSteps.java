@@ -21,27 +21,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.RestCallService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.PaymentInitiationSctJson;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
 public class SinglePaymentErrorfulSteps {
+
+    @Autowired
+    private RestCallService restService;
 
     @Autowired
     @Qualifier("xs2a")
@@ -68,18 +68,7 @@ public class SinglePaymentErrorfulSteps {
 
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-                HttpMethod.POST,
-                entity,
-                HashMap.class);
-        } catch (RestClientResponseException rex) {
-            context.handleRequestError(rex);
-        }
+        restService.sendErrorfulRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
     }
 
     // @Then("^an error response code and the appropriate error response are received$")
