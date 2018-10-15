@@ -42,7 +42,7 @@ public class PaymentModelMapperXs2a {
     private final ValueValidatorService validationService;
     private final AccountModelMapper accountModelMapper;
 
-    public Object mapToXs2aPayment(Object payment, PaymentRequestParameters requestParameters) {
+    public Object mapToXs2aPayment(Object payment, PaymentInitiationParameters requestParameters) {
         if (requestParameters.getPaymentType() == SINGLE) {
             return mapToXs2aSinglePayment(validatePayment(payment, PaymentInitiationSctJson.class));
         } else if (requestParameters.getPaymentType() == PERIODIC) {

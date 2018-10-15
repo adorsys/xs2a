@@ -26,8 +26,8 @@ import java.util.List;
 @Service
 public class DecoupedScaPaymentService implements ScaPaymentService {
     @Override
-    public PaymentInitialisationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, String paymentProduct) {
-        return new PaymentInitialisationResponse();
+    public PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct) {
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DecoupedScaPaymentService implements ScaPaymentService {
     }
 
     @Override
-    public SinglePaymentInitiateResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct) {
+    public SinglePaymentInitiationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 }

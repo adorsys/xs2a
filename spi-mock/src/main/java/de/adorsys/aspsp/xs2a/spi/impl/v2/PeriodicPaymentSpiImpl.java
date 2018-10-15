@@ -20,13 +20,16 @@ import de.adorsys.aspsp.xs2a.component.JsonConverter;
 import de.adorsys.aspsp.xs2a.exception.RestException;
 import de.adorsys.aspsp.xs2a.spi.config.rest.AspspRemoteUrls;
 import de.adorsys.aspsp.xs2a.spi.domain.SpiAspspAuthorisationData;
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.aspsp.xs2a.spi.impl.service.KeycloakInvokerService;
 import de.adorsys.aspsp.xs2a.spi.mapper.SpiPeriodicPaymentMapper;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaMethod;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
@@ -53,6 +56,8 @@ import static de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 @Service
 @AllArgsConstructor
 public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
+    private static final String TEST_ASPSP_DATA = "Test aspsp data";
+
     @Qualifier("aspspRestTemplate")
     private final RestTemplate aspspRestTemplate;
     private final SpiPeriodicPaymentMapper spiPeriodicPaymentMapper;
@@ -62,25 +67,26 @@ public class PeriodicPaymentSpiImpl implements PeriodicPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentInitialisationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData aspspConsentData) {
-        de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
-
+    public SpiResponse<SpiPeriodicPaymentInitiationResponse> initiatePayment(@NotNull SpiPsuData psuData, @NotNull SpiPeriodicPayment payment, @NotNull AspspConsentData initialAspspConsentData) {
         try {
+            de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment request = spiPeriodicPaymentMapper.mapToAspspSpiPeriodicPayment(payment);
+
             ResponseEntity<de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment> aspspResponse =
                 aspspRestTemplate.postForEntity(aspspRemoteUrls.createPeriodicPayment(), request, de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment.class);
-            SpiPaymentInitialisationResponse spiPaymentInitialisationResponse = spiPeriodicPaymentMapper.mapToSpiPaymentResponse(aspspResponse.getBody());
 
-            return new SpiResponse<>(spiPaymentInitialisationResponse, aspspConsentData);
+            return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
+                       .payload(spiPeriodicPaymentMapper.mapToSpiPeriodicPaymentResponse(aspspResponse.getBody()))
+                       .success();
 
         } catch (RestException e) {
-
             if (e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
-
-                return SpiResponse.<SpiPaymentInitialisationResponse>builder()
+                return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
+                           .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                            .fail(SpiResponseStatus.TECHNICAL_FAILURE);
             }
-
-            return SpiResponse.<SpiPaymentInitialisationResponse>builder()
+            return SpiResponse.<SpiPeriodicPaymentInitiationResponse>builder()
+                       .aspspConsentData(initialAspspConsentData.respondWith(TEST_ASPSP_DATA.getBytes()))
                        .fail(SpiResponseStatus.LOGICAL_FAILURE);
         }
     }
