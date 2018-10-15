@@ -39,12 +39,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PisConsentMapper {
-    private final ConsentMapper consentMapper;
+    private final TppInfoMapper tppInfoMapper;
 
     public PisConsent mapToPisConsent(PisConsentRequest request) {
         PisConsent consent = new PisConsent();
         consent.setPayments(mapToPisPaymentDataList(request.getPayments(), consent));
-        consent.setTppInfo(consentMapper.mapToTppInfo(request.getTppInfo()));
+        consent.setTppInfo(tppInfoMapper.mapToTppInfo(request.getTppInfo()));
         consent.setPaymentType(request.getPaymentType());
         consent.setPisPaymentProduct(request.getPaymentProduct());
         consent.setConsentType(ConsentType.PIS);
@@ -114,7 +114,7 @@ public class PisConsentMapper {
                        response.setConsentStatus(pc.getConsentStatus());
                        response.setPaymentType(pc.getPaymentType());
                        response.setPaymentProduct(pc.getPisPaymentProduct());
-                       response.setTppInfo(consentMapper.mapToCmsTppInfo(pc.getTppInfo()));
+                       response.setTppInfo(tppInfoMapper.mapToCmsTppInfo(pc.getTppInfo()));
                        return response;
                    });
     }

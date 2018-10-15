@@ -17,25 +17,21 @@
 package de.adorsys.psd2.consent.server.service.mapper;
 
 import de.adorsys.psd2.consent.api.CmsTppInfo;
-import de.adorsys.psd2.consent.api.CmsTppRole;
 import de.adorsys.psd2.consent.server.domain.TppInfo;
-import de.adorsys.psd2.consent.server.domain.TppRole;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
-public class ConsentMapper {
+public class TppInfoMapper {
     public TppInfo mapToTppInfo(CmsTppInfo tppInfo) {
         return Optional.ofNullable(tppInfo)
                    .map(tin -> {
                        TppInfo pisTppInfo = new TppInfo();
                        pisTppInfo.setAuthorisationNumber(tin.getAuthorisationNumber());
                        pisTppInfo.setTppName(tin.getTppName());
-                       pisTppInfo.setTppRoles(mapToTppRoles(tin.getTppRoles()));
+                       pisTppInfo.setTppRoles(new ArrayList<>(tin.getTppRoles()));
                        pisTppInfo.setAuthorityId(tin.getAuthorityId());
                        pisTppInfo.setAuthorityName(tin.getAuthorityName());
                        pisTppInfo.setCountry(tin.getCountry());
@@ -57,7 +53,7 @@ public class ConsentMapper {
 
                        tppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
                        tppInfo.setTppName(tpp.getTppName());
-                       tppInfo.setTppRoles(mapToCmsTppRoles(tpp.getTppRoles()));
+                       tppInfo.setTppRoles(new ArrayList<>(tpp.getTppRoles()));
                        tppInfo.setAuthorityId(tpp.getAuthorityId());
                        tppInfo.setAuthorityName(tpp.getAuthorityName());
                        tppInfo.setCountry(tpp.getCountry());
@@ -70,21 +66,5 @@ public class ConsentMapper {
 
                        return tppInfo;
                    }).orElse(null);
-    }
-
-    private List<TppRole> mapToTppRoles(List<CmsTppRole> tppRoles) {
-        return Optional.ofNullable(tppRoles)
-                   .map(roles -> roles.stream()
-                                     .map(role -> TppRole.valueOf(role.name()))
-                                     .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
-    }
-
-    private List<CmsTppRole> mapToCmsTppRoles(List<TppRole> tppRoles) {
-        return Optional.ofNullable(tppRoles)
-                   .map(roles -> roles.stream()
-                                     .map(role -> CmsTppRole.valueOf(role.name()))
-                                     .collect(Collectors.toList()))
-                   .orElseGet(Collections::emptyList);
     }
 }

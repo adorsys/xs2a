@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.server.domain;
 
+import de.adorsys.psd2.consent.api.CmsTppRole;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,7 +49,7 @@ public class TppInfo {
     @Column(name = "tpp_role")
     @Enumerated(value = EnumType.STRING)
     @ApiModelProperty(value = "Tpp roles", required = true, dataType = "array")
-    private List<TppRole> tppRoles;
+    private List<CmsTppRole> tppRoles;
 
     @Column(name = "authority_id", nullable = false)
     @ApiModelProperty(value = "National competent authority id", required = true, example = "authority id")
