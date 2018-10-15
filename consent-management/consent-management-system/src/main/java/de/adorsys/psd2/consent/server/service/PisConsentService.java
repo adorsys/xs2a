@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.consent.server.service;
 
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.CmsAuthorisationType;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
-import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.psd2.consent.api.pis.PisConsentAspspDataResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataRequest;
@@ -113,7 +112,7 @@ public class PisConsentService {
      * @param consentId id of the consent
      * @return Response containing aspsp consent data
      */
-    public Optional<PisConsentAspspDataResponse> getAspspConsentDataByConsentId(String consentId) {
+    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByConsentId(String consentId) {
         return getPisConsentById(consentId)
                    .map(this::prepareAspspConsentData);
     }
@@ -124,14 +123,14 @@ public class PisConsentService {
      * @param paymentId id of the payment
      * @return Response containing aspsp consent data
      */
-    public Optional<PisConsentAspspDataResponse> getAspspConsentDataByPaymentId(String paymentId) {
+    public Optional<CmsAspspConsentDataBase64> getAspspConsentDataByPaymentId(String paymentId) {
         return pisPaymentDataRepository.findByPaymentId(paymentId)
                    .map(PisPaymentData::getConsent)
                    .map(this::prepareAspspConsentData);
     }
 
-    private PisConsentAspspDataResponse prepareAspspConsentData(PisConsent consent) {
-        PisConsentAspspDataResponse response = new PisConsentAspspDataResponse();
+    private CmsAspspConsentDataBase64 prepareAspspConsentData(PisConsent consent) {
+        CmsAspspConsentDataBase64 response = new CmsAspspConsentDataBase64();
         String aspspConsentDataBase64 = Optional.ofNullable(consent.getAspspConsentData())
                                             .map(bytes -> Base64.getEncoder().encodeToString(bytes))
                                             .orElse(null);
@@ -148,9 +147,9 @@ public class PisConsentService {
      * @return String consent id
      */
     @Transactional
-    public Optional<String> updateAspspConsentData(String consentId, UpdateConsentAspspDataRequest request) {
+    public Optional<String> updateAspspConsentDataInPisConsent(String consentId, CmsAspspConsentDataBase64 request) {
         return getActualPisConsent(consentId)
-                   .map(cons -> updateAspspConsentData(request, cons));
+                   .map(cons -> updateAspspConsentDataInPisConsent(request, cons));
     }
 
     /**
@@ -236,7 +235,7 @@ public class PisConsentService {
         return pisConsentAuthorizationRepository.save(consentAuthorization);
     }
 
-    private String updateAspspConsentData(UpdateConsentAspspDataRequest request, PisConsent consent) {
+    private String updateAspspConsentDataInPisConsent(CmsAspspConsentDataBase64 request, PisConsent consent) {
         byte[] aspspConsentData = Optional.ofNullable(request.getAspspConsentDataBase64())
                                       .map(aspspConsentDataBase64 -> Base64.getDecoder().decode(aspspConsentDataBase64))
                                       .orElse(null);

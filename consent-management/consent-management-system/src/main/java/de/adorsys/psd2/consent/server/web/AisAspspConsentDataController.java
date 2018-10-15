@@ -16,8 +16,7 @@
 
 package de.adorsys.psd2.consent.server.web;
 
-import de.adorsys.psd2.consent.api.UpdateConsentAspspDataRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAspspDataResponse;
+import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.server.service.AisConsentService;
 import io.swagger.annotations.*;
@@ -38,7 +37,7 @@ public class AisAspspConsentDataController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<AisConsentAspspDataResponse> getAspspConsentData(
+    public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentData(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId) {
         return aisConsentService.getAspspConsentData(consentId)
@@ -54,8 +53,8 @@ public class AisAspspConsentDataController {
     public ResponseEntity<CreateAisConsentResponse> updateAspspConsentData(
         @ApiParam(name = "consent-id", value = "The account consent identification assigned to the created account consent.", example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
         @PathVariable("consent-id") String consentId,
-        @RequestBody UpdateConsentAspspDataRequest request) {
-        return aisConsentService.updateAspspConsentData(consentId, request)
+        @RequestBody CmsAspspConsentDataBase64 request) {
+        return aisConsentService.saveAspspConsentDataInAisConsent(consentId, request)
                    .map(consId -> new ResponseEntity<>(new CreateAisConsentResponse(consId), HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

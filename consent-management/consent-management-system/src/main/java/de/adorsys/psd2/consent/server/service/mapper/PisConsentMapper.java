@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.server.service.mapper;
 import de.adorsys.psd2.consent.api.CmsAccountReference;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.CmsConsentStatus;
-import de.adorsys.psd2.consent.api.CmsRemittance;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;

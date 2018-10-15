@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@ApiModel(description = "AccountAccess type", value = "AccountAccessType")
+@ApiModel(description = "AccountAccess type", value = "AisAccountAccessType")
 public enum Xs2aAccountAccessType {
     ALL_ACCOUNTS("allAccounts"),
     ALL_ACCOUNTS_WITH_BALANCES("allAccountsWithBalances");

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.client.cms.model.pis;
 
-import de.adorsys.psd2.consent.api.PisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.pis.PisConsentStatusResponse;
 import de.adorsys.psd2.consent.client.cms.RestCmsRequestMethod;
 import de.adorsys.psd2.consent.client.core.HttpMethod;
 import de.adorsys.psd2.consent.client.core.util.HttpUriParams;

@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.pis;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ApiModel(description = "Access account information", value = "AccessAccountInfo")
-public class AccessAccountInfo {
+@ApiModel(description = "Remittance in cms", value = "CmsRemittance")
+public class CmsRemittance {
+    @ApiModelProperty(value = "the actual reference", required = true, example = "Ref Number Merchant")
+    private String reference;
 
-    @ApiModelProperty(value = "ISO 4217 currency code", example = "EUR")
-    private String currency;
+    @ApiModelProperty(value = "reference type", example = "reference type")
+    private String referenceType;
 
-    @ApiModelProperty(value = "Types of access: ACCOUNT, BALANCE, TRANSACTION, PAYMENT", example = "ACCOUNT")
-    private TypeAccess typeAccess;
+    @ApiModelProperty(value = "reference issuer", example = "reference issuer")
+    private String referenceIssuer;
 }

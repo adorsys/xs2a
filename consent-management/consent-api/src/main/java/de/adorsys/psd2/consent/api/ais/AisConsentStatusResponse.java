@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api;
+package de.adorsys.psd2.consent.api.ais;
 
-import io.swagger.annotations.ApiModel;
+import de.adorsys.psd2.consent.api.CmsConsentStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@ApiModel(description = "Type of the ais consent request", value = "AisConsentRequestType")
-public enum AisConsentRequestType {
-    GLOBAL,
-    ALL_AVAILABLE_ACCOUNTS,
-    BANK_OFFERED,
-    DEDICATED_ACCOUNTS
+@Data
+@AllArgsConstructor
+public class AisConsentStatusResponse {
+    private CmsConsentStatus consentStatus;
 }

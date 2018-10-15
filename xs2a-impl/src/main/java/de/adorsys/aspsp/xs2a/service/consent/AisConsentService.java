@@ -23,12 +23,10 @@ import de.adorsys.aspsp.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.AisConsentStatusResponse;
-import de.adorsys.psd2.consent.api.ConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -113,7 +111,7 @@ public class AisConsentService {
      * @param actionStatus Enum value representing whether the acition is successful or errors occured
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus) {
-        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new ConsentActionRequest(tppId, consentId, actionStatus), Void.class);
+        consentRestTemplate.postForEntity(remoteAisConsentUrls.consentActionLog(), new AisConsentActionRequest(tppId, consentId, actionStatus), Void.class);
     }
 
     /**
