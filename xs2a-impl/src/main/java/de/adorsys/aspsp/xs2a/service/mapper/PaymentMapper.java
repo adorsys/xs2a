@@ -160,7 +160,6 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
                        initialisationResponse.setTransactionFees(spiXs2aAccountMapper.mapToXs2aAmount(pir.getSpiTransactionFees()));
                        initialisationResponse.setTransactionFeeIndicator(pir.isSpiTransactionFeeIndicator());
                        initialisationResponse.setPsuMessage(pir.getPsuMessage());
-                       initialisationResponse.setTppRedirectPreferred(pir.isTppRedirectPreferred());
                        initialisationResponse.setScaMethods(mapToAuthenticationObjects(pir.getScaMethods()));
                        initialisationResponse.setChallengeData(mapToChallengeData(pir.getChallengeData()));
                        initialisationResponse.setTppMessages(mapToMessageErrorCodes(pir.getTppMessages()));
@@ -181,7 +180,6 @@ public class PaymentMapper { // NOPMD TODO fix large amount of methods in Paymen
         response.setScaMethods(null); //Not Present in 1.1 payment entity
         response.setPsuMessage(null);
         response.setLinks(null); //Not Present in 1.1 payment entity
-        response.setTppRedirectPreferred(false); //Not Present in 1.1 payment entity
         return response;
     }
 

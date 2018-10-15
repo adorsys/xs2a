@@ -31,7 +31,6 @@ public class SpiPaymentMapper {
         paymentResponse.setSpiTransactionFees(null);
         paymentResponse.setSpiTransactionFeeIndicator(false);
         paymentResponse.setScaMethods(null);
-        paymentResponse.setTppRedirectPreferred(false);
         if (spiSinglePayment.getPaymentId() == null) {
             paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
             paymentResponse.setPaymentId(spiSinglePayment.getEndToEndIdentification());

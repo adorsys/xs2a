@@ -30,9 +30,9 @@ public abstract class SpiPaymentInitiationResponse {
     private SpiAmount spiTransactionFees;
     private boolean spiTransactionFeeIndicator;
     private List<String> scaMethods;
+    // TODO Make extendable list of scaMethods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
     private String chosenScaMethod;
     private SpiChallengeData challengeData;
     private String psuMessage;
     private List<String> tppMessages;
-    private boolean tppRedirectPreferred;
 }

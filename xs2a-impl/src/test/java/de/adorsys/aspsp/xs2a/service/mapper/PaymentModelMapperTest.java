@@ -356,7 +356,6 @@ public class PaymentModelMapperTest {
         response.setTransactionFees(getXs2aAmount());
         response.setTransactionFeeIndicator(true);
         response.setScaMethods(null);
-        response.setChosenScaMethod(null);
 
         OtpFormat format = OtpFormat.getByValue(OTP_FORMAT).orElse(null);
         Xs2aChallengeData challenge =  new Xs2aChallengeData(IMAGE, DATA, IMAGE_LINK, OTP_MAX_LENGTH, format,
@@ -366,7 +365,6 @@ public class PaymentModelMapperTest {
         response.setPsuMessage(PSU_MSG);
         response.setTppMessages(null); //TODO fix this along with creating TppMessage mapper
         response.setLinks(null);
-        response.setTppRedirectPreferred(false);
         return response;
     }
 

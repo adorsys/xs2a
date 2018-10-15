@@ -24,8 +24,6 @@ import lombok.Data;
 
 @Data
 public abstract class PaymentInitiationResponse {
-    private Xs2aAuthenticationObject chosenScaMethod;
-    private boolean tppRedirectPreferred;
     private String scaStatus;
     @JsonUnwrapped
     private Xs2aTransactionStatus transactionStatus;
