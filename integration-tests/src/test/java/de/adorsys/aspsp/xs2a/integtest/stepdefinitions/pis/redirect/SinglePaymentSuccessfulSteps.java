@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ParseService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.RestCallService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -32,9 +33,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
 public class SinglePaymentSuccessfulSteps {
@@ -52,17 +50,16 @@ public class SinglePaymentSuccessfulSteps {
     @Autowired
     private RestCallService paymentService;
 
+    @Autowired
+    private ParseService parseService;
+
     @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201> data = mapper.readValue(resourceToString(
-            "/data-input/pis/single/" + dataFileName, UTF_8),
-            new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
+        parseService.parseJson("/data-input/pis/single/" + dataFileName,  new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
             });
-
-        context.setTestData(data);
     }
 
     @When("^PSU sends the single payment initiating request$")
