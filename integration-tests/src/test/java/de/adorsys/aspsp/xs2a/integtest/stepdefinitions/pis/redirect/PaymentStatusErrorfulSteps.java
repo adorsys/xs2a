@@ -21,24 +21,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.TppMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.IOUtils.resourceToString;
 
 @FeatureFileSteps
 public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
@@ -53,6 +48,9 @@ public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
     @Autowired
     private ObjectMapper mapper;
 
+    @Autowired
+    private TestService testService;
+
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps
 
@@ -61,29 +59,15 @@ public class PaymentStatusErrorfulSteps extends AbstractErrorfulSteps {
 
     @And("^PSU prepares the errorful payment status request data (.*) with the payment service (.*)$")
     public void loadErrorfulPaymentStatusTestData (String dataFileName, String paymentService) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
-            "/data-input/pis/status/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, TppMessages>>() {
-            });
-
-        context.setTestData(data);
+        testService.parseJson("/data-input/pis/status/" + dataFileName,  new TypeReference<TestData<HashMap, TppMessages>>() {
+        });
         context.setPaymentService(paymentService);
         this.setErrorfulIds(dataFileName);
     }
 
     @When("^PSU requests the status of the payment with error$")
     public void sendPaymentStatusRequestWithoutExistingPaymentId() throws HttpClientErrorException, IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
-
-        try {
-            restTemplate.exchange(
-                context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
-                HttpMethod.GET,
-                entity,
-                HashMap.class);
-        } catch (RestClientResponseException rex) {
-            context.handleRequestError(rex);
-        }
+        testService.sendErrorfulRestCall(HttpMethod.GET, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status");
     }
 
     // @Then("^an error response code and the appropriate error response are received$")
