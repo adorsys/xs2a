@@ -16,10 +16,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { PisService } from '../../service/pis.service';
 import { Banking } from '../../model/banking.model';
 import { AccountConsent } from '../../model/accountConsent';
 import ConsentStatusEnum = AccountConsent.ConsentStatusEnum;
+import { PisService } from '../pis.service';
 
 @Component({
   selector: 'app-tan-confirmation-page',

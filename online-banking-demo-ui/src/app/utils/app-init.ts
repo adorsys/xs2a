@@ -26,21 +26,21 @@ export function initializer(keycloakService: KeycloakService, configService: Con
 }
 
 export function keycloakInit(keycloak: KeycloakService, configService: ConfigService): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await keycloak.init({
-          config: configService.getConfig().keycloakConfig,
-          initOptions: {
-            onLoad: 'login-required',
-            checkLoginIframe: false,
-            flow: 'implicit',
-          },
-          enableBearerInterceptor: true,
-          bearerExcludedUrls: []
-        });
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
+  return new Promise(async (resolve, reject) => {
+    try {
+      await keycloak.init({
+        config: configService.getConfig().keycloakConfig,
+        initOptions: {
+          onLoad: 'login-required',
+          checkLoginIframe: false,
+          flow: 'implicit',
+        },
+        enableBearerInterceptor: true,
+        bearerExcludedUrls: []
+      });
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
