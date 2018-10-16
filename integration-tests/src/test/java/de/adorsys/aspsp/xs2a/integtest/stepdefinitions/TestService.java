@@ -77,8 +77,6 @@ public class TestService {
     }
 
     public void sendErrorfulRestCall (HttpMethod httpMethod, String url, HttpEntity httpEntity) throws IOException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
 
         try {
             restTemplate.exchange(
