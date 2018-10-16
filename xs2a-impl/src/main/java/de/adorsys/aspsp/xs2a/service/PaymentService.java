@@ -76,9 +76,13 @@ public class PaymentService {
      */
     public ResponseObject createPayment(Object payment, PaymentInitiationParameters paymentInitiationParameters) {
         Xs2aPisConsent pisConsent = null;
+        TppInfo tppInfo = tppService.getTppInfo();
+        tppInfo.setRedirectUri(paymentInitiationParameters.getTppRedirectUri());
+        tppInfo.setNokRedirectUri(paymentInitiationParameters.getTppNokRedirectUri());
+
         // TODO remove 'if' statement after create implementation of bulk payment https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/429
         if (EnumSet.of(SINGLE, PERIODIC).contains(paymentInitiationParameters.getPaymentType())) {
-            pisConsent = xs2aPisConsentMapper.mapToXs2aPisConsent(pisConsentService.createPisConsent(paymentInitiationParameters));
+            pisConsent = xs2aPisConsentMapper.mapToXs2aPisConsent(pisConsentService.createPisConsent(paymentInitiationParameters, tppInfo));
             if (StringUtils.isBlank(pisConsent.getConsentId())) {
                 return ResponseObject.builder()
                            .fail(new MessageError(CONSENT_UNKNOWN_400))
@@ -87,9 +91,6 @@ public class PaymentService {
         }
 
         ResponseObject response;
-        TppInfo tppInfo = tppService.getTppInfo();
-        tppInfo.setRedirectUri(paymentInitiationParameters.getTppRedirectUri());
-        tppInfo.setNokRedirectUri(paymentInitiationParameters.getTppNokRedirectUri());
 
         if (paymentInitiationParameters.getPaymentType() == SINGLE) {
             return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
