@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory.*;
+import static de.adorsys.aspsp.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static de.adorsys.aspsp.xs2a.domain.consent.ConsentAuthorizationResponseLinkType.START_AUTHORISATION_WITH_PSU_AUTHENTICATION;
 
 @Service
@@ -39,7 +39,17 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(String psuId, String consentId) {
-        return createConsentAuthorizationAndGetResponse(ScaStatus.STARTED, START_AUTHORISATION_WITH_PSU_AUTHENTICATION, consentId, psuId);
+        return aisConsentService.createAisConsentAuthorization(consentId, Xs2aScaStatus.valueOf(ScaStatus.STARTED.name()), psuId)
+                   .map(authId -> {
+                       CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
+
+                       resp.setConsentId(consentId);
+                       resp.setAuthorizationId(authId);
+                       resp.setScaStatus(ScaStatus.STARTED);
+                       resp.setResponseLinkType(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+                       return resp;
+                   });
     }
 
     @Override
@@ -47,7 +57,6 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId);
     }
 
-    // TODO cover with unit tests https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/334
     @Override
     public UpdateConsentPsuDataResponse updateConsentPsuData(UpdateConsentPsuDataReq request, AccountConsentAuthorization consentAuthorization) {
         AisScaStage<UpdateConsentPsuDataReq, UpdateConsentPsuDataResponse> service = scaStageAuthorisationFactory.getService(SERVICE_PREFIX + consentAuthorization.getScaStatus().name());
@@ -58,19 +67,5 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
         }
 
         return response;
-    }
-
-    private Optional<CreateConsentAuthorizationResponse> createConsentAuthorizationAndGetResponse(ScaStatus scaStatus, ConsentAuthorizationResponseLinkType linkType, String consentId, String psuId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, Xs2aScaStatus.valueOf(scaStatus.name()), psuId)
-                   .map(authId -> {
-                       CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
-
-                       resp.setConsentId(consentId);
-                       resp.setAuthorizationId(authId);
-                       resp.setScaStatus(scaStatus);
-                       resp.setResponseLinkType(linkType);
-
-                       return resp;
-                   });
     }
 }
