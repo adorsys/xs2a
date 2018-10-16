@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.spi.domain.payment;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * @deprecated since 1.8. Will be removed in 1.10
- * @see SpiPaymentInitiationResponse
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SpiPaymentInitialisationResponse extends SpiPaymentInitiationResponse {
+public class PeriodicPaymentInitiationResponse extends PaymentInitiationResponse {
 
+    private PaymentType paymentType = PaymentType.PERIODIC;
 }

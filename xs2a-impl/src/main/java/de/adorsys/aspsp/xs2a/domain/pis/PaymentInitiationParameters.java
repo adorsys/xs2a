@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.authorization.pis;
+package de.adorsys.aspsp.xs2a.domain.pis;
 
-import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.TppInfo;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
+import lombok.Data;
 
-public interface CreatePaymentService<R, T> {
-    ResponseObject<R> createPayment(T payment, PaymentProduct paymentProduct, boolean isTppExplicitAuthorisationPreferred, String consentId, TppInfo tppInfo);
+@Data
+public class PaymentInitiationParameters {
+    private PaymentType paymentType;
+    private PaymentProduct paymentProduct;
+    private String qwacCertificate;
+    private String tppRedirectUri;
+    private String tppNokRedirectUri;
+    private boolean tppExplicitAuthorisationPreferred;
+    private String psuId;
 }
