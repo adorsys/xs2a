@@ -76,6 +76,21 @@ public class TestService {
         }
     }
 
+    public void sendErrorfulRestCall (HttpMethod httpMethod, String url, HttpEntity httpEntity) throws IOException {
+        HttpEntity entity = PaymentUtils.getHttpEntity(
+            context.getTestData().getRequest(), context.getAccessToken());
+
+        try {
+            restTemplate.exchange(
+                url,
+                httpMethod,
+                httpEntity,
+                context.getTestData().getResponse().getBody().getClass());
+        } catch (RestClientResponseException rex) {
+            context.handleRequestError(rex);
+        }
+    }
+
     public void parseJson (String fileName, TypeReference typeReference) throws IOException {
         TestData<?, ?> data = mapper.readValue(resourceToString(
             fileName, UTF_8),
