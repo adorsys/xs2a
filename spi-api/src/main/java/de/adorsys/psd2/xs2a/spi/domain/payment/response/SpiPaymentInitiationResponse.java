@@ -16,24 +16,23 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
+import de.adorsys.psd2.xs2a.spi.domain.payment.SpiChallengeData;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class SpiSinglePaymentInitiateResponse {
+public abstract class SpiPaymentInitiationResponse {
+    private SpiTransactionStatus transactionStatus;
     private String paymentId;
-    private String endToEndIdentification;
-    private SpiAccountReference debtorAccount;
-    private SpiAmount instructedAmount;
-    private SpiAccountReference creditorAccount;
-    private String creditorAgent;
-    private String creditorName;
-    private SpiAddress creditorAddress;
-    private String remittanceInformationUnstructured;
-    private SpiTransactionStatus paymentStatus;
-    protected SpiPaymentProduct paymentProduct;
+    private SpiAmount spiTransactionFees;
+    private boolean spiTransactionFeeIndicator;
+    private List<String> scaMethods;
+    // TODO Make extendable list of scaMethods https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/411
+    private String chosenScaMethod;
+    private SpiChallengeData challengeData;
+    private String psuMessage;
+    private List<String> tppMessages;
 }

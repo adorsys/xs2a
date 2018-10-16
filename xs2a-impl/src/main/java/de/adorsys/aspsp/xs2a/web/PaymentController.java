@@ -19,7 +19,7 @@ package de.adorsys.aspsp.xs2a.web;
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
 import de.adorsys.aspsp.xs2a.domain.Xs2aTransactionStatus;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentProduct;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentType;
 import de.adorsys.aspsp.xs2a.exception.MessageError;
 import de.adorsys.aspsp.xs2a.service.ConsentService;
@@ -93,15 +93,15 @@ public class PaymentController implements PaymentApi {
                                           Object psUIPPort, String psUAccept, String psUAcceptCharset,
                                           String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent,
                                           String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        PaymentRequestParameters requestParams = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), PSU_ID);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), PSU_ID);
         ResponseObject serviceResponse =
-            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, requestParams), requestParams);
+            xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(body, paymentInitiationParameters), paymentInitiationParameters);
 
         return serviceResponse.hasError()
             ? responseMapper.created(serviceResponse)
             : responseMapper.created(ResponseObject
             .builder()
-            .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody(), requestParams))
+            .body(paymentModelMapperPsd2.mapToPaymentInitiationResponse12(serviceResponse.getBody(), paymentInitiationParameters))
             .build());
     }
 

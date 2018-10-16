@@ -30,6 +30,7 @@ const routes: Routes = [
   { path: 'ais/:consentId', component: AisConsentConfirmationPageComponent},
   { path: 'pis', component: PisHelpPageComponent},
   { path: 'pis/:consentId/:paymentId', component: PisConsentConfirmationPageComponent },
+  { path: 'pis/:consentId/:paymentId/:psuId', component: PisConsentConfirmationPageComponent },
   { path: 'pis/tanconfirmationcanceled', component: PisTanConfirmationCanceledComponent },
   { path: 'pis/tanconfirmationerror', component: PisTanConfirmationErrorComponent },
   { path: 'pis/tanconfirmation', component: PisTanConfirmationPageComponent },

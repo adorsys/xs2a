@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.domain.pis;
+package de.adorsys.aspsp.xs2a.domain.consent;
 
-import lombok.Data;
+import lombok.Value;
 
-@Data
-public class PaymentRequestParameters {
-    private PaymentType paymentType;
-    private PaymentProduct paymentProduct;
-    private String qwacCertificate;
-    private String tppRedirectUri;
-    private String tppNokRedirectUri;
-    private boolean tppExplicitAuthorisationPreferred;
-    private String psuId;
+@Value
+public class Xs2aPisConsent {
+    private String consentId;
 }

@@ -11,6 +11,9 @@ metadata:
       [{
         "from": {
           "kind":"ImageStreamTag",
+          {{- if .Values.aspspMock.image.namespace }}
+          "namespace": "{{ .Values.aspspMock.image.namespace }}",
+          {{- end }}
           "name":"{{- if .Values.aspspMock.image.stream }}{{ .Values.aspspMock.image.name }}:{{ default "latest" .Values.aspspMock.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspsp-mock:latest{{- end }}"
         },
         "fieldPath":"spec.template.spec.initContainers[?(@.name==\"mockserver\")].image"
@@ -46,6 +49,7 @@ spec:
       - name: mockserver
         # redhat hack: invalid image to stop first unused deployment
         image: " "
+        imagePullPolicy: {{ .Values.aspspMock.image.pullPolicy }}
         env:
         - name: TZ
           value: {{ .Values.timezone | quote }}
@@ -64,6 +68,18 @@ spec:
             secretKeyRef:
               key: admin-password
               name: "{{ template "psd2.fullname" . }}-keycloak"
+        {{- if .Values.aspspMock.db.user }}
+        - name: MONGODB_USER
+          valueFrom:
+              secretKeyRef:
+                  key: username
+                  name: {{ template "psd2.fullname" . }}-aspsp-mock-db
+        - name: MONGODB_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                  key: password
+                  name: {{ template "psd2.fullname" . }}-aspsp-mock-db
+        {{- end }}
         {{- range $name, $value := .Values.aspspMock.env }}
         {{- if not (empty $value) }}
         - name: {{ $name | quote }}

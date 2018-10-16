@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,18 +9,39 @@ import java.util.HashMap;
 import java.util.Objects;
 
 /**
- * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the  dynamical decisions of the ASPSP when processing the request.  Remark: All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined extensions):    * &#39;startAuthorisation&#39;:      In case, where just the authorisation process of the cancellation needs to be started,      but no additional data needs to be updated for time being (no authentication method to be selected,      no PSU identification nor PSU authentication data to be uploaded).   * &#39;startAuthorisationWithPsuIdentification&#39;:      In case where a PSU Identification needs to be updated when starting the cancellation authorisation:      The link to the cancellation-authorisations end-point, where the cancellation sub-resource has to be      generated while uploading the PSU identification data.   * &#39;startAuthorisationWithPsuAuthentication&#39;:      In case of a yet to be created authorisation sub-resource: The link to the authorisation end-point,      where the authorisation sub-resource has to be generated while uploading the PSU authentication data.
+ * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the
+ * dynamical decisions of the ASPSP when processing the request.  Remark: All links can be relative or full links, to
+ * be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined
+ * extensions):    * &#39;startAuthorisation&#39;:     In case, where just the authorisation process of the
+ * cancellation needs to be started,     but no additional data needs to be updated for time being (no authentication
+ * method to be selected,     no PSU identification nor PSU authentication data to be uploaded).   * &#39;
+ * startAuthorisationWithPsuIdentification&#39;:     In case where a PSU Identification needs to be updated when
+ * starting the cancellation authorisation:     The link to the cancellation-authorisations end-point, where the
+ * cancellation sub-resource has to be     generated while uploading the PSU identification data.   * &#39;
+ * startAuthorisationWithPsuAuthentication&#39;:     In case of a yet to be created authorisation sub-resource: The
+ * link to the authorisation end-point,     where the authorisation sub-resource has to be generated while uploading
+ * the PSU authentication data.
  */
-@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the  dynamical decisions of the ASPSP when processing the request.  Remark: All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined extensions):    * 'startAuthorisation':      In case, where just the authorisation process of the cancellation needs to be started,      but no additional data needs to be updated for time being (no authentication method to be selected,      no PSU identification nor PSU authentication data to be uploaded).   * 'startAuthorisationWithPsuIdentification':      In case where a PSU Identification needs to be updated when starting the cancellation authorisation:      The link to the cancellation-authorisations end-point, where the cancellation sub-resource has to be      generated while uploading the PSU identification data.   * 'startAuthorisationWithPsuAuthentication':      In case of a yet to be created authorisation sub-resource: The link to the authorisation end-point,      where the authorisation sub-resource has to be generated while uploading the PSU authentication data. ")
+@ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response" +
+    " depend on the dynamical decisions of the ASPSP when processing the request.  Remark: All links can be relative " +
+    "or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be " +
+    "added for ASPSP defined extensions):    * 'startAuthorisation':     In case, where just the authorisation " +
+    "process of the cancellation needs to be started,     but no additional data needs to be updated for time being " +
+    "(no authentication method to be selected,     no PSU identification nor PSU authentication data to be uploaded)." +
+    "   * 'startAuthorisationWithPsuIdentification':     In case where a PSU Identification needs to be updated when " +
+    "starting the cancellation authorisation:     The link to the cancellation-authorisations end-point, where the " +
+    "cancellation sub-resource has to be     generated while uploading the PSU identification data.   * " +
+    "'startAuthorisationWithPsuAuthentication':     In case of a yet to be created authorisation sub-resource: The " +
+    "link to the authorisation end-point,     where the authorisation sub-resource has to be generated while " +
+    "uploading the PSU authentication data. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class LinksPaymentInitiationCancel extends HashMap<String, String> {
     @JsonProperty("startAuthorisation")
     private String startAuthorisation = null;
-
     @JsonProperty("startAuthorisationWithPsuIdentification")
     private String startAuthorisationWithPsuIdentification = null;
-
     @JsonProperty("startAuthorisationWithPsuAuthentication")
     private String startAuthorisationWithPsuAuthentication = null;
 
@@ -50,7 +55,7 @@ public class LinksPaymentInitiationCancel extends HashMap<String, String> {
      *
      * @return startAuthorisation
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getStartAuthorisation() {
         return startAuthorisation;
     }
@@ -69,7 +74,7 @@ public class LinksPaymentInitiationCancel extends HashMap<String, String> {
      *
      * @return startAuthorisationWithPsuIdentification
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getStartAuthorisationWithPsuIdentification() {
         return startAuthorisationWithPsuIdentification;
     }
@@ -88,7 +93,7 @@ public class LinksPaymentInitiationCancel extends HashMap<String, String> {
      *
      * @return startAuthorisationWithPsuAuthentication
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getStartAuthorisationWithPsuAuthentication() {
         return startAuthorisationWithPsuAuthentication;
     }
@@ -96,7 +101,6 @@ public class LinksPaymentInitiationCancel extends HashMap<String, String> {
     public void setStartAuthorisationWithPsuAuthentication(String startAuthorisationWithPsuAuthentication) {
         this.startAuthorisationWithPsuAuthentication = startAuthorisationWithPsuAuthentication;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -112,7 +116,8 @@ public class LinksPaymentInitiationCancel extends HashMap<String, String> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(startAuthorisation, startAuthorisationWithPsuIdentification, startAuthorisationWithPsuAuthentication, super.hashCode());
+        return Objects.hash(startAuthorisation, startAuthorisationWithPsuIdentification,
+            startAuthorisationWithPsuAuthentication, super.hashCode());
     }
 
     @Override

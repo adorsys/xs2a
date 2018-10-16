@@ -3,6 +3,10 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+{{- with .Values.cms.route.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
   name: {{ template "psd2.fullname" . }}-cms
   labels:
 {{ include "psd2.labels" . | indent 4 }}

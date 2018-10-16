@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -32,7 +16,8 @@ import java.util.Objects;
  */
 @ApiModel(description = "Signature/corporate seal certificate is expired.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICCERTIFICATEEXPIRED401 {
     @JsonProperty("category")
     private TppMessageCategory category = null;
@@ -53,7 +38,7 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -74,7 +59,7 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public CodeEnum getCode() {
         return code;
@@ -94,7 +79,7 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -113,7 +98,7 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -130,7 +115,8 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TppMessageGENERICCERTIFICATEEXPIRED401 tppMessageGENERICCERTIFICATEEXPIRED401 = (TppMessageGENERICCERTIFICATEEXPIRED401) o;
+        TppMessageGENERICCERTIFICATEEXPIRED401 tppMessageGENERICCERTIFICATEEXPIRED401 =
+            (TppMessageGENERICCERTIFICATEEXPIRED401) o;
         return Objects.equals(this.category, tppMessageGENERICCERTIFICATEEXPIRED401.category) && Objects.equals(this.code, tppMessageGENERICCERTIFICATEEXPIRED401.code) && Objects.equals(this.path, tppMessageGENERICCERTIFICATEEXPIRED401.path) && Objects.equals(this.text, tppMessageGENERICCERTIFICATEEXPIRED401.text);
     }
 
@@ -143,7 +129,6 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICCERTIFICATEEXPIRED401 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -168,7 +153,6 @@ public class TppMessageGENERICCERTIFICATEEXPIRED401 {
      */
     public enum CodeEnum {
         EXPIRED("CERTIFICATE_EXPIRED");
-
         private String value;
 
         CodeEnum(String value) {

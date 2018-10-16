@@ -137,8 +137,8 @@ public class PaymentModelMapperTest {
         assertThat(result.getUltimateCreditor()).isNotBlank();
         assertThat(result.getRemittanceInformationUnstructured()).isNotBlank();
         assertThat(result.getDebtorAccount()).isNotNull();
-        assertThat(result.getRequestedExecutionDate()).isNotNull();
-        assertThat(result.getRequestedExecutionTime()).isNotNull();
+        assertThat(result.getRequestedExecutionDate()).isNull();
+        assertThat(result.getRequestedExecutionTime()).isNull();
     }
 
     @Test
@@ -356,7 +356,6 @@ public class PaymentModelMapperTest {
         response.setTransactionFees(getXs2aAmount());
         response.setTransactionFeeIndicator(true);
         response.setScaMethods(null);
-        response.setChosenScaMethod(null);
 
         OtpFormat format = OtpFormat.getByValue(OTP_FORMAT).orElse(null);
         Xs2aChallengeData challenge =  new Xs2aChallengeData(IMAGE, DATA, IMAGE_LINK, OTP_MAX_LENGTH, format,
@@ -366,7 +365,6 @@ public class PaymentModelMapperTest {
         response.setPsuMessage(PSU_MSG);
         response.setTppMessages(null); //TODO fix this along with creating TppMessage mapper
         response.setLinks(null);
-        response.setTppRedirectPreferred(false);
         return response;
     }
 
@@ -377,8 +375,8 @@ public class PaymentModelMapperTest {
         return amount;
     }
 
-    private PaymentRequestParameters getRequestParameters(PaymentType paymentType){
-        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+    private PaymentInitiationParameters getRequestParameters(PaymentType paymentType){
+        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
         requestParameters.setPaymentType(paymentType);
         requestParameters.setQwacCertificate("TEST CERTIFICATE");
         requestParameters.setPaymentProduct(PaymentProduct.SCT);

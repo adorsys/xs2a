@@ -7,15 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets messageCodeTextAisSpecific
  */
 public enum MessageCodeTextAisSpecific {
-
-    CONSENT_INVALID("CONSENT_INVALID"),
-
-    SESSIONS_NOT_SUPPORTED("SESSIONS_NOT_SUPPORTED"),
-
-    ACCESS_EXCEEDED("ACCESS_EXCEEDED"),
-
-    REQUESTED_FORMATS_INVALID("REQUESTED_FORMATS_INVALID");
-
+    CONSENT_INVALID("CONSENT_INVALID"), SESSIONS_NOT_SUPPORTED("SESSIONS_NOT_SUPPORTED"), ACCESS_EXCEEDED(
+        "ACCESS_EXCEEDED"), REQUESTED_FORMATS_INVALID("REQUESTED_FORMATS_INVALID");
     private String value;
 
     MessageCodeTextAisSpecific(String value) {

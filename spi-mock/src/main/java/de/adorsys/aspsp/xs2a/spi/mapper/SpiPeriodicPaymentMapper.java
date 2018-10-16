@@ -16,30 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.spi.mapper;
 
-import de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPaymentInitialisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.code.SpiFrequencyCode;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentProduct;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SpiPeriodicPaymentMapper {
-    public SpiPaymentInitialisationResponse mapToSpiPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment spiPeriodicPayment) {
-        SpiPaymentInitialisationResponse paymentResponse = new SpiPaymentInitialisationResponse();
-
-        if (spiPeriodicPayment.getPaymentId() == null) {
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RJCT);
-            paymentResponse.setPaymentId(spiPeriodicPayment.getEndToEndIdentification());
-            paymentResponse.setTppMessages(new String[]{"PAYMENT_FAILED"});
-        } else {
-            paymentResponse.setTransactionStatus(SpiTransactionStatus.RCVD);
-            paymentResponse.setPaymentId(spiPeriodicPayment.getPaymentId());
-        }
-
-        return paymentResponse;
-    }
 
     public de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment mapToAspspSpiPeriodicPayment(@NotNull SpiPeriodicPayment payment) {
         de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment periodic = new de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment();
@@ -77,5 +63,16 @@ public class SpiPeriodicPaymentMapper {
         periodic.setFrequency(SpiFrequencyCode.valueOf(payment.getFrequency()));
         periodic.setDayOfExecution(payment.getDayOfExecution());
         return periodic;
+    }
+
+    public SpiPeriodicPaymentInitiationResponse mapToSpiPeriodicPaymentResponse(@NotNull de.adorsys.aspsp.xs2a.spi.domain.payment.SpiPeriodicPayment payment) {
+        SpiPeriodicPaymentInitiationResponse spi = new SpiPeriodicPaymentInitiationResponse();
+        spi.setPaymentId(payment.getPaymentId());
+        if (payment.getPaymentId() == null) {
+            spi.setTransactionStatus(SpiTransactionStatus.RJCT);
+        } else {
+            spi.setTransactionStatus(SpiTransactionStatus.RCVD);
+        }
+        return spi;
     }
 }
