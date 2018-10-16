@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.AbstractErrorfulSteps;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -39,7 +40,7 @@ public class UpdateAuthorisationWithIdentificationErrorfulSteps extends Abstract
     private Context<HashMap, TppMessages> context;
 
     @Autowired
-    private ObjectMapper mapper;
+   private TestService testService;
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps
@@ -50,17 +51,15 @@ public class UpdateAuthorisationWithIdentificationErrorfulSteps extends Abstract
     // @And("^PSU sends the start authorisation request and receives the authorisationId$")
     // See GlobalSuccessfulSteps
 
+
     @And("^PSU prepares the errorful identification data (.*) with the payment service (.*)$")
     public void loadErrorfulUpdateIdentificationData (String dataFileName, String paymentService) throws IOException {
-        TestData<HashMap, TppMessages> data = mapper.readValue(resourceToString(
-            "/data-input/pis/embedded/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, TppMessages>>() {
-            });
-
-        context.setTestData(data);
         context.setPaymentService(paymentService);
-        this.setErrorfulIds(dataFileName);
+
+        testService.parseJson("/data-input/pis/embedded/" + dataFileName, new TypeReference<TestData<HashMap, TppMessages>>() {
+        });
     }
+
 
     // @When("^PSU sends the errorful update authorisation data request$")
     // See GlobalErrorfulSteps

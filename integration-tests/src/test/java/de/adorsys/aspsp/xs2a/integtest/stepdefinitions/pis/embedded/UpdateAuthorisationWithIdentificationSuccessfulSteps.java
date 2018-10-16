@@ -17,6 +17,7 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
 import cucumber.api.java.en.When;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -32,9 +33,7 @@ import org.springframework.web.client.RestTemplate;
 public class UpdateAuthorisationWithIdentificationSuccessfulSteps {
 
     @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
-
+    private TestService testService;
     @Autowired
     private Context context;
 
@@ -52,16 +51,7 @@ public class UpdateAuthorisationWithIdentificationSuccessfulSteps {
 
     @When("^PSU sends the update identification data request$")
     public void sendUpdateAuthorisationWithIdentificationRequest() {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        ResponseEntity<UpdatePsuAuthenticationResponse> response = restTemplate.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId(),
-            HttpMethod.PUT,
-            entity,
-            UpdatePsuAuthenticationResponse.class);
-
-        context.setActualResponse(response);
+        testService.sendRestCall(HttpMethod.PUT,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId());
     }
 
     // @Then("PSU checks if the correct SCA status and response code is received$")

@@ -22,6 +22,7 @@ import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
@@ -44,14 +45,10 @@ import static org.hamcrest.Matchers.equalTo;
 public class UpdateAuthorisationWithScaSelectionSuccessfulSteps {
 
     @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
-
-    @Autowired
     private Context context;
 
     @Autowired
-    private ObjectMapper mapper;
+    private TestService testService;
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps
@@ -70,26 +67,13 @@ public class UpdateAuthorisationWithScaSelectionSuccessfulSteps {
 
     @And("^PSU wants to select the authentication method using the (.*)$")
     public void loadScaMethodSelectionData(String filename) throws IOException {
-        TestData<SelectPsuAuthenticationMethod, SelectPsuAuthenticationMethodResponse> data = mapper.readValue(resourceToString(
-            "/data-input/pis/embedded/" + filename, UTF_8),
-            new TypeReference<TestData<SelectPsuAuthenticationMethod, SelectPsuAuthenticationMethodResponse>>() {
-            });
-
-        context.setTestData(data);
+        testService.parseJson("/data-input/pis/embedded/" + filename, new TypeReference<TestData<SelectPsuAuthenticationMethod, SelectPsuAuthenticationMethodResponse>>() {
+        });
     }
 
     @When("^PSU sends the select sca method request$")
     public void sendUpdateAuthorisationWithScaSelectionRequest() {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        ResponseEntity<SelectPsuAuthenticationMethodResponse> response = restTemplate.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId(),
-            HttpMethod.PUT,
-            entity,
-            SelectPsuAuthenticationMethodResponse.class);
-
-        context.setActualResponse(response);
+        testService.sendRestCall(HttpMethod.PUT, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations/" + context.getAuthorisationId());
     }
 
     @Then("PSU checks if the correct SCA status and response code is received for the selection$")
