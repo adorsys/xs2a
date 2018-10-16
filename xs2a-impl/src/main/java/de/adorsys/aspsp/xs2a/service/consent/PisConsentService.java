@@ -25,11 +25,11 @@ import de.adorsys.aspsp.xs2a.domain.pis.*;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.aspsp.xs2a.service.mapper.consent.Xs2aPisConsentMapper;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,11 +61,13 @@ public class PisConsentService {
      * Creates PIS consent
      *
      * @param parameters Payment request parameters to get needed payment info
+     * @param tppInfo information about TPP
      * @return String consentId
      */
     // TODO rename method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/409
-    public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters) {
+    public CreatePisConsentResponse createPisConsent(PaymentInitiationParameters parameters, TppInfo tppInfo) {
         PisConsentRequest request = new PisConsentRequest();
+        request.setTppInfo(pisConsentMapper.mapToCmsTppInfo(tppInfo));
         request.setPaymentProduct(PisPaymentProduct.getByCode(parameters.getPaymentProduct().getCode()).orElse(null));
         request.setPaymentType(PisPaymentType.valueOf(parameters.getPaymentType().name()));
         return consentRestTemplate.postForEntity(remotePisConsentUrls.createPisConsent(), request, CreatePisConsentResponse.class).getBody();
@@ -78,7 +80,7 @@ public class PisConsentService {
 
     /**
      * @deprecated since 1.8. Will be removed in 1.10
-     * {@link de.adorsys.aspsp.xs2a.service.consent.PisConsentService#createPisConsent(PaymentInitiationParameters)}
+     * {@link de.adorsys.aspsp.xs2a.service.consent.PisConsentService#createPisConsent(PaymentInitiationParameters, TppInfo)}
      */
     @Deprecated
     public ResponseObject createPisConsent(Object payment, Object xs2aResponse, PaymentInitiationParameters requestParameters, TppInfo tppInfo) {

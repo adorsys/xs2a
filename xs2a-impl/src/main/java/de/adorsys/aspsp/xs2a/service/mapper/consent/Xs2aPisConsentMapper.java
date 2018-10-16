@@ -93,6 +93,36 @@ public class Xs2aPisConsentMapper {
         return new Xs2aPisConsent(response.getConsentId());
     }
 
+    public CmsTppInfo mapToCmsTppInfo(TppInfo pisTppInfo) {
+        return Optional.ofNullable(pisTppInfo)
+                   .map(tpp -> {
+                       CmsTppInfo tppInfo = new CmsTppInfo();
+
+                       tppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
+                       tppInfo.setTppName(tpp.getTppName());
+                       tppInfo.setTppRoles(mapToCmsTppRoles(tpp.getTppRoles()));
+                       tppInfo.setAuthorityId(tpp.getAuthorityId());
+                       tppInfo.setAuthorityName(tpp.getAuthorityName());
+                       tppInfo.setCountry(tpp.getCountry());
+                       tppInfo.setOrganisation(tpp.getOrganisation());
+                       tppInfo.setOrganisationUnit(tpp.getOrganisationUnit());
+                       tppInfo.setCity(tpp.getCity());
+                       tppInfo.setState(tpp.getState());
+                       tppInfo.setRedirectUri(tpp.getRedirectUri());
+                       tppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
+
+                       return tppInfo;
+                   }).orElse(null);
+    }
+
+    private List<CmsTppRole> mapToCmsTppRoles(List<Xs2aTppRole> tppRoles) {
+        return Optional.ofNullable(tppRoles)
+                   .map(roles -> roles.stream()
+                                     .map(role -> CmsTppRole.valueOf(role.name()))
+                                     .collect(Collectors.toList()))
+                   .orElseGet(Collections::emptyList);
+    }
+
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
         return Optional.ofNullable(payment)
                    .map(pmt -> {

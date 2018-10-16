@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service.mapper.consent;
+package de.adorsys.aspsp.xs2a.service.consent;
 
-import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
-import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.Optional;
 
 @Service
-public class AspspConsentDataMapper {
+public class Base64AspspDataService implements AspspDataEncoder<byte[], String>, AspspDataDecoder<String, byte[]> {
 
-    public AspspConsentData mapToAspspConsentData(Xs2aConsentData xs2aConsentData) {
-        byte[] aspspConsentData = Optional.ofNullable(xs2aConsentData.getAspspConsentDataBase64())
+    @Override
+    public String encode(byte[] bytePayload) {
+        return Optional.ofNullable(bytePayload)
+                   .map(b -> Base64.getEncoder().encodeToString(b))
+                   .orElse(null);
+    }
+
+    @Override
+    public byte[] decode(String base64Payload) {
+        return Optional.ofNullable(base64Payload)
                                       .map(s -> Base64.getDecoder().decode(s))
                                       .orElse(null);
-        return new AspspConsentData(aspspConsentData, xs2aConsentData.getConsentId());
     }
 }
