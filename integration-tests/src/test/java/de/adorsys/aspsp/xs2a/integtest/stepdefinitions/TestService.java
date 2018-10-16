@@ -16,6 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.aspsp.xs2a.integtest.model.TestData;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +32,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.io.IOUtils.resourceToString;
+
 @Service
-public class RestCallService {
+public class TestService {
 
     @Autowired
     @Qualifier("xs2a")
@@ -39,6 +45,8 @@ public class RestCallService {
     @Autowired
     private Context context;
 
+    @Autowired
+    private ObjectMapper mapper;
 
     public void sendRestCall (HttpMethod httpMethod, String url) {
         HttpEntity entity = PaymentUtils.getHttpEntity(
@@ -58,7 +66,7 @@ public class RestCallService {
             context.getTestData().getRequest(), context.getAccessToken());
 
         try {
-            ResponseEntity<?> response = restTemplate.exchange(
+            restTemplate.exchange(
                 url,
                 httpMethod,
                 entity,
@@ -68,6 +76,10 @@ public class RestCallService {
         }
     }
 
-
-
+    public void parseJson (String fileName, TypeReference typeReference) throws IOException {
+        TestData<?, ?> data = mapper.readValue(resourceToString(
+            fileName, UTF_8),
+            typeReference);
+        context.setTestData(data);
+    }
 }

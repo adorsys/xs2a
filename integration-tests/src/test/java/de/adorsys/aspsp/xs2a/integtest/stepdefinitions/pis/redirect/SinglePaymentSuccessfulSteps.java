@@ -20,8 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ParseService;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.RestCallService;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
@@ -39,23 +38,20 @@ public class SinglePaymentSuccessfulSteps {
 
 
     @Autowired
-    private RestCallService restCallService;
-
-    @Autowired
-    private ParseService parseService;
+    private TestService testService;
 
     @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        parseService.parseJson("/data-input/pis/single/" + dataFileName,  new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
+        testService.parseJson("/data-input/pis/single/" + dataFileName,  new TypeReference<TestData<PaymentInitiationSctJson, PaymentInitationRequestResponse201>>() {
             });
     }
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-          restCallService.sendRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
+          testService.sendRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
     }
 
     // @Then("^a successful response code and the appropriate payment response data are received$")

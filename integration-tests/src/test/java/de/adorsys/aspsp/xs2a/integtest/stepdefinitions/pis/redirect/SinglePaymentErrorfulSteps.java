@@ -20,8 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.ParseService;
-import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.RestCallService;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitiationSctJson;
@@ -36,27 +35,23 @@ import java.io.IOException;
 public class SinglePaymentErrorfulSteps {
 
     @Autowired
-    private RestCallService restService;
+    private TestService testService;
 
     @Autowired
     private Context<PaymentInitiationSctJson, TppMessages> context;
-
-    @Autowired
-    private ParseService parseService;
-
 
     @Given("^PSU initiates an errorful single payment (.*) using the payment service (.*) and the payment product (.*)$")
     public void loadTestData(String dataFileName, String paymentService, String paymentProduct) throws IOException {
         context.setPaymentProduct(paymentProduct);
         context.setPaymentService(paymentService);
 
-        parseService.parseJson("/data-input/pis/single/" + dataFileName,  new TypeReference<TestData<PaymentInitiationSctJson, TppMessages>>() {
+        testService.parseJson("/data-input/pis/single/" + dataFileName,  new TypeReference<TestData<PaymentInitiationSctJson, TppMessages>>() {
         });
     }
 
     @When("^PSU sends the single payment initiating request with error$")
     public void sendPaymentInitiatingRequestWithError() throws HttpClientErrorException, IOException {
-        restService.sendErrorfulRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
+        testService.sendErrorfulRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
     }
 
     // @Then("^an error response code and the appropriate error response are received$")
