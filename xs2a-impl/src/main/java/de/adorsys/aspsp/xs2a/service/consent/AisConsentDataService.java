@@ -17,21 +17,39 @@
 package de.adorsys.aspsp.xs2a.service.consent;
 
 import de.adorsys.aspsp.xs2a.config.rest.consent.AisConsentRemoteUrls;
-import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
+import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
+import de.adorsys.aspsp.xs2a.service.mapper.consent.AspspConsentDataMapper;
+import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Service
-public class AisConsentDataService extends ConsentDataService {
-    private AisConsentRemoteUrls aisConsentRemoteUrls;
+import java.util.Base64;
+import java.util.Objects;
+import java.util.Optional;
 
-    public AisConsentDataService(RestTemplate consentRestTemplate, AisConsentRemoteUrls aisConsentRemoteUrls) {
-        super(consentRestTemplate);
-        this.aisConsentRemoteUrls = aisConsentRemoteUrls;
+@Service
+@RequiredArgsConstructor
+public class AisConsentDataService {
+    @Qualifier("consentRestTemplate")
+    protected final RestTemplate consentRestTemplate;
+    private final AisConsentRemoteUrls aisConsentRemoteUrls;
+    private final AspspConsentDataMapper aspspConsentDataMapper;
+
+    public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
+        return aspspConsentDataMapper.mapToAspspConsentData(consentRestTemplate.getForEntity(aisConsentRemoteUrls.getAspspConsentData(), Xs2aConsentData.class, consentId).getBody());
     }
 
-    @Override
-    protected AspspConsentDataRemoteUrls getRemoteUrl() {
-        return aisConsentRemoteUrls;
+    public void updateAspspConsentData(AspspConsentData consentData) {
+        Optional.ofNullable(consentData)
+            .filter(cd -> StringUtils.isNotBlank(cd.getConsentId()) && Objects.nonNull(cd.getAspspConsentData()))
+            .ifPresent(cd -> {
+                String aspspConsentDataBase64 = Optional.ofNullable(cd.getAspspConsentData())
+                                                    .map(bytes -> Base64.getEncoder().encodeToString(bytes))
+                                                    .orElse(null);
+                consentRestTemplate.put(aisConsentRemoteUrls.updateAspspConsentData(), new Xs2aConsentData(cd.getConsentId(), aspspConsentDataBase64), cd.getConsentId());
+            });
     }
 }

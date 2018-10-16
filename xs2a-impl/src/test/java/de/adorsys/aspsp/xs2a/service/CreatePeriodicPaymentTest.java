@@ -58,8 +58,8 @@ public class CreatePeriodicPaymentTest {
     @Test
     public void success_initiate_periodic_payment() {
         //When
-        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, PaymentProduct.SCT)).thenReturn(buildPeriodicPaymentInitiationResponse());
-        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildXs2aPisConsent(), buildTppInfo());
+        when(scaPaymentService.createPeriodicPayment(buildPeriodicPayment(), TPP_INFO, PaymentProduct.SCT, buildXs2aPisConsent())).thenReturn(buildPeriodicPaymentInitiationResponse());
+        ResponseObject<PeriodicPaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(buildPeriodicPayment(), buildPaymentInitiationParameters(), buildTppInfo(), buildXs2aPisConsent());
 
         //Then
         assertThat(actualResponse.hasError()).isFalse();

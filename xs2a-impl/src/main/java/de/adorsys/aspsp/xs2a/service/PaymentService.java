@@ -92,9 +92,9 @@ public class PaymentService {
         tppInfo.setNokRedirectUri(paymentInitiationParameters.getTppNokRedirectUri());
 
         if (paymentInitiationParameters.getPaymentType() == SINGLE) {
-            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, pisConsent, tppInfo);
+            return createSinglePaymentService.createPayment((SinglePayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         } else if (paymentInitiationParameters.getPaymentType() == PERIODIC) {
-            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, pisConsent, tppInfo);
+            return createPeriodicPaymentService.createPayment((PeriodicPayment) payment, paymentInitiationParameters, tppInfo, pisConsent);
         } else {
             response = createBulkPayments((BulkPayment) payment, tppInfo, paymentInitiationParameters.getPaymentProduct().getCode());
         }

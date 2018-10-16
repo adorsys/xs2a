@@ -18,8 +18,6 @@ package de.adorsys.aspsp.xs2a.spi.domain.payment;
 
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiTransactionStatus;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -30,24 +28,14 @@ import java.util.List;
  * @see de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment
  */
 @Data
-@ApiModel(description = "BulkPayment Initialisation Request", value = "SpiBulkPayment")
 public class SpiBulkPayment {
-    @ApiModelProperty(value = "If this element equals \"true\", the PSU prefers only one booking entry. If this element equals \"false\", the PSU prefers individual booking of all contained individual transactions. The ASPSP will follow this preference according to contracts agreed on with the PSU.", example = "true")
     private Boolean batchBookingPreferred;
 
-    @ApiModelProperty(value = "debtor account", required = true)
     private SpiAccountReference debtorAccount;
 
-    @ApiModelProperty(value = "requested execution date", example = "2020-01-01")
     private LocalDate requestedExecutionDate;
 
-    @ApiModelProperty(value = "The Bulk Entry Type is a type which follows the JSON formats for the supported products for single payments, see Section 11.1, excluding the data elements\n" +
-                                  "\uF0B7 debtorAccount,\n" +
-                                  "\uF0B7 requestedExecutionDate,\n" +
-                                  "\uF0B7 requestedExecutionTime.\n" +
-                                  "These three data elements may not be contained in any bulk entry.", required = true)
     List<SpiSinglePayment> payments;
 
-    @ApiModelProperty(value = "Transaction status", example = "Pending")
     private SpiTransactionStatus paymentStatus;
 }
