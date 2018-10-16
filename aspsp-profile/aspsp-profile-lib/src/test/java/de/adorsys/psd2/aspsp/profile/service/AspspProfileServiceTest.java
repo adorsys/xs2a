@@ -153,7 +153,6 @@ public class AspspProfileServiceTest {
     private static List<String> getPaymentTypes() {
         return Arrays.asList(
             "periodic",
-            "delayed",
             "bulk");
     }
 

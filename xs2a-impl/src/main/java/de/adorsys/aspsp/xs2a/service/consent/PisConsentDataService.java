@@ -16,28 +16,38 @@
 
 package de.adorsys.aspsp.xs2a.service.consent;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
 import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class PisConsentDataService extends ConsentDataService {
-    private PisConsentRemoteUrls pisConsentRemoteUrls;
-
-    public PisConsentDataService(RestTemplate consentRestTemplate, PisConsentRemoteUrls pisConsentRemoteUrls) {
-        super(consentRestTemplate);
-        this.pisConsentRemoteUrls = pisConsentRemoteUrls;
-    }
+@RequiredArgsConstructor
+public class PisConsentDataService {
+    @Qualifier("consentRestTemplate")
+    private final RestTemplate consentRestTemplate;
+    private final PisConsentRemoteUrls pisConsentRemoteUrls;
+    private final Base64AspspDataService base64AspspDataService;
 
     public AspspConsentData getAspspConsentDataByPaymentId(String paymentId) {
-        return mapToAspspConsentData(consentRestTemplate.getForEntity(getRemoteUrl().getAspspConsentData(), Xs2aConsentData.class, paymentId).getBody());
+        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(pisConsentRemoteUrls.getAspspConsentData(), Xs2aConsentData.class, paymentId).getBody();
+        byte[] bytePayload = base64AspspDataService.decode(xs2aConsentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, xs2aConsentData.getConsentId());
     }
 
-    @Override
-    protected AspspConsentDataRemoteUrls getRemoteUrl() {
-        return pisConsentRemoteUrls;
+    public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
+        Xs2aConsentData xs2aConsentData = consentRestTemplate.getForEntity(pisConsentRemoteUrls.getAspspConsentDataByConsentId(), Xs2aConsentData.class, consentId).getBody();
+        byte[] bytePayload = base64AspspDataService.decode(xs2aConsentData.getAspspConsentDataBase64());
+        return new AspspConsentData(bytePayload, xs2aConsentData.getConsentId());
+    }
+
+    public void updateAspspConsentData(AspspConsentData consentData) {
+        String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
+
+        consentRestTemplate.put(pisConsentRemoteUrls.updateAspspConsentData(),
+            new Xs2aConsentData(consentData.getConsentId(), base64Payload), consentData.getConsentId());
     }
 }

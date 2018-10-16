@@ -224,7 +224,7 @@ variables: &variables
     - helm init --client-only
     - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
     - echo "${VAULT_PWD}" > $ANSIBLE_VAULT_PASSWORD_FILE
-    - ansible-vault view env/develop.yaml.enc > env/develop.yaml
+    - ansible-vault view env/${HELM_VALUE}.enc > env/${HELM_VALUE}
     - >-
       helm diff upgrade ${HELM_RELEASE} .
       --allow-unreleased -q
@@ -446,4 +446,26 @@ deploy_branch_stage:
     DOCKER_TAG: "${CI_COMMIT_REF_SLUG}"
     HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
     HELM_VALUE: develop.yaml
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://${CI_ENVIRONMENT_SLUG}-backend-datev-sb.cloud.adorsys.de
+    on_stop: remove_deploy_review_branch
 
+remove_deploy_review_branch:
+  stage: "deploy:static"
+  when: manual
+  only:
+  - /^.*-helm-.*$/
+  image: adorsys/ci-helm:2.10
+  dependencies: []
+  script:
+    - oc login kubernetes.default.svc --token=${HELM_TOKEN} --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    - helm init --client-only
+    - helm del --purge "${HELM_RELEASE}"
+  variables:
+    <<: *variables
+    GIT_STRATEGY: none
+    HELM_RELEASE: "${CI_ENVIRONMENT_SLUG}-psd2"
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop

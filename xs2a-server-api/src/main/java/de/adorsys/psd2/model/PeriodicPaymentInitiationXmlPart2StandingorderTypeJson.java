@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,24 +11,23 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment.
+ * The body part 2 of a periodic payment initation request containes the execution related informations of the
+ * periodic payment.
  */
-@ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
+@ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related " +
+    "informations of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
     @JsonProperty("startDate")
     private LocalDate startDate = null;
-
     @JsonProperty("endDate")
     private LocalDate endDate = null;
-
     @JsonProperty("executionRule")
     private ExecutionRule executionRule = null;
-
     @JsonProperty("frequency")
     private FrequencyCode frequency = null;
-
     @JsonProperty("dayOfExecution")
     private DayOfExecution dayOfExecution = null;
 
@@ -58,7 +41,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
      *
      * @return startDate
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public LocalDate getStartDate() {
@@ -79,7 +62,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
      *
      * @return endDate
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public LocalDate getEndDate() {
         return endDate;
@@ -99,7 +82,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
      *
      * @return executionRule
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public ExecutionRule getExecutionRule() {
         return executionRule;
@@ -119,7 +102,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
      *
      * @return frequency
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public FrequencyCode getFrequency() {
@@ -140,7 +123,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
      *
      * @return dayOfExecution
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public DayOfExecution getDayOfExecution() {
         return dayOfExecution;
@@ -149,7 +132,6 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
     public void setDayOfExecution(DayOfExecution dayOfExecution) {
         this.dayOfExecution = dayOfExecution;
     }
-
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -172,7 +154,6 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {\n");
-
         sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
         sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
         sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");

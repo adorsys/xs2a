@@ -16,11 +16,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { PisService } from '../../service/pis.service';
 import { Banking } from '../../model/banking.model';
 import { SinglePayment } from '../../model/singlePayment';
 import { AccountConsent } from '../../model/accountConsent';
 import ConsentStatusEnum = AccountConsent.ConsentStatusEnum;
+import { PisService } from '../pis.service';
 
 @Component({
   selector: 'app-consent-confirmation-page',
@@ -54,8 +54,8 @@ export class PisConsentConfirmationPageComponent implements OnInit {
   }
 
   getBankingDetailsFromUrl(params: UrlSegment[]) {
-    this.consentId = params[1].toString();
-    this.paymentId = params[2].toString();
+    this.consentId = params[0].toString();
+    this.paymentId = params[1].toString();
   }
 
   createQueryParams() {

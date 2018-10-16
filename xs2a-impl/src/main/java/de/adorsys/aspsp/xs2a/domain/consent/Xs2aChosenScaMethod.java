@@ -16,22 +16,12 @@
 
 package de.adorsys.aspsp.xs2a.domain.consent;
 
-import de.adorsys.psd2.model.ChosenScaMethod;
 import lombok.Data;
 
 @Data
 public class Xs2aChosenScaMethod {
+
     private String authenticationType;
     private String authenticationMethodId;
 
-    /*
-    TODO Delete inner class after fixing bug in ChosenScaMethod : https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/343
-     This class was created for extending incorrect class ChosenScaMethod.
-     Because ChosenScaMethod doesn't have any fields
-    */
-    @Data
-    public class ExtendedChosenScaMethod extends ChosenScaMethod {
-        private String authenticationType;
-        private String authenticationMethodId;
-    }
 }

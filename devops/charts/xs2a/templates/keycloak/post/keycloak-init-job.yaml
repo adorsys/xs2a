@@ -32,6 +32,8 @@ spec:
             memory: 100Mi
             cpu: 100m
         env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
         - name: KEYCLOAK_HOST
           value: "http://{{ template "psd2.fullname" . }}-keycloak:8080"
         - name: KEYCLOAK_USER

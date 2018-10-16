@@ -17,17 +17,15 @@
 package de.adorsys.aspsp.xs2a.web.aspect;
 
 import de.adorsys.aspsp.xs2a.domain.ResponseObject;
-import de.adorsys.aspsp.xs2a.domain.pis.PaymentRequestParameters;
+import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController> {
@@ -36,7 +34,7 @@ public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentControll
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.aspsp.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, ..)", returning = "result", argNames = "result,payment,requestParameters")
-    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentRequestParameters requestParameters) {
+    public ResponseObject<?> createPaymentAspect(ResponseObject<?> result, Object payment, PaymentInitiationParameters requestParameters) {
         if (!result.hasError()) {
             return enrichLink(result, requestParameters);
         }

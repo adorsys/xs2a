@@ -16,6 +16,7 @@
 
 package de.adorsys.aspsp.xs2a.service.payment;
 
+import de.adorsys.aspsp.xs2a.service.consent.PisConsentDataService;
 import de.adorsys.aspsp.xs2a.service.mapper.PaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aPaymentMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmbeddedScaPaymentService extends RedirectAndEmbeddedPaymentService {
-    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper) {
-        super(paymentSpi, paymentMapper, singlePaymentSpi, periodicPaymentSpi, xs2aToSpiPaymentMapper, xs2aToSpiPeriodicPaymentMapper, spiToXs2aPaymentMapper);
+    public EmbeddedScaPaymentService(PaymentSpi paymentSpi, PaymentMapper paymentMapper, SinglePaymentSpi singlePaymentSpi, PeriodicPaymentSpi periodicPaymentSpi, Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPeriodicPaymentMapper, SpiToXs2aPaymentMapper spiToXs2aPaymentMapper, PisConsentDataService pisConsentDataService) {
+        super(paymentSpi, paymentMapper, singlePaymentSpi, periodicPaymentSpi, xs2aToSpiPaymentMapper, xs2aToSpiPeriodicPaymentMapper, spiToXs2aPaymentMapper, pisConsentDataService);
     }
 }

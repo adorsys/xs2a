@@ -23,7 +23,6 @@ import java.util.Optional;
 public enum PisPaymentType {
     BULK("bulk"),
     PERIODIC("periodic"),
-    FUTURE_DATED("delayed"),
     SINGLE("single");
 
     private static final Map<String, PisPaymentType> container = new HashMap<>();

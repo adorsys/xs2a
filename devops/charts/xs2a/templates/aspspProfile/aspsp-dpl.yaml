@@ -11,9 +11,12 @@ metadata:
       [{
         "from": {
           "kind": "ImageStreamTag",
-          "name":"{{- if .Values.aspspProfile.image.stream }}{{ .Values.aspspProfile.image.name }}:{{ default "latest" .Values.aspspProfile.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspspProfile:latest{{- end }}"
+          {{- if .Values.aspspProfile.image.namespace }}
+          "namespace": "{{ .Values.aspspProfile.image.namespace }}",
+          {{- end }}
+          "name":"{{- if .Values.aspspProfile.image.stream }}{{ .Values.aspspProfile.image.name }}:{{ default "latest" .Values.aspspProfile.image.tag }}{{- else }}{{ template "psd2.fullname" . }}-aspspprofile:latest{{- end }}"
         },
-        "fieldPath": "spec.template.spec.containers[?(@.name==\"aspsp-profile\")].image"
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"aspspprofile\")].image"
       }]
   name: {{ template "psd2.fullname" . }}-aspspprofile
   labels:
@@ -36,8 +39,9 @@ spec:
         app.kubernetes.io/component: aspspProfile
     spec:
       containers:
-        - name: aspsp-profile
+        - name: aspspprofile
           image: " "
+          imagePullPolicy: {{ .Values.aspspProfile.image.pullPolicy }}
           ports:
           - containerPort: 8080
             protocol: TCP

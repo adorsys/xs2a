@@ -2191,7 +2191,7 @@ paths:
         Return a list of all authorisation subresources IDs which have been created.
         
         This function returns an array of hyperlinks to all generated authorisation sub-resources.
-      operationId: getPaymentInitiationAuthorisation
+      operationId: getConsentAuthorisations
       tags:
         - Account Information Service (AIS)
         - Common AIS and PIS Services
@@ -2837,7 +2837,7 @@ paths:
         Read a list of all authorisation subresources IDs which have been created.
         
         This function returns an array of hyperlinks to all generated authorisation sub-resources.
-      operationId: getPaymentInitiationAuthorisation
+      operationId: getSigningBasketAuthorisations
       tags:
         - Signing Baskets
         - Common AIS and PIS Services
@@ -3439,7 +3439,8 @@ components:
       #  This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach,
       #  if the PSU is already identified e.g. with the first relevant factor or alternatively an access token,
       #  if SCA is required and if the authentication method is implicitly selected.
-      $ref: "#/components/schemas/authenticationObject"
+      allOf:
+        - $ref: '#/components/schemas/authenticationObject'
 
     authenticationType:
       description: |
@@ -4910,12 +4911,12 @@ components:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationStructured: # N.A.
 #          $ref: "#/components/schemas/remittanceInformationStructured"
-#        requestedExecutionDate:
-#          type: string
-#          format: date
-#        requestedExecutionTime:
-#          type: string
-#          format: date-time
+        requestedExecutionDate:
+          type: string
+          format: date
+        requestedExecutionTime:
+          type: string
+          format: date-time
 
     paymentInitiationSctInst_json:
       description: |

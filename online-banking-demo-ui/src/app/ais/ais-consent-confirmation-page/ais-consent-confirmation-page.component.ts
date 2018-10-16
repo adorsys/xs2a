@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { AisService } from '../../service/ais.service';
+import { AisService } from '../ais.service';
 import { Account } from '../../model/aspsp/account';
 import { AccountConsent } from '../../model/aspsp/accountConsent';
 import { AspspSettings } from '../../model/profile/aspspSettings';
@@ -72,7 +72,7 @@ export class AisConsentConfirmationPageComponent implements OnInit {
   }
 
   getConsentIdFromUrl(params: UrlSegment[]) {
-    this.consentId = params[1].toString();
+    this.consentId = params[0].toString();
   }
 
   createQueryParams() {

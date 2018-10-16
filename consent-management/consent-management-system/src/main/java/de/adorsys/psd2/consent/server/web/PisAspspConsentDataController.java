@@ -59,4 +59,17 @@ public class PisAspspConsentDataController {
                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping(path = "/consent/{consent-id}/aspsp-consent-data")
+    @ApiOperation(value = "Get aspsp consent data identified by given consent id.")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")})
+    public ResponseEntity<PisConsentAspspDataResponse> getAspspConsentDataByConsentId(
+        @ApiParam(name = "consent-id", value = "The consent identification.", example = "32454656712432")
+        @PathVariable("consent-id") String consentId) {
+        return pisConsentService.getAspspConsentDataByConsentId(consentId)
+                   .map(response -> new ResponseEntity<>(response, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.web.interceptor;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.aspsp.xs2a.service.mapper.MessageErrorMapper;
 import de.adorsys.aspsp.xs2a.service.validator.RequestValidatorService;
@@ -32,7 +31,6 @@ import org.springframework.web.method.HandlerMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

@@ -40,18 +40,17 @@ public class PisScaAuthenticatedStage extends PisScaStage<UpdatePisConsentPsuDat
 
     @Override
     public UpdatePisConsentPsuDataResponse apply(UpdatePisConsentPsuDataRequest request, GetPisConsentAuthorisationResponse pisConsentAuthorisationResponse) {
-        AspspConsentData aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(), getMethod(request.getAuthenticationMethodId()),pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId())).getAspspConsentData();
+        AspspConsentData aspspConsentData = paymentSpi.performStrongUserAuthorisation(request.getPsuId(), getMethod(request.getAuthenticationMethodId()), pisConsentDataService.getAspspConsentDataByPaymentId(request.getPaymentId())).getAspspConsentData();
         pisConsentDataService.updateAspspConsentData(aspspConsentData);
         request.setScaStatus(SCAMETHODSELECTED);
         return pisAuthorisationService.doUpdatePisConsentAuthorisation(request);
     }
 
-    private SpiScaMethod getMethod(String method){ // TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
-        SpiScaMethod scaMethod =SpiScaMethod.SMS_OTP;
+    private SpiScaMethod getMethod(String method) { //TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332
+        SpiScaMethod scaMethod = SpiScaMethod.SMS_OTP;
         try {
             scaMethod = SpiScaMethod.valueOf(method);
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.error("Sca Method could not be parsed", e.getLocalizedMessage());
         }
         return scaMethod;

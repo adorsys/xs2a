@@ -38,7 +38,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
@@ -143,41 +143,6 @@ public class PaymentServiceTest {
         assertThat(response.getError().getTransactionStatus()).isEqualTo(RJCT);
     }
 
-    //PeriodicPayment Tests
-    @Test
-    public void initiatePeriodicPayment() {
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_OK, TPP_INFO, ALLOWED_PAYMENT_PRODUCT)).thenReturn(getPaymentResponse(RCVD, null));
-        PeriodicPayment payment = PERIODIC_PAYMENT_OK;
-        //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RCVD);
-    }
-
-    @Test
-    public void initiatePeriodicPayment_Failure_ASPSP_RJCT() {
-        when(scaPaymentService.createPeriodicPayment(PERIODIC_PAYMENT_NOK_AMOUNT, TPP_INFO, ALLOWED_PAYMENT_PRODUCT)).thenReturn(getPaymentInitiationResponseRJCT());
-        PeriodicPayment payment = PERIODIC_PAYMENT_NOK_AMOUNT;
-        initiatePeriodicPaymentFailureTest(payment, PAYMENT_FAILED);
-    }
-
-    private PaymentInitialisationResponse getPaymentInitiationResponseRJCT() {
-        PaymentInitialisationResponse response = new PaymentInitialisationResponse();
-        response.setTransactionStatus(RJCT);
-        response.setTppMessages(new MessageErrorCode[]{MessageErrorCode.PAYMENT_FAILED});
-        return response;
-    }
-
-    private void initiatePeriodicPaymentFailureTest(PeriodicPayment payment, MessageErrorCode errorCode) {
-        //When
-        ResponseObject<PaymentInitialisationResponse> actualResponse = paymentService.initiatePeriodicPayment(payment, TPP_INFO, ALLOWED_PAYMENT_PRODUCT);
-        //Then
-        assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(RJCT);
-        assertThat(actualResponse.getBody().getTppMessages()[0].getName()).isEqualTo(errorCode.getName());
-    }
-
     //Bulk Tests
     @Test
     public void createBulkPayments() {
@@ -263,7 +228,7 @@ public class PaymentServiceTest {
         singlePayments.setDebtorAccount(getReference(iban));
         singlePayments.setCreditorAccount(getReference(iban));
         singlePayments.setRequestedExecutionDate(LocalDate.now());
-        singlePayments.setRequestedExecutionTime(LocalDateTime.now());
+        singlePayments.setRequestedExecutionTime(OffsetDateTime.now());
         return singlePayments;
     }
 
@@ -290,7 +255,7 @@ public class PaymentServiceTest {
         payment.setStartDate(LocalDate.now());
         payment.setEndDate(LocalDate.now().plusMonths(4));
         payment.setRequestedExecutionDate(LocalDate.now());
-        payment.setRequestedExecutionTime(LocalDateTime.now());
+        payment.setRequestedExecutionTime(OffsetDateTime.now());
         return payment;
     }
 
@@ -326,8 +291,8 @@ public class PaymentServiceTest {
     }
 
 
-    private PaymentRequestParameters getRequestParameters(){
-        PaymentRequestParameters requestParameters = new PaymentRequestParameters();
+    private PaymentInitiationParameters getRequestParameters(){
+        PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
 
         return requestParameters;
     }

@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,11 +12,14 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * The addressed resource is unknown relative to the TPP.   - 404 (if account-id in path)   - 403 (if other resource in path)   - 400 (if payload)
+ * The addressed resource is unknown relative to the TPP.   - 404 (if account-id in path)   - 403 (if other resource
+ * in path)   - 400 (if payload)
  */
-@ApiModel(description = "The addressed resource is unknown relative to the TPP.   - 404 (if account-id in path)   - 403 (if other resource in path)   - 400 (if payload) ")
+@ApiModel(description = "The addressed resource is unknown relative to the TPP.   - 404 (if account-id in path)   - " +
+    "403 (if other resource in path)   - 400 (if payload) ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
     @JsonProperty("category")
     private TppMessageCategory category = null;
@@ -53,7 +40,7 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -74,7 +61,7 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public CodeEnum getCode() {
         return code;
@@ -94,7 +81,7 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -113,7 +100,7 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -130,7 +117,8 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        TppMessageGENERICRESOURCEUNKNOWN404403400 tppMessageGENERICRESOURCEUNKNOWN404403400 = (TppMessageGENERICRESOURCEUNKNOWN404403400) o;
+        TppMessageGENERICRESOURCEUNKNOWN404403400 tppMessageGENERICRESOURCEUNKNOWN404403400 =
+            (TppMessageGENERICRESOURCEUNKNOWN404403400) o;
         return Objects.equals(this.category, tppMessageGENERICRESOURCEUNKNOWN404403400.category) && Objects.equals(this.code, tppMessageGENERICRESOURCEUNKNOWN404403400.code) && Objects.equals(this.path, tppMessageGENERICRESOURCEUNKNOWN404403400.path) && Objects.equals(this.text, tppMessageGENERICRESOURCEUNKNOWN404403400.text);
     }
 
@@ -143,7 +131,6 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessageGENERICRESOURCEUNKNOWN404403400 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -168,7 +155,6 @@ public class TppMessageGENERICRESOURCEUNKNOWN404403400 {
      */
     public enum CodeEnum {
         UNKNOWN("RESOURCE_UNKNOWN");
-
         private String value;
 
         CodeEnum(String value) {

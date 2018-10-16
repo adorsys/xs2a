@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,26 +15,21 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class PaymentInitationRequestMultiLevelScaResponse201 {
     @JsonProperty("transactionStatus")
     private TransactionStatus transactionStatus = null;
-
     @JsonProperty("paymentId")
     private String paymentId = null;
-
     @JsonProperty("transactionFees")
     private Amount transactionFees = null;
-
     @JsonProperty("transactionFeeIndicator")
     private Boolean transactionFeeIndicator = null;
-
     @JsonProperty("_links")
     private Map _links = null;
-
     @JsonProperty("psuMessage")
     private String psuMessage = null;
-
     @JsonProperty("tppMessages")
     private TppMessages tppMessages = null;
 
@@ -64,7 +43,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return transactionStatus
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TransactionStatus getTransactionStatus() {
@@ -85,7 +64,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return paymentId
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public String getPaymentId() {
         return paymentId;
@@ -105,7 +84,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return transactionFees
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public Amount getTransactionFees() {
         return transactionFees;
@@ -125,7 +104,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return transactionFeeIndicator
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public Boolean getTransactionFeeIndicator() {
         return transactionFeeIndicator;
     }
@@ -144,7 +123,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return _links
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public Map getLinks() {
@@ -165,7 +144,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return psuMessage
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPsuMessage() {
         return psuMessage;
     }
@@ -184,7 +163,7 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
      *
      * @return tppMessages
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     @Valid
     public TppMessages getTppMessages() {
         return tppMessages;
@@ -194,7 +173,6 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
         this.tppMessages = tppMessages;
     }
 
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -203,20 +181,24 @@ public class PaymentInitationRequestMultiLevelScaResponse201 {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PaymentInitationRequestMultiLevelScaResponse201 paymentInitationRequestMultiLevelScaResponse201 = (PaymentInitationRequestMultiLevelScaResponse201) o;
-        return Objects.equals(this.transactionStatus, paymentInitationRequestMultiLevelScaResponse201.transactionStatus) && Objects.equals(this.paymentId, paymentInitationRequestMultiLevelScaResponse201.paymentId) && Objects.equals(this.transactionFees, paymentInitationRequestMultiLevelScaResponse201.transactionFees) && Objects.equals(this.transactionFeeIndicator, paymentInitationRequestMultiLevelScaResponse201.transactionFeeIndicator) && Objects.equals(this._links, paymentInitationRequestMultiLevelScaResponse201._links) && Objects.equals(this.psuMessage, paymentInitationRequestMultiLevelScaResponse201.psuMessage) && Objects.equals(this.tppMessages, paymentInitationRequestMultiLevelScaResponse201.tppMessages);
+        PaymentInitationRequestMultiLevelScaResponse201 paymentInitationRequestMultiLevelScaResponse201 =
+            (PaymentInitationRequestMultiLevelScaResponse201) o;
+        return Objects.equals(this.transactionStatus,
+            paymentInitationRequestMultiLevelScaResponse201.transactionStatus) && Objects.equals(this.paymentId,
+            paymentInitationRequestMultiLevelScaResponse201.paymentId) && Objects.equals(this.transactionFees,
+            paymentInitationRequestMultiLevelScaResponse201.transactionFees) && Objects.equals(this.transactionFeeIndicator, paymentInitationRequestMultiLevelScaResponse201.transactionFeeIndicator) && Objects.equals(this._links, paymentInitationRequestMultiLevelScaResponse201._links) && Objects.equals(this.psuMessage, paymentInitationRequestMultiLevelScaResponse201.psuMessage) && Objects.equals(this.tppMessages, paymentInitationRequestMultiLevelScaResponse201.tppMessages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionStatus, paymentId, transactionFees, transactionFeeIndicator, _links, psuMessage, tppMessages);
+        return Objects.hash(transactionStatus, paymentId, transactionFees, transactionFeeIndicator, _links,
+            psuMessage, tppMessages);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class PaymentInitationRequestMultiLevelScaResponse201 {\n");
-
         sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
         sb.append("    paymentId: ").append(toIndentedString(paymentId)).append("\n");
         sb.append("    transactionFees: ").append(toIndentedString(transactionFees)).append("\n");

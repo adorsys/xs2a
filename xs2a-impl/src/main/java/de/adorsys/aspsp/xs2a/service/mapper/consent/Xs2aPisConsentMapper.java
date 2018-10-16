@@ -30,6 +30,7 @@ import de.adorsys.psd2.consent.api.pis.PisPaymentProduct;
 import de.adorsys.psd2.consent.api.pis.PisPaymentType;
 import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisConsentAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisConsentPsuDataResponse;
+import de.adorsys.psd2.consent.api.pis.proto.CreatePisConsentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisConsentRequest;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aPisConsentMapper {
 
-    public PisConsentRequest mapToCmsPisConsentRequestForSinglePayment(SinglePayment singlePayment, PaymentProduct paymentProduct) {
+    public PisConsentRequest mapToCmsPisConsentRequest(SinglePayment singlePayment, PaymentProduct paymentProduct) {
         PisConsentRequest request = new PisConsentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
         request.setPaymentProduct(PisPaymentProduct.getByCode(paymentProduct.getCode()).orElse(null));
@@ -86,6 +87,40 @@ public class Xs2aPisConsentMapper {
     public Optional<Xs2aUpdatePisConsentPsuDataResponse> mapToXs2aUpdatePisConsentPsuDataResponse(UpdatePisConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r -> new Xs2aUpdatePisConsentPsuDataResponse(getScaStatus(response), response.getAvailableScaMethods()));
+    }
+
+    public Xs2aPisConsent mapToXs2aPisConsent(CreatePisConsentResponse response) {
+        return new Xs2aPisConsent(response.getConsentId());
+    }
+
+    public CmsTppInfo mapToCmsTppInfo(TppInfo pisTppInfo) {
+        return Optional.ofNullable(pisTppInfo)
+                   .map(tpp -> {
+                       CmsTppInfo tppInfo = new CmsTppInfo();
+
+                       tppInfo.setAuthorisationNumber(tpp.getAuthorisationNumber());
+                       tppInfo.setTppName(tpp.getTppName());
+                       tppInfo.setTppRoles(mapToCmsTppRoles(tpp.getTppRoles()));
+                       tppInfo.setAuthorityId(tpp.getAuthorityId());
+                       tppInfo.setAuthorityName(tpp.getAuthorityName());
+                       tppInfo.setCountry(tpp.getCountry());
+                       tppInfo.setOrganisation(tpp.getOrganisation());
+                       tppInfo.setOrganisationUnit(tpp.getOrganisationUnit());
+                       tppInfo.setCity(tpp.getCity());
+                       tppInfo.setState(tpp.getState());
+                       tppInfo.setRedirectUri(tpp.getRedirectUri());
+                       tppInfo.setNokRedirectUri(tpp.getNokRedirectUri());
+
+                       return tppInfo;
+                   }).orElse(null);
+    }
+
+    private List<CmsTppRole> mapToCmsTppRoles(List<Xs2aTppRole> tppRoles) {
+        return Optional.ofNullable(tppRoles)
+                   .map(roles -> roles.stream()
+                                     .map(role -> CmsTppRole.valueOf(role.name()))
+                                     .collect(Collectors.toList()))
+                   .orElseGet(Collections::emptyList);
     }
 
     private PisPayment mapToPisPaymentForSinglePayment(SinglePayment payment) {
@@ -226,5 +261,4 @@ public class Xs2aPisConsentMapper {
                    .map(Enum::name)
                    .orElse(null);
     }
-
 }

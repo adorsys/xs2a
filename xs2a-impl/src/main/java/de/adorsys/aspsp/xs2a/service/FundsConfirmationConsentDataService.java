@@ -16,27 +16,16 @@
 
 package de.adorsys.aspsp.xs2a.service;
 
-import de.adorsys.aspsp.xs2a.config.rest.consent.AspspConsentDataRemoteUrls;
-import de.adorsys.aspsp.xs2a.service.consent.ConsentDataService;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 //TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
 @Service
-public class FundsConfirmationConsentDataService extends ConsentDataService {
-    public FundsConfirmationConsentDataService(RestTemplate consentRestTemplate) {
-        super(consentRestTemplate);
-    }
+public class FundsConfirmationConsentDataService {
 
-    @Override
-    protected AspspConsentDataRemoteUrls getRemoteUrl() {
-        //TODO Create FundsConfirmationConsentRemoteUrls after corresponding endpoins appear https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
-        return null;
-    }
-
-    @Override
     public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return null;
+        return new AspspConsentData();
     }
+
+    public void updateAspspConsentData(AspspConsentData aspspConsentData){}
 }

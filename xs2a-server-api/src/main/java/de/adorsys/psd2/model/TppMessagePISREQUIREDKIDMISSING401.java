@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2018 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -28,11 +12,14 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * The payment initiation has failed due to a missing KID. This is a specific message code for the Norwegian market, where ASPSP can require the payer to transmit the KID.
+ * The payment initiation has failed due to a missing KID. This is a specific message code for the Norwegian market,
+ * where ASPSP can require the payer to transmit the KID.
  */
-@ApiModel(description = "The payment initiation has failed due to a missing KID. This is a specific message code for the Norwegian market, where ASPSP can require the payer to transmit the KID. ")
+@ApiModel(description = "The payment initiation has failed due to a missing KID. This is a specific message code for " +
+    "the Norwegian market, where ASPSP can require the payer to transmit the KID. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-08-09T18:41:17.591+02:00[Europe/Berlin]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2018-10-11T14:55" +
+    ":45.627+02:00[Europe/Berlin]")
 public class TppMessagePISREQUIREDKIDMISSING401 {
     @JsonProperty("category")
     private TppMessageCategory category = null;
@@ -53,7 +40,7 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
      *
      * @return category
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     @Valid
     public TppMessageCategory getCategory() {
@@ -74,7 +61,7 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
      *
      * @return code
      **/
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(required = true, value = "")
     @NotNull
     public CodeEnum getCode() {
         return code;
@@ -94,7 +81,7 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
      *
      * @return path
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getPath() {
         return path;
     }
@@ -113,7 +100,7 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
      *
      * @return text
      **/
-    @ApiModelProperty
+    @ApiModelProperty(value = "")
     public String getText() {
         return text;
     }
@@ -131,7 +118,10 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
             return false;
         }
         TppMessagePISREQUIREDKIDMISSING401 tppMessagePISREQUIREDKIDMISSING401 = (TppMessagePISREQUIREDKIDMISSING401) o;
-        return Objects.equals(this.category, tppMessagePISREQUIREDKIDMISSING401.category) && Objects.equals(this.code, tppMessagePISREQUIREDKIDMISSING401.code) && Objects.equals(this.path, tppMessagePISREQUIREDKIDMISSING401.path) && Objects.equals(this.text, tppMessagePISREQUIREDKIDMISSING401.text);
+        return Objects.equals(this.category, tppMessagePISREQUIREDKIDMISSING401.category) && Objects.equals(this.code
+            , tppMessagePISREQUIREDKIDMISSING401.code) && Objects.equals(this.path,
+            tppMessagePISREQUIREDKIDMISSING401.path) && Objects.equals(this.text,
+            tppMessagePISREQUIREDKIDMISSING401.text);
     }
 
     @Override
@@ -143,7 +133,6 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class TppMessagePISREQUIREDKIDMISSING401 {\n");
-
         sb.append("    category: ").append(toIndentedString(category)).append("\n");
         sb.append("    code: ").append(toIndentedString(code)).append("\n");
         sb.append("    path: ").append(toIndentedString(path)).append("\n");
@@ -168,7 +157,6 @@ public class TppMessagePISREQUIREDKIDMISSING401 {
      */
     public enum CodeEnum {
         MISSING("REQUIRED_KID_MISSING");
-
         private String value;
 
         CodeEnum(String value) {

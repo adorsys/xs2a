@@ -95,25 +95,25 @@ public class PaymentModelMapperPsd2 {
         return TransactionStatus.valueOf(responseObject.name());
     }
 
-    public Object mapToPaymentInitiationResponse12(Object response, PaymentRequestParameters requestParameters) {
+    public Object mapToPaymentInitiationResponse12(Object response, PaymentInitiationParameters requestParameters) {
         PaymentInitationRequestResponse201 response201 = new PaymentInitationRequestResponse201();
         if (EnumSet.of(SINGLE, PERIODIC).contains(requestParameters.getPaymentType())) {
-            PaymentInitiateResponse specificResponse = (PaymentInitiateResponse) response;
+            PaymentInitiationResponse specificResponse = (PaymentInitiationResponse) response;
             response201.setTransactionStatus(mapToTransactionStatus12(specificResponse.getTransactionStatus()));
             response201.setPaymentId(specificResponse.getPaymentId());
             response201.setTransactionFees(mapToAmount(specificResponse.getTransactionFees()));
             response201.setTransactionFeeIndicator(specificResponse.isTransactionFeeIndicator());
             response201.setScaMethods(mapToScaMethods(specificResponse.getScaMethods()));
             response201.setChallengeData(mapToChallengeData(specificResponse.getChallengeData()));
-            response201.setLinks(mapper.convertValue(((PaymentInitiateResponse) response).getLinks(), Map.class));
+            response201.setLinks(mapper.convertValue(((PaymentInitiationResponse) response).getLinks(), Map.class));
             response201.setPsuMessage(specificResponse.getPsuMessage());
             response201.setTppMessages(messageErrorMapper.mapToTppMessages(specificResponse.getTppMessages()));
             return response201;
         } else {
-            List<PaymentInitiateResponse> specificResponse = (List<PaymentInitiateResponse>) response;
+            List<PaymentInitiationResponse> specificResponse = (List<PaymentInitiationResponse>) response;
             return specificResponse.stream()
                        .peek(r -> {
-                           PaymentRequestParameters parameters = new PaymentRequestParameters();
+                           PaymentInitiationParameters parameters = new PaymentInitiationParameters();
                            parameters.setPaymentType(SINGLE);
                            mapToPaymentInitiationResponse12(r, parameters);
                        })
@@ -139,8 +139,8 @@ public class PaymentModelMapperPsd2 {
         return bulkPart;
     }
 
-    public PaymentRequestParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, String psuId) {
-        PaymentRequestParameters parameters = new PaymentRequestParameters();
+    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI, String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, String psuId) {
+        PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(PaymentProduct.getByValue(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
         parameters.setQwacCertificate(new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8));

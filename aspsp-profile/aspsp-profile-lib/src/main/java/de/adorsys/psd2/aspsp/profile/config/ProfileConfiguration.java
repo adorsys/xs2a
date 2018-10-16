@@ -33,8 +33,6 @@ import static de.adorsys.psd2.aspsp.profile.domain.BookingStatus.BOOKED;
 @PropertySource(value = {"classpath:bank_profile.yml", "file:${bank_profile.path}"}, ignoreResourceNotFound = true)
 @ConfigurationProperties
 public class ProfileConfiguration {
-    private final static boolean isDelayedPaymentTypeAllowedAlways = true;
-
     /**
      * This field indicates the requested maximum frequency for an access per day
      */
@@ -129,7 +127,6 @@ public class ProfileConfiguration {
 
     @PostConstruct
     private void addDefaultValues() { //NOPMD It is necessary to set single payment and booked booking status available by default
-        setDefaultPaymentType(PaymentType.FUTURE_DATED);
         setDefaultPaymentType(PaymentType.SINGLE);
         setDefaultBookingStatus(BOOKED);
         setAvailableAccountReferenceField(SupportedAccountReferenceField.IBAN); //Sets default Account Reference Field
