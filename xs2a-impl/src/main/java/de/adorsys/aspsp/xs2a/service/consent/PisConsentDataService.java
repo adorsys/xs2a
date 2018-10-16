@@ -20,7 +20,6 @@ import de.adorsys.aspsp.xs2a.config.rest.consent.PisConsentRemoteUrls;
 import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -46,11 +45,9 @@ public class PisConsentDataService {
     }
 
     public void updateAspspConsentData(AspspConsentData consentData) {
-        if (consentData != null && StringUtils.isNotBlank(consentData.getConsentId())) {
-            String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
+        String base64Payload = base64AspspDataService.encode(consentData.getAspspConsentData());
 
-            consentRestTemplate.put(pisConsentRemoteUrls.updateAspspConsentData(),
-                new Xs2aConsentData(consentData.getConsentId(), base64Payload), consentData.getConsentId());
-        }
+        consentRestTemplate.put(pisConsentRemoteUrls.updateAspspConsentData(),
+            new Xs2aConsentData(consentData.getConsentId(), base64Payload), consentData.getConsentId());
     }
 }
