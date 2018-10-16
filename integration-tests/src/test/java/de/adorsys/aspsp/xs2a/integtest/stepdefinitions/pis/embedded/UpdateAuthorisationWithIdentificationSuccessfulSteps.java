@@ -16,7 +16,6 @@
 
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.embedded;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
@@ -38,9 +37,6 @@ public class UpdateAuthorisationWithIdentificationSuccessfulSteps {
 
     @Autowired
     private Context context;
-
-    @Autowired
-    private ObjectMapper mapper;
 
     //  @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps

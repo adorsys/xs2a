@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
@@ -28,9 +27,7 @@ import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.psd2.model.PaymentInitationRequestResponse201;
 import de.adorsys.psd2.model.PaymentInitiationSctJson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -38,17 +35,11 @@ import java.io.IOException;
 public class SinglePaymentSuccessfulSteps {
 
     @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
-
-    @Autowired
     private Context<PaymentInitiationSctJson, PaymentInitationRequestResponse201> context;
 
-    @Autowired
-    private ObjectMapper mapper;
 
     @Autowired
-    private RestCallService paymentService;
+    private RestCallService restCallService;
 
     @Autowired
     private ParseService parseService;
@@ -64,7 +55,7 @@ public class SinglePaymentSuccessfulSteps {
 
     @When("^PSU sends the single payment initiating request$")
     public void sendPaymentInitiatingRequest() {
-          paymentService.sendRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
+          restCallService.sendRestCall(HttpMethod.POST,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
     }
 
     // @Then("^a successful response code and the appropriate payment response data are received$")
