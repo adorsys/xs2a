@@ -52,8 +52,8 @@ public class CreatePeriodicPaymentService implements CreatePaymentService<Period
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, Xs2aPisConsent pisConsent, TppInfo tppInfo) {
-        PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct());
+    public ResponseObject<PeriodicPaymentInitiationResponse> createPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+        PeriodicPaymentInitiationResponse response = scaPaymentService.createPeriodicPayment(periodicPayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
         periodicPayment.setPaymentId(response.getPaymentId());

@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package de.adorsys.aspsp.xs2a.service;
+package de.adorsys.aspsp.xs2a.service.mapper.consent;
 
+import de.adorsys.aspsp.xs2a.domain.Xs2aConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import org.springframework.stereotype.Service;
 
-//TODO Implement this class properly during implementation of FundsConfirmationConsent https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/379
+import java.util.Base64;
+import java.util.Optional;
+
 @Service
-public class FundsConfirmationConsentDataService {
+public class AspspConsentDataMapper {
 
-    public AspspConsentData getAspspConsentDataByConsentId(String consentId) {
-        return new AspspConsentData();
+    public AspspConsentData mapToAspspConsentData(Xs2aConsentData xs2aConsentData) {
+        byte[] aspspConsentData = Optional.ofNullable(xs2aConsentData.getAspspConsentDataBase64())
+                                      .map(s -> Base64.getDecoder().decode(s))
+                                      .orElse(null);
+        return new AspspConsentData(aspspConsentData, xs2aConsentData.getConsentId());
     }
-
-    public void updateAspspConsentData(AspspConsentData aspspConsentData){}
 }

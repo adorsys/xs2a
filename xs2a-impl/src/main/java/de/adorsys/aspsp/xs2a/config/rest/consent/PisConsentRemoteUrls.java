@@ -123,4 +123,13 @@ public class PisConsentRemoteUrls implements AspspConsentDataRemoteUrls {
     public String updatePisConsentPayment() {
         return consentServiceBaseUrl + "/pis/consent/{consent-id}/payment";
     }
+
+    /**
+     * Returns URL-string to CMS endpoint that gets aspsp consent data by payment ID
+     *
+     * @return String
+     */
+    public String getAspspConsentDataByConsentId() {
+        return consentServiceBaseUrl + "/pis/consent/{consent-id}/aspsp-consent-data";
+    }
 }
