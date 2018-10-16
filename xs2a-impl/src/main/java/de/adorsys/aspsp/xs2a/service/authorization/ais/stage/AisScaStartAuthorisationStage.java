@@ -53,6 +53,14 @@ public class AisScaStartAuthorisationStage extends AisScaStage<UpdateConsentPsuD
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper);
     }
 
+    /**
+     * Start authorisation stage workflow: SPU authorising process using data from request
+     * (returns response with FAILED status in case of non-successful authorising), available SCA methods getting
+     * and performing the flow according to none, one or multiple available methods.
+     *
+     * @param request UpdateConsentPsuDataReq with updating data
+     * @return UpdateConsentPsuDataResponse as a result of updating process
+     */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());

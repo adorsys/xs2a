@@ -45,6 +45,14 @@ public class AisScaAuthenticatedStage extends AisScaStage<UpdateConsentPsuDataRe
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper);
     }
 
+    /**
+     * Verifying authorisation code workflow: verifying code from the request
+     * (returns response with error code in case of wrong code being provided), updates consent status
+     * and returns response with FINALISED status.
+     *
+     * @param request UpdateConsentPsuDataReq with updating data
+     * @return UpdateConsentPsuDataResponse as a result of updating process
+     */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());

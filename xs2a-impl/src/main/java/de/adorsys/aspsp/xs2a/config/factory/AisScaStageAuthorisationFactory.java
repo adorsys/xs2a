@@ -16,6 +16,9 @@
 
 package de.adorsys.aspsp.xs2a.config.factory;
 
+/**
+ * This is specific factory intended to retrieve specific, stage-dependent SCA update authorisation services for AIS
+ */
 public interface AisScaStageAuthorisationFactory extends ServiceFactory {
     String SERVICE_PREFIX = "AIS_";
 }

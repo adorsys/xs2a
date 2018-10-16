@@ -26,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.function.Function;
 
+/**
+ * Abstract class to be extended by each stage of updating consent PSU data workflow
+ */
 @RequiredArgsConstructor
 public abstract class AisScaStage<T, R> implements Function<T, R> {
     protected final AisConsentService aisConsentService;

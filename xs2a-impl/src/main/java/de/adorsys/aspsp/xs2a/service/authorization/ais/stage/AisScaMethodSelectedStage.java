@@ -46,6 +46,14 @@ public class AisScaMethodSelectedStage extends AisScaStage<UpdateConsentPsuDataR
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper);
     }
 
+    /**
+     * Stage for multiple available SCA methods only: request should contain chosen sca method,
+     * that is used in a process of requesting authorisation code (returns response with error code in case of wrong code request)
+     * and returns response with SCAMETHODSELECTED status.
+     *
+     * @param request UpdateConsentPsuDataReq with updating data
+     * @return UpdateConsentPsuDataResponse as a result of updating process
+     */
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         SpiAccountConsent accountConsent = aisConsentService.getAccountConsentById(request.getConsentId());

@@ -40,6 +40,7 @@ public class AisScaFinalisedStage extends AisScaStage<UpdateConsentPsuDataReq, U
         super(aisConsentService, aisConsentDataService, aisConsentSpi, aisConsentMapper, messageErrorCodeMapper, psuDataMapper);
     }
 
+    // Needed to prevent error in case of trying to update consent PSU data, that already has FINALISED Sca status.
     @Override
     public UpdateConsentPsuDataResponse apply(UpdateConsentPsuDataReq request) {
         return new UpdateConsentPsuDataResponse(FINALISED);

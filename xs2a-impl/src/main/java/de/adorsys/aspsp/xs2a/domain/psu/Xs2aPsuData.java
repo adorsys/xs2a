@@ -18,6 +18,9 @@ package de.adorsys.aspsp.xs2a.domain.psu;
 
 import lombok.Value;
 
+/**
+ * Contains data about PSU
+ */
 @Value
 public class Xs2aPsuData {
     private String psuId;
