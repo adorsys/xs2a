@@ -22,5 +22,5 @@ import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.PaymentInitiationParameters;
 
 public interface CreatePaymentService<T, R> {
-    ResponseObject<R> createPayment(T payment, PaymentInitiationParameters paymentInitiationParameters, Xs2aPisConsent pisConsent, TppInfo tppInfo);
+    ResponseObject<R> createPayment(T payment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent);
 }

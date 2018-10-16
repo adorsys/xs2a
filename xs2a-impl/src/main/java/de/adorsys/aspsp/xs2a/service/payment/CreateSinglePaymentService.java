@@ -52,8 +52,8 @@ public class CreateSinglePaymentService implements CreatePaymentService<SinglePa
      * @return Response containing information about created periodic payment or corresponding error
      */
     @Override
-    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, Xs2aPisConsent pisConsent, TppInfo tppInfo) {
-        SinglePaymentInitiationResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentInitiationParameters.getPaymentProduct());
+    public ResponseObject<SinglePaymentInitiationResponse> createPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, Xs2aPisConsent pisConsent) {
+        SinglePaymentInitiationResponse response = scaPaymentService.createSinglePayment(singlePayment, tppInfo, paymentInitiationParameters.getPaymentProduct(), pisConsent);
         response.setPisConsentId(pisConsent.getConsentId());
 
         singlePayment.setPaymentId(response.getPaymentId());

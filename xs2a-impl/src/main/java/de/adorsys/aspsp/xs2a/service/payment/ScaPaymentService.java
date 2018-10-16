@@ -17,14 +17,15 @@
 package de.adorsys.aspsp.xs2a.service.payment;
 
 import de.adorsys.aspsp.xs2a.domain.TppInfo;
+import de.adorsys.aspsp.xs2a.domain.consent.Xs2aPisConsent;
 import de.adorsys.aspsp.xs2a.domain.pis.*;
 
 import java.util.List;
 
 public interface ScaPaymentService {
-    PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct);
+    PeriodicPaymentInitiationResponse createPeriodicPayment(PeriodicPayment periodicPayment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent);
 
     List<PaymentInitialisationResponse> createBulkPayment(BulkPayment bulkPayment, TppInfo tppInfo, String paymentProduct);
 
-    SinglePaymentInitiationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct);
+    SinglePaymentInitiationResponse createSinglePayment(SinglePayment singlePayment, TppInfo tppInfo, PaymentProduct paymentProduct, Xs2aPisConsent pisConsent);
 }

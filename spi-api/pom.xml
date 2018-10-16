@@ -26,6 +26,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>de.adorsys.psd2</groupId>
     <artifactId>spi-api</artifactId>
     <packaging>jar</packaging>
 
@@ -33,12 +34,6 @@
     <description>xs2a spi interfaces for aspsp</description>
 
     <properties>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <swagger.annotations.version>1.5.19</swagger.annotations.version>
-        <apache.commons.version>3.7</apache.commons.version>
-        <java.version>1.8</java.version>
         <ruleset.basedir>..</ruleset.basedir>
     </properties>
 
@@ -46,6 +41,7 @@
 
         <!-- project dependencies -->
 
+<!-- TODO remove dependency to consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/332 -->
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-api</artifactId>
@@ -53,12 +49,6 @@
         </dependency>
 
         <!-- other dependencies -->
-
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.annotations.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -73,7 +63,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${apache.commons.version}</version>
+            <version>${apache.commons-lang3.version}</version>
         </dependency>
     </dependencies>
 

@@ -41,7 +41,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Base64;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.UUID;
 
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.RECEIVED;
 import static de.adorsys.psd2.consent.api.CmsConsentStatus.VALID;
