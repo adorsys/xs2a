@@ -22,13 +22,10 @@ import de.adorsys.aspsp.xs2a.service.authorization.AuthorisationMethodService;
 import de.adorsys.aspsp.xs2a.service.message.MessageService;
 import de.adorsys.aspsp.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.aspsp.xs2a.web.PaymentController;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Aspect
 @Component
 public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentController> {
@@ -42,11 +39,5 @@ public class PaymentInitiationAspect extends AbstractPaymentLink<PaymentControll
             return enrichLink(result, requestParameters);
         }
         return enrichErrorTextMessage(result);
-    }
-
-    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.api.PaymentApi._initiatePayment(..)) && args(body,..)", returning = "result", argNames = "result,body")
-    public ResponseEntity<?> testAspect(ResponseEntity<?> result, Object body) {
-        log.info("fdfdfdfdfdfdf");
-        return result;
     }
 }
