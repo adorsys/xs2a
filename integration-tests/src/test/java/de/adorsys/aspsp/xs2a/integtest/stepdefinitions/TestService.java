@@ -61,6 +61,16 @@ public class TestService {
         context.setActualResponse(response);
     }
 
+    public void sendRestCall(HttpMethod httpMethod, String url, HttpEntity entity) {
+        ResponseEntity<?> response = restTemplate.exchange(
+            url,
+            httpMethod,
+            entity,
+            context.getTestData().getResponse().getBody().getClass());
+
+        context.setActualResponse(response);
+    }
+
     public void sendErrorfulRestCall (HttpMethod httpMethod, String url) throws IOException {
         HttpEntity entity = PaymentUtils.getHttpEntity(
             context.getTestData().getRequest(), context.getAccessToken());
@@ -95,4 +105,6 @@ public class TestService {
             typeReference);
         context.setTestData(data);
     }
+
+
 }

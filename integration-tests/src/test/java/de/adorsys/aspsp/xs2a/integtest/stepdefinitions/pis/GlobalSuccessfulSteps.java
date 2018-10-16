@@ -17,7 +17,6 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
@@ -25,6 +24,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import de.adorsys.aspsp.xs2a.integtest.config.AuthConfigProperty;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
 import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.*;
@@ -43,8 +43,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -60,10 +58,10 @@ public class GlobalSuccessfulSteps {
     private RestTemplate template;
 
     @Autowired
-    private ObjectMapper mapper;
+    private AuthConfigProperty authConfigProperty;
 
     @Autowired
-    private AuthConfigProperty authConfigProperty;
+    private TestService testService;
 
     @Before
     public void loadTestDataIntoDb() {
@@ -126,33 +124,18 @@ public class GlobalSuccessfulSteps {
     // Embedded Global Step Payment Initiation
     @And("^PSU sends the single payment initiating request and receives the paymentId$")
     public void sendSinglePaymentInitiationEmbedded() {
-        HttpEntity entity = PaymentUtils.getHttpEntity(
-            context.getTestData().getRequest(), context.getAccessToken());
-
-        ResponseEntity<PaymentInitationRequestResponse201> response = template.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct(),
-            HttpMethod.POST,
-            entity,
-            PaymentInitationRequestResponse201.class);
-
-        context.setPaymentId(response.getBody().getPaymentId());
+        testService.sendRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentProduct());
+        context.setPaymentId(((PaymentInitationRequestResponse201) context.getActualResponse().getBody()).getPaymentId());
     }
 
     // Embedded Global Step Payment Initiation
     @And("^PSU sends the start authorisation request and receives the authorisationId$")
-    public void startAuthorisationRequest() {
-//        HttpEntity entity = PaymentUtils.getHttpEntity(
-//            null, context.getAccessToken());
-
+    public void startAuthorisationRequest() throws IOException {
         HttpEntity entity = PaymentUtils.getHttpEntityWithoutBody(context.getTestData().getRequest(), context.getAccessToken());
-
-        ResponseEntity<StartScaprocessResponse> response = template.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations",
-            HttpMethod.POST,
-            entity,
-            StartScaprocessResponse.class);
-
-        extractAuthorisationId(response);
+        testService.parseJson(("/data-input/pis/embedded/" + "startAuth-successful.json"), new TypeReference<TestData<HashMap, StartScaprocessResponse>>() {
+        });
+        testService.sendRestCall(HttpMethod.POST, context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/authorisations", entity);
+        extractAuthorisationId(context.getActualResponse());
     }
 
     private void extractAuthorisationId(ResponseEntity<StartScaprocessResponse> response) {
@@ -167,12 +150,8 @@ public class GlobalSuccessfulSteps {
     // Embedded Global Step Payment Initiation
     @And("^PSU wants to update the resource with his (.*)$")
     public void loadIdentificationData(String identificationData) throws IOException {
-        TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse> data = mapper.readValue(resourceToString(
-            "/data-input/pis/embedded/" + identificationData, UTF_8),
-            new TypeReference<TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse>>() {
-            });
-
-        context.setTestData(data);
+        testService.parseJson("/data-input/pis/embedded/" + identificationData,  new TypeReference<TestData<UpdatePsuAuthentication, UpdatePsuAuthenticationResponse>>() {
+        });
     }
 
     // Embedded Global Step Payment Initiation
