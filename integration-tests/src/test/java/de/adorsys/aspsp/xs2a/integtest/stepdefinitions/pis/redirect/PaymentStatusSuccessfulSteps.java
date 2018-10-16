@@ -17,28 +17,22 @@
 package de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.redirect;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.adorsys.aspsp.xs2a.integtest.model.TestData;
+import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.TestService;
 import de.adorsys.aspsp.xs2a.integtest.stepdefinitions.pis.FeatureFileSteps;
 import de.adorsys.aspsp.xs2a.integtest.util.Context;
-import de.adorsys.aspsp.xs2a.integtest.util.PaymentUtils;
 import de.adorsys.psd2.model.PaymentInitiationStatusResponse200Json;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.HashMap;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -46,14 +40,10 @@ import static org.hamcrest.Matchers.equalTo;
 public class PaymentStatusSuccessfulSteps {
 
     @Autowired
-    @Qualifier("xs2a")
-    private RestTemplate restTemplate;
-
-    @Autowired
     private Context<HashMap, PaymentInitiationStatusResponse200Json> context;
 
     @Autowired
-    private ObjectMapper mapper;
+    private TestService testService;
 
     // @Given("^PSU wants to initiate a single payment (.*) using the payment service (.*) and the payment product (.*)$")
     // See SinglePaymentSuccessfulSteps
@@ -63,25 +53,13 @@ public class PaymentStatusSuccessfulSteps {
 
     @And("^PSU wants to request the payment status by using a set of data (.*)$")
     public void loadPaymentStatusTestData(String dataFileName) throws IOException {
-        TestData<HashMap, PaymentInitiationStatusResponse200Json> data = mapper.readValue(resourceToString(
-            "/data-input/pis/status/" + dataFileName, UTF_8),
-            new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
+        testService.parseJson("/data-input/pis/status/" + dataFileName, new TypeReference<TestData<HashMap, PaymentInitiationStatusResponse200Json>>() {
         });
-
-        context.setTestData(data);
     }
 
     @When("^PSU requests the status of the payment$")
     public void sendPaymentStatusRequest() throws HttpClientErrorException {
-        HttpEntity entity = PaymentUtils.getHttpEntity(context.getTestData().getRequest(), context.getAccessToken());
-
-        ResponseEntity<PaymentInitiationStatusResponse200Json> response = restTemplate.exchange(
-            context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status",
-            HttpMethod.GET,
-            entity,
-            PaymentInitiationStatusResponse200Json.class);
-
-        context.setActualResponse(response);
+        testService.sendRestCall(HttpMethod.GET,context.getBaseUrl() + "/" + context.getPaymentService() + "/" + context.getPaymentId() + "/status");
     }
 
     @Then("^a successful response code and the correct payment status is delivered to the PSU$")
