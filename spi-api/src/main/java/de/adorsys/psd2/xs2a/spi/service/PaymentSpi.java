@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
 //TODO javadocs!
-interface PaymentSpi<T extends SpiPayment, R> extends PaymentAuthorisationSpi<T> {
+interface PaymentSpi<T extends SpiPayment, R> {
 
     @NotNull
     SpiResponse<R> initiatePayment(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData initialAspspConsentData);

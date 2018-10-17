@@ -16,23 +16,17 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.AspspConsentData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponseStatus;
 import org.jetbrains.annotations.NotNull;
 
-interface PaymentAuthorisationSpi<T extends SpiPayment> extends AuthorisationSpi<T> {
+public interface PaymentAuthorisationSpi<T extends SpiPayment> extends AuthorisationSpi<T> {
 
     @NotNull
-    default SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiResponse.VoidResponse>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
-    }
+    SpiResponse<SpiResponse.VoidResponse> executePaymentWithoutSca(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 
     @NotNull
-    default SpiResponse<SpiResponse.VoidResponse> executePaymentWithSca(@NotNull SpiPsuData psuData, @NotNull T payment, @NotNull AspspConsentData aspspConsentData) {
-        return SpiResponse.<SpiResponse.VoidResponse>builder()
-                   .fail(SpiResponseStatus.NOT_SUPPORTED);
-    }
+    SpiResponse<SpiResponse.VoidResponse> executePaymentWithSca(@NotNull SpiPsuData psuData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull AspspConsentData aspspConsentData);
 }
